@@ -34,15 +34,22 @@
 
 ## Next actions
 <!-- The ordered next steps. -->
-1. **Session 5 (user directive: next gate / next part of a gate):** resume
-   the ADR-0004 program sequence - G2 + G3 pages (8 conditions). Specify
-   G2.5 (spec-suite red run); force the Q8 hard-core-designation ADR
-   (criteria drafted in the G1 page); resolve or defer Q3 first analyzers
-   (couples to the conventions-enforcer arc in `E:\claude-orchestrator`).
-2. Sessions 6-10 per `plan.md`: G4 solo; G5+G6; G7+G8; G9+G10; PL-* +
+1. **Session 5 (user directive, recorded post-close): a once-over of G1** -
+   walk the user through `docs/gates/G1-requirements-spec.md` until fully
+   understood: G1.1 spec/schema linting, G1.2 model checking (hangs on Q8),
+   G1.3 criteria review checklist. Interactive walk-through mode (tour,
+   rulings one at a time - the session-4 pacing preference), no new
+   artifacts unless rulings force them. Q8's designation criteria (drafted
+   in the G1 page) will surface naturally; if ruled on, the Q8 ADR can land
+   here instead of the G2 session.
+2. Then the program sequence resumes: G2 + G3 pages (8 conditions; specify
+   G2.5; Q8 ADR if still open; resolve or defer Q3 first analyzers -
+   couples to the conventions-enforcer arc in `E:\claude-orchestrator`).
+   `plan.md`'s schedule table shifts one more right.
+3. Later sessions per `plan.md`: G4 solo; G5+G6; G7+G8; G9+G10; PL-* +
    close-out. Recorded inputs: G4.6's protected set is the single root
    `specs/**` (E5); native-interop memory-safety gap (taxonomy).
-3. Parked G0 work, waits on Q6 pilot: F10 `/intake` skill (its venue going
+4. Parked G0 work, waits on Q6 pilot: F10 `/intake` skill (its venue going
    live flips G0.1 -> `enforced`) and F11 scaffold subcommand.
 
 ## Open questions
@@ -58,7 +65,8 @@
 - Q6 pilot repository selection; greenfield vs retrofit sequencing - gates
   F10/F11 and G0.1's `enforced` flip.
 - Q7 enforcement-layer change-control workflow (PL-PIPE.1).
-- Q8 which components merit formal models (G1.2, G2.1, G5.6) - ADR due
-  session 5.
+- Q8 which components merit formal models (G1.2, G2.1, G5.6) - criteria may
+  get ruled during the session-5 G1 once-over; ADR there or at the G2
+  session.
 - Protect-main still blocked: rulesets on a private repo need GitHub Pro -
   upgrade, make public, or accept unprotected main?
