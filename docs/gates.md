@@ -19,8 +19,9 @@
   concentrated at G1 and G6 by design; they do not claim loopability).
 - **Condition lifecycle** - `registered` (named, check intent fixed) ->
   `specified` (exact mechanical pass condition and parameters fixed) ->
-  `enforced` (live and blocking in its venue). **Every condition in this
-  document is `registered`; none is `specified` yet.** Where a near-final pass
+  `enforced` (live and blocking in its venue). **Per-condition states are
+  carried on each gate's Deep-page line; the count line under the overview
+  totals them.** Where a near-final pass
   shape already exists it appears in the Check column, open parameters flagged.
 - **Numbering provenance** - the original session table ran phases 1-7 with an
   addendum adding 0, 5.5, 8, 9; the handoff merged these to 0-10 (5.5 UAT -> 6,
@@ -42,13 +43,13 @@ Conditions with unresolved parameters link here; the questions live in
 | Ref | Open question | Conditions affected |
 |---|---|---|
 | Q1 | Spec-path immutability mechanism (protected dirs + CI diff vs CODEOWNERS vs separate repo) | G4.6, PL-PIPE.1 |
-| Q2 | Task-contract schema fields for definition-of-ready | G0.1 |
 | Q3 | Which house conventions become custom analyzers first | G3.2 |
 | Q4 | Threshold selection: mutation floor, complexity budgets, ratchet cadence | G4.8, G5.5, G9 (authored policy) |
 | Q7 | Enforcement-layer change-control workflow | PL-PIPE.1 |
 | Q8 | Which components merit formal models | G1.2, G2.1, G5.6 |
 
-(Q5 two-channel decorrelation and Q6 pilot selection are harness/rollout
+(Q2 resolved 2026-07-23 -> [0005](../decisions/0005-task-contract-fields.md).
+Q5 two-channel decorrelation and Q6 pilot selection are harness/rollout
 questions, not condition parameters.)
 
 ## Overview
@@ -57,7 +58,7 @@ questions, not condition parameters.)
 |---|---|---|---|---|---|
 | G0 | Planning / Intake | harness intake step | per task | task entering spec | 1 |
 | G1 | Requirements / Spec | spec sign-off | per task | spec release downstream | 3 |
-| G2 | Design / Architecture | design sign-off + baseline lock | per task | implementation start | 4 |
+| G2 | Design / Architecture | design sign-off + baseline lock | per task | implementation start | 5 |
 | G3 | Implementation | editor / local build | seconds | code leaving the inner loop | 3 |
 | G4 | Pre-merge CI | merge queue | minutes | merge to main | 9 |
 | G5 | Integration / System | nightly pipeline | hours, nightly | promotion to release candidate | 6 |
@@ -69,7 +70,7 @@ questions, not condition parameters.)
 | PL-DOC | Documentation lifecycle | CI + scheduled sweep | per merge / dated | doc-touching merges | 3 |
 | PL-PIPE | Pipeline integrity | separate approval channel + CI | per gate-config change | enforcement-layer edits | 3 |
 
-47 registered conditions total.
+48 conditions total - 3 `specified` (G0.1, G1.1, G1.3), 45 `registered`.
 
 ---
 
@@ -85,10 +86,11 @@ non-goals, decomposition into independently gateable units. Becomes G1's input
 and the scope baseline every later gate implicitly checks against.
 **FAIL blocks:** the task entering the spec stage.
 **Closes:** mis-selection, scope creep (upstream of misinterpretation).
+**Deep page:** [gates/G0-planning-intake.md](gates/G0-planning-intake.md) - G0.1 `specified`.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| G0.1 | Definition-of-ready check | mechanical (human until schema exists) | Reject if acceptance criteria are unwritable, dependencies unresolved, or scope unbounded | task-contract schema validation | Q2 |
+| G0.1 | Definition-of-ready check | mechanical (human until schema exists) | Reject if acceptance criteria are unwritable, dependencies unresolved, or scope unbounded | task-contract schema validation | [0005](../decisions/0005-task-contract-fields.md) |
 
 ## G1 - Requirements / Spec
 
@@ -98,13 +100,16 @@ independently of the implementation, mechanically checkable downstream.
 **Inputs:** accepted task contract (G0).
 **Authored here -> downstream gate material:** numbered acceptance criteria
 (REQ-IDs); immutable acceptance tests; property + metamorphic specs; boundary
-schemas (OpenAPI/protobuf); formal models for hard cores (TLA+/P). Enforced
+schemas (OpenAPI/protobuf); formal models for hard cores (TLA+/P); naive
+reference implementation for differential-gated components (catalog pattern 6);
+approval snapshots (`.approved.*`, pattern 5). Enforced
 downstream at G4.3-G4.6, G5.1, G5.2, G5.5, G5.6.
 **FAIL blocks:** release of the spec set - design and implementation cannot
 start against an unlinted or ambiguous spec.
 **Operator note:** Spec agent, context decorrelated from the Developer
 (two-channel principle; mechanism is open question Q5).
 **Closes:** requirements misinterpretation (ODC function).
+**Deep page:** [gates/G1-requirements-spec.md](gates/G1-requirements-spec.md) - G1.1, G1.3 `specified`; G1.2 `registered` (Q8).
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
@@ -134,6 +139,11 @@ design-level security flaws.
 | G2.2 | Breaking-change baseline lock | mechanical | API surface and schema baselines exist and are locked before implementation begins | PublicApiAnalyzers, schema baselines | - |
 | G2.3 | ADR review | human | Significant design choices are recorded and reviewed | `decisions/` | - |
 | G2.4 | Threat-model existence | mechanical | Every component crossing a trust boundary has a STRIDE threat model, with abuse cases compiled into security acceptance tests | STRIDE process | - |
+| G2.5 | Spec-suite red run | mechanical | Acceptance + property suites compile against the locked scaffold and every unimplemented criterion's test fails (red) before implementation starts | test runner | - |
+
+G2.5 added 2026-07-23 by ratified completeness finding - design source:
+[gates/G1-requirements-spec.md](gates/G1-requirements-spec.md) (completeness
+check), per [0004](../decisions/0004-per-gate-documentation-program.md).
 
 ## G3 - Implementation (inner loop)
 
@@ -327,20 +337,9 @@ paths - and this registry itself.
 
 ---
 
-## Spec-first catalog cross-reference
+## Cross-references
 
-Where the eight catalog patterns (handoff section 4) surface as conditions:
-
-| Pattern | Authored | Enforced by |
-|---|---|---|
-| 1. Immutable acceptance tests + traceability | G1 | G4.3, G4.6 |
-| 2. Type-first scaffolding + API surface lock | G2 | G4.5 (source), G7.2 (binary) |
-| 3. Property-based + metamorphic specs | G1 | G4.4 |
-| 4. Boundary contracts | G1 | G4.5 (schema diff), G5.1 (consumer pacts) |
-| 5. Approval tests with locked snapshots | G1/G2 | via G4.3 (suite) + G4.6 (`.approved.*` immutability) |
-| 6. Differential gates | G1 (reference impl) | G5.2 |
-| 7. Mutation threshold | - | G5.5 |
-| 8. Formal models for hard cores | G1 | G1.2, G2.1, G5.6 |
-
-The bug-class taxonomy (handoff section 3) anchors each gate's **Closes** line;
-per-class ladder positions live there until the taxonomy gets its own page.
+The eight spec-first patterns with their authored-at / enforced-by mapping
+live in [catalog.md](catalog.md). The bug-class taxonomy anchoring each
+gate's **Closes** line, with per-class ladder positions and the gap-analysis
+method, lives in [taxonomy.md](taxonomy.md).

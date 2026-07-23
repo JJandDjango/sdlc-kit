@@ -25,8 +25,8 @@ flowchart LR
 | Component | Responsibility (one line) | Status | Deep doc |
 |---|---|---|---|
 | gate map | Unified SDLC gate table: phases 0-10, what each authors vs enforces, defect classes closed | designed | [docs/gates.md](docs/gates.md) |
-| bug-class taxonomy | CWE/ODC anchors -> gate mapping with detectability-ladder position per class | designed | no doc yet |
-| spec-first gate catalog | The 8 gate patterns: immutable acceptance tests, API lock, property specs, contracts, approvals, differential, mutation floor, formal models | designed | no doc yet |
+| bug-class taxonomy | CWE/ODC anchors -> gate mapping with detectability-ladder position per class | designed | [docs/taxonomy.md](docs/taxonomy.md) |
+| spec-first gate catalog | The 8 gate patterns: immutable acceptance tests, API lock, property specs, contracts, approvals, differential, mutation floor, formal models | designed | [docs/catalog.md](docs/catalog.md) |
 | task-contract schema | Phase-0 definition-of-ready: scope, non-goals, gateable decomposition | planned | no doc yet |
 | REQ-ID traceability | Criterion-annotation format + CI script requiring every REQ-ID -> >=1 passing test | planned | no doc yet |
 | custom analyzers | House conventions encoded as Roslyn analyzers + code fixes (fed by convention extraction) | planned | no doc yet |
@@ -34,6 +34,6 @@ flowchart LR
 | pilot stack | Minimal phase 3-4 stack (formatter, StyleCop, strict compile, arch tests, ratchets) on a pilot repo | planned | no doc yet |
 
 Design source: `HANDOFF_gate-architecture_2026-07-22.md` (root, frozen). The
-gate map now lives as the registry `docs/gates.md` (gates G0-G10 + PL-*, with
-condition rosters); taxonomy and catalog detail stay in the handoff until each
-gets its `docs/` page on touch.
+gate map lives as the registry `docs/gates.md` (gates G0-G10 + PL-*, with
+condition rosters and per-gate deep pages under `docs/gates/`); taxonomy and
+catalog detail live in `docs/taxonomy.md` and `docs/catalog.md`.

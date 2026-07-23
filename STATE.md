@@ -2,27 +2,30 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-07-22._
+> _Generated 2026-07-23._
 
 ## Now
 <!-- What's actively being worked. -->
-- Session 2 (2026-07-22) closed: gate registry authored. `docs/gates.md` defines
-  13 gates - G0-G10 phase gates plus PL-DOC / PL-PIPE cross-cutting - with 47
-  conditions registered (per-condition IDs `Gn.m`, kind mechanical|human, tool
-  candidates, check intent, open-parameter links). Source-faithful to
-  `HANDOFF_gate-architecture_2026-07-22.md` section 5: all enforced items,
-  authored columns, and defect classes carried; nothing invented; verified by
-  full cross-check.
-- `decisions/0003-gate-vocabulary-and-registry.md` fixed vocabulary: a *gate* is
-  a phase's blocking enforcement venue (one table row); a *condition* is a check
-  attached to it; lifecycle `registered -> specified -> enforced`. All 47
-  conditions are `registered`; none `specified` yet.
-- Spine touches: MAP.md gate-map row now links `docs/gates.md`; CONVENTIONS.md
-  carries the gate-vocabulary rule; covers-marker added. `cairn audit` clean,
-  0 findings.
-- Correction to session-1 notes: branch is `main` (not master) and a remote IS
-  configured - github.com/JJandDjango/sdlc_development_kit. Session-end commit
-  (including this STATE.md) and user-approved push to origin/main in progress.
+- Session 3 (2026-07-23) closed: gate documentation program launched and its
+  first increment shipped. ADR 0004 fixes the program - sequential per-gate
+  deep pages `docs/gates/<ID>-<slug>.md` (G0 -> G10 -> PL-*), depth =
+  document + specify (enforcement artifacts are a later pass), normative
+  roster policy (gaps -> PROPOSED conditions, user ratifies), light gates
+  batched (~7 sessions; schedule table in `plan.md`).
+- Shipped this session: `docs/gates/G0-planning-intake.md` (exemplar) and
+  `docs/gates/G1-requirements-spec.md`; substrate pages `docs/taxonomy.md`
+  (ladder + CWE/ODC -> condition mapping) and `docs/catalog.md` (8 spec-first
+  patterns, cross-ref table moved from registry); ADR 0005 task-contract
+  fields (8 fields, Q2 resolved); MAP/CONVENTIONS/registry touches.
+- Ratified 2026-07-23: task-contract field set (G0.1 -> `specified`); G1.1
+  warnings-block strictness (-> `specified`); G1.3 10-item review checklist
+  (-> `specified`); new condition G2.5 spec-suite red run (registered, design
+  source: G1 page completeness check). Registry now 48 conditions - 3
+  `specified`, 45 `registered`. Cairn audit clean (2 INFO orphan notes are
+  by design - gate pages link from the registry, not MAP).
+- Session end: commit + push approved; after the push, apply
+  `.github/ruleset-protect-main.json` (PRs required on main, 0 approvals) -
+  from session 4 onward work lands via branch -> PR -> merge.
 
 ## Blockers
 <!-- What's stopping progress. -->
@@ -30,24 +33,26 @@
 
 ## Next actions
 <!-- The ordered next steps. -->
-1. Begin the `registered -> specified` pass on one gate's conditions - G4
-   pre-merge CI is highest-leverage (9 conditions incl. G4.6 spec-path
-   immutability, G4.3 REQ-ID traceability).
-2. Apply `.github/ruleset-protect-main.json` on GitHub now that the remote
-   exists and main is pushed.
-3. Prior candidate steps (proposed, not yet decided), now anchored to condition
-   IDs: CWE gap analysis vs the ten pillars; prototype custom Roslyn analyzer
-   (G3.2); REQ-ID traceability format + CI script (G4.3); minimal phase 3-4
-   stack on a pilot repo (G3/G4 subset); Verifier spec-path immutability check
-   (G4.6); phase-0 task-contract schema (G0.1).
+1. **User directive for session 4:** walk through G0 thoroughly and survey
+   what implementations exist / could be created to enforce it - task-contract
+   schema encoding (JSON Schema over YAML/JSON), validator tooling, harness
+   intake wiring. A user-directed pull-forward of G0's enforcement pass;
+   spec baseline is `docs/gates/G0-planning-intake.md` + ADR 0005.
+2. Resume the program sequence: G2 + G3 pages - specify G2.5, force the Q8
+   hard-core-designation ADR (criteria drafted in the G1 page), resolve or
+   defer Q3 (first custom analyzers).
+3. Sessions 5-9 per the `plan.md` schedule (G4 solo; G5+G6; G7+G8; G9+G10;
+   PL-* + close-out). Session inputs already recorded in pages: G4.6's
+   protected-path set must include task contracts (G0 page, session 5);
+   native-interop memory-safety gap (taxonomy, session 6).
 
 ## Open questions
 <!-- Unresolved decisions that need an answer. -->
-- Spec-path immutability mechanism: protected dirs + CI diff check vs CODEOWNERS vs separate repo/submodule (G4.6, PL-PIPE.1).
-- Task-contract schema fields for phase-0 definition-of-ready (G0.1).
-- Which house conventions become custom Roslyn analyzers first; does the convention-extraction skill generate analyzer stubs (G3.2)?
-- Threshold selection: mutation score floor (G5.5), complexity budgets (G4.8), ratchet-tightening cadence (G9 policy).
-- How the harness achieves two-channel decorrelation between Spec and Developer contexts.
-- Pilot repository selection; greenfield vs retrofit sequencing.
-- Enforcement-layer change-control workflow - who/what approves gate edits (PL-PIPE.1).
-- Which components merit formal models - identify the phase-1 hard cores (G1.2, G2.1, G5.6).
+- Q1 spec-path immutability mechanism: protected dirs + CI diff vs CODEOWNERS vs separate repo (G4.6, PL-PIPE.1) - session 5.
+- Q3 which house conventions become custom Roslyn analyzers first; does the convention-extraction skill generate stubs (G3.2) - session 4.
+- Q4 threshold selection: mutation floor (G5.5), complexity budgets (G4.8), ratchet cadence (G9) - sessions 5/6/8.
+- Q5 how the harness achieves two-channel decorrelation between Spec and Developer contexts (harness design, not a condition parameter).
+- Q6 pilot repository selection; greenfield vs retrofit sequencing.
+- Q7 enforcement-layer change-control workflow (PL-PIPE.1) - session 9.
+- Q8 which components merit formal models (G1.2, G2.1, G5.6) - designation criteria proposed in the G1 page; ADR due session 4.
+- (Q2 resolved 2026-07-23 -> decisions/0005-task-contract-fields.md.)

@@ -14,6 +14,10 @@
   (G0-G10, PL-*); a *condition* is a check attached to it, lifecycle
   `registered -> specified -> enforced`. Registry: `docs/gates.md`
   ([[0003-gate-vocabulary-and-registry]]).
+- **Gate pages.** Each gate gets a deep page `docs/gates/<ID>-<slug>.md` on
+  the fixed template; the registry stays the one-line index; PROPOSED roster
+  changes enter only on user ratification
+  ([[0004-per-gate-documentation-program]]).
 <!-- Example code rule - adapt or delete:
 - **Match the idiom.** New code follows the touched layer's dominant pattern.
 -->
