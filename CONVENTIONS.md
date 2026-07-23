@@ -10,6 +10,10 @@
 
 - **Decisions get recorded.** A choice a future you would question gets an ADR
   ([[0001-record-architecture-decisions]]).
+- **Gate vocabulary.** A *gate* is a phase's blocking enforcement venue
+  (G0-G10, PL-*); a *condition* is a check attached to it, lifecycle
+  `registered -> specified -> enforced`. Registry: `docs/gates.md`
+  ([[0003-gate-vocabulary-and-registry]]).
 <!-- Example code rule - adapt or delete:
 - **Match the idiom.** New code follows the touched layer's dominant pattern.
 -->
