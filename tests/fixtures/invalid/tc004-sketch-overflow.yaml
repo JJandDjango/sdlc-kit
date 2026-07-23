@@ -1,0 +1,19 @@
+id: sample-task
+intent: >
+  A sufficiently long intent statement describing the outcome in user
+  language for fixture purposes.
+scope:
+  - module-a/
+non_goals:
+  - module-b
+decomposition:
+  - unit: the work
+    done_means: the described outcome holds
+    acceptance_sketch:
+      - first draft criterion
+      - second draft criterion
+      - third draft criterion
+      - fourth criterion over the limit
+dependencies: []
+provenance:
+  origin: human-request

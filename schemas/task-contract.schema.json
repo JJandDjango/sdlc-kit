@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:sdlc-kit:task-contract:v1",
+  "title": "Task contract (G0 definition-of-ready)",
+  "description": "Phase-0 task contract. Field set: ADR 0005; encoding: ADR 0006. Root schema = draft profile (blocked dependencies representable); validate #/$defs/ready for the G0.1 gate.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "intent",
+    "scope",
+    "non_goals",
+    "decomposition",
+    "dependencies",
+    "provenance"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{2,63}$"
+    },
+    "intent": {
+      "type": "string",
+      "minLength": 40,
+      "maxLength": 1200
+    },
+    "scope": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "non_goals": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "decomposition": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/unit"
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dependency"
+      }
+    },
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    }
+  },
+  "$defs": {
+    "unit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unit",
+        "done_means",
+        "acceptance_sketch"
+      ],
+      "properties": {
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "done_means": {
+          "type": "string",
+          "minLength": 1
+        },
+        "acceptance_sketch": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref",
+        "status"
+      ],
+      "properties": {
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "resolved",
+            "blocked"
+          ]
+        },
+        "blocked_by": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "if": {
+        "properties": {
+          "status": {
+            "const": "blocked"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "blocked_by"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "blocked_by"
+          ]
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "origin"
+      ],
+      "properties": {
+        "origin": {
+          "enum": [
+            "human-request",
+            "g8-escape",
+            "g9-maintenance"
+          ]
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "if": {
+        "properties": {
+          "origin": {
+            "const": "g8-escape"
+          }
+        },
+        "required": [
+          "origin"
+        ]
+      },
+      "then": {
+        "required": [
+          "ref"
+        ]
+      }
+    },
+    "ready_delta": {
+      "properties": {
+        "dependencies": {
+          "items": {
+            "properties": {
+              "status": {
+                "const": "resolved"
+              }
+            }
+          }
+        }
+      }
+    },
+    "ready": {
+      "allOf": [
+        {
+          "$ref": "#"
+        },
+        {
+          "$ref": "#/$defs/ready_delta"
+        }
+      ]
+    }
+  }
+}

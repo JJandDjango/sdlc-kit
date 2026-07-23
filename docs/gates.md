@@ -86,11 +86,11 @@ non-goals, decomposition into independently gateable units. Becomes G1's input
 and the scope baseline every later gate implicitly checks against.
 **FAIL blocks:** the task entering the spec stage.
 **Closes:** mis-selection, scope creep (upstream of misinterpretation).
-**Deep page:** [gates/G0-planning-intake.md](gates/G0-planning-intake.md) - G0.1 `specified`.
+**Deep page:** [gates/G0-planning-intake.md](gates/G0-planning-intake.md) - G0.1 `specified`; enforcement mechanism shipped ([0006](../decisions/0006-task-contract-enforcement.md), [task-contract.md](task-contract.md)) - `enforced` awaits the intake venue (Q6).
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| G0.1 | Definition-of-ready check | mechanical (human until schema exists) | Reject if acceptance criteria are unwritable, dependencies unresolved, or scope unbounded | task-contract schema validation | [0005](../decisions/0005-task-contract-fields.md) |
+| G0.1 | Definition-of-ready check | mechanical | Contract at `specs/<id>/contract.yaml` validates against `schemas/task-contract.schema.json` (`ready` profile): fields present + bounded, every unit sketched, all dependencies resolved | `python -m taskcontract validate` (jsonschema) | [0005](../decisions/0005-task-contract-fields.md), [0006](../decisions/0006-task-contract-enforcement.md) |
 
 ## G1 - Requirements / Spec
 

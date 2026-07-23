@@ -51,17 +51,21 @@ wrong everything downstream.
   unwritable, dependencies unresolved, scope unbounded - each decompose into
   field checks (sketch present, dependency statuses, scope + non-goals
   bounded). The field set below is that decomposition.
-- **Kind & loopability:** mechanical (human until the schema is encoded).
-  Diagnostics are per-field ("`non_goals` empty", "dependency X unresolved") -
-  an agent can loop the contract to green without human interpretation.
-- **Tooling:** schema validation - JSON Schema over a YAML/JSON contract
-  file is the candidate encoding (an enforcement-pass choice). Alternative
-  considered: checklist-only human review - rejected as a terminal state; it
-  is the interim state until the schema exists.
+- **Kind & loopability:** mechanical - `python -m taskcontract validate`
+  emits the per-field diagnostics ("`non_goals` empty", "dependency X
+  unresolved" - stable TCnnn rule ids), so an agent can loop the contract
+  to green without human interpretation.
+- **Tooling:** `schemas/task-contract.schema.json` (JSON Schema Draft
+  2020-12, draft/ready profiles) checked by the `taskcontract` validator -
+  encoding, tooling and wiring ratified in
+  [0006](../../decisions/0006-task-contract-enforcement.md); deep page:
+  [../task-contract.md](../task-contract.md). Checklist-only human review
+  served as the interim state and is retired.
 - **Parameters:** the field set - fixed below
   ([0005](../../decisions/0005-task-contract-fields.md)).
-- **Lifecycle:** `specified` (field set ratified 2026-07-23). Schema
-  encoding and harness wiring remain enforcement-pass work.
+- **Lifecycle:** `specified` (field set 0005; schema + validator +
+  backstops shipped per 0006). `enforced` awaits the intake venue going
+  live in a harness (pilot, Q6).
 
 ### Task-contract field set (Q2) - ratified 2026-07-23, [0005](../../decisions/0005-task-contract-fields.md)
 
@@ -107,4 +111,9 @@ already promises it.
 - Q2 resolved: field set ratified ->
   [0005](../../decisions/0005-task-contract-fields.md); G0.1 `specified`.
 - Observations parked: unit-size bound; concurrent-scope harness note;
-  G4.6 enumeration must add task contracts (input to session 5).
+  G4.6 enumeration must add task contracts (input to the G4 session).
+- Enforcement pass (session 4): three-stop walk-through ratified encoding,
+  validator and wiring ->
+  [0006](../../decisions/0006-task-contract-enforcement.md); mechanism
+  built (`schemas/`, `taskcontract/`, fixtures + CI). E5 sharpens the G4.6
+  input: the protected set becomes the single root `specs/**`.

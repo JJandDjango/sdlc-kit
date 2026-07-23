@@ -1,0 +1,19 @@
+id: harden-csv-import
+intent: >
+  CSV import rejects malformed rows with a per-row error report instead of
+  silently dropping them, closing incident INC-2214.
+scope:
+  - import/csv
+non_goals:
+  - XLSX import
+decomposition:
+  - unit: row validation
+    done_means: malformed rows produce a per-row diagnostic; valid rows import
+    acceptance_sketch:
+      - a mixed file imports the valid rows and reports the bad ones by line
+dependencies:
+  - ref: import-error-reporting-api
+    status: resolved
+provenance:
+  origin: g8-escape
+  ref: INC-2214

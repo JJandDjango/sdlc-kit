@@ -1,0 +1,33 @@
+id: g0-enforcement-pass
+intent: >
+  Make G0.1 mechanically checkable: encode the ratified field set as a JSON
+  Schema, ship a validator with field-level diagnostics, and prepare the
+  wiring so malformed tasks are rejected before any spec work starts.
+scope:
+  - schemas/
+  - taskcontract/
+  - tests/
+  - .github/workflows/
+  - docs/task-contract.md
+non_goals:
+  - G1 criteria tooling
+  - the immutability mechanism itself (Q1, G4.6)
+  - the /intake skill (deferred to the pilot, Q6)
+decomposition:
+  - unit: contract schema
+    done_means: schema validates the fixture set - valid pass, invalid fail
+    acceptance_sketch:
+      - draft profile accepts a blocked dependency; ready profile rejects it
+      - an unknown top-level field is rejected (strict)
+  - unit: validator CLI
+    done_means: python -m taskcontract validate exits 0/1 with per-field lines
+    acceptance_sketch:
+      - invalid fixture yields TC003 naming the unresolved dependency
+      - --json emits the same violations as an array
+  - unit: regression suite
+    done_means: pytest green over golden fixtures, run by kit CI on push
+    acceptance_sketch:
+      - every TCnnn rule is covered by at least one named invalid fixture
+dependencies: []
+provenance:
+  origin: human-request

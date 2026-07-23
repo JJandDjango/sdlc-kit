@@ -6,27 +6,27 @@
 
 ## Now
 <!-- What's actively being worked. -->
-- Session 3 (2026-07-23) closed: gate documentation program launched and its
-  first increment shipped. ADR 0004 fixes the program - sequential per-gate
-  deep pages `docs/gates/<ID>-<slug>.md` (G0 -> G10 -> PL-*), depth =
-  document + specify (enforcement artifacts are a later pass), normative
-  roster policy (gaps -> PROPOSED conditions, user ratifies), light gates
-  batched (~7 sessions; schedule table in `plan.md`).
-- Shipped this session: `docs/gates/G0-planning-intake.md` (exemplar) and
-  `docs/gates/G1-requirements-spec.md`; substrate pages `docs/taxonomy.md`
-  (ladder + CWE/ODC -> condition mapping) and `docs/catalog.md` (8 spec-first
-  patterns, cross-ref table moved from registry); ADR 0005 task-contract
-  fields (8 fields, Q2 resolved); MAP/CONVENTIONS/registry touches.
-- Ratified 2026-07-23: task-contract field set (G0.1 -> `specified`); G1.1
-  warnings-block strictness (-> `specified`); G1.3 10-item review checklist
-  (-> `specified`); new condition G2.5 spec-suite red run (registered, design
-  source: G1 page completeness check). Registry now 48 conditions - 3
-  `specified`, 45 `registered`. Cairn audit clean (2 INFO orphan notes are
-  by design - gate pages link from the registry, not MAP).
-- Session end: committed ff1efdc, pushed to origin/main. Ruleset application
-  BLOCKED - GitHub 403: private repos need GitHub Pro (or public visibility)
-  for rulesets. `.github/ruleset-protect-main.json` stays stored; direct
-  pushes to main continue meanwhile.
+- Session 4 (2026-07-23) closed: G0's enforcement pass pulled forward by user
+  directive and shipped end-to-end after an interactive three-stop
+  walk-through (encoding -> validator -> wiring); every ruling ratified.
+- Shipped: ADR 0006 (E1-E5 encoding decisions, P1-P2 parameters, validator +
+  wiring, kept feature set); `schemas/task-contract.schema.json` (Draft
+  2020-12, draft/ready profiles); `taskcontract` package -
+  `python -m taskcontract validate`, stable TC000-TC009 diagnostics,
+  `--json` loop output; 13 golden fixtures + `tests/test_validator.py`
+  (16/16 green, live-fired); pyproject (`pip install -e` verified);
+  `.github/workflows/ci.yml`; deep page `docs/task-contract.md`;
+  registry / G0-page / MAP / CONVENTIONS touches. Cairn audit clean
+  (2 INFO gate-page orphans, by design).
+- G0.1 stays `specified` but is now genuinely mechanical - the registry line
+  dropped "(human until schema exists)"; `enforced` awaits the intake venue
+  live in a harness (pilot, Q6).
+- Direction set this session: the kit stays as self-contained as possible,
+  Cairn expected; `/intake` skill's home = this repo, plugin-packaged like
+  cairn's skill (record formally in the F10 un-deferral ADR).
+- plan.md rewritten for session 4; program schedule shifted one right
+  (sessions 5-10); "session N" references in pre-shift pages read +1.
+- Session end: single commit of the above, push pre-approved by user.
 
 ## Blockers
 <!-- What's stopping progress. -->
@@ -34,28 +34,31 @@
 
 ## Next actions
 <!-- The ordered next steps. -->
-1. **User directive for session 4:** walk through G0 thoroughly and survey
-   what implementations exist / could be created to enforce it - task-contract
-   schema encoding (JSON Schema over YAML/JSON), validator tooling, harness
-   intake wiring. A user-directed pull-forward of G0's enforcement pass;
-   spec baseline is `docs/gates/G0-planning-intake.md` + ADR 0005.
-2. Resume the program sequence: G2 + G3 pages - specify G2.5, force the Q8
-   hard-core-designation ADR (criteria drafted in the G1 page), resolve or
-   defer Q3 (first custom analyzers).
-3. Sessions 5-9 per the `plan.md` schedule (G4 solo; G5+G6; G7+G8; G9+G10;
-   PL-* + close-out). Session inputs already recorded in pages: G4.6's
-   protected-path set must include task contracts (G0 page, session 5);
-   native-interop memory-safety gap (taxonomy, session 6).
+1. **Session 5 (user directive: next gate / next part of a gate):** resume
+   the ADR-0004 program sequence - G2 + G3 pages (8 conditions). Specify
+   G2.5 (spec-suite red run); force the Q8 hard-core-designation ADR
+   (criteria drafted in the G1 page); resolve or defer Q3 first analyzers
+   (couples to the conventions-enforcer arc in `E:\claude-orchestrator`).
+2. Sessions 6-10 per `plan.md`: G4 solo; G5+G6; G7+G8; G9+G10; PL-* +
+   close-out. Recorded inputs: G4.6's protected set is the single root
+   `specs/**` (E5); native-interop memory-safety gap (taxonomy).
+3. Parked G0 work, waits on Q6 pilot: F10 `/intake` skill (its venue going
+   live flips G0.1 -> `enforced`) and F11 scaffold subcommand.
 
 ## Open questions
 <!-- Unresolved decisions that need an answer. -->
-- Q1 spec-path immutability mechanism: protected dirs + CI diff vs CODEOWNERS vs separate repo (G4.6, PL-PIPE.1) - session 5.
-- Q3 which house conventions become custom Roslyn analyzers first; does the convention-extraction skill generate stubs (G3.2) - session 4.
-- Q4 threshold selection: mutation floor (G5.5), complexity budgets (G4.8), ratchet cadence (G9) - sessions 5/6/8.
-- Q5 how the harness achieves two-channel decorrelation between Spec and Developer contexts (harness design, not a condition parameter).
-- Q6 pilot repository selection; greenfield vs retrofit sequencing.
-- Q7 enforcement-layer change-control workflow (PL-PIPE.1) - session 9.
-- Q8 which components merit formal models (G1.2, G2.1, G5.6) - designation criteria proposed in the G1 page; ADR due session 4.
-- Protect-main blocked: rulesets on a private repo need GitHub Pro - upgrade,
-  make the repo public, or accept unprotected main for now?
-- (Q2 resolved 2026-07-23 -> decisions/0005-task-contract-fields.md.)
+- Q1 spec-path immutability mechanism - E5 sharpened the candidate to one
+  protected root `specs/**` + CI diff (G4.6, PL-PIPE.1) - G4 session.
+- Q3 first custom Roslyn analyzers; does convention extraction generate
+  stubs (G3.2) - session 5.
+- Q4 thresholds: mutation floor (G5.5), complexity budgets (G4.8), ratchet
+  cadence (G9).
+- Q5 two-channel decorrelation between Spec and Developer contexts (harness
+  design, not a condition parameter).
+- Q6 pilot repository selection; greenfield vs retrofit sequencing - gates
+  F10/F11 and G0.1's `enforced` flip.
+- Q7 enforcement-layer change-control workflow (PL-PIPE.1).
+- Q8 which components merit formal models (G1.2, G2.1, G5.6) - ADR due
+  session 5.
+- Protect-main still blocked: rulesets on a private repo need GitHub Pro -
+  upgrade, make public, or accept unprotected main?

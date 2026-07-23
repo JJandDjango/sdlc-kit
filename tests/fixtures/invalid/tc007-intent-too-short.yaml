@@ -1,0 +1,14 @@
+id: sample-task
+intent: Fix it.
+scope:
+  - module-a/
+non_goals:
+  - module-b
+decomposition:
+  - unit: the work
+    done_means: the described outcome holds
+    acceptance_sketch:
+      - one draft criterion
+dependencies: []
+provenance:
+  origin: human-request

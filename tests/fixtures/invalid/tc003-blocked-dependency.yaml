@@ -1,0 +1,19 @@
+id: sample-task
+intent: >
+  A sufficiently long intent statement describing the outcome in user
+  language for fixture purposes.
+scope:
+  - module-a/
+non_goals:
+  - module-b
+decomposition:
+  - unit: the work
+    done_means: the described outcome holds
+    acceptance_sketch:
+      - one draft criterion
+dependencies:
+  - ref: schema-migration
+    status: blocked
+    blocked_by: auth-rework
+provenance:
+  origin: human-request

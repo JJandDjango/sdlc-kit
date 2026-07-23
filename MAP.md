@@ -27,7 +27,7 @@ flowchart LR
 | gate map | Unified SDLC gate table: phases 0-10, what each authors vs enforces, defect classes closed | designed | [docs/gates.md](docs/gates.md) |
 | bug-class taxonomy | CWE/ODC anchors -> gate mapping with detectability-ladder position per class | designed | [docs/taxonomy.md](docs/taxonomy.md) |
 | spec-first gate catalog | The 8 gate patterns: immutable acceptance tests, API lock, property specs, contracts, approvals, differential, mutation floor, formal models | designed | [docs/catalog.md](docs/catalog.md) |
-| task-contract schema | Phase-0 definition-of-ready: scope, non-goals, gateable decomposition | planned | no doc yet |
+| task-contract schema | Phase-0 definition-of-ready: dual-profile JSON Schema + `taskcontract` validator (TCnnn diagnostics) | implemented (v1) | [docs/task-contract.md](docs/task-contract.md) |
 | REQ-ID traceability | Criterion-annotation format + CI script requiring every REQ-ID -> >=1 passing test | planned | no doc yet |
 | custom analyzers | House conventions encoded as Roslyn analyzers + code fixes (fed by convention extraction) | planned | no doc yet |
 | verifier checks | Spec-path immutability diff check + enforcement-layer change control | planned | no doc yet |

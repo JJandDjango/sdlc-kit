@@ -1,0 +1,16 @@
+id: fix-null-deref
+intent: >
+  Crash on empty cart at checkout no longer occurs; checkout completes for
+  carts with zero items.
+scope:
+  - checkout/
+non_goals:
+  - cart UI changes
+decomposition:
+  - unit: guard empty cart
+    done_means: checkout handles zero-item carts without a null dereference
+    acceptance_sketch:
+      - empty cart proceeds to the order-review page
+dependencies: []
+provenance:
+  origin: g9-maintenance
