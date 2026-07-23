@@ -23,9 +23,10 @@
   source: G1 page completeness check). Registry now 48 conditions - 3
   `specified`, 45 `registered`. Cairn audit clean (2 INFO orphan notes are
   by design - gate pages link from the registry, not MAP).
-- Session end: commit + push approved; after the push, apply
-  `.github/ruleset-protect-main.json` (PRs required on main, 0 approvals) -
-  from session 4 onward work lands via branch -> PR -> merge.
+- Session end: committed ff1efdc, pushed to origin/main. Ruleset application
+  BLOCKED - GitHub 403: private repos need GitHub Pro (or public visibility)
+  for rulesets. `.github/ruleset-protect-main.json` stays stored; direct
+  pushes to main continue meanwhile.
 
 ## Blockers
 <!-- What's stopping progress. -->
@@ -55,4 +56,6 @@
 - Q6 pilot repository selection; greenfield vs retrofit sequencing.
 - Q7 enforcement-layer change-control workflow (PL-PIPE.1) - session 9.
 - Q8 which components merit formal models (G1.2, G2.1, G5.6) - designation criteria proposed in the G1 page; ADR due session 4.
+- Protect-main blocked: rulesets on a private repo need GitHub Pro - upgrade,
+  make the repo public, or accept unprotected main for now?
 - (Q2 resolved 2026-07-23 -> decisions/0005-task-contract-fields.md.)
