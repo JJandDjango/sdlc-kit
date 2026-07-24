@@ -51,14 +51,22 @@ check when its session arrives.
 | Injection / neutralization | CWE-707: 79, 89, 78 | (c), strong | G4.7 taint/dataflow scan |
 | Input validation / parsing | CWE-20 | (a) + (d) | G1/G2 parse-don't-validate types; G5.3 fuzzing |
 | Numeric / calculation | CWE-682: 190, 193 | (a)/(c) + (e) | G3.3 checked arithmetic; G2 unit-of-measure types; G4.4 property tests |
+| Incorrect comparison | CWE-697 | (b)/(e) | G3.2/G4.1 battery rules; G5.5 mutation floor |
 | Error/exception handling | CWE-703, 390 | (c)/(e) | G4.1 (swallowed-catch rules); G5.5 mutation floor |
+| Control flow (non-concurrency) | CWE-691: 484, 835 | (b) | G3.3 strict compile; G3.2/G4.1 battery |
 | Concurrency | CWE-362, 667 | (d); (a) with ownership types | G2.1 design model check; G5.4 systematic testing; G5.6 trace conformance |
+| Improper interaction between entities | CWE-435 | (d)/(e) | G5.1 consumer-driven contracts; G5 integration suite |
 | Access control / authz | CWE-284, 693 | (c)/(e), design-level | G2.4 threat model -> abuse-case tests (run in G4.3); G4.7 CodeQL patterns |
 | API/protocol misuse (call order) | ODC interface | (d) -> (a) via typestate | G2 typestate scaffolding; G3.2 custom analyzers |
 | Logic / algorithmic | ODC algorithm | (e) | G4.4 property; G5.2 differential; G5.5 adequacy floor |
 | Requirements misinterpretation | ODC function | (e) | G1 spec set (G1.3 review), enforced at G4.3 traceability; G6 catches the residue |
 | Build / config / deployment | ODC build/package | (b)/(c) | G7.3 IaC scanning |
 | Performance | CWE-400, 407 | (d) | G7.1 benchmark budgets |
+
+The 435/691/697 rows close the pillar-tagging gap found in the session-7
+sweep - every CWE-1000 pillar now has >=1 tagged row; rule-level
+substantiation of the battery-anchored rows lands with the G4 session's
+battery audit (map enabled rules by CWE tag, per the method below).
 
 Structural degradation (complexity, duplication, coupling, drift, dead code)
 is deliberately not a row here - it is not a bug class but an entropy

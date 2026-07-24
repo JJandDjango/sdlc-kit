@@ -1,49 +1,57 @@
-# Plan - Session 6 (2026-07-24)
+# Plan - Session 7 (2026-07-24)
 
-The ADR-0004 program sequence resumes: G2 + G3 deep pages (8 conditions).
-User opened with the G2 walk. Interactive walk-through mode (tour, rulings
-one at a time - the session-4 pacing preference); docs authored after the
-tour. Q8 already resolved (0007), so G2's session slims to condition
-specification; Q3 waits at the G3 walk.
+The ADR-0004 program sequence continues: the G3 deep page (3 conditions,
+G3.1-G3.3). G2 consumed all of session 6, so the S6 G2+G3 slot splits
+across two sessions and every later gate shifts one right (schedule
+below). Interactive walk-through mode (tour, rulings one at a time);
+docs authored after the tour. Q3 resolves or defers at stop 3 - it
+couples to the conventions-enforcer arc in `E:\claude-orchestrator`
+(ratified design + E1-E5 seed list at `designs/conventions-skill.md`
+there; rollout discipline extract -> ratify -> compile, advisory ->
+gating).
 
 ## This session
 
 1. Refresh this plan (done - this file).
-2. G2 tour stop 1 - Frame: identity + why (correct-by-construction
-   headline, principles 1/2/4/5, authored -> enforced fan-out); land the
-   G1.2 <-> G2.1 model-checking division (spec-side vs design-side model).
-3. Tour stop 2 - G2.1 design-level model checking: consume 0007, fix pass
-   condition -> `specified`.
-4. Tour stop 3 - G2.2 breaking-change baseline lock: fix pass condition
-   (PublicAPI / OpenAPI / buf baselines committed + G4.6-protected before
-   implementation) -> `specified`; ratchet baselines routed to stop 7.
-5. Tour stop 4 - G2.3 ADR review (human): ratify significance triggers +
-   review attestation checklist -> `specified`.
-6. Tour stop 5 - G2.4 threat-model existence: fix pass condition (STRIDE
-   per trust boundary; every abuse case -> >=1 security acceptance test);
-   recording venue deferred (0007 precedent) -> `specified`.
-7. Tour stop 6 - G2.5 spec-suite red run: fix pass condition (suites
-   compile against locked scaffold; every criterion test red, zero pass)
-   -> `specified`.
-8. Tour stop 7 - Close-out: completeness check (three prepared findings:
-   ratchet-baseline lock gap - candidate G2.6; arch-rule-test existence ->
-   G2.3 checklist item; typestate presence -> G2.3 checklist item);
-   operators & harness; decisions.
-9. Authoring pass: `docs/gates/G2-design-architecture.md` (0004 template,
-   G1 page as exemplar) + registry cascade (Deep-page line, lifecycle
-   flips, counts). Commit the G2 wrap (Theory trailer); push on explicit
-   approval.
-10. The G3 walk (own itinerary at its start; Q3 couples to the
-    conventions-enforcer arc in `E:\claude-orchestrator`).
-11. Session end: STATE.md regen, commit, push on explicit approval.
+2. G3 tour stop 1 - Frame: identity + why (inner loop clean at zero
+   human cost, seconds cadence, machine-applicable fixes; the Developer
+   agent's only write surface; the pipeline's inversion point - G0-G2
+   author enforcement instruments, G3 authors only their object); land
+   the G3 <-> G4.1 echo division (latency vs authority, single-sourced
+   config, PL-PIPE governance of the configs).
+3. Tour stop 2 - G3.1 formatter: fix pass condition (zero formatting
+   diffs) -> `specified`.
+4. Tour stop 3 - G3.2 StyleCop + custom Roslyn analyzers: resolve or
+   defer Q3 (first analyzer list; does convention extraction generate
+   stubs; pipeline-native analyzers like G10.1 sunset escalation vs
+   house-convention analyzers from the enforcer arc); fix pass
+   condition -> `specified`. ADR 0008 if Q3 lands a policy.
+5. Tour stop 4 - G3.3 strict compile: fix pass condition (`Nullable`
+   enable, `TreatWarningsAsErrors`, `AnalysisLevel latest-all`) ->
+   `specified`.
+6. Tour stop 5 - Close-out: completeness check (one prepared finding:
+   no explicit unit-tests-green condition at G3 or G4 - "local build
+   red" covers compile, no G4 row runs the Developer's unit suite,
+   though G5.5 mutation presupposes it); operators & harness;
+   decisions.
+7. Authoring pass: `docs/gates/G3-implementation.md` (0004 template, G2
+   page as exemplar) + registry cascade (Deep-page line, lifecycle
+   flips, counts) + ADR 0008 if ratified. Commit the G3 wrap (Theory
+   trailer); push on explicit approval.
+8. Session end: STATE.md regen, commit, push on explicit approval.
 
-## Schedule (unchanged from session 5)
+## Schedule (rebased: G2+G3 split, later gates shift one right)
 
 | S | Gates | Conditions | Decisions likely forced |
 |---|---|---|---|
-| 6 | G2 + G3 | 8 | Q3 first analyzers (this session) |
-| 7 | G4 solo | 9 | Q1 immutability mechanism ADR; REQ-ID format; ratchet shape |
-| 8 | G5 + G6 | 8 | Q4 mutation-floor procedure; trace-conformance criteria |
-| 9 | G7 + G8 | 7 | benchmark-budget + SLO procedure shapes |
-| 10 | G9 + G10 | 6 | Q4 ratchet cadence; sunset policy |
-| 11 | PL-DOC + PL-PIPE | 6 | Q7 change-control ADR; program close-out audit |
+| 7 | G3 solo | 3 | Q3 first analyzers (this session) |
+| 8 | G4 solo | 9 | Q1 immutability mechanism ADR; REQ-ID format; ratchet shape |
+| 9 | G5 + G6 | 8 | Q4 mutation-floor procedure; trace-conformance criteria |
+| 10 | G7 + G8 | 7 | benchmark-budget + SLO procedure shapes |
+| 11 | G9 + G10 | 6 | Q4 ratchet cadence; sunset policy |
+| 12 | PL-DOC + PL-PIPE | 6 | Q7 change-control ADR; program close-out audit |
+
+Banked inputs (detail in STATE.md): the G4 session inherits the
+protected root `specs/**` (incl. task contracts), the ratchet
+enforcement package, and the REQ-ID / criterion-annotation format; the
+G5 session inherits the native-interop memory-safety taxonomy gap.

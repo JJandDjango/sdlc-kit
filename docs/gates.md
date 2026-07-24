@@ -26,6 +26,14 @@
 - **Numbering provenance** - the original session table ran phases 1-7 with an
   addendum adding 0, 5.5, 8, 9; the handoff merged these to 0-10 (5.5 UAT -> 6,
   Release -> 7, Operations -> 8, Maintenance -> 9, Deprecation -> 10).
+- **Two-layer model**
+  ([0008](../decisions/0008-two-layer-condition-model.md)) - a condition's
+  pass condition is authored as a language-agnostic **shape**; the
+  Check/Tooling columns and deep-page binding sections are the **reference
+  profile (.NET)**. Additional per-ecosystem profiles bind shapes without
+  changing them; a profile that cannot reach a shape registers a kit build
+  item (gap-closure directive), which gates that profile's `enforced` flip -
+  never the shape's `specified`.
 
 **Mutability model** (applies everywhere): the Developer agent's sole write
 surface is implementation + unit tests (G3's artifacts). Every spec artifact
@@ -43,15 +51,19 @@ Conditions with unresolved parameters link here; the questions live in
 | Ref | Open question | Conditions affected |
 |---|---|---|
 | Q1 | Spec-path immutability mechanism (protected dirs + CI diff vs CODEOWNERS vs separate repo) | G4.6, PL-PIPE.1 |
-| Q3 | Which house conventions become custom analyzers first | G3.2 |
 | Q4 | Threshold selection: mutation floor, complexity budgets, ratchet cadence | G4.8, G5.5, G9 (authored policy) |
 | Q7 | Enforcement-layer change-control workflow | PL-PIPE.1 |
 
 (Q2 resolved 2026-07-23 -> [0005](../decisions/0005-task-contract-fields.md);
 Q8 resolved 2026-07-23 ->
-[0007](../decisions/0007-hard-core-designation-criteria.md).
+[0007](../decisions/0007-hard-core-designation-criteria.md);
+Q3 resolved 2026-07-24 ->
+[0009](../decisions/0009-custom-analyzer-adoption-policy.md) - policy, not
+list; first-tranche instantiation rides pilot activation (Q6).
 Q5 two-channel decorrelation and Q6 pilot selection are harness/rollout
-questions, not condition parameters.)
+questions, not condition parameters; named Q5 sub-question on record: what
+the Developer's context contains - test source vs criteria + diagnostics
+(session-7 anti-gaming finding).)
 
 ## Overview
 
@@ -71,7 +83,8 @@ questions, not condition parameters.)
 | PL-DOC | Documentation lifecycle | CI + scheduled sweep | per merge / dated | doc-touching merges | 3 |
 | PL-PIPE | Pipeline integrity | separate approval channel + CI | per gate-config change | enforcement-layer edits | 3 |
 
-48 conditions total - 9 `specified` (G0.1, G1.1-G1.3, G2.1-G2.5), 39 `registered`.
+48 conditions total - 12 `specified` (G0.1, G1.1-G1.3, G2.1-G2.5,
+G3.1-G3.3), 36 `registered`.
 
 ---
 
@@ -155,13 +168,18 @@ artifacts in the pipeline.
 **FAIL blocks:** code leaving the inner loop (local build stays red).
 **Operator note:** the Developer agent's only write surface.
 **Closes:** type/null misuse (CWE-476, 457), resource lifetime (CWE-664, 772),
-convention drift.
+numeric overflow (CWE-682, trap half), incorrect comparison (CWE-697),
+non-concurrency control flow (CWE-691 remainder), convention drift.
+**Deep page:** [gates/G3-implementation.md](gates/G3-implementation.md) -
+G3.1-G3.3 all `specified`; first page under the two-layer model
+([0008](../decisions/0008-two-layer-condition-model.md)); Q3 closed by
+[0009](../decisions/0009-custom-analyzer-adoption-policy.md).
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| G3.1 | Formatter | mechanical | Zero formatting diffs | `dotnet format`, `.editorconfig` | - |
-| G3.2 | StyleCop + custom Roslyn analyzers | mechanical | Analyzer set clean; house conventions encoded as analyzers with code-fix providers (auto-fixable preferred) | StyleCop.Analyzers, custom Roslyn | Q3 |
-| G3.3 | Strict compile | mechanical | Builds with `Nullable` enable, `TreatWarningsAsErrors`, `AnalysisLevel latest-all` | compiler configuration | - |
+| G3.1 | Formatter | mechanical | Zero formatting diffs: verify mode exits clean tree-wide; total fixer, layout only | `dotnet format whitespace`, `.editorconfig` | - |
+| G3.2 | Analyzer battery | mechanical | Declared analyzer set clean at gating severity *and unweakened* (no new in-source suppressions); house conventions encoded as analyzers with code-fix providers (auto-fixable preferred) | StyleCop.Analyzers, custom Roslyn, `EnforceCodeStyleInBuild` | [0009](../decisions/0009-custom-analyzer-adoption-policy.md); tranche at Q6 |
+| G3.3 | Strict compile | mechanical | Builds with `Nullable` enable, `TreatWarningsAsErrors`, `AnalysisLevel latest-all`, checked arithmetic, unsafe off | compiler configuration (`Directory.Build.props`) | - |
 
 ## G4 - Pre-merge CI
 
