@@ -1,78 +1,73 @@
-# Plan - Session 8 (2026-07-24)
+# Plan - Session 9 (2026-07-24)
 
-The ADR-0004 program sequence continues: the G4 deep page - the largest
-gate (9 conditions, G4.1-G4.9, plus one banked candidate condition), solo
-slot per the rebased schedule. Interactive walk-through mode (tour,
+The ADR-0004 program sequence continues: the G5 + G6 walk - the nightly
+tier (G5 Integration/System, 6 conditions, outcome = promotion to
+release candidate) and the staging tier (G6 UAT/Staging, 2 conditions,
+outcome = candidate acceptance). Interactive walk-through mode (tour,
 rulings one at a time, ratified before edits land); docs authored after
-the tour. Decisions this session forces: Q1 immutability-mechanism ADR,
-the REQ-ID / criterion-annotation format (consumers G2.4, G2.5, G4.3),
-the ratchet shape (G4.8; Q4 numbers stay open). Q1 lands early - several
-later stops (suppression-audit residence, baseline residence, ratchet
-residence) stand on its mechanism.
+the tour. Decisions this session likely forces (schedule row): the Q4
+mutation-floor procedure (G5.5) and trace-conformance criteria (G5.6).
+Banked inputs consumed here: G4.11 as G5.5's named precondition
+(one-run totality substrate enforced at merge); the native-interop
+memory-safety gap (taxonomy `-` row; couples to G3.3 clause 4's
+compensating-control demand); the mandatory generated-input oracle
+scope (anti-overfit - G5.2/G5.3 must fix which components carry
+generated-input oracles; likely back-propagates a G1.3 checklist item).
 
 ## This session
 
 1. Refresh this plan (done - this file).
-2. Tour stop 1 - Frame: identity + why (the authority end of the G3<->G4
-   echo division; merged-result semantics - conditions run on the merge
-   result, not the PR head; the last cheap moment, minutes cadence; QA
-   executes, Verifier's deterministic core = G4.6 + suppression audit;
-   the CI definition itself is PL-PIPE scope). Roster agenda: 9
-   registered + 1 banked candidate. Provenance item parked to close-out:
-   the registry's authored line ("regression tests from review findings")
-   in a pipeline with no human review at G4.
-3. Stop 2 - G4.6 + Q1: the spec-path immutability mechanism (single
-   protected root `specs/**` incl. task contracts - banked; CI diff
-   check vs CODEOWNERS vs separate repo; phase-unconditional check;
-   manifest self-protection; shared machinery with the G3 config set /
-   enforcement-layer class). -> ADR 0010; G4.6 `specified`.
-4. Stop 3 - G4.1 echo complex: battery superset rule (add, never drop);
-   G3.1 echo as explicit job step (banked); four-vector suppression
-   audit placement (pragmas / NoWarn + severity / flag overrides /
-   exclusion edits - banked); battery-audit disposition (substantiate
-   the 691/697 taxonomy rows by CWE-tag mapping - banked). -> G4.1
-   `specified`.
-5. Stop 4 - Suite execution: G4.3 acceptance + REQ-ID traceability -
-   fix the criterion-annotation format + script shape (ADR if ruled
-   cross-cutting enough); G4.4 property suites; rule on the banked
-   candidate condition - merged-build unit-suite-green (G4.10?), also
-   G5.5's precondition. -> G4.3, G4.4 `specified` (+ G4.10 if adopted).
-6. Stop 5 - G2-lock enforcement: G4.2 architecture tests; G4.5 API
-   surface diff + "unapproved" semantics (approval = baseline change
-   arriving through the spec channel, not a human click). -> both
-   `specified`.
-7. Stop 6 - Detectors: G4.7 taint/security scan - "no new findings"
-   baseline semantics (absolute-zero vs baseline-relative, residence if
-   relative); G4.9 secret + dependency audit - division from G9.2
-   (new-at-merge vs newly-disclosed-in-place). -> both `specified`.
-8. Stop 7 - G4.8 ratchets: ratify the banked package (fail-if-missing,
-   protected-path residence, bootstrap = authored budgets (Q4) +
-   duplication captured from main); tighten-only mechanics + tightening
-   actor (G9 coupling). Q4 numbers stay open as parameters. ->
-   `specified`.
-9. Stop 8 - Close-out: completeness check (prepared items: the authored
-   line above; CWE-703 error-handling coverage; merge-queue vs PR-CI
-   venue semantics), operators & harness, decisions.
-10. Authoring pass: `docs/gates/G4-pre-merge-ci.md` (0008 two-layer
-    template, G3 page as exemplar) + registry cascade (Deep-page line,
-    lifecycle flips, counts, open-parameter index: Q1 closes) + ADR
-    0010 (+ 0011 if REQ-ID ruled ADR-worthy) + STATE. Commit the G4
-    wrap (Theory trailer); push on explicit approval.
+2. Tour stop 1 - Frame: G5 identity (nightly on main, hours budget,
+   promotion to release candidate) + G6 identity (staging, per
+   candidate, candidate acceptance); venue semantics after G4's merge
+   queue - what a red nightly seizes (promotion, not merges?);
+   operators (G5 execution-only like G4? who is G6's human subject);
+   roster agenda 6 + 2.
+3. Stop 2 - G5.1 consumer-driven contract verification: pact-set
+   totality (all consumers), pact provenance and residence, PactNet.
+4. Stop 3 - G5.2 + G5.3 the generated-input oracle pair: differential
+   testing against the authored naive reference (a spec-stage artifact
+   - its provenance and protection) and fuzzing (SharpFuzz); banked
+   scope ruling - which components MUST carry generated-input oracles
+   (anti-overfit; G1.3 back-propagation); native-interop memory-safety
+   gap disposition (fuzzing as the compensating control for the
+   taxonomy `-` row). -> both `specified`.
+5. Stop 4 - G5.4 systematic concurrency testing: Coyote scope (which
+   components; 0007 hard-core coupling), interleaving budget.
+   -> `specified`.
+6. Stop 5 - G5.5 mutation threshold: Q4 mutation-floor procedure
+   (likely forced; floor numbers stay Q4-open), changed-code scope,
+   G4.11 precondition linkage. -> `specified`.
+7. Stop 6 - G5.6 model trace-conformance: conformance criteria (likely
+   forced), 0007 hard-core designation coupling, trace-capture
+   mechanics. -> `specified`.
+8. Stop 7 - G6.1 + G6.2: human validation against REQ-IDs (staging
+   walk; 0011 criteria.yaml as the checklist source) + exploratory
+   testing (findings become new REQ-IDs - the loop back into the spec
+   channel). -> both `specified`.
+9. Stop 8 - Close-out: completeness check, operators & harness,
+   decisions inventory, S10 banked inputs.
+10. Authoring pass: `docs/gates/G5-integration-system.md` +
+    `docs/gates/G6-uat-staging.md` (0008 two-layer template, G4 page
+    as exemplar) + registry cascade (Deep-page lines, lifecycle flips,
+    counts 23 -> 31, open-parameter index) + ADR(s) if forced + STATE.
+    Commit the G5+G6 wrap (Theory trailer); push on explicit approval.
 11. Session end: STATE.md regen, commit, push on explicit approval.
 
 ## Schedule (rebased: G2+G3 split, later gates shift one right)
 
 | S | Gates | Conditions | Decisions likely forced |
 |---|---|---|---|
-| 8 | G4 solo (this session) | 9 (+1 candidate) | Q1 ADR; REQ-ID format; ratchet shape |
-| 9 | G5 + G6 | 8 | Q4 mutation-floor procedure; trace-conformance criteria |
+| 8 | G4 solo (done) | 11 ruled | Q1 -> ADR 0010; REQ-ID -> ADR 0011; ratchet shape |
+| 9 | G5 + G6 (this session) | 8 | Q4 mutation-floor procedure; trace-conformance criteria |
 | 10 | G7 + G8 | 7 | benchmark-budget + SLO procedure shapes |
 | 11 | G9 + G10 | 6 | Q4 ratchet cadence; sunset policy |
 | 12 | PL-DOC + PL-PIPE | 6 | Q7 change-control ADR; program close-out audit |
 
-Banked inputs (detail in STATE.md): from the G2 session - protected set
-= single root `specs/**` incl. task contracts; ratchet enforcement
-package; REQ-ID format consumers. From the G3 session - G3.1 echo step;
-four-vector suppression audit; unit-suite-green candidate; battery
-audit. The G5 session inherits the native-interop memory-safety gap and
-the generated-input oracle scope (anti-overfit).
+Banked inputs (detail in STATE.md): consumed this session - G4.11 ->
+G5.5 precondition; native-interop memory-safety gap; generated-input
+oracle scope. Held for S11 - G9 tightening-job shape (0010
+direction-conditional auto-approve), G9.2 SLA windows (G4.9's
+soft-seize backstop consumes them), G9.3 license-sweep division. Held
+for S12 - Q7 worked example (0010/G4.8 channel-weight tiering);
+PL-PIPE.2 fixture pattern (traceability + battery golden tests).

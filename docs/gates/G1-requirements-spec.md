@@ -32,6 +32,10 @@
     carried here source-faithfully.
   - approval-test snapshots (`.approved.*`) -> G4.3 + G4.6 (pattern 5,
     authored G1/G2).
+  - component oracle-designation record -> scopes G5.2-G5.4 + G5.7;
+    reviewed by checklist item 11 (S9 rubric).
+  - declared-consumer registry -> G5.1 pact totality (S9; alongside the
+    boundary schemas).
 
 ## Why this gate exists
 
@@ -138,12 +142,24 @@ Per spec set:
 6. **Consistent** - no two criteria demand conflicting behavior.
 7. **Respects non-goals** - nothing specifies excluded scope.
 8. **Boundary + error paths** - each in-scope input surface has >=1 boundary
-   criterion and >=1 error-path criterion.
+   criterion and >=1 error-path criterion; each external dependency has >=1
+   system-level failure criterion ("on dependency X unavailable, the system
+   does Y") - S9 extension, the chaos question's routed coverage.
 9. **Property-spec applicability** - surfaces with algorithmic/invariant
    behavior carry property or metamorphic specs (pattern 3), or a recorded
    reason why not.
 10. **Schema presence** - every in-scope service/trust boundary has a
     boundary schema (pattern 4).
+11. **Oracle designation answered** - the component declaration record
+    answers the generated-input oracle question for every component
+    touched: differential-gated (naive reference authored), fuzz-gated
+    (targets declared; mandatory for trust-boundary parsers and
+    native-interop wrappers, no opt-out), property-only,
+    concurrency-gated (tripwire-checked at G5.4), soak-designated, or
+    none-with-justification; trace-gating derives from
+    [0007](../../decisions/0007-hard-core-designation-criteria.md), never
+    opted. Absence of an oracle is an authored, reviewed decision (S9
+    rubric).
 
 ## Completeness check
 
@@ -186,3 +202,6 @@ immutability diffs.
   session.
 - Roster corrections recorded: G1 also authors the differential reference
   implementation (pattern 6) and approval snapshots (pattern 5).
+- S9 cascade (G5+G6 walk): checklist gains item 11 (oracle designation)
+  and item 8's external-dependency failure clause; the authored set gains
+  the component declaration record and the declared-consumer registry.

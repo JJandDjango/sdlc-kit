@@ -42,7 +42,8 @@ G4.6 ([0010](../decisions/0010-write-surface-immutability.md)) - never by
 prompt instructions. Gate configurations themselves are
 enforcement-layer artifacts governed by PL-PIPE. Operators per the harness
 design: Spec agent authors G0-G2 artifacts, Developer works only inside G3, QA
-executes G4-G6, Verifier is cross-cutting (gate integrity, immutability diffs).
+executes G4-G6 (the human principal grades G6.1/G6.2), Verifier is
+cross-cutting (gate integrity, immutability diffs).
 
 ## Open-parameter index
 
@@ -51,7 +52,7 @@ Conditions with unresolved parameters link here; the questions live in
 
 | Ref | Open question | Conditions affected |
 |---|---|---|
-| Q4 | Threshold selection, numeric only - shapes closed: mutation floor (G5.5), complexity budgets + capture parameters (G4.8), tightening cadence (G9) | G4.8, G5.5, G9 (authored policy) |
+| Q4 | Threshold selection, numeric only - shapes closed: mutation floor + small-N cutoff (G5.5 - procedure fixed S9), complexity budgets + capture parameters (G4.8), tightening cadence (G9) | G4.8, G5.5, G9 (authored policy) |
 | Q7 | Enforcement-layer change-control workflow | PL-PIPE.1 |
 
 (Q2 resolved 2026-07-23 -> [0005](../decisions/0005-task-contract-fields.md);
@@ -80,8 +81,8 @@ the Developer's context contains - test source vs criteria + diagnostics
 | G2 | Design / Architecture | design sign-off + baseline lock | per task | implementation start | 5 |
 | G3 | Implementation | editor / local build | seconds | code leaving the inner loop | 3 |
 | G4 | Pre-merge CI | merge queue (PR CI = preview) | minutes | merge to main | 11 |
-| G5 | Integration / System | nightly pipeline | hours, nightly | promotion to release candidate | 6 |
-| G6 | UAT / Staging | staging environment | per candidate | candidate acceptance | 2 |
+| G5 | Integration / System | pinned-snapshot pipeline | hours (schedule = policy) | promotion to release candidate | 7 |
+| G6 | UAT / Staging | certified staging environment | per candidate, principal-paced | candidate acceptance | 3 |
 | G7 | Release / Deploy | release pipeline | per release | deploy; rollout continuation | 4 |
 | G8 | Operations | production runtime | continuous | further rollout; convergence closure | 3 |
 | G9 | Maintenance / Evolution | scheduled jobs | weekly+ | dependency merge; SLA compliance | 3 |
@@ -89,8 +90,8 @@ the Developer's context contains - test source vs criteria + diagnostics
 | PL-DOC | Documentation lifecycle | CI + scheduled sweep | per merge / dated | doc-touching merges | 3 |
 | PL-PIPE | Pipeline integrity | separate approval channel + CI | per gate-config change | enforcement-layer edits | 3 |
 
-50 conditions total - 23 `specified` (G0.1, G1.1-G1.3, G2.1-G2.5,
-G3.1-G3.3, G4.1-G4.11), 27 `registered`.
+52 conditions total - 33 `specified` (G0.1, G1.1-G1.3, G2.1-G2.5,
+G3.1-G3.3, G4.1-G4.11, G5.1-G5.7, G6.1-G6.3), 19 `registered`.
 
 ---
 
@@ -232,39 +233,73 @@ G4.1 + G4.6 per the 0008 precedent.
 ## G5 - Integration / System
 
 **Purpose:** catch what only whole-system execution reveals - and prove the
-spec suite itself has teeth.
-**Venue & cadence:** nightly pipeline, hours. Slow gates still block release -
-cost sets cadence, never rigor.
-**Inputs:** merged main build.
-**Authored here:** - (execution-only gate).
-**FAIL blocks:** promotion to release candidate.
+spec suite itself has teeth (the distribution oracles + the sensitivity
+floor).
+**Venue & cadence:** deep-verification tier over **pinned snapshots** of
+main - one sha per run; promotion promotes the verified artifact, never a
+rebuild. Budget-class hours; the schedule is policy, not shape ("nightly" =
+the reference default; rolling / on-demand runs satisfy the same shape).
+Slow gates still block release - cost sets cadence, never rigor.
+**Inputs:** the pinned snapshot (merged main build).
+**Authored here:** - (execution-only gate; discovered state - corpus
+growth, minimized crashers - lands as tightening candidates through the
+merge queue, 0010's direction-conditional lane).
+**FAIL blocks:** promotion to release candidate. Red seizes promotion,
+never merges; past its remediation window it escalates to stop-the-line at
+task intake (fix lane via contract reference; numbers Q4/G9, S11).
+**Operator note:** pure QA execution - subject integrity inherited from
+G4's diff policing; no Verifier, no human. Fresh exploration each run;
+every red ships a replay recipe; no retry-to-green.
 **Closes:** interaction bugs, concurrency (CWE-362, 667), parsing/input
-validation (CWE-20), vacuous specs.
+validation (CWE-20), vacuous specs, resource-trend defects (CWE-400 trend
+class), native-interop memory safety (via G5.3's mandatory-fuzz
+disposition).
+**Deep page:** [gates/G5-integration-system.md](gates/G5-integration-system.md) -
+G5.1-G5.7 all `specified`; roster 6 -> 7 (G5.7 soak/resource-trend adopted
+at close-out); G5.2 renamed; the oracle-designation rubric ruled (G1
+declaration record, G1.3-reviewed); G5.5's floor procedure fixed (numbers
+stay Q4); G5.6's conformance criteria fixed.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| G5.1 | Consumer-driven contract verification | mechanical | Provider verifies all consumer pacts | PactNet | - |
-| G5.2 | Differential testing | mechanical | Optimized implementation equivalent to the naive reference (authored at spec stage) over generated inputs - strongest oracle for algorithmic code | reference implementation + generators | - |
-| G5.3 | Fuzzing | mechanical | No crashes/hangs on corpus + newly generated inputs | SharpFuzz | - |
-| G5.4 | Systematic concurrency testing | mechanical | Scheduled-interleaving exploration runs clean | Coyote | - |
-| G5.5 | Mutation threshold | mechanical | Mutation score >= floor on changed code - gates the *spec's adequacy*, closing the vacuous-test loophole | Stryker.NET | Q4 |
-| G5.6 | Model trace-conformance | mechanical | Implementation traces conform to the checked formal model | TLA+/P trace checking | [0007](../decisions/0007-hard-core-designation-criteria.md) |
+| G5.1 | Consumer-driven contract verification | mechanical | Declared-consumer registry x accepted pact set closed both directions; the real built provider verifies every accepted pact; unaccepted versions verify as advisory report | PactNet | - |
+| G5.2 | Differential + deep property campaign | mechanical | Optimized equivalent to the spec-authored naive reference over generated inputs under the declared equivalence relation (error agreement included); property/metamorphic suites re-run at campaign budget under fresh seeds | reference implementation + generators, CsCheck/FsCheck | - |
+| G5.3 | Fuzzing | mechanical | No crashes/hangs/sanitizer findings on corpus + fresh inputs for every declared target; corpus grows via tightening candidates; interop wrappers mandatorily fuzz-gated | SharpFuzz | - |
+| G5.4 | Systematic concurrency testing | mechanical | Scheduled-interleaving exploration clean for every concurrency-gated component; declared set >= tripwire-detected set; failures ship replayable schedules | Coyote | - |
+| G5.5 | Mutation threshold | mechanical | Mutation score >= floor on code changed since the last green run (zero survivors below the small-N cutoff) - gates the *spec's adequacy*; G4.11 is the named precondition | Stryker.NET | Q4 (numbers; procedure fixed) |
+| G5.6 | Model trace-conformance | mechanical | Mapped implementation traces are admissible behaviors of the checked model; action coverage + mapping totality; zero traces = FAIL | TLA+/P trace checking | [0007](../decisions/0007-hard-core-designation-criteria.md) |
+| G5.7 | Soak / resource-trend | mechanical | Soak-designated components run sustained scenarios: no unbounded resource-growth trend, zero crashes over the window; trend shapes gate - absolute budgets stay G7 | dotnet-counters + trend assertion | - |
 
 ## G6 - UAT / Staging
 
 **Purpose:** catch conformant-but-wrong - the code a mechanically satisfied
 spec still permits (the oracle problem's residue).
-**Venue & cadence:** production-like staging environment, per release candidate.
-**Inputs:** candidate promoted by G5.
+**Venue & cadence:** production-like staging reached only through G6.3's
+certified deploy path; per candidate, principal-paced (G5 emits a rolling
+stream of promotable snapshots; G6 draws at the principal's pace - no 1:1
+coupling).
+**Inputs:** promoted candidate (verified artifact); delta criteria records
+(0011); prior acceptance record.
 **Authored here -> downstream gate material:** findings -> new acceptance
-criteria (convergence loop into G1).
-**FAIL blocks:** candidate acceptance.
-**Closes:** residual requirements misinterpretation.
+criteria through the front door (Spec agent drafts, G1.3 reviews, G2.5
+arms red - the convergence loop into G1); the per-candidate acceptance
+record (class S) that G7's admission mechanically consumes.
+**FAIL blocks:** candidate acceptance; default-deny - no record = not
+accepted.
+**Operator note:** QA operates the venue (certified deploy, walk sheets,
+recording, assistive scouting - suggestions never verdicts); **the human
+principal grades** - non-delegable: an agent's only oracle is the spec
+text, and G6 exists to catch what the spec text missed.
+**Closes:** residual requirements misinterpretation; venue drift (G6.3).
+**Deep page:** [gates/G6-uat-staging.md](gates/G6-uat-staging.md) -
+G6.1-G6.3 all `specified`; roster 2 -> 3 (G6.3 venue certification adopted
+at close-out); the acceptance record ruled (class S, G7-consumed).
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| G6.1 | Human validation against REQ-IDs | human | Walk the numbered criteria in a production-like environment | staging environment | - |
-| G6.2 | Exploratory testing | human | Unscripted probing beyond the criteria; findings become new REQ-IDs | - | - |
+| G6.1 | Human validation against REQ-IDs | human | Walk the delta criteria (new/changed since last acceptance) in the certified environment; per-criterion verdicts recorded; findings indict the spec layer; accept-with-findings = auto-armed forward obligation | staging environment + criteria.yaml walk sheet | - |
+| G6.2 | Exploratory testing | human | Timeboxed unscripted probing beyond the criteria; principal grades (agent scouting = suggestions only); validated findings become new REQ-IDs; session attested even at zero findings | - | - |
+| G6.3 | Venue certification | mechanical | Candidate reached staging via the committed environment definition through the production deploy path; deviations only per the declared-delta allowlist; certification recorded or the walk cannot start | environment definition + deploy pipeline (class E) | - |
 
 ## G7 - Release / Deploy
 

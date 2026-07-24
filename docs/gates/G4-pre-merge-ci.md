@@ -449,10 +449,11 @@ this is a subject check on the change-act.
   approver rather than blocking (Q7 binding).
 - **Reference binding (.NET):** the write-surface audit job (one diff
   computation with G4.6): `#pragma warning disable`,
-  `[SuppressMessage]`, `GlobalSuppressions.cs`, `<NoWarn>`, severity
-  downgrades in `.editorconfig`, strictness-flag edits in props,
-  exclusion-glob edits, `Skip=` / `[Ignore]` / category-exclusion
-  edits.
+  `[SuppressMessage]`, `GlobalSuppressions.cs`, `// Stryker disable`
+  comments (S9 cascade - G5.5's dismissal ruling bans in-source
+  mutation ignores), `<NoWarn>`, severity downgrades in
+  `.editorconfig`, strictness-flag edits in props, exclusion-glob
+  edits, `Skip=` / `[Ignore]` / category-exclusion edits.
 - **Gap status:** the audit job is a kit build item (0008 register);
   vector construct lists are per-profile (every ecosystem has pragma
   and skip forms).

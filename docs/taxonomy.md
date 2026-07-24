@@ -46,7 +46,7 @@ check when its session arrives.
 | Type/interface misuse | CWE-704, ODC interface | (a) | G3.3 strict compile |
 | Null/uninitialized state | CWE-476, 457 | (a)/(b) | G3.3 (`Nullable` enable, definite assignment) |
 | Memory safety (managed code) | CWE-119, 416, 415 | (a) | language choice (GC) - closed by construction, no condition needed |
-| Memory safety (native interop) | CWE-119 family | (d) | - (sanitizers at interop; revisit at the G5 session) |
+| Memory safety (native interop) | CWE-119 family | (d) | G5.3 mandatory fuzz-gating of interop wrappers + sanitizer instrumentation - the compensating control G3.3 clause 4 demands (S9 ruling) |
 | Resource lifetime | CWE-664, 772 | (c) | G3.2 / G4.1 (lifetime analyzers, e.g. CA2000) |
 | Injection / neutralization | CWE-707: 79, 89, 78 | (c), strong | G4.7 taint/dataflow scan |
 | Input validation / parsing | CWE-20 | (a) + (d) | G1/G2 parse-don't-validate types; G5.3 fuzzing |
@@ -61,7 +61,7 @@ check when its session arrives.
 | Logic / algorithmic | ODC algorithm | (e) | G4.4 property; G5.2 differential; G5.5 adequacy floor |
 | Requirements misinterpretation | ODC function | (e) | G1 spec set (G1.3 review), enforced at G4.3 traceability; G6 catches the residue |
 | Build / config / deployment | ODC build/package | (b)/(c) | G7.3 IaC scanning |
-| Performance | CWE-400, 407 | (d) | G7.1 benchmark budgets |
+| Performance | CWE-400, 407 | (d) | G5.7 soak/resource-trend (trend class - the earlier rung, S9); G7.1 benchmark budgets |
 
 The 435/691/697 rows close the pillar-tagging gap found in the session-7
 sweep - every CWE-1000 pillar now has >=1 tagged row; rule-level
