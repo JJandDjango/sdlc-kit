@@ -46,9 +46,10 @@ Conditions with unresolved parameters link here; the questions live in
 | Q3 | Which house conventions become custom analyzers first | G3.2 |
 | Q4 | Threshold selection: mutation floor, complexity budgets, ratchet cadence | G4.8, G5.5, G9 (authored policy) |
 | Q7 | Enforcement-layer change-control workflow | PL-PIPE.1 |
-| Q8 | Which components merit formal models | G1.2, G2.1, G5.6 |
 
-(Q2 resolved 2026-07-23 -> [0005](../decisions/0005-task-contract-fields.md).
+(Q2 resolved 2026-07-23 -> [0005](../decisions/0005-task-contract-fields.md);
+Q8 resolved 2026-07-23 ->
+[0007](../decisions/0007-hard-core-designation-criteria.md).
 Q5 two-channel decorrelation and Q6 pilot selection are harness/rollout
 questions, not condition parameters.)
 
@@ -70,7 +71,7 @@ questions, not condition parameters.)
 | PL-DOC | Documentation lifecycle | CI + scheduled sweep | per merge / dated | doc-touching merges | 3 |
 | PL-PIPE | Pipeline integrity | separate approval channel + CI | per gate-config change | enforcement-layer edits | 3 |
 
-48 conditions total - 3 `specified` (G0.1, G1.1, G1.3), 45 `registered`.
+48 conditions total - 4 `specified` (G0.1, G1.1, G1.2, G1.3), 44 `registered`.
 
 ---
 
@@ -109,12 +110,12 @@ start against an unlinted or ambiguous spec.
 **Operator note:** Spec agent, context decorrelated from the Developer
 (two-channel principle; mechanism is open question Q5).
 **Closes:** requirements misinterpretation (ODC function).
-**Deep page:** [gates/G1-requirements-spec.md](gates/G1-requirements-spec.md) - G1.1, G1.3 `specified`; G1.2 `registered` (Q8).
+**Deep page:** [gates/G1-requirements-spec.md](gates/G1-requirements-spec.md) - G1.1, G1.2, G1.3 all `specified`; G1.2's designation criteria ratified in [0007](../decisions/0007-hard-core-designation-criteria.md).
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
 | G1.1 | Spec/schema linting | mechanical | Boundary schemas and spec files lint clean | Spectral, `buf lint` | - |
-| G1.2 | Model checking | mechanical | Formal models for hard cores check clean pre-implementation | TLA+/TLC, P | Q8 |
+| G1.2 | Model checking | mechanical | Formal models for hard cores check clean pre-implementation | TLA+/TLC, P | [0007](../decisions/0007-hard-core-designation-criteria.md) |
 | G1.3 | Criteria completeness + ambiguity review | human | Numbered criteria are complete, unambiguous, testable - the concentration point of human attention in the whole pipeline | review checklist | - |
 
 ## G2 - Design / Architecture
@@ -135,7 +136,7 @@ design-level security flaws.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| G2.1 | Design-level model checking | mechanical | Concurrency/protocol designs model-check clean before code exists | TLA+/TLC, Alloy, P | Q8 |
+| G2.1 | Design-level model checking | mechanical | Concurrency/protocol designs model-check clean before code exists | TLA+/TLC, Alloy, P | [0007](../decisions/0007-hard-core-designation-criteria.md) |
 | G2.2 | Breaking-change baseline lock | mechanical | API surface and schema baselines exist and are locked before implementation begins | PublicApiAnalyzers, schema baselines | - |
 | G2.3 | ADR review | human | Significant design choices are recorded and reviewed | `decisions/` | - |
 | G2.4 | Threat-model existence | mechanical | Every component crossing a trust boundary has a STRIDE threat model, with abuse cases compiled into security acceptance tests | STRIDE process | - |
@@ -209,7 +210,7 @@ validation (CWE-20), vacuous specs.
 | G5.3 | Fuzzing | mechanical | No crashes/hangs on corpus + newly generated inputs | SharpFuzz | - |
 | G5.4 | Systematic concurrency testing | mechanical | Scheduled-interleaving exploration runs clean | Coyote | - |
 | G5.5 | Mutation threshold | mechanical | Mutation score >= floor on changed code - gates the *spec's adequacy*, closing the vacuous-test loophole | Stryker.NET | Q4 |
-| G5.6 | Model trace-conformance | mechanical | Implementation traces conform to the checked formal model | TLA+/P trace checking | Q8 |
+| G5.6 | Model trace-conformance | mechanical | Implementation traces conform to the checked formal model | TLA+/P trace checking | [0007](../decisions/0007-hard-core-designation-criteria.md) |
 
 ## G6 - UAT / Staging
 

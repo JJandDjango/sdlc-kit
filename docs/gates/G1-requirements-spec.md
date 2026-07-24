@@ -93,13 +93,16 @@ authors the spec half of every downstream (e)-class closure
   diagnostic - loopable, though trace interpretation is the costliest loop
   in the pipeline, part of why hard-core designation is rationed.
 - **Tooling:** TLA+/TLC, P; Alloy for structural models (handoff section 7).
-- **Parameters:** the hard-core designation set = Q8. Proposed designation
-  criteria (to settle with G2.1 in the session-4 ADR): designate a component
-  when a defect in it would be (i) concurrency/distributed-protocol shaped,
-  (ii) invisible until (d)-time or later, and (iii) costly-irreversible in
-  production (data loss, safety, money movement).
-- **Lifecycle:** `registered` - pass shape fixed; applicability set stays
-  open until the Q8 ADR (session 4, shared with G2.1).
+- **Parameters:** the hard-core designation procedure, ratified in
+  [0007](../../decisions/0007-hard-core-designation-criteria.md): designate
+  a component when a defect in it would be (i) concurrency/distributed-
+  protocol shaped, (ii) invisible until (d)-time or later, and (iii)
+  costly-irreversible in production (data loss, safety, money movement) -
+  all three prongs must hold. Procedure-bound like G1.1's pinned rulesets;
+  the per-component set is decided at spec time, its recording venue
+  deferred to the enforcement pass.
+- **Lifecycle:** `specified` (designation criteria ratified 2026-07-23,
+  [0007](../../decisions/0007-hard-core-designation-criteria.md)).
 
 ### G1.3 Criteria completeness + ambiguity review
 
@@ -155,7 +158,8 @@ Examined:
   **G2.5 - spec-suite red run** (ratified 2026-07-23): the acceptance +
   property suites compile against the locked scaffold, and every
   not-yet-implemented criterion's test fails (red) before implementation
-  starts. Entered G2's roster as `registered`; to be specified at session 4.
+  starts. Entered G2's roster as `registered`; to be specified at the
+  G2+G3 session.
 - **Vacuity guards** (criteria per unit, property-spec presence, schema
   presence): absorbed as checklist items 4 / 9 / 10 at the human venue -
   mechanizing them is a later ladder climb, noted, not proposed.
@@ -174,8 +178,11 @@ immutability diffs.
 
 - G1.1 strictness (warnings block) and G1.3 checklist ratified 2026-07-23;
   both conditions `specified`.
-- Q8 designation criteria proposed here; the ADR lands with G2.1 at
-  session 4.
-- G2.5 ratified into G2's roster as `registered`; specified at session 4.
+- Q8 designation criteria ratified 2026-07-23 (session-5 once-over) ->
+  [0007](../../decisions/0007-hard-core-designation-criteria.md); G1.2
+  `specified`. G2.1 and G5.6 consume the same criteria at their own
+  sessions.
+- G2.5 ratified into G2's roster as `registered`; specified at the G2+G3
+  session.
 - Roster corrections recorded: G1 also authors the differential reference
   implementation (pattern 6) and approval snapshots (pattern 5).

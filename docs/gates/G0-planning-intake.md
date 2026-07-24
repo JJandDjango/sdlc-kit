@@ -103,7 +103,7 @@ is a G0-authored spec artifact - immutable to the Developer under the
 mutability model. **Cross-reference note for the G4 session:** G4.6's
 protected-path enumeration (acceptance tests, criteria, schemas, baselines,
 `.approved.*`) does not yet name task contracts; when G4.6 is specified
-(session 5) the protected set must include them - the mutability model
+(the G4 session) the protected set must include them - the mutability model
 already promises it.
 
 ## Decisions & open items
