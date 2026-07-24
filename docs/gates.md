@@ -71,7 +71,7 @@ questions, not condition parameters.)
 | PL-DOC | Documentation lifecycle | CI + scheduled sweep | per merge / dated | doc-touching merges | 3 |
 | PL-PIPE | Pipeline integrity | separate approval channel + CI | per gate-config change | enforcement-layer edits | 3 |
 
-48 conditions total - 4 `specified` (G0.1, G1.1, G1.2, G1.3), 44 `registered`.
+48 conditions total - 9 `specified` (G0.1, G1.1-G1.3, G2.1-G2.5), 39 `registered`.
 
 ---
 
@@ -126,13 +126,15 @@ lands inside the valid space (correct-by-construction over detect-after).
 **Inputs:** signed-off spec set (G1).
 **Authored here -> downstream gate material:** interface + domain-type
 scaffolding; `PublicAPI.Shipped.txt` baseline; architecture rule tests
-(NetArchTest); typestate encodings; ratchet baselines (complexity, coverage);
-threat model (STRIDE per trust boundary) -> abuse cases compiled into security
-acceptance tests. Enforced downstream at G4.2, G4.5, G4.8, G7.2.
+(NetArchTest); typestate encodings; ratchet baselines for the metrics G4.8
+enforces; threat model (STRIDE per trust boundary) -> abuse cases compiled
+into security acceptance tests. Enforced downstream at G4.2, G4.3, G4.5,
+G4.8, G7.2.
 **FAIL blocks:** implementation start - without locked baselines there is
 nothing to gate the implementation against.
 **Closes:** API misuse, concurrency design flaws, architectural erosion,
 design-level security flaws.
+**Deep page:** [gates/G2-design-architecture.md](gates/G2-design-architecture.md) - G2.1-G2.5 all `specified`; G2.1 consumes [0007](../decisions/0007-hard-core-designation-criteria.md); ratchet-baseline enforcement exported to the G4 session.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
@@ -141,10 +143,6 @@ design-level security flaws.
 | G2.3 | ADR review | human | Significant design choices are recorded and reviewed | `decisions/` | - |
 | G2.4 | Threat-model existence | mechanical | Every component crossing a trust boundary has a STRIDE threat model, with abuse cases compiled into security acceptance tests | STRIDE process | - |
 | G2.5 | Spec-suite red run | mechanical | Acceptance + property suites compile against the locked scaffold and every unimplemented criterion's test fails (red) before implementation starts | test runner | - |
-
-G2.5 added 2026-07-23 by ratified completeness finding - design source:
-[gates/G1-requirements-spec.md](gates/G1-requirements-spec.md) (completeness
-check), per [0004](../decisions/0004-per-gate-documentation-program.md).
 
 ## G3 - Implementation (inner loop)
 
