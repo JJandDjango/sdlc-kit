@@ -100,18 +100,18 @@ Roster verdict: complete - one condition; fully specifying it *is* the gate.
 The Spec agent authors the task contract from the raw request; the intake
 check runs in the harness before the spec stage opens. The accepted contract
 is a G0-authored spec artifact - immutable to the Developer under the
-mutability model. **Cross-reference note for the G4 session:** G4.6's
-protected-path enumeration (acceptance tests, criteria, schemas, baselines,
-`.approved.*`) does not yet name task contracts; when G4.6 is specified
-(the G4 session) the protected set must include them - the mutability model
-already promises it.
+mutability model. **Cross-reference note, honored at the G4 session:** G4.6's
+protected set is now the single root `specs/**`, task contracts included
+([0010](../../decisions/0010-write-surface-immutability.md), class S) -
+the mutability model's promise kept.
 
 ## Decisions & open items
 
 - Q2 resolved: field set ratified ->
   [0005](../../decisions/0005-task-contract-fields.md); G0.1 `specified`.
 - Observations parked: unit-size bound; concurrent-scope harness note;
-  G4.6 enumeration must add task contracts (input to the G4 session).
+  G4.6 enumeration must add task contracts (input to the G4 session;
+  honored -> [0010](../../decisions/0010-write-surface-immutability.md)).
 - Enforcement pass (session 4): three-stop walk-through ratified encoding,
   validator and wiring ->
   [0006](../../decisions/0006-task-contract-enforcement.md); mechanism

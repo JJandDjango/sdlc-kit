@@ -38,7 +38,8 @@
 **Mutability model** (applies everywhere): the Developer agent's sole write
 surface is implementation + unit tests (G3's artifacts). Every spec artifact
 authored at G0-G2 is immutable to the implementer, enforced mechanically by
-G4.6 - never by prompt instructions. Gate configurations themselves are
+G4.6 ([0010](../decisions/0010-write-surface-immutability.md)) - never by
+prompt instructions. Gate configurations themselves are
 enforcement-layer artifacts governed by PL-PIPE. Operators per the harness
 design: Spec agent authors G0-G2 artifacts, Developer works only inside G3, QA
 executes G4-G6, Verifier is cross-cutting (gate integrity, immutability diffs).
@@ -50,8 +51,7 @@ Conditions with unresolved parameters link here; the questions live in
 
 | Ref | Open question | Conditions affected |
 |---|---|---|
-| Q1 | Spec-path immutability mechanism (protected dirs + CI diff vs CODEOWNERS vs separate repo) | G4.6, PL-PIPE.1 |
-| Q4 | Threshold selection: mutation floor, complexity budgets, ratchet cadence | G4.8, G5.5, G9 (authored policy) |
+| Q4 | Threshold selection, numeric only - shapes closed: mutation floor (G5.5), complexity budgets + capture parameters (G4.8), tightening cadence (G9) | G4.8, G5.5, G9 (authored policy) |
 | Q7 | Enforcement-layer change-control workflow | PL-PIPE.1 |
 
 (Q2 resolved 2026-07-23 -> [0005](../decisions/0005-task-contract-fields.md);
@@ -60,6 +60,12 @@ Q8 resolved 2026-07-23 ->
 Q3 resolved 2026-07-24 ->
 [0009](../decisions/0009-custom-analyzer-adoption-policy.md) - policy, not
 list; first-tranche instantiation rides pilot activation (Q6).
+Q1 resolved 2026-07-24 ->
+[0010](../decisions/0010-write-surface-immutability.md) - write-surface
+manifest + CI diff audit, allowlist polarity, channel provenance; G4.6
+renamed. Q7 carries a worked example on record (0010/G4.8):
+direction-conditional channel weight - tightenings auto-approve,
+loosenings take the full second channel.
 Q5 two-channel decorrelation and Q6 pilot selection are harness/rollout
 questions, not condition parameters; named Q5 sub-question on record: what
 the Developer's context contains - test source vs criteria + diagnostics
@@ -73,7 +79,7 @@ the Developer's context contains - test source vs criteria + diagnostics
 | G1 | Requirements / Spec | spec sign-off | per task | spec release downstream | 3 |
 | G2 | Design / Architecture | design sign-off + baseline lock | per task | implementation start | 5 |
 | G3 | Implementation | editor / local build | seconds | code leaving the inner loop | 3 |
-| G4 | Pre-merge CI | merge queue | minutes | merge to main | 9 |
+| G4 | Pre-merge CI | merge queue (PR CI = preview) | minutes | merge to main | 11 |
 | G5 | Integration / System | nightly pipeline | hours, nightly | promotion to release candidate | 6 |
 | G6 | UAT / Staging | staging environment | per candidate | candidate acceptance | 2 |
 | G7 | Release / Deploy | release pipeline | per release | deploy; rollout continuation | 4 |
@@ -83,8 +89,8 @@ the Developer's context contains - test source vs criteria + diagnostics
 | PL-DOC | Documentation lifecycle | CI + scheduled sweep | per merge / dated | doc-touching merges | 3 |
 | PL-PIPE | Pipeline integrity | separate approval channel + CI | per gate-config change | enforcement-layer edits | 3 |
 
-48 conditions total - 12 `specified` (G0.1, G1.1-G1.3, G2.1-G2.5,
-G3.1-G3.3), 36 `registered`.
+50 conditions total - 23 `specified` (G0.1, G1.1-G1.3, G2.1-G2.5,
+G3.1-G3.3, G4.1-G4.11), 27 `registered`.
 
 ---
 
@@ -185,27 +191,43 @@ G3.1-G3.3 all `specified`; first page under the two-layer model
 
 **Purpose:** the merge is the last cheap moment to stop a defect - everything
 decidable in minutes blocks here.
-**Venue & cadence:** merge queue / PR CI, minutes.
+**Venue & cadence:** merge queue (authoritative) / PR CI (advisory preview),
+minutes. Queue semantics required: conditions evaluate the merged result
+against main-at-queue-time.
 **Inputs:** candidate diff + full build of the merged result.
-**Authored here -> downstream gate material:** regression tests from review
-findings.
+**Authored here:** - (execution-only gate; ruled session 8 - the source
+table's "regression tests from review findings" was human-SDLC residue;
+conversion loops live at G6/G8.3).
 **FAIL blocks:** merge to main.
-**Operator note:** QA agent owns execution; G4.6 is part of the Verifier's
-deterministic core. The CI definition itself is enforcement-layer (PL-PIPE).
+**Operator note:** QA agent executes the result-scoped conditions; the
+Verifier's deterministic core owns the diff-scoped subject checks (G4.6 +
+G4.10, one write-surface audit job). The CI definition itself is
+enforcement-layer (PL-PIPE). Zero human conditions - the pipeline's largest
+fully-mechanical gate.
 **Closes:** injection (CWE-707: 79, 89, 78), calculation (CWE-682), error
-handling (CWE-703), architectural erosion; misinterpretation via traceability.
+handling (CWE-703), architectural erosion + duplication entropy,
+secret/vulnerable-dependency introduction, misinterpretation via
+traceability - and agent self-weakening (subject integrity: G4.5/G4.6/G4.10).
+**Deep page:** [gates/G4-pre-merge-ci.md](gates/G4-pre-merge-ci.md) -
+G4.1-G4.11 all `specified`; roster 9 -> 11 (G4.10 suppression audit, G4.11
+full test execution adopted); Q1 closed by
+[0010](../decisions/0010-write-surface-immutability.md); traceability format
+fixed by [0011](../decisions/0011-criterion-traceability-format.md); renames
+G4.1 + G4.6 per the 0008 precedent.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| G4.1 | Full analyzer set | mechanical | Entire analyzer battery clean on the merged build (superset of the G3 run) | Roslyn analyzer set | - |
-| G4.2 | Architecture tests | mechanical | Dependency and layering rules hold | NetArchTest | - |
-| G4.3 | Acceptance suite + REQ-ID traceability | mechanical | Acceptance tests green AND every REQ-ID maps to >=1 passing test via `[Criterion("REQ-nnn")]`-style annotations | test runner + CI traceability script | format + script = candidate next-step 3 |
-| G4.4 | Property tests | mechanical | Property/metamorphic suites green | FsCheck/CsCheck | - |
-| G4.5 | API surface diff | mechanical | No unapproved public-surface change - code (`PublicAPI.Shipped.txt`), HTTP (oasdiff), proto (`buf breaking`) | PublicApiAnalyzers, oasdiff, buf | - |
-| G4.6 | Spec-path immutability | mechanical | Any diff touching a spec path (acceptance tests, criteria, schemas, baselines, `.approved.*`) fails the build - never prompt-enforced | CI diff check | Q1 |
-| G4.7 | Taint/security scan | mechanical | No new taint/dataflow findings | CodeQL, Semgrep | - |
-| G4.8 | Duplication + complexity ratchets | mechanical | Both metrics <= current baseline; baseline only ever tightens | jscpd / PMD CPD, complexity ratchet | Q4 |
-| G4.9 | Secret/dependency audit | mechanical | No secrets in the diff; no known-vulnerable dependencies | secret scan, dependency audit | - |
+| G4.1 | Inner-loop echo | mechanical | Merged result builds under identical committed strict config; declared battery clean at gating severity (superset: add, never drop); formatter verify-mode clean as explicit step | Roslyn battery, `dotnet format`, committed props | - |
+| G4.2 | Architecture tests | mechanical | Arch-rule partition green on the merged result; per-rule + violating-edge diagnostics; traces to ADRs, not REQ-IDs | NetArchTest | - |
+| G4.3 | Acceptance suite + REQ-ID traceability | mechanical | Acceptance + security partitions green AND traceability total: every criterion >=1 passing witness, every spec-suite test annotated, no dangling refs - computed from `criteria.yaml` x runner results | test runner + traceability script (pass mode) | [0011](../decisions/0011-criterion-traceability-format.md) |
+| G4.4 | Property tests | mechanical | Property/metamorphic partition green under derived seed f(base sha, candidate sha); diagnostic carries seed + shrunk counterexample | FsCheck/CsCheck | - |
+| G4.5 | API surface diff | mechanical | Every declared surface equals its locked baseline, bidirectional; spec-channel candidates get breaking-classification as report | PublicApiAnalyzers (RS0016/17), oasdiff, buf | - |
+| G4.6 | Write-surface immutability | mechanical | Candidate diff (merged result vs main-at-queue) lands inside the manifest's writable set, or carries channel provenance (S: spec sign-off; E: PL-PIPE.1); no implementation bypass; manifest missing = FAIL | write-surface audit job (CI diff) | [0010](../decisions/0010-write-surface-immutability.md) |
+| G4.7 | Taint/security scan | mechanical | Zero findings at gating severity on the merged result (ratchet-at-zero, not baseline-relative); FP dismissals only via committed class-E suppression config | CodeQL, Semgrep | - |
+| G4.8 | Duplication + complexity ratchets | mechanical | Duplication <= captured shrink-only baseline; complexity per authored per-method budgets, violation count ratcheted (zero at greenfield); baselines static between G9 tightenings; missing = FAIL | jscpd / PMD CPD, CA1502/1505/1506 thresholds | Q4 (numbers) |
+| G4.9 | Secret/dependency audit | mechanical | No secret material in the diff (masked, rotation-first); dependency delta over the locked graph introduces no advisory-matched or license-disallowed package; nothing past its G9.2 SLA window | gitleaks, NuGetAudit + lockfile, license allowlist | - |
+| G4.10 | Suppression audit | mechanical | Candidate diff introduces no weakening - four vectors: in-source suppressions/skips, severity downgrades, strictness overrides, exclusion widening | write-surface audit job | - |
+| G4.11 | Full test execution | mechanical | Entire discovered suite green on the merged result, unit partition included; zero tests = FAIL; skips zero outside committed quarantine | `dotnet test` solution-wide | - |
 
 ## G5 - Integration / System
 
@@ -348,7 +370,7 @@ paths - and this registry itself.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| PL-PIPE.1 | Enforcement-layer change control | human | Gate-config edits approved through a channel separate from what they enforce | approval workflow | Q7, Q1 |
+| PL-PIPE.1 | Enforcement-layer change control | human | Gate-config edits approved through a channel separate from what they enforce | approval workflow | Q7; mechanical arm = [0010](../decisions/0010-write-surface-immutability.md) |
 | PL-PIPE.2 | Gate-config golden tests | mechanical | Gate configurations pass their own regression suite | golden tests | - |
 | PL-PIPE.3 | Agent-behavior evals | mechanical | Agent prompts pass behavioral evals before deployment | eval suite | - |
 

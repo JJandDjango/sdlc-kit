@@ -65,8 +65,10 @@ check when its session arrives.
 
 The 435/691/697 rows close the pillar-tagging gap found in the session-7
 sweep - every CWE-1000 pillar now has >=1 tagged row; rule-level
-substantiation of the battery-anchored rows lands with the G4 session's
-battery audit (map enabled rules by CWE tag, per the method below).
+substantiation of the battery-anchored rows = the battery-CWE map +
+PL-PIPE.2 golden test (G4-session ruling: three strata - vendor-shipped
+imports, load-bearing hand-tags incl. 703, tier-level style tag; build
+item, rides pilot activation).
 
 Structural degradation (complexity, duplication, coupling, drift, dead code)
 is deliberately not a row here - it is not a bug class but an entropy

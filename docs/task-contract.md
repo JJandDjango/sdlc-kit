@@ -37,7 +37,9 @@ catch the empty and the essay, not the off-topic.
 - **E1** `acceptance_sketch` nests inside each decomposition unit - vanilla
   JSON Schema cannot check correspondence across parallel top-level arrays.
   Unit shape: `{unit, done_means, acceptance_sketch}`, all required. No
-  per-unit id yet - the REQ-ID format ADR (G4 session) may add one.
+  per-unit id - [0011](../decisions/0011-criterion-traceability-format.md)
+  added none: criteria carry `REQ-<task>-<nnn>` and cite units by name
+  (G1.3 item 3).
 - **E2** one schema file, two profiles: root = `draft` (a parked contract
   with a blocked dependency is representable, per 0005's own grammar);
   `$defs/ready` = draft + every `status: resolved`. The gate checks `ready`.
@@ -52,8 +54,9 @@ catch the empty and the essay, not the off-topic.
 - **E5** contracts live at `specs/<task-id>/contract.yaml`. One protected
   root - `specs/**` - later covers every spec artifact (G1 criteria,
   baselines, `.approved.*`), collapsing G4.6's protected-path enumeration to
-  a single rule and strengthening the Q1 candidate "protected dirs + CI
-  diff".
+  a single rule - the shape Q1 then ratified
+  ([0010](../decisions/0010-write-surface-immutability.md), allowlist
+  form).
 - **P1** id pattern `^[a-z][a-z0-9-]{2,63}$`; **P2** intent 40-1200 chars.
   Tunable defaults - nothing downstream hardens on them yet.
 

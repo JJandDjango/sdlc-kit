@@ -128,8 +128,9 @@ peripheral at G1.2.
   population mechanics (new surface enters Unshipped until release
   promotes it) are tooling discipline, enforcement-pass material.
 - **Parameters:** surface enumeration = derived from scaffold + spec set
-  (procedure-bound). Baseline path layout couples to Q1's protected-root
-  decision (G4 session); nothing here blocks on it. Ratchet baselines are
+  (procedure-bound). Baseline path layout fixed by
+  [0010](../../decisions/0010-write-surface-immutability.md):
+  `specs/baselines/` via AdditionalFiles wiring. Ratchet baselines are
   *not* this condition (see completeness check).
 - **Lifecycle:** `specified` (ratified 2026-07-24).
 
@@ -223,8 +224,9 @@ Per design set:
   set, so criterion -> test mapping rides the existing traceability
   mechanism rather than growing a parallel one.
 - **Parameters:** boundary enumeration = design artifact, completeness
-  judged at G2.3; abuse-case criterion ID mechanics ride the REQ-ID
-  format decision (G4 session); model recording venue = enforcement-pass
+  judged at G2.3; abuse-case criterion ID mechanics ride
+  [0011](../../decisions/0011-criterion-traceability-format.md) (kind
+  metadata, one grammar); model recording venue = enforcement-pass
   material (0007 precedent).
 - **Lifecycle:** `specified` (ratified 2026-07-24).
 
@@ -262,8 +264,9 @@ Per design set:
   errors with file/line; uncovered criteria named; unexpectedly-green
   tests named), loopable by the Spec agent.
 - **Tooling:** test runner + the traceability script in existence mode.
-- **Parameters:** criterion-annotation format rides the REQ-ID decision
-  (G4 session, shared with G2.4); red = fail-or-error, fixed here.
+- **Parameters:** criterion-annotation format fixed by
+  [0011](../../decisions/0011-criterion-traceability-format.md) (shared
+  with G2.4); red = fail-or-error, fixed here.
 - **Lifecycle:** `specified` (ratified 2026-07-24).
 
 ## Completeness check
@@ -326,7 +329,9 @@ diffs. G2.3's reviewer is human - the rationed, non-oracle human venue
 - Ratchet-baseline enforcement exported to the G4 session (no G2.6);
   G4-session inputs now: protected set = single root + task contracts
   (G0 page note) + ratchet fail-if-missing/residence/bootstrap (here).
-- Shared open parameter: REQ-ID / criterion-annotation format (G4
-  session) - G2.4 linkage and G2.5 coverage ride it.
+- Shared open parameter: REQ-ID / criterion-annotation format - closed
+  at the G4 session ->
+  [0011](../../decisions/0011-criterion-traceability-format.md); G2.4
+  linkage and G2.5 coverage ride it.
 - Recording venues (threat models, hard-core designations) deferred to
   the enforcement pass throughout (0007 precedent).

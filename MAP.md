@@ -28,9 +28,9 @@ flowchart LR
 | bug-class taxonomy | CWE/ODC anchors -> gate mapping with detectability-ladder position per class | designed | [docs/taxonomy.md](docs/taxonomy.md) |
 | spec-first gate catalog | The 8 gate patterns: immutable acceptance tests, API lock, property specs, contracts, approvals, differential, mutation floor, formal models | designed | [docs/catalog.md](docs/catalog.md) |
 | task-contract schema | Phase-0 definition-of-ready: dual-profile JSON Schema + `taskcontract` validator (TCnnn diagnostics) | implemented (v1) | [docs/task-contract.md](docs/task-contract.md) |
-| REQ-ID traceability | Criterion-annotation format + CI script requiring every REQ-ID -> >=1 passing test | planned | no doc yet |
+| REQ-ID traceability | Criterion-annotation format + CI script requiring every REQ-ID -> >=1 passing test | designed | [decisions/0011](decisions/0011-criterion-traceability-format.md) |
 | custom analyzers | House conventions encoded as Roslyn analyzers + code fixes (fed by convention extraction) | planned | no doc yet |
-| verifier checks | Spec-path immutability diff check + enforcement-layer change control | planned | no doc yet |
+| verifier checks | Write-surface immutability + suppression audit (one diff job, G4.6 + G4.10) + enforcement-layer change control | designed | [decisions/0010](decisions/0010-write-surface-immutability.md) |
 | pilot stack | Minimal phase 3-4 stack (formatter, StyleCop, strict compile, arch tests, ratchets) on a pilot repo | planned | no doc yet |
 
 Design source: `HANDOFF_gate-architecture_2026-07-22.md` (root, frozen). The

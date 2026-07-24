@@ -80,8 +80,9 @@ non-concurrency control flow (CWE-691 remainder), convention drift
    enforcement its own subject could silently delete - one `.editorconfig`
    edit and the loop goes permissive. The Developer's write surface
    excludes the G3 config set, mechanically - protected-path machinery
-   shared with G4.6 (mechanism = Q1, the G4 session); changes flow only
-   through PL-PIPE.1's second channel.
+   shared with G4.6 (mechanism =
+   [0010](../../decisions/0010-write-surface-immutability.md), class E);
+   changes flow only through PL-PIPE.1's second channel.
 
 ## Conditions
 
@@ -275,7 +276,8 @@ so the check asks what escapes the three conditions. Examined:
   by CWE tag"). Fixed in this session's cascade: taxonomy rows added for
   incorrect comparison (697 -> battery + G5.5), non-concurrency control
   flow (691 -> G3.3 + battery), improper interaction (435 -> G5.1/G5).
-  Rule-level substantiation = the G4 session's battery audit.
+  Rule-level substantiation -> ruled a build item at the G4 session
+  (battery-CWE map + PL-PIPE.2 golden test, three strata).
 - **Generated-code exclusions.** Formatter and analyzers need
   generated-code fencing, and an over-broad exclusion glob blinds the
   battery as effectively as any pragma. Absorbed into the suppression
@@ -308,8 +310,8 @@ one event) -> run tests -> repeat until the working diff is clean and the
 spec suite progresses red -> green. Its write surface is implementation +
 unit tests; everything enforcing (`.editorconfig`, `Directory.Build.props`,
 the analyzer set) it consumes but cannot touch. The suppression audit
-joins the Verifier's deterministic core alongside G4.6 (placement fixed at
-the G4 session). No human appears at G3 by design - the pipeline's
+joins the Verifier's deterministic core alongside G4.6 (placement:
+G4.10, [G4 page](G4-pre-merge-ci.md)). No human appears at G3 by design - the pipeline's
 attention concentration stays at G1.3 and G6. The build is authoritative;
 editor live-analysis is advisory preview of the same rules.
 
