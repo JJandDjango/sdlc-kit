@@ -6,24 +6,28 @@
 
 ## Now
 <!-- What's actively being worked. -->
-- Session 6 (2026-07-24) closed: the G2 walk ran as a seven-stop
-  interactive tour (frame -> G2.1..G2.5 -> close-out); every ruling
-  ratified in-conversation before its edit landed. G2 wrap committed
-  `a5a4940` - page `docs/gates/G2-design-architecture.md`, registry now
-  9 specified / 39 registered. G3 was not reached; it opens next session.
-- Ruled: the G1.2 <-> G2.1 two-model division (spec-side guarantees vs
-  design-side realization, same 0007 set). Two sharpenings beyond the
-  registry rows: G2.1 property carry-forward; G2.5 clause 2 (coverage via
-  the G4.3 traceability script in existence mode). G2.3 ratified with 5
-  significance triggers + 7-item checklist (items 6-7 absorb the
-  completeness findings); G2.4/G2.3 composition fixed (human judges the
-  boundary enumeration, machine checks existence + linkage).
-- Ruled: candidate G2.6 rejected (per-repo artifact behind a per-task
-  gate); ratchet-baseline enforcement exported to the G4 session.
-  Registry drift fixed (ratchet metric phrasing; G4.3 added to G2's
-  enforced-at list; G2.5 provenance folded into the page).
-- plan.md rewritten for session 6 (G3 steps still pending in it). Cairn
-  audit clean (3 INFO gate-page orphans, by design). Push approved.
+- Session 7 (2026-07-24) closed: the G3 walk ran as a five-stop
+  interactive tour (frame -> G3.1..G3.3 -> close-out); every ruling
+  ratified in-conversation before its edit landed. G3 wrap committed
+  `425d72b` and pushed - page `docs/gates/G3-implementation.md`, registry
+  now 12 specified / 36 registered.
+- Ruled: the G3 <-> G4.1 echo division (latency vs authority;
+  single-sourced config; PL-PIPE governance of G3's configs - the one
+  gate executing inside its subject's context). Ruled mid-walk on a user
+  scope question: the two-layer condition model, ADR 0008 -
+  language-agnostic shapes, per-ecosystem tooling profiles, .NET =
+  reference profile; gap-closure directive (unreachable rungs become kit
+  build items; active-profile trigger only; missing binding gates
+  `enforced`, never `specified`). G3 page is the pattern-setter; G0-G2
+  pages retrofit lazily.
+- Ruled: Q3 closed as policy, ADR 0009 (ratified-registry source of
+  truth; selection function at pilot activation; pipeline-native tier
+  first; bounded stub generation; fixture-before-gating). G3.2 renamed
+  "Analyzer battery". Sharpenings beyond registry rows: G3.2
+  no-self-weakening clause; G3.3 loud-failure numerics (drift fix) +
+  fenced escape hatches. Taxonomy: 435/691/697 rows added - every
+  CWE-1000 pillar now has >=1 tagged row. Cairn audit clean (4 INFO
+  gate-page orphans, by design).
 
 ## Blockers
 <!-- What's stopping progress. -->
@@ -31,36 +35,43 @@
 
 ## Next actions
 <!-- The ordered next steps. -->
-1. Next session: the G3 walk (3 conditions; specify G3.1-G3.3; resolve or
-   defer Q3 first analyzers - couples to the conventions-enforcer arc in
-   `E:\claude-orchestrator`, ratified design + E1-E5 seed list at
-   `designs/conventions-skill.md` there). Refresh plan.md schedule
-   accordingly (G2+G3 slot split across two sessions; later gates shift
-   one right).
-2. Recorded G4-session inputs (three): protected set = single root
-   `specs/**` (E5) and must include task contracts (G0 page note);
-   ratchet enforcement package (G2 page completeness check: G4.8
-   fail-if-missing, protected-path residence, bootstrap = Q4 budgets +
-   duplication capture from main); REQ-ID / criterion-annotation format
-   (consumers: G2.4 linkage, G2.5 coverage, G4.3). Native-interop
-   memory-safety gap (taxonomy) waits for the G5 session.
+1. Next session: the G4 walk (9 conditions, solo slot per the rebased
+   S7-S12 schedule in plan.md; refresh plan.md at its start). Banked
+   inputs, from G2 session: protected set = single root `specs/**` incl.
+   task contracts; ratchet enforcement package (G4.8 fail-if-missing,
+   protected-path residence, bootstrap = Q4 budgets + duplication capture
+   from main); REQ-ID / criterion-annotation format (consumers G2.4,
+   G2.5, G4.3). From G3 session: G3.1 echo step (identical
+   `dotnet format whitespace --verify-no-changes` in the G4 job);
+   four-vector suppression audit (pragmas / NoWarn + severity downgrades /
+   strictness-flag overrides / generated-code exclusions; joins the
+   Verifier's deterministic core); unit-suite-green candidate condition
+   (merged-build test execution - also G5.5's precondition); battery
+   audit substantiating the 691/697 rows (map enabled rules by CWE tag).
+   Q1 immutability-mechanism ADR due here.
+2. G5-session inputs on record: native-interop memory-safety gap
+   (taxonomy `-` row); mandatory generated-input oracle scope
+   (anti-overfit finding - G5.2/G5.3 scope must fix which components
+   carry generated-input oracles; likely back-propagates a G1.3
+   checklist item).
 3. Parked G0 work, waits on Q6 pilot: F10 `/intake` skill (venue live
-   flips G0.1 -> `enforced`) and F11 scaffold subcommand. Direction on
-   record: kit self-contained, `/intake` homed here plugin-packaged -
-   formalize in the F10 un-deferral ADR.
+   flips G0.1 -> `enforced`) and F11 scaffold subcommand; direction on
+   record (kit self-contained, `/intake` homed here plugin-packaged).
+   Build items awaiting .NET-profile activation (0008/0009):
+   sunset-escalation analyzer, suppression-audit check.
 
 ## Open questions
 <!-- Unresolved decisions that need an answer. -->
-- Q1 spec-path immutability mechanism - E5 sharpened the candidate to one
-  protected root `specs/**` + CI diff (G4.6, PL-PIPE.1) - the G4 session.
-- Q3 first custom Roslyn analyzers; does convention extraction generate
-  stubs (G3.2) - the G3 walk.
-- Q4 thresholds: mutation floor (G5.5), complexity budgets (G4.8), ratchet
-  cadence (G9).
-- Q5 two-channel decorrelation between Spec and Developer contexts (harness
-  design, not a condition parameter).
-- Q6 pilot repository selection; greenfield vs retrofit sequencing - gates
-  F10/F11 and G0.1's `enforced` flip.
+- Q1 spec-path immutability mechanism - single protected root `specs/**`
+  + CI diff (G4.6, PL-PIPE.1) - the G4 session.
+- Q4 thresholds: mutation floor (G5.5), complexity budgets (G4.8),
+  ratchet cadence (G9).
+- Q5 two-channel decorrelation (harness design); named sub-question on
+  record (session 7): what the Developer's context contains - test source
+  vs criteria + diagnostics.
+- Q6 pilot repository selection; greenfield vs retrofit - gates F10/F11,
+  G0.1's `enforced` flip, first-tranche analyzer instantiation (0009),
+  and the .NET-profile build items.
 - Q7 enforcement-layer change-control workflow (PL-PIPE.1).
 - Protect-main still blocked: rulesets on a private repo need GitHub Pro -
   upgrade, make public, or accept unprotected main?
