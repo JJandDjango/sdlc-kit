@@ -28,6 +28,10 @@
     no dedicated condition needed
   - ratchet budgets/baselines -> G4.8 (enforcement sharpening exported to
     the G4 session - see completeness check)
+  - performance budgets + SLO declarations (`slo.yaml`) -> G7.1
+    (absolute ceilings), G7.4 + G8.2 (compiled canary/monitoring
+    rules) - S10 cascade; requirement-derived where an SLO
+    decomposes; tightenings auto-approve (0010)
   - threat model -> abuse-case criteria + tests -> G4.3 (suite), G4.6
     (protected)
 - **Authoring vs locking:** boundary schemas are authored at G1 (pattern

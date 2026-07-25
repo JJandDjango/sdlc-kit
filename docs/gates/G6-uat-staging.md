@@ -160,8 +160,11 @@ candidates does not dissolve this one.
 - **Shape (pass condition):** object = the staging deployment of the
   candidate. The candidate reached staging via the **committed
   environment definition** (class E), through the **same deploy path
-  production uses**; deviations only per the declared-delta allowlist
-  (class E: scale, data, secrets); certification - definition hash +
+  production uses**, exercising the **revert leg** as well (deploy ->
+  revert -> redeploy; S10 cascade - G7.4's auto-revert runs only
+  per-candidate-rehearsed operations); deviations only per the
+  declared-delta allowlist (class E: scale, data, secrets);
+  certification - definition hash +
   deploy provenance - recorded in the acceptance record. Missing or
   mismatched = the walk cannot start (precondition to G6.1/G6.2).
 - **Reference binding:** the release pipeline targeting staging;
@@ -172,7 +175,9 @@ candidates does not dissolve this one.
 - **Why:** a drifted staging voids every G6 verdict silently -
   vacuity-shaped, and mechanically checkable. Bonus bought free: every
   G6 walk *rehearses the G7 deploy* - deployability defects surface
-  one gate early (formalization from G7's side banked, S10).
+  one gate early (formalized from G7's side at S10: admission
+  interlock 2 hash-matches the certified definition, and the
+  rehearsal includes the revert leg).
 - **Kind & loopability:** mechanical; diagnostic = the drift diff or
   the missing certification - loopable by the enforcement channel
   (environment fixes are class E work, never Developer work).
@@ -258,3 +263,7 @@ here.
 - S10 inputs banked: G7 admission consumes the acceptance record;
   deploy-path formalization from G7's side; G8.3 reuses the
   conversion-record shape; production chaos (G8 venue question).
+- S10 cascade landed (2026-07-25): the certified rehearsal gains the
+  revert leg (deploy -> revert -> redeploy) - G7.4 auto-revert
+  soundness; all four banked inputs above discharged (see G7/G8
+  pages).

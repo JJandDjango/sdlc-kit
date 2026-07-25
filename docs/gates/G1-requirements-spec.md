@@ -32,8 +32,9 @@
     carried here source-faithfully.
   - approval-test snapshots (`.approved.*`) -> G4.3 + G4.6 (pattern 5,
     authored G1/G2).
-  - component oracle-designation record -> scopes G5.2-G5.4 + G5.7;
-    reviewed by checklist item 11 (S9 rubric).
+  - component oracle-designation record -> scopes G5.2-G5.4 + G5.7 +
+    G7.1 (budget-designated column, S10); reviewed by checklist item
+    11 (S9 rubric; column added S10).
   - declared-consumer registry -> G5.1 pact totality (S9; alongside the
     boundary schemas).
 
@@ -205,3 +206,8 @@ immutability diffs.
 - S9 cascade (G5+G6 walk): checklist gains item 11 (oracle designation)
   and item 8's external-dependency failure clause; the authored set gains
   the component declaration record and the declared-consumer registry.
+- S10 cascade (G7+G8 walk): the declaration record gains the
+  budget-designated column (G7.1 scope; item 11 reviews it with the
+  rest); G8.3's escape conversions arrive as ordinary front-door
+  criteria - no new checklist item needed (item-8 clause + 0011
+  format already cover them).

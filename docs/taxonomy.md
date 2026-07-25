@@ -60,8 +60,10 @@ check when its session arrives.
 | API/protocol misuse (call order) | ODC interface | (d) -> (a) via typestate | G2 typestate scaffolding; G3.2 custom analyzers |
 | Logic / algorithmic | ODC algorithm | (e) | G4.4 property; G5.2 differential; G5.5 adequacy floor |
 | Requirements misinterpretation | ODC function | (e) | G1 spec set (G1.3 review), enforced at G4.3 traceability; G6 catches the residue |
-| Build / config / deployment | ODC build/package | (b)/(c) | G7.3 IaC scanning |
-| Performance | CWE-400, 407 | (d) | G5.7 soak/resource-trend (trend class - the earlier rung, S9); G7.1 benchmark budgets |
+| Build / config / deployment | ODC build/package | (b)/(c) | G6.3 certified-path rehearsal incl. revert leg (dynamic half, per candidate - S10); G7.3 IaC scanning (static half) |
+| Performance | CWE-400, 407 | (d) | G5.7 soak/resource-trend (trend class - the earlier rung, S9); G7.1 benchmark budgets (absolute ceilings, quiet infra - S10) |
+| Breaking change (consumer contract) | ODC interface | (b) | G4.5 surface diff (source, per merge); G7.2 binary compat (shipped form, per release - S10; row added S10, gap found at the G7 walk) |
+| Artifact integrity (shipped supply chain) | CWE-494 family / SLSA threats | (b) | G7.5 SBOM + provenance attestation (S10); consumed by G7 admission interlock 2 |
 
 The 435/691/697 rows close the pillar-tagging gap found in the session-7
 sweep - every CWE-1000 pillar now has >=1 tagged row; rule-level

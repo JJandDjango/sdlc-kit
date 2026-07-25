@@ -42,8 +42,9 @@ G4.6 ([0010](../decisions/0010-write-surface-immutability.md)) - never by
 prompt instructions. Gate configurations themselves are
 enforcement-layer artifacts governed by PL-PIPE. Operators per the harness
 design: Spec agent authors G0-G2 artifacts, Developer works only inside G3, QA
-executes G4-G6 (the human principal grades G6.1/G6.2), Verifier is
-cross-cutting (gate integrity, immutability diffs).
+executes G4-G7 (the human principal grades G6.1/G6.2; the operations
+principal grades G8.3), Verifier is cross-cutting (gate integrity,
+immutability diffs).
 
 ## Open-parameter index
 
@@ -52,7 +53,7 @@ Conditions with unresolved parameters link here; the questions live in
 
 | Ref | Open question | Conditions affected |
 |---|---|---|
-| Q4 | Threshold selection, numeric only - shapes closed: mutation floor + small-N cutoff (G5.5 - procedure fixed S9), complexity budgets + capture parameters (G4.8), tightening cadence (G9) | G4.8, G5.5, G9 (authored policy) |
+| Q4 | Threshold selection, numeric only - shapes closed: mutation floor + small-N cutoff (G5.5 - procedure fixed S9), complexity budgets + capture parameters (G4.8), benchmark ceilings/margins/statistic defaults (G7.1 - procedure fixed S10), canary confidence + minimum-sample constants (G7.4), triage window (G8.3 - G9.2 SLA family), tightening cadence (G9) | G4.8, G5.5, G7.1, G7.4, G8.3, G9 (authored policy) |
 | Q7 | Enforcement-layer change-control workflow | PL-PIPE.1 |
 
 (Q2 resolved 2026-07-23 -> [0005](../decisions/0005-task-contract-fields.md);
@@ -83,15 +84,16 @@ the Developer's context contains - test source vs criteria + diagnostics
 | G4 | Pre-merge CI | merge queue (PR CI = preview) | minutes | merge to main | 11 |
 | G5 | Integration / System | pinned-snapshot pipeline | hours (schedule = policy) | promotion to release candidate | 7 |
 | G6 | UAT / Staging | certified staging environment | per candidate, principal-paced | candidate acceptance | 3 |
-| G7 | Release / Deploy | release pipeline | per release | deploy; rollout continuation | 4 |
+| G7 | Release / Deploy | release pipeline | per release | deploy; rollout continuation | 5 |
 | G8 | Operations | production runtime | continuous | further rollout; convergence closure | 3 |
 | G9 | Maintenance / Evolution | scheduled jobs | weekly+ | dependency merge; SLA compliance | 3 |
 | G10 | Deprecation / Retirement | build + scheduled | sunset-driven | merge past sunset; retirement completion | 3 |
 | PL-DOC | Documentation lifecycle | CI + scheduled sweep | per merge / dated | doc-touching merges | 3 |
 | PL-PIPE | Pipeline integrity | separate approval channel + CI | per gate-config change | enforcement-layer edits | 3 |
 
-52 conditions total - 33 `specified` (G0.1, G1.1-G1.3, G2.1-G2.5,
-G3.1-G3.3, G4.1-G4.11, G5.1-G5.7, G6.1-G6.3), 19 `registered`.
+53 conditions total - 41 `specified` (G0.1, G1.1-G1.3, G2.1-G2.5,
+G3.1-G3.3, G4.1-G4.11, G5.1-G5.7, G6.1-G6.3, G7.1-G7.5, G8.1-G8.3),
+12 `registered`.
 
 ---
 
@@ -147,9 +149,10 @@ lands inside the valid space (correct-by-construction over detect-after).
 **Authored here -> downstream gate material:** interface + domain-type
 scaffolding; `PublicAPI.Shipped.txt` baseline; architecture rule tests
 (NetArchTest); typestate encodings; ratchet baselines for the metrics G4.8
-enforces; threat model (STRIDE per trust boundary) -> abuse cases compiled
+enforces; performance budgets + SLO declarations (`slo.yaml`, S10);
+threat model (STRIDE per trust boundary) -> abuse cases compiled
 into security acceptance tests. Enforced downstream at G4.2, G4.3, G4.5,
-G4.8, G7.2.
+G4.8, G7.1, G7.2, G7.4, G8.2.
 **FAIL blocks:** implementation start - without locked baselines there is
 nothing to gate the implementation against.
 **Closes:** API misuse, concurrency design flaws, architectural erosion,
@@ -303,41 +306,93 @@ at close-out); the acceptance record ruled (class S, G7-consumed).
 
 ## G7 - Release / Deploy
 
-**Purpose:** nothing ships that regresses performance, compatibility, or
-infrastructure safety.
-**Venue & cadence:** release pipeline, per release.
-**Inputs:** accepted candidate (G6).
-**Authored here -> downstream gate material:** performance budgets;
-SBOM/provenance.
-**FAIL blocks:** the deploy; a failing canary auto-reverts the rollout.
-**Closes:** performance (CWE-400, 407); build/config/deployment (ODC
-build/package).
+**Purpose:** nothing ships that regresses performance, compatibility,
+infrastructure safety, or artifact integrity - the mechanical re-entry
+after the human boundary.
+**Venue & cadence:** release pipeline - the same committed definition
+and deploy path G6.3 certifies, parameterized by target - per release.
+Deploy timing is business policy: G7 rules whether a release *may*
+ship, never when it must.
+**Inputs:** accepted candidate (verified artifact + acceptance record);
+G5.1 verification matrix; SLO declarations + performance budgets
+(class S); the committed environment definition.
+**Admission (four interlocks, structural):** acceptance record present
++ accepted + no unresolved blocking findings; artifact identity
+(digest + attestation, no rebuild lane; environment-definition hash
+per G6.3); can-i-deploy over the target environment; no standing G8
+red (fix lane via contract reference).
+**Authored here -> downstream gate material:** the release record set,
+all pipeline facts - measurement records (G9 tightening input), binary
+baselines + contract-diff payloads (-> G10 notification), SBOM +
+provenance attestations (G7.5). Budgets and SLOs are authored
+*upstream* (G2, class S) - the source table's "budgets authored at
+release" was human-SDLC residue (session-10 correction).
+**FAIL blocks:** the deploy; a failing canary auto-reverts the rollout
+(G7.4). Rollout completion (100% + full-exposure window, G8.2 green)
+closes G7 - baseline capture and production-version designation fire
+there.
+**Operator note:** fully mechanical, zero human conditions, QA
+executes; pipeline definition + rollout policy + suppressions are
+class E (PL-PIPE); interlocks golden-tested via PL-PIPE.2.
+**Closes:** performance (CWE-400, 407 - absolute half of the S9 soak
+split); build/config/deployment (ODC build/package - rehearsal +
+G7.3); binary-compat breaks at the shipped boundary (G7.2); artifact
+integrity (CWE-494 family / SLSA threats - G7.5).
+**Deep page:** [gates/G7-release-deploy.md](gates/G7-release-deploy.md) -
+G7.1-G7.5 all `specified`; roster 4 -> 5 (G7.5 SBOM + provenance
+adopted at close-out); four-interlock admission ruled; benchmark +
+canary procedure shapes fixed (numbers stay Q4); migration
+revert-safety clause on G7.4.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| G7.1 | Benchmark budgets | mechanical | Benchmarks within authored budgets vs baseline | BenchmarkDotNet + CI comparison | - |
-| G7.2 | ApiCompat binary compatibility | mechanical | Shipped binaries compatible with the locked baseline | Microsoft.DotNet.ApiCompat | - |
-| G7.3 | IaC scanning | mechanical | Infrastructure-as-code scan clean | IaC scanners | - |
-| G7.4 | Canary with SLO-based rollback | mechanical | Canary meets SLO criteria or rollout auto-reverts | deploy tooling | - |
+| G7.1 | Benchmark budgets | mechanical | Every budget-designated operation within its authored ceiling (class S tuples, per runner fingerprint); committed protocol, noise-floor + vacuity guards; measurement record committed, never gating (G9 input) | BenchmarkDotNet, dedicated runner class | Q4 (numbers) |
+| G7.2 | ApiCompat binary compatibility | mechanical | Shipped package set (all TFMs) binary-compatible with the last shipped release; breaks only via spec-channel break records; version increment coheres with delta class; baseline captured at rollout completion | Microsoft.DotNet.ApiCompat | - |
+| G7.3 | IaC scanning | mechanical | The certified environment definition + pipeline config scan clean at gating severity across all target instantiations, current feeds, ratchet-at-zero; dismissals via class-E suppression config; echo at enforcement-layer CI | trivy config-mode, PSRule (infra-format-keyed) | - |
+| G7.4 | Canary with SLO-based rollback | mechanical | Staged exposure; per-stage dual verdict (absolute SLO + canary-vs-control delta); sample-floor guard; breach auto-reverts, no manual-continue; G8.1 fires = stage-FAIL; migration revert-safety (expand/contract) | progressive delivery + analysis compiled from slo.yaml | Q4 (canary constants) |
+| G7.5 | SBOM + provenance attestation | mechanical | Every shipped artifact carries a committed SBOM + signed provenance (digest -> pipeline run -> source sha), verified at admission; missing either = nothing ships | SLSA provenance via CI attestation, CycloneDX | - |
 
 ## G8 - Operations
 
 **Purpose:** turn every escaped defect into an upstream gate - the convergence
 loop that tunes the gate set to the actual defect distribution instead of the
 generic taxonomy.
-**Venue & cadence:** production runtime, continuous.
-**Inputs:** live traffic, telemetry, incidents.
+**Venue & cadence:** production runtime, continuous - the only gate that
+never convenes on a schedule: conditions are **standing invariants**,
+the gate convenes on breach (event-driven).
+**Inputs:** live traffic; telemetry from the shared instrumentation
+surface (G5.6's action-emission layer + SLI streams); incident, crash,
+and external-report channels.
 **Authored here -> downstream gate material:** new acceptance criteria +
-regression tests from incidents, fed back to G1 as immutable spec artifacts.
-**FAIL blocks:** further rollout (error budget); an escape that does not
-produce a new criterion is itself a process failure.
-**Closes:** escaped defects - by conversion, not prevention.
+regression tests from escapes, minted through the front door (Spec agent
+drafts, G1.3 reviews, G2.5 arms red); ladder-assignment statistics (the
+gate set's own tuning evidence); triage records (class S, G6.2
+conversion-record shape).
+**FAIL blocks:** further rollout - red seizes rollouts, never operations
+(all standing G8 reds funnel into G7's admission interlock 4; fix lane
+via contract reference); convergence closure - a finding closes only by
+conversion or recorded disposition. An escape that does not produce a
+new criterion is itself a process failure (mechanized in G8.3's record
+schema).
+**Operator note:** monitoring/alert/derivation configs are class E
+(gutting an alert is deleting a gate); G8.1/G8.2 mechanical; the
+**operations principal** grades G8.3 (non-delegable; agents cluster and
+draft as suggestions). Production chaos = governed practice, not a
+condition: committed chaos plan (class E), error budget as license,
+findings convert via G8.3.
+**Closes:** escaped defects - by conversion, not prevention; the
+runtime residue of every upstream class at its production surface.
+**Deep page:** [gates/G8-operations.md](gates/G8-operations.md) -
+G8.1-G8.3 all `specified`; G8.3 renamed (escape triage + conversion),
+G8.2 renamed (license, not alerts); standing-invariant venue ruled;
+shared-instrumentation chain formalized (G5.6 proves, G8.1 inherits);
+S9's chaos routing discharged.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| G8.1 | Runtime contract assertions | mechanical | Contract assertions with telemetry stay silent in production | telemetry | - |
-| G8.2 | SLO / error-budget alerts | mechanical | SLOs within budget; breach halts further rollouts | monitoring | - |
-| G8.3 | Crash triage | human | Every crash triaged; escapes convert to new REQ-IDs + regression tests | triage process | - |
+| G8.1 | Runtime contract assertions | mechanical | Zero fires on the spec-derived gated set (boundary contracts + hard-core stream monitors), shipped enabled, fire-to-telemetry; fire = auto-finding + rollout seizure + canary stage-FAIL; liveness floors - dead listener reads red | shared OTel-family instrumentation, compiled monitors | - |
+| G8.2 | SLO / error-budget license | mechanical | Error budget not exhausted per service; SLIs/objectives/windows compiled from `specs/<service>/slo.yaml` (class S), derivation golden-tested; exhaustion = standing red -> admission interlock 4; alerts notify, the license blocks | SLI pipeline + burn-rate rules | - |
+| G8.3 | Escape triage + conversion | human | Every escape candidate (crashes, G8.1 fires, G8.2 incidents, external reports) triaged to disposition within window; conversion by default, declining takes written rationale; escape dispositions schema-incomplete without criterion + regression-test + ladder refs; queue attested even at zero | triage queue + 0011-family records | window -> G9.2 family (Q4/S11) |
 
 ## G9 - Maintenance / Evolution
 

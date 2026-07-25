@@ -82,8 +82,8 @@ proves the living suite still pins the implementation.
 **The oracle-designation rubric** (ruled this walk; the G1.3 checklist
 enforces it): every component answers the oracle question **at G1**, in
 one declaration record - differential-gated, fuzz-gated, property-only,
-concurrency-gated, soak-designated, or none - and *none requires
-written justification*, reviewed at G1.3. Silence is not an option:
+concurrency-gated, soak-designated, budget-designated (S10 column), or
+none - and *none requires written justification*, reviewed at G1.3. Silence is not an option:
 absence of an oracle is an authored, human-reviewed decision.
 Must-differential: algorithmic cores with a definable naive reference
 an order simpler than the optimized form. Must-fuzz, no opt-out:
@@ -91,7 +91,9 @@ trust-boundary parsers (the CWE-20 surface) and every native-interop
 wrapper. Concurrency-gated: shared-state concurrency,
 tripwire-detected (G5.4). Trace-gated: derived from 0007's hard-core
 designation, never opted. Soak-designated: long-running /
-service-shaped components (G5.7).
+service-shaped components (G5.7). Budget-designated: hot-path /
+service-shaped components carrying absolute perf ceilings (G7.1; S10
+column, same G1.3 review).
 
 Principles bearing:
 
@@ -122,7 +124,8 @@ Per [0008](../../decisions/0008-two-layer-condition-model.md): **Shape**
 is normative and ecosystem-free; **Reference binding** is the .NET
 profile. Objects default to the pinned snapshot; the component
 designation record (reference binding `specs/components.yaml`, class S)
-scopes G5.2-G5.4 and G5.7.
+scopes G5.2-G5.4 and G5.7 - and, since S10, G7.1 via the
+budget-designated column.
 
 ### G5.1 Consumer-driven contract verification
 
