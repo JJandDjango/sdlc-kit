@@ -1,86 +1,100 @@
-# Plan - Session 11 (2026-07-25)
+# Plan - Session 12 (2026-07-26)
 
-The ADR-0004 program sequence continues: the G9 + G10 walk - the
-maintenance tier (G9 Maintenance/Evolution, 3 conditions, scheduled
-venue - the first gate that runs *between* changes rather than on
-them) and the retirement tier (G10 Deprecation/Retirement, 3
-conditions, sunset-driven - the only gate that forces deletion).
-Interactive walk-through mode (tour, rulings one at a time, ratified
-before edits land); docs authored after the tour. Decisions this
-session likely forces (schedule row): Q4 ratchet-tightening cadence
-(the tightening-job procedure) and the sunset policy (authorship,
-notice, escalation) - numbers stay Q4-open. Structural question the
-walk must answer: G9's authored-here line (dependency update policy,
-scheduled ratchet tightening, refactoring budgets) has no condition
-enforcing it - the S10 SBOM gap produced G7.5 by the same shape, so
-a G9.4 tightening-job condition is a live candidate.
+The ADR-0004 program sequence closes: the PL-DOC + PL-PIPE walk - the
+two cross-cutting lifecycles (PL-DOC Documentation, 3 conditions, CI +
+scheduled sweep: docs are injected context, staleness is a defect
+vector; PL-PIPE Pipeline integrity, 3 conditions, separate approval
+channel: the enforcement layer is the highest-privilege artifact set),
+the last six `registered` conditions - then the program close-out
+audit over all 54. Interactive walk-through mode (tour, rulings one at
+a time, ratified before edits land); docs authored after the tour.
+Decisions this session likely forces (schedule row): the Q7
+enforcement-layer change-control ADR (four direction-conditional
+worked instances banked: 0010/G4.8 channel weight, G9.2 windows, G9.3
+allowlist exceptions, 0013 date moves). Structural questions the walk
+must answer: the PL-DOC/PL-PIPE boundary (agent prompts are class E -
+which docs are context-load-bearing enough to join them); whether
+PL-DOC inherits the diff/world two-arm division (merge arm + sweep
+arm, G4.9/G9.3 precedent); how PL-PIPE.1's second channel escapes
+self-reference (who approves changes to the approval workflow).
 
 ## This session
 
 1. Refresh this plan (done - this file).
-2. Tour stop 1 - Frame: G9 identity (scheduled jobs, weekly+, no
-   diff and no PR to gate - what FAIL blocks in a venue with no
-   change in flight; SLA breach escalates); G10 identity (build +
-   scheduled, sunset-driven; accretion is the defect class); the
-   between-features thesis (supply-chain rot + slow entropy accrue
-   in quiet weeks); operators for operator-less venues (scheduled
-   jobs run unattended - who owns a G9 red); roster agenda 3 + 3;
-   the tightening-job gap named (stop 5 decides).
-3. Stop 2 - G9.1 dependency PRs gated by full suite: what "full
-   suite" spans (G4 + G5 per registry - does G6 acceptance or G7
-   admission apply to bot PRs; is a bot PR an agent task with a
-   task contract); G7.5 SBOM consumed for field-impact mapping
-   (banked - which updates touch shipped surface); batch vs
-   single-dependency discipline; G4.9 lockfile/advisory coupling
-   (same audit, different trigger). -> `specified`.
-4. Stop 3 - G9.2 vulnerability-fix SLAs: the SLA-window family is
-   already consumed three ways (G4.9 soft-seize, G5 red-window
-   escalation, G8.3 triage window - banked) - one policy artifact,
-   authorship + residence; severity -> window mapping; what breach
-   escalation means mechanically (stop-the-line mechanics incl. the
-   0005 fix-lane field, banked - serves G5 and G8 reds alike);
-   windows numeric -> Q4. -> `specified`.
-5. Stop 4 - G9.3 license audit: the license-sweep division (banked
-   - G4.9 gates the diff-time delta, G9.3 sweeps the full standing
-   set; why both); allowlist authorship + residence (one artifact,
-   two consumers); transitive scope; suppression/exception
-   discipline. -> `specified`.
-6. Stop 5 - The tightening job (G9's authored-here core): four
-   input families banked (ratchet cadence Q4; corpus growth;
-   mutation-floor moves; budget re-tightening from measurement
-   records + ladder-assignment statistics); the cadence procedure
-   shape (likely forced - what runs, what it reads, what it may
-   tighten, who ratifies); condition or policy - adopt G9.4 or
-   route; refactoring budgets' place. Cadence numbers -> Q4.
-7. Stop 6 - G10.1 obsolete-sunset escalation: sunset-date
-   authorship + residence (the deprecation mark shape - where the
-   date lives so an analyzer can read it); warning -> error
-   mechanics at the date (custom analyzer, enforcer-arc coupling);
-   consumer notification via G7.2's contract-diff payload (banked -
-   G10's authored-here line); sunset policy likely forced (minimum
-   notice, who may set/move a date). -> `specified`.
-8. Stop 7 - G10.2 dead-code ratchet: what counts as dead (tooling
-   reach vs reflection/DI false-liveness); ratchet-family precedent
-   (G4.8 shrink-only baseline shape - same discipline or G9-owned
-   tightening); "trending down" semantics (<= baseline is a
-   ratchet; a trend mandate is a different animal). -> `specified`.
-9. Stop 8 - G10.3 data-migration verification: the
-   contract-migration far end (banked - G7.4 proved N and N+1
-   coexist at rollout; G10.3 proves the old path is safe to
-   remove); migration-spec authorship (G10 authored-here) +
-   verification venue (per-retirement, not weekly); relation to
-   G6.3's certified environment for rehearsal. -> `specified`.
-10. Stop 9 - Close-out: completeness check (tightening-job ruling
-    lands; anything else the walk surfaced), rejections with
-    routing, taxonomy + checklist cascades, decisions inventory
-    (ratchet-cadence + sunset-policy ADRs if forced), S12 banked
-    inputs.
-11. Authoring pass: `docs/gates/G9-maintenance.md` +
-    `docs/gates/G10-retirement.md` (0008 two-layer template, G7/G8
-    pages as exemplar) + registry cascade (Deep-page lines,
-    lifecycle flips, counts 41 -> 47, open-parameter index) +
-    ADR(s) if forced + STATE.
-12. Session end: STATE.md regen, commit the G9+G10 wrap (Theory
+2. Tour stop 1 - Frame: PL identity (cross-cutting lifecycles, not
+   phase exits - conditions convene inside existing venues; PL-PIPE
+   alone owns a venue no other gate may share, the second channel);
+   PL-DOC identity (docs-as-injected-context thesis; pace-layering -
+   fast layers drift-gated, slow layers change-controlled; the
+   two-arm question); PL-PIPE identity (one diff can delete every
+   gate; the registry itself is in scope; why the other 48
+   conditions stay conditions); the boundary line between them;
+   roster agenda 3 + 3; gap candidates named (close-out decides).
+3. Stop 2 - PL-DOC.1 doc samples compile/execute: subject inventory
+   (which docs carry samples; generated subjects banked - release
+   notes from G7.2 payloads, deprecation dossiers); extraction +
+   execution harness shape (two-layer: .NET reference profile);
+   vacuity polarity (zero samples extracted - green or red); venue
+   (doc-touching merges). -> `specified`.
+4. Stop 3 - PL-DOC.2 doc coverage: the denominator
+   (one-artifact-many-consumers: the locked API baselines /
+   PublicAPI.Shipped.txt as coverage input); what counts as covered;
+   ratchet vs absolute (zero-missing at greenfield, G4.8
+   discipline); undocumented-new-surface at merge vs sweep.
+   -> `specified`.
+5. Stop 4 - PL-DOC.3 staleness dating: the dating mechanism
+   (authored dates vs git facts; the covers-marker precedent);
+   thresholds per pace layer -> clocks.yaml (0012, numbers Q4); what
+   staleness blocks (sweep red vs flagged-before-context-reuse -
+   intake coupling); sweep liveness (dead sweep reads red, G9
+   discipline). -> `specified`.
+6. Stop 5 - PL-PIPE.1 enforcement-layer change control (human, the
+   sixth census seat): class-E inventory consolidation (scope line +
+   S9-S11 growth: environment definition, monitoring config, rollout
+   policy, chaos plan, clocks artifact, allowlists, root configs,
+   flag schema, tightening-job config); the Q7 workflow ruling - who
+   the second channel is, how approval is recorded, 0010's
+   mechanical arm (G4.6 E-provenance) as the teeth;
+   direction-conditionality generalized (tightenings auto-approve,
+   loosenings take the full channel - four instances on record);
+   self-reference (changes to this workflow take the strongest
+   channel). -> `specified` + ADR 0014.
+7. Stop 6 - PL-PIPE.2 gate-config golden tests: what a golden test
+   asserts (config x fixture facts -> decision, regression-pinned);
+   subject inventory (S10-S11 banked: admission interlocks, slo.yaml
+   derivation, clocks.yaml derivations, record<->mark coherence,
+   notification-clock computation, migration classification, G9.4
+   three-lane routing); coverage teeth (decision-bearing class-E
+   config without goldens reads red); venue (enforcement-layer CI).
+   -> `specified`.
+8. Stop 7 - PL-PIPE.3 agent-behavior evals: subjects (the harness
+   prompt set - Spec, Developer, QA, Verifier); what an eval asserts
+   (behavioral invariants - anti-gaming probes, session-7 finding;
+   write-surface discipline under adversarial instruction);
+   eval-before-deployment mechanics (prompt edit = class E:
+   PL-PIPE.1 channel + PL-PIPE.3 green); the suite itself is class
+   E; relation to Q5 (evals regression-guard decorrelation, don't
+   design it). -> `specified`.
+9. Stop 8 - Program close-out audit (all 54): the x3 pattern sweeps
+   (fail-closed polarity; schema-incompleteness teeth;
+   one-artifact-many-consumers - where each should apply and
+   doesn't); human census (exactly six, each with non-delegability
+   rationale); taxonomy closure both directions (every row a closing
+   condition, every Closes line anchored); open-parameter index
+   post-Q7 (Q4-numeric-only confirmed); build-item register + the
+   Q6-conditional inventory complete; counts 54/54.
+10. Stop 9 - Close-out: rejections with routing; cascades (taxonomy
+    rows for doc-staleness / enforcement-compromise classes if
+    ruled; checklist); decisions inventory (0014 + anything the
+    audit forces); the program's forward hand-off (everything
+    activation-shaped rides Q6 - the pilot checklist).
+11. Authoring pass: `docs/gates/PL-DOC-documentation.md` +
+    `docs/gates/PL-PIPE-pipeline-integrity.md` (0008 two-layer
+    template, G9/G10 pages as exemplar) + registry cascade
+    (Deep-page lines, lifecycle flips, counts 48 -> 54 mod
+    adoptions, open-parameter index post-Q7) + ADR 0014 +
+    audit-driven cascades + STATE.
+12. Session end: STATE.md regen, commit the program wrap (Theory
     trailer); push on explicit approval.
 
 ## Schedule (rebased: G2+G3 split, later gates shift one right)
@@ -90,20 +104,19 @@ a G9.4 tightening-job condition is a live candidate.
 | 8 | G4 solo (done) | 11 ruled | Q1 -> ADR 0010; REQ-ID -> ADR 0011; ratchet shape |
 | 9 | G5 + G6 (done) | 10 ruled | Q4 mutation-floor procedure; trace-conformance criteria |
 | 10 | G7 + G8 (done) | 8 ruled (G7.5 adopted) | benchmark-budget + SLO procedure shapes |
-| 11 | G9 + G10 (this session) | 6 | Q4 ratchet cadence; sunset policy |
-| 12 | PL-DOC + PL-PIPE | 6 | Q7 change-control ADR; program close-out audit |
+| 11 | G9 + G10 (done) | 7 ruled (G9.4 adopted; G10.2 trend struck) | ADR 0012 stop-the-line; ADR 0013 sunset |
+| 12 | PL-DOC + PL-PIPE (this session) | 6 + program audit | Q7 -> ADR 0014; close-out findings |
 
-Banked inputs (detail in STATE.md): consumed this session - G9
-tightening job's four input families (cadence Q4, corpus growth,
-mutation-floor moves, budget re-tightening from measurement records
-+ ladder-assignment statistics); G9.2 SLA windows already consumed
-three ways (G4.9 soft-seize, G5 red-window escalation, G8.3 triage
-window); stop-the-line mechanics incl. the 0005 fix-lane field; G9.1
-<- G7.5 SBOM field-impact mapping; G9.3 license-sweep division; G10
-notification <- G7.2 contract-diff payload; G10.3 = the
-contract-migration far end. Held for S12 - Q7 worked example
-(0010/G4.8 channel-weight tiering); PL-PIPE.2 fixture pattern (scope
-grew S10: G7 admission interlocks + slo.yaml derivation compiles as
-golden-test subjects); PL-PIPE scope consolidation (environment
-definition, monitoring config, rollout policy, chaos plan - the
-class E inventory grew S9-S10).
+Banked inputs (detail in STATE.md): Q7 worked-example set = four
+direction-conditional instances (0010/G4.8 channel weight, G9.2
+windows, G9.3 allowlists, 0013 date moves). PL-PIPE.2 golden-test
+inventory: S10 (admission interlocks, slo.yaml derivation) + S11
+(clocks.yaml derivations, record<->mark coherence, notification-clock
+computation, migration classification, G9.4 three-lane routing).
+PL-PIPE.1 class-E inventory grown S9-S11: environment definition,
+monitoring config, rollout policy, chaos plan, clocks artifact,
+allowlists, root configs, flag schema, tightening-job config. PL-DOC
+subjects banked: deprecation dossiers + release-notes generation from
+G7.2 payloads. Audit inputs: patterns named x3 (fail-closed polarity,
+schema-incompleteness teeth, one-artifact-many-consumers); human
+census six (G1.3, G2.3, G6.1, G6.2, G8.3, PL-PIPE.1).
