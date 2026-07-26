@@ -19,7 +19,7 @@ checkable**; **immutable to the implementer** - enforced by path checks
 | 2 | Type-first scaffolding + API surface lock | G2 | G4.5 (source), G7.2 (binary) |
 | 3 | Property-based + metamorphic specs | G1 | G4.4 |
 | 4 | Boundary contracts | G1 | G1.1 (lint), G4.5 (schema diff), G5.1 (consumer pacts) |
-| 5 | Approval tests with locked snapshots | G1/G2 | G4.3 (suite) + G4.6 (`.approved.*` immutability) |
+| 5 | Approval tests with locked snapshots | G1/G2 | G4.3 (suite) + G4.6 (`.approved.*` immutability) + PL-DOC.1 (run-class sample output pins - S12) |
 | 6 | Differential gates | G1 (reference impl) | G5.2 |
 | 7 | Mutation threshold | - (meta: adequacy of the suites) | G5.5 |
 | 8 | Formal models for hard cores | G1 | G1.2, G2.1, G5.6 |

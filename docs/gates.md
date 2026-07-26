@@ -53,8 +53,7 @@ Conditions with unresolved parameters link here; the questions live in
 
 | Ref | Open question | Conditions affected |
 |---|---|---|
-| Q4 | Threshold selection, numeric only - shapes closed through G10: mutation floor + small-N cutoff (G5.5 - procedure fixed S9), complexity budgets + capture parameters (G4.8), benchmark ceilings/margins/statistic defaults (G7.1 - procedure fixed S10), canary confidence + minimum-sample constants (G7.4), and every clock in the clocks artifact - SLA windows (severity x exposure), remediation/disposition/breach windows, notice floors, drainage window, tightening + sweep + attestation cadences (0012 - S11) | G4.8, G5.5, G7.1, G7.4, clocks.yaml (0012) |
-| Q7 | Enforcement-layer change-control workflow | PL-PIPE.1 |
+| Q4 | Threshold selection, numeric only - shapes closed through the full set: mutation floor + small-N cutoff (G5.5 - procedure fixed S9), complexity budgets + capture parameters (G4.8), benchmark ceilings/margins/statistic defaults (G7.1 - procedure fixed S10), canary confidence + minimum-sample constants (G7.4), every clock in the clocks artifact - SLA windows (severity x exposure), remediation/disposition/breach windows, notice floors, drainage window, tightening + sweep + attestation cadences (0012 - S11) - plus doc age windows per layer, doc remediation window, doc-sweep cadence (PL-DOC.3 - S12) and eval trial counts, pass floors, eval-sweep cadence (PL-PIPE.3 - S12) | G4.8, G5.5, G7.1, G7.4, PL-DOC.3, PL-PIPE.3, clocks.yaml (0012) |
 
 (Q2 resolved 2026-07-23 -> [0005](../decisions/0005-task-contract-fields.md);
 Q8 resolved 2026-07-23 ->
@@ -65,9 +64,11 @@ list; first-tranche instantiation rides pilot activation (Q6).
 Q1 resolved 2026-07-24 ->
 [0010](../decisions/0010-write-surface-immutability.md) - write-surface
 manifest + CI diff audit, allowlist polarity, channel provenance; G4.6
-renamed. Q7 carries a worked example on record (0010/G4.8):
-direction-conditional channel weight - tightenings auto-approve,
-loosenings take the full second channel.
+renamed. Q7 resolved 2026-07-26 ->
+[0014](../decisions/0014-enforcement-change-control.md) - two lanes
+routed by a committed direction classifier (undecidable = loosening),
+full lane = the human principal, one hash-bound append-only approval
+ledger, meta-layer always full-lane, revert-to-approved auto.
 Q5 two-channel decorrelation and Q6 pilot selection are harness/rollout
 questions, not condition parameters; named Q5 sub-question on record: what
 the Developer's context contains - test source vs criteria + diagnostics
@@ -88,12 +89,13 @@ the Developer's context contains - test source vs criteria + diagnostics
 | G8 | Operations | production runtime | continuous | further rollout; convergence closure | 3 |
 | G9 | Maintenance / Evolution | scheduled jobs | weekly+ (clocks.yaml) | dependency merge; aging breaches -> standing reds | 4 |
 | G10 | Deprecation / Retirement | build + scheduled | sunset-driven | merge past sunset; retirement completion | 3 |
-| PL-DOC | Documentation lifecycle | CI + scheduled sweep | per merge / dated | doc-touching merges | 3 |
-| PL-PIPE | Pipeline integrity | separate approval channel + CI | per gate-config change | enforcement-layer edits | 3 |
+| PL-DOC | Documentation lifecycle | merge CI + scheduled sweep | per merge + sweep (clocks.yaml) | doc-integrity-breaking merges (any class); staleness past window | 3 |
+| PL-PIPE | Pipeline integrity | the second channel + enforcement CI | per class-E change + eval sweep | class-E edits without approval; prompt deploys without eval green | 3 |
 
-54 conditions total - 48 `specified` (G0.1, G1.1-G1.3, G2.1-G2.5,
-G3.1-G3.3, G4.1-G4.11, G5.1-G5.7, G6.1-G6.3, G7.1-G7.5, G8.1-G8.3,
-G9.1-G9.4, G10.1-G10.3), 6 `registered`.
+54 conditions total - all 54 `specified` (G0.1 through PL-PIPE.3,
+every gate G0-G10 + PL-DOC + PL-PIPE), 0 `registered` - the
+specification layer is complete
+([0015](../decisions/0015-program-close-out.md)).
 
 ---
 
@@ -155,6 +157,10 @@ into security acceptance tests. Enforced downstream at G4.2, G4.3, G4.5,
 G4.8, G7.1, G7.2, G7.4, G8.2.
 **FAIL blocks:** implementation start - without locked baselines there is
 nothing to gate the implementation against.
+**Operator note:** G2.3 is the Theory kernel's census seat - an ADR
+records *why*, and reconciling authored intent is the accountable
+human's articulation; agents draft, the why-holder reviews (S12 audit,
+[0015](../decisions/0015-program-close-out.md)).
 **Closes:** API misuse, concurrency design flaws, architectural erosion,
 design-level security flaws.
 **Deep page:** [gates/G2-design-architecture.md](gates/G2-design-architecture.md) - G2.1-G2.5 all `specified`; G2.1 consumes [0007](../decisions/0007-hard-core-designation-criteria.md); ratchet-baseline enforcement exported to the G4 session.
@@ -320,8 +326,10 @@ G5.1 verification matrix; SLO declarations + performance budgets
 **Admission (four interlocks, structural):** acceptance record present
 + accepted + no unresolved blocking findings; artifact identity
 (digest + attestation, no rebuild lane; environment-definition hash
-per G6.3); can-i-deploy over the target environment; no standing G8
-red (fix lane via contract reference).
+per G6.3); can-i-deploy over the target environment; no standing red
+per the reds ledger (`reds.yaml`,
+[0015](../decisions/0015-program-close-out.md); fix lane via contract
+reference).
 **Authored here -> downstream gate material:** the release record set,
 all pipeline facts - measurement records (G9 tightening input), binary
 baselines + contract-diff payloads (-> G10 notification), SBOM +
@@ -416,7 +424,9 @@ business policy, routed out S11).
 **FAIL blocks:** the diff/world division - G4.9 gates what a change
 introduces, G9 gates what time introduced into the unchanged set. A
 breach opens a standing red in the 0012 economy: intake + merge +
-admission arms, fix lane via `fixes`, windows in clocks.yaml.
+admission arms, fix lane via `fixes`, windows in clocks.yaml, open
+reds in one ledger (`reds.yaml`,
+[0015](../decisions/0015-program-close-out.md)).
 **Operator note:** fully mechanical - no principal; bot and sweeps run
 unattended; QA owns schedules, feeds, allowlists, and the tightening
 job's config as class E (PL-PIPE); tightenings ride 0010's
@@ -476,36 +486,88 @@ G7.2 records the break.
 
 ## PL-DOC - Documentation lifecycle (cross-cutting)
 
-**Purpose:** for agent pipelines documentation is injected context, so
-staleness is a defect *vector*, not a cosmetic issue.
-**Venue & cadence:** CI on doc-touching merges + scheduled staleness sweep.
-Pace-layered: fast layers get automated drift gates; slow layers get
-change-control review.
-**FAIL blocks:** doc-touching merges; stale docs flagged before reuse as
-context.
+**Purpose:** for agent pipelines documentation is injected context - a
+stale doc does not mislead a reader, it generates wrong code at scale -
+so staleness is a defect *vector*, not a cosmetic issue.
+**Venue & cadence:** no venue of its own - the merge arm rides G4-time
+CI (samples via the ordinary solution build, coverage via the
+committed compiler config + docs build), the sweep arm rides G9's
+scheduled infrastructure; per merge + sweep cadence (clocks.yaml).
+The diff/world division's third instance (after G4.9/G9): the merge
+arm charges drift to the change that causes it, the sweep catches
+what time does to the unchanged set.
+**Inputs:** the doc set + front-matter (`reviewed:`/`covers:`); the
+declared public surface (API baselines, G7.2 shipped set); the
+compiled samples project; git facts; clocks.yaml; generated-doc
+payloads (G7.2 contract-diffs, 0013 dossiers).
+**Authored here -> downstream gate material:** the staleness ledger
+(context assembly consumes it: drift-stale excluded by default,
+age-stale injected annotated); the doc-set config, sample-relaxation
+ruleset, and dating config (class E).
+**FAIL blocks:** any merge breaking a sample (API merges included -
+charged to cause); undocumented new public surface; doc-touching
+merges without current dates; staleness past window = standing red
+(0012); drift-stale docs excluded from context injection.
+**Operator note:** fully mechanical, unattended; QA owns the class-E
+config set; prose quality is named residue - human, oracle-problem
+family (0015). Boundary with PL-PIPE (frame ruling): *a prompt
+instructs, a doc informs* - decision-bearing docs are class E.
+**Closes:** documentation staleness / context rot (ODC documentation).
+**Deep page:** [gates/PL-DOC-documentation.md](gates/PL-DOC-documentation.md) -
+PL-DOC.1-.3 all `specified` (S12); samples ruled inclusion-first with
+G10.1 reach; coverage rides the strict config; staleness = drift +
+age over pace layers, ledger-gated context injection.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| PL-DOC.1 | Doc samples compile/execute | mechanical | Every code sample in docs compiles/runs in CI | doc-sample harness | - |
-| PL-DOC.2 | Doc coverage | mechanical | Coverage analyzer clean over the public surface | coverage analyzers | - |
-| PL-DOC.3 | Staleness dating | mechanical | Docs carry dates; stale-past-threshold entries flagged | dating check | - |
+| PL-DOC.1 | Doc samples compile/execute | mechanical | Every sample resolves + compiles: region refs to the compiled samples project (dangling = FAIL); inline blocks extract + compile under committed config (opt-out explicit); run-class executes clean, output pinned where approved; deprecation diagnostics never relaxed (G10.1 reach); generated docs draw only from the inclusion set | samples csproj in-solution, DocFX code-link / mdsnippets, extraction harness, `dotnet run` | - |
+| PL-DOC.2 | Doc coverage | mechanical | Declared public surface of the shipped set fully documented: non-empty summary, params/returns/exceptions, crefs resolve, docs-site build clean; CS1591-family at error in committed props (G3.3 surface, G4.1 echo); brownfield via shrink-only baseline (G9.4-managed), missing where declared = FAIL | CS1591/CS1573 via props, DocFX-family build, coverage report, baseline file | - |
+| PL-DOC.3 | Staleness dating | mechanical | Every subject dated (`reviewed:`) + drift-anchored (`covers:`), missing/dangling = red; drift-stale (subject changed past date) and age-stale (past per-layer window; anchorless takes fast window) open 0012 remediation, past-window = standing red; doc-touching merges carry current dates; sweep emits the ledger, dead sweep reads red | front-matter check over git facts, sweep on G9 infra, staleness ledger | Q4 (windows, cadence) |
 
 ## PL-PIPE - Pipeline integrity (cross-cutting)
 
 **Purpose:** the enforcement layer is the highest-privilege artifact set - a
 developer agent that can edit the workflow file can delete every gate in one
-diff.
-**Venue & cadence:** separate approval channel + CI self-tests, per
-enforcement-layer change.
-**Scope:** gate definitions, CI config, analyzer rulesets, agent prompts, spec
-paths - and this registry itself.
-**FAIL blocks:** any enforcement-layer edit lacking second-channel approval.
+diff; the registry is worth exactly as much as its machinery is
+tamper-proof.
+**Venue & cadence:** the second channel - the one venue no other gate
+may share (frame ruling: sharing it with the layer it approves would
+collapse the separation) - plus enforcement-layer CI (goldens ride
+G4.11 discovery; evals on three arms); per class-E change + the eval
+sweep cadence (clocks.yaml).
+**Scope:** the 0010 manifest, born-protected polarity - gate/CI
+definitions, analyzer rulesets, agent prompts, spec paths, this
+registry itself, and the consolidated census
+([0014](../decisions/0014-enforcement-change-control.md)).
+**Inputs:** class-E diffs; the manifest; the direction-classifier
+config; the approval ledger; golden fixtures; eval scenarios + the
+model pin.
+**Authored here -> downstream gate material:** approval-ledger records
+(G4.6 joins them at merge); manifest goldens-markings; eval verdicts +
+committed transcripts.
+**FAIL blocks:** any class-E delta without its valid hash-bound
+approval record; decision-bearing config without goldens (unmarked
+class = red); prompt deployment without eval green.
+**Operator note:** PL-PIPE.1 human - the sixth census seat (every
+agent is inside the gated class; the other five seats judge the
+product, this one guards the machine); .2/.3 mechanical. Suites,
+fixtures, and scenarios are themselves class E - weakening edits are
+loosenings, so the instruments are self-guarding; meta-layer edits
+always take the full lane (0014).
+**Closes:** enforcement-layer compromise (CWE-693) - self-weakening at
+diff time (with G4.6/G4.10), enforcement rot over time (with G9.4),
+gate-config bugs, prompt regressions.
+**Deep page:** [gates/PL-PIPE-pipeline-integrity.md](gates/PL-PIPE-pipeline-integrity.md) -
+PL-PIPE.1-.3 all `specified` (S12); Q7 -> ADR
+[0014](../decisions/0014-enforcement-change-control.md); goldens ruled
+polarity-trio + manifest markings; evals ruled five families x three
+arms.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| PL-PIPE.1 | Enforcement-layer change control | human | Gate-config edits approved through a channel separate from what they enforce | approval workflow | Q7; mechanical arm = [0010](../decisions/0010-write-surface-immutability.md) |
-| PL-PIPE.2 | Gate-config golden tests | mechanical | Gate configurations pass their own regression suite | golden tests | - |
-| PL-PIPE.3 | Agent-behavior evals | mechanical | Agent prompts pass behavioral evals before deployment | eval suite | - |
+| PL-PIPE.1 | Enforcement-layer change control | human | Every class-E delta carries a valid hash-bound approval record: lane per the committed direction classifier (tightening auto; loosening/undecidable/meta = full lane = human principal; revert-to-approved auto); append-only ledger, total across lanes; G4.6 joins diff <-> record at merge; no single context authors and approves | direction classifier + approval ledger (`specs/approvals/`) + write-surface audit job | [0014](../decisions/0014-enforcement-change-control.md) |
+| PL-PIPE.2 | Gate-config golden tests | mechanical | Every manifest class marked decision-bearing (names its suite) or inert, unmarked = red; per subject the polarity trio (pass + block + fail-closed fixtures); goldens ride G4.11 discovery + G9.1 executor-drift runs; fixture flips toward green = loosening (full lane) | golden suites (fixture x config -> decision) in ordinary test projects, manifest markings | - |
+| PL-PIPE.3 | Agent-behavior evals | mechanical | Prompt-touching merges, executor changes (pinned model version; unpinned = red), and the cadenced sweep all run the suite: five invariant families per persona (containment, oracle integrity, role boundaries, loop competence, escalation honesty); zero-tolerance vs rate-floor verdicts, fixed N, committed transcripts, no retry-to-green | eval harness + per-persona scenario suites + model pin; verdict computation golden-tested | Q4 (N, floors, cadence) |
 
 ---
 

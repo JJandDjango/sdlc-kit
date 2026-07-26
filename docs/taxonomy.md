@@ -66,9 +66,14 @@ check when its session arrives.
 | Artifact integrity (shipped supply chain) | CWE-494 family / SLSA threats | (b) | G7.5 SBOM + provenance attestation (S10); consumed by G7 admission interlock 2 |
 | Known-vulnerable / unmaintained dependency | CWE-1104; advisory feeds (937/1035 family) | (b) | G4.9 delta arm (merge intake); G9.2 standing sweep - publication clock, severity x exposure windows, EOL fold-in (S11) |
 | License noncompliance (dependency legal) | no CWE - legal class, ODC build/package-adjacent | (b) | G4.9 delta arm; G9.3 exposure-scoped full-closure sweep, unknown-fail-closed (S11) |
+| Documentation staleness / context rot | ODC documentation | (b) | PL-DOC.1 samples-vs-current-surface (G10.1 reach into docs); PL-DOC.2 coverage at merge; PL-DOC.3 drift + age sweep, ledger-gated context injection (S12) |
+| Enforcement-layer compromise | CWE-693 protection mechanism failure | (b) | G4.6 + G4.10 diff arm (agent self-weakening); G9.4 standing arm (enforcement rot); PL-PIPE.1 change control + PL-PIPE.2 goldens + PL-PIPE.3 evals - the lifecycle (S12) |
 
 The 435/691/697 rows close the pillar-tagging gap found in the session-7
-sweep - every CWE-1000 pillar now has >=1 tagged row; rule-level
+sweep - every CWE-1000 pillar now has >=1 tagged row; the S12
+enforcement-compromise row gives pillar 693 a dedicated row (previously
+access-control-adjacent only) and anchors G4's agent-self-weakening
+Closes line; rule-level
 substantiation of the battery-anchored rows = the battery-CWE map +
 PL-PIPE.2 golden test (G4-session ruling: three strata - vendor-shipped
 imports, load-bearing hand-tags incl. 703, tier-level style tag; build
