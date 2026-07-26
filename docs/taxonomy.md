@@ -60,10 +60,12 @@ check when its session arrives.
 | API/protocol misuse (call order) | ODC interface | (d) -> (a) via typestate | G2 typestate scaffolding; G3.2 custom analyzers |
 | Logic / algorithmic | ODC algorithm | (e) | G4.4 property; G5.2 differential; G5.5 adequacy floor |
 | Requirements misinterpretation | ODC function | (e) | G1 spec set (G1.3 review), enforced at G4.3 traceability; G6 catches the residue |
-| Build / config / deployment | ODC build/package | (b)/(c) | G6.3 certified-path rehearsal incl. revert leg (dynamic half, per candidate - S10); G7.3 IaC scanning (static half) |
+| Build / config / deployment | ODC build/package | (b)/(c) | G6.3 certified-path rehearsal incl. revert leg (dynamic half, per candidate - S10); G7.3 IaC scanning (static half); G10.3 retirement-record verification (the destructive-migration end - S11) |
 | Performance | CWE-400, 407 | (d) | G5.7 soak/resource-trend (trend class - the earlier rung, S9); G7.1 benchmark budgets (absolute ceilings, quiet infra - S10) |
 | Breaking change (consumer contract) | ODC interface | (b) | G4.5 surface diff (source, per merge); G7.2 binary compat (shipped form, per release - S10; row added S10, gap found at the G7 walk) |
 | Artifact integrity (shipped supply chain) | CWE-494 family / SLSA threats | (b) | G7.5 SBOM + provenance attestation (S10); consumed by G7 admission interlock 2 |
+| Known-vulnerable / unmaintained dependency | CWE-1104; advisory feeds (937/1035 family) | (b) | G4.9 delta arm (merge intake); G9.2 standing sweep - publication clock, severity x exposure windows, EOL fold-in (S11) |
+| License noncompliance (dependency legal) | no CWE - legal class, ODC build/package-adjacent | (b) | G4.9 delta arm; G9.3 exposure-scoped full-closure sweep, unknown-fail-closed (S11) |
 
 The 435/691/697 rows close the pillar-tagging gap found in the session-7
 sweep - every CWE-1000 pillar now has >=1 tagged row; rule-level
@@ -72,9 +74,11 @@ PL-PIPE.2 golden test (G4-session ruling: three strata - vendor-shipped
 imports, load-bearing hand-tags incl. 703, tier-level style tag; build
 item, rides pilot activation).
 
-Structural degradation (complexity, duplication, coupling, drift, dead code)
-is deliberately not a row here - it is not a bug class but an entropy
-process, closed by ratchets and architecture tests (G4.2, G4.8, G10.2) per
+Structural degradation (complexity, duplication, coupling, drift, dead
+code, stale feature flags, enforcement staleness) is deliberately not a
+row here - it is not a bug class but an entropy process, closed by
+ratchets, deadlines, and architecture tests (G4.2, G4.8, G10.2, G10.1's
+flag fold-in, G9.4's tightening job - S11) per
 [0002-spec-first-gates-over-static-detectors](../decisions/0002-spec-first-gates-over-static-detectors.md).
 
 ## Gap-analysis method

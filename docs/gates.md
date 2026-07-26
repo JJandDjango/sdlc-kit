@@ -53,7 +53,7 @@ Conditions with unresolved parameters link here; the questions live in
 
 | Ref | Open question | Conditions affected |
 |---|---|---|
-| Q4 | Threshold selection, numeric only - shapes closed: mutation floor + small-N cutoff (G5.5 - procedure fixed S9), complexity budgets + capture parameters (G4.8), benchmark ceilings/margins/statistic defaults (G7.1 - procedure fixed S10), canary confidence + minimum-sample constants (G7.4), triage window (G8.3 - G9.2 SLA family), tightening cadence (G9) | G4.8, G5.5, G7.1, G7.4, G8.3, G9 (authored policy) |
+| Q4 | Threshold selection, numeric only - shapes closed through G10: mutation floor + small-N cutoff (G5.5 - procedure fixed S9), complexity budgets + capture parameters (G4.8), benchmark ceilings/margins/statistic defaults (G7.1 - procedure fixed S10), canary confidence + minimum-sample constants (G7.4), and every clock in the clocks artifact - SLA windows (severity x exposure), remediation/disposition/breach windows, notice floors, drainage window, tightening + sweep + attestation cadences (0012 - S11) | G4.8, G5.5, G7.1, G7.4, clocks.yaml (0012) |
 | Q7 | Enforcement-layer change-control workflow | PL-PIPE.1 |
 
 (Q2 resolved 2026-07-23 -> [0005](../decisions/0005-task-contract-fields.md);
@@ -86,14 +86,14 @@ the Developer's context contains - test source vs criteria + diagnostics
 | G6 | UAT / Staging | certified staging environment | per candidate, principal-paced | candidate acceptance | 3 |
 | G7 | Release / Deploy | release pipeline | per release | deploy; rollout continuation | 5 |
 | G8 | Operations | production runtime | continuous | further rollout; convergence closure | 3 |
-| G9 | Maintenance / Evolution | scheduled jobs | weekly+ | dependency merge; SLA compliance | 3 |
+| G9 | Maintenance / Evolution | scheduled jobs | weekly+ (clocks.yaml) | dependency merge; aging breaches -> standing reds | 4 |
 | G10 | Deprecation / Retirement | build + scheduled | sunset-driven | merge past sunset; retirement completion | 3 |
 | PL-DOC | Documentation lifecycle | CI + scheduled sweep | per merge / dated | doc-touching merges | 3 |
 | PL-PIPE | Pipeline integrity | separate approval channel + CI | per gate-config change | enforcement-layer edits | 3 |
 
-53 conditions total - 41 `specified` (G0.1, G1.1-G1.3, G2.1-G2.5,
-G3.1-G3.3, G4.1-G4.11, G5.1-G5.7, G6.1-G6.3, G7.1-G7.5, G8.1-G8.3),
-12 `registered`.
+54 conditions total - 48 `specified` (G0.1, G1.1-G1.3, G2.1-G2.5,
+G3.1-G3.3, G4.1-G4.11, G5.1-G5.7, G6.1-G6.3, G7.1-G7.5, G8.1-G8.3,
+G9.1-G9.4, G10.1-G10.3), 6 `registered`.
 
 ---
 
@@ -248,8 +248,9 @@ Slow gates still block release - cost sets cadence, never rigor.
 growth, minimized crashers - lands as tightening candidates through the
 merge queue, 0010's direction-conditional lane).
 **FAIL blocks:** promotion to release candidate. Red seizes promotion,
-never merges; past its remediation window it escalates to stop-the-line at
-task intake (fix lane via contract reference; numbers Q4/G9, S11).
+never merges; past its remediation window (clocks.yaml) it escalates to
+stop-the-line at task intake (fix lane via the 0012 `fixes` field;
+numbers Q4).
 **Operator note:** pure QA execution - subject integrity inherited from
 G4's diff policing; no Verifier, no human. Fresh exploration each run;
 every red ships a replay recipe; no retry-to-green.
@@ -392,44 +393,86 @@ S9's chaos routing discharged.
 |---|---|---|---|---|---|
 | G8.1 | Runtime contract assertions | mechanical | Zero fires on the spec-derived gated set (boundary contracts + hard-core stream monitors), shipped enabled, fire-to-telemetry; fire = auto-finding + rollout seizure + canary stage-FAIL; liveness floors - dead listener reads red | shared OTel-family instrumentation, compiled monitors | - |
 | G8.2 | SLO / error-budget license | mechanical | Error budget not exhausted per service; SLIs/objectives/windows compiled from `specs/<service>/slo.yaml` (class S), derivation golden-tested; exhaustion = standing red -> admission interlock 4; alerts notify, the license blocks | SLI pipeline + burn-rate rules | - |
-| G8.3 | Escape triage + conversion | human | Every escape candidate (crashes, G8.1 fires, G8.2 incidents, external reports) triaged to disposition within window; conversion by default, declining takes written rationale; escape dispositions schema-incomplete without criterion + regression-test + ladder refs; queue attested even at zero | triage queue + 0011-family records | window -> G9.2 family (Q4/S11) |
+| G8.3 | Escape triage + conversion | human | Every escape candidate (crashes, G8.1 fires, G8.2 incidents, external reports) triaged to disposition within window; conversion by default, declining takes written rationale; escape dispositions schema-incomplete without criterion + regression-test + ladder refs; queue attested even at zero | triage queue + 0011-family records | window in clocks.yaml (0012; Q4) |
 
 ## G9 - Maintenance / Evolution
 
 **Purpose:** hold the line between features - supply-chain rot and slow entropy
 accrue in the quiet weeks, not inside feature work.
-**Venue & cadence:** scheduled jobs, weekly+ cadence.
-**Inputs:** dependency ecosystem changes, vulnerability feeds, aging baselines.
-**Authored here -> downstream gate material:** dependency update policy;
-scheduled ratchet tightening (cadence is open question Q4); refactoring budgets.
-**FAIL blocks:** dependency merge; an SLA breach escalates.
-**Closes:** supply-chain rot; slow entropy accruing between features.
+**Venue & cadence:** scheduled jobs, weekly+ reference (clocks.yaml) - the
+clock-driven venue: the first gate that convenes on time, not change.
+Conditions are standing invariants over the dependency graph and the
+enforcement baseline set; the sweep is the *detection* mechanism (feeds
+are polled, never pushed). A sweep past its declared cadence reads red -
+a dead sweep is a gutted gate, not a quiet week.
+**Inputs:** advisory + EOL feeds; license metadata; the locked dependency
+closure; the G7.5 SBOM join (exposure classes); the pipeline's own
+records (G7.1 measurements, G5 corpus state, G5.5 scores, G8.3 ladder
+statistics).
+**Authored here -> downstream gate material:** the dependency update
+policy (the bot lane's standing task contract, class E); tightenings
+landed/drafted/reported by G9.4; refactoring-work candidates (capacity =
+business policy, routed out S11).
+**FAIL blocks:** the diff/world division - G4.9 gates what a change
+introduces, G9 gates what time introduced into the unchanged set. A
+breach opens a standing red in the 0012 economy: intake + merge +
+admission arms, fix lane via `fixes`, windows in clocks.yaml.
+**Operator note:** fully mechanical - no principal; bot and sweeps run
+unattended; QA owns schedules, feeds, allowlists, and the tightening
+job's config as class E (PL-PIPE); tightenings ride 0010's
+direction-conditional lane.
+**Closes:** supply-chain rot (known-vuln + EOL + license); enforcement
+staleness (Goodhart decay of the gate set itself - G9.4).
+**Deep page:** [gates/G9-maintenance.md](gates/G9-maintenance.md) -
+G9.1-G9.4 all `specified`; roster 3 -> 4 (G9.4 tightening & baseline
+freshness adopted at stop 5); aging-window family + clocks artifact +
+`fixes` field -> ADR [0012](../decisions/0012-stop-the-line-economy.md);
+EOL folded into G9.2; refactoring budgets routed to business policy.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| G9.1 | Dependency PRs gated by full suite | mechanical | Automated dependency updates merge only through G4 + G5 | update bot + full gate stack | - |
-| G9.2 | Vulnerability-fix SLAs | mechanical | Known vulnerabilities fixed within the policy window | dependency audit | - |
-| G9.3 | License audit | mechanical | No disallowed licenses in the dependency set | license audit | - |
+| G9.1 | Dependency PRs gated by full suite | mechanical | Updates ride the full ordinary gate set (G4 at merge incl. G4.9's delta arm, G5 downstream) - no reduced profile; write surface = manifest + lockfile, source-touching updates exit to ordinary intake; single-dependency PRs, batching only in declared version-locked groups; queue ordered by SBOM exposure class; holds never stop the G9.2 clock | Renovate/Dependabot, central package mgmt + lockfile, G7.5 SBOM join | - |
+| G9.2 | Vulnerability-fix SLAs | mechanical | No advisory- or EOL-matched component past its window; clock from publication (EOL: announced date); windows = severity x exposure class; fixed = clean graph merged or VEX-shaped suppression (rationale + expiry); breach = standing red, three arms + fix lane (0012) | NuGetAudit/OSV + EOL feeds over the lockfile closure | Q4 (windows) |
+| G9.3 | License audit | mechanical | Full locked closure licensed within each package's exposure class; unknown reads red; one class-E allowlist, two arms (G4.9 delta, G9.3 sweep); exceptions = rationale + expiry, always second channel; breach joins the aging family | SPDX from NuGet metadata + ClearlyDefined-family enrichment | - |
+| G9.4 | Tightening & baseline freshness | mechanical | No ratchet-managed parameter past its tightening cadence; every candidate from the four evidence families landed (class E, auto), drafted (class S, spec channel), or dispositioned - tighten-by-default, declining takes written rationale; the job never loosens | scheduled job over committed records + baseline configs | Q4 (cadences) |
 
 ## G10 - Deprecation / Retirement
 
 **Purpose:** force deletion - agents add code and almost never delete it;
 without an explicit removal phase the codebase grows monotonically regardless
 of every other gate.
-**Venue & cadence:** build (analyzer escalation) + scheduled, sunset-date
-driven.
-**Inputs:** deprecation marks, migration specs, consumer contract diffs.
-**Authored here -> downstream gate material:** sunset dates on `[Obsolete]`;
-migration specs; consumer notification via contract diff.
-**FAIL blocks:** merges past a sunset date; retirement completion without
-verified migration.
-**Closes:** accretion.
+**Venue & cadence:** the deadline gate - no pipeline of its own; deadlines
+injected into existing venues (analyzer at build for G10.1, graph count at
+the scheduled sweep for G10.2, record checks at merge + admission for
+G10.3), sunset-date driven.
+**Inputs:** deprecation records + sunset dates (class S, 0013); usage
+telemetry from the shared instrumentation surface; fleet version facts
+(G7.2 release records); migration specs.
+**Authored here -> downstream gate material:** sunset dates on marks and
+flag declarations; migration specs; consumer notification = the G7.2
+contract-diff payload of the release shipping the mark (structurally
+enforced: record schema + clock-from-notification, 0013).
+**FAIL blocks:** merges past a sunset date (analyzer error, no suppression
+lane); dead-count breach = standing red (0012); contract-class migration
+without its complete retirement record (no merge, no admission).
+**Operator note:** fully mechanical; deprecation records ride the spec
+channel; analyzer + root configs + flag schema are class E (PL-PIPE);
+removal work enters ordinary intake.
+**Closes:** accretion (dead code, stale feature flags, zero-edge
+packages); unsafe removal - contraction is the pipeline's only
+irreversible act, so verification front-loads.
+**Deep page:** [gates/G10-retirement.md](gates/G10-retirement.md) -
+G10.1-G10.3 all `specified`; sunset policy -> ADR
+[0013](../decisions/0013-sunset-policy.md); feature flags folded into
+G10.1's subject class; trend mandate struck (downtrend is structural);
+the deletion pipeline: G10.1 starves -> G10.2 counts -> G10.3 clears ->
+G7.2 records the break.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| G10.1 | Obsolete-sunset escalation | mechanical | `[Obsolete]` warning escalates to error at the sunset date | custom analyzer | - |
-| G10.2 | Dead-code ratchet | mechanical | Dead-code count <= baseline, trending down | dead-code detection | - |
-| G10.3 | Data-migration verification | mechanical | Migrations verified before the old path is removed | migration tests | - |
+| G10.1 | Obsolete-sunset escalation | mechanical | Sunset-bearing subjects (APIs + declared config surfaces incl. feature flags): usage warns before the date, errors at and past it, no suppression lane; class-S record <-> compiled mark coherence both ways, incomplete = merge red; date valid only >= notification + notice floor; moves per 0013 asymmetry | custom Roslyn analyzer (0009-family) + specs/deprecations/ records | Q4 (notice floors) |
+| G10.2 | Dead-code ratchet | mechanical | Graph-level dead count from declared roots <= shrink-only baseline (G4.8 discipline, G9.4-managed, zero at greenfield); undeclared liveness reads dead; post-sunset members + zero-edge packages count; breach = standing red (0012) | ILLink-informed reachability, trimmer root descriptors + [DynamicDependency] | - |
+| G10.3 | Data-migration verification | mechanical | Every schema migration classifies expand/contract (unclassifiable = contract); contract-class merges/admits only with the complete retirement record: deprecation chain, backfill reconciliation, drainage evidence, fleet coherence, certified-env rehearsal, recoverability ref | EF migration lexicon, OTel usage counters, G6.3 rehearsal | Q4 (drainage window) |
 
 ## PL-DOC - Documentation lifecycle (cross-cutting)
 
