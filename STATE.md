@@ -2,33 +2,41 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-07-25._
+> _Generated 2026-07-26._
 
 ## Now
 <!-- What's actively being worked. -->
-- Session 10 (2026-07-24/25) closed: the G7+G8 walk ran as an
-  eight-stop tour (frame -> benchmarks -> binary compat -> IaC -> SLO
-  pair -> runtime assertions -> escape triage -> close-out) plus a
-  mid-walk interlock consolidation; every ruling ratified live. Wrap
-  committed `11548aa` - pages `docs/gates/G7-release-deploy.md` +
-  `G8-operations.md`, registry 41 specified / 53 total (G7 4 -> 5,
-  G7.5 adopted; G8.2 renamed license, G8.3 renamed escape triage +
-  conversion).
-- Ruled: four-interlock G7 admission (record; identity, no rebuild
-  lane; can-i-deploy; no standing G8 red + fix lane); G7.4
-  intra-rollout / G8.2 inter-rollout license; G7 fully mechanical
-  (timing = business policy); budgets + SLOs authored at G2; G7.1
-  budgets-only via the new budget-designated column; G7.2 last-ship
-  baseline + version coherence; G7.3 = the certified environment
-  definition; G7.4 dual-clause canary + migration revert-safety
-  (N+1); G8 standing-invariant venue (red seizes rollouts never
-  operations); G8.1 spec-derived set on the G5.6-shared surface;
-  G8.3 conversion-by-default + ladder assignments; chaos = governed
-  practice (plan class E, budget as license).
-- Cascades: G6.3 revert leg; taxonomy +2 rows (breaking-change gap
-  found at the walk) + 2 extended; G1 declaration-record column; G2
-  authored set (+budgets, +slo.yaml); Q4 index +3 rows. Zero new
-  ADRs. Cairn audit clean (9 INFO gate-page orphans, by design).
+- Session 11 (2026-07-25/26) closed: the G9+G10 walk ran as a
+  nine-stop tour (frame -> dependency lane -> vuln SLAs -> license
+  audit -> tightening job -> sunset escalation -> dead-code ratchet
+  -> migration verification -> close-out); every ruling ratified
+  live. Wrap committed `734585e` - pages docs/gates/G9-maintenance.md
+  + G10-retirement.md, ADRs 0012 (stop-the-line economy) + 0013
+  (sunset policy), registry 48 specified / 54 total (G9 3 -> 4,
+  G9.4 tightening & baseline freshness adopted; G10.2 trend mandate
+  struck).
+- Ruled: anti-entropy pair frame (G9 exogenous / G10 endogenous;
+  standing invariants sweep-detected, dead-sweep liveness);
+  diff/world division (G4.9 intake arm, G9 standing arm); one red
+  economy - uniform three arms + ninth contract field `fixes`
+  (0012); one clocks artifact = Q4's single landing surface; G9.1
+  non-exemption lane (manifest+lockfile surface, exit-to-intake);
+  G9.2 publication clock + severity x exposure windows + EOL
+  fold-in; G9.3 exposure-scoped allowlist, unknown-fail-closed;
+  G9.4 four evidence families -> three lanes (land/draft/report),
+  tighten-by-default, never loosens; refactoring budgets = business
+  policy; G10 deadline gate; G10.1 record<->mark coherence,
+  clock-from-notification, move asymmetry (0013), flags folded in
+  as sunset-bearing; G10.2 declared-roots count,
+  undeclared-liveness-reads-dead, conveyor coupling; G10.3
+  expand/contract classification (fail-closed), six-field
+  retirement record, verification-before-the-irreversible.
+- Cascades: taxonomy +2 rows (known-vuln dependency, license
+  noncompliance), build/config row gains G10.3, entropy note
+  absorbs flags + enforcement staleness; Q4 index repointed at
+  clocks.yaml; G5 + G8.3 S11 markers discharged. Patterns named x3
+  each for the S12 audit: fail-closed polarity,
+  schema-incompleteness teeth, one-artifact-many-consumers.
 
 ## Blockers
 <!-- What's stopping progress. -->
@@ -36,45 +44,45 @@
 
 ## Next actions
 <!-- The ordered next steps. -->
-1. Next session (S11): the G9 + G10 walk (6 conditions; refresh
-   plan.md at its start). Banked: G9's tightening job now carries
-   four input families (ratchet cadence Q4, corpus growth,
-   mutation-floor moves, budget re-tightening from measurement
-   records + ladder-assignment statistics); G9.2 SLA windows consumed
-   three ways (G4.9 soft-seize, G5 red-window escalation, G8.3
-   triage window); stop-the-line mechanics incl. the 0005 fix-lane
-   field (serves G5 and G8 reds alike); G9.1 consumes G7.5's SBOM
-   for field-impact mapping; G9.3 license-sweep division; G10
-   notification consumes G7.2's contract-diff payload; G10.3 takes
-   the contract-migration far end. Schedule row: Q4 ratchet cadence +
-   sunset policy likely forced.
-2. S12: PL-DOC + PL-PIPE (6 conditions) + program close-out audit.
-   Banked: Q7 worked example (0010/G4.8 channel-weight tiering);
-   PL-PIPE.2 fixture pattern - scope grew S10 (G7 admission
-   interlocks + slo.yaml derivation compiles are golden-test
-   subjects); PL-PIPE scope consolidation (environment definition,
-   monitoring config, rollout policy, chaos plan - the class E
-   inventory grew S9-S10).
-3. Parked G0 work waits on Q6 pilot: F10 `/intake` (venue live flips
-   G0.1 -> `enforced`) and F11 scaffold. Build-item register stays
-   four (0008); conditionals: trace-validation harness on first
-   hard-core activation (now shared G5.6/G8.1), G7.1's bootstrap
-   capture variant.
+1. Next session (S12): the PL-DOC + PL-PIPE walk (6 conditions, the
+   last two registered gates; refresh plan.md at its start) + the
+   program close-out audit. Banked: Q7 worked-example set = four
+   direction-conditional instances (0010 channel weight, windows,
+   allowlists, date moves); PL-PIPE.2 golden-test inventory grew
+   S11 (clocks.yaml derivations, record<->mark coherence,
+   notification-clock computation, migration classification, G9.4
+   three-lane routing) atop S10's (admission interlocks, slo.yaml
+   derivation); PL-PIPE.1 class-E inventory grew S9-S11
+   (environment definition, monitoring config, rollout policy,
+   chaos plan, clocks artifact, allowlists, root configs, flag
+   schema, tightening-job config); PL-DOC subjects banked:
+   deprecation dossiers + release-notes generation from G7.2
+   payloads; audit inputs: the x3 patterns, human census six.
+2. Parked G0 work waits on Q6 pilot: F10 `/intake` (venue live
+   flips G0.1 -> `enforced`) and F11 scaffold. Build-item register
+   stays four (0008); conditionals grew S11: trace-validation
+   harness (G5.6/G8.1), G7.1 bootstrap capture, G9.4 job, G10.1
+   analyzer (0009 first tranche), G10.2 reachability job, sweep +
+   bot activation - all ride pilot activation.
+3. 0005's JSON-Schema build item picks up the `fixes` field (0012)
+   when enforcement-pass work runs.
 
 ## Open questions
 <!-- Unresolved decisions that need an answer. -->
-- Q4 thresholds, numeric only (procedures fixed through G8): mutation
-  floor + small-N (G5.5); complexity budgets + capture (G4.8);
-  benchmark ceilings/margins/statistic defaults (G7.1); canary
-  confidence + minimum-sample constants (G7.4); triage window (G8.3,
-  G9.2 family); tightening cadence (G9).
-- Q5 two-channel decorrelation (harness design); named sub-question:
-  what the Developer's context contains.
-- Q6 pilot repository selection - now also gates the first
-  oracle-designation records (incl. the budget-designated column)
-  and G7.1's bootstrap variant.
+- Q4 thresholds, numeric only - now a single-file edit (clocks.yaml
+  per 0012) plus per-gate constants: mutation floor + small-N
+  (G5.5); complexity budgets + capture (G4.8); benchmark constants
+  (G7.1); canary constants (G7.4); every window/cadence/floor in
+  the clocks artifact (SLA, remediation, disposition, breach,
+  notice, drainage, tightening).
+- Q5 two-channel decorrelation (harness design); named
+  sub-question: what the Developer's context contains.
+- Q6 pilot repository selection - gates first oracle-designation
+  records, G7.1's bootstrap variant, and now the whole G9/G10
+  activation set (bot, sweeps, analyzer, reachability, tightening
+  job).
 - Q7 enforcement-layer change-control workflow (PL-PIPE.1); worked
-  example on record.
+  examples on record: four direction-conditional instances.
 - Protect-main still blocked for this repo: rulesets on a private
-  repo need GitHub Pro - upgrade, make public, or accept unprotected
-  main?
+  repo need GitHub Pro - upgrade, make public, or accept
+  unprotected main?
