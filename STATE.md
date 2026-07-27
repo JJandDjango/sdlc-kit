@@ -34,24 +34,29 @@
   resolves `prompt-lang.config.yaml` from session cwd, so cross-repo edits
   validate against the wrong tag set (false positives on cairn's three
   section tags from a kit-cwd session; cairn's batch gate is authoritative).
+- **Post-merge coda (same day)**: both PRs merged (kit main `1124dfb`,
+  cairn `e7fbed1`, both squash); local mains pulled, fix branches deleted.
+  One-channel done: `~/.claude/skills/sdlc` deleted (the plugin is the
+  single `/sdlc` surface), cairn's skills-dir copy refreshed from its
+  merged main. Plugin updated `d21cdd9` -> `1124dfb` (applies at session
+  start); the engine repo audits **clean under the plugin's own engine** -
+  the `material` transient is closed. The distribution loop is verified
+  end-to-end: report -> repair -> PR -> plugin update -> consumer clean.
 
 ## Blockers
-- None. (Two PRs await the user's merge click - not blocked, just gated.)
+- None.
 
 ## Next actions
-1. **Merge the two PRs** (`pilot-fixes-r1` -> main in sdlc-kit and cairn;
-   mains are PR-only). Then: delete `~/.claude/skills/sdlc` (one-channel),
-   update the plugin, re-run engine audit (clears the transient where stale
-   audit copies expect `material`).
-2. **Pilot continues**: next engine session implements M0 through the gates
+1. **Pilot continues**: next engine session implements M0 through the gates
    (fresh Developer context - Q5 reality data); its gate-passage notes keep
-   feeding the per-gate agent design.
-3. **Per-gate agent design**: shape the first agent (G0 contract review has
+   feeding the per-gate agent design. Its next session-start also confirms
+   `/sdlc` surfaces once, from the plugin (pilot notes item 2's last tick).
+2. **Per-gate agent design**: shape the first agent (G0 contract review has
    its design input already) + the plugin `agents/` distribution shape.
-4. Activation build items land into the skill payload as built (0015
+3. Activation build items land into the skill payload as built (0015
    inventory); Q4 numbers when the pilot gives reality (clocks.yaml +
    per-gate constants).
-5. Distribution follow-ups when wanted: PyPI publish; explainer PDF into
+4. Distribution follow-ups when wanted: PyPI publish; explainer PDF into
    `docs/` if the user wants it versioned.
 
 ## Open questions
