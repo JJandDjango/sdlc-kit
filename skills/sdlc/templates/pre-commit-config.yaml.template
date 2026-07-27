@@ -1,0 +1,11 @@
+# Task-contract ready check (SDLC kit F8, written by /sdlc init {{ date }}).
+# If this file already existed, /sdlc printed this snippet instead - merge
+# the hook into your existing repos list.
+repos:
+  - repo: local
+    hooks:
+      - id: taskcontract
+        name: task-contract ready check
+        entry: python -m taskcontract validate
+        language: system
+        files: ^specs/.*/contract\.yaml$

@@ -1,0 +1,5 @@
+# Standing-red ledger (SDLC kit ADR 0015): every open accepted red, one
+# entry, one artifact - fix-lane admission, release interlocks, and
+# disposition tracking all query here; none redeclare.
+# Entry schema: {id, condition, class, clock_origin, window, status}.
+reds: []

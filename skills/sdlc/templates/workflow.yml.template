@@ -1,0 +1,24 @@
+# SDLC kit gate jobs (written by /sdlc init, {{ date }}).
+name: sdlc
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: install the sdlc kit
+        run: pip install "{{ kit_ref }}"
+      - name: validate task contracts (G0 backstop)
+        if: hashFiles('specs/*/contract.yaml') != ''
+        run: python -m taskcontract validate specs/*/contract.yaml --profile ready
+  # Future gate jobs land here as the kit's activation program builds
+  # them (analyzer battery, pre-merge suite, docs build, staleness sweep):
+  # {{ kit_repo }}/blob/main/docs/gates.md

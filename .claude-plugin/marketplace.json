@@ -1,0 +1,13 @@
+{
+  "name": "sdlc-kit",
+  "owner": {
+    "name": "Johnathan Hyden"
+  },
+  "plugins": [
+    {
+      "name": "sdlc",
+      "source": "./",
+      "description": "Spec-first SDLC gates for agent-driven development — so agent-written code cannot degrade the codebase."
+    }
+  ]
+}
