@@ -1,0 +1,5 @@
+{
+  "yaml.schemas": {
+    "{{ schema_url }}": "specs/*/contract.yaml"
+  }
+}

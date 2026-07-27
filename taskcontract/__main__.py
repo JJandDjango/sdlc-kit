@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from .checker import PROFILES, load_schema, validate_path
+from .scaffold import scaffold
 
 
 def main(argv=None) -> int:
@@ -24,7 +25,22 @@ def main(argv=None) -> int:
                      help="emit violations as a JSON array (the agent loop substrate)")
     val.add_argument("--schema", type=Path, default=None,
                      help="override the packaged schema file")
+    new = sub.add_parser("new", help="scaffold a red contract skeleton at specs/<id>/contract.yaml (F11)")
+    new.add_argument("id", help="task id (schema pattern: lowercase, digits, hyphens)")
+    new.add_argument("--root", type=Path, default=Path("."),
+                     help="repo root that holds specs/ (default: cwd)")
     args = parser.parse_args(argv)
+
+    if args.command == "new":
+        try:
+            path = scaffold(args.id, root=args.root)
+        except (ValueError, FileExistsError, OSError) as exc:
+            print(f"taskcontract new: {exc}", file=sys.stderr)
+            return 1
+        print(f"created {path}")
+        print("fill every TODO, then loop to green:")
+        print(f"  python -m taskcontract validate {path} --profile ready")
+        return 0
 
     schema_doc = load_schema(args.schema)
     violations = []

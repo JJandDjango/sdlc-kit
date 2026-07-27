@@ -111,7 +111,7 @@ non-goals, decomposition into independently gateable units. Becomes G1's input
 and the scope baseline every later gate implicitly checks against.
 **FAIL blocks:** the task entering the spec stage.
 **Closes:** mis-selection, scope creep (upstream of misinterpretation).
-**Deep page:** [gates/G0-planning-intake.md](gates/G0-planning-intake.md) - G0.1 `specified`; enforcement mechanism shipped ([0006](../decisions/0006-task-contract-enforcement.md), [task-contract.md](task-contract.md)) - `enforced` awaits the intake venue (Q6).
+**Deep page:** [gates/G0-planning-intake.md](gates/G0-planning-intake.md) - G0.1 `specified`; enforcement mechanism shipped ([0006](../decisions/0006-task-contract-enforcement.md), [task-contract.md](task-contract.md)); venue shipped as `/sdlc intake` ([0016](../decisions/0016-distribution-before-activation.md)) - `enforced` flips per-target at first live use (the Q6 pilot).
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|

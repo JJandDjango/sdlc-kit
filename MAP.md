@@ -32,6 +32,7 @@ flowchart LR
 | custom analyzers | House conventions encoded as Roslyn analyzers + code fixes (fed by convention extraction) | planned | no doc yet |
 | verifier checks | Write-surface immutability + suppression audit (one diff job, G4.6 + G4.10) + enforcement-layer change control | designed | [decisions/0010](decisions/0010-write-surface-immutability.md) |
 | pilot stack | Minimal phase 3-4 stack (formatter, StyleCop, strict compile, arch tests, ratchets) on a pilot repo | planned | no doc yet |
+| distribution skill | `/sdlc` init + intake (F10) + new (F11) + audit: the kit's delivery vehicle - no-clobber gate-spine scaffold, Cairn-shaped, marketplace-installable | implemented (v1) | [decisions/0016](decisions/0016-distribution-before-activation.md) |
 
 Design source: `HANDOFF_gate-architecture_2026-07-22.md` (root, frozen). The
 gate map lives as the registry `docs/gates.md` (gates G0-G10 + PL-*, with

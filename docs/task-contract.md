@@ -111,12 +111,14 @@ kit CI on every push.
 
 ## Wiring - venue precision
 
-1. **Intake loop - the G0 venue.** An `/intake` skill: the Spec agent
-   authors the contract from the raw request, loops `validate --profile
+1. **Intake loop - the G0 venue.** `/sdlc intake`
+   ([0016](../decisions/0016-distribution-before-activation.md),
+   `skills/sdlc/SKILL.md`): the agent authors the contract from the raw
+   request onto a `taskcontract new` scaffold, loops `validate --profile
    ready` to green, writes `specs/<id>/contract.yaml`, refuses the
-   spec-stage handoff while red. *This venue going live is what flips G0.1
-   to `enforced`* - deferred to the pilot (Q6), with F11 (`new <id>`
-   scaffold) alongside it.
+   spec-stage handoff while red. *This venue running live in a repo is
+   what flips G0.1 to `enforced` there* - the first such repo is the Q6
+   pilot.
 2. **Repo backstop - pre-commit (consumer snippet, F8):**
 
    ```yaml
@@ -149,8 +151,10 @@ the `ready` profile needs the house CLI, which composes root +
 
 ## Lifecycle
 
-G0.1 stays `specified`: `enforced` means live and blocking in its venue, and
-the intake venue awaits the pilot (Q6). What changed this pass: the check is
-now genuinely mechanical - schema, validator, fixtures and CI exist; the
-registry line drops "(human until schema exists)". Deferred: F10 `/intake`
-skill, F11 scaffold subcommand.
+G0.1 stays `specified` kit-side: `enforced` means live and blocking in its
+venue, and the venue is per-target - it flips in a repo when `/sdlc intake`
+is how tasks enter development there (first such repo = the Q6 pilot, per
+[0016](../decisions/0016-distribution-before-activation.md)). F10 ships as
+`/sdlc intake`, F11 as `python -m taskcontract new <id>` (a deliberately
+red skeleton - TC007 trips until a real intent is authored); both ride the
+`/sdlc` distribution skill.
