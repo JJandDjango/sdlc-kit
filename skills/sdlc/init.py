@@ -8,11 +8,11 @@ dependencies.
 Invoked two ways:
   1. By the /sdlc skill after its interview (see SKILL.md), or
   2. Directly by a human:
-       python init.py --answers '{"project_name": "...", "material": "...", "stack": "..."}' [--cwd DIR]
+       python init.py --answers '{"project_name": "...", "adoption": "...", "stack": "..."}' [--cwd DIR]
 
 Answer keys (all required):
   project_name  (str)   e.g. "billing-service"
-  material      (str)   greenfield | brownfield
+  adoption      (str)   greenfield | brownfield
   stack         (str)   free text, e.g. "python" / "dotnet" / "typescript"
 
 Behavior:
@@ -53,7 +53,7 @@ MERGE_TEMPLATE_TO_TARGET = {
     "vscode-settings.json.template": ".vscode/settings.json",
 }
 
-REQUIRED_ANSWER_KEYS = {"project_name", "material", "stack"}
+REQUIRED_ANSWER_KEYS = {"project_name", "adoption", "stack"}
 
 NEXT_STEPS = f"""
 Next steps:
@@ -87,16 +87,16 @@ def build_var_dict(answers: dict, today: str) -> dict:
     project_name = str(answers["project_name"]).strip()
     if not project_name or "/" in project_name or "\\" in project_name:
         raise ValueError(f"project_name must be non-empty with no slashes, got {answers['project_name']!r}")
-    material = answers["material"]
-    if material not in {"greenfield", "brownfield"}:
-        raise ValueError(f"material must be 'greenfield' or 'brownfield', got {material!r}")
+    adoption = answers["adoption"]
+    if adoption not in {"greenfield", "brownfield"}:
+        raise ValueError(f"adoption must be 'greenfield' or 'brownfield', got {adoption!r}")
     stack = str(answers["stack"]).strip()
     if not stack:
         raise ValueError("stack must be a non-empty string (free text)")
 
     return {
         "project_name": project_name,
-        "material": material,
+        "adoption": adoption,
         "stack": stack,
         "date": today,
         "kit_repo": KIT_REPO,
@@ -153,7 +153,7 @@ def main(argv: list[str] | None = None) -> int:
         "--answers",
         required=True,
         help=("JSON dict of interview answers. Required keys: project_name (str), "
-              "material (greenfield|brownfield), stack (str, free text)."),
+              "adoption (greenfield|brownfield), stack (str, free text)."),
     )
     parser.add_argument(
         "--cwd",

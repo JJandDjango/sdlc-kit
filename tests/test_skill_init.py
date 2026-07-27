@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-ANSWERS = {"project_name": "demo", "material": "greenfield", "stack": "python"}
+ANSWERS = {"project_name": "demo", "adoption": "greenfield", "stack": "python"}
 
 FULL_PAYLOAD = {
     "SDLC.md",
@@ -58,7 +58,7 @@ def test_preexisting_merge_target_untouched(tmp_path, skill_init):
 
 
 @pytest.mark.parametrize("bad", [
-    {**ANSWERS, "material": "legacy"},
+    {**ANSWERS, "adoption": "legacy"},
     {**ANSWERS, "project_name": "a/b"},
     {**ANSWERS, "stack": "  "},
 ])

@@ -9,7 +9,7 @@ import yaml
 
 from taskcontract.scaffold import scaffold
 
-ANSWERS = {"project_name": "demo", "material": "greenfield", "stack": "python"}
+ANSWERS = {"project_name": "demo", "adoption": "greenfield", "stack": "python"}
 
 VALID_DOC = {
     "id": "demo-task",

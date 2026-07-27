@@ -21,7 +21,7 @@ Finding codes:
   KIT-MISSING       PyYAML / taskcontract unavailable - parse and contract
                     checks skipped (install: pip install "git+https://github.com/JJandDjango/sdlc-kit.git")
   CONFIG-PARSE      .sdlc/config.yaml is not valid YAML          (ERROR)
-  CONFIG-KEYS       config lacks kit / material / stack / active_gates
+  CONFIG-KEYS       config lacks kit / adoption / stack / active_gates
   CLOCKS-PARSE      .sdlc/clocks.yaml is not valid YAML          (ERROR)
   REDS-PARSE        .sdlc/reds.yaml is not valid YAML            (ERROR)
   REDS-SCHEMA       a reds entry lacks the ledger fields
@@ -54,7 +54,7 @@ SURFACES = (
     ".github/workflows/sdlc.yml",
 )
 
-CONFIG_KEYS = ("kit", "material", "stack", "active_gates")
+CONFIG_KEYS = ("kit", "adoption", "stack", "active_gates")
 REDS_ENTRY_KEYS = ("id", "condition", "class", "clock_origin", "window", "status")
 
 Finding = namedtuple("Finding", ["severity", "code", "message", "path"])
