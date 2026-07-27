@@ -6,70 +6,58 @@
 
 ## Now
 <!-- What's actively being worked. -->
-- Session 12 (2026-07-26) closed: the PL-DOC + PL-PIPE walk ran as a
-  nine-stop tour (frame -> samples -> coverage -> staleness -> change
-  control -> goldens -> evals -> program audit -> close-out); every
-  ruling ratified live. Wrap committed `b1fa4c2` - pages
-  docs/gates/PL-DOC-documentation.md + PL-PIPE-pipeline-integrity.md,
-  ADRs 0014 (enforcement change control - Q7 closes) + 0015 (program
-  close-out), registry 54/54 specified / 0 registered - **the
-  ADR-0004 specification program is complete**.
-- Ruled: PL identity (lifecycles of the machinery; the second channel
-  the one unshared venue); the prompt-instructs/doc-informs boundary
-  (decision-bearing docs are class E); PL-DOC = the diff/world
-  division's third instance; samples inclusion-first with G10.1 reach
-  into docs; coverage on the borrowed shipped-surface denominator,
-  teeth in the strict config; staleness = drift + age over pace
-  layers, authored dates, the staleness ledger gates context
-  injection (drift-stale excluded by default); 0014 two-lane change
-  control - direction classifier, undecidable = loosening, the human
-  principal holds the full lane (sixth census seat), hash-bound
-  append-only ledger, meta-layer always full-lane,
-  revert-to-approved auto; goldens = polarity trio + manifest
-  markings (decision-bearing/inert, unmarked red), no bespoke runner;
-  evals = five families x three arms, zero-tolerance vs rate-floor,
-  self-guarding suite.
-- Audit (all 54 swept): five findings dispositioned - the
-  standing-red ledger named (`reds.yaml`, 0015); taxonomy +2 rows
-  (doc staleness / ODC documentation; enforcement compromise /
-  CWE-693); G2.3's census rationale made explicit; G2.4/G4.2
-  vacuous-declaration residues accepted open-eyed; census confirmed
-  at six; catalog pattern 5 gains PL-DOC.1.
+- Session 13 (2026-07-26): the kit became distributable, Cairn-style
+  ([0016](decisions/0016-distribution-before-activation.md) -
+  distribution before activation). The `/sdlc` skill shipped:
+  `init` (interview + no-clobber payload: SDLC.md status page,
+  `.sdlc/` config + clocks + reds seeds, protected `specs/` root, CI
+  validate workflow, F8/F12 merge-target snippets - printed, never
+  merged, when they exist), `intake` (F10 - the G0 venue), `new`
+  (F11 as `python -m taskcontract new` - the skeleton is born red,
+  TC007 the tripwire, so a fresh contract can never pass vacuously),
+  `audit` (report-only, exit 0/1/2, parked drafts read INFO). Suite
+  20 -> 34 green; SKILL.md PromptLang-clean; consumer surfaces
+  authored (README + USAGE + LICENSE + marketplace.json); package
+  0.2.0.
+- **Published**: repo renamed `JJandDjango/sdlc-kit` and flipped
+  public; the tracked protect-main ruleset applied (id 19781346) -
+  the standing blocker dissolved, and its first live catch was this
+  session's own push (main is PR-only now). Skill installed to
+  `~/.claude/skills/sdlc`; greenfield + brownfield smoke green
+  (no-clobber proven against sentinels).
+- Q6 reframed, not answered: the pilot is *the first repo
+  initialized via `/sdlc`*; G0.1 flips `enforced` per-target at
+  first live intake there.
 
 ## Blockers
 <!-- What's stopping progress. -->
-- None.
+- None. (Protect-main resolved this session - public repos carry
+  rulesets free.)
 
 ## Next actions
 <!-- The ordered next steps. -->
-1. The specification program is closed; **the next program is
-   activation**, and everything rides Q6 (pilot selection): F10
-   `/intake` + F11 scaffold, trace-validation harness (G5.6/G8.1),
-   G7.1 bootstrap capture, G9.4 tightening job, G10.1 analyzer (0009
-   first tranche), G10.2 reachability job, sweeps + bot - plus the
-   S12 additions: samples project + extraction harness, docs-build
-   job, staleness sweep + ledger + context-assembly hook, the
-   doc-set config set, direction classifier + approval ledger,
-   golden scaffolding + manifest markings, eval suite + model pin,
-   `reds.yaml`. Build-item register stays four (0008); 0005's
-   JSON-Schema item carries `fixes` (0012).
-2. Q4 numbers when the pilot gives reality: one clocks.yaml edit
-   (rows grown S12 - doc age windows per layer, doc remediation
-   window, doc-sweep cadence, eval N/floors/cadence) plus per-gate
-   constants (G4.8, G5.5, G7.1, G7.4).
-3. Q5 harness design (the Developer-context sub-question) -
-   PL-PIPE.3's concrete probes instantiate against it.
+1. Pilot a real repo: `/cairn` then `/sdlc` (greenfield or
+   brownfield), first task through `/sdlc intake` - G0.1 reads
+   `enforced` there and that repo becomes the Q6 pilot.
+2. Activation build items land *into the skill payload* as they are
+   built (the 0015 inventory: trace-validation harness, G7.1
+   bootstrap capture, G9.4 tightening job, G10.1 analyzer, G10.2
+   reachability, sweeps + bot, samples project, docs-build job,
+   staleness ledger + context hook, direction classifier + approval
+   ledger, goldens, evals, `reds.yaml` consumers).
+3. Q4 numbers when the pilot gives reality (one clocks.yaml edit +
+   per-gate constants); Q5 harness design (Developer-context
+   sub-question).
+4. Distribution follow-ups when wanted: PyPI publish; verify the
+   marketplace install path from a second session
+   (`/plugin marketplace add JJandDjango/sdlc-kit`).
 
 ## Open questions
 <!-- Unresolved decisions that need an answer. -->
-- Q4 thresholds, numeric only - a single-file edit (clocks.yaml per
-  0012) plus per-gate constants; shapes are closed program-wide.
+- Q4 thresholds, numeric only - shapes closed program-wide.
 - Q5 two-channel decorrelation (harness design); named sub-question:
   what the Developer's context contains.
-- Q6 pilot repository selection - now gates the entire activation
-  inventory above.
-- Protect-main still blocked for this repo: rulesets on a private
-  repo need GitHub Pro - upgrade, make public, or accept unprotected
-  main?
+- Q6 pilot - now a stream, not a selection: which repo gets
+  initialized first, and does it carry real build intent?
 
-(Q7 resolved this session -> [0014](decisions/0014-enforcement-change-control.md).)
+(Protect-main resolved this session; Q7 resolved S12 -> [0014](decisions/0014-enforcement-change-control.md).)
