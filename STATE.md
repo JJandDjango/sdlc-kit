@@ -2,62 +2,66 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-07-26._
+> _Generated 2026-07-27._
 
 ## Now
-<!-- What's actively being worked. -->
-- Session 13 (2026-07-26): the kit became distributable, Cairn-style
-  ([0016](decisions/0016-distribution-before-activation.md) -
-  distribution before activation). The `/sdlc` skill shipped:
-  `init` (interview + no-clobber payload: SDLC.md status page,
-  `.sdlc/` config + clocks + reds seeds, protected `specs/` root, CI
-  validate workflow, F8/F12 merge-target snippets - printed, never
-  merged, when they exist), `intake` (F10 - the G0 venue), `new`
-  (F11 as `python -m taskcontract new` - the skeleton is born red,
-  TC007 the tripwire, so a fresh contract can never pass vacuously),
-  `audit` (report-only, exit 0/1/2, parked drafts read INFO). Suite
-  20 -> 34 green; SKILL.md PromptLang-clean; consumer surfaces
-  authored (README + USAGE + LICENSE + marketplace.json); package
-  0.2.0.
-- **Published**: repo renamed `JJandDjango/sdlc-kit` and flipped
-  public; the tracked protect-main ruleset applied (id 19781346) -
-  the standing blocker dissolved, and its first live catch was this
-  session's own push (main is PR-only now). Skill installed to
-  `~/.claude/skills/sdlc`; greenfield + brownfield smoke green
-  (no-clobber proven against sentinels).
-- Q6 reframed, not answered: the pilot is *the first repo
-  initialized via `/sdlc`*; G0.1 flips `enforced` per-target at
-  first live intake there.
+- Session 14 (2026-07-27): **the pilot exists - Q6 is answered.** ImSimEngine
+  (`E:/ImSimProject/engine`, nested repo of the Kallipolis worldbuilding home)
+  was initialized in its own session via `/cairn` + `/sdlc` and took its
+  first task (M0: window + Vulkan cleared frame, ash + winit) through
+  `/sdlc intake` to ready-green on day one - G0.1 reads `enforced` there.
+  Parent-side pivot recorded in ImSimProject (its ADR 0003: S&Box retired,
+  Rust+Vulkan ground-up engine as the game-code home).
+- **Round 1 of the feedback loop closed**: the pilot filed five friction
+  items (engine repo `PILOT-NOTES.md`); all five fixed on branch
+  `pilot-fixes-r1` - install id documented as `sdlc@sdlc-kit`, one-channel
+  guidance, `material` -> `adoption` axis rename (lockstep with cairn's
+  paired `pilot-fixes-r1` branch - its Q3 carried the same word), validator
+  prints `<profile>-green: <path>`, invocation-supplied answers blessed as
+  interview-equivalent. Suites: kit 34, cairn 213 green. Engine consumer
+  synced (`adoption:` key; kit-source audit reads it clean). Marketplace
+  install path verified live by the pilot (friction item 1 was its finding).
+- **New roadmap direction (user)**: one or more **LLM review agents per
+  gate** - the substance key beside each mechanical form check - shipped
+  through the kit plugin channel (`agents/` in the plugin payload; consumers
+  get them on plugin update). Design input = the pilot's per-gate
+  observations; the first (G0: slot, judgments, context, output shape) is
+  logged in engine `PILOT-NOTES.md`.
+- Coworker-facing explainer PDF (6pp: gates tour, contract, principles,
+  roadmap) generated from THEORY/gates.md/USAGE - scratchpad artifact,
+  uncommitted; offer stands to land it in `docs/`.
+- Observation routed to the foundations arc: the PromptLang write-time hook
+  resolves `prompt-lang.config.yaml` from session cwd, so cross-repo edits
+  validate against the wrong tag set (false positives on cairn's three
+  section tags from a kit-cwd session; cairn's batch gate is authoritative).
 
 ## Blockers
-<!-- What's stopping progress. -->
-- None. (Protect-main resolved this session - public repos carry
-  rulesets free.)
+- None. (Two PRs await the user's merge click - not blocked, just gated.)
 
 ## Next actions
-<!-- The ordered next steps. -->
-1. Pilot a real repo: `/cairn` then `/sdlc` (greenfield or
-   brownfield), first task through `/sdlc intake` - G0.1 reads
-   `enforced` there and that repo becomes the Q6 pilot.
-2. Activation build items land *into the skill payload* as they are
-   built (the 0015 inventory: trace-validation harness, G7.1
-   bootstrap capture, G9.4 tightening job, G10.1 analyzer, G10.2
-   reachability, sweeps + bot, samples project, docs-build job,
-   staleness ledger + context hook, direction classifier + approval
-   ledger, goldens, evals, `reds.yaml` consumers).
-3. Q4 numbers when the pilot gives reality (one clocks.yaml edit +
-   per-gate constants); Q5 harness design (Developer-context
-   sub-question).
-4. Distribution follow-ups when wanted: PyPI publish; verify the
-   marketplace install path from a second session
-   (`/plugin marketplace add JJandDjango/sdlc-kit`).
+1. **Merge the two PRs** (`pilot-fixes-r1` -> main in sdlc-kit and cairn;
+   mains are PR-only). Then: delete `~/.claude/skills/sdlc` (one-channel),
+   update the plugin, re-run engine audit (clears the transient where stale
+   audit copies expect `material`).
+2. **Pilot continues**: next engine session implements M0 through the gates
+   (fresh Developer context - Q5 reality data); its gate-passage notes keep
+   feeding the per-gate agent design.
+3. **Per-gate agent design**: shape the first agent (G0 contract review has
+   its design input already) + the plugin `agents/` distribution shape.
+4. Activation build items land into the skill payload as built (0015
+   inventory); Q4 numbers when the pilot gives reality (clocks.yaml +
+   per-gate constants).
+5. Distribution follow-ups when wanted: PyPI publish; explainer PDF into
+   `docs/` if the user wants it versioned.
 
 ## Open questions
-<!-- Unresolved decisions that need an answer. -->
 - Q4 thresholds, numeric only - shapes closed program-wide.
-- Q5 two-channel decorrelation (harness design); named sub-question:
-  what the Developer's context contains.
-- Q6 pilot - now a stream, not a selection: which repo gets
-  initialized first, and does it carry real build intent?
+- Q5 two-channel decorrelation (harness design); named sub-question: the
+  Developer's context contents. The M0 implementation session is the first
+  live data point.
+- **Per-gate agent shape** (new): venue per gate, context assembly, verdict
+  format (PASS/annotations, never edits), and how agents version inside the
+  plugin - first design input on record at the pilot.
 
-(Protect-main resolved this session; Q7 resolved S12 -> [0014](decisions/0014-enforcement-change-control.md).)
+(Q6 answered this session - the pilot is ImSimEngine; the stream framing
+holds: every further `/sdlc`-initialized repo adds reality data.)
