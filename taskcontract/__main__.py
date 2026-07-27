@@ -52,6 +52,9 @@ def main(argv=None) -> int:
     else:
         for violation in violations:
             print(violation.line)
+        if not violations:
+            for file in args.files:
+                print(f"{args.profile}-green: {file}")
     return 1 if violations else 0
 
 

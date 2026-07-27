@@ -46,8 +46,11 @@ Copy-Item -Recurse skills\sdlc $HOME\.claude\skills\sdlc   # Windows
 
 ```
 /plugin marketplace add JJandDjango/sdlc-kit
-/plugin install sdlc
+/plugin install sdlc@sdlc-kit
 ```
+
+Pick one channel — plugin users should not also keep a skills-dir copy
+(see [USAGE.md](USAGE.md) §2).
 
 ### The validator (target repos consume this via pip)
 

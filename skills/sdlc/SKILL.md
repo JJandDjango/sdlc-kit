@@ -1,6 +1,6 @@
 ---
 name: sdlc
-description: Lay a spec-first SDLC gate spine into any repository - greenfield or brownfield. Interviews for project name, material, and stack, then renders a no-clobber payload - SDLC.md gate status page, .sdlc/ config + clocks + standing-red ledger, the protected specs/ root for immutable task contracts, and a CI job validating every contract (the G0 backstop). Day-2 subcommands - `/sdlc intake` (the G0 venue - turn a raw request into a contract and loop the validator to green), `/sdlc new {id}` (scaffold a contract skeleton), `/sdlc audit` (report-only gate-health check). Pairs with /cairn - docs spine first, gate spine second; neither requires the other. Use when starting, adopting, or operating gated agent-driven development.
+description: Lay a spec-first SDLC gate spine into any repository - greenfield or brownfield. Interviews for project name, adoption (greenfield or brownfield), and stack - or takes them from the invocation args - then renders a no-clobber payload - SDLC.md gate status page, .sdlc/ config + clocks + standing-red ledger, the protected specs/ root for immutable task contracts, and a CI job validating every contract (the G0 backstop). Day-2 subcommands - `/sdlc intake` (the G0 venue - turn a raw request into a contract and loop the validator to green), `/sdlc new {id}` (scaffold a contract skeleton), `/sdlc audit` (report-only gate-health check). Pairs with /cairn - docs spine first, gate spine second; neither requires the other. Use when starting, adopting, or operating gated agent-driven development.
 ---
 
 # `/sdlc` - lay a spec-first gate spine
@@ -49,14 +49,14 @@ written when they already exist):
 
 2. DETECT a Cairn spine: if THEORY.md and MAP.md are absent at the target, RECOMMEND running /cairn first (docs spine, then gate spine) - never require it, never write its files.
 
-3. INTERVIEW batch - invoke AskUserQuestion with 3 questions in one call:
+3. INTERVIEW batch - but SKIP the questions the invocation already answers: when the invoking text (a charter, script, or explicit user instruction) supplies project name, adoption, and stack, treat those as interview-equivalent and go straight to RENDER; ask only what is missing. Otherwise invoke AskUserQuestion with 3 questions in one call:
    - Q1 header "Project name": "Name for this project?" options: "Use cwd directory name" / "Use git remote name" (offer only if a remote exists) / Other.
-   - Q2 header "Material": "Greenfield or brownfield?" options: "greenfield - gates from commit zero" / "brownfield - adopt gates additively (no-clobber protects what exists)".
+   - Q2 header "Adoption": "Greenfield or brownfield?" options: "greenfield - gates from commit zero" / "brownfield - adopt gates additively (no-clobber protects what exists)".
    - Q3 header "Stack": "Primary stack? (recorded for gate activation; the v1 payload is stack-neutral)" options: "dotnet" / "python" / "typescript" - Other for anything else, free text.
 
 4. RENDER - one Bash call:
        python {skill-dir}/init.py --answers '{json}'
-   where {json} is the dict {"project_name": ..., "material": ..., "stack": ...} as a single-quoted shell argument (escape inner double quotes as the shell needs). Non-zero exit: REPORT stderr in one line and return to the conversation.
+   where {json} is the dict {"project_name": ..., "adoption": ..., "stack": ...} as a single-quoted shell argument (escape inner double quotes as the shell needs). Non-zero exit: REPORT stderr in one line and return to the conversation.
 
 5. REPORT the engine's stdout verbatim (created / skipped / merge-by-hand blocks + next steps). If any merge-by-hand snippet printed, restate in one line which files the user must merge manually.
 
@@ -107,7 +107,7 @@ A2. REPORT stdout verbatim. Exit 0 = clean; 1 = findings, each carrying a code (
 <criteria>
 - [ ] Dispatch honored: a subcommand argument never triggers the interview; no-arg runs init steps 1-5.
 - [ ] Target confirmed (cwd, or git root if chosen); git absence noted, never blocking; Cairn recommended when absent and its files untouched.
-- [ ] Interview captured project_name / material / stack; init.py invoked once; stdout reported with created / skipped / merge-by-hand surfaced.
+- [ ] Answers captured - project_name / adoption / stack, from the interview or supplied by the invocation; init.py invoked once; stdout reported with created / skipped / merge-by-hand surfaced.
 - [ ] New flow: `taskcontract new` invoked; created path + loop line reported, or the failure + install hint.
 - [ ] Intake flow: contract authored on its own scaffold; validate looped (max 5) to ready-green or PARKED with a named blocker; handoff refused while red; nothing else written.
 - [ ] Audit flow: audit.py ran by absolute path; findings reported verbatim; nothing written or fixed.

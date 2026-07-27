@@ -2,7 +2,7 @@
 
 > Gate spine of the [SDLC Kit]({{ kit_repo }}) - spec-first gates plus
 > static enforcement for agent-driven development.
-> Initialized {{ date }} ({{ material }}, stack: {{ stack }}).
+> Initialized {{ date }} ({{ adoption }}, stack: {{ stack }}).
 
 ## Contract flow (live)
 
@@ -24,7 +24,7 @@ Registry and per-gate deep pages: {{ kit_repo }}/blob/main/docs/gates.md
 
 ## Local surfaces
 
-- `.sdlc/config.yaml` - material, stack, kit ref, active gates
+- `.sdlc/config.yaml` - adoption, stack, kit ref, active gates
 - `.sdlc/clocks.yaml` - numeric gate parameters (placeholders until calibrated)
 - `.sdlc/reds.yaml` - standing-red ledger: every accepted red carries an entry
 - `specs/` - the protected root (see `specs/README.md`)

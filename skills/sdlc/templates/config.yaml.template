@@ -1,6 +1,6 @@
 # SDLC kit - per-repo configuration (written by /sdlc init, {{ date }}).
 kit: {{ kit_ref }}
-material: {{ material }}  # greenfield | brownfield
+adoption: {{ adoption }}  # greenfield | brownfield
 stack: {{ stack }}  # free text; selects the tooling profile at activation
 active_gates:
   - G0  # contract conformance - CI backstop; /sdlc intake is the venue

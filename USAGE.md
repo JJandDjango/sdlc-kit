@@ -24,7 +24,7 @@ edit is allowed to weaken that check.
 | Repo already initialized | No — use `intake` / `new` / `audit` | — |
 
 Greenfield and brownfield get the same payload; the difference is
-recorded in `.sdlc/config.yaml` (`material:`) and brownfield relies on
+recorded in `.sdlc/config.yaml` (`adoption:`) and brownfield relies on
 no-clobber — anything you already have is skipped, never overwritten.
 
 ---
@@ -40,8 +40,14 @@ or, as a plugin:
 
 ```
 /plugin marketplace add JJandDjango/sdlc-kit
-/plugin install sdlc
+/plugin install sdlc@sdlc-kit
 ```
+
+(The plugin is named `sdlc`, the marketplace `sdlc-kit` — the qualified
+id always resolves; bare `sdlc-kit` does not.) Pick **one** channel: if
+you adopt the plugin after a skills-dir install, delete
+`~/.claude/skills/sdlc` so `/sdlc` doesn't surface twice — the plugin
+also tracks kit updates, the copied dir does not.
 
 Target repos additionally consume the validator via pip (CI does this
 automatically from the scaffolded workflow):
@@ -62,7 +68,7 @@ Run it in the target repo. It asks:
 | # | Answer | What it drives |
 |---|---|---|
 | 1 | **project name** | Titles the gate status page. |
-| 2 | **material** — greenfield / brownfield | Recorded in config; brownfield leans on no-clobber. |
+| 2 | **adoption** — greenfield / brownfield | Recorded in config; brownfield leans on no-clobber. |
 | 3 | **stack** — free text (e.g. `dotnet`, `python`, `typescript`) | Recorded in config for the activation program; v1 payload is stack-neutral. |
 
 If a Cairn spine is absent it recommends `/cairn` first (never
@@ -72,7 +78,7 @@ requires it, never touches Cairn's files).
 
 ```
 SDLC.md                     gate status page — which gates are live here (🟢/🔴)
-.sdlc/config.yaml           material, stack, kit ref, active gates
+.sdlc/config.yaml           adoption, stack, kit ref, active gates
 .sdlc/clocks.yaml           numeric gate parameters — seeded placeholder defaults
 .sdlc/reds.yaml             standing-red ledger — starts empty
 specs/README.md             the protected root: contracts live at specs/<task-id>/contract.yaml,
@@ -121,7 +127,7 @@ with you.
 ```
 mkdir billing-service && cd billing-service && git init
 /cairn        → document why the project exists
-/sdlc         → name: billing-service · material: greenfield · stack: python
+/sdlc         → name: billing-service · adoption: greenfield · stack: python
 /sdlc intake  → "Add invoice PDF export"
               → writes specs/invoice-pdf-export/contract.yaml, validates ready
 # implement only what the contract scopes; CI re-validates every contract on push

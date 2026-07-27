@@ -48,5 +48,6 @@ def test_blocked_dependency_is_draft_legal():
 
 def test_cli_exit_codes(capsys):
     assert main(["validate", str(VALID[0])]) == 0
+    assert f"ready-green: {VALID[0]}" in capsys.readouterr().out
     assert main(["validate", str(INVALID[-1])]) == 1
     assert capsys.readouterr().out.strip()
