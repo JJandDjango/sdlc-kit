@@ -1,0 +1,17 @@
+id: tc002-empty-entities
+intent: >-
+  An entities field that is present but empty is a malformed
+  declaration - declare terms or omit the field entirely.
+scope:
+  - taskcontract/
+non_goals:
+  - Passing validation
+decomposition:
+  - unit: schema-shape
+    done_means: the empty entities array trips minItems
+    acceptance_sketch:
+      - a ready validation of this fixture returns TC002
+dependencies: []
+provenance:
+  origin: human-request
+entities: []

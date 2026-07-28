@@ -58,21 +58,25 @@ so CRUD rides the [0014](../decisions/0014-enforcement-change-control.md)
 lanes, retirement rides the [0013](../decisions/0013-sunset-policy.md)
 pattern, and `specs/vocabulary/` joins the protected write surface.
 
-## 🔴 `entities:` field + the G0 coverage join
+## 🟢 `entities:` field + the G0 coverage join
 
 Contracts gain an optional `entities:` array - the terms a task
 operates on - via the [0005](../decisions/0005-task-contract-fields.md)
-amendment path: existing contracts stay valid, the join activates on
-presence. Ready-profile semantics:
+amendment path: existing contracts stay valid (schema `version: 1.1.0`,
+field optional, unique slug refs), the join activates on presence.
+Ready-profile semantics, live in `validate --profile ready` whenever
+the contract sits in a specs tree (loose files stay schema-only):
 
 - every ref must resolve to a **ratified** term;
-- a missing or draft ref is an *unresolved dependency* under the
-  existing ready profile - diagnostics name each missing term; the
-  move is to fork a small vocabulary task, never to fail the work;
-- draft does not resolve - ratification is deliberately the human
-  bottleneck, one cheap action per term, concentrated on meaning;
-- a deprecated term warns inside its sunset window and errors past it
-  (the notice floor is a Q4 number).
+- a missing ref is an *unresolved dependency*: `TC010` names the term
+  and the file to fork (`specs/vocabulary/<term>.yaml`) - fork the
+  small vocabulary task, never fail the work;
+- draft does not resolve (`TC011`) - ratification is deliberately the
+  human bottleneck, one cheap action per term, concentrated on
+  meaning;
+- a deprecated term warns inside its sunset window (`W001`,
+  severity `warning` - prints, never gates) and errors past it
+  (`TC012`); the notice floor stays a Q4 number.
 
 ## 🔴 Generation - born ratified or born draft
 

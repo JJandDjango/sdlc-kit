@@ -13,7 +13,9 @@
 ## G0.1 as mechanical clauses
 
 The 8-field set is fixed by 0005 (field table lives on the G0 page - not
-duplicated here). Every pass-condition clause maps to vanilla JSON Schema
+duplicated here); [0017](../decisions/0017-vocabulary-layer.md) V2 amends
+it with one optional field, `entities:` - unique term-slug refs, schema
+`version: 1.1.0`. Every pass-condition clause maps to vanilla JSON Schema
 Draft 2020-12:
 
 | G0.1 clause | Schema encoding |
@@ -31,6 +33,14 @@ Draft 2020-12:
 written, a done-meaning is stated - never that it is *good*. Goodness stays
 human, concentrated at G1.3. The intent length bounds are a proxy: they
 catch the empty and the essay, not the off-topic.
+
+One ready-profile rule lives outside the schema: the **coverage join**
+(0017 V3) - when a contract at `specs/<id>/contract.yaml` declares
+`entities:`, each ref must resolve to a *ratified* term in the sibling
+`specs/vocabulary/`. That is a cross-file join, Python's half of the
+two-layer split ([0008](../decisions/0008-two-layer-condition-model.md)):
+schema at the door, joins at the ledger. Loose files (fixtures, ad-hoc
+paths) never enter the join.
 
 ## Ratified decisions (0006)
 
@@ -102,6 +112,10 @@ violations as an array - the agent loop substrate.
 | TC007 | intent length out of bounds |
 | TC008 | malformed dependency entry |
 | TC009 | provenance origin invalid / escape missing ref |
+| TC010 | entities ref names no vocabulary term (fork the vocab task) |
+| TC011 | entities ref not ratified - draft does not resolve |
+| TC012 | entities ref deprecated past its sunset |
+| W001 | entities ref deprecated inside its sunset window (warning - never gates) |
 
 Regression suite: golden fixtures `tests/fixtures/{valid,invalid}/*.yaml` -
 every invalid fixture is named for the rule it must trigger; the first valid

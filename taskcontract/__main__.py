@@ -54,30 +54,32 @@ def main(argv=None) -> int:
     if args.command == "vocab-check":
         schema_doc = load_glossary_schema(args.schema)
         violations, count = validate_vocab_root(args.root, schema_doc=schema_doc)
+        errors = [v for v in violations if v.severity == "error"]
         if args.as_json:
             print(json.dumps([vars(v) for v in violations], indent=2))
         else:
             for violation in violations:
                 print(violation.line)
-            if not violations:
+            if not errors:
                 state = f"{count} terms" if count else "no vocabulary here"
                 print(f"vocab-green: {Path(args.root) / VOCAB_DIR} ({state})")
-        return 1 if violations else 0
+        return 1 if errors else 0
 
     schema_doc = load_schema(args.schema)
     violations = []
     for file in args.files:
         violations.extend(validate_path(file, profile=args.profile, schema_doc=schema_doc))
 
+    errors = [v for v in violations if v.severity == "error"]
     if args.as_json:
         print(json.dumps([vars(v) for v in violations], indent=2))
     else:
         for violation in violations:
             print(violation.line)
-        if not violations:
+        if not errors:
             for file in args.files:
                 print(f"{args.profile}-green: {file}")
-    return 1 if violations else 0
+    return 1 if errors else 0
 
 
 if __name__ == "__main__":

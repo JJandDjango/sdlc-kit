@@ -123,6 +123,81 @@ def validate_term_path(file, schema_doc: dict | None = None,
     return violations
 
 
+def load_terms(root=Path(".")) -> dict[str, dict]:
+    """Term slug -> parsed doc for every parseable term under <root>/specs/vocabulary/.
+
+    Unreadable or non-mapping files are simply absent here - the door
+    (vocab-check) is where they get reported; the join then sees their
+    refs as unresolved, which is the right compound failure.
+    """
+    vocab = Path(root) / VOCAB_DIR
+    terms: dict[str, dict] = {}
+    if not vocab.is_dir():
+        return terms
+    for file in sorted(vocab.glob("*.yaml")):
+        if file.stem in RESERVED_STEMS:
+            continue
+        try:
+            doc = _normalized(yaml.safe_load(file.read_text(encoding="utf-8")))
+        except (OSError, yaml.YAMLError):
+            continue
+        if isinstance(doc, dict):
+            terms[file.stem] = doc
+    return terms
+
+
+def coverage_join(contract_file, instance, root,
+                  today: datetime.date | None = None) -> list[Violation]:
+    """G0 coverage join (ADR 0017 V3): every entities ref resolves ratified-only.
+
+    Missing and draft terms are unresolved dependencies - the remedy is a
+    small vocabulary task, never failing the work itself. Deprecated terms
+    warn inside their sunset window and error past it (V7c).
+    """
+    refs = instance.get("entities") if isinstance(instance, dict) else None
+    if not isinstance(refs, list):
+        return []
+    name = str(contract_file)
+    today = today or datetime.date.today()
+    terms = load_terms(root)
+    out: list[Violation] = []
+    for i, ref in enumerate(refs):
+        if not isinstance(ref, str):
+            continue  # shape is the schema's finding, not the join's
+        path = f"$.entities[{i}]"
+        term = terms.get(ref)
+        if term is None:
+            out.append(Violation(
+                name, path, "TC010",
+                f"entity '{ref}' names no vocabulary term - fork a vocabulary "
+                f"task (specs/vocabulary/{ref}.yaml)"))
+            continue
+        status = term.get("status")
+        if status == "ratified":
+            continue
+        if status == "deprecated":
+            sunset_raw = term.get("sunset")
+            try:
+                sunset = datetime.date.fromisoformat(str(sunset_raw))
+            except (TypeError, ValueError):
+                sunset = None
+            if sunset is None or sunset < today:
+                tail = f"sunset {sunset_raw} passed" if sunset else "sunset unknown"
+                out.append(Violation(
+                    name, path, "TC012", f"entity '{ref}' is deprecated ({tail})"))
+            else:
+                out.append(Violation(
+                    name, path, "W001",
+                    f"entity '{ref}' is deprecated, sunset {sunset_raw} "
+                    f"(inside the notice window)", severity="warning"))
+            continue
+        out.append(Violation(
+            name, path, "TC011",
+            f"entity '{ref}' is not ratified (status: {status}) - draft does "
+            f"not resolve; ratify the term or fork the vocabulary task"))
+    return out
+
+
 def validate_vocab_root(root=Path("."), schema_doc: dict | None = None):
     """Validate every term under <root>/specs/vocabulary/.
 

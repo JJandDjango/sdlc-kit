@@ -1,0 +1,20 @@
+id: entities-declared
+intent: >-
+  Prove the optional entities field is schema-legal on a ready contract:
+  this fixture validates outside a specs tree, so the coverage join
+  stays out of play and pure shape is what passes here.
+scope:
+  - taskcontract/
+non_goals:
+  - Exercising the coverage join (tmp-tree tests own that)
+decomposition:
+  - unit: schema-shape
+    done_means: the entities array is accepted with slug items
+    acceptance_sketch:
+      - a ready validation of this fixture returns no violations
+dependencies: []
+provenance:
+  origin: human-request
+entities:
+  - gate
+  - vocabulary-term
