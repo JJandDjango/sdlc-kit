@@ -10,7 +10,7 @@ from pathlib import Path
 from .checker import PROFILES, load_schema, validate_path
 from .scaffold import scaffold
 from .vocabulary import (VOCAB_DIR, list_terms, load_glossary_schema,
-                         scaffold_term, validate_vocab_root)
+                         registry_size, scaffold_term, validate_vocab_root)
 
 
 def main(argv=None) -> int:
@@ -95,6 +95,9 @@ def main(argv=None) -> int:
                 print(violation.line)
             if not errors:
                 state = f"{count} terms" if count else "no vocabulary here"
+                entries = registry_size(args.root)
+                if entries is not None:
+                    state += f", registry {entries} constraints"
                 print(f"vocab-green: {Path(args.root) / VOCAB_DIR} ({state})")
         return 1 if errors else 0
 

@@ -21,12 +21,17 @@ from jsonschema import Draft202012Validator
 from .checker import Violation, _leaf_errors
 
 GLOSSARY_SCHEMA_PATH = Path(__file__).resolve().parent / "schemas" / "glossary-term.schema.json"
+REGISTRY_SCHEMA_PATH = Path(__file__).resolve().parent / "schemas" / "constraint-registry.schema.json"
 VOCAB_DIR = Path("specs") / "vocabulary"
 RESERVED_STEMS = {"constraints"}  # constraints.yaml is the registry - own schema (V6), never a term
 
 
 def load_glossary_schema(schema_path: Path | None = None) -> dict:
     return json.loads((schema_path or GLOSSARY_SCHEMA_PATH).read_text(encoding="utf-8"))
+
+
+def load_registry_schema(schema_path: Path | None = None) -> dict:
+    return json.loads((schema_path or REGISTRY_SCHEMA_PATH).read_text(encoding="utf-8"))
 
 
 DATE_FIELDS = ("since", "sunset")
@@ -276,8 +281,74 @@ def coverage_join(contract_file, instance, root,
     return out
 
 
+def validate_constraints(root=Path("."), schema_doc: dict | None = None,
+                         known_terms: set[str] | None = None) -> list[Violation]:
+    """Validate <root>/specs/vocabulary/constraints.yaml (ADR 0017 V6).
+
+    VC000 unreadable - VC001 schema violation - VC002 subject names no
+    term file - VC003 duplicate constraint id. Absent file = vacuously
+    green (the registry, like the layer, activates on presence).
+    """
+    path = Path(root) / VOCAB_DIR / "constraints.yaml"
+    if not path.is_file():
+        return []
+    name = str(path)
+    try:
+        instance = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError) as exc:
+        return [Violation(name, "$", "VC000", f"unreadable registry: {exc}")]
+
+    doc = schema_doc or load_registry_schema()
+    seen: set[tuple[str, str, str]] = set()
+    violations: list[Violation] = []
+    for err in _leaf_errors(Draft202012Validator(doc).iter_errors(instance)):
+        key = (err.json_path, "VC001", err.message)
+        if key not in seen:
+            seen.add(key)
+            violations.append(Violation(name, err.json_path, "VC001", err.message))
+
+    entries = instance.get("constraints") if isinstance(instance, dict) else None
+    if isinstance(entries, list):
+        if known_terms is None:
+            known_terms = set(load_terms(root))
+        ids: set[str] = set()
+        for i, entry in enumerate(entries):
+            if not isinstance(entry, dict):
+                continue
+            cid = entry.get("id")
+            if isinstance(cid, str):
+                if cid in ids:
+                    violations.append(Violation(
+                        name, f"$.constraints[{i}].id", "VC003",
+                        f"duplicate constraint id '{cid}'"))
+                ids.add(cid)
+            subjects = entry.get("subjects")
+            if isinstance(subjects, list):
+                for j, ref in enumerate(subjects):
+                    if isinstance(ref, str) and ref not in known_terms:
+                        violations.append(Violation(
+                            name, f"$.constraints[{i}].subjects[{j}]", "VC002",
+                            f"subject '{ref}' names no term file"))
+
+    violations.sort(key=lambda v: (v.path, v.rule))
+    return violations
+
+
+def registry_size(root=Path(".")) -> int | None:
+    """Entry count of a parseable registry, else None (absent or unreadable)."""
+    path = Path(root) / VOCAB_DIR / "constraints.yaml"
+    if not path.is_file():
+        return None
+    try:
+        instance = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError):
+        return None
+    entries = instance.get("constraints") if isinstance(instance, dict) else None
+    return len(entries) if isinstance(entries, list) else None
+
+
 def validate_vocab_root(root=Path("."), schema_doc: dict | None = None):
-    """Validate every term under <root>/specs/vocabulary/.
+    """Validate every term and the constraint registry under <root>/specs/vocabulary/.
 
     Returns (violations, term_count). An absent or empty directory is
     vacuously green - the layer activates on presence, like the join.
@@ -286,11 +357,10 @@ def validate_vocab_root(root=Path("."), schema_doc: dict | None = None):
     if not vocab.is_dir():
         return [], 0
     files = sorted(p for p in vocab.glob("*.yaml") if p.stem not in RESERVED_STEMS)
-    if not files:
-        return [], 0
     doc = schema_doc or load_glossary_schema()
     known = {p.stem for p in files}
     violations: list[Violation] = []
     for file in files:
         violations.extend(validate_term_path(file, schema_doc=doc, known_terms=known))
+    violations.extend(validate_constraints(root, known_terms=known))
     return violations, len(files)

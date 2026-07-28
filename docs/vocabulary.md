@@ -107,29 +107,44 @@ reports door failures as `VOCAB-INVALID` and warning-only contracts
 as `CONTRACT-WARNED` (INFO); `specs/vocabulary/` is exempt from the
 orphan sweep - the glossary is not a task directory.
 
-## 🔴 Constraint registry - `specs/vocabulary/constraints.yaml`
+## 🟢 Constraint registry - `specs/vocabulary/constraints.yaml`
 
-Class E, manifest-marked. Entry shape: `id`, `kind` (`enumeration` /
-`cardinality` / `disjointness` / `reference-integrity` /
-`reachability`), `subjects` (term refs - reference integrity
-enforced), `check` (the implementing validator), `status`. Born
-non-empty: the pipeline's four existing cross-artifact joins - G4.3
-criterion traceability, G4.6 write surface, `fixes:` resolution,
-G10.1 coherence - enumerated retroactively; each entry's kind and
-implementing check are fixed when the registry ships.
+Class E, self-declared: the file carries `class: E` (schema-required
+const) - machine-readable now, joinable by the 0010 write-surface
+manifest when that materializes; membership is ratified in 0014 + 0017.
+Entry shape: `id`, `kind` (`enumeration` / `cardinality` /
+`disjointness` / `reference-integrity` / `reachability`), `subjects`
+(term refs - existence enforced by the door), `check` (the
+implementing validator), `status` (`specified` / `enforced` /
+`retired`). Schema `taskcontract/schemas/constraint-registry.schema.json`
+v1; door diagnostics `VC000` (unreadable) / `VC001` (schema) / `VC002`
+(subject names no term) / `VC003` (duplicate id), reported by
+`vocab-check` and the audit alike. Born non-empty with five entries:
 
-## 🔴 Evolution
+| Entry | Kind | Status |
+|---|---|---|
+| entities-coverage | reference-integrity | enforced (TC010-TC012, W001) |
+| g4-3-criterion-traceability | reference-integrity | specified |
+| g4-6-write-surface | enumeration | specified |
+| fixes-resolution | reference-integrity | specified |
+| g10-1-coherence | reference-integrity | specified |
 
-- **Accretion** - vocabulary grows at the rate work demands it: the
-  coverage join forks vocabulary tasks; nothing grows speculatively.
-- **Conversion ratchet** - a recurring agent finding becomes a
-  constraint entry plus an executable check; principle on record now,
-  tooling when the agents are live.
-- **Lifecycle** - deprecation sets `sunset`; the join warns inside the
-  notice window, errors past it; deletion only at zero references.
-- **Versioning** - schemas carry `version:`; deltas ship migration
-  notes in the plugin changelog; tooled consumer migration is deferred
-  until consumer count makes manual lockstep untenable.
+## 🟢 Evolution
+
+- **Accretion** (live) - vocabulary grows at the rate work demands it:
+  the coverage join forks vocabulary tasks (TC010 names the exact file
+  to create); nothing grows speculatively.
+- **Conversion ratchet** (principle only - tooling rides the agent
+  arc) - a recurring agent finding becomes a constraint entry plus an
+  executable check; the registry it lands in now exists.
+- **Lifecycle** (live) - deprecation sets `sunset`; the join warns
+  inside the notice window (`W001`), errors past it (`TC012`);
+  deletion only at zero references; the notice floor stays Q4.
+- **Versioning** (live) - all three schemas carry `version:`
+  (task-contract 1.1.0 after the entities delta; glossary-term and
+  constraint-registry born 1.0.0); deltas ship migration notes in the
+  plugin changelog; tooled consumer migration is deferred until
+  consumer count makes manual lockstep untenable.
 
 ## ⚪ Deferred, triggers on record
 

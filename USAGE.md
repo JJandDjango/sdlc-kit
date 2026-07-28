@@ -126,8 +126,8 @@ with you.
 ## 5. Vocabulary — executable shared language 🟢
 
 > 🟢 **Shipped** (kit 0.3.0, [ADR 0017](decisions/0017-vocabulary-layer.md)) —
-> deep page: [docs/vocabulary.md](docs/vocabulary.md). The constraint
-> registry (`constraints.yaml`) is the one piece still landing.
+> deep page: [docs/vocabulary.md](docs/vocabulary.md), including the
+> constraint registry (`specs/vocabulary/constraints.yaml`, class E).
 
 The terms your tasks operate on become per-term YAML files under
 `specs/vocabulary/` — validated at the door, joined at G0.

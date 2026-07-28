@@ -94,10 +94,20 @@ def test_single_file_mode_skips_ref_resolution(tmp_path):
 
 
 def test_constraints_yaml_is_reserved_for_the_registry(tmp_path):
-    _vocab_tree(tmp_path, gate=GATE, constraints="registry: []\n")
+    registry = (
+        "class: E\n"
+        "constraints:\n"
+        "  - id: sample-join\n"
+        "    kind: reference-integrity\n"
+        "    subjects:\n"
+        "      - gate\n"
+        "    check: sample check pointer\n"
+        "    status: specified\n"
+    )
+    _vocab_tree(tmp_path, gate=GATE, constraints=registry)
     violations, count = validate_vocab_root(tmp_path, schema_doc=SCHEMA)
     assert violations == []
-    assert count == 1
+    assert count == 1, "the registry is judged by its own schema, never counted as a term"
 
 
 def test_schemas_ship_inside_the_package():
