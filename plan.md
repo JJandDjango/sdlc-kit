@@ -1,47 +1,34 @@
-# Plan - Session 13 (2026-07-26)
+# Plan - Session 15 (2026-07-28)
 
-The specification program closed at 54/54 (S12); before activation, the
-kit becomes distributable the way Cairn did: a `/sdlc` skill in this
-repo, flipped public as `sdlc-kit`, installable by shell copy or plugin
-marketplace, so the flow is install -> new repo -> `/cairn` (doc spine)
--> `/sdlc` (gate spine) on greenfield and brownfield targets alike.
-This re-sequences activation: the delivery vehicle ships first, and
-Q6's "pilot" becomes the first repo initialized via the skill. Going
-public also dissolves the protect-main blocker (rulesets are free on
-public repos; the ruleset JSON is already tracked). Ratified this
-session: repo public + renamed `sdlc-kit`; consumer model = pip from
-GitHub for the validator machinery plus Cairn-style marketplace/skill
-distribution; v1 subcommands = init + new + intake + audit (F10 and
-F11 ship inside the skill).
+The session's design input arrived from the user: a review of "Why
+Agentic Systems Need Ontologies" (Coyle, AI Engineer) against the
+standing deterministic-first directive. Outcome: the vocabulary layer -
+shared language as executable definitions - designed, ratified, and
+recorded as ADR 0017 (glossary family, `entities:` field, G0 coverage
+join, G0 agent vocabulary interface, greenfield seed / brownfield
+extraction, `/sdlc vocab` day-2 family, constraint registry, evolution
+loops, RDF map deferred, kit self-hosting, docs Pass 0). The import
+ruling: constraint semantics, never RDF/OWL/JSON-LD machinery - plain
+YAML/JSON, schema at the door, Python joins at the ledger.
 
 ## This session
 
-1. Refresh this plan (done - this file).
-2. Pass 0, docs-first: ADR 0016 (distribution before activation - the
-   program re-order, v1 scope, naming, consumer model, lifecycle
-   stance: G0.1 stays `specified` kit-side, flips `enforced`
-   per-target when intake runs live); skeleton README.md + USAGE.md
-   with red status markers; MIT LICENSE.
-3. Pass 1, engine before skill: `python -m taskcontract new <id>`
-   (F11) - 8-field contract skeleton at specs/<id>/contract.yaml;
-   tests (tmp-dir round-trip new -> fill -> validate green; id
-   rejection).
-4. Pass 2, the skill: skills/sdlc/SKILL.md (PromptLang, Cairn-style
-   dispatch: no-arg init interview / new / intake / audit), init.py
-   (zero-dep, no-clobber, {{var}} templates), templates/* (SDLC.md,
-   .sdlc/config+clocks+reds, specs/README, workflow, F8 + F12
-   snippets), audit.py (report-only, exit 0/1/2), tests;
-   `python -m prompt_lang` clean on SKILL.md.
-5. Pass 3, packaging + cascades: .claude-plugin/marketplace.json;
-   README/USAGE completed (markers to green); MAP.md row;
-   docs/task-contract.md F10/F11 deferred-line update.
-6. Pass 4, install + smoke: shell-copy skills/sdlc ->
-   ~/.claude/skills/sdlc; scratch greenfield run (init -> new ->
-   validate --profile ready green -> audit 0); brownfield run
-   (no-clobber proven, snippets printed).
-7. Pass 5, publish: GitHub rename -> sdlc-kit + visibility -> public
-   (live confirmation each), apply ruleset to main, push on explicit
-   approval; STATE.md regen; commit-session (Theory trailers).
+1. Refresh this plan (done).
+2. Design input: video review + kit docs mapping (done - review
+   delivered in-conversation; gates.md + 0008 grounded the mapping).
+3. Feature list interrogated and ratified (done - V1-V10; V1 closed
+   per-term-files + computed listing, no stored index).
+4. Record the design doc (done - decisions/0017-vocabulary-layer.md).
+5. Next: implementation plan scoped to the ratified set. Order per
+   ADR: V9 self-host (`/sdlc init` on this repo; first contract = the
+   vocabulary feature), V10 docs Pass 0 (docs/vocabulary.md + USAGE,
+   red markers), then engine-first passes (glossary schema + door,
+   `entities:` + G0 join, `/sdlc vocab` subcommands + extractor,
+   constraints.yaml), suites green throughout.
+
+Deferred until wanted or until pilot reality: per-gate agent harness
+arc (ADR 0017's named neighbor); PyPI publish; explainer PDF into
+docs/; Q4 numbers + activation build items (0015 inventory).
 
 House rules in force: no pipes/chains in any authored command string
 (CI steps included); never Edit/Write under ~/.claude/skills (shell
