@@ -1,0 +1,9 @@
+term: spec-artifact
+name: Spec artifact
+definition: Any immutable artifact under the protected specs/ root - contracts, criteria, baselines, vocabulary - that encodes intent before implementation and may not be weakened by the implementer of the work it governs.
+kind: entity
+status: draft
+since: 2026-07-28
+sources:
+  - docs/gates.md
+  - decisions/0010-write-surface-immutability.md

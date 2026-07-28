@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import datetime
 import json
+import re
 from pathlib import Path
 
 import yaml
@@ -121,6 +122,83 @@ def validate_term_path(file, schema_doc: dict | None = None,
 
     violations.sort(key=lambda v: (v.path, v.rule))
     return violations
+
+
+TERM_SKELETON = """\
+# Glossary term - vocabulary layer (ADR 0017 V1). Fill every TODO, then loop:
+#   python -m taskcontract vocab-check
+# Ratification is the human act: flip status draft -> ratified in review
+# (class-S edit; the PR merge is the interim approval record).
+
+term: {slug}
+
+# Display name.
+name: TODO
+
+# The meaning, stated so drift is checkable (20-1200 chars).
+definition: TODO
+
+# entity | relation | attribute | value-set
+kind: entity
+
+# Optional relations - refs must name files in this directory:
+# relations:
+#   is_a: []
+#   part_of: []
+#   disjoint_with: []
+
+# value-set kind only - the closed set:
+# values: []
+
+status: draft
+since: {today}
+
+# Extraction provenance (brownfield births) - paths or URLs:
+# sources: []
+"""
+
+
+def scaffold_term(slug: str, root: Path | str = ".", schema_doc: dict | None = None,
+                  today: datetime.date | None = None) -> Path:
+    """Write specs/vocabulary/<slug>.yaml under root; refuse bad slugs and clobbers.
+
+    Born draft with a VT002 tripwire definition - a fresh term can never
+    pass the door vacuously, mirroring the contract skeleton's TC007.
+    The slug pattern comes from the schema - single source of truth.
+    """
+    doc = schema_doc or load_glossary_schema()
+    pattern = doc["properties"]["term"]["pattern"]
+    if not re.fullmatch(pattern, slug):
+        raise ValueError(f"term {slug!r} must match {pattern}")
+    if slug in RESERVED_STEMS:
+        raise ValueError(f"term {slug!r} is reserved for the constraint registry")
+    path = Path(root) / VOCAB_DIR / f"{slug}.yaml"
+    if path.exists():
+        raise FileExistsError(f"{path} already exists (terms are edited, never re-scaffolded)")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    stamp = (today or datetime.date.today()).isoformat()
+    path.write_text(TERM_SKELETON.format(slug=slug, today=stamp), encoding="utf-8")
+    return path
+
+
+def list_terms(root=Path(".")):
+    """(rows, unreadable) for the computed listing - no stored index, ever.
+
+    rows: (term, kind, status, name) sorted by term. unreadable: paths the
+    loader skipped - the listing names them, the door explains them.
+    """
+    vocab = Path(root) / VOCAB_DIR
+    if not vocab.is_dir():
+        return [], []
+    terms = load_terms(root)
+    rows = [(slug,
+             str(terms[slug].get("kind", "?")),
+             str(terms[slug].get("status", "?")),
+             str(terms[slug].get("name", "?")))
+            for slug in sorted(terms)]
+    unreadable = [p for p in sorted(vocab.glob("*.yaml"))
+                  if p.stem not in RESERVED_STEMS and p.stem not in terms]
+    return rows, unreadable
 
 
 def load_terms(root=Path(".")) -> dict[str, dict]:

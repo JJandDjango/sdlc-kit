@@ -9,7 +9,8 @@ from pathlib import Path
 
 from .checker import PROFILES, load_schema, validate_path
 from .scaffold import scaffold
-from .vocabulary import VOCAB_DIR, load_glossary_schema, validate_vocab_root
+from .vocabulary import (VOCAB_DIR, list_terms, load_glossary_schema,
+                         scaffold_term, validate_vocab_root)
 
 
 def main(argv=None) -> int:
@@ -38,6 +39,15 @@ def main(argv=None) -> int:
                        help="emit violations as a JSON array (the agent loop substrate)")
     vocab.add_argument("--schema", type=Path, default=None,
                        help="override the packaged glossary schema file")
+    vlist = sub.add_parser("vocab-list",
+                           help="computed glossary listing - no stored index (ADR 0017 V5)")
+    vlist.add_argument("--root", type=Path, default=Path("."),
+                       help="repo root that holds specs/ (default: cwd)")
+    vadd = sub.add_parser("vocab-add",
+                          help="scaffold a draft term skeleton at specs/vocabulary/<slug>.yaml")
+    vadd.add_argument("slug", help="term slug (schema pattern: lowercase, digits, hyphens)")
+    vadd.add_argument("--root", type=Path, default=Path("."),
+                      help="repo root that holds specs/ (default: cwd)")
     args = parser.parse_args(argv)
 
     if args.command == "new":
@@ -49,6 +59,29 @@ def main(argv=None) -> int:
         print(f"created {path}")
         print("fill every TODO, then loop to green:")
         print(f"  python -m taskcontract validate {path} --profile ready")
+        return 0
+
+    if args.command == "vocab-add":
+        try:
+            path = scaffold_term(args.slug, root=args.root)
+        except (ValueError, FileExistsError, OSError) as exc:
+            print(f"taskcontract vocab-add: {exc}", file=sys.stderr)
+            return 1
+        print(f"created {path}")
+        print("author the term, then loop to green:")
+        print("  python -m taskcontract vocab-check")
+        return 0
+
+    if args.command == "vocab-list":
+        rows, unreadable = list_terms(args.root)
+        for term, kind, status, name in rows:
+            print(f"{term:24} {kind:10} {status:10} {name}")
+        for path in unreadable:
+            print(f"unreadable: {path} (run vocab-check)")
+        by_status = [sum(1 for r in rows if r[2] == s)
+                     for s in ("ratified", "draft", "deprecated")]
+        print(f"terms: {len(rows)} (ratified {by_status[0]}, "
+              f"draft {by_status[1]}, deprecated {by_status[2]})")
         return 0
 
     if args.command == "vocab-check":

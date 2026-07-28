@@ -123,12 +123,11 @@ with you.
 
 ---
 
-## 5. Vocabulary — executable shared language 🔴
+## 5. Vocabulary — executable shared language 🟢
 
-> 🔴 **Ratified, not yet shipped**
-> ([ADR 0017](decisions/0017-vocabulary-layer.md)) — the commands and
-> the `entities:` field land with the vocabulary passes; this section
-> flips 🟢 as they ship. Deep page: [docs/vocabulary.md](docs/vocabulary.md).
+> 🟢 **Shipped** (kit 0.3.0, [ADR 0017](decisions/0017-vocabulary-layer.md)) —
+> deep page: [docs/vocabulary.md](docs/vocabulary.md). The constraint
+> registry (`constraints.yaml`) is the one piece still landing.
 
 The terms your tasks operate on become per-term YAML files under
 `specs/vocabulary/` — validated at the door, joined at G0.
@@ -138,6 +137,10 @@ The terms your tasks operate on become per-term YAML files under
 | `/sdlc vocab` | Computed listing of the glossary (no stored index) |
 | `/sdlc vocab add <slug>` | Scaffold one term skeleton, born `draft` |
 | `/sdlc vocab extract` | Draft terms from declared surfaces (APIs, schemas, docs) with `sources:` provenance |
+
+Engine equivalents for CI and scripts: `python -m taskcontract
+vocab-list` / `vocab-add <slug>` / `vocab-check` (the door — VTnnn
+diagnostics; the scaffolded CI workflow runs it as a backstop step).
 
 Contracts may declare `entities:` — the terms the task touches. G0
 resolves each ref against **ratified** terms only: a missing or draft

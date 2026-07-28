@@ -1,0 +1,12 @@
+term: acceptance-sketch
+name: Acceptance sketch
+definition: The one-to-three-item witness inside each decomposition unit that a concrete acceptance criterion can later be written - the schema checks the witness exists; G1 makes it real.
+kind: entity
+relations:
+  part_of:
+    - decomposition-unit
+status: draft
+since: 2026-07-28
+sources:
+  - taskcontract/schemas/task-contract.schema.json
+  - decisions/0006-task-contract-enforcement.md

@@ -29,8 +29,11 @@ Finding codes:
   CONTRACT-INVALID  a specs/*/contract.yaml fails the ready profile (ERROR)
   CONTRACT-PARKED   a contract fails ready ONLY on unresolved
                     dependencies (TC003) - a legal parked draft   (INFO)
+  CONTRACT-WARNED   a contract is ready-green with warnings only
+                    (e.g. W001 sunset window)                     (INFO)
   CONTRACT-ORPHAN   a specs/<dir>/ carries no contract.yaml
   ID-MISMATCH       a contract's id differs from its directory name
+  VOCAB-INVALID     a specs/vocabulary/ term fails the door check (ERROR)
 """
 
 from __future__ import annotations
@@ -130,7 +133,9 @@ def _check_contracts(cwd: Path, findings: list[Finding]) -> None:
     if not specs.is_dir():
         return
 
-    task_dirs = sorted(d for d in specs.iterdir() if d.is_dir())
+    # specs/vocabulary/ is the glossary, not a task dir (ADR 0017 V1).
+    task_dirs = sorted(d for d in specs.iterdir()
+                       if d.is_dir() and d.name != "vocabulary")
     contracts = [d / "contract.yaml" for d in task_dirs]
     for d, contract in zip(task_dirs, contracts):
         if not contract.is_file():
@@ -154,15 +159,23 @@ def _check_contracts(cwd: Path, findings: list[Finding]) -> None:
     for contract in present:
         rel = contract.relative_to(cwd).as_posix()
         violations = validate_path(contract, profile="ready", schema_doc=schema_doc)
-        rules = {v.rule for v in violations}
-        if violations and rules == {"TC003"}:
-            blockers = "; ".join(v.message for v in violations)
+        # Older pip kits predate Violation.severity - treat all as errors there.
+        errors = [v for v in violations
+                  if getattr(v, "severity", "error") == "error"]
+        warnings = [v for v in violations
+                    if getattr(v, "severity", "error") != "error"]
+        rules = {v.rule for v in errors}
+        if errors and rules == {"TC003"}:
+            blockers = "; ".join(v.message for v in errors)
             findings.append(Finding("INFO", "CONTRACT-PARKED",
                                     f"legal draft parked on {blockers}", rel))
-        elif violations:
-            head = "; ".join(f"{v.rule} {v.message}" for v in violations[:3])
-            more = f" (+{len(violations) - 3} more)" if len(violations) > 3 else ""
+        elif errors:
+            head = "; ".join(f"{v.rule} {v.message}" for v in errors[:3])
+            more = f" (+{len(errors) - 3} more)" if len(errors) > 3 else ""
             findings.append(Finding("ERROR", "CONTRACT-INVALID", head + more, rel))
+        elif warnings:
+            head = "; ".join(f"{v.rule} {v.message}" for v in warnings[:3])
+            findings.append(Finding("INFO", "CONTRACT-WARNED", head, rel))
 
         if yaml is not None:
             try:
@@ -175,6 +188,29 @@ def _check_contracts(cwd: Path, findings: list[Finding]) -> None:
                                         f"{contract.parent.name!r}", rel))
 
 
+def _check_vocabulary(cwd: Path, findings: list[Finding]) -> None:
+    vocab = cwd / "specs" / "vocabulary"
+    if not vocab.is_dir():
+        return  # the layer activates on presence
+    try:
+        from taskcontract.vocabulary import validate_vocab_root
+    except ImportError:
+        findings.append(Finding("WARN", "KIT-MISSING",
+                                f"vocabulary door unavailable - term checks "
+                                f"skipped (update the kit: {PIP_HINT})", ""))
+        return
+    violations, _count = validate_vocab_root(cwd)
+    errors = [v for v in violations if getattr(v, "severity", "error") == "error"]
+    by_file: dict[str, list] = {}
+    for v in errors:
+        by_file.setdefault(v.file, []).append(v)
+    for file, batch in sorted(by_file.items()):
+        rel = Path(file).relative_to(cwd).as_posix() if Path(file).is_absolute() else file
+        head = "; ".join(f"{v.rule} {v.message}" for v in batch[:3])
+        more = f" (+{len(batch) - 3} more)" if len(batch) > 3 else ""
+        findings.append(Finding("ERROR", "VOCAB-INVALID", head + more, rel))
+
+
 def audit(cwd: Path) -> tuple[list[Finding], bool]:
     """Run every check. Returns (findings, is_spine)."""
     is_spine = (cwd / ".sdlc").is_dir() or (cwd / "SDLC.md").is_file()
@@ -185,6 +221,7 @@ def audit(cwd: Path) -> tuple[list[Finding], bool]:
     _check_surfaces(cwd, findings)
     _check_yaml_surfaces(cwd, findings)
     _check_contracts(cwd, findings)
+    _check_vocabulary(cwd, findings)
     findings.sort(key=lambda f: (SEVERITY_RANK[f.severity], f.code, f.path))
     return findings, True
 

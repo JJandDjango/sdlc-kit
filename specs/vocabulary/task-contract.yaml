@@ -1,0 +1,15 @@
+term: task-contract
+name: Task contract
+definition: The phase-0 definition-of-ready artifact at specs/<task-id>/contract.yaml - intent, scope, non-goals, decomposition, dependencies, provenance, and optionally the entities it operates on. Immutable to implementers once ready; the only door into development.
+kind: entity
+relations:
+  is_a:
+    - spec-artifact
+  disjoint_with:
+    - vocabulary-term
+status: ratified
+since: 2026-07-28
+sources:
+  - docs/task-contract.md
+  - taskcontract/schemas/task-contract.schema.json
+  - decisions/0005-task-contract-fields.md

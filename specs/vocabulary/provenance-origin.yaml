@@ -1,0 +1,16 @@
+term: provenance-origin
+name: Provenance origin
+definition: The closed set of ways a task may enter the pipeline; an operations escape must cite its incident so the convergence loop stays auditable.
+kind: value-set
+values:
+  - human-request
+  - g8-escape
+  - g9-maintenance
+relations:
+  part_of:
+    - task-contract
+status: draft
+since: 2026-07-28
+sources:
+  - taskcontract/schemas/task-contract.schema.json
+  - decisions/0006-task-contract-enforcement.md

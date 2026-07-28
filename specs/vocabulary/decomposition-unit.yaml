@@ -1,0 +1,12 @@
+term: decomposition-unit
+name: Decomposition unit
+definition: The smallest separately-verifiable piece of a task contract - a named unit carrying a done-meaning and one to three acceptance sketches; later criteria cite units by name.
+kind: entity
+relations:
+  part_of:
+    - task-contract
+status: draft
+since: 2026-07-28
+sources:
+  - taskcontract/schemas/task-contract.schema.json
+  - decisions/0006-task-contract-enforcement.md

@@ -78,7 +78,7 @@ the contract sits in a specs tree (loose files stay schema-only):
   severity `warning` - prints, never gates) and errors past it
   (`TC012`); the notice floor stays a Q4 number.
 
-## 🔴 Generation - born ratified or born draft
+## 🟢 Generation - born ratified or born draft
 
 | Path | Mechanism | Born |
 |---|---|---|
@@ -88,14 +88,24 @@ the contract sits in a specs tree (loose files stay schema-only):
 
 Ratification is un-tooled in v1: the status flip is a class-S edit and
 the PR merge is the interim approval record. The extractor's first
-fixture is this repo's own registry terms - the kit is its own second
-initialized consumer.
+fixture is live: this repo's own `specs/vocabulary/` - ten terms
+extracted from the gate registry, schemas, and ADRs, the three core
+nouns (task-contract, gate, vocabulary-term) ratified per the
+vocabulary-layer contract's own acceptance sketch, seven left draft
+for selective ratification. The kit is its own second initialized
+consumer.
 
-## 🔴 `/sdlc vocab` day-2 family
+## 🟢 `/sdlc vocab` day-2 family
 
 `/sdlc vocab` (computed listing) · `/sdlc vocab add <slug>` ·
 `/sdlc vocab extract`. Day-2 so initialized repos adopt without
-re-init; the init greenfield branch calls the same machinery.
+re-init; the init greenfield branch calls the same machinery (seed
+terms born ratified - the interviewee is the principal). Engine
+surface: `python -m taskcontract vocab-list` / `vocab-add <slug>`
+(a VT002-tripwire skeleton, born draft) / `vocab-check`. The audit
+reports door failures as `VOCAB-INVALID` and warning-only contracts
+as `CONTRACT-WARNED` (INFO); `specs/vocabulary/` is exempt from the
+orphan sweep - the glossary is not a task directory.
 
 ## 🔴 Constraint registry - `specs/vocabulary/constraints.yaml`
 

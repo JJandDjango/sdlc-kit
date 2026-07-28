@@ -1,0 +1,8 @@
+term: gate
+name: Gate
+definition: A pass/fail checkpoint between SDLC phases that authors or enforces conditions on artifacts - work proceeds only through its green verdict, and every gate names what it checks and the defect class it closes.
+kind: entity
+status: ratified
+since: 2026-07-28
+sources:
+  - docs/gates.md
