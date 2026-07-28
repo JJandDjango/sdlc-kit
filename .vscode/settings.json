@@ -1,0 +1,5 @@
+{
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/JJandDjango/sdlc-kit/main/schemas/task-contract.schema.json": "specs/*/contract.yaml"
+  }
+}

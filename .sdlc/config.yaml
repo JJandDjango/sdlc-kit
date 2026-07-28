@@ -1,0 +1,8 @@
+# SDLC kit - per-repo configuration (written by /sdlc init, 2026-07-28).
+kit: git+https://github.com/JJandDjango/sdlc-kit.git
+adoption: brownfield  # greenfield | brownfield
+stack: python  # free text; selects the tooling profile at activation
+active_gates:
+  - G0  # contract conformance - CI backstop; /sdlc intake is the venue
+# Gates join this list as the kit's activation program builds their
+# enforcement: https://github.com/JJandDjango/sdlc-kit/blob/main/docs/gates.md
