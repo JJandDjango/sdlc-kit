@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:sdlc-kit:task-contract:v1",
+  "version": "1.0.0",
   "title": "Task contract (G0 definition-of-ready)",
   "description": "Phase-0 task contract. Field set: ADR 0005; encoding: ADR 0006. Root schema = draft profile (blocked dependencies representable); validate #/$defs/ready for the G0.1 gate.",
   "type": "object",

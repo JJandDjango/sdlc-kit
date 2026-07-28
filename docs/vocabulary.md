@@ -27,14 +27,18 @@ flip per term, concentrated exactly where shared understanding is
 created. Human and agent are bound to the same executable definitions -
 never to prose both merely read.
 
-## 🔴 Glossary family - `specs/vocabulary/<term-slug>.yaml`
+## 🟢 Glossary family - `specs/vocabulary/<term-slug>.yaml`
 
 One file per term; the filename is the stable ID; flat directory; no
 stored index - the landing point is the `/sdlc vocab` computed
 listing, drift-impossible by construction (a stored index returns only
 if a consumer must read summaries without executing code - trigger
 registered in 0017). Kit-side schema
-`schemas/glossary-term.schema.json`, versioned. Fields:
+`taskcontract/schemas/glossary-term.schema.json`, versioned, packaged
+in the wheel. Door: `python -m taskcontract vocab-check` - stable
+VTnnn diagnostics (VT000-VT009), bare YAML dates normalized, an absent
+directory vacuously green; the scaffolded CI workflow carries the
+backstop step. Fields:
 
 | Field | Meaning |
 |---|---|

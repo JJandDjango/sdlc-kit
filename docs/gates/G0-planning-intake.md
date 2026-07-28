@@ -55,7 +55,7 @@ wrong everything downstream.
   emits the per-field diagnostics ("`non_goals` empty", "dependency X
   unresolved" - stable TCnnn rule ids), so an agent can loop the contract
   to green without human interpretation.
-- **Tooling:** `schemas/task-contract.schema.json` (JSON Schema Draft
+- **Tooling:** `taskcontract/schemas/task-contract.schema.json` (JSON Schema Draft
   2020-12, draft/ready profiles) checked by the `taskcontract` validator -
   encoding, tooling and wiring ratified in
   [0006](../../decisions/0006-task-contract-enforcement.md); deep page:
@@ -115,5 +115,6 @@ the mutability model's promise kept.
 - Enforcement pass (session 4): three-stop walk-through ratified encoding,
   validator and wiring ->
   [0006](../../decisions/0006-task-contract-enforcement.md); mechanism
-  built (`schemas/`, `taskcontract/`, fixtures + CI). E5 sharpens the G4.6
+  built (`taskcontract/` with its packaged `schemas/`, fixtures + CI). E5
+  sharpens the G4.6
   input: the protected set becomes the single root `specs/**`.

@@ -1,0 +1,8 @@
+term: vt008-malformed-relations
+name: Malformed relations
+definition: Relations must be arrays of term refs keyed by the three ratified relation kinds.
+kind: entity
+relations:
+  is_a: gate
+status: draft
+since: 2026-07-28

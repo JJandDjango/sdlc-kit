@@ -1,0 +1,12 @@
+term: severity-level
+name: Severity level
+definition: The closed set of severities a kit diagnostic may carry in tooling output.
+kind: value-set
+values:
+  - info
+  - warn
+  - error
+status: ratified
+since: 2026-07-28
+aliases:
+  - severity

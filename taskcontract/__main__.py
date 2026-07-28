@@ -9,6 +9,7 @@ from pathlib import Path
 
 from .checker import PROFILES, load_schema, validate_path
 from .scaffold import scaffold
+from .vocabulary import VOCAB_DIR, load_glossary_schema, validate_vocab_root
 
 
 def main(argv=None) -> int:
@@ -29,6 +30,14 @@ def main(argv=None) -> int:
     new.add_argument("id", help="task id (schema pattern: lowercase, digits, hyphens)")
     new.add_argument("--root", type=Path, default=Path("."),
                      help="repo root that holds specs/ (default: cwd)")
+    vocab = sub.add_parser("vocab-check",
+                           help="validate the specs/vocabulary/ glossary at the door (ADR 0017)")
+    vocab.add_argument("--root", type=Path, default=Path("."),
+                       help="repo root that holds specs/ (default: cwd)")
+    vocab.add_argument("--json", action="store_true", dest="as_json",
+                       help="emit violations as a JSON array (the agent loop substrate)")
+    vocab.add_argument("--schema", type=Path, default=None,
+                       help="override the packaged glossary schema file")
     args = parser.parse_args(argv)
 
     if args.command == "new":
@@ -41,6 +50,19 @@ def main(argv=None) -> int:
         print("fill every TODO, then loop to green:")
         print(f"  python -m taskcontract validate {path} --profile ready")
         return 0
+
+    if args.command == "vocab-check":
+        schema_doc = load_glossary_schema(args.schema)
+        violations, count = validate_vocab_root(args.root, schema_doc=schema_doc)
+        if args.as_json:
+            print(json.dumps([vars(v) for v in violations], indent=2))
+        else:
+            for violation in violations:
+                print(violation.line)
+            if not violations:
+                state = f"{count} terms" if count else "no vocabulary here"
+                print(f"vocab-green: {Path(args.root) / VOCAB_DIR} ({state})")
+        return 1 if violations else 0
 
     schema_doc = load_schema(args.schema)
     violations = []

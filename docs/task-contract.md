@@ -140,12 +140,12 @@ kit CI on every push.
 
 ```json
 "yaml.schemas": {
-  "./schemas/task-contract.schema.json": "specs/*/contract.yaml"
+  "./taskcontract/schemas/task-contract.schema.json": "specs/*/contract.yaml"
 }
 ```
 
 External tools can validate the *draft* profile directly
-(`check-jsonschema --schemafile schemas/task-contract.schema.json ...`);
+(`check-jsonschema --schemafile taskcontract/schemas/task-contract.schema.json ...`);
 the `ready` profile needs the house CLI, which composes root +
 `$defs/ready_delta`.
 

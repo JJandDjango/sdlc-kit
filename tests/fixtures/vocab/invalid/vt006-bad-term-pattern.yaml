@@ -1,0 +1,6 @@
+term: Bad_Term
+name: Bad slug
+definition: The term must be a lowercase hyphenated slug like every stable ID.
+kind: entity
+status: draft
+since: 2026-07-28

@@ -1,0 +1,7 @@
+term: vt005-unknown-field
+name: Unknown field
+definition: An unknown key in an enforcement-layer artifact is a typo or scope smuggling.
+kind: entity
+status: draft
+since: 2026-07-28
+notes: stray key

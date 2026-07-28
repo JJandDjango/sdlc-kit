@@ -15,7 +15,7 @@ from pathlib import Path
 import yaml
 from jsonschema import Draft202012Validator
 
-SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schemas" / "task-contract.schema.json"
+SCHEMA_PATH = Path(__file__).resolve().parent / "schemas" / "task-contract.schema.json"
 PROFILES = ("ready", "draft")
 
 

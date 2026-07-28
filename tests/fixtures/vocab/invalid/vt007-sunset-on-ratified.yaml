@@ -1,0 +1,7 @@
+term: vt007-sunset-on-ratified
+name: Sunset on ratified
+definition: A sunset date belongs only to a deprecated term, never a live one.
+kind: entity
+status: ratified
+since: 2026-07-28
+sunset: 2026-12-31

@@ -1,0 +1,8 @@
+term: vt004-values-on-entity
+name: Values on entity
+definition: Values are the value-set discipline; an entity may not carry them.
+kind: entity
+values:
+  - stray
+status: draft
+since: 2026-07-28
