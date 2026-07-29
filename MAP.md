@@ -34,6 +34,7 @@ flowchart LR
 | pilot stack | Minimal phase 3-4 stack (formatter, StyleCop, strict compile, arch tests, ratchets) on a pilot repo | planned | no doc yet |
 | distribution skill | `/sdlc` init + intake (F10) + new (F11) + audit + vocab family: the kit's delivery vehicle - no-clobber gate-spine scaffold, Cairn-shaped, marketplace-installable | implemented (v1) | [decisions/0016](decisions/0016-distribution-before-activation.md) |
 | vocabulary layer | Executable shared language: glossary door (VT/VC), `entities:` + G0.2 coverage join (ratified-only, fork semantics), class-E constraint registry, `/sdlc vocab` family; kit self-hosted as consumer 2 | implemented (v1) | [docs/vocabulary.md](docs/vocabulary.md) |
+| distribution reconciliation | Consumer-side update story: tagged install pins (tag-on-bump), CHANGELOG.md migration notes, `/sdlc update` scaffold-drift engine (report-only, per-file consented apply) | implemented (v1) | [docs/distribution.md](docs/distribution.md) |
 
 Design source: `HANDOFF_gate-architecture_2026-07-22.md` (root, frozen). The
 gate map lives as the registry `docs/gates.md` (gates G0-G10 + PL-*, with

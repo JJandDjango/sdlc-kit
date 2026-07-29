@@ -1,0 +1,13 @@
+term: scaffold
+name: Scaffold
+definition: The committed payload /sdlc init renders into a consumer - SDLC.md, the .sdlc/ config and ledgers, specs/README.md, the CI workflow, hook and editor settings - written once under no-clobber and consumer-owned thereafter; kit updates never rewrite it in place.
+kind: entity
+relations:
+  part_of:
+    - consumer
+status: ratified
+since: 2026-07-29
+sources:
+  - skills/sdlc/init.py
+  - skills/sdlc/SKILL.md
+  - skills/sdlc/templates/workflow.yml.template

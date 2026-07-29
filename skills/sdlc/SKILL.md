@@ -1,6 +1,6 @@
 ---
 name: sdlc
-description: Lay a spec-first SDLC gate spine into any repository - greenfield or brownfield. Interviews for project name, adoption (greenfield or brownfield), and stack - or takes them from the invocation args - then renders a no-clobber payload - SDLC.md gate status page, .sdlc/ config + clocks + standing-red ledger, the protected specs/ root for immutable task contracts, and a CI job validating every contract (the G0 backstop). Day-2 subcommands - `/sdlc intake` (the G0 venue - turn a raw request into a contract and loop the validator to green), `/sdlc new {id}` (scaffold a contract skeleton), `/sdlc audit` (report-only gate-health check), and the vocabulary family (ADR 0017) - `/sdlc vocab` (computed glossary listing), `/sdlc vocab add {slug}` (draft term skeleton), `/sdlc vocab extract` (draft terms from declared surfaces with sources provenance; ratification stays human). Greenfield init also seeds 5-15 ratified terms through the interview. Pairs with /cairn - docs spine first, gate spine second; neither requires the other. Use when starting, adopting, or operating gated agent-driven development.
+description: Lay a spec-first SDLC gate spine into any repository - greenfield or brownfield. Interviews for project name, adoption (greenfield or brownfield), and stack - or takes them from the invocation args - then renders a no-clobber payload - SDLC.md gate status page, .sdlc/ config + clocks + standing-red ledger, the protected specs/ root for immutable task contracts, and a CI job validating every contract (the G0 backstop). Day-2 subcommands - `/sdlc intake` (the G0 venue - turn a raw request into a contract and loop the validator to green), `/sdlc new {id}` (scaffold a contract skeleton), `/sdlc audit` (report-only gate-health check), `/sdlc update` (report-only scaffold drift vs the current kit templates; per-file consented apply), and the vocabulary family (ADR 0017) - `/sdlc vocab` (computed glossary listing), `/sdlc vocab add {slug}` (draft term skeleton), `/sdlc vocab extract` (draft terms from declared surfaces with sources provenance; ratification stays human). Greenfield init also seeds 5-15 ratified terms through the interview. Pairs with /cairn - docs spine first, gate spine second; neither requires the other. Use when starting, adopting, or operating gated agent-driven development.
 ---
 
 # `/sdlc` - lay a spec-first gate spine
@@ -46,6 +46,7 @@ written when they already exist):
 <instructions>
 0. DISPATCH. If this skill was invoked with a first argument naming a subcommand, do NOT run the interview:
    - `audit` - run the Audit flow (A1-A2).
+   - `update` - run the Update flow (U1-U3).
    - `new` - run the New flow (N1-N2); the second argument is the task id.
    - `intake` - run the Intake flow (I1-I7); remaining text is the raw request, when given.
    - `vocab` - sub-dispatch on the next argument: none - the List flow (L1); `add` - the Add flow (VA1-VA2), third argument is the term slug; `extract` - the Extract flow (X1-X4), remaining text names the surfaces, when given.
@@ -122,6 +123,18 @@ X4. REPORT - the vocab-list output, then one line stating the handoff: ratificat
 A1. RUN - one Bash call, by absolute path: `python "{skill-dir}/audit.py" --cwd .`
 
 A2. REPORT stdout verbatim. Exit 0 = clean; 1 = findings, each carrying a code (e.g. CONTRACT-INVALID, SPINE-MISSING, REDS-SCHEMA); 2 = no gate spine here (offer the init interview instead). Do NOT fix findings unasked - audit automates detection; fixes stay with the user or an explicit follow-up task.
+
+## Update flow
+
+The committed scaffold is rendered once and never rewritten by the
+kit (no-clobber); this flow makes the drift visible when the kit
+moves on, and applies fixes only file by file on the user's word.
+
+U1. RUN - one Bash call, by absolute path: `python "{skill-dir}/update.py" --cwd .`
+
+U2. REPORT stdout verbatim. Exit 0 = scaffold current; 1 = drift or absence, one row per surface with its class - `kit-owned` (applyable), `merge-target` (hand-merged; `--show {rel}` prints the current render), `consumer` (existence-only by design - SDLC.md, config, clocks, reds are the consumer's data); 2 = no gate spine (offer the init interview instead).
+
+U3. APPLY only on the user's explicit per-file direction - one Bash call per file: `python "{skill-dir}/update.py" --cwd . --apply {rel}`. Kit-owned surfaces only; the engine refuses merge targets and consumer files. NEVER loop apply over the whole report - each file is its own consent.
 </instructions>
 
 <constraints>
@@ -130,6 +143,7 @@ A2. REPORT stdout verbatim. Exit 0 = clean; 1 = findings, each carrying a code (
 - Do NOT touch Cairn strata (THEORY.md, MAP.md, STATE.md, CONVENTIONS.md, decisions/, docs/): recommend /cairn, never write on its behalf.
 - Do NOT chain shell commands - every Bash call is a single segment: no pipes, no semicolons, no `&&`, no redirects.
 - `audit` is report-only: never fix its findings unasked, never route it through a writing step.
+- `update` is report-only by default: `--apply` writes exactly one named kit-owned file per user-directed call; merge targets and consumer-owned files are never applied; no bulk path exists.
 - intake writes ONLY `specs/{id}/contract.yaml`; a red contract never hands off to development.
 - Vocab writes land ONLY under `specs/vocabulary/`; the List flow is read-only.
 - NEVER flip a term's status to `ratified` unasked. Extraction and day-2 authoring are born `draft`; the single born-ratified path is the greenfield init seed, where the interviewee is the principal. A TC010/TC011 in a contract loop means fork the term or drop the ref - never ratify to turn a contract green.
@@ -143,6 +157,7 @@ A2. REPORT stdout verbatim. Exit 0 = clean; 1 = findings, each carrying a code (
 - [ ] New flow: `taskcontract new` invoked; created path + loop line reported, or the failure + install hint.
 - [ ] Intake flow: contract authored on its own scaffold; validate looped (max 5) to ready-green or PARKED with a named blocker; handoff refused while red; nothing else written.
 - [ ] Audit flow: audit.py ran by absolute path; findings reported verbatim; nothing written or fixed.
+- [ ] Update flow: update.py ran by absolute path; drift reported by class (kit-owned / merge-target / consumer); apply only per-file on explicit user direction; merge targets and consumer files never applied.
 - [ ] Vocab flows: listing computed and reported verbatim; add scaffolds red and draft; extract reads only declared surfaces, births 5-15 draft terms with sources, loops the door to green (max 5), and leaves every ratification to the user.
 - [ ] Greenfield init seeds 5-15 ratified terms through the interview and the same machinery; brownfield init recommends extract instead.
 - [ ] Every Bash call a single segment; no overwrite anywhere.

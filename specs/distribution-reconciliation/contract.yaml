@@ -1,0 +1,88 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: distribution-reconciliation
+
+intent: >-
+  Consumers reconcile kit updates deliberately instead of absorbing
+  them silently: the scaffolded CI installs a pinned release tag
+  rather than floating main, every schema or behavior delta ships a
+  migration note in a real CHANGELOG.md, and a day-2 /sdlc update
+  command reports committed-scaffold drift file by file with consented
+  apply only - closing the three gaps (floating ref, promised-but-
+  absent changelog, frozen scaffold) that today make kit updates a
+  push consumers cannot hold back.
+
+scope:
+  - skills/sdlc/templates/workflow.yml.template
+  - skills/sdlc/init.py
+  - skills/sdlc/update.py
+  - skills/sdlc/SKILL.md
+  - CHANGELOG.md
+  - docs/distribution.md
+  - docs/vocabulary.md
+  - pyproject.toml
+  - tests/
+
+non_goals:
+  - PyPI publish - stays deferred behind its registered trigger (F4
+    struck at feature ratification, 2026-07-29).
+  - Tooled consumer migration - deferred until consumer count makes
+    manual lockstep untenable (ADR 0017).
+  - Auto-apply or bulk overwrite in /sdlc update - apply is per-file
+    and consented; no-clobber stands.
+  - Rewriting consumer repos themselves - the kit ships the lever;
+    consumers pull it.
+
+decomposition:
+  - unit: docs-pass-0
+    done_means: The distribution and reconciliation story is
+      documented user-facing before implementation - the three
+      channels (wheel, plugin, committed scaffold), the pull-model
+      upgrade path, and the delta-note house rule - status markers
+      authored red, flipped as units ship.
+    acceptance_sketch:
+      - docs/distribution.md exists with per-surface status markers
+        before any implementation pass lands
+      - docs/vocabulary.md's migration-notes promise points at
+        CHANGELOG.md, not an unmaterialized plugin changelog
+  - unit: release-tagging
+    done_means: The kit tags releases and the scaffolded install ref
+      pins to one - init renders the workflow with a git ref at
+      v{packaged version} resolved at render time, and the tag-on-
+      version-bump discipline is recorded where releases happen.
+    acceptance_sketch:
+      - a freshly rendered workflow.yml contains a tagged install ref
+        and no floating .git ref
+      - v0.3.0 exists on origin and matches the packaged kit version
+      - the tag-on-bump rule is stated alongside the delta-note rule
+  - unit: changelog
+    done_means: CHANGELOG.md exists at the repo root, backfilled for
+      0.1.0 through 0.3.0 including the task-contract 1.1.0 schema
+      delta note, and is the named venue for future migration notes.
+    acceptance_sketch:
+      - CHANGELOG.md carries 0.1.0, 0.2.0, 0.3.0 entries with the
+        1.1.0 delta note as the exemplar
+      - the house rule 'no schema version bump merges without its
+        delta note' is stated in the file
+  - unit: update-command
+    done_means: /sdlc update exists as a day-2 flow backed by a
+      report-only engine - renders current templates, diffs the
+      consumer's committed scaffold, reports drift per file, and
+      applies only per-file on explicit consent.
+    acceptance_sketch:
+      - update.py exits 0 on no drift and 1 on drift, naming each
+        drifted file
+      - SKILL.md gains the Update flow with the consented-apply
+        constraint and no bulk-overwrite path
+      - merge-target files (user-owned) are distinguished from
+        kit-owned scaffold files in the report
+
+dependencies: []
+
+provenance:
+  origin: human-request
+
+entities:
+  - consumer
+  - scaffold

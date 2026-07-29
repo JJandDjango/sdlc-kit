@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -65,6 +66,23 @@ def test_preexisting_merge_target_untouched(tmp_path, skill_init):
 def test_bad_answers_rejected(tmp_path, skill_init, bad):
     with pytest.raises(ValueError):
         skill_init.render_all(bad, _templates(skill_init), tmp_path, "2026-07-26")
+
+
+def test_rendered_scaffold_pins_release_tag(tmp_path, skill_init):
+    skill_init.render_all(ANSWERS, _templates(skill_init), tmp_path, "2026-07-29")
+    workflow = (tmp_path / ".github/workflows/sdlc.yml").read_text(encoding="utf-8")
+    assert f"@v{skill_init.KIT_VERSION}" in workflow
+    assert 'sdlc-kit.git"' not in workflow  # floating install ref shape
+    settings = (tmp_path / ".vscode/settings.json").read_text(encoding="utf-8")
+    assert f"/v{skill_init.KIT_VERSION}/" in settings
+    assert "/main/" not in settings  # floating schema-URL shape
+
+
+def test_kit_version_matches_packaged_version(skill_init):
+    pyproject = Path(__file__).parent.parent / "pyproject.toml"
+    with pyproject.open("rb") as fh:
+        packaged = tomllib.load(fh)["project"]["version"]
+    assert skill_init.KIT_VERSION == packaged
 
 
 def test_cli_round_trip(tmp_path, skill_init, capsys):

@@ -33,9 +33,14 @@ from datetime import date
 from pathlib import Path
 
 KIT_REPO = "https://github.com/JJandDjango/sdlc-kit"
-KIT_REF = f"git+{KIT_REPO}.git"
+# Pinned distribution ref (contract: distribution-reconciliation, unit
+# release-tagging). Bump KIT_VERSION together with pyproject [project].version -
+# tests hold the two equal - and tag v{KIT_VERSION} at the merge that ships the
+# bump. Consumers upgrade by bumping the rendered ref themselves: pull, not push.
+KIT_VERSION = "0.4.0"
+KIT_REF = f"git+{KIT_REPO}.git@v{KIT_VERSION}"
 SCHEMA_URL = ("https://raw.githubusercontent.com/JJandDjango/sdlc-kit/"
-              "main/taskcontract/schemas/task-contract.schema.json")
+              f"v{KIT_VERSION}/taskcontract/schemas/task-contract.schema.json")
 
 TEMPLATE_TO_TARGET = {
     "SDLC.md.template": "SDLC.md",
