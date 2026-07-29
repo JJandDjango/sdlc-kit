@@ -2,7 +2,8 @@
 
 > 🟢 **v1 shipped** — every flow on this page is implemented and proven
 > by the kit's regression suite plus live greenfield + brownfield smoke
-> runs (no-clobber included).
+> runs (no-clobber included). Sections marked 🔴 are ratified but not
+> yet shipped.
 
 The kit lays a **gate spine** into a repository: immutable task
 contracts under `specs/`, a gate status page, config + ledgers under
@@ -122,7 +123,41 @@ with you.
 
 ---
 
-## 5. A worked example (greenfield)
+## 5. Vocabulary — executable shared language 🟢
+
+> 🟢 **Shipped** (kit 0.3.0, [ADR 0017](decisions/0017-vocabulary-layer.md)) —
+> deep page: [docs/vocabulary.md](docs/vocabulary.md), including the
+> constraint registry (`specs/vocabulary/constraints.yaml`, class E).
+
+The terms your tasks operate on become per-term YAML files under
+`specs/vocabulary/` — validated at the door, joined at G0.
+
+| Command | What it does |
+|---|---|
+| `/sdlc vocab` | Computed listing of the glossary (no stored index) |
+| `/sdlc vocab add <slug>` | Scaffold one term skeleton, born `draft` |
+| `/sdlc vocab extract` | Draft terms from declared surfaces (APIs, schemas, docs) with `sources:` provenance |
+
+Engine equivalents for CI and scripts: `python -m taskcontract
+vocab-list` / `vocab-add <slug>` / `vocab-check` (the door — VTnnn
+diagnostics; the scaffolded CI workflow runs it as a backstop step).
+
+Contracts may declare `entities:` — the terms the task touches. G0
+resolves each ref against **ratified** terms only: a missing or draft
+term surfaces as an unresolved dependency naming the term — fork a
+small vocabulary task; the work itself never fails for vocabulary.
+Ratification stays deliberately human: flip `status: draft →
+ratified` in the term file; the PR merge is the approval record.
+Deprecation sets `sunset:`; the join warns inside the notice window
+and errors past it.
+
+Greenfield init seeds 5–15 terms through the interview (born
+ratified); brownfield repos start with `vocab extract` and ratify the
+keepers.
+
+---
+
+## 6. A worked example (greenfield)
 
 ```
 mkdir billing-service && cd billing-service && git init
@@ -140,7 +175,7 @@ actually starts.
 
 ---
 
-## 6. Troubleshooting
+## 7. Troubleshooting
 
 | Symptom | Cause / fix |
 |---|---|

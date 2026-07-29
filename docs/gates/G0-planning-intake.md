@@ -55,7 +55,7 @@ wrong everything downstream.
   emits the per-field diagnostics ("`non_goals` empty", "dependency X
   unresolved" - stable TCnnn rule ids), so an agent can loop the contract
   to green without human interpretation.
-- **Tooling:** `schemas/task-contract.schema.json` (JSON Schema Draft
+- **Tooling:** `taskcontract/schemas/task-contract.schema.json` (JSON Schema Draft
   2020-12, draft/ready profiles) checked by the `taskcontract` validator -
   encoding, tooling and wiring ratified in
   [0006](../../decisions/0006-task-contract-enforcement.md); deep page:
@@ -64,8 +64,10 @@ wrong everything downstream.
 - **Parameters:** the field set - fixed below
   ([0005](../../decisions/0005-task-contract-fields.md)).
 - **Lifecycle:** `specified` (field set 0005; schema + validator +
-  backstops shipped per 0006). `enforced` awaits the intake venue going
-  live in a harness (pilot, Q6).
+  backstops shipped per 0006); `enforced` in this kit repo since the V9
+  self-host (the vocabulary-layer contract entered through `/sdlc intake`,
+  2026-07-28) - per-target elsewhere; the Q6 pilot flips at its M0
+  session.
 
 ### Task-contract field set (Q2) - ratified 2026-07-23, [0005](../../decisions/0005-task-contract-fields.md)
 
@@ -79,6 +81,32 @@ wrong everything downstream.
 | `acceptance_sketch` | 1-3 draft criteria per unit | the writability witness - "criteria unwritable" is decidable only by attempting one; full criteria remain G1's job |
 | `dependencies` | list; each `resolved` or `blocked-by: <ref>`; all must be `resolved` to pass | "dependencies unresolved" rejection |
 | `provenance` | origin: human request / G8 escape / G9 maintenance | (derived - principle 8) the convergence loop needs escapes distinguishable at intake |
+| `entities` | optional ([0017](../../decisions/0017-vocabulary-layer.md) amendment) - the ratified vocabulary terms the task operates on | the G0.2 coverage join; absent = join inactive, contract valid |
+
+### G0.2 Vocabulary coverage join - added 2026-07-28, [0017](../../decisions/0017-vocabulary-layer.md)
+
+- **What (pass condition):** every `entities:` ref on the contract resolves
+  to a *ratified* term at `specs/vocabulary/{term}.yaml`. A missing or
+  draft term is an unresolved dependency - the diagnostic names the term
+  and the exact file to fork, and the work itself is never failed for
+  vocabulary. A deprecated term warns inside its sunset window
+  (non-gating) and errors past it. Term files and the constraint registry
+  validate at the door.
+- **Why:** shared meaning between human and agent holds only when both are
+  bound to the same executable definitions - the join makes the contract's
+  own language an artifact the gate checks, while ratification stays the
+  one cheap human action, concentrated exactly on meaning.
+- **Kind & loopability:** mechanical - stable rule ids on both surfaces:
+  TC010/TC011/TC012 + W001 from `validate --profile ready`; VT000-VT009 /
+  VC000-VC003 from `vocab-check`. The field is optional, so the join
+  activates on presence and existing contracts stay valid.
+- **Tooling:** `taskcontract/schemas/glossary-term.schema.json` +
+  `constraint-registry.schema.json`, the coverage join inside the
+  validator, the `/sdlc vocab` family (list / add / extract); deep page:
+  [../vocabulary.md](../vocabulary.md).
+- **Parameters:** the sunset notice floor rides Q4.
+- **Lifecycle:** `enforced` in this repo - the join runs in the live
+  intake venue and the CI backstop; per-target elsewhere, as with G0.1.
 
 ## Completeness check
 
@@ -93,7 +121,8 @@ by G0.1's field checks. Examined and **not** proposed:
   harness scheduling concern, not an intake-correctness check. Logged as a
   harness observation.
 
-Roster verdict: complete - one condition; fully specifying it *is* the gate.
+Roster verdict: complete - two conditions (G0.1 definition-of-ready, G0.2
+vocabulary coverage); fully specifying them *is* the gate.
 
 ## Operators & harness
 
@@ -115,5 +144,6 @@ the mutability model's promise kept.
 - Enforcement pass (session 4): three-stop walk-through ratified encoding,
   validator and wiring ->
   [0006](../../decisions/0006-task-contract-enforcement.md); mechanism
-  built (`schemas/`, `taskcontract/`, fixtures + CI). E5 sharpens the G4.6
+  built (`taskcontract/` with its packaged `schemas/`, fixtures + CI). E5
+  sharpens the G4.6
   input: the protected set becomes the single root `specs/**`.

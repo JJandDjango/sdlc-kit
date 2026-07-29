@@ -1,0 +1,12 @@
+term: dependency
+name: Dependency
+definition: A task contract's declared prerequisite - a ref with status resolved or blocked; one blocked entry parks the whole contract as draft, and ready requires every entry resolved.
+kind: entity
+relations:
+  part_of:
+    - task-contract
+status: draft
+since: 2026-07-28
+sources:
+  - taskcontract/schemas/task-contract.schema.json
+  - decisions/0006-task-contract-enforcement.md

@@ -1,0 +1,6 @@
+term: some-other-slug
+name: Filename mismatch
+definition: The term field disagrees with the filename, breaking the stable-ID rule.
+kind: entity
+status: draft
+since: 2026-07-28

@@ -1,0 +1,6 @@
+term: vt004-valueset-without-values
+name: Value set without values
+definition: A value-set kind must enumerate its closed set of values.
+kind: value-set
+status: draft
+since: 2026-07-28

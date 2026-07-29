@@ -1,0 +1,43 @@
+# Constraint registry - the pipeline's named cross-artifact joins
+# (ADR 0017 V6). Class-E enforcement artifact: CRUD rides the 0014
+# lanes; this file joins the 0010 write-surface manifest's census when
+# that manifest materializes. Subjects are term refs - the door checks
+# they exist. Born non-empty: the four pre-existing joins enumerated
+# retroactively, plus the coverage join this layer itself shipped.
+
+class: E
+constraints:
+  - id: entities-coverage
+    kind: reference-integrity
+    subjects:
+      - task-contract
+      - vocabulary-term
+    check: python -m taskcontract validate --profile ready (TC010-TC012, W001)
+    status: enforced
+  - id: g4-3-criterion-traceability
+    kind: reference-integrity
+    subjects:
+      - task-contract
+      - acceptance-sketch
+    check: traceability script over criteria.yaml x runner results (G4.3, ADR 0011)
+    status: specified
+  - id: g4-6-write-surface
+    kind: enumeration
+    subjects:
+      - spec-artifact
+    check: write-surface audit job - candidate diff inside the 0010 manifest's writable set (G4.6)
+    status: specified
+  - id: fixes-resolution
+    kind: reference-integrity
+    subjects:
+      - task-contract
+      - standing-red
+    check: ledger join - every fixes ref names the red or incident it clears (ADR 0012; G9 fix lane)
+    status: specified
+  - id: g10-1-coherence
+    kind: reference-integrity
+    subjects:
+      - spec-artifact
+      - vocabulary-term
+    check: sunset coherence both ways - class-S record matches compiled mark; vocabulary sunsets ride the same 0013 pattern (G10.1)
+    status: specified

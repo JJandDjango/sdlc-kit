@@ -111,11 +111,12 @@ non-goals, decomposition into independently gateable units. Becomes G1's input
 and the scope baseline every later gate implicitly checks against.
 **FAIL blocks:** the task entering the spec stage.
 **Closes:** mis-selection, scope creep (upstream of misinterpretation).
-**Deep page:** [gates/G0-planning-intake.md](gates/G0-planning-intake.md) - G0.1 `specified`; enforcement mechanism shipped ([0006](../decisions/0006-task-contract-enforcement.md), [task-contract.md](task-contract.md)); venue shipped as `/sdlc intake` ([0016](../decisions/0016-distribution-before-activation.md)) - `enforced` flips per-target at first live use (the Q6 pilot).
+**Deep page:** [gates/G0-planning-intake.md](gates/G0-planning-intake.md) - G0.1 `specified`; enforcement mechanism shipped ([0006](../decisions/0006-task-contract-enforcement.md), [task-contract.md](task-contract.md)); venue shipped as `/sdlc intake` ([0016](../decisions/0016-distribution-before-activation.md)) - `enforced` flips per-target at first live use: live in this kit repo since the V9 self-host (the vocabulary-layer contract entered through its own intake); the Q6 pilot follows at its M0 session. G0.2 (vocabulary coverage) added by [0017](../decisions/0017-vocabulary-layer.md), `enforced` here.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| G0.1 | Definition-of-ready check | mechanical | Contract at `specs/<id>/contract.yaml` validates against `schemas/task-contract.schema.json` (`ready` profile): fields present + bounded, every unit sketched, all dependencies resolved | `python -m taskcontract validate` (jsonschema) | [0005](../decisions/0005-task-contract-fields.md), [0006](../decisions/0006-task-contract-enforcement.md) |
+| G0.1 | Definition-of-ready check | mechanical | Contract at `specs/<id>/contract.yaml` validates against `taskcontract/schemas/task-contract.schema.json` (`ready` profile): fields present + bounded, every unit sketched, all dependencies resolved | `python -m taskcontract validate` (jsonschema) | [0005](../decisions/0005-task-contract-fields.md), [0006](../decisions/0006-task-contract-enforcement.md) |
+| G0.2 | Vocabulary coverage join | mechanical | Every contract `entities:` ref resolves to a *ratified* term in `specs/vocabulary/` (missing or draft = unresolved dependency - fork the vocabulary task, never fail the work; deprecated warns inside its sunset window, errors past it); term files and the constraint registry validate at the door | `python -m taskcontract validate` ready profile (TC010-TC012, W001); `vocab-check` door (VT/VC diagnostics); [vocabulary.md](vocabulary.md) | Q4 (notice floor) |
 
 ## G1 - Requirements / Spec
 

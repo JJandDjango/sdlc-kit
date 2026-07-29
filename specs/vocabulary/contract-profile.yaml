@@ -1,0 +1,12 @@
+term: contract-profile
+name: Contract profile
+definition: The two validation profiles of a task contract - draft admits blocked dependencies so parking is representable; ready is the G0 entry gate.
+kind: value-set
+values:
+  - draft
+  - ready
+status: draft
+since: 2026-07-28
+sources:
+  - taskcontract/schemas/task-contract.schema.json
+  - decisions/0006-task-contract-enforcement.md

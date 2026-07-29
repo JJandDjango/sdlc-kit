@@ -5,72 +5,67 @@
 > _Generated 2026-07-28._
 
 ## Now
-- Session 15 (2026-07-28): **the vocabulary layer is designed and
-  ratified** (decisions/0017-vocabulary-layer.md). Design input was a
-  transcript-based review of "Why Agentic Systems Need Ontologies"
-  (Coyle, AI Engineer, 2026-07-22) against the standing
-  deterministic-first directive. Import ruling: constraint *semantics*
-  (enumeration, cardinality, disjointness, reference integrity,
-  reachability), never machinery - RDF/OWL rejected for gating
-  (open-world / no-unique-name semantics merge where a gate must
-  reject; SHACL is the W3C answer if formal checking is ever wanted),
-  JSON-LD rejected as operating format. Substrate confirmed: plain
-  YAML/JSON, schema at the door, Python joins at the ledger;
-  right-first-time layer = entity model + stable IDs + named
-  constraint kinds.
-- Ratified set V1-V10, headline shapes: per-term glossary files at
-  `specs/vocabulary/` (filename = stable ID, flat dir, no stored
-  index - `/sdlc vocab` computed listing is the landing point);
-  optional `entities:` contract field (0005 amendment path); G0
-  coverage join (ratified-only resolution; missing term = unresolved
-  dependency, forks a vocab task, never fails the work); G0 agent
-  vocabulary interface (annotations only - harness stays in the
-  per-gate arc); greenfield seed interview (terms born ratified) and
-  brownfield extractor (born draft, `sources:` provenance);
-  `/sdlc vocab` / `vocab add` / `vocab extract` day-2 family
-  (ratification un-tooled: class-S edit, PR merge = interim approval
-  record); class-E `constraints.yaml` born non-empty (G4.3 / G4.6 /
-  `fixes:` / G10.1 enumerated retroactively); evolution = intake
-  accretion + conversion ratchet + sunset lifecycle + versioning
-  policy; RDF projection map deferred per 0008 discipline.
-- Verified this session: the kit repo is **not** self-initialized (no
-  SDLC.md / .sdlc/ / specs/ at root). V9 decides `/sdlc init` runs
-  here at implementation start - the first contract through this
-  repo's own G0 is the vocabulary feature itself, and the kit's
-  brownfield extraction (formalizing the registry's existing terms)
-  is the extractor's first fixture.
-- Uncommitted at handoff: `decisions/0017-vocabulary-layer.md` (new),
-  `plan.md` (session-15 refresh), this STATE regen - commit-session
-  lands them as the session commit.
+- Session 16 (2026-07-28): **the vocabulary layer is implemented and
+  live** - ADR 0017's ratified set shipped end to end in seven commits
+  (5e47b87..2f7e11a + close). V9 self-host first: /sdlc init
+  (brownfield, python) makes the kit consumer 2, and the
+  vocabulary-layer contract went ready-green through this repo's own
+  intake - G0.1 (and now G0.2) read enforced-in-fact here. Docs Pass 0
+  authored red, flipped green as passes shipped.
+- Shipped surfaces: glossary door (glossary-term schema v1, VT000-009,
+  bare-date normalization, stable-ID + closed-world relation checks);
+  `entities:` + the G0.2 coverage join (contract schema 1.1.0,
+  TC010-012 errors + W001 sunset-window warning on a new severity
+  channel); `/sdlc vocab` family (vocab-list computed listing,
+  vocab-add VT002-tripwire skeleton, extract flow + greenfield seed in
+  SKILL.md, intake taught the fork move); constraint registry born
+  non-empty (5 entries incl. the live entities-coverage row, class E
+  self-declared, VC000-003). Extraction fixture is real: 10 terms from
+  the kit's own registry, 3 ratified (task-contract, gate,
+  vocabulary-term - per the contract's own sketch), 7 draft.
+- Found-and-fixed en route: the wheel shipped **no schemas at all**
+  (editable install masked it; any consumer CI crashed at first
+  contract) - schemas now live inside the package, proven by a
+  non-editable install validating this repo green from outside
+  (Two-Key pass). Audit: severity-aware (CONTRACT-WARNED), vocab door
+  (VOCAB-INVALID), specs/vocabulary/ exempt from the orphan sweep -
+  that one found live by the stale installed audit. Kit 0.3.0. Suite
+  37 -> 85 green; audit clean.
+- **Pushed to origin/main at session end** (user-approved wrap). The
+  scaffolded CI now installs the pushed kit - the first GitHub run of
+  the vocab-check step is the 0.3.0 distribution loop's confirmation.
+  Remaining consumer move: update the /sdlc plugin (the cache copy
+  predates this session and mis-flags the glossary as an orphan).
+- Out of contract scope, left stale for the user (one-liners or a g9
+  intake): README.md tree line, CONVENTIONS.md schema ref,
+  .vscode/settings.json raw URL - all still name the old root
+  schemas/ path.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. **Implementation plan for the ratified set** (plan.md step 5), ADR
-   order: V9 self-host init, V10 docs Pass 0 (docs/vocabulary.md +
-   USAGE, red markers), then engine-before-skill passes: glossary
-   schema + door check, `entities:` field + G0 join, `/sdlc vocab`
-   subcommands + extractor, constraints.yaml; suites green throughout.
-2. **Per-gate agent arc** (0017 V4's named neighbor): harness, venue,
-   verdict plumbing, plugin `agents/` distribution. V4 fixed the G0
-   agent's vocabulary interface; the G0 slot's design input stays on
-   record at engine `PILOT-NOTES.md`.
-3. **Pilot continues** (engine repo's own session): M0 through the
-   gates with a fresh Developer context - Q5 reality data; gate-passage
-   notes keep feeding the agent design.
-4. Unchanged deferrals: Q4 numbers + activation build items (0015
-   inventory); PyPI publish; explainer PDF into docs/ if wanted.
+1. **Plugin update**, and verify the first GitHub CI run green
+   (vocab-check step included) - that closes the 0.3.0 distribution
+   loop.
+2. **Ratify or prune the 7 draft terms** - class-S status flips, the
+   user's cheap action; the glossary is the approval venue now.
+3. **Per-gate agent arc** (0017 V4's named neighbor): harness, venue,
+   verdict plumbing, plugin agents/ distribution; V4 fixed the G0
+   agent's vocabulary interface.
+4. **Pilot M0 session** (engine repo): first consumer of the vocab
+   family via `/sdlc vocab extract`; Q5 reality data.
+5. Deferrals unchanged: Q4 numbers (now incl. the sunset notice
+   floor), PyPI publish, explainer PDF; V8 RDF map trigger-gated.
 
 ## Open questions
-- Q4 thresholds, numeric only - vocabulary sunset notice floor (0017
-  V7c) now rides here too.
-- Q5 two-channel decorrelation; named sub-question: the Developer's
-  context contents - the M0 implementation session is the first live
-  data point.
+- Q4 thresholds, numeric only - vocabulary sunset notice floor rides
+  here.
+- Q5 two-channel decorrelation; the M0 session remains the first live
+  data point for the Developer's context contents.
 - Per-gate agent shape: venue, context assembly, verdict format,
-  plugin versioning - G0's vocabulary judgments now fixed by 0017 V4;
-  the rest stays open.
+  plugin versioning - G0's vocabulary judgments fixed by 0017 V4; the
+  rest open.
 
-(Q6 stream framing holds: the engine is consumer 1; this repo becomes
-consumer 2 at the V9 self-host.)
+(Q6 resolved in fact: the engine repo is consumer 1, this repo is
+consumer 2 - both initialized, both under their own gates.)

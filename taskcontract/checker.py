@@ -15,7 +15,7 @@ from pathlib import Path
 import yaml
 from jsonschema import Draft202012Validator
 
-SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schemas" / "task-contract.schema.json"
+SCHEMA_PATH = Path(__file__).resolve().parent / "schemas" / "task-contract.schema.json"
 PROFILES = ("ready", "draft")
 
 
@@ -25,6 +25,7 @@ class Violation:
     path: str
     rule: str
     message: str
+    severity: str = "error"  # "warning" rides the same channel, never gates
 
     @property
     def line(self) -> str:
@@ -112,5 +113,17 @@ def validate_path(file, profile: str = "ready", schema_doc: dict | None = None) 
         if key not in seen:
             seen.add(key)
             violations.append(Violation(name, err.json_path, rule, message))
+
+    if profile == "ready":
+        # The G0 coverage join (ADR 0017 V3) activates when the contract
+        # sits in a specs tree - specs/<id>/contract.yaml - where the
+        # sibling specs/vocabulary/ is findable. Loose files (fixtures,
+        # ad-hoc validation) get schema checks only. Local import: the
+        # vocabulary module already imports Violation from here.
+        parents = list(Path(file).resolve().parents)
+        if len(parents) >= 3 and parents[1].name == "specs":
+            from .vocabulary import coverage_join
+            violations.extend(coverage_join(name, instance, parents[2]))
+
     violations.sort(key=lambda v: (v.path, v.rule))
     return violations

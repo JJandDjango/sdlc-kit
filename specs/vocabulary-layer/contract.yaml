@@ -1,0 +1,124 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: vocabulary-layer
+
+intent: >-
+  The kit carries an executable vocabulary layer per ADR 0017: glossary
+  terms live as per-term YAML files under specs/vocabulary/, validated
+  at the door against a kit-side schema; task contracts may declare the
+  terms they operate on through an optional entities field that G0
+  joins against ratified terms only - a missing or draft term surfaces
+  as an unresolved dependency naming the term, never a silent pass and
+  never a failure of the work itself; a constraint registry enumerates
+  the pipeline's existing cross-artifact joins as named checkable
+  entries; and the /sdlc vocab day-2 family (computed listing, add,
+  extract) operates the layer in any initialized repo, this one
+  included. Shared meaning between human and agent becomes something
+  the pipeline executes rather than prose both merely read.
+
+scope:
+  - schemas/
+  - taskcontract/
+  - skills/sdlc/
+  - tests/
+  - docs/
+  - USAGE.md
+  - specs/vocabulary/
+  - .github/workflows/sdlc.yml
+  - pyproject.toml
+
+non_goals:
+  - Per-gate agent harness, venue, or plugin distribution - its own
+    arc; only the G0 vocabulary interface definition rides ADR 0017
+  - RDF, OWL, or SHACL machinery in any form; the RDF projection map
+    stays a deferred build item behind its ADR 0008 trigger
+  - Numeric thresholds (Q4), including the vocabulary sunset notice
+    floor
+  - Product-domain vocabulary content for consumer repos - theirs to
+    author through these venues
+
+decomposition:
+  - unit: docs-pass-0
+    done_means: docs/vocabulary.md and a USAGE.md vocabulary section
+      exist before any vocabulary code ships, every ratified surface
+      listed with a red status marker
+    acceptance_sketch:
+      - docs/vocabulary.md carries one red-marked section per ratified
+        surface (glossary family, coverage join, vocab subcommands,
+        constraint registry, evolution)
+      - USAGE.md vocabulary section shows the consumer-facing
+        commands, red-marked
+  - unit: glossary-door
+    done_means: schemas/glossary-term.schema.json (versioned) ships
+      and the validator checks every specs/vocabulary/ term file
+      against it at the door; a repo without the directory validates
+      vacuously green
+    acceptance_sketch:
+      - a well-formed term file passes; each schema violation yields a
+        named diagnostic pointing at the file and field
+      - kind and status enums, relations shape, and since/sunset
+        fields are covered by tests
+      - an absent specs/vocabulary/ directory produces zero
+        diagnostics
+  - unit: entities-join
+    done_means: the task-contract schema accepts an optional entities
+      array (ADR 0005 amendment path) and the ready profile joins
+      every ref against the glossary, resolving ratified terms only;
+      draft or missing terms produce unresolved-dependency diagnostics
+      naming each term; deprecated terms warn inside their sunset
+      window and error past it
+    acceptance_sketch:
+      - a contract whose refs are all ratified validates green; a
+        draft or missing ref goes red naming the term
+      - a contract without the field validates exactly as before
+      - a deprecated term warns before its sunset date and errors
+        after it
+  - unit: vocab-skill-family
+    done_means: /sdlc vocab renders a computed listing (no stored
+      index), vocab add scaffolds a term skeleton, vocab extract
+      drafts terms from declared surfaces with sources provenance;
+      the init greenfield branch seeds terms through the same
+      machinery, born ratified
+    acceptance_sketch:
+      - listing output derives from the term files at call time
+      - extracted terms carry sources and status draft; ratification
+        stays a hand edit approved by PR merge
+      - a greenfield init interview seeds 5-15 terms born ratified
+  - unit: kit-extraction-fixture
+    done_means: vocab extract has run against this repo's own
+      declared surfaces (gate registry, schemas, ADRs); the kept
+      terms are ratified in specs/vocabulary/ and stand as the
+      extractor's first fixture
+    acceptance_sketch:
+      - specs/vocabulary/ holds this repo's ratified terms with
+        sources provenance
+      - the pipeline's core nouns (task contract, gate, vocabulary
+        term) are present and ratified
+  - unit: constraint-registry
+    done_means: specs/vocabulary/constraints.yaml validates at the
+      door (id, kind enum, subjects as term refs, check, status) and
+      is born non-empty with the four existing pipeline joins (G4.3
+      traceability, G4.6 write surface, fixes resolution, G10.1
+      coherence) enumerated retroactively; the registry is class E in
+      the enforcement manifest
+    acceptance_sketch:
+      - a registry entry whose subject names an unknown term goes red
+        (reference integrity)
+      - the four retroactive entries are present, each with kind and
+        implementing check named
+      - the enforcement manifest marks the registry class E
+  - unit: docs-to-green
+    done_means: every shipped surface's marker is flipped green in
+      docs/vocabulary.md; the gate registry G0 row and deep page
+      carry the coverage join; task-contract.md documents the
+      entities field; the full suite and /sdlc audit are green
+    acceptance_sketch:
+      - no red marker remains for a shipped surface
+      - the G0 registry row names the vocabulary coverage join
+      - pytest and /sdlc audit both exit zero
+
+dependencies: []
+
+provenance:
+  origin: human-request

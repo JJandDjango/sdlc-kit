@@ -1,0 +1,11 @@
+term: spec-artifact
+name: Spec artifact
+definition: An immutable artifact under the protected specs root encoding what must hold before implementation may proceed.
+kind: entity
+relations:
+  part_of:
+    - gate
+status: draft
+since: 2026-07-28
+sources:
+  - docs/gates.md

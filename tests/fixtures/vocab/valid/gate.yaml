@@ -1,0 +1,6 @@
+term: gate
+name: Gate
+definition: A checkpoint in the delivery pipeline that authors or enforces conditions an artifact must satisfy before work proceeds.
+kind: entity
+status: ratified
+since: 2026-07-28

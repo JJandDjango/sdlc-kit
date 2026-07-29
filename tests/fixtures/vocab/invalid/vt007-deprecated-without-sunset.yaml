@@ -1,0 +1,6 @@
+term: vt007-deprecated-without-sunset
+name: Deprecated without sunset
+definition: Deprecation must set the sunset date that opens the notice window.
+kind: entity
+status: deprecated
+since: 2026-07-28

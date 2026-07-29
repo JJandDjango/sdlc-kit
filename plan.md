@@ -1,34 +1,44 @@
-# Plan - Session 15 (2026-07-28)
+# Plan - Session 16 (2026-07-28) - EXECUTED
 
-The session's design input arrived from the user: a review of "Why
-Agentic Systems Need Ontologies" (Coyle, AI Engineer) against the
-standing deterministic-first directive. Outcome: the vocabulary layer -
-shared language as executable definitions - designed, ratified, and
-recorded as ADR 0017 (glossary family, `entities:` field, G0 coverage
-join, G0 agent vocabulary interface, greenfield seed / brownfield
-extraction, `/sdlc vocab` day-2 family, constraint registry, evolution
-loops, RDF map deferred, kit self-hosting, docs Pass 0). The import
-ruling: constraint semantics, never RDF/OWL/JSON-LD machinery - plain
-YAML/JSON, schema at the door, Python joins at the ledger.
+Implementation session for the ratified vocabulary layer (ADR 0017,
+V1-V10). All ten steps ran to completion in seven commits
+(5e47b87..2f7e11a + the close); suite 37 -> 85 green throughout, audit
+clean, Two-Key consumer-path verification passed.
 
-## This session
+## This session (all done)
 
-1. Refresh this plan (done).
-2. Design input: video review + kit docs mapping (done - review
-   delivered in-conversation; gates.md + 0008 grounded the mapping).
-3. Feature list interrogated and ratified (done - V1-V10; V1 closed
-   per-term-files + computed listing, no stored index).
-4. Record the design doc (done - decisions/0017-vocabulary-layer.md).
-5. Next: implementation plan scoped to the ratified set. Order per
-   ADR: V9 self-host (`/sdlc init` on this repo; first contract = the
-   vocabulary feature), V10 docs Pass 0 (docs/vocabulary.md + USAGE,
-   red markers), then engine-first passes (glossary schema + door,
-   `entities:` + G0 join, `/sdlc vocab` subcommands + extractor,
-   constraints.yaml), suites green throughout.
+1. Plan refreshed and user-ratified.
+2. V9 self-host: /sdlc init brownfield+python; audit clean (5e47b87).
+3. V9 first contract: vocabulary-layer ready-green through this repo's
+   own intake - G0.1 enforced-in-fact here (830fd3e).
+4. V10 docs Pass 0: docs/vocabulary.md + USAGE section 5, red-marked
+   before code (2395554).
+5. Pass A glossary door: glossary-term schema v1, VT000-VT009, schemas
+   relocated into the package - closed a live distribution gap (the
+   wheel shipped no schemas; non-editable installs crashed) (6b927dd).
+6. Pass B entities + G0.2 join: schema 1.1.0, TC010-012 + W001
+   warning channel, sunset window semantics (ee86ad6).
+7. Pass C vocab family: vocab-list / vocab-add / vocab-check CLI,
+   SKILL.md flows + greenfield seed, extraction fixture live (10 real
+   terms: 3 ratified, 7 draft), audit VOCAB-INVALID / CONTRACT-WARNED
+   + vocabulary-dir orphan exemption (eed47fb).
+8. Pass D constraint registry: born non-empty (5 entries incl. the
+   live entities-coverage join), class E self-declared, VC000-003
+   (c06bc7b).
+9. Docs to green: gates.md G0.2 row, G0 deep page condition block +
+   field-table row, enforced-in-fact recorded; verification battery
+   (2f7e11a).
+10. Close: MAP row, this plan, STATE regen, session commit.
 
-Deferred until wanted or until pilot reality: per-gate agent harness
-arc (ADR 0017's named neighbor); PyPI publish; explainer PDF into
-docs/; Q4 numbers + activation build items (0015 inventory).
+Left for the user (out of contract scope, one-liners or a g9 intake):
+README.md tree line, CONVENTIONS.md schema ref, .vscode/settings.json
+raw URL - all still name the old root schemas/ path. Post-push: update
+the /sdlc plugin (the cached copy predates this session). Ratify or
+prune the 7 draft terms (class-S flips) at leisure.
+
+Deferred unchanged: per-gate agent arc (0017's named neighbor); V8 RDF
+projection map (trigger-gated); Q4 numbers incl. the sunset notice
+floor; PyPI publish; explainer PDF into docs/.
 
 House rules in force: no pipes/chains in any authored command string
 (CI steps included); never Edit/Write under ~/.claude/skills (shell

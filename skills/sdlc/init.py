@@ -35,7 +35,7 @@ from pathlib import Path
 KIT_REPO = "https://github.com/JJandDjango/sdlc-kit"
 KIT_REF = f"git+{KIT_REPO}.git"
 SCHEMA_URL = ("https://raw.githubusercontent.com/JJandDjango/sdlc-kit/"
-              "main/schemas/task-contract.schema.json")
+              "main/taskcontract/schemas/task-contract.schema.json")
 
 TEMPLATE_TO_TARGET = {
     "SDLC.md.template": "SDLC.md",

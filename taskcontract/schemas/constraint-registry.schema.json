@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:sdlc-kit:constraint-registry:v1",
+  "version": "1.0.0",
+  "title": "Constraint registry (vocabulary layer)",
+  "description": "specs/vocabulary/constraints.yaml - the pipeline's named cross-artifact joins (ADR 0017 V6). A class-E enforcement artifact: the file self-declares its class for the 0014 lanes and the future 0010 manifest join. Subjects are term refs - existence is checked by the door, not expressible here; duplicate constraint ids likewise.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "class",
+    "constraints"
+  ],
+  "properties": {
+    "class": {
+      "const": "E"
+    },
+    "constraints": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/constraint"
+      }
+    }
+  },
+  "$defs": {
+    "constraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "subjects",
+        "check",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{2,63}$"
+        },
+        "kind": {
+          "enum": [
+            "enumeration",
+            "cardinality",
+            "disjointness",
+            "reference-integrity",
+            "reachability"
+          ]
+        },
+        "subjects": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{2,63}$"
+          }
+        },
+        "check": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "specified",
+            "enforced",
+            "retired"
+          ]
+        }
+      }
+    }
+  }
+}

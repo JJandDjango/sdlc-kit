@@ -1,0 +1,6 @@
+term: vt002-bad-kind
+name: Bad kind
+definition: This term declares a kind outside the ratified enumeration.
+kind: verb
+status: draft
+since: 2026-07-28

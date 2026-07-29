@@ -1,8 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:sdlc-kit:task-contract:v1",
+  "version": "1.1.0",
   "title": "Task contract (G0 definition-of-ready)",
-  "description": "Phase-0 task contract. Field set: ADR 0005; encoding: ADR 0006. Root schema = draft profile (blocked dependencies representable); validate #/$defs/ready for the G0.1 gate.",
+  "description": "Phase-0 task contract. Field set: ADR 0005, amended by ADR 0017 V2 (optional entities). Root schema = draft profile (blocked dependencies representable); validate #/$defs/ready for the G0.1 gate. The entities coverage join (ratified-only resolution) is a Python-side ready check - not expressible here.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -55,6 +56,15 @@
     },
     "provenance": {
       "$ref": "#/$defs/provenance"
+    },
+    "entities": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]{2,63}$"
+      }
     }
   },
   "$defs": {

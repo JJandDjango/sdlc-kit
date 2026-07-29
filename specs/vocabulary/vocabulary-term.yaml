@@ -1,0 +1,13 @@
+term: vocabulary-term
+name: Vocabulary term
+definition: One ratifiable unit of shared language at specs/vocabulary/<term-slug>.yaml - the filename is the stable ID, and the definition is executable context; gates join contract entities against its status, so meaning is enforced, never assumed.
+kind: entity
+relations:
+  is_a:
+    - spec-artifact
+status: ratified
+since: 2026-07-28
+sources:
+  - docs/vocabulary.md
+  - taskcontract/schemas/glossary-term.schema.json
+  - decisions/0017-vocabulary-layer.md

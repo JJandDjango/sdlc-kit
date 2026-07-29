@@ -1,0 +1,7 @@
+# Numeric gate parameters - the single clock artifact (SDLC kit ADR 0012).
+# PLACEHOLDERS: uncalibrated until this repo's first green run (bootstrap
+# capture). Change control is direction-conditional (SDLC kit ADR 0014):
+# tightenings may auto-approve; loosenings take the full approval lane.
+remediation_windows: {}  # per-gate standing-red windows - filled at activation
+cadences: {}  # sweep / job cadences - filled at activation
+thresholds: {}  # per-gate numeric constants - filled at activation
