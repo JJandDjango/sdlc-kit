@@ -6,10 +6,7 @@ values:
   - human-request
   - g8-escape
   - g9-maintenance
-relations:
-  part_of:
-    - task-contract
-status: draft
+status: ratified
 since: 2026-07-28
 sources:
   - taskcontract/schemas/task-contract.schema.json

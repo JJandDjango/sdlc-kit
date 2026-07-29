@@ -5,7 +5,7 @@ kind: value-set
 values:
   - draft
   - ready
-status: draft
+status: ratified
 since: 2026-07-28
 sources:
   - taskcontract/schemas/task-contract.schema.json
