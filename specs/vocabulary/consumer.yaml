@@ -1,0 +1,10 @@
+term: consumer
+name: Consumer
+definition: A repository that has adopted the kit's gate spine - initialized by /sdlc init, carrying the committed scaffold, and validating its specs with the pip-installed kit; the unit at which distribution, upgrade, and migration are reckoned.
+kind: entity
+status: ratified
+since: 2026-07-29
+sources:
+  - skills/sdlc/SKILL.md
+  - skills/sdlc/init.py
+  - docs/vocabulary.md

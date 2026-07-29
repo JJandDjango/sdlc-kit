@@ -25,3 +25,8 @@ def skill_init():
 @pytest.fixture(scope="session")
 def skill_audit():
     return _load("audit")
+
+
+@pytest.fixture(scope="session")
+def skill_update():
+    return _load("update")

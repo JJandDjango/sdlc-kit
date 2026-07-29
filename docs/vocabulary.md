@@ -142,9 +142,10 @@ v1; door diagnostics `VC000` (unreadable) / `VC001` (schema) / `VC002`
   deletion only at zero references; the notice floor stays Q4.
 - **Versioning** (live) - all three schemas carry `version:`
   (task-contract 1.1.0 after the entities delta; glossary-term and
-  constraint-registry born 1.0.0); deltas ship migration notes in the
-  plugin changelog; tooled consumer migration is deferred until
-  consumer count makes manual lockstep untenable.
+  constraint-registry born 1.0.0); deltas ship migration notes in
+  CHANGELOG.md at the repo root (house rule: no schema version bump
+  merges without its delta note); tooled consumer migration is
+  deferred until consumer count makes manual lockstep untenable.
 
 ## ⚪ Deferred, triggers on record
 
