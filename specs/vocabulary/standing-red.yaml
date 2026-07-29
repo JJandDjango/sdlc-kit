@@ -2,7 +2,7 @@ term: standing-red
 name: Standing red
 definition: A ledger entry in .sdlc/reds.yaml recording a deliberately red gate condition with class, clock origin, and window - visible debt with an expiry, never silent suppression.
 kind: entity
-status: draft
+status: ratified
 since: 2026-07-28
 sources:
   - skills/sdlc/templates/reds.yaml.template
