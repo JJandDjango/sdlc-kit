@@ -31,10 +31,11 @@
   (VOCAB-INVALID), specs/vocabulary/ exempt from the orphan sweep -
   that one found live by the stale installed audit. Kit 0.3.0. Suite
   37 -> 85 green; audit clean.
-- **Not pushed** - the session's commits await user approval; the
-  scaffolded CI installs the kit from git main, so CI stays coherent
-  only once push lands. Post-push: update the /sdlc plugin (the cache
-  copy predates this session and mis-flags the glossary as an orphan).
+- **Pushed to origin/main at session end** (user-approved wrap). The
+  scaffolded CI now installs the pushed kit - the first GitHub run of
+  the vocab-check step is the 0.3.0 distribution loop's confirmation.
+  Remaining consumer move: update the /sdlc plugin (the cache copy
+  predates this session and mis-flags the glossary as an orphan).
 - Out of contract scope, left stale for the user (one-liners or a g9
   intake): README.md tree line, CONVENTIONS.md schema ref,
   .vscode/settings.json raw URL - all still name the old root
@@ -44,8 +45,9 @@
 - None.
 
 ## Next actions
-1. **Push + plugin update** (user approval), then CI green on GitHub
-   confirms the distribution loop for 0.3.0.
+1. **Plugin update**, and verify the first GitHub CI run green
+   (vocab-check step included) - that closes the 0.3.0 distribution
+   loop.
 2. **Ratify or prune the 7 draft terms** - class-S status flips, the
    user's cheap action; the glossary is the approval venue now.
 3. **Per-gate agent arc** (0017 V4's named neighbor): harness, venue,
