@@ -23,16 +23,15 @@
   suite-locked: drift-checked overlay templates render from kit truth
   + date + stack only; interview-only variables land in the
   unrenderable review-by-hand net.
-- Receipts: suite 95 -> 106; the 0.5.0 self-run named exactly its two
-  bump surfaces; audit clean; PromptLang green. Self-pin lag learned
-  the hard way (PR #11 CI run 1): a bump PR cannot pin itself to the
-  tag its own merge creates - the kit's pins ride at v0.4.0 until the
-  post-merge self-pin PR; rule recorded in docs/distribution.md.
-- **PR #11 open from `session-18-dotnet-profile-g0`** - the merge is
-  the approval record for the tooling-profile ratification (class-S).
-  Post-merge sequence: **tag v0.5.0 on the merge**, then the
-  **self-pin PR** (workflow ref + vscode schema URL -> v0.5.0; its
-  green CI proves the tag installs).
+- Receipts: suite 95 -> 106; audit clean; PromptLang green. Self-pin
+  lag learned the hard way (PR #11 CI run 1): a bump PR cannot pin
+  itself to the tag its own merge creates - now doctrine in
+  docs/distribution.md, with the #7 -> #8 sequence generalized.
+- **PR #11 merged 2026-07-30** (the merge = the tooling-profile
+  ratification record); **v0.5.0 tagged on the merge** and pushed.
+  The self-pin PR closes the loop: both refs -> v0.5.0, self-run
+  reads scaffold-current, and its green CI is the tag's install
+  proof.
 
 ## Blockers
 - None.
