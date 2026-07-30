@@ -2,61 +2,58 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-07-29._
+> _Generated 2026-07-29 (session 18)._
 
 ## Now
-- Session 17 (2026-07-29): **the glossary is fully ratified and the
-  distribution loop goes pull** - four PRs merged (#6 ratification
-  walk, #7 distribution-reconciliation, #8 self-pin, #9 vscode
-  one-liner), tags v0.3.0 + v0.4.0 on origin, kit 0.4.0.
-- The ratification walk: all 7 draft terms flipped after stop-by-stop
-  source verification, one user decision per term (PR #6 merge = the
-  approval record). House convention settled en route: value-sets
-  carry no structural relations (provenance-origin shed its part_of;
-  contract-profile is the exemplar).
-- distribution-reconciliation: the first contract through the
-  ratified vocabulary - first real `entities:` declaration, resolved
-  against the kit's first TC010 accretion-born terms (consumer,
-  scaffold - user-ratified at intake). Shipped whole: pinned install
-  refs (KIT_VERSION single-sourced in init.py, test-locked to
-  pyproject; tag-on-bump house rule, first executed at v0.4.0),
-  CHANGELOG.md (migration-notes venue, backfilled 0.1.0-0.3.0, the
-  1.1.0 delta note as exemplar), /sdlc update (report-only drift
-  engine - kit-owned / merge-target / consumer classes,
-  date-wildcard compare, per-file consented apply; Update flow in
-  SKILL.md, PromptLang-green). Docs Pass 0 authored
-  docs/distribution.md red first; markers green; MAP row landed.
-- Dogfood receipts: the engine's first live run named this repo's own
-  two drifted surfaces; the self-pin PR's CI proved `pip install
-  @v0.4.0`; `/sdlc update` reads scaffold-current (exit 0) on main -
-  first time ever. Suite 85 -> 95 green; audit clean; glossary 12/12
-  ratified (registry 5 constraints); plugin cache at post-merge HEAD
-  (restart applies). Morning check: the first GitHub runs of the
-  vocab-check step came back green - the 0.3.0 loop closed before
-  the walk began.
+- Session 18 (2026-07-29): **the stack answer went live** - tooling
+  profiles ship as in-kit template overlays (ADR 0018:
+  profiles/{stack}/profile.json, replace-by-target, drift classes
+  single-sourced in init, no forced migration), dotnet's container
+  live and deliberately empty; kit 0.5.0. The C# arc opened here:
+  goal is per-gate executable baselines for .NET, gaps found in real
+  work repos propagating back as kit fixes (promotion rule: project
+  -> profile -> shape; findings cross, employer code never does).
+- Contract `dotnet-profile-g0` (F1-F9 ratified whole) entered through
+  its own intake: `tooling-profile` born TC011-red and user-ratified
+  at the door (glossary 13/13). The G0 finding is load-bearing: both
+  G0 conditions are artifact checks, zero stack delta - so the slice
+  is container + docs/dotnet-profile.md (13-gate binding table, .NET
+  fit notes, gap register with named triggers, G3 roadmap).
+- Profile-authoring rule surfaced by the first red loop and now
+  suite-locked: drift-checked overlay templates render from kit truth
+  + date + stack only; interview-only variables land in the
+  unrenderable review-by-hand net.
+- Receipts: suite 95 -> 106; the 0.5.0 self-run named exactly its two
+  bump surfaces then read scaffold-current after consented apply +
+  one-line hand-merge; audit clean; PromptLang green.
+- **PR open from `session-18-dotnet-profile-g0`** - the merge is the
+  approval record for the tooling-profile ratification (class-S), and
+  **v0.5.0 tags that merge** (tag-on-bump; not yet tagged).
 
 ## Blockers
 - None.
 
 ## Next actions
-1. **Per-gate agent arc** (0017 V4's named neighbor): harness, venue,
-   verdict plumbing, plugin agents/ distribution; G0's vocabulary
-   interface fixed by V4.
-2. **Pilot M0 session** (engine repo): first consumer of `/sdlc vocab
-   extract` and now `/sdlc update` (its scaffold predates the pin);
-   Q5 reality data.
-3. Carried one-liners, two remaining: README.md tree line,
-   CONVENTIONS.md schema ref - both still name the old root schemas/
-   path (.vscode cleared this session).
-4. Deferrals unchanged: Q4 numbers (sunset notice floor included),
-   PyPI publish (F4 struck 2026-07-29; trigger stands), explainer
-   PDF; V8 RDF map trigger-gated. Registered v1 edge from this
-   session: no consumer opt-out for a deliberately-absent merge
-   target (update reports absence forever).
+1. **G3 slice** (dotnet profile's first heavy payload):
+   Directory.Build.props strict compile, .editorconfig +
+   `dotnet format`, analyzer battery, inner-loop CI job - container
+   decided, the work is binding content. Open sub-question: brownfield
+   drift classes for .editorconfig/props (merge-target vs kit-owned).
+2. **Per-gate agent arc** (0017 V4's neighbor, unchanged): harness,
+   venue, verdict plumbing, plugin agents/ distribution.
+3. **Pilot M0 session** (engine repo): now also the first
+   profile-aware `/sdlc update` consumer; Q5 reality data.
+4. Carried one-liners, two remaining: README.md tree line,
+   CONVENTIONS.md schema ref (both still name the old root schemas/
+   path).
+5. Deferrals unchanged: Q4 numbers, PyPI publish (trigger stands),
+   explainer PDF, V8 RDF map; new registered gaps behind triggers:
+   Azure DevOps variant, Husky.NET hooks, dotnet-tool wrapper.
 
 ## Open questions
 - Q4 thresholds, numeric only.
-- Q5 two-channel decorrelation - the M0 session remains the first
-  live data point.
+- Q5 two-channel decorrelation - M0 remains the first live data point.
 - Per-gate agent shape: venue, context assembly, verdict format,
-  plugin versioning - G0's judgments fixed; the rest open.
+  plugin versioning.
+- G3 slice's brownfield class call (above) - decide inside that
+  contract, not before.
