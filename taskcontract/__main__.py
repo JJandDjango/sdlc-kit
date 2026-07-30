@@ -9,6 +9,7 @@ from pathlib import Path
 
 from .checker import PROFILES, load_schema, validate_path
 from .scaffold import scaffold
+from .suppression_audit import main_audit
 from .vocabulary import (VOCAB_DIR, list_terms, load_glossary_schema,
                          registry_size, scaffold_term, validate_vocab_root)
 
@@ -48,7 +49,21 @@ def main(argv=None) -> int:
     vadd.add_argument("slug", help="term slug (schema pattern: lowercase, digits, hyphens)")
     vadd.add_argument("--root", type=Path, default=Path("."),
                       help="repo root that holds specs/ (default: cwd)")
+    audit = sub.add_parser(
+        "suppression-audit",
+        help="G4.10 four-vector diff check: no new weakening of gating constraints")
+    audit.add_argument("--base", default=None,
+                       help="diff base sha (default: resolved from the Actions event)")
+    audit.add_argument("--head", default="HEAD",
+                       help="diff head (default: HEAD)")
+    audit.add_argument("--repo", default=".",
+                       help="repository to diff (default: cwd)")
+    audit.add_argument("--json", action="store_true", dest="as_json",
+                       help="emit findings as a JSON array (the agent loop substrate)")
     args = parser.parse_args(argv)
+
+    if args.command == "suppression-audit":
+        return main_audit(args)
 
     if args.command == "new":
         try:

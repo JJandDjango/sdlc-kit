@@ -1,58 +1,86 @@
-# Plan - Session 20 (2026-07-30) - dotnet tooling profile, G3 slice - EXECUTED
+# Plan - Session 21 (2026-07-30) - dotnet tooling profile, G4 mechanical core slice
 
-Ratified by the user in-session: F1-F9 kept whole. All steps ran:
-contract dotnet-profile-g3 ready-green through intake (first pass, no
-TC loop), docs Pass 0 authored red and flipped at ship, four overlay
-surfaces + manifest landed (classes per ADR 0019), suite 106 -> 111,
-audit clean, kit 0.6.0. Self-run drift = the known self-pin lag; the
-self-pin PR follows the v0.6.0 tag per distribution doctrine.
-Remaining: commit/PR, tag at merge, self-pin follow-up. Session 19 was harness-side, kit unchanged at 0.5.0.
-The G3 slice is the dotnet overlay's first real payload (roadmap step 2,
-docs/dotnet-profile.md); gate shape ratified at docs/gates/G3-implementation.md.
+Roadmap step 3 (docs/dotnet-profile.md): the merge gate's mechanical
+core lands in the dotnet overlay - echo, full test execution,
+secret/dependency audit - plus the four banked G4-session inputs from
+the G3 page. Gate shape ratified at docs/gates/G4-pre-merge-ci.md
+(eleven conditions, session-8 walk); this slice binds four (G4.1,
+G4.9, G4.10, G4.11); the remaining seven stay 🔴 per roadmap step 4.
+Kit ships as 0.7.0.
 
 ## Feature list (WHAT - strike / keep / amend)
 
-- **F1 Directory.Build.props overlay surface** - G3.3's five ratified
-  flags (Nullable enable, TreatWarningsAsErrors, AnalysisLevel
-  latest-all, CheckForOverflowUnderflow, AllowUnsafeBlocks off) plus
-  G3.2 wiring: EnforceCodeStyleInBuild, StyleCop.Analyzers package ref.
-- **F2 .editorconfig overlay surface** - G3.1 layout rules + G3.2
-  severity map, single-sourced for local build and future G4 echo.
-- **F3 Inner-loop CI workflow** (.github/workflows/sdlc-dotnet.yml) -
-  format verify + strict build as chain-free steps, beside the G0
-  backstop workflow, consumer's own .NET workflow untouched.
-- **F4 Drift-class ruling** (the STATE sub-question, decided at
-  intake): recommend merge-target for .editorconfig and
-  Directory.Build.props (consumers legitimately extend both),
-  kit-owned for the workflow file.
-- **F5 Local hooks** - overlay-replace the base pre-commit config to
-  add the formatter hook; re-register Husky.NET behind a new trigger
-  ("a consumer without Python tolerance") - its old trigger names this
-  slice, so the gap must close or re-register honestly.
-- **F6 Docs** - dotnet-profile.md G3 fit notes, Pass 0 red-first;
-  G3 row flips green at ship; gap register updated (F5's re-trigger).
-- **F7 Tests** - render, classification, and content assertions for
-  the new surfaces; non-dotnet byte-identical regression holds; locked
-  profile-authoring rule holds (kit truth + date + stack only).
-- **F8 Registry + version** - 0.6.0 (KIT_VERSION + pyproject
+- **F1 Merge-gate workflow extension** - sdlc-dotnet.yml (kit-owned)
+  grows from inner-loop echo to the mechanical core: `merge_group`
+  trigger added (queue-authoritative venue; `pull_request` stays as
+  advisory preview building the test-merge ref), the existing three
+  steps stand as G4.1's echo clauses (build / battery / formatter),
+  new steps per F2-F5; header re-scoped; every step chain-free;
+  consumer workflows untouched.
+- **F2 Full test execution (G4.11)** - `dotnet test` solution-wide
+  after the strict build (`--no-build`); zero-tests-discovered = FAIL
+  guard (mechanism ruled at developer phase); skip/quarantine policy =
+  enforcement-pass material, named line in docs.
+- **F3 Secrets clause (G4.9 clause 1)** - gitleaks diff-mode step over
+  base..head; masked diagnostics, rotation-first fit note. Binding
+  ruled at intake - recommendation: `docker run` of the MIT gitleaks
+  image (single chain-free segment, no org license wall) over
+  gitleaks-action.
+- **F4 Dependency clause (G4.9 clause 2 + locked graph)** -
+  Directory.Build.props (merge-target) gains the audit block
+  (`RestorePackagesWithLockFile`, `NuGetAuditMode` all, NU1901-1904 as
+  errors); workflow restore goes `--locked-mode`; brownfield lockfile
+  story in fit notes (absent lockfile = red, adoption pace with the
+  consumer). License allowlist + SLA backstop (clause 3) deferred with
+  named lines - the first needs the policy artifact, the second G9.2
+  tracking.
+- **F5 Suppression audit (G4.10)** - the doc-promised build item: new
+  `taskcontract` subcommand implementing the four-vector diff check
+  (in-source suppressions incl. Skip/Ignore forms; severity
+  downgrades; strictness-flag weakening; exclusion widening) over
+  base..head with the .NET construct lists; workflow step installs the
+  pinned kit and runs it (per-event base resolution inside the
+  subcommand, so steps stay dumb and chain-free); per-vector
+  diagnostics naming the legitimate channel.
+- **F6 Battery-CWE map disposition** - the fourth banked input (three
+  strata substantiating taxonomy 691/697/703 rows + golden test).
+  Recommendation: re-register (Husky.NET precedent) behind "first
+  scanner slice (G4.7) or next taxonomy session" - data-audit work
+  orthogonal to the overlay payload; keeping it would dilute the
+  shipping slice.
+- **F7 Docs** - dotnet-profile.md G4 fit-notes section, Pass-0
+  red-first: venue semantics (queue-ready via `merge_group`,
+  queue-less fallback = strict serial merges), brownfield lockfile
+  story, the G3 "review-blocking by policy" line flips to the live
+  audit, deferral register (license allowlist, SLA backstop, seven
+  remaining conditions). Binding-table G4 row flips at ship to
+  green-core with honest remainder marking.
+- **F8 Tests** - content assertions for the new workflow steps + props
+  audit block; suppression-audit fixture corpus (positive + negative
+  per vector); chain-free check extended over new steps; non-dotnet
+  byte-identical regression holds; version equality at 0.7.0;
+  profile-authoring lock holds over template edits.
+- **F9 Registry + version** - 0.7.0 (KIT_VERSION + pyproject
   together), CHANGELOG delta note, MAP row touch, tag-on-bump at the
   shipping merge, self-pin follow-up PR per distribution doctrine.
-- **F9 ADR 0019** - enforcement-config drift-class precedent
-  (generalizes to every future profile's G3 slice). Optional - strike
-  if the contract record suffices.
+- **F10 ADR 0020** - merge-gate distribution shape as precedent: one
+  workflow serving both venues (PR advisory / queue authoritative),
+  and pipeline-native checks shipping as kit modules behind the pin,
+  never copied scripts. Strikeable if the contract record suffices;
+  lean keep - it generalizes to every future profile's G4 slice.
 
 ## Steps (scoped by the kept set)
 
-1. Ratify F1-F9 (in conversation).
-2. Intake - /sdlc intake authors specs/dotnet-profile-g3/contract.yaml
-   to ready-green; entities joined; F4's ruling recorded in-contract.
-3. Docs Pass 0 - F6 red-first.
-4. Implement (@developer) - F1-F3 + F5 surfaces, profile.json manifest
-   entries, tests (F7).
-5. ADR 0019 (F9, if kept).
+1. Ratify F1-F10 (in conversation).
+2. Intake - /sdlc intake authors specs/dotnet-profile-g4/contract.yaml
+   to ready-green; F3's binding and F6's disposition ruled in-contract.
+3. Docs Pass 0 - F7 red-first.
+4. Implement (@developer) - F1-F5: workflow + props deltas,
+   taskcontract subcommand, tests (F8).
+5. ADR 0020 (F10, if kept).
 6. Verify (@verifier) - suite green, /sdlc audit clean, self-run still
    exit 0, byte-identical regression green.
-7. Registry touches (F8) - version bump last, tag-on-bump at merge.
+7. Registry touches (F9) - version bump last, tag-on-bump at merge.
 8. Wrap - docs markers flip, STATE regenerated, commit/PR; self-pin PR
    after the tag.
 

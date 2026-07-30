@@ -267,6 +267,58 @@ def test_dotnet_workflow_steps_are_chain_free(tmp_path, skill_init):
         assert not any(c in command for c in ";|&>"), command
 
 
+# --- dotnet G4 mechanical core (contract: dotnet-profile-g4) ---
+
+PROPS_G4_SETTINGS = (
+    "<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>",
+    "<NuGetAudit>true</NuGetAudit>",
+    "<NuGetAuditMode>all</NuGetAuditMode>",
+    "<NuGetAuditLevel>low</NuGetAuditLevel>",
+    "NU1901;NU1902;NU1903;NU1904",
+)
+
+
+def test_dotnet_workflow_carries_g4_mechanical_core(tmp_path, skill_init):
+    skill_init.render_all({**ANSWERS, "stack": "dotnet"},
+                          _templates(skill_init), tmp_path, "2026-07-30")
+    workflow = (tmp_path / ".github/workflows/sdlc-dotnet.yml").read_text(
+        encoding="utf-8")
+    assert "merge_group:" in workflow          # queue-authoritative venue
+    assert "fetch-depth: 0" in workflow        # history for diff-scoped steps
+    # the mechanical core in gate order: locked restore -> echo -> tests
+    restore = workflow.index("dotnet restore --locked-mode")
+    build = workflow.index("dotnet build --no-restore")
+    tests = workflow.index("dotnet test --no-build")
+    assert restore < build < tests
+    assert "TreatNoTestsAsError=true" in workflow  # zero-tests FAIL guard
+    # diff-scoped steps: masked secrets scan + the audit from the pinned kit
+    assert "gitleaks" in workflow and "--redact" in workflow
+    assert "python -m taskcontract suppression-audit" in workflow
+    assert f"@v{skill_init.KIT_VERSION}" in workflow
+    assert workflow.index("pip install") < workflow.index(
+        "python -m taskcontract suppression-audit")
+
+
+def test_dotnet_props_carry_dependency_audit_block(tmp_path, skill_init):
+    skill_init.render_all({**ANSWERS, "stack": "dotnet"},
+                          _templates(skill_init), tmp_path, "2026-07-30")
+    props = (tmp_path / "Directory.Build.props").read_text(encoding="utf-8")
+    for needle in PROPS_G4_SETTINGS:
+        assert needle in props, needle
+
+
+def test_dotnet_diff_scoped_steps_skip_push_runs(tmp_path, skill_init):
+    """The secrets scan and suppression audit are diff-scoped (G4.10 frame):
+    they run on pull_request and merge_group, never on push-main where no
+    candidate diff exists."""
+    skill_init.render_all({**ANSWERS, "stack": "dotnet"},
+                          _templates(skill_init), tmp_path, "2026-07-30")
+    workflow = (tmp_path / ".github/workflows/sdlc-dotnet.yml").read_text(
+        encoding="utf-8")
+    gates = workflow.count("if: github.event_name != 'push'")
+    assert gates == 4  # secrets, setup-python, kit install, audit
+
+
 def test_dotnet_enforcement_configs_are_merge_targets(tmp_path, skill_init):
     sentinel_props = "<Project>mine</Project>\n"
     sentinel_ec = "root = true  # mine\n"

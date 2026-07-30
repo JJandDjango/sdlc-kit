@@ -30,12 +30,12 @@ flowchart LR
 | task-contract schema | Phase-0 definition-of-ready: dual-profile JSON Schema + `taskcontract` validator (TCnnn diagnostics) | implemented (v1) | [docs/task-contract.md](docs/task-contract.md) |
 | REQ-ID traceability | Criterion-annotation format + CI script requiring every REQ-ID -> >=1 passing test | designed | [decisions/0011](decisions/0011-criterion-traceability-format.md) |
 | custom analyzers | House conventions encoded as Roslyn analyzers + code fixes (fed by convention extraction) | planned | no doc yet |
-| verifier checks | Write-surface immutability + suppression audit (one diff job, G4.6 + G4.10) + enforcement-layer change control | designed | [decisions/0010](decisions/0010-write-surface-immutability.md) |
+| verifier checks | Write-surface immutability + suppression audit (one diff job, G4.6 + G4.10) + enforcement-layer change control; suppression half shipped as `taskcontract suppression-audit` (0.7.0) | partial (v1) | [decisions/0010](decisions/0010-write-surface-immutability.md) |
 | pilot stack | Minimal phase 3-4 stack (formatter, StyleCop, strict compile, arch tests, ratchets) on a pilot repo | planned | no doc yet |
 | distribution skill | `/sdlc` init + intake (F10) + new (F11) + audit + vocab family: the kit's delivery vehicle - no-clobber gate-spine scaffold, Cairn-shaped, marketplace-installable | implemented (v1) | [decisions/0016](decisions/0016-distribution-before-activation.md) |
 | vocabulary layer | Executable shared language: glossary door (VT/VC), `entities:` + G0.2 coverage join (ratified-only, fork semantics), class-E constraint registry, `/sdlc vocab` family; kit self-hosted as consumer 2 | implemented (v1) | [docs/vocabulary.md](docs/vocabulary.md) |
 | distribution reconciliation | Consumer-side update story: tagged install pins (tag-on-bump), CHANGELOG.md migration notes, `/sdlc update` scaffold-drift engine (report-only, per-file consented apply) | implemented (v1) | [docs/distribution.md](docs/distribution.md) |
-| tooling profiles | Per-stack template overlays (`profiles/{stack}/profile.json`) the stack answer selects at init/update; dotnet carries the G3 payload (strict props, editorconfig, inner-loop workflow, formatter hook - classes per ADR 0019) | implemented (v1) | [docs/dotnet-profile.md](docs/dotnet-profile.md) |
+| tooling profiles | Per-stack template overlays (`profiles/{stack}/profile.json`) the stack answer selects at init/update; dotnet carries G3's inner loop + G4's mechanical core (strict props + locked-graph audit, editorconfig, merge-gate workflow, formatter hook - classes per ADRs 0019/0020) | implemented (v1) | [docs/dotnet-profile.md](docs/dotnet-profile.md) |
 
 Design source: `HANDOFF_gate-architecture_2026-07-22.md` (root, frozen). The
 gate map lives as the registry `docs/gates.md` (gates G0-G10 + PL-*, with

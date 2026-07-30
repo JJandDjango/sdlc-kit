@@ -1,7 +1,12 @@
-# SDLC kit dotnet inner-loop echo (written by /sdlc init, {{ date }}).
-# Re-runs G3's mechanical conditions in the tamper-proof venue: format
-# verify (G3.1) + one strict build (G3.2 battery + G3.3 flags). Sits
-# beside sdlc.yml; your own .NET workflows are untouched.
+# SDLC kit dotnet merge gate (written by /sdlc init, {{ date }}).
+# G4's mechanical core in the tamper-proof venue: the G3 echo received
+# (G4.1: strict build + battery in-build + format verify), full test
+# execution (G4.11), secrets + dependency audit (G4.9 clauses 1-2),
+# and the four-vector suppression audit (G4.10) run from the pinned
+# kit. pull_request is the advisory preview on the test-merge ref;
+# merge_group is the authoritative queue venue; push-main re-runs the
+# result-scoped core. Sits beside sdlc.yml; your own .NET workflows
+# are untouched.
 # Binding status: {{ kit_repo }}/blob/main/docs/dotnet-profile.md
 name: sdlc dotnet
 
@@ -9,18 +14,38 @@ on:
   push:
     branches: [main]
   pull_request:
+  merge_group:
 
 jobs:
-  inner-loop:
+  merge-gate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "10.0.x"
-      - name: restore
-        run: dotnet restore
-      - name: format verify (G3.1 gate form)
+      - name: restore (locked graph - G4.9 precondition)
+        run: dotnet restore --locked-mode
+      - name: format verify (G4.1 clause 3)
         run: dotnet format whitespace --verify-no-changes
-      - name: strict build (G3.2 + G3.3, one event)
+      - name: strict build (G4.1 clauses 1-2, one event)
         run: dotnet build --no-restore
+      - name: full test execution (G4.11)
+        run: dotnet test --no-build -- RunConfiguration.TreatNoTestsAsError=true
+      - name: secrets scan (G4.9 clause 1, diff-scoped, masked)
+        if: github.event_name != 'push'
+        env:
+          SDLC_DIFF_BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
+        run: docker run --rm -v ${{ github.workspace }}:/repo -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0=/repo ghcr.io/gitleaks/gitleaks:v8 git --no-banner --redact --log-opts=$SDLC_DIFF_BASE..HEAD /repo
+      - uses: actions/setup-python@v5
+        if: github.event_name != 'push'
+        with:
+          python-version: "3.13"
+      - name: install the sdlc kit
+        if: github.event_name != 'push'
+        run: pip install "{{ kit_ref }}"
+      - name: suppression audit (G4.10, four vectors, diff-scoped)
+        if: github.event_name != 'push'
+        run: python -m taskcontract suppression-audit
