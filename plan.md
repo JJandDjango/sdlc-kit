@@ -7,8 +7,9 @@ ratified at the door, 13/13), overlay container + update parity shipped
 flipped at ship, ADR 0018, kit 0.5.0. Self-pin lag surfaced by PR #11
 CI run 1 (a bump PR cannot install the tag its own merge creates):
 pins reverted to v0.4.0 in-PR, rule recorded in docs/distribution.md.
-Post-merge: tag v0.5.0, then the self-pin PR moves both refs (its CI
-is the install proof). The PR merge is the term-flip approval record.
+Post-merge executed 2026-07-30: v0.5.0 tagged on #11's merge, self-pin
+PR #12 merged green - its contracts job proved `pip install @v0.5.0`.
+#11's merge is the term-flip approval record.
 
 > "C# module" = the kit's **dotnet tooling profile** (registry 0008:
 > shapes are language-agnostic; profiles bind them). This session pours
