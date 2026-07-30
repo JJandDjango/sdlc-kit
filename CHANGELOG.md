@@ -9,6 +9,25 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.5.0 - 2026-07-29 (tag `v0.5.0`)
+
+- Tooling profiles (ADR 0018): the recorded `stack:` now selects a
+  template overlay at `templates/profiles/{stack}/` (profile.json
+  manifest; add or replace-by-target; same no-clobber and merge
+  semantics). The dotnet overlay ships as the live container -
+  deliberately empty until its G3 slice; `docs/dotnet-profile.md` is
+  the profile's status page (binding table, fit notes, gap register).
+- `/sdlc update` resolves the consumer's profile from
+  `.sdlc/config.yaml` and reports overlay surfaces in their declared
+  classes; a consumer scaffolded before a profile slice ships sees
+  the new surfaces as `absent` rows with per-file consented apply -
+  no forced migration.
+- Existing consumers: bump the install ref in
+  `.github/workflows/sdlc.yml` and the schema URL in
+  `.vscode/settings.json` when you take this version (`/sdlc update`
+  reports exactly this drift). Schemas: none changed. The glossary
+  gains the ratified `tooling-profile` term.
+
 ## 0.4.0 - 2026-07-29 (tag `v0.4.0`)
 
 - Scaffolded install ref pins to the release tag (`@v{version}`)

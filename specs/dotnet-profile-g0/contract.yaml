@@ -1,0 +1,107 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: dotnet-profile-g0
+
+intent: >-
+  The stack answer recorded at init becomes a live parameter: /sdlc init
+  resolves the payload as the stack-neutral base plus a per-stack
+  tooling-profile overlay (profiles/dotnet ships first - deliberately
+  empty at this G0 slice), /sdlc update compares consumers against the
+  same resolved render, and the dotnet profile's G0 binding is
+  documented for C# shops - same intake venue, validator, and CI
+  backstop, with fit notes and registered gaps. Non-dotnet consumers
+  render byte-identical to today; the container is what the G3+ binding
+  slices land into.
+
+scope:
+  - skills/sdlc/init.py
+  - skills/sdlc/update.py
+  - skills/sdlc/SKILL.md
+  - skills/sdlc/templates/
+  - tests/
+  - docs/dotnet-profile.md
+  - decisions/0018-tooling-profile-distribution.md
+  - MAP.md
+  - CHANGELOG.md
+  - pyproject.toml
+
+non_goals:
+  - Stack-specific G0 checks - both G0 conditions are stack-neutral by
+    construction; this slice ships container plus documentation, no new
+    gate machinery.
+  - G1+ overlay content - the G3 slice (formatter, analyzer battery,
+    strict compile) is the named next task, not this one.
+  - Azure DevOps pipeline variant, Husky.NET local hooks, dotnet-tool
+    validator wrapper - registered as gaps in docs/dotnet-profile.md,
+    not built.
+  - Per-gate agent harness work - the parallel arc (STATE next-action
+    1), untouched here.
+  - PyPI publish - stays deferred behind its registered trigger.
+
+decomposition:
+  - unit: profile-overlay-resolution
+    done_means: init.py resolves the payload as base templates plus
+      templates/profiles/{stack}/ overlay entries (add or replace,
+      per target); an unknown stack or absent overlay dir renders the
+      base exactly as today; no-clobber and merge-target semantics
+      hold for overlay entries; a dotnet answer prints one
+      stack-aware next-steps line; SKILL.md's stack question drops
+      the stack-neutral parenthetical.
+    acceptance_sketch:
+      - a dotnet render with the shipped (empty) overlay differs from
+        a python render only in recorded stack values
+      - a fixture overlay entry lands at its target on a clean tree,
+        is skipped when the target exists, and a fixture merge-target
+        overlay prints its snippet instead of writing
+      - non-dotnet stacks produce today's payload byte-for-byte
+  - unit: update-parity
+    done_means: update.py reads the consumer's stack from
+      .sdlc/config.yaml, resolves the same base-plus-overlay template
+      set, and classifies overlay surfaces with the existing
+      kit-owned / merge-target / consumer classes; unclassified stays
+      the safety net.
+    acceptance_sketch:
+      - a dotnet consumer scaffolded before the overlay existed
+        reports no spurious absent rows while the dotnet overlay is
+        empty
+      - a fixture overlay surface reports absence and drift in its
+        declared class
+      - the self-run on this repo (stack python) still exits 0
+  - unit: dotnet-g0-doc
+    done_means: docs/dotnet-profile.md exists Pass-0 red-first - a
+      binding-status table for G0-G10 plus PL-DOC and PL-PIPE, G0 fit
+      notes for .NET shops (scope authoring, local-Python note, CI
+      backstop unaffected), the gap register, and the roadmap naming
+      the G3 slice next; markers flip green only as units ship.
+    acceptance_sketch:
+      - the page carries a 13-row binding table with every row red at
+        Pass 0
+      - the gap register lists Azure DevOps, Husky.NET, and the
+        dotnet-tool wrapper with their defer rationale
+  - unit: adr-0018
+    done_means: decisions/0018-tooling-profile-distribution.md records
+      the in-kit overlay architecture, the zero-delta G0 finding, the
+      promotion rule (project to profile to shape), and the revisit
+      trigger (a profile needing independent release cadence).
+    acceptance_sketch:
+      - the ADR exists in house format and the docs page links it
+  - unit: version-and-registry
+    done_means: KIT_VERSION and pyproject bump to 0.5.0 together
+      (the equality test holds), CHANGELOG.md carries the 0.5.0 delta
+      note stating overlay semantics, MAP.md gains the tooling-profile
+      component row, and v0.5.0 is tagged at the shipping merge.
+    acceptance_sketch:
+      - the version-equality test is green at 0.5.0
+      - the CHANGELOG 0.5.0 entry names base-plus-overlay resolution
+        and the empty-dotnet-overlay semantics
+
+dependencies: []
+
+provenance:
+  origin: human-request
+
+entities:
+  - tooling-profile
+  - scaffold
+  - consumer

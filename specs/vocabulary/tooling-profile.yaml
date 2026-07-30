@@ -1,0 +1,20 @@
+# Glossary term - vocabulary layer (ADR 0017 V1). Fill every TODO, then loop:
+#   python -m taskcontract vocab-check
+# Ratification is the human act: flip status draft -> ratified in review
+# (class-S edit; the PR merge is the interim approval record).
+
+term: tooling-profile
+
+name: Tooling profile
+
+definition: The kit's per-stack binding layer - a template overlay under skills/sdlc/templates/profiles/{stack}/ that init resolves on top of the stack-neutral base payload, selected by the consumer's declared stack; it binds gate shapes to ecosystem tooling without changing them (the 0008 two-layer model applied at the distribution layer). An absent or empty overlay renders the base exactly.
+
+kind: entity
+
+status: ratified
+since: 2026-07-29
+
+sources:
+  - skills/sdlc/templates/config.yaml.template
+  - skills/sdlc/init.py
+  - docs/gates.md

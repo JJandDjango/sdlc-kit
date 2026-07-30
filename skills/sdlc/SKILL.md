@@ -41,6 +41,10 @@ written when they already exist):
   SDLC.md - .sdlc/config.yaml - .sdlc/clocks.yaml - .sdlc/reds.yaml -
   specs/README.md - .github/workflows/sdlc.yml -
   .pre-commit-config.yaml - .vscode/settings.json
+A stack with a shipped tooling profile overlays additional surfaces
+(templates/profiles/{stack}/profile.json, ADR 0018); dotnet's overlay
+is the live container, deliberately empty until its G3 slice
+(docs/dotnet-profile.md).
 </context>
 
 <instructions>
@@ -61,7 +65,7 @@ written when they already exist):
 3. INTERVIEW batch - but SKIP the questions the invocation already answers: when the invoking text (a charter, script, or explicit user instruction) supplies project name, adoption, and stack, treat those as interview-equivalent and go straight to RENDER; ask only what is missing. Otherwise invoke AskUserQuestion with 3 questions in one call:
    - Q1 header "Project name": "Name for this project?" options: "Use cwd directory name" / "Use git remote name" (offer only if a remote exists) / Other.
    - Q2 header "Adoption": "Greenfield or brownfield?" options: "greenfield - gates from commit zero" / "brownfield - adopt gates additively (no-clobber protects what exists)".
-   - Q3 header "Stack": "Primary stack? (recorded for gate activation; the v1 payload is stack-neutral)" options: "dotnet" / "python" / "typescript" - Other for anything else, free text.
+   - Q3 header "Stack": "Primary stack? (selects the tooling profile overlay at render - dotnet's container is live, per-gate payload lands slice by slice)" options: "dotnet" / "python" / "typescript" - Other for anything else, free text.
 
 4. RENDER - one Bash call:
        python {skill-dir}/init.py --answers '{json}'
