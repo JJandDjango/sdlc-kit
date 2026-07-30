@@ -1,0 +1,4 @@
+{
+  "note": "dotnet tooling-profile overlay (ADR 0018). Deliberately empty at the G0 slice - the container is live, the first payload lands with the G3 slice. Status: docs/dotnet-profile.md.",
+  "templates": {}
+}

@@ -117,3 +117,110 @@ def test_no_spine_exits_2(tmp_path, skill_update, capsys):
     err = capsys.readouterr().err
     assert rc == 2
     assert "No SDLC gate spine" in err
+
+
+# --- tooling-profile parity (contract: dotnet-profile-g0, ADR 0018) ---
+
+import json
+import shutil
+
+
+def _steel_templates(skill_init, tmp_path):
+    """Real templates plus a fixture overlay.
+
+    Drift-checked overlay templates must render from kit truth + date +
+    stack only (profile-authoring rule, ADR 0018); badge.txt models the
+    mis-authored case - an interview-only variable - and must land in the
+    unrenderable safety net, never silently pass.
+    """
+    templates = tmp_path / "templates-fixture"
+    shutil.copytree(_templates(skill_init), templates)
+    profile = templates / "profiles" / "steel"
+    profile.mkdir(parents=True)
+    (profile / "extra.txt.template").write_text(
+        "steel tool config for {{ stack }}\n", encoding="utf-8")
+    (profile / "hooks.yaml.template").write_text(
+        "hooks: steel ({{ date }})\n", encoding="utf-8")
+    (profile / "badge.txt.template").write_text(
+        "badge for {{ project_name }}\n", encoding="utf-8")
+    (profile / "profile.json").write_text(json.dumps({"templates": {
+        "extra.txt.template": {"target": "tools/steel.txt", "class": "kit-owned"},
+        "hooks.yaml.template": {"target": ".steel-hooks.yaml", "class": "merge-target"},
+        "badge.txt.template": {"target": "tools/badge.txt", "class": "kit-owned"},
+    }}), encoding="utf-8")
+    return templates
+
+
+def test_dotnet_consumer_empty_overlay_is_clean(tmp_path, skill_init, skill_update, capsys):
+    """A dotnet consumer sees no spurious rows while the shipped overlay is
+    empty - the pre-0.5.0 scaffold reads current."""
+    skill_init.render_all({**ANSWERS, "stack": "dotnet"},
+                          _templates(skill_init), tmp_path, "2020-01-01")
+    rc = skill_update.main(["--cwd", str(tmp_path)])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "scaffold current" in out
+
+
+def test_read_stack_parses_value_comment_and_absence(tmp_path, skill_init, skill_update):
+    _scaffold(tmp_path, skill_init)
+    assert skill_update.read_stack(tmp_path) == "python"
+    config = tmp_path / ".sdlc/config.yaml"
+    config.write_text("kit: x\nstack: 'dotnet'  # quoted\n", encoding="utf-8")
+    assert skill_update.read_stack(tmp_path) == "dotnet"
+    config.write_text("kit: x\n", encoding="utf-8")
+    assert skill_update.read_stack(tmp_path) == ""
+
+
+def test_stackless_config_scans_base_surfaces_only(tmp_path, skill_init, skill_update, capsys):
+    _scaffold(tmp_path, skill_init)
+    config = tmp_path / ".sdlc/config.yaml"
+    config.write_text("kit: pinned\n", encoding="utf-8")  # stack line gone
+    rc = skill_update.main(["--cwd", str(tmp_path)])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "scaffold current" in out
+
+
+def test_overlay_surface_reports_in_declared_class(tmp_path, skill_init, skill_update):
+    templates = _steel_templates(skill_init, tmp_path)
+    consumer = tmp_path / "consumer"
+    skill_init.render_all({**ANSWERS, "stack": "steel"}, templates, consumer, "2020-01-01")
+
+    rows, is_spine = skill_update.scan(consumer, templates, "steel")
+    assert is_spine
+    by_path = {r.path: r for r in rows}
+    assert by_path["tools/steel.txt"].status == "ok"
+    assert by_path["tools/steel.txt"].klass == "kit-owned"
+    # interview-only variables cannot be compared: the safety net holds
+    assert by_path["tools/badge.txt"].status == "unrenderable"
+
+    (consumer / "tools/steel.txt").unlink()
+    rows, _ = skill_update.scan(consumer, templates, "steel")
+    by_path = {r.path: r for r in rows}
+    assert by_path["tools/steel.txt"].status == "absent"
+    assert by_path["tools/steel.txt"].klass == "kit-owned"
+
+    (consumer / ".steel-hooks.yaml").write_text("hooks: mutated\n", encoding="utf-8")
+    rows, _ = skill_update.scan(consumer, templates, "steel")
+    by_path = {r.path: r for r in rows}
+    assert by_path[".steel-hooks.yaml"].status == "drift"
+    assert by_path[".steel-hooks.yaml"].klass == "merge-target"
+
+
+def test_overlay_apply_honors_classes(tmp_path, skill_init, skill_update):
+    templates = _steel_templates(skill_init, tmp_path)
+    consumer = tmp_path / "consumer"
+    skill_init.render_all({**ANSWERS, "stack": "steel"}, templates, consumer, "2020-01-01")
+
+    target = consumer / "tools/steel.txt"
+    target.write_text("garbage\n", encoding="utf-8")
+    ok, message = skill_update.apply_one(consumer, templates, "steel", "tools/steel.txt")
+    assert ok and "applied" in message
+    assert target.read_text(encoding="utf-8") == "steel tool config for steel\n"
+
+    ok, message = skill_update.apply_one(consumer, templates, "steel", ".steel-hooks.yaml")
+    assert not ok and "merge it by hand" in message
+
+    ok, message = skill_update.apply_one(consumer, templates, "steel", "tools/badge.txt")
+    assert not ok and "needs interview answers" in message

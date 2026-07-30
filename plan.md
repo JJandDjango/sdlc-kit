@@ -1,39 +1,47 @@
-# Plan - Session 17 (2026-07-29) - EXECUTED
+# Plan - Session 18 (2026-07-29) - dotnet tooling profile, G0 slice - EXECUTED
 
-Ratified by the user in-session: sequence + feature set (F4 struck).
-All four steps ran to completion: PR #6 (ratification, merged),
-PR #7 (distribution reconciliation, merged, tag v0.4.0), PR #8
-(self-pin, merged - CI proved the pinned install). Suite 85 -> 95;
-audit clean; glossary 12/12 ratified; v0.3.0 + v0.4.0 on origin.
+Ratified by the user in-session: F1-F9 kept whole. All steps ran:
+contract dotnet-profile-g0 ready-green through intake (tooling-profile
+ratified at the door, 13/13), overlay container + update parity shipped
+(suite 95 -> 106), docs/dotnet-profile.md Pass 0 authored red and
+flipped at ship, ADR 0018, kit 0.5.0. Self-pin lag surfaced by PR #11
+CI run 1 (a bump PR cannot install the tag its own merge creates):
+pins reverted to v0.4.0 in-PR, rule recorded in docs/distribution.md.
+Post-merge: tag v0.5.0, then the self-pin PR moves both refs (its CI
+is the install proof). The PR merge is the term-flip approval record.
+
+> "C# module" = the kit's **dotnet tooling profile** (registry 0008:
+> shapes are language-agnostic; profiles bind them). This session pours
+> the profile container and ships the G0 slice; heavy binding content
+> starts at the G3 slice (next).
 
 ## Steps
 
-1. **Ratification PR** - commit the 7 glossary flips on
-   `session-17-vocab-ratification`, push, open the PR (the merge is
-   the interim approval record per docs/vocabulary.md), CI green,
-   merge, update local main.
-2. **Operational pair** (no new capability):
-   a. Verify the first GitHub CI run of the vocab-check step - DONE
-      before commit: runs 30418987462/30418987423 green on main
-      2026-07-29T03:13Z; the 0.3.0 distribution loop is confirmed.
-   b. Update the stale /sdlc plugin cache (predates session 16;
-      mis-flags the glossary as an orphan).
-3. **Intake: distribution reconciliation loop** - `/sdlc intake` on
-   the ratified set:
-   - F1: pin the scaffolded install ref to a release tag; tagging
-     discipline on version bumps.
-   - F2: CHANGELOG.md materialized, backfilled 0.1.0-0.3.0;
-     delta-note house rule per schema version bump.
-   - F3: `/sdlc update` day-2 command - report-only scaffold drift,
-     consented per-file apply.
-   - F4 (PyPI publish): struck - stays deferred behind its trigger.
-   - entities: let TC010 fork accretion-born vocabulary tasks if the
-     contract names unresolved terms (consumer, scaffold, ...).
-4. Implement the kept set, gated by the ready-green contract.
+1. **Ratify the design** - feature list F1-F9 (in conversation). Strike /
+   keep / amend; the kept set scopes everything below.
+2. **Intake** - `/sdlc intake` authors `specs/dotnet-profile-g0/contract.yaml`
+   to ready-green; declare `entities:`; fork `tooling-profile` as a draft
+   vocabulary term if nothing ratified fits (user ratifies, never the loop).
+3. **Docs Pass 0** - author `docs/dotnet-profile.md` red-first: binding
+   status for all 13 gates (G0 🟡 until shipped, rest 🔴), G0 fit notes,
+   registered gaps, roadmap order.
+4. **Implement** (@developer): profile-overlay resolution in `init.py`
+   (base + `templates/profiles/{stack}/`, unknown stack = base only,
+   no-clobber and merge-target semantics preserved) + `update.py` parity
+   (stack read from `.sdlc/config.yaml`) + stack-aware next-steps note +
+   tests (fixture profile; byte-identical base-payload regression).
+5. **ADR 0018** - tooling-profile distribution: in-kit overlay, zero-delta
+   G0 finding, promotion rule (project -> profile -> shape), revisit
+   trigger (a profile needing independent release cadence).
+6. **Verify** (@verifier): suite green, `/sdlc audit` clean, `/sdlc update`
+   self-run still exit 0, overlay edge cases (pre-0.5.0 dotnet consumer
+   sees no spurious absent rows).
+7. **Registry touches** - MAP component row; CHANGELOG delta note;
+   KIT_VERSION bump + tag at the shipping merge (tag-on-bump).
+8. **Wrap** - docs markers flip, STATE regenerated, commit/PR.
 
-Carried user one-liners (out of scope, unchanged): README.md tree
-line, CONVENTIONS.md schema ref, .vscode/settings.json raw URL still
-name the old root schemas/ path.
+Carried user one-liners (out of scope, unchanged): README.md tree line
+and CONVENTIONS.md schema ref still name the old root schemas/ path.
 
 House rules in force: no pipes/chains in any authored command string
 (CI steps included); never Edit/Write under ~/.claude/skills (shell

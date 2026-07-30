@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import tomllib
 from pathlib import Path
 
@@ -95,3 +96,101 @@ def test_cli_round_trip(tmp_path, skill_init, capsys):
     out = capsys.readouterr().out
     assert rc == 0
     assert "merge-by-hand" in out and "Nothing new to create" in out
+
+
+# --- tooling-profile overlay (contract: dotnet-profile-g0, ADR 0018) ---
+
+STACK_BEARING = {"SDLC.md", ".sdlc/config.yaml"}  # the only {{ stack }} templates
+
+
+def _fixture_profile(templates_src: Path, tmp_path: Path, stack: str = "steel") -> Path:
+    """Copy the real templates and inject a fixture overlay for `stack`."""
+    templates = tmp_path / "templates-fixture"
+    shutil.copytree(templates_src, templates)
+    profile = templates / "profiles" / stack
+    profile.mkdir(parents=True)
+    (profile / "extra.txt.template").write_text(
+        "steel tool config for {{ project_name }}\n", encoding="utf-8")
+    (profile / "hooks.yaml.template").write_text(
+        "hooks: steel ({{ date }})\n", encoding="utf-8")
+    (profile / "steel-specs-README.md.template").write_text(
+        "steel specs root\n", encoding="utf-8")
+    (profile / "profile.json").write_text(json.dumps({"templates": {
+        "extra.txt.template": {"target": "tools/steel.txt", "class": "kit-owned"},
+        "hooks.yaml.template": {"target": ".steel-hooks.yaml", "class": "merge-target"},
+        "steel-specs-README.md.template": {"target": "specs/README.md", "class": "kit-owned"},
+    }}), encoding="utf-8")
+    return templates
+
+
+@pytest.mark.parametrize("stack", ["dotnet", "ruby"])
+def test_non_base_stacks_render_base_payload_exactly(tmp_path, skill_init, stack):
+    """Empty overlay (dotnet) and absent overlay (ruby) are byte-identical
+    to the base render outside the recorded stack values."""
+    base_dir, stack_dir = tmp_path / "base", tmp_path / "other"
+    skill_init.render_all(ANSWERS, _templates(skill_init), base_dir, "2026-07-29")
+    skill_init.render_all({**ANSWERS, "stack": stack},
+                          _templates(skill_init), stack_dir, "2026-07-29")
+    for rel in FULL_PAYLOAD:
+        base_text = (base_dir / rel).read_text(encoding="utf-8")
+        stack_text = (stack_dir / rel).read_text(encoding="utf-8")
+        if rel in STACK_BEARING:
+            assert stack_text.replace(stack, "python") == base_text, rel
+        else:
+            assert stack_text == base_text, rel
+
+
+def test_overlay_adds_and_replaces_by_target(tmp_path, skill_init):
+    templates = _fixture_profile(_templates(skill_init), tmp_path)
+    out = tmp_path / "consumer"
+    created, skipped, merges = skill_init.render_all(
+        {**ANSWERS, "stack": "steel"}, templates, out, "2026-07-29")
+    rels = {p.relative_to(out).as_posix() for p in created}
+    assert rels == FULL_PAYLOAD | {"tools/steel.txt", ".steel-hooks.yaml"}
+    assert (out / "tools/steel.txt").read_text(encoding="utf-8") == \
+        "steel tool config for demo\n"
+    # replace-by-target: the overlay's render wins over the base template
+    assert (out / "specs/README.md").read_text(encoding="utf-8") == "steel specs root\n"
+    assert skipped == [] and merges == []
+
+
+def test_overlay_respects_no_clobber_and_merge_semantics(tmp_path, skill_init):
+    templates = _fixture_profile(_templates(skill_init), tmp_path)
+    out = tmp_path / "consumer"
+    answers = {**ANSWERS, "stack": "steel"}
+    skill_init.render_all(answers, templates, out, "2026-07-29")
+    created, skipped, merges = skill_init.render_all(answers, templates, out, "2026-07-30")
+    assert created == []
+    # overlay kit-owned entries no-clobber like base ones (6 base + 1 overlay)
+    assert len(skipped) == 7
+    # overlay merge-targets print their snippet instead of writing
+    merge_rels = {rel for rel, _ in merges}
+    assert merge_rels == {".pre-commit-config.yaml", ".vscode/settings.json",
+                          ".steel-hooks.yaml"}
+    snippet = dict(merges)[".steel-hooks.yaml"]
+    assert snippet == "hooks: steel (2026-07-30)\n"
+
+
+def test_malformed_profile_manifest_rejected(tmp_path, skill_init):
+    templates = _fixture_profile(_templates(skill_init), tmp_path)
+    manifest = templates / "profiles" / "steel" / "profile.json"
+    manifest.write_text(json.dumps({"templates": {
+        "extra.txt.template": {"target": "tools/steel.txt", "class": "root-owned"},
+    }}), encoding="utf-8")
+    with pytest.raises(ValueError, match="class"):
+        skill_init.render_all({**ANSWERS, "stack": "steel"},
+                              templates, tmp_path / "consumer", "2026-07-29")
+
+
+def test_cli_dotnet_note_is_stack_conditional(tmp_path, skill_init, capsys):
+    rc = skill_init.main(["--answers", json.dumps({**ANSWERS, "stack": "dotnet"}),
+                          "--cwd", str(tmp_path / "dn")])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "docs/dotnet-profile.md" in out
+
+    rc = skill_init.main(["--answers", json.dumps(ANSWERS),
+                          "--cwd", str(tmp_path / "py")])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "docs/dotnet-profile.md" not in out
