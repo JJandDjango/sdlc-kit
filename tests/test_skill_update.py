@@ -151,15 +151,57 @@ def _steel_templates(skill_init, tmp_path):
     return templates
 
 
-def test_dotnet_consumer_empty_overlay_is_clean(tmp_path, skill_init, skill_update, capsys):
-    """A dotnet consumer sees no spurious rows while the shipped overlay is
-    empty - the pre-0.5.0 scaffold reads current."""
+def test_dotnet_fresh_scaffold_is_clean(tmp_path, skill_init, skill_update, capsys):
+    """A dotnet consumer scaffolded from the current templates - G3 payload
+    included - reads current."""
     skill_init.render_all({**ANSWERS, "stack": "dotnet"},
                           _templates(skill_init), tmp_path, "2020-01-01")
     rc = skill_update.main(["--cwd", str(tmp_path)])
     out = capsys.readouterr().out
     assert rc == 0
     assert "scaffold current" in out
+
+
+def test_dotnet_pre_slice_consumer_reports_absent_in_ruled_classes(
+        tmp_path, skill_init, skill_update):
+    """A dotnet consumer scaffolded before the G3 payload existed sees the
+    new surfaces as honest rows in their manifest-declared classes
+    (contract: dotnet-profile-g3, unit manifest-and-drift-classes)."""
+    pre_slice = tmp_path / "templates-pre-slice"
+    shutil.copytree(_templates(skill_init), pre_slice)
+    manifest = pre_slice / "profiles" / "dotnet" / "profile.json"
+    manifest.write_text(json.dumps({"templates": {}}), encoding="utf-8")
+    consumer = tmp_path / "consumer"
+    skill_init.render_all({**ANSWERS, "stack": "dotnet"}, pre_slice,
+                          consumer, "2020-01-01")
+
+    rows, is_spine = skill_update.scan(consumer, _templates(skill_init), "dotnet")
+    assert is_spine
+    by_path = {r.path: r for r in rows}
+    assert by_path["Directory.Build.props"].status == "absent"
+    assert by_path["Directory.Build.props"].klass == "merge-target"
+    assert by_path[".editorconfig"].status == "absent"
+    assert by_path[".editorconfig"].klass == "merge-target"
+    assert by_path[".github/workflows/sdlc-dotnet.yml"].status == "absent"
+    assert by_path[".github/workflows/sdlc-dotnet.yml"].klass == "kit-owned"
+    # the replaced pre-commit target exists from the base render: drift,
+    # merged by hand, never applied
+    assert by_path[".pre-commit-config.yaml"].status == "drift"
+    assert by_path[".pre-commit-config.yaml"].klass == "merge-target"
+
+
+def test_dotnet_overlay_templates_render_from_kit_truth(skill_init, skill_update):
+    """Profile-authoring rule (ADR 0018, suite-locked): every shipped dotnet
+    overlay template renders from kit truth + date + stack only, so the
+    drift engine can always compare it - no interview-only variables."""
+    templates = _templates(skill_init)
+    profile_dir = templates / "profiles" / "dotnet"
+    variables = skill_update._compare_vars("dotnet")
+    overlay = [s for s in skill_init.resolve_surfaces(templates, "dotnet")
+               if s.path.parent == profile_dir]
+    assert overlay  # the payload actually ships
+    for surface in overlay:
+        assert skill_update._render(surface, variables) is not None, surface.name
 
 
 def test_read_stack_parses_value_comment_and_absence(tmp_path, skill_init, skill_update):

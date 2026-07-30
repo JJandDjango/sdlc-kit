@@ -1,49 +1,62 @@
-# Plan - Session 18 (2026-07-29) - dotnet tooling profile, G0 slice - EXECUTED
+# Plan - Session 20 (2026-07-30) - dotnet tooling profile, G3 slice - EXECUTED
 
 Ratified by the user in-session: F1-F9 kept whole. All steps ran:
-contract dotnet-profile-g0 ready-green through intake (tooling-profile
-ratified at the door, 13/13), overlay container + update parity shipped
-(suite 95 -> 106), docs/dotnet-profile.md Pass 0 authored red and
-flipped at ship, ADR 0018, kit 0.5.0. Self-pin lag surfaced by PR #11
-CI run 1 (a bump PR cannot install the tag its own merge creates):
-pins reverted to v0.4.0 in-PR, rule recorded in docs/distribution.md.
-Post-merge executed 2026-07-30: v0.5.0 tagged on #11's merge, self-pin
-PR #12 merged green - its contracts job proved `pip install @v0.5.0`.
-#11's merge is the term-flip approval record.
+contract dotnet-profile-g3 ready-green through intake (first pass, no
+TC loop), docs Pass 0 authored red and flipped at ship, four overlay
+surfaces + manifest landed (classes per ADR 0019), suite 106 -> 111,
+audit clean, kit 0.6.0. Self-run drift = the known self-pin lag; the
+self-pin PR follows the v0.6.0 tag per distribution doctrine.
+Remaining: commit/PR, tag at merge, self-pin follow-up. Session 19 was harness-side, kit unchanged at 0.5.0.
+The G3 slice is the dotnet overlay's first real payload (roadmap step 2,
+docs/dotnet-profile.md); gate shape ratified at docs/gates/G3-implementation.md.
 
-> "C# module" = the kit's **dotnet tooling profile** (registry 0008:
-> shapes are language-agnostic; profiles bind them). This session pours
-> the profile container and ships the G0 slice; heavy binding content
-> starts at the G3 slice (next).
+## Feature list (WHAT - strike / keep / amend)
 
-## Steps
+- **F1 Directory.Build.props overlay surface** - G3.3's five ratified
+  flags (Nullable enable, TreatWarningsAsErrors, AnalysisLevel
+  latest-all, CheckForOverflowUnderflow, AllowUnsafeBlocks off) plus
+  G3.2 wiring: EnforceCodeStyleInBuild, StyleCop.Analyzers package ref.
+- **F2 .editorconfig overlay surface** - G3.1 layout rules + G3.2
+  severity map, single-sourced for local build and future G4 echo.
+- **F3 Inner-loop CI workflow** (.github/workflows/sdlc-dotnet.yml) -
+  format verify + strict build as chain-free steps, beside the G0
+  backstop workflow, consumer's own .NET workflow untouched.
+- **F4 Drift-class ruling** (the STATE sub-question, decided at
+  intake): recommend merge-target for .editorconfig and
+  Directory.Build.props (consumers legitimately extend both),
+  kit-owned for the workflow file.
+- **F5 Local hooks** - overlay-replace the base pre-commit config to
+  add the formatter hook; re-register Husky.NET behind a new trigger
+  ("a consumer without Python tolerance") - its old trigger names this
+  slice, so the gap must close or re-register honestly.
+- **F6 Docs** - dotnet-profile.md G3 fit notes, Pass 0 red-first;
+  G3 row flips green at ship; gap register updated (F5's re-trigger).
+- **F7 Tests** - render, classification, and content assertions for
+  the new surfaces; non-dotnet byte-identical regression holds; locked
+  profile-authoring rule holds (kit truth + date + stack only).
+- **F8 Registry + version** - 0.6.0 (KIT_VERSION + pyproject
+  together), CHANGELOG delta note, MAP row touch, tag-on-bump at the
+  shipping merge, self-pin follow-up PR per distribution doctrine.
+- **F9 ADR 0019** - enforcement-config drift-class precedent
+  (generalizes to every future profile's G3 slice). Optional - strike
+  if the contract record suffices.
 
-1. **Ratify the design** - feature list F1-F9 (in conversation). Strike /
-   keep / amend; the kept set scopes everything below.
-2. **Intake** - `/sdlc intake` authors `specs/dotnet-profile-g0/contract.yaml`
-   to ready-green; declare `entities:`; fork `tooling-profile` as a draft
-   vocabulary term if nothing ratified fits (user ratifies, never the loop).
-3. **Docs Pass 0** - author `docs/dotnet-profile.md` red-first: binding
-   status for all 13 gates (G0 🟡 until shipped, rest 🔴), G0 fit notes,
-   registered gaps, roadmap order.
-4. **Implement** (@developer): profile-overlay resolution in `init.py`
-   (base + `templates/profiles/{stack}/`, unknown stack = base only,
-   no-clobber and merge-target semantics preserved) + `update.py` parity
-   (stack read from `.sdlc/config.yaml`) + stack-aware next-steps note +
-   tests (fixture profile; byte-identical base-payload regression).
-5. **ADR 0018** - tooling-profile distribution: in-kit overlay, zero-delta
-   G0 finding, promotion rule (project -> profile -> shape), revisit
-   trigger (a profile needing independent release cadence).
-6. **Verify** (@verifier): suite green, `/sdlc audit` clean, `/sdlc update`
-   self-run still exit 0, overlay edge cases (pre-0.5.0 dotnet consumer
-   sees no spurious absent rows).
-7. **Registry touches** - MAP component row; CHANGELOG delta note;
-   KIT_VERSION bump + tag at the shipping merge (tag-on-bump).
-8. **Wrap** - docs markers flip, STATE regenerated, commit/PR.
+## Steps (scoped by the kept set)
 
-Carried user one-liners (out of scope, unchanged): README.md tree line
-and CONVENTIONS.md schema ref still name the old root schemas/ path.
+1. Ratify F1-F9 (in conversation).
+2. Intake - /sdlc intake authors specs/dotnet-profile-g3/contract.yaml
+   to ready-green; entities joined; F4's ruling recorded in-contract.
+3. Docs Pass 0 - F6 red-first.
+4. Implement (@developer) - F1-F3 + F5 surfaces, profile.json manifest
+   entries, tests (F7).
+5. ADR 0019 (F9, if kept).
+6. Verify (@verifier) - suite green, /sdlc audit clean, self-run still
+   exit 0, byte-identical regression green.
+7. Registry touches (F8) - version bump last, tag-on-bump at merge.
+8. Wrap - docs markers flip, STATE regenerated, commit/PR; self-pin PR
+   after the tag.
 
 House rules in force: no pipes/chains in any authored command string
 (CI steps included); never Edit/Write under ~/.claude/skills (shell
-copy only); /sdlc never touches Cairn strata in target repos.
+copy only); /sdlc never touches Cairn strata in target repos; overlay
+templates render from kit truth + date + stack only.

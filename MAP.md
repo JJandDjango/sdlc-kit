@@ -35,7 +35,7 @@ flowchart LR
 | distribution skill | `/sdlc` init + intake (F10) + new (F11) + audit + vocab family: the kit's delivery vehicle - no-clobber gate-spine scaffold, Cairn-shaped, marketplace-installable | implemented (v1) | [decisions/0016](decisions/0016-distribution-before-activation.md) |
 | vocabulary layer | Executable shared language: glossary door (VT/VC), `entities:` + G0.2 coverage join (ratified-only, fork semantics), class-E constraint registry, `/sdlc vocab` family; kit self-hosted as consumer 2 | implemented (v1) | [docs/vocabulary.md](docs/vocabulary.md) |
 | distribution reconciliation | Consumer-side update story: tagged install pins (tag-on-bump), CHANGELOG.md migration notes, `/sdlc update` scaffold-drift engine (report-only, per-file consented apply) | implemented (v1) | [docs/distribution.md](docs/distribution.md) |
-| tooling profiles | Per-stack template overlays (`profiles/{stack}/profile.json`) the stack answer selects at init/update; dotnet container live, deliberately empty until its G3 slice | implemented (v1) | [docs/dotnet-profile.md](docs/dotnet-profile.md) |
+| tooling profiles | Per-stack template overlays (`profiles/{stack}/profile.json`) the stack answer selects at init/update; dotnet carries the G3 payload (strict props, editorconfig, inner-loop workflow, formatter hook - classes per ADR 0019) | implemented (v1) | [docs/dotnet-profile.md](docs/dotnet-profile.md) |
 
 Design source: `HANDOFF_gate-architecture_2026-07-22.md` (root, frozen). The
 gate map lives as the registry `docs/gates.md` (gates G0-G10 + PL-*, with

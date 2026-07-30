@@ -1,0 +1,26 @@
+# SDLC kit dotnet inner-loop echo (written by /sdlc init, {{ date }}).
+# Re-runs G3's mechanical conditions in the tamper-proof venue: format
+# verify (G3.1) + one strict build (G3.2 battery + G3.3 flags). Sits
+# beside sdlc.yml; your own .NET workflows are untouched.
+# Binding status: {{ kit_repo }}/blob/main/docs/dotnet-profile.md
+name: sdlc dotnet
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  inner-loop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: restore
+        run: dotnet restore
+      - name: format verify (G3.1 gate form)
+        run: dotnet format whitespace --verify-no-changes
+      - name: strict build (G3.2 + G3.3, one event)
+        run: dotnet build --no-restore

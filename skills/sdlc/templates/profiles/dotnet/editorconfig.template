@@ -1,0 +1,22 @@
+# SDLC kit dotnet profile: G3.1 layout rules + G3.2 severity map
+# (written by /sdlc init, {{ date }}). Single source for the local build
+# and the CI echo - severity edits are enforcement-layer changes.
+root = true
+
+[*]
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+
+# G3.2: style rules gate in the build (EnforceCodeStyleInBuild); G3.3's
+# zero-warning regime escalates warning to error.
+dotnet_analyzer_diagnostic.category-Style.severity = warning
+
+# Documentation rules ride PL-DOC, not G3 - off until that slice ships.
+dotnet_diagnostic.SA1600.severity = none
+dotnet_diagnostic.SA1601.severity = none
+dotnet_diagnostic.SA1633.severity = none

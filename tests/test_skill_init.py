@@ -123,14 +123,7 @@ def _fixture_profile(templates_src: Path, tmp_path: Path, stack: str = "steel") 
     return templates
 
 
-@pytest.mark.parametrize("stack", ["dotnet", "ruby"])
-def test_non_base_stacks_render_base_payload_exactly(tmp_path, skill_init, stack):
-    """Empty overlay (dotnet) and absent overlay (ruby) are byte-identical
-    to the base render outside the recorded stack values."""
-    base_dir, stack_dir = tmp_path / "base", tmp_path / "other"
-    skill_init.render_all(ANSWERS, _templates(skill_init), base_dir, "2026-07-29")
-    skill_init.render_all({**ANSWERS, "stack": stack},
-                          _templates(skill_init), stack_dir, "2026-07-29")
+def _assert_base_render(base_dir, stack_dir, stack):
     for rel in FULL_PAYLOAD:
         base_text = (base_dir / rel).read_text(encoding="utf-8")
         stack_text = (stack_dir / rel).read_text(encoding="utf-8")
@@ -138,6 +131,32 @@ def test_non_base_stacks_render_base_payload_exactly(tmp_path, skill_init, stack
             assert stack_text.replace(stack, "python") == base_text, rel
         else:
             assert stack_text == base_text, rel
+
+
+def test_absent_overlay_renders_base_payload_exactly(tmp_path, skill_init):
+    """No shipped overlay (ruby) is byte-identical to the base render
+    outside the recorded stack values."""
+    base_dir, stack_dir = tmp_path / "base", tmp_path / "other"
+    skill_init.render_all(ANSWERS, _templates(skill_init), base_dir, "2026-07-29")
+    skill_init.render_all({**ANSWERS, "stack": "ruby"},
+                          _templates(skill_init), stack_dir, "2026-07-29")
+    _assert_base_render(base_dir, stack_dir, "ruby")
+
+
+def test_empty_overlay_renders_base_payload_exactly(tmp_path, skill_init):
+    """An empty manifest renders the base exactly - the pre-payload dotnet
+    shape, kept covered by fixture now that dotnet ships surfaces."""
+    templates = tmp_path / "templates-fixture"
+    shutil.copytree(_templates(skill_init), templates)
+    hollow = templates / "profiles" / "hollow"
+    hollow.mkdir(parents=True)
+    (hollow / "profile.json").write_text(
+        json.dumps({"templates": {}}), encoding="utf-8")
+    base_dir, stack_dir = tmp_path / "base", tmp_path / "other"
+    skill_init.render_all(ANSWERS, templates, base_dir, "2026-07-29")
+    skill_init.render_all({**ANSWERS, "stack": "hollow"},
+                          templates, stack_dir, "2026-07-29")
+    _assert_base_render(base_dir, stack_dir, "hollow")
 
 
 def test_overlay_adds_and_replaces_by_target(tmp_path, skill_init):
@@ -194,3 +213,74 @@ def test_cli_dotnet_note_is_stack_conditional(tmp_path, skill_init, capsys):
     out = capsys.readouterr().out
     assert rc == 0
     assert "docs/dotnet-profile.md" not in out
+
+
+# --- dotnet G3 payload (contract: dotnet-profile-g3) ---
+
+DOTNET_G3_NEW = {"Directory.Build.props", ".editorconfig",
+                 ".github/workflows/sdlc-dotnet.yml"}
+
+PROPS_SETTINGS = (
+    "<Nullable>enable</Nullable>",
+    "<TreatWarningsAsErrors>true</TreatWarningsAsErrors>",
+    "<AnalysisLevel>latest-all</AnalysisLevel>",
+    "<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>",
+    "<AllowUnsafeBlocks>false</AllowUnsafeBlocks>",
+    "<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>",
+    'Include="StyleCop.Analyzers"',
+)
+
+
+def test_dotnet_render_adds_g3_surfaces(tmp_path, skill_init):
+    created, skipped, merges = skill_init.render_all(
+        {**ANSWERS, "stack": "dotnet"}, _templates(skill_init), tmp_path,
+        "2026-07-30")
+    rels = {p.relative_to(tmp_path).as_posix() for p in created}
+    assert rels == FULL_PAYLOAD | DOTNET_G3_NEW
+    assert skipped == [] and merges == []
+
+    props = (tmp_path / "Directory.Build.props").read_text(encoding="utf-8")
+    for needle in PROPS_SETTINGS:
+        assert needle in props, needle
+
+    editorconfig = (tmp_path / ".editorconfig").read_text(encoding="utf-8")
+    assert "[*.cs]" in editorconfig
+    assert ("dotnet_analyzer_diagnostic.category-Style.severity = warning"
+            in editorconfig)
+
+    precommit = (tmp_path / ".pre-commit-config.yaml").read_text(encoding="utf-8")
+    assert "taskcontract" in precommit   # base hook survives the replacement
+    assert "dotnet format" in precommit  # the G3.1 fix-channel hook
+
+
+def test_dotnet_workflow_steps_are_chain_free(tmp_path, skill_init):
+    """House rule: every authored CI run step is a single segment - no
+    pipes, chains, semicolons, or redirects."""
+    skill_init.render_all({**ANSWERS, "stack": "dotnet"},
+                          _templates(skill_init), tmp_path, "2026-07-30")
+    workflow = (tmp_path / ".github/workflows/sdlc-dotnet.yml").read_text(
+        encoding="utf-8")
+    run_lines = [line.split("run:", 1)[1]
+                 for line in workflow.splitlines() if "run:" in line]
+    assert run_lines
+    for command in run_lines:
+        assert not any(c in command for c in ";|&>"), command
+
+
+def test_dotnet_enforcement_configs_are_merge_targets(tmp_path, skill_init):
+    sentinel_props = "<Project>mine</Project>\n"
+    sentinel_ec = "root = true  # mine\n"
+    (tmp_path / "Directory.Build.props").write_text(sentinel_props,
+                                                    encoding="utf-8")
+    (tmp_path / ".editorconfig").write_text(sentinel_ec, encoding="utf-8")
+    created, _, merges = skill_init.render_all(
+        {**ANSWERS, "stack": "dotnet"}, _templates(skill_init), tmp_path,
+        "2026-07-30")
+    assert (tmp_path / "Directory.Build.props").read_text(
+        encoding="utf-8") == sentinel_props
+    assert (tmp_path / ".editorconfig").read_text(
+        encoding="utf-8") == sentinel_ec
+    merge_rels = {rel for rel, _ in merges}
+    assert {"Directory.Build.props", ".editorconfig"} <= merge_rels
+    rels = {p.relative_to(tmp_path).as_posix() for p in created}
+    assert ".github/workflows/sdlc-dotnet.yml" in rels  # kit-owned still writes

@@ -1,4 +1,9 @@
 {
-  "note": "dotnet tooling-profile overlay (ADR 0018). Deliberately empty at the G0 slice - the container is live, the first payload lands with the G3 slice. Status: docs/dotnet-profile.md.",
-  "templates": {}
+  "note": "dotnet tooling-profile overlay (ADR 0018). G3 slice payload (contract: dotnet-profile-g3): strict props, editorconfig, inner-loop workflow, formatter hook. Drift classes ruled in-contract (ADR 0019). Status: docs/dotnet-profile.md.",
+  "templates": {
+    "Directory.Build.props.template": {"target": "Directory.Build.props", "class": "merge-target"},
+    "editorconfig.template": {"target": ".editorconfig", "class": "merge-target"},
+    "dotnet-workflow.yml.template": {"target": ".github/workflows/sdlc-dotnet.yml", "class": "kit-owned"},
+    "dotnet-pre-commit-config.yaml.template": {"target": ".pre-commit-config.yaml", "class": "merge-target"}
+  }
 }
