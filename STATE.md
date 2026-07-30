@@ -2,60 +2,48 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-07-30 (session 18 close)._
+> _Generated 2026-07-30 (session 19 close)._
 
 ## Now
-- Session 18 (2026-07-29): **the stack answer went live** - tooling
-  profiles ship as in-kit template overlays (ADR 0018:
-  profiles/{stack}/profile.json, replace-by-target, drift classes
-  single-sourced in init, no forced migration), dotnet's container
-  live and deliberately empty; kit 0.5.0. The C# arc opened here:
-  goal is per-gate executable baselines for .NET, gaps found in real
-  work repos propagating back as kit fixes (promotion rule: project
-  -> profile -> shape; findings cross, employer code never does).
-- Contract `dotnet-profile-g0` (F1-F9 ratified whole) entered through
-  its own intake: `tooling-profile` born TC011-red and user-ratified
-  at the door (glossary 13/13). The G0 finding is load-bearing: both
-  G0 conditions are artifact checks, zero stack delta - so the slice
-  is container + docs/dotnet-profile.md (13-gate binding table, .NET
-  fit notes, gap register with named triggers, G3 roadmap).
-- Profile-authoring rule surfaced by the first red loop and now
-  suite-locked: drift-checked overlay templates render from kit truth
-  + date + stack only; interview-only variables land in the
-  unrenderable review-by-hand net.
-- Receipts: suite 95 -> 106; audit clean; PromptLang green. Self-pin
-  lag learned the hard way (PR #11 CI run 1): a bump PR cannot pin
-  itself to the tag its own merge creates - now doctrine in
-  docs/distribution.md, with the #7 -> #8 sequence generalized.
-- **Shipped end to end 2026-07-30**: PR #11 merged (the merge = the
-  tooling-profile ratification record), **v0.5.0 tagged** on it, and
-  self-pin PR #12 merged green - its contracts job proved
-  `pip install @v0.5.0`; main reads scaffold-current at the 0.5.0
-  render. Plugin cache note: SKILL.md changed this session (stack
-  question + overlay payload note) - `claude plugin update` /
-  restart applies before the next /sdlc use.
+- Session 19 (2026-07-30) ran entirely on the harness side; the kit
+  itself is unchanged at v0.5.0, main scaffold-current.
+- Skills triage (the user-named opener): five community skills
+  investigated, verdicts executed. find-skills (vercel-labs)
+  installed user-level and proven live end to end. Superpowers,
+  claude-mem, and Task Observer skipped as redundant with the
+  harness: competing process framework, curated memory already in
+  place, feedback-promotion pipeline already in place. Impeccable
+  deferred until real frontend work exists.
+- The verbosity comment got structural treatment: kernel CLAUDE.md
+  now carries "Output style (all sessions)" - Strunk/Orwell/STE
+  compiled into eight rules with Orwell's rule 6 supreme (clarity
+  outranks every cut). The superseded succinctness bullet folded in
+  whole (~/.claude ac971bc, user-ratified principled-rules form).
+- ~/.claude repo caught up and pushed: workflow-preferences
+  promotion, sdlc-kit marketplace wiring, cairn and find-skills
+  skill trees tracked, output-style section. Session-18's plugin
+  cache note is discharged - /reload-plugins ran this session.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. **Session-19 opener, user-named**: review a few of the user's
-   Claude skills; the user also has a comment regarding verbosity to
-   deliver first - take it before starting work.
+1. **Session-20 opener, user-named**: evaluate the new output
+   register live against a fresh session's replies.
 2. **G3 slice** (dotnet profile's first heavy payload):
    Directory.Build.props strict compile, .editorconfig +
-   `dotnet format`, analyzer battery, inner-loop CI job - container
-   decided, the work is binding content. Open sub-question: brownfield
-   drift classes for .editorconfig/props (merge-target vs kit-owned).
-3. **Per-gate agent arc** (0017 V4's neighbor, unchanged): harness,
-   venue, verdict plumbing, plugin agents/ distribution.
-4. **Pilot M0 session** (engine repo): now also the first
-   profile-aware `/sdlc update` consumer; Q5 reality data.
+   `dotnet format`, analyzer battery, inner-loop CI job. Open
+   sub-question: brownfield drift classes for .editorconfig/props
+   (merge-target vs kit-owned) - decide inside the contract.
+3. **Per-gate agent arc** (unchanged): harness, venue, verdict
+   plumbing, plugin agents/ distribution.
+4. **Pilot M0 session** (engine repo): first profile-aware
+   `/sdlc update` consumer; Q5 reality data.
 5. Carried one-liners, two remaining: README.md tree line,
    CONVENTIONS.md schema ref (both still name the old root schemas/
    path).
 6. Deferrals unchanged: Q4 numbers, PyPI publish (trigger stands),
-   explainer PDF, V8 RDF map; new registered gaps behind triggers:
+   explainer PDF, V8 RDF map; registered gaps behind triggers:
    Azure DevOps variant, Husky.NET hooks, dotnet-tool wrapper.
 
 ## Open questions
@@ -63,5 +51,3 @@
 - Q5 two-channel decorrelation - M0 remains the first live data point.
 - Per-gate agent shape: venue, context assembly, verdict format,
   plugin versioning.
-- G3 slice's brownfield class call (above) - decide inside that
-  contract, not before.
