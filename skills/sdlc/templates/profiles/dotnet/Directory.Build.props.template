@@ -1,9 +1,13 @@
 <Project>
   <!-- SDLC kit dotnet profile: G3.3 strict compile + G3.2 analyzer wiring
-       (written by /sdlc init, {{ date }}). One file at the repo root; every
-       project inherits. Per-project overrides of any setting here, and
-       <NoWarn> additions, are suppressions - the G4 suppression audit's
-       watch list. Binding status: docs/dotnet-profile.md in the kit repo. -->
+       + G4.9 locked-graph dependency audit (written by /sdlc init,
+       {{ date }}). One file at the repo root; every project inherits.
+       Per-project overrides of any setting here, and <NoWarn> additions,
+       are suppressions - the G4 suppression audit's watch list. The
+       lockfile block makes restores deterministic and audit deltas
+       well-defined; a repo without committed packages.lock.json files
+       lands red at CI restore until they land (dotnet restore writes
+       them). Binding status: docs/dotnet-profile.md in the kit repo. -->
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -11,6 +15,13 @@
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>low</NuGetAuditLevel>
+    <WarningsAsErrors>$(WarningsAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" PrivateAssets="all" />

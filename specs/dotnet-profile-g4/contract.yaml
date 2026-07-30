@@ -1,0 +1,171 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: dotnet-profile-g4
+
+intent: >-
+  The dotnet overlay carries the merge gate's mechanical core:
+  sdlc-dotnet.yml grows from inner-loop echo into the G4 venue -
+  queue-ready via merge_group with pull_request as advisory preview,
+  the standing echo steps as G4.1's three clauses, dotnet test
+  solution-wide as G4.11, a gitleaks diff-mode secrets step and
+  NuGetAudit over a locked dependency graph as G4.9 clauses 1-2, and
+  the four-vector suppression audit as a taskcontract subcommand run
+  from the pinned kit install (G4.10). Directory.Build.props gains the
+  locked-graph and audit-severity block, merge-target per ADR 0019.
+  ADR 0020 records the venue binding and kit-module distribution shape
+  as precedent; the battery-CWE map re-registers behind a named
+  trigger; license allowlist and SLA backstop defer with named lines;
+  non-dotnet consumers render byte-identical to the 0.6.0 payload; the
+  kit ships as 0.7.0.
+
+scope:
+  - skills/sdlc/templates/profiles/dotnet/
+  - taskcontract/
+  - skills/sdlc/init.py
+  - tests/
+  - docs/dotnet-profile.md
+  - decisions/0020-merge-gate-distribution-shape.md
+  - MAP.md
+  - CHANGELOG.md
+  - pyproject.toml
+
+non_goals:
+  - The seven unbound G4 conditions - G4.2 arch tests, G4.3
+    traceability, G4.4 property tests, G4.5 API surface, G4.6
+    write-surface manifest, G4.7 taint scan, G4.8 ratchets - roadmap
+    step 4 and their own build items.
+  - G4.9 clause 3 residue - the license allowlist (policy artifact)
+    and the SLA backstop (needs G9.2 tracking) - deferred with named
+    lines in the fit notes.
+  - The battery-CWE map - re-registers behind "first G4.7 scanner
+    slice or next taxonomy session" (Husky.NET re-registration
+    precedent), not built here.
+  - The write-surface audit job proper - the suppression audit ships
+    standalone; absorption into the one-diff job arrives with G4.6.
+  - Merge-queue enablement in consumer repos - branch-protection
+    policy is documented, never a kit-written setting.
+  - House analyzer tranche, Azure DevOps variant, dotnet-tool
+    validator wrapper - unchanged registered gaps.
+  - Overlay-resolution engine changes - init.py is touched only for
+    the KIT_VERSION bump.
+
+decomposition:
+  - unit: merge-gate-workflow
+    done_means: the dotnet workflow template grows the mechanical
+      core - merge_group trigger beside pull_request and push-main,
+      the standing restore / format-verify / strict-build steps
+      standing as G4.1's echo clauses, and a solution-wide dotnet test
+      step ordered after the strict build with a zero-tests-discovered
+      FAIL guard; header re-scoped to the merge gate; every run step a
+      single chain-free segment; sdlc.yml and consumer workflows
+      untouched.
+    acceptance_sketch:
+      - a dotnet render's workflow carries merge_group and a dotnet
+        test step ordered after the strict build
+      - no run step in the rendered workflow contains a pipe,
+        semicolon, redirect, or chain operator
+  - unit: secrets-scan-step
+    done_means: the workflow gains a gitleaks diff-mode step over
+      base..head as a single docker-run segment of the MIT gitleaks
+      image (ruled over gitleaks-action - no org license wall), masked
+      diagnostics only; the per-event base lands in step env via
+      Actions expressions, never via shell chaining; checkout fetches
+      history deep enough to resolve the range.
+    acceptance_sketch:
+      - the rendered workflow carries a gitleaks step as one chain-free
+        docker run segment consuming a step-env base
+      - the step's scan scope is the candidate delta, not the full
+        tree history
+  - unit: dependency-audit
+    done_means: the Directory.Build.props template gains the
+      locked-graph and audit block - RestorePackagesWithLockFile true,
+      NuGetAuditMode all, audit warnings NU1901-NU1904 raised to
+      errors - and the workflow restore step goes locked-mode; the
+      brownfield story (absent lockfile lands red at restore, adoption
+      pace with the consumer) rides the docs unit.
+    acceptance_sketch:
+      - a dotnet render's props carries the lockfile setting, the
+        audit mode, and the NU1901-1904 escalation
+      - the rendered workflow restore step carries locked-mode as one
+        chain-free segment
+  - unit: suppression-audit-subcommand
+    done_means: python -m taskcontract suppression-audit implements
+      the four-vector diff check over base..head - in-source
+      suppression constructs (pragma disable, SuppressMessage,
+      GlobalSuppressions, NoWarn, Skip/Ignore test-disabling forms),
+      severity downgrades in analysis config, strictness-flag
+      weakening in build props, exclusion-scope widening - with
+      per-vector diagnostics naming construct, location, and the
+      legitimate channel; base resolves from the Actions event when
+      flags are absent; the workflow gains setup-python, the pinned
+      kit install, and the audit step, all chain-free.
+    acceptance_sketch:
+      - fixture diffs per vector produce that vector's diagnostic and
+        a clean fixture diff exits 0
+      - the rendered workflow runs the audit from the pinned kit ref
+        install
+  - unit: dotnet-g4-doc
+    done_means: docs/dotnet-profile.md gains a G4 fit-notes section
+      authored Pass-0 red-first - venue semantics (merge_group
+      queue-ready, pull_request advisory, queue-less fallback strict
+      serial merges with required-up-to-date branches), the brownfield
+      lockfile story, the G3 note's "review-blocking by policy" line
+      flipping to the live audit, the deferral register (license
+      allowlist, SLA backstop, seven unbound conditions), and the
+      battery-CWE map re-registration behind its named trigger; the
+      binding-table G4 row flips at ship to green mechanical core with
+      the remainder honestly red.
+    acceptance_sketch:
+      - at Pass 0 the section exists red and the G4 row still reads
+        red
+      - at ship the G4 row reads green-core with remainder red and the
+        gap register names the battery-CWE re-registration
+  - unit: adr-0020
+    done_means: decisions/0020-merge-gate-distribution-shape.md
+      records the precedent - one kit-owned workflow serving both
+      venues (pull_request advisory preview, merge_group
+      authoritative, queue-less fallback documented, branch protection
+      never kit-written) and pipeline-native checks distributing as
+      versioned kit modules behind the pinned install, never copied
+      scripts.
+    acceptance_sketch:
+      - ADR 0020 exists in house format and docs/dotnet-profile.md
+        links it
+  - unit: regression-suite
+    done_means: the suite covers the payload - workflow content
+      assertions (merge_group, test-step order, gitleaks segment,
+      locked-mode restore, audit step), props audit-block assertions,
+      the chain-free check extended over all new run lines,
+      suppression-audit unit tests over a fixture corpus, byte-identical
+      non-dotnet regression, and the profile-authoring lock holding
+      over the edited templates.
+    acceptance_sketch:
+      - a python render remains byte-identical to the 0.6.0 base
+        payload
+      - each suppression vector has at least one tripping and one
+        passing fixture
+  - unit: version-and-registry
+    done_means: KIT_VERSION and pyproject bump to 0.7.0 together (the
+      equality test holds), CHANGELOG.md carries the 0.7.0 delta
+      naming the four bound conditions and the subcommand, MAP.md rows
+      touch (tooling profiles; verifier checks gains its shipped
+      half), v0.7.0 is tagged at the shipping merge, and the self-pin
+      follow-up PR lands per distribution doctrine.
+    acceptance_sketch:
+      - the version-equality test is green at 0.7.0
+      - the CHANGELOG 0.7.0 entry names the four bound conditions and
+        the suppression-audit subcommand
+
+dependencies:
+  - ref: dotnet-profile-g3
+    status: resolved
+
+provenance:
+  origin: human-request
+
+entities:
+  - tooling-profile
+  - scaffold
+  - consumer
+  - gate

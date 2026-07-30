@@ -9,6 +9,41 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.7.0 - 2026-07-30 (tag `v0.7.0`)
+
+- The dotnet workflow grows into the merge gate (contract
+  `dotnet-profile-g4`) - G4's mechanical core, four conditions bound:
+  the standing echo as G4.1's three clauses, full test execution
+  (G4.11: `dotnet test` after the build, zero tests discovered =
+  FAIL), secrets scan (G4.9 clause 1: gitleaks diff-mode as one
+  docker step, output masked), dependency audit (G4.9 clause 2:
+  NuGetAudit over a locked graph), and the four-vector suppression
+  audit (G4.10) run from the pinned kit install.
+- `Directory.Build.props` (merge-target) gains the locked-graph
+  block: `RestorePackagesWithLockFile`, `NuGetAudit` + mode + level,
+  NU1901-1904 raised to errors. Brownfield: a repo without committed
+  `packages.lock.json` files lands red at CI restore until
+  `dotnet restore` writes them and they land.
+- Workflow venue per ADR 0020: one file serves both venues -
+  `merge_group` added (queue-authoritative) beside `pull_request`
+  (advisory preview); diff-scoped steps skip push-main runs. Job
+  renamed `inner-loop` -> `merge-gate`: repos using it as a required
+  check must update the check name.
+- New subcommand: `python -m taskcontract suppression-audit` - G4.10's
+  four vectors (in-source suppressions, severity downgrades,
+  strictness weakening, exclusion widening; construct lists are
+  binding material). Exit 0 clean / 1 findings / 2 environment;
+  `--json` for the loop. Pipeline-native checks distribute this way -
+  kit modules behind the pin, never copied scripts (ADR 0020).
+- Existing dotnet consumers: `/sdlc update` reports workflow drift
+  (kit-owned - take it with `--apply`) and props drift (merge-target -
+  merge the audit block by hand; `--show` prints the render).
+  Non-dotnet consumers: byte-identical payload, ref bump only.
+- Existing consumers: bump the install ref in
+  `.github/workflows/sdlc.yml` and the schema URL in
+  `.vscode/settings.json` when you take this version. Schemas: none
+  changed.
+
 ## 0.6.0 - 2026-07-30 (tag `v0.6.0`)
 
 - The dotnet overlay carries its first payload (contract

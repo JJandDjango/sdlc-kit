@@ -1,7 +1,8 @@
 # Dotnet tooling profile - the kit's C# binding, gate by gate
 
 <!-- covers: specs/dotnet-profile-g0/contract.yaml,
-     specs/dotnet-profile-g3/contract.yaml -->
+     specs/dotnet-profile-g3/contract.yaml,
+     specs/dotnet-profile-g4/contract.yaml -->
 
 > **Contract** - one question: *how does the kit bind to a .NET
 > consumer, and what ships per gate?*
@@ -11,7 +12,10 @@
 > resolved through `tooling-profile` (ratified at this intake),
 > `scaffold`, `consumer`. G3 slice ratified 2026-07-30 (its own F1-F9
 > kept whole); contract `specs/dotnet-profile-g3/contract.yaml` -
-> ready-green at intake, drift classes ruled in-contract.
+> ready-green at intake, drift classes ruled in-contract. G4
+> mechanical-core slice ratified 2026-07-30 (F1-F10 kept whole);
+> contract `specs/dotnet-profile-g4/contract.yaml` - ready-green at
+> intake, venue + distribution shape ruled in-contract (ADR 0020).
 
 **Status legend:** 🔴 ratified, not yet shipped · 🟢 shipped ·
 ⚪ deferred behind a named trigger. Docs Pass 0 authored 2026-07-29,
@@ -58,7 +62,7 @@ order.
 | G1 requirements/spec | Spectral / buf lint; TLA+ for hard cores | 🔴 |
 | G2 design/architecture | PublicAPI baselines, NetArchTest rules, STRIDE, red spec-suite run | 🔴 |
 | G3 implementation | `dotnet format`, analyzer battery (StyleCop + custom Roslyn), strict compile props | 🟢 0.6.0 |
-| G4 pre-merge CI | the 11-condition merge queue core (echo, arch tests, suites, ratchets, audits) | 🔴 |
+| G4 pre-merge CI | the 11-condition merge queue core (echo, arch tests, suites, ratchets, audits) | 🟢 0.7.0 mechanical core (G4.1, G4.9.1-2, G4.10, G4.11) · 🔴 remainder |
 | G5 integration/system | Pact, differential + property campaigns, SharpFuzz, Coyote, Stryker.NET | 🔴 |
 | G6 UAT/staging | certified-venue walk sheets; principal grades | 🔴 |
 | G7 release/deploy | BenchmarkDotNet budgets, ApiCompat, IaC scan, canary, SBOM/provenance | 🔴 |
@@ -118,12 +122,55 @@ Fit notes:
   [0019](../decisions/0019-enforcement-config-drift-classes.md).
 - **Severity edits are enforcement-layer changes.** Per-project
   strictness overrides, `<NoWarn>`, and in-source suppressions are
-  tamper vectors. The mechanical suppression audit is a registered
-  build item arriving with the G4 slice; until then they are
-  review-blocking by policy.
+  tamper vectors - and since 0.7.0 the four-vector suppression audit
+  (G4.10, `python -m taskcontract suppression-audit`) trips on each
+  in CI; severity policy routes through PL-PIPE.1, not the diff.
 - **House analyzers are not here yet.** The battery ships stock
   StyleCop + IDE tiers; the custom tranche instantiates at pilot
   activation ([0009](../decisions/0009-custom-analyzer-adoption-policy.md)).
+
+## 🟢 G4 fit notes for .NET shops (unit: dotnet-g4-doc)
+
+The merge gate's mechanical core: `sdlc-dotnet.yml` stops being
+inner-loop-only and becomes the G4 venue - four of the gate's eleven
+conditions bound, the rest deferred honestly below.
+
+- **The workflow is the gate seed.** `merge_group` joins
+  `pull_request` and push-main as triggers: with a merge queue enabled
+  the gate evaluates main-at-queue-time (authoritative); the PR run is
+  the advisory preview on the test-merge ref. Queue-less fallback,
+  binding note: strict serial merges with required-up-to-date
+  branches. Branch-protection settings are the consumer's - documented
+  here, never kit-written
+  ([0020](../decisions/0020-merge-gate-distribution-shape.md)).
+- **Echo stands (G4.1).** The three G3 steps are the echo's three
+  clauses received: strict build (clause 1), battery in-build
+  (clause 2), formatter verify as an explicit step (clause 3). Same
+  committed configs, tamper-proof venue.
+- **Full test execution (G4.11).** `dotnet test` solution-wide after
+  the strict build; zero tests discovered fails the gate; skip
+  constructs are the suppression audit's vector-4 material (quarantine
+  policy = enforcement-pass config, deferred named line).
+- **Secrets (G4.9 clause 1).** gitleaks diff mode over base..head as
+  one docker-run step of the MIT image (no org license wall);
+  diagnostics masked - a hit means rotate the credential, not just
+  remove the line.
+- **Dependencies (G4.9 clause 2).** The props audit block turns the
+  locked graph on (`RestorePackagesWithLockFile`, `NuGetAuditMode`
+  all, NU1901-1904 as errors) and CI restores locked-mode.
+  **Brownfield lands red at restore, deliberately** - a repo without
+  committed lockfiles fails until they land; merge-target pace, same
+  doctrine as the G3 props.
+- **Suppression audit (G4.10).** `python -m taskcontract
+  suppression-audit` runs from the pinned kit install: four vectors
+  (in-source suppressions incl. Skip/Ignore forms, severity
+  downgrades, strictness weakening, exclusion widening) over the
+  candidate diff, each diagnostic naming the construct, location, and
+  the legitimate channel.
+- **Deferral register, named:** license allowlist (G4.9 clause 2's
+  policy artifact), SLA backstop (G4.9 clause 3, needs G9.2
+  tracking), quarantine-list content (enforcement-pass config), and
+  the seven unbound conditions G4.2-G4.8 (roadmap step 4).
 
 ## ⚪ Gap register - deferred, triggers on record
 
@@ -138,6 +185,12 @@ Fit notes:
   Python.
 - **`dotnet tool` validator wrapper** - trigger: local-Python
   friction reported by a real .NET consumer.
+- **Battery-CWE map** (three strata substantiating the taxonomy's
+  691/697/703 rows + golden test) - trigger: the first G4.7 scanner
+  slice or the next taxonomy session. Banked at the G3 walk as a
+  G4-session input; addressed at the G4 slice by re-registration
+  (the mechanical core ships venue payload; the map is registry
+  substantiation - Husky.NET precedent, ruled in-contract).
 
 ## Roadmap - slice order
 
@@ -147,8 +200,10 @@ Fit notes:
    `Directory.Build.props` strict compile, `.editorconfig` +
    `dotnet format`, the analyzer battery (stock tiers), and the
    inner-loop workflow job.
-3. **G4 mechanical core** - echo, full test execution,
-   secret/dependency audit.
+3. **G4 mechanical core (shipped, 0.7.0)** - the merge-gate workflow:
+   the echo received, full test execution, secrets + dependency audit
+   over a locked graph, and the suppression audit as a kit subcommand
+   (venue + distribution shape: ADR 0020).
 4. **Beyond** - by the consumer's actual defect distribution
    (convergence loop); findings from real C# repos file back as gaps
    or slices here, per the promotion rule in
