@@ -24,11 +24,15 @@
   + date + stack only; interview-only variables land in the
   unrenderable review-by-hand net.
 - Receipts: suite 95 -> 106; the 0.5.0 self-run named exactly its two
-  bump surfaces then read scaffold-current after consented apply +
-  one-line hand-merge; audit clean; PromptLang green.
-- **PR open from `session-18-dotnet-profile-g0`** - the merge is the
-  approval record for the tooling-profile ratification (class-S), and
-  **v0.5.0 tags that merge** (tag-on-bump; not yet tagged).
+  bump surfaces; audit clean; PromptLang green. Self-pin lag learned
+  the hard way (PR #11 CI run 1): a bump PR cannot pin itself to the
+  tag its own merge creates - the kit's pins ride at v0.4.0 until the
+  post-merge self-pin PR; rule recorded in docs/distribution.md.
+- **PR #11 open from `session-18-dotnet-profile-g0`** - the merge is
+  the approval record for the tooling-profile ratification (class-S).
+  Post-merge sequence: **tag v0.5.0 on the merge**, then the
+  **self-pin PR** (workflow ref + vscode schema URL -> v0.5.0; its
+  green CI proves the tag installs).
 
 ## Blockers
 - None.

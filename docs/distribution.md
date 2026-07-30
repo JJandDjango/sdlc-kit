@@ -44,6 +44,15 @@ recorded beside the delta-note rule. Effect: updates flip from push
 (the kit chooses when every consumer takes HEAD) to pull (a consumer
 upgrades by bumping one line, with the changelog in hand).
 
+**Self-pin lag (kit repo only):** inside a bump PR the kit's own
+committed scaffold keeps the *previous* release's pins - the new tag
+is born at that PR's merge, so pinning to it pre-merge cannot
+install (PR #11's first CI run is the receipt). Post-merge sequence,
+now standing: tag the merge, then a self-pin PR moves the kit's own
+refs to the fresh tag - its green CI is the tag's install proof (the
+session-17 #7 → #8 sequence, generalized). Between the two merges
+`/sdlc update` on main honestly names the two lagging surfaces.
+
 ## 🟢 CHANGELOG.md (F2 - unit: changelog)
 
 The migration-notes venue, materialized at the repo root - the
