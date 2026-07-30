@@ -1,4 +1,4 @@
-# SDLC kit gate jobs (written by /sdlc init, 2026-07-29).
+# SDLC kit gate jobs (written by /sdlc init, 2026-07-30).
 name: sdlc
 
 on:
@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: "3.13"
       - name: install the sdlc kit
-        run: pip install "git+https://github.com/JJandDjango/sdlc-kit.git@v0.5.0"
+        run: pip install "git+https://github.com/JJandDjango/sdlc-kit.git@v0.6.0"
       - name: validate task contracts (G0 backstop)
         if: hashFiles('specs/*/contract.yaml') != ''
         run: python -m taskcontract validate specs/*/contract.yaml --profile ready
