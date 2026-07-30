@@ -9,6 +9,29 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.6.0 - 2026-07-30 (tag `v0.6.0`)
+
+- The dotnet overlay carries its first payload (contract
+  `dotnet-profile-g3`) - G3's inner loop, four surfaces:
+  `Directory.Build.props` (merge-target; the five strict-compile flags
+  + `EnforceCodeStyleInBuild` + pinned StyleCop.Analyzers),
+  `.editorconfig` (merge-target; layout rules + severity map),
+  `.github/workflows/sdlc-dotnet.yml` (kit-owned; format verify +
+  strict build beside the G0 backstop), and a pre-commit replacement
+  adding the `dotnet format` hook (merge-target, like its base).
+- Drift classes per ADR 0019: enforcement configs consumers extend
+  are merge-target - written when absent, snippet when present, drift
+  reported never applied; kit process artifacts stay kit-owned.
+- Existing dotnet consumers: `/sdlc update` reports the three new
+  surfaces `absent` and the pre-commit target as merge-target drift.
+  Take the workflow with `--apply`; merge the two configs and the
+  hook by hand (`--show` prints each render). Non-dotnet consumers:
+  byte-identical payload, ref bump only.
+- Existing consumers: bump the install ref in
+  `.github/workflows/sdlc.yml` and the schema URL in
+  `.vscode/settings.json` when you take this version (`/sdlc update`
+  reports exactly this drift). Schemas: none changed.
+
 ## 0.5.0 - 2026-07-29 (tag `v0.5.0`)
 
 - Tooling profiles (ADR 0018): the recorded `stack:` now selects a

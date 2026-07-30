@@ -1,0 +1,153 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: dotnet-profile-g3
+
+intent: >-
+  The dotnet overlay stops being empty: a dotnet consumer scaffolds
+  G3's inner loop - Directory.Build.props carrying the five ratified
+  strictness flags plus the analyzer wiring (EnforceCodeStyleInBuild,
+  StyleCop.Analyzers), .editorconfig carrying the layout rules and the
+  severity map, an inner-loop CI workflow running format verify and
+  strict build as chain-free steps beside the G0 backstop, and a
+  pre-commit config carrying the formatter hook. The two enforcement
+  configs land merge-target and the workflow kit-owned - ADR 0019
+  records the ruling as precedent for future profiles; Husky.NET
+  re-registers behind "a consumer without Python tolerance";
+  non-dotnet consumers render byte-identical to the 0.5.0 payload;
+  the kit ships as 0.6.0.
+
+scope:
+  - skills/sdlc/templates/profiles/dotnet/
+  - skills/sdlc/init.py
+  - tests/
+  - docs/dotnet-profile.md
+  - decisions/0019-enforcement-config-drift-classes.md
+  - MAP.md
+  - CHANGELOG.md
+  - pyproject.toml
+
+non_goals:
+  - The house analyzer tranche - selection function and first tranche
+    ride pilot activation (Q6, ADR 0009); the battery ships the stock
+    StyleCop + IDE code-style tiers only.
+  - Pipeline-native analyzers (sunset-escalation, suppression audit) -
+    registered build items whose enforcement loci are G10/G4, not this
+    slice.
+  - The G4 echo job and mechanical core - roadmap step 3; the
+    inner-loop workflow is G3's venue seed, not the 11-condition core.
+  - Husky.NET local hooks - the fired trigger closes by re-registering
+    behind a new named trigger, not by building.
+  - Azure DevOps pipeline variant and the dotnet-tool validator
+    wrapper - registered gaps, unchanged.
+  - Overlay-resolution engine changes - init.py/update.py semantics
+    are fixed by the G0 container; init.py is touched only for the
+    KIT_VERSION bump.
+
+decomposition:
+  - unit: strict-compile-props
+    done_means: the dotnet overlay ships a Directory.Build.props
+      template targeting the consumer repo root with G3.3's ratified
+      flags (Nullable enable, TreatWarningsAsErrors true,
+      AnalysisLevel latest-all, CheckForOverflowUnderflow true,
+      AllowUnsafeBlocks false) plus G3.2's wiring
+      (EnforceCodeStyleInBuild true, pinned StyleCop.Analyzers
+      PackageReference with PrivateAssets all); content renders from
+      kit truth + date + stack only.
+    acceptance_sketch:
+      - a dotnet render on a clean tree writes Directory.Build.props
+        with all seven wired settings present
+      - an existing Directory.Build.props gets the snippet printed,
+        never a write
+  - unit: editorconfig
+    done_means: the overlay ships an .editorconfig template targeting
+      the consumer repo root carrying the C# layout/whitespace rules
+      (the dotnet format whitespace surface) and the severity map that
+      makes StyleCop and IDE style rules gate at warning under G3.3's
+      zero-warning regime; no interview variables.
+    acceptance_sketch:
+      - a dotnet render writes .editorconfig with a [*.cs] section,
+        layout rules, and severity entries
+      - an existing .editorconfig gets the snippet printed, never a
+        write
+  - unit: inner-loop-workflow
+    done_means: the overlay ships .github/workflows/sdlc-dotnet.yml
+      running on pull_request beside the G0 backstop - setup, restore,
+      dotnet format whitespace --verify-no-changes, and dotnet build
+      as separate steps, every run step a single chain-free segment;
+      the consumer's own .NET workflows are untouched.
+    acceptance_sketch:
+      - a dotnet render adds the workflow and leaves sdlc.yml and all
+        consumer workflows unchanged
+      - no run step in the rendered workflow contains a pipe,
+        semicolon, redirect, or chain operator
+  - unit: precommit-formatter-hook
+    done_means: the overlay replaces the base pre-commit config target
+      with a dotnet variant adding a dotnet-format hook in apply mode
+      (G3.1's fix channel); non-dotnet stacks keep the base config;
+      the gap register re-registers Husky.NET behind "a consumer
+      without Python tolerance".
+    acceptance_sketch:
+      - a dotnet render's pre-commit config contains the dotnet-format
+        hook; a python render's is byte-identical to base
+      - docs/dotnet-profile.md's gap register names the new Husky.NET
+        trigger
+  - unit: manifest-and-drift-classes
+    done_means: profile.json declares the four surfaces with the ruled
+      classes - .editorconfig and Directory.Build.props merge-target,
+      sdlc-dotnet.yml kit-owned, the pre-commit replacement
+      merge-target like its base - and
+      decisions/0019-enforcement-config-drift-classes.md records the
+      ruling and rationale as precedent for future profiles' G3
+      slices.
+    acceptance_sketch:
+      - /sdlc update on a dotnet consumer scaffolded at 0.5.0 reports
+        the new surfaces as absent rows in their ruled classes
+      - ADR 0019 exists in house format and docs/dotnet-profile.md
+        links it
+  - unit: dotnet-g3-doc
+    done_means: docs/dotnet-profile.md gains a G3 fit-notes section
+      authored Pass-0 red-first - what lands in the consumer, the
+      brownfield merge story for the two merge targets, the
+      suppression-audit forward pointer - and the binding-table G3 row
+      flips green only when the units ship.
+    acceptance_sketch:
+      - at Pass 0 the section exists with a red marker and the G3 row
+        still reads red
+      - at ship the G3 row reads green and the fit notes name the
+        brownfield merge story
+  - unit: regression-suite
+    done_means: the suite covers the payload - rendered content
+      assertions for all four surfaces, class assertions via the
+      manifest, the chain-free workflow check, byte-identical
+      non-dotnet regression against the 0.5.0 base payload, and the
+      locked profile-authoring rule extended over the new templates.
+    acceptance_sketch:
+      - a python render is byte-identical to the pre-slice base
+        payload
+      - the authoring lock rejects a fixture overlay template carrying
+        an interview variable
+  - unit: version-and-registry
+    done_means: KIT_VERSION and pyproject bump to 0.6.0 together (the
+      equality test holds), CHANGELOG.md carries the 0.6.0 delta note
+      naming the four surfaces and their classes, MAP.md's
+      tooling-profiles row drops "deliberately empty", v0.6.0 is
+      tagged at the shipping merge, and the self-pin follow-up PR
+      lands per distribution doctrine.
+    acceptance_sketch:
+      - the version-equality test is green at 0.6.0
+      - the CHANGELOG 0.6.0 entry names all four surfaces with their
+        drift classes
+
+dependencies:
+  - ref: dotnet-profile-g0
+    status: resolved
+
+provenance:
+  origin: human-request
+
+entities:
+  - tooling-profile
+  - scaffold
+  - consumer
+  - gate

@@ -1,0 +1,18 @@
+<Project>
+  <!-- SDLC kit dotnet profile: G3.3 strict compile + G3.2 analyzer wiring
+       (written by /sdlc init, {{ date }}). One file at the repo root; every
+       project inherits. Per-project overrides of any setting here, and
+       <NoWarn> additions, are suppressions - the G4 suppression audit's
+       watch list. Binding status: docs/dotnet-profile.md in the kit repo. -->
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

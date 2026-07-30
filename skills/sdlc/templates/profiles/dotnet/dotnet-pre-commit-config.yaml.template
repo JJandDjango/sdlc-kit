@@ -1,0 +1,17 @@
+# Task-contract ready check + dotnet formatter (SDLC kit dotnet profile,
+# written by /sdlc init {{ date }}). If this file already existed, /sdlc
+# printed this snippet instead - merge the hooks into your repos list.
+repos:
+  - repo: local
+    hooks:
+      - id: taskcontract
+        name: task-contract ready check
+        entry: python -m taskcontract validate
+        language: system
+        files: ^specs/.*/contract\.yaml$
+      - id: dotnet-format
+        name: dotnet format whitespace (G3.1 apply mode)
+        entry: dotnet format whitespace
+        language: system
+        files: \.cs$
+        pass_filenames: false

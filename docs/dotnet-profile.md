@@ -1,6 +1,7 @@
 # Dotnet tooling profile - the kit's C# binding, gate by gate
 
-<!-- covers: specs/dotnet-profile-g0/contract.yaml -->
+<!-- covers: specs/dotnet-profile-g0/contract.yaml,
+     specs/dotnet-profile-g3/contract.yaml -->
 
 > **Contract** - one question: *how does the kit bind to a .NET
 > consumer, and what ships per gate?*
@@ -8,11 +9,14 @@
 > Feature set ratified in-session 2026-07-29 (F1-F9, nothing struck);
 > task contract `specs/dotnet-profile-g0/contract.yaml` - entities
 > resolved through `tooling-profile` (ratified at this intake),
-> `scaffold`, `consumer`.
+> `scaffold`, `consumer`. G3 slice ratified 2026-07-30 (its own F1-F9
+> kept whole); contract `specs/dotnet-profile-g3/contract.yaml` -
+> ready-green at intake, drift classes ruled in-contract.
 
 **Status legend:** 🔴 ratified, not yet shipped · 🟢 shipped ·
 ⚪ deferred behind a named trigger. Docs Pass 0 authored 2026-07-29,
-before any implementation; markers flip as units land.
+before any implementation; G3 fit notes Pass 0 authored 2026-07-30;
+markers flip as units land.
 
 ## What a tooling profile is
 
@@ -35,9 +39,9 @@ scaffolded before a slice ships sees the new surfaces as honest
 stack-neutral"). This slice made it live: base + overlay resolution
 in init (no-clobber and merge-target semantics unchanged), the same
 resolution in `/sdlc update` (stack read from `.sdlc/config.yaml`),
-and one stack-aware next-steps line at init. The dotnet overlay ships
-**deliberately empty** at this slice - the first real payload arrives
-with the G3 slice below.
+and one stack-aware next-steps line at init. The dotnet overlay
+shipped **deliberately empty** at this slice; its first real payload
+landed with the G3 slice below (0.6.0).
 
 ## Binding status, gate by gate
 
@@ -53,7 +57,7 @@ order.
 | G0 planning/intake | identical to base - contract validation + vocabulary join are artifact checks; fit notes below | 🟢 0.5.0 |
 | G1 requirements/spec | Spectral / buf lint; TLA+ for hard cores | 🔴 |
 | G2 design/architecture | PublicAPI baselines, NetArchTest rules, STRIDE, red spec-suite run | 🔴 |
-| G3 implementation | `dotnet format`, analyzer battery (StyleCop + custom Roslyn), strict compile props | 🔴 next slice |
+| G3 implementation | `dotnet format`, analyzer battery (StyleCop + custom Roslyn), strict compile props | 🟢 0.6.0 |
 | G4 pre-merge CI | the 11-condition merge queue core (echo, arch tests, suites, ratchets, audits) | 🔴 |
 | G5 integration/system | Pact, differential + property campaigns, SharpFuzz, Coyote, Stryker.NET | 🔴 |
 | G6 UAT/staging | certified-venue walk sheets; principal grades | 🔴 |
@@ -80,23 +84,69 @@ order.
   (`src/Foo/`, `*.csproj`) are the natural .NET scope units, and
   scope is the baseline later diff-scoped gates check against.
 
+## 🟢 G3 fit notes for .NET shops (unit: dotnet-g3-doc)
+
+Four surfaces land, resolved by the overlay at init and tracked by
+`/sdlc update` in their ruled classes:
+
+- **`Directory.Build.props`** (repo root, merge-target) - G3.3's
+  strict compile (`Nullable` enable, `TreatWarningsAsErrors`,
+  `AnalysisLevel latest-all`, checked arithmetic, unsafe off) plus
+  G3.2's wiring (`EnforceCodeStyleInBuild`, pinned StyleCop.Analyzers
+  reference). One file at the root; every project inherits.
+- **`.editorconfig`** (repo root, merge-target) - G3.1's layout rules
+  and G3.2's severity map, gating at warning under the zero-warning
+  regime.
+- **`.github/workflows/sdlc-dotnet.yml`** (kit-owned) - format verify
+  plus strict build as chain-free steps, beside the G0 backstop; the
+  consumer's own .NET workflows untouched.
+- **`.pre-commit-config.yaml`** (merge-target, replaces the base
+  entry) - adds the `dotnet format` hook in apply mode, G3.1's fix
+  channel.
+
+Fit notes:
+
+- **The build is the gate.** One `dotnet build` evaluates battery and
+  strict flags together; the formatter runs apply-mode in the loop,
+  verify-mode in CI. Both venues read the identical committed configs -
+  venue drift is impossible by construction.
+- **Brownfield lands red, deliberately.** The props surface the
+  existing warning debt at once; merge-target leaves adoption pace
+  with the consumer - init prints snippets beside existing files,
+  update reports drift on these two but never applies them. The class
+  ruling:
+  [0019](../decisions/0019-enforcement-config-drift-classes.md).
+- **Severity edits are enforcement-layer changes.** Per-project
+  strictness overrides, `<NoWarn>`, and in-source suppressions are
+  tamper vectors. The mechanical suppression audit is a registered
+  build item arriving with the G4 slice; until then they are
+  review-blocking by policy.
+- **House analyzers are not here yet.** The battery ships stock
+  StyleCop + IDE tiers; the custom tranche instantiates at pilot
+  activation ([0009](../decisions/0009-custom-analyzer-adoption-policy.md)).
+
 ## ⚪ Gap register - deferred, triggers on record
 
 - **Azure DevOps pipeline variant** - trigger: the first real
   consumer on AzDO; the kit's CI substrate is GitHub Actions until
   then.
-- **Husky.NET local hooks** (pre-commit alternative) - trigger: the
-  G3 slice, where local hooks first carry real checks (formatter).
+- **Husky.NET local hooks** (pre-commit alternative) - trigger: a
+  consumer without Python tolerance. The original trigger (the G3
+  slice) fired and closed on pre-commit: Python is already the kit's
+  local substrate, so the formatter hook rides the existing config;
+  Husky.NET remains registered for shops that will not run local
+  Python.
 - **`dotnet tool` validator wrapper** - trigger: local-Python
   friction reported by a real .NET consumer.
 
 ## Roadmap - slice order
 
-1. **G0 (this task)** - the container: overlay resolution, update
+1. **G0 (shipped, 0.5.0)** - the container: overlay resolution, update
    parity, this page.
-2. **G3** - the first heavy payload: `Directory.Build.props` strict
-   compile, `.editorconfig` + `dotnet format`, the analyzer battery,
-   and the inner-loop workflow job.
+2. **G3 (shipped, 0.6.0)** - the first heavy payload:
+   `Directory.Build.props` strict compile, `.editorconfig` +
+   `dotnet format`, the analyzer battery (stock tiers), and the
+   inner-loop workflow job.
 3. **G4 mechanical core** - echo, full test execution,
    secret/dependency audit.
 4. **Beyond** - by the consumer's actual defect distribution
