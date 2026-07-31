@@ -1,12 +1,20 @@
-# Plan - Session 21 (2026-07-30) - dotnet tooling profile, G4 mechanical core slice
+# Plan - Session 21 (2026-07-30) - dotnet tooling profile, G4 mechanical core slice - EXECUTED
 
-Roadmap step 3 (docs/dotnet-profile.md): the merge gate's mechanical
-core lands in the dotnet overlay - echo, full test execution,
-secret/dependency audit - plus the four banked G4-session inputs from
-the G3 page. Gate shape ratified at docs/gates/G4-pre-merge-ci.md
-(eleven conditions, session-8 walk); this slice binds four (G4.1,
-G4.9, G4.10, G4.11); the remaining seven stay 🔴 per roadmap step 4.
-Kit ships as 0.7.0.
+Ratified by the user in-session: F1-F10 kept whole, rulings as
+recommended (F3 docker-run gitleaks, F6 battery-CWE re-registration,
+F10 ADR 0020 kept). All steps ran: session-20 close merged first
+(PR #17), contract dotnet-profile-g4 ready-green through intake
+(first pass, no TC loop), docs Pass 0 authored red and flipped at
+ship, four conditions bound (G4.1, G4.9.1-2, G4.10, G4.11), the
+suppression audit shipped as the first pipeline-native kit module,
+suite 111 -> 146, both audit engines clean, kit 0.7.0. PR #18 merged
+(819686b) and v0.7.0 tagged there; self-pin PR #19 merged (eb881dc),
+its contracts job proving pip install @v0.7.0.
+
+Original scope statement: roadmap step 3 (docs/dotnet-profile.md) -
+the merge gate's mechanical core in the dotnet overlay; gate shape
+ratified at docs/gates/G4-pre-merge-ci.md; seven conditions stay 🔴
+per roadmap step 4.
 
 ## Feature list (WHAT - strike / keep / amend)
 
