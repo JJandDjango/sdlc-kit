@@ -10,7 +10,7 @@ definition: The machine-actionable result a pipeline-native check emits - exit 0
 
 kind: entity
 
-status: draft
+status: ratified
 since: 2026-07-31
 
 sources:
