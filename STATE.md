@@ -25,14 +25,23 @@
   `pip install @v0.8.0`. Carried one-liners fixed (README tree
   line, CONVENTIONS schema ref -> taskcontract/schemas/; empty
   root schemas/ removed).
+- Post-close: `operator` + `verdict` ratified on the user's
+  direction (PR #24, 45f4eac) - glossary 15 terms, all ratified,
+  zero drafts.
 - Prior close: #21 (0385242) - G4 mechanical core, 0.7.0.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. Rule the draft terms: ratify or amend `operator` and `verdict`
-   (class-S flip in review).
+1. **Session 23 opener (user-named): controlled language.** Explore
+   ASD-STE100-style restriction for kit artifacts - a specific
+   dictionary plus per-file-kind rules for what language is and is
+   not allowed, particularly JSON files, features, and task
+   descriptions. Natural joins: the vocabulary layer (ratified terms
+   as the dictionary seed), contract prose fields (intent,
+   done_means, acceptance sketches), the constraint registry; likely
+   shape - a controlled-language door beside vocab-check.
 2. **Pilot M0 session** (engine repo): first profile-aware
    consumer - dotnet payload spans G3 + G4 core and now carries
    operators to exercise; Q5 reality data.
@@ -52,3 +61,7 @@
 - Operator activation in consumers: when does a consumer's
   `active_gates` reflect operator-driven G3/G4 preflight - M0
   should surface the shape.
+- Controlled-language scope (session 23): which file kinds gate
+  first (JSON / features / task descriptions), and does the
+  dictionary extend the glossary or stand beside it as its own
+  class-E artifact?
