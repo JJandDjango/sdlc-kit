@@ -1,5 +1,17 @@
 {
-  "note": "dotnet tooling-profile overlay (ADR 0018). G3 slice (contract: dotnet-profile-g3): strict props, editorconfig, formatter hook. G4 mechanical core (contract: dotnet-profile-g4): the workflow grows into the merge gate (echo, full tests, secrets + dependency audit, suppression audit); props gains the locked-graph block. Drift classes ruled in-contract (ADRs 0019, 0020). Status: docs/dotnet-profile.md.",
+  "note": "dotnet tooling-profile overlay (ADR 0018). G3 slice (contract: dotnet-profile-g3): strict props, editorconfig, formatter hook. G4 mechanical core (contract: dotnet-profile-g4): the workflow grows into the merge gate (echo, full tests, secrets + dependency audit, suppression audit); props gains the locked-graph block. Drift classes ruled in-contract (ADRs 0019, 0020). Operator layer (contract: operator-layer): commands binds the g3 inner loop and g4 preflight for operator defs - data for agents, never scaffold (ADR 0021); the CI-side secrets scan stays workflow-only. Status: docs/dotnet-profile.md.",
+  "commands": {
+    "g3": [
+      "dotnet format whitespace --verify-no-changes",
+      "dotnet build"
+    ],
+    "g4-preflight": [
+      "dotnet restore --locked-mode",
+      "dotnet build --no-restore",
+      "dotnet test --no-build -- RunConfiguration.TreatNoTestsAsError=true",
+      "python -m taskcontract suppression-audit --base origin/main"
+    ]
+  },
   "templates": {
     "Directory.Build.props.template": {"target": "Directory.Build.props", "class": "merge-target"},
     "editorconfig.template": {"target": ".editorconfig", "class": "merge-target"},

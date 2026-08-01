@@ -1,0 +1,17 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Ratification is the human act: flip status draft -> ratified in review
+# (class-S edit; the PR merge is the interim approval record).
+
+term: operator
+
+name: Operator
+
+definition: An agent persona that convenes at one or more gates to drive their checks green - four in the roster (spec, developer, qa, verifier), each with a fixed write surface and a context manifest; per-gate behavior lives in venue bindings inside the def, never in per-gate files. Human principals are seats, not operators - their conditions take agent assist at most, suggestions never verdicts.
+
+kind: entity
+
+status: draft
+since: 2026-07-31
+
+sources:
+  - docs/operators.md

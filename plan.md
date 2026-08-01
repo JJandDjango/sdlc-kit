@@ -1,96 +1,46 @@
-# Plan - Session 21 (2026-07-30) - dotnet tooling profile, G4 mechanical core slice - EXECUTED
+# Plan - Session 22 (2026-07-31) - per-gate agent arc: design first - EXECUTED
 
-Ratified by the user in-session: F1-F10 kept whole, rulings as
-recommended (F3 docker-run gitleaks, F6 battery-CWE re-registration,
-F10 ADR 0020 kept). All steps ran: session-20 close merged first
-(PR #17), contract dotnet-profile-g4 ready-green through intake
-(first pass, no TC loop), docs Pass 0 authored red and flipped at
-ship, four conditions bound (G4.1, G4.9.1-2, G4.10, G4.11), the
-suppression audit shipped as the first pipeline-native kit module,
-suite 111 -> 146, both audit engines clean, kit 0.7.0. PR #18 merged
-(819686b) and v0.7.0 tagged there; self-pin PR #19 merged (eb881dc),
-its contracts job proving pip install @v0.7.0.
+Ratified by the user in-session: F1-F9 kept whole, knobs as
+recommended (developer + verifier ship, spec + qa register; profile
+commands kept; verdict retrofit document-only; personas-not-per-gate
+ruled in conversation). All steps ran: carried one-liners fixed,
+contract operator-layer ready-green through intake (first pass, no
+TC loop), docs Pass 0 authored red and flipped at ship, the Two-Key
+pair shipped as plugin agents/ (sdlc-developer, sdlc-verifier),
+dotnet commands: bindings landed, operator + verdict drafted into
+the vocabulary, ADR 0021 recorded, suite 146 -> 158, all four check
+surfaces green. Kit 0.8.0; v0.8.0 tag at the shipping merge and the
+self-pin PR follow per distribution doctrine.
 
-Original scope statement: roadmap step 3 (docs/dotnet-profile.md) -
-the merge gate's mechanical core in the dotnet overlay; gate shape
-ratified at docs/gates/G4-pre-merge-ci.md; seven conditions stay 🔴
-per roadmap step 4.
+Original scope statement: STATE next-action 1. The arc is named in
+every recent contract ("its own arc") but never designed. This
+session designs it - feature list ratified before any
+implementation - then ships the first slice if the ratified scope
+allows. Pilot M0 (engine repo) stays out of scope unless redirected.
 
-## Feature list (WHAT - strike / keep / amend)
+## Steps
 
-- **F1 Merge-gate workflow extension** - sdlc-dotnet.yml (kit-owned)
-  grows from inner-loop echo to the mechanical core: `merge_group`
-  trigger added (queue-authoritative venue; `pull_request` stays as
-  advisory preview building the test-merge ref), the existing three
-  steps stand as G4.1's echo clauses (build / battery / formatter),
-  new steps per F2-F5; header re-scoped; every step chain-free;
-  consumer workflows untouched.
-- **F2 Full test execution (G4.11)** - `dotnet test` solution-wide
-  after the strict build (`--no-build`); zero-tests-discovered = FAIL
-  guard (mechanism ruled at developer phase); skip/quarantine policy =
-  enforcement-pass material, named line in docs.
-- **F3 Secrets clause (G4.9 clause 1)** - gitleaks diff-mode step over
-  base..head; masked diagnostics, rotation-first fit note. Binding
-  ruled at intake - recommendation: `docker run` of the MIT gitleaks
-  image (single chain-free segment, no org license wall) over
-  gitleaks-action.
-- **F4 Dependency clause (G4.9 clause 2 + locked graph)** -
-  Directory.Build.props (merge-target) gains the audit block
-  (`RestorePackagesWithLockFile`, `NuGetAuditMode` all, NU1901-1904 as
-  errors); workflow restore goes `--locked-mode`; brownfield lockfile
-  story in fit notes (absent lockfile = red, adoption pace with the
-  consumer). License allowlist + SLA backstop (clause 3) deferred with
-  named lines - the first needs the policy artifact, the second G9.2
-  tracking.
-- **F5 Suppression audit (G4.10)** - the doc-promised build item: new
-  `taskcontract` subcommand implementing the four-vector diff check
-  (in-source suppressions incl. Skip/Ignore forms; severity
-  downgrades; strictness-flag weakening; exclusion widening) over
-  base..head with the .NET construct lists; workflow step installs the
-  pinned kit and runs it (per-event base resolution inside the
-  subcommand, so steps stay dumb and chain-free); per-vector
-  diagnostics naming the legitimate channel.
-- **F6 Battery-CWE map disposition** - the fourth banked input (three
-  strata substantiating taxonomy 691/697/703 rows + golden test).
-  Recommendation: re-register (Husky.NET precedent) behind "first
-  scanner slice (G4.7) or next taxonomy session" - data-audit work
-  orthogonal to the overlay payload; keeping it would dilute the
-  shipping slice.
-- **F7 Docs** - dotnet-profile.md G4 fit-notes section, Pass-0
-  red-first: venue semantics (queue-ready via `merge_group`,
-  queue-less fallback = strict serial merges), brownfield lockfile
-  story, the G3 "review-blocking by policy" line flips to the live
-  audit, deferral register (license allowlist, SLA backstop, seven
-  remaining conditions). Binding-table G4 row flips at ship to
-  green-core with honest remainder marking.
-- **F8 Tests** - content assertions for the new workflow steps + props
-  audit block; suppression-audit fixture corpus (positive + negative
-  per vector); chain-free check extended over new steps; non-dotnet
-  byte-identical regression holds; version equality at 0.7.0;
-  profile-authoring lock holds over template edits.
-- **F9 Registry + version** - 0.7.0 (KIT_VERSION + pyproject
-  together), CHANGELOG delta note, MAP row touch, tag-on-bump at the
-  shipping merge, self-pin follow-up PR per distribution doctrine.
-- **F10 ADR 0020** - merge-gate distribution shape as precedent: one
-  workflow serving both venues (PR advisory / queue authoritative),
-  and pipeline-native checks shipping as kit modules behind the pin,
-  never copied scripts. Strikeable if the contract record suffices;
-  lean keep - it generalizes to every future profile's G4 slice.
-
-## Steps (scoped by the kept set)
-
-1. Ratify F1-F10 (in conversation).
-2. Intake - /sdlc intake authors specs/dotnet-profile-g4/contract.yaml
-   to ready-green; F3's binding and F6's disposition ruled in-contract.
-3. Docs Pass 0 - F7 red-first.
-4. Implement (@developer) - F1-F5: workflow + props deltas,
-   taskcontract subcommand, tests (F8).
-5. ADR 0020 (F10, if kept).
-6. Verify (@verifier) - suite green, /sdlc audit clean, self-run still
-   exit 0, byte-identical regression green.
-7. Registry touches (F9) - version bump last, tag-on-bump at merge.
-8. Wrap - docs markers flip, STATE regenerated, commit/PR; self-pin PR
-   after the tag.
+1. Carried one-liners (direct fix, no gate ceremony): README.md tree
+   line and CONVENTIONS.md schema ref -> `taskcontract/schemas/`;
+   delete the empty root `schemas/` leftover.
+2. Feature list (WHAT) for the per-gate agent arc - strikeable F-items
+   covering: harness (how an agent drives a gate to green from
+   diagnostics alone), venue (where each gate-agent runs), verdict
+   plumbing (the 0/1/2 + `--json` module contract, suppression-audit
+   as precedent), context assembly (two-channel decorrelation),
+   plugin `agents/` distribution + versioning. Ratify / strike /
+   amend in conversation.
+3. Record the ratified set as the design doc.
+4. Intake - `/sdlc intake` authors the contract for the first
+   implementable slice to ready-green.
+5. Docs Pass 0 - red-first for the user-facing surface.
+6. Implement (@developer) - the ratified slice + tests.
+7. Verify (@verifier) - suite green, `/sdlc audit` clean, self-run
+   still exit 0.
+8. Registry touches - ADR for the arc's precedents (likely), MAP row,
+   CHANGELOG, version bump last, tag-on-bump at the shipping merge.
+9. Wrap - docs markers flip, STATE regenerated, commit/PR; self-pin
+   follow-up PR after the tag.
 
 House rules in force: no pipes/chains in any authored command string
 (CI steps included); never Edit/Write under ~/.claude/skills (shell

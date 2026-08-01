@@ -78,7 +78,7 @@ spine. Neither requires the other.
 ```
 skills/sdlc/          # the /sdlc skill: SKILL.md + init.py + audit.py + templates/
 taskcontract/         # pip-installable validator (+ contract scaffolding)
-schemas/              # task-contract JSON Schema (draft + ready profiles)
+taskcontract/schemas/ # task-contract JSON Schema (draft + ready profiles)
 docs/                 # gate registry, taxonomy, catalog, per-gate deep pages
 decisions/            # ADRs 0001+ — the why, append-only
 tests/                # validator + skill regression suite

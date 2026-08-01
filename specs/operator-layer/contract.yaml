@@ -1,0 +1,176 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: operator-layer
+
+intent: >-
+  The kit ships the operator layer's first slice: docs/operators.md
+  makes the verdict contract (exit 0/1/2 + --json findings) and the
+  loop protocol (cap-5, fix-what-diagnostics-name, no retry-to-green)
+  normative, the Two-Key operator pair distributes as plugin agents
+  from a new root agents/ dir - sdlc-developer (G3 write surface,
+  never reads acceptance-test source: the session-7 anti-gaming
+  ruling) and sdlc-verifier (zero-trust re-run, writes nothing) - each
+  carrying write surface, context manifest, per-gate venue bindings,
+  and the loop; the dotnet profile declares machine-readable commands
+  the defs consume; the venue map rules every gate's agent venue
+  including G4's local preflight with CI staying authoritative and
+  agentless; sdlc-spec and sdlc-qa register behind venue existence;
+  operator and verdict enter the vocabulary as drafts; ADR 0021
+  records the shape precedents; the kit ships as 0.8.0.
+
+scope:
+  - agents/
+  - docs/operators.md
+  - docs/gates.md
+  - skills/sdlc/templates/profiles/dotnet/profile.json
+  - skills/sdlc/init.py
+  - specs/vocabulary/
+  - tests/
+  - decisions/0021-operator-layer-shape.md
+  - MAP.md
+  - CHANGELOG.md
+  - pyproject.toml
+
+non_goals:
+  - sdlc-spec and sdlc-qa defs - registered in the venue map with
+    named triggers; they ship when their venues exist (G1/G2
+    authoring surfaces and G5-G7 pipelines are unbound everywhere
+    today).
+  - The PL-PIPE.3 eval harness - its own arc; defs name the eval
+    obligation, nothing runs it in this slice.
+  - The Q5 decorrelation mechanism (separate sessions, models,
+    context windows) - stays open for M0 reality data; context
+    manifests rule content only.
+  - Exit-2 retrofit of validate and vocab-check - the verdict
+    contract documents the per-surface deltas as fact; no module's
+    exit semantics change in this slice.
+  - Consumer routing policy - plugin agent descriptions carry
+    auto-delegation; CLAUDE.md directive wiring stays consumer-owned.
+  - A mechanical harness runner - the loop protocol is def-embedded
+    discipline this slice; a runner executable is a later build item
+    behind the per-gate activation program.
+  - Term ratification - operator and verdict are born draft; the
+    status flip stays the user's class-S act.
+
+decomposition:
+  - unit: verdict-contract
+    done_means: docs/operators.md states the normative verdict
+      contract - exit 0 green / 1 red with findings / 2
+      not-applicable-or-usage, --json emitting a findings array with
+      stable per-finding fields, stable greppable diagnostic codes -
+      with a per-surface conformance table over the five existing
+      checks (validate, vocab-check, suppression-audit, audit,
+      update) naming each delta (validate and vocab-check lack a
+      distinct exit-2 lane) as documented fact; ADR 0020's rule
+      extends - pipeline-native checks speak the verdict contract.
+    acceptance_sketch:
+      - the conformance table covers all five surfaces and names the
+        exit-2 deltas
+      - no module's exit semantics change in this slice
+  - unit: loop-protocol
+    done_means: docs/operators.md states the loop discipline
+      generalized from intake I5 - one single-segment invocation per
+      iteration, fix exactly what the diagnostics name, cap 5,
+      persistent red reports remaining findings and returns control,
+      no retry-to-green, checks and gating configs read-only to the
+      looping agent - and both shipped defs instantiate it in their
+      instructions.
+    acceptance_sketch:
+      - the protocol section names the cap, the single-segment rule,
+        and the read-only constraint
+      - each shipped def carries the loop with the same cap and
+        constraints
+  - unit: operator-defs
+    done_means: agents/sdlc-developer.md and agents/sdlc-verifier.md
+      exist as PromptLang-shaped plugin agents - frontmatter plus
+      purpose/context/instructions/constraints/criteria structure -
+      each carrying its write surface (developer implementation +
+      unit tests only; verifier writes nothing), its MUST-READ /
+      MUST-NOT-READ context manifest (developer never reads
+      acceptance-test source; verifier re-runs every check itself and
+      trusts no reported green), per-gate venue bindings resolved
+      from .sdlc/config.yaml stack to the profile's commands, the
+      loop protocol, and class-E standing named in the header.
+    acceptance_sketch:
+      - both defs carry frontmatter, PromptLang tags, write surface,
+        context manifest, and the loop protocol
+      - no sdlc-spec or sdlc-qa file exists under agents/
+      - the developer manifest forbids acceptance-test source and the
+        verifier constraints forbid writes
+  - unit: venue-map
+    done_means: docs/operators.md carries the venue table over all
+      thirteen gates - operator persona, agent venue class
+      (conversation flow, local preflight, ci-mechanical, scheduled,
+      human-graded), status today - with the two rulings inside -
+      G4's agent venue is local preflight over the same modules the
+      merge gate runs with CI authoritative and agentless, and human
+      conditions (G1.3, G6.1, G6.2, G8.3, PL-PIPE.1) take agent
+      assist at most, suggestions never verdicts.
+    acceptance_sketch:
+      - the table has a row for every gate G0-G10 plus PL-DOC and
+        PL-PIPE
+      - G4's row reads local preflight with agentless CI and the five
+        human conditions read assist-only
+  - unit: profile-commands
+    done_means: the dotnet profile.json gains a commands block keyed
+      by gate binding - G3 inner loop (format verify, strict build)
+      and G4 preflight (solution test, suppression audit) - every
+      command a single chain-free segment; the block is data for
+      agent defs, not scaffold - init.py renders nothing new from it;
+      profiles without the block bind nothing.
+    acceptance_sketch:
+      - dotnet profile.json carries G3 and G4-preflight command
+        entries and every command is chain-free
+      - a non-dotnet render stays byte-identical (the block renders
+        nothing)
+  - unit: def-test-suite
+    done_means: the suite covers the layer - frontmatter completeness
+      and PromptLang tag structure per def, the chain-free check
+      extended over every command string in defs and profile
+      commands, every taskcontract subcommand a def names resolving
+      against the CLI, venue-map/def coherence (each shipped def's
+      bound gates appear in the venue table), a profile commands
+      shape check, and version equality at 0.8.0.
+    acceptance_sketch:
+      - structural, chain-free, resolution, and coherence assertions
+        each have at least one test
+      - the version-equality test is green at 0.8.0
+  - unit: vocab-drafts
+    done_means: operator and verdict scaffold as draft vocabulary
+      terms with real definitions and sources naming the design doc;
+      ratification stays the user's class-S flip; the contract's own
+      entities declare only already-ratified terms.
+    acceptance_sketch:
+      - specs/vocabulary/operator.yaml and specs/vocabulary/verdict.yaml
+        exist with status draft
+      - vocab-check stays green
+  - unit: registry-version
+    done_means: decisions/0021-operator-layer-shape.md records the
+      precedents - persona roster not per-gate files, plugin channel
+      for prompt artifacts, verdict and loop contracts normative,
+      local-preflight venue doctrine, anti-gaming context ruling;
+      docs/gates.md gains one additive operator-layer pointer line;
+      MAP.md gains the operator-layer row; CHANGELOG.md carries the
+      0.8.0 delta; KIT_VERSION and pyproject bump to 0.8.0 together;
+      v0.8.0 tags at the shipping merge with the self-pin follow-up
+      per distribution doctrine.
+    acceptance_sketch:
+      - ADR 0021 exists in house format and docs/operators.md links
+        it
+      - the CHANGELOG 0.8.0 entry names the two shipped defs and the
+        verdict contract
+      - the version-equality test is green at 0.8.0
+
+dependencies:
+  - ref: dotnet-profile-g4
+    status: resolved
+
+provenance:
+  origin: human-request
+
+entities:
+  - gate
+  - consumer
+  - tooling-profile
+  - task-contract

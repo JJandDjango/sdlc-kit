@@ -9,6 +9,35 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.8.0 - 2026-07-31 (tag `v0.8.0`)
+
+- The operator layer ships its first slice (contract
+  `operator-layer`, ADR 0021): plugin `agents/` carries the Two-Key
+  pair - `sdlc-developer` (G3 write surface: implementation + unit
+  tests only; never reads acceptance-test source) and
+  `sdlc-verifier` (zero-trust grader: re-runs every check fresh,
+  writes nothing - no Edit/Write in its toolset). `sdlc-spec` and
+  `sdlc-qa` are registered, shipping when their venues exist.
+- `docs/operators.md` is the layer's deep page and makes two
+  contracts normative: the verdict contract (exit 0/1/2, `--json`
+  findings arrays, stable codes - existing surfaces grandfathered
+  with named deltas) and the loop protocol (single-segment
+  invocations, fix what diagnostics name, cap 5, no retry-to-green,
+  checks read-only to the looper). Venue map covers all 13 gates;
+  G4's agent venue is local preflight - CI stays authoritative and
+  agentless.
+- The dotnet `profile.json` gains `commands:` - `g3` (format verify,
+  build) and `g4-preflight` (locked restore, build, full tests,
+  suppression audit vs `origin/main`) - data operator defs bind at
+  runtime, never rendered scaffold; the CI-side secrets scan stays
+  workflow-only. Scaffold output is unchanged for every stack: ref
+  bump only, no drift to reconcile.
+- Vocabulary: `operator` and `verdict` enter as drafts (sources:
+  `docs/operators.md`); ratification stays a review act.
+- Agents ride the plugin channel: `claude plugin update` delivers
+  them; `/sdlc update` deliberately does not cover `agents/`.
+  Schemas: none changed.
+
 ## 0.7.0 - 2026-07-30 (tag `v0.7.0`)
 
 - The dotnet workflow grows into the merge gate (contract
