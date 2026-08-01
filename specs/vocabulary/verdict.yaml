@@ -1,0 +1,17 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Ratification is the human act: flip status draft -> ratified in review
+# (class-S edit; the PR merge is the interim approval record).
+
+term: verdict
+
+name: Verdict
+
+definition: The machine-actionable result a pipeline-native check emits - exit 0 green, 1 red with findings, 2 not applicable or unusable invocation - with findings as a JSON array of stable coded records an agent can loop against. The loop protocol consumes verdicts, never prose; codes stay stable so a break announces itself by name.
+
+kind: entity
+
+status: draft
+since: 2026-07-31
+
+sources:
+  - docs/operators.md

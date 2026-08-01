@@ -19,8 +19,9 @@
   changes enter only on user ratification
   ([[0004-per-gate-documentation-program]]).
 - **Task contracts.** One per task at `specs/<task-id>/contract.yaml`, valid
-  against `schemas/task-contract.schema.json` (`ready` profile) via
-  `python -m taskcontract validate` ([[0006-task-contract-enforcement]]).
+  against `taskcontract/schemas/task-contract.schema.json` (`ready`
+  profile) via `python -m taskcontract validate`
+  ([[0006-task-contract-enforcement]]).
 <!-- Example code rule - adapt or delete:
 - **Match the idiom.** New code follows the touched layer's dominant pattern.
 -->

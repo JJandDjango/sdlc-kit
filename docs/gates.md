@@ -44,7 +44,10 @@ enforcement-layer artifacts governed by PL-PIPE. Operators per the harness
 design: Spec agent authors G0-G2 artifacts, Developer works only inside G3, QA
 executes G4-G7 (the human principal grades G6.1/G6.2; the operations
 principal grades G8.3), Verifier is cross-cutting (gate integrity,
-immutability diffs).
+immutability diffs). The operator layer ships these as plugin agent defs
+with per-gate venue bindings - roster, venue map, and the verdict + loop
+contracts in [operators.md](operators.md)
+([0021](../decisions/0021-operator-layer-shape.md)).
 
 ## Open-parameter index
 
