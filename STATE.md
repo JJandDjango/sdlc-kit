@@ -20,28 +20,27 @@
   g4-preflight), operator + verdict as draft terms, ADR 0021.
 - Receipts: suite 146 -> 158; six contracts ready-green;
   vocab-green 15 terms; audit clean; suppression-audit main..HEAD
-  green; kit 0.8.0. Carried one-liners fixed (README tree line,
-  CONVENTIONS schema ref -> taskcontract/schemas/; empty root
-  schemas/ removed).
+  green; kit 0.8.0. PR #21 merged (51a1b18), v0.8.0 tagged there;
+  self-pin PR #22 merged (4bbd7aa), its contracts job proving
+  `pip install @v0.8.0`. Carried one-liners fixed (README tree
+  line, CONVENTIONS schema ref -> taskcontract/schemas/; empty
+  root schemas/ removed).
 - Prior close: #21 (0385242) - G4 mechanical core, 0.7.0.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. Merge the session-22-agent-arc PR; tag v0.8.0 at the merge;
-   self-pin PR moves the kit's own scaffold refs (distribution
-   doctrine standing sequence).
-2. Rule the draft terms: ratify or amend `operator` and `verdict`
+1. Rule the draft terms: ratify or amend `operator` and `verdict`
    (class-S flip in review).
-3. **Pilot M0 session** (engine repo): first profile-aware
+2. **Pilot M0 session** (engine repo): first profile-aware
    consumer - dotnet payload spans G3 + G4 core and now carries
    operators to exercise; Q5 reality data.
-4. Registered continuations: sdlc-spec / sdlc-qa defs behind venue
+3. Registered continuations: sdlc-spec / sdlc-qa defs behind venue
    existence; PL-PIPE.3 eval harness (own arc); mechanical loop
    runner; verdict field-name convergence (rides the next
    pipeline-native module).
-5. Deferrals unchanged: Q4 numbers, PyPI publish (trigger stands),
+4. Deferrals unchanged: Q4 numbers, PyPI publish (trigger stands),
    explainer PDF, V8 RDF map; gaps behind triggers: Azure DevOps
    variant, Husky.NET, dotnet-tool wrapper, battery-CWE map.
 
