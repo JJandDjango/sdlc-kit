@@ -25,7 +25,8 @@
 - Receipts: suite 158 -> 188; validate 7/7 ready-green; vocab-green
   17 terms / registry 6 constraints; lang-green armed; audit clean
   (6 LANG-EXEMPT INFO); kit 0.9.0 (tag rides the shipping merge).
-- Session-23 branch/PR open at close; user acts at review:
+- PR #26 open at close (branch controlled-language, dcb22c7); user
+  acts at review:
   set-ratify the dictionary via the merge (seed grew by `exempt` +
   `binds` during self-adoption - flagged), class-S flips for
   `controlled-dictionary` + `controlled-field` drafts when ready.
