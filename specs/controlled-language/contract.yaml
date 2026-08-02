@@ -1,0 +1,79 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Ratified design source: docs/controlled-language.md (Pass 0, session 23 walk).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: controlled-language
+
+intent: The kit ships a controlled-language door beside vocab-check. A set-ratified dictionary artifact at specs/vocabulary/dictionary.yaml carries the closed general-word class and the field registry. Entries carry word, pos, and gloss. Bans carry use_instead replacements. The registry binds the six contract prose fields with text-types. A zero-dependency lang-check subcommand speaks the verdict contract and enforces tier-1 rules and integrity checks on registry-bound fields only. Exit 0 is green, 1 is red; absence of the dictionary is green. A report-only lang-extract subcommand seeds the dictionary from the repo's own ratified corpus and emits the legacy-red census. The door joins intake, CI, audit, and the /sdlc skill. The kit self-hosts as the proof instance. The claim is bounded interpretation, never determinism - form checked, meaning not checked.
+
+scope:
+  - taskcontract/schemas/dictionary.schema.json
+  - taskcontract/ (lang module + __main__ wiring)
+  - specs/vocabulary/dictionary.yaml
+  - specs/vocabulary/constraints.yaml (disjointness entry)
+  - specs/vocabulary/ (glossary drafts - controlled-dictionary, controlled-field)
+  - skills/sdlc/SKILL.md (lang flows)
+  - skills/sdlc/audit.py (door findings)
+  - skills/sdlc/templates/ (CI backstop step)
+  - docs/controlled-language.md (markers)
+  - CONVENTIONS.md (register line)
+  - decisions/ (arc ADR)
+  - tests/
+  - CHANGELOG.md + pyproject.toml (version, last)
+
+non_goals:
+  - Pilot M0 execution.
+  - Base-layer verb content - function words, bans, and rules only in v1; promotion waits on self-host evidence.
+  - PromptLang or foundations-repo changes - prompt lexicon stays behind its trigger.
+  - Eval harness implementation - PL-PIPE.3 comprehension family is registered, not built.
+  - F-item region checking and slot templates - deferred, triggers on record.
+  - Meaning, completeness, or correctness judgment - V4 and the human seats own the residue.
+  - Lexicon policing of raw human requests or deliberated prose (THEORY, ADRs, docs literature).
+
+decomposition:
+  - unit: dictionary-schema
+    done_means: The schema at taskcontract/schemas/dictionary.schema.json validates the dictionary artifact. The schema validates approved entries (word, pos, gloss) and banned entries with required use_instead. The schema also validates the function-word block, the style principle, the exempt list, and field-registry rows with text-type. The file is versioned 1.0.0 and packaged in the wheel.
+    acceptance_sketch:
+      - Verify the schema rejects a banned entry that lacks use_instead.
+      - Verify the schema rejects a registry row with a text-type outside descriptive or procedural.
+      - Verify the built wheel packages the schema file.
+  - unit: lang-extract
+    done_means: The lang-extract subcommand reads the registry-bound prose fields across specs contracts. The report prints candidate words with frequencies, banned-candidate matches, and the per-contract red census. The run writes no file.
+    acceptance_sketch:
+      - Run the subcommand over fixture contracts and verify candidate counts match the fixture prose.
+      - Verify skip classes (code spans, paths, gate IDs, diagnostic codes, term slugs, numbers) appear in no candidate list.
+      - Verify the run leaves the working tree unchanged.
+  - unit: dictionary-seed
+    done_means: The artifact at specs/vocabulary/dictionary.yaml validates against the schema. The seed is harvested from the ready-green contracts with the synonym collapse applied. The word list stays disjoint from every glossary term name and alias.
+    acceptance_sketch:
+      - Verify vocab-check and lang-check both exit 0 with the seeded dictionary present.
+      - Verify a fixture dictionary that duplicates a glossary term name turns the disjointness check red.
+  - unit: lang-check-door
+    done_means: The lang-check subcommand enforces the tier-1 rules and the integrity set on registry-bound fields only. The door speaks the verdict contract with stable CLnnn codes. Base-shadow findings report at INFO severity. The door exits green when no dictionary exists. The --json envelope carries the form-checked note.
+    acceptance_sketch:
+      - Verify a fixture contract with a banned word goes red and the finding names the use_instead replacement.
+      - Verify a repo without a dictionary exits 0.
+      - Verify a use_instead target that is itself banned goes red.
+  - unit: venue-joins
+    done_means: The scaffolded CI workflow template carries a lang-check backstop step as one chain-free segment. The audit engine reports dictionary and door findings with stable codes. The skill carries the /sdlc lang and /sdlc lang extract flows.
+    acceptance_sketch:
+      - Verify the rendered workflow contains the lang-check step as a single segment.
+      - Verify audit reports a broken fixture dictionary with a stable code.
+  - unit: paper-trail
+    done_means: The markers in docs/controlled-language.md match the shipped units. CONVENTIONS.md carries the register line. The controlled-dictionary and controlled-field terms exist as drafts with sources naming the docs page. The constraint registry carries the disjointness entry. The arc ADR records the rulings.
+    acceptance_sketch:
+      - Verify vocab-check stays green with the draft terms and the new constraint entry present.
+      - Verify the docs page carries a non-goals section and markers that match the shipped state.
+
+dependencies: []
+
+provenance:
+  origin: human-request
+
+entities:
+  - task-contract
+  - vocabulary-term
+  - verdict
+  - gate
+  - standing-red
+  - consumer

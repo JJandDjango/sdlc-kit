@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:sdlc-kit:dictionary:v1",
+  "version": "1.0.0",
+  "title": "Controlled-language dictionary (vocabulary layer)",
+  "description": "specs/vocabulary/dictionary.yaml - the closed general-word class beside the open glossary (session-23 arc; docs/controlled-language.md). A class-E enforcement artifact: the file self-declares its class for the 0014 lanes. Set-ratified - the merge is the ratification. The schema validates shape; the lang-check door owns the cross-artifact checks: glossary/dictionary disjointness (alias-aware, surface forms never stems), use_instead reference integrity (targets must resolve approved, no ban chains), entry uniqueness under case normalization, and base-shadowing (local glossary shadows base dictionary, INFO). The function-word block is the pos 'function' subset of words. Sentence caps live in the door keyed by text_type (future Q4 clock), not here. The exempt list is the standing-red ratchet (paired with .sdlc/reds.yaml entries, ADR 0015): listed contracts take prose-rule findings at warning severity - visible, never gating; removing an entry is a tightening and rides the auto lane.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "class",
+    "style",
+    "words",
+    "fields"
+  ],
+  "properties": {
+    "class": {
+      "const": "E"
+    },
+    "style": {
+      "const": "restricted choice, never unnatural construction"
+    },
+    "words": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/word"
+      }
+    },
+    "banned": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/ban"
+      }
+    },
+    "exempt": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "fields": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/field"
+      }
+    }
+  },
+  "$defs": {
+    "word": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "word",
+        "pos"
+      ],
+      "properties": {
+        "word": {
+          "$ref": "#/$defs/surface"
+        },
+        "pos": {
+          "enum": [
+            "verb",
+            "noun",
+            "modifier",
+            "function"
+          ]
+        },
+        "gloss": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      }
+    },
+    "ban": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "word",
+        "use_instead"
+      ],
+      "properties": {
+        "word": {
+          "$ref": "#/$defs/surface"
+        },
+        "use_instead": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/surface"
+          }
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      }
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact",
+        "path",
+        "text_type"
+      ],
+      "properties": {
+        "artifact": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{2,63}$"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text_type": {
+          "enum": [
+            "descriptive",
+            "procedural"
+          ]
+        }
+      }
+    },
+    "surface": {
+      "type": "string",
+      "pattern": "^[a-z][a-z-]{0,63}$"
+    }
+  }
+}

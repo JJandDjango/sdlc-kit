@@ -50,7 +50,7 @@ def _tree(tmp_path, registry, with_gate=True):
 def test_kit_registry_is_born_non_empty():
     violations, _count = validate_vocab_root(REPO)
     assert violations == []
-    assert registry_size(REPO) == 5
+    assert registry_size(REPO) == 6
 
     doc = yaml.safe_load(
         (REPO / "specs" / "vocabulary" / "constraints.yaml").read_text(encoding="utf-8"))
@@ -105,7 +105,7 @@ def test_registry_without_terms_fails_reference_integrity(tmp_path):
 
 def test_cli_reports_registry_in_the_green_line(capsys):
     assert main(["vocab-check", "--root", str(REPO)]) == 0
-    assert "registry 5 constraints" in capsys.readouterr().out
+    assert "registry 6 constraints" in capsys.readouterr().out
 
 
 def test_audit_reports_registry_errors_as_vocab_invalid(tmp_path, skill_audit):

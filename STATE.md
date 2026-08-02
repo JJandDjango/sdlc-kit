@@ -2,66 +2,69 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-07-31 (session 22 close)._
+> _Generated 2026-08-02 (session 23 close)._
 
 ## Now
-- Session 22 (2026-07-31): **the operator layer shipped its first
-  slice** - the arc carried as "its own" since ADR 0017, designed
-  and landed in one session. Contract `operator-layer` ready-green
-  at intake first pass (F1-F9 ratified whole; personas-not-per-gate
-  ruled in conversation). Shipped: plugin `agents/` with the
-  Two-Key pair - sdlc-developer (G3 write surface, never reads
-  acceptance-test source: the anti-gaming ruling ratified) and
-  sdlc-verifier (zero-trust grader, no Edit/Write in its toolset) -
-  docs/operators.md making the verdict contract (exit 0/1/2 +
-  --json) and loop protocol (cap 5, no retry-to-green) normative,
-  the 13-gate venue map (G4 = local preflight, CI authoritative and
-  agentless), dotnet profile.json `commands:` bindings (g3 +
-  g4-preflight), operator + verdict as draft terms, ADR 0021.
-- Receipts: suite 146 -> 158; six contracts ready-green;
-  vocab-green 15 terms; audit clean; suppression-audit main..HEAD
-  green; kit 0.8.0. PR #21 merged (51a1b18), v0.8.0 tagged there;
-  self-pin PR #22 merged (4bbd7aa), its contracts job proving
-  `pip install @v0.8.0`. Carried one-liners fixed (README tree
-  line, CONVENTIONS schema ref -> taskcontract/schemas/; empty
-  root schemas/ removed).
-- Post-close: `operator` + `verdict` ratified on the user's
-  direction (PR #24, 45f4eac) - glossary 15 terms, all ratified,
-  zero drafts.
-- Prior close: #21 (0385242) - G4 mechanical core, 0.7.0.
+- Session 23 (2026-08-02): **the controlled-language layer shipped
+  whole** - designed in a live walk (pros, cons 1-7 at depth, three
+  decisions ruled) and landed the same session. Named "bounded
+  interpretation," never "determinism": form checked, meaning not
+  checked. Shipped: dictionary schema (born 1.0.0) + set-ratified
+  seed at specs/vocabulary/dictionary.yaml (999 words harvested from
+  the seven ready-green contracts; zero bans - census-driven); base
+  layer (function words + vagueness/evasive bans) in the wheel;
+  `lang-check` (CLnnn, verdict-contract native, absence = green,
+  glossary disjointness + use_instead integrity + base shadowing) +
+  `lang-extract` (report-only census); field registry binding the six
+  contract prose fields with text-types; exempt ratchet for the six
+  pre-arc contracts (ledger `cl-legacy-tranche` - warnings, never
+  gating, ratchet on next edit); venue joins (template CI step, audit
+  LANG-INVALID/LANG-EXEMPT, /sdlc lang flows); ADR 0022. The
+  `controlled-language` contract passed its own door after rewrite -
+  the first hard-at-intake conformance.
+- Receipts: suite 158 -> 188; validate 7/7 ready-green; vocab-green
+  17 terms / registry 6 constraints; lang-green armed; audit clean
+  (6 LANG-EXEMPT INFO); kit 0.9.0 (tag rides the shipping merge).
+- Session-23 branch/PR open at close; user acts at review:
+  set-ratify the dictionary via the merge (seed grew by `exempt` +
+  `binds` during self-adoption - flagged), class-S flips for
+  `controlled-dictionary` + `controlled-field` drafts when ready.
+- Prior close: PR #25 (c077331) - session-23 opener queued; operator
+  + verdict ratified post-close (PR #24).
 
 ## Blockers
 - None.
 
 ## Next actions
-1. **Session 23 opener (user-named): controlled language.** Explore
-   ASD-STE100-style restriction for kit artifacts - a specific
-   dictionary plus per-file-kind rules for what language is and is
-   not allowed, particularly JSON files, features, and task
-   descriptions. Natural joins: the vocabulary layer (ratified terms
-   as the dictionary seed), contract prose fields (intent,
-   done_means, acceptance sketches), the constraint registry; likely
-   shape - a controlled-language door beside vocab-check.
-2. **Pilot M0 session** (engine repo): first profile-aware
-   consumer - dotnet payload spans G3 + G4 core and now carries
-   operators to exercise; Q5 reality data.
-3. Registered continuations: sdlc-spec / sdlc-qa defs behind venue
-   existence; PL-PIPE.3 eval harness (own arc); mechanical loop
-   runner; verdict field-name convergence (rides the next
-   pipeline-native module).
-4. Deferrals unchanged: Q4 numbers, PyPI publish (trigger stands),
-   explainer PDF, V8 RDF map; gaps behind triggers: Azure DevOps
-   variant, Husky.NET, dotnet-tool wrapper, battery-CWE map.
+1. **Self-pin PR after the v0.9.0 tag** - bumps the kit's own
+   workflow pin AND adds its lang-check CI step (the 0.8.0 pin
+   predates the subcommand; sequenced deliberately, ADR 0022).
+2. **Pilot M0 session** (engine repo): first profile-aware consumer -
+   dotnet payload spans G3 + G4 core, operators to exercise, and now
+   the controlled-language machinery brownfield-style; Q5 reality
+   data + the trace-fed curation feed both start here.
+3. Registered continuations: PL-PIPE.3 eval harness (now carrying
+   the comprehension family - paired prose variants, loop counts,
+   divergence); sdlc-spec / sdlc-qa defs behind venue existence;
+   mechanical loop runner; verdict field-name convergence (lang-check
+   shipped the envelope shape - convergence still rides a dedicated
+   pass).
+4. Controlled-language deferrals, triggers on record: base verb
+   promotion (self-host evidence), F-item region checking, prompt
+   lexicon (foundations-side PromptLang extension), slot templates
+   (per-field escape evidence), greenfield day-one arming.
+5. Deferrals unchanged: Q4 numbers (now also lang caps + escape-rate
+   threshold), PyPI publish, explainer PDF, V8 RDF map; gaps behind
+   triggers: Azure DevOps variant, Husky.NET, dotnet-tool wrapper,
+   battery-CWE map.
 
 ## Open questions
-- Q4 thresholds, numeric only (G4.8 ratchet budgets ride these).
-- Q5 two-channel decorrelation - content half ruled (context
-  manifests, ADR 0021); mechanism rides M0.
+- Q4 thresholds, numeric only (lang sentence caps + escape-rate KPI
+  join the clock list).
+- Q5 decorrelation mechanism - rides M0; the controlled lexicon is
+  the channel-invariant (ADR 0022 note).
 - Q6 first analyzer tranche - rides pilot activation.
-- Operator activation in consumers: when does a consumer's
-  `active_gates` reflect operator-driven G3/G4 preflight - M0
-  should surface the shape.
-- Controlled-language scope (session 23): which file kinds gate
-  first (JSON / features / task descriptions), and does the
-  dictionary extend the glossary or stand beside it as its own
-  class-E artifact?
+- Comprehension empirics (front-run, admitted): does restriction
+  help the model reader? PL-PIPE.3 family + M0 trace tagging answer;
+  a null result re-prices one benefit, kills nothing.
+- Operator activation in consumers - M0 surfaces the shape.

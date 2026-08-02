@@ -1,0 +1,22 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Ratification is the human act: flip status draft -> ratified in review
+# (class-S edit; the PR merge is the interim approval record).
+
+term: controlled-field
+
+name: Controlled field
+
+definition: A prose field a field-registry row binds to the controlled-language door - one (artifact, path, text_type) row in the controlled dictionary. In v1 the six task-contract prose fields - intent, scope, non_goals, unit, done_means, acceptance_sketch. Text type selects the rule profile - descriptive cap 25; procedural cap 20 plus modal policing, and verb-first acceptance sketches. Registry extensions are class-E deltas on the full lane; everything the registry does not name is out of the door's scope by construction.
+
+kind: entity
+
+relations:
+  part_of:
+    - task-contract
+
+status: draft
+since: 2026-08-02
+
+sources:
+  - docs/controlled-language.md
+  - taskcontract/schemas/dictionary.schema.json

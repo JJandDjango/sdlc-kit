@@ -41,3 +41,10 @@ constraints:
       - vocabulary-term
     check: sunset coherence both ways - class-S record matches compiled mark; vocabulary sunsets ride the same 0013 pattern (G10.1)
     status: specified
+  - id: glossary-dictionary-disjointness
+    kind: disjointness
+    subjects:
+      - controlled-dictionary
+      - vocabulary-term
+    check: python -m taskcontract lang-check (CL003) - dictionary words and bans stay disjoint from glossary term names, aliases, and slugs; surface forms, alias-aware, never stems
+    status: enforced

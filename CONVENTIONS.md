@@ -22,6 +22,11 @@
   against `taskcontract/schemas/task-contract.schema.json` (`ready`
   profile) via `python -m taskcontract validate`
   ([[0006-task-contract-enforcement]]).
+- **Register boundary.** Controlled register where prose is executed -
+  contract prose fields, checked by `python -m taskcontract lang-check`;
+  free register where prose is deliberated (THEORY, ADRs, docs
+  literature, conversation). Raw human requests are never
+  lexicon-policed ([[0022-controlled-language-shape]]).
 <!-- Example code rule - adapt or delete:
 - **Match the idiom.** New code follows the touched layer's dominant pattern.
 -->

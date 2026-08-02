@@ -37,6 +37,7 @@ flowchart LR
 | distribution reconciliation | Consumer-side update story: tagged install pins (tag-on-bump), CHANGELOG.md migration notes, `/sdlc update` scaffold-drift engine (report-only, per-file consented apply) | implemented (v1) | [docs/distribution.md](docs/distribution.md) |
 | tooling profiles | Per-stack template overlays (`profiles/{stack}/profile.json`) the stack answer selects at init/update; dotnet carries G3's inner loop + G4's mechanical core (strict props + locked-graph audit, editorconfig, merge-gate workflow, formatter hook - classes per ADRs 0019/0020) | implemented (v1) | [docs/dotnet-profile.md](docs/dotnet-profile.md) |
 | operator layer | Agent personas that drive gates green from verdicts: the Two-Key pair shipped as plugin `agents/` (developer, verifier), venue map over all 13 gates, verdict + loop contracts normative, profile `commands:` bindings; spec + qa registered | implemented (v1) | [docs/operators.md](docs/operators.md) |
+| controlled language | Bounded interpretation for executed prose: set-ratified closed dictionary + field registry, `lang-check` door (CLnnn) + `lang-extract` census over contract prose fields, exempt ratchet for pre-arc contracts, base layer in the wheel | implemented (v1) | [docs/controlled-language.md](docs/controlled-language.md) |
 
 Design source: `HANDOFF_gate-architecture_2026-07-22.md` (root, frozen). The
 gate map lives as the registry `docs/gates.md` (gates G0-G10 + PL-*, with

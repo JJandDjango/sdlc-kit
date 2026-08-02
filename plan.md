@@ -1,48 +1,47 @@
-# Plan - Session 22 (2026-07-31) - per-gate agent arc: design first - EXECUTED
+# Plan - Session 23 (2026-08-02) - controlled language - EXECUTED
 
-Ratified by the user in-session: F1-F9 kept whole, knobs as
-recommended (developer + verifier ship, spec + qa register; profile
-commands kept; verdict retrofit document-only; personas-not-per-gate
-ruled in conversation). All steps ran: carried one-liners fixed,
-contract operator-layer ready-green through intake (first pass, no
-TC loop), docs Pass 0 authored red and flipped at ship, the Two-Key
-pair shipped as plugin agents/ (sdlc-developer, sdlc-verifier),
-dotnet commands: bindings landed, operator + verdict drafted into
-the vocabulary, ADR 0021 recorded, suite 146 -> 158, all four check
-surfaces green. Kit 0.8.0; v0.8.0 tag at the shipping merge and the
-self-pin PR follow per distribution doctrine.
-
-Original scope statement: STATE next-action 1. The arc is named in
-every recent contract ("its own arc") but never designed. This
-session designs it - feature list ratified before any
-implementation - then ships the first slice if the ratified scope
-allows. Pilot M0 (engine repo) stays out of scope unless redirected.
+Design ratified in a live walk (review -> STE anatomy -> pros -> cons
+1-7 in depth -> shape): F1-F12 kept whole; rulings - standalone
+set-ratified dictionary beside the glossary; first surface = the six
+contract prose fields; posture hard-at-intake, legacy per census.
+All steps ran: Pass 0 authored red and flipped at ship; contract
+`controlled-language` ready-green at intake first pass, then
+rewritten to pass its own door (the first hard-at-intake
+conformance); dictionary schema born 1.0.0; base layer (function
+words + bans) in the wheel; seed harvested from the seven
+ready-green contracts (999 words, zero bans - census-driven);
+lang-check + lang-extract shipped verdict-contract native; census
+ruled legacy material on caps/verb-first -> exempt ratchet + ledger
+`cl-legacy-tranche`; venue joins (template step, audit codes, skill
+flows; kit's own CI step rides the self-pin PR); terms
+controlled-dictionary + controlled-field drafted; disjointness
+constraint enforced (registry entry 6); ADR 0022; suite 158 -> 188;
+kit 0.9.0. All five check surfaces green.
 
 ## Steps
 
-1. Carried one-liners (direct fix, no gate ceremony): README.md tree
-   line and CONVENTIONS.md schema ref -> `taskcontract/schemas/`;
-   delete the empty root `schemas/` leftover.
-2. Feature list (WHAT) for the per-gate agent arc - strikeable F-items
-   covering: harness (how an agent drives a gate to green from
-   diagnostics alone), venue (where each gate-agent runs), verdict
-   plumbing (the 0/1/2 + `--json` module contract, suppression-audit
-   as precedent), context assembly (two-channel decorrelation),
-   plugin `agents/` distribution + versioning. Ratify / strike /
-   amend in conversation.
-3. Record the ratified set as the design doc.
-4. Intake - `/sdlc intake` authors the contract for the first
-   implementable slice to ready-green.
-5. Docs Pass 0 - red-first for the user-facing surface.
-6. Implement (@developer) - the ratified slice + tests.
-7. Verify (@verifier) - suite green, `/sdlc audit` clean, self-run
-   still exit 0.
-8. Registry touches - ADR for the arc's precedents (likely), MAP row,
-   CHANGELOG, version bump last, tag-on-bump at the shipping merge.
-9. Wrap - docs markers flip, STATE regenerated, commit/PR; self-pin
-   follow-up PR after the tag.
+1. ~~Explore the joins~~ - in-walk.
+2. ~~Feature list F1-F12 ratified~~ - in-walk, three decisions ruled.
+3. ~~Design doc~~ - docs/controlled-language.md Pass 0 -> all 🟢.
+4. ~~Intake~~ - contract ready-green; entities all ratified refs.
+5. ~~Implement~~ - schema; extractor (census first); seed;
+   door + integrity + exempt ratchet; joins; tests (+30).
+6. ~~Verify~~ - pytest 188 green; validate 7/7; vocab-green 17/6;
+   lang-green armed; audit clean (6 LANG-EXEMPT INFO).
+7. ~~Registry touches~~ - ADR 0022, MAP row, CHANGELOG 0.9.0,
+   CONVENTIONS register line, version bump (init.py lockstep held
+   by the suite).
+8. Wrap - STATE regenerated, branch + commit + PR; tag v0.9.0 at
+   the shipping merge; self-pin PR after the tag (carries the kit's
+   own lang-check CI step).
+
+User acts at review: set-ratify the dictionary (the merge; note
+seed grew by `exempt` + `binds` during self-adoption), and the
+class-S flips for controlled-dictionary + controlled-field when
+ready. Registry census tests updated 5 -> 6 (disjointness entry).
 
 House rules in force: no pipes/chains in any authored command string
-(CI steps included); never Edit/Write under ~/.claude/skills (shell
-copy only); /sdlc never touches Cairn strata in target repos; overlay
-templates render from kit truth + date + stack only.
+(CI steps included); commit messages via Write + git commit -F; never
+Edit/Write under ~/.claude/skills (repo skills/ tree is fine); /sdlc
+never touches Cairn strata in target repos; overlay templates render
+from kit truth + date + stack only.

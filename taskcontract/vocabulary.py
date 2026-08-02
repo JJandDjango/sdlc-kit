@@ -23,7 +23,7 @@ from .checker import Violation, _leaf_errors
 GLOSSARY_SCHEMA_PATH = Path(__file__).resolve().parent / "schemas" / "glossary-term.schema.json"
 REGISTRY_SCHEMA_PATH = Path(__file__).resolve().parent / "schemas" / "constraint-registry.schema.json"
 VOCAB_DIR = Path("specs") / "vocabulary"
-RESERVED_STEMS = {"constraints"}  # constraints.yaml is the registry - own schema (V6), never a term
+RESERVED_STEMS = {"constraints", "dictionary"}  # registry (V6) + controlled-language dictionary (F1) - own schemas, never terms
 
 
 def load_glossary_schema(schema_path: Path | None = None) -> dict:

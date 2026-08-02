@@ -34,6 +34,10 @@ Finding codes:
   CONTRACT-ORPHAN   a specs/<dir>/ carries no contract.yaml
   ID-MISMATCH       a contract's id differs from its directory name
   VOCAB-INVALID     a specs/vocabulary/ term fails the door check (ERROR)
+  LANG-INVALID      the controlled-language door reports errors
+                    (dictionary health or prose rules)            (ERROR)
+  LANG-EXEMPT       an exempt contract carries prose findings at
+                    warning severity (standing red, ratchet)      (INFO)
 """
 
 from __future__ import annotations
@@ -211,6 +215,37 @@ def _check_vocabulary(cwd: Path, findings: list[Finding]) -> None:
         findings.append(Finding("ERROR", "VOCAB-INVALID", head + more, rel))
 
 
+def _check_language(cwd: Path, findings: list[Finding]) -> None:
+    if not (cwd / "specs" / "vocabulary" / "dictionary.yaml").is_file():
+        return  # the door is at rest - absence is green by design
+    try:
+        from taskcontract.lang import lang_check
+    except ImportError:
+        findings.append(Finding("WARN", "KIT-MISSING",
+                                f"controlled-language door unavailable - lang "
+                                f"checks skipped (update the kit: {PIP_HINT})", ""))
+        return
+    violations, _armed = lang_check(cwd)
+    by_file: dict[str, list] = {}
+    warned: dict[str, int] = {}
+    for v in violations:
+        severity = getattr(v, "severity", "error")
+        if severity == "error":
+            by_file.setdefault(v.file, []).append(v)
+        elif severity == "warning":
+            warned[v.file] = warned.get(v.file, 0) + 1
+    for file, batch in sorted(by_file.items()):
+        rel = Path(file).relative_to(cwd).as_posix() if Path(file).is_absolute() else file
+        head = "; ".join(f"{v.rule} {v.message}" for v in batch[:3])
+        more = f" (+{len(batch) - 3} more)" if len(batch) > 3 else ""
+        findings.append(Finding("ERROR", "LANG-INVALID", head + more, rel))
+    for file, count in sorted(warned.items()):
+        rel = Path(file).relative_to(cwd).as_posix() if Path(file).is_absolute() else file
+        findings.append(Finding("INFO", "LANG-EXEMPT",
+                                f"{count} prose findings at warning severity "
+                                f"(standing red - ratchet on next edit)", rel))
+
+
 def audit(cwd: Path) -> tuple[list[Finding], bool]:
     """Run every check. Returns (findings, is_spine)."""
     is_spine = (cwd / ".sdlc").is_dir() or (cwd / "SDLC.md").is_file()
@@ -222,6 +257,7 @@ def audit(cwd: Path) -> tuple[list[Finding], bool]:
     _check_yaml_surfaces(cwd, findings)
     _check_contracts(cwd, findings)
     _check_vocabulary(cwd, findings)
+    _check_language(cwd, findings)
     findings.sort(key=lambda f: (SEVERITY_RANK[f.severity], f.code, f.path))
     return findings, True
 

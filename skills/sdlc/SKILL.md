@@ -54,6 +54,7 @@ is the live container, deliberately empty until its G3 slice
    - `new` - run the New flow (N1-N2); the second argument is the task id.
    - `intake` - run the Intake flow (I1-I7); remaining text is the raw request, when given.
    - `vocab` - sub-dispatch on the next argument: none - the List flow (L1); `add` - the Add flow (VA1-VA2), third argument is the term slug; `extract` - the Extract flow (X1-X4), remaining text names the surfaces, when given.
+   - `lang` - sub-dispatch on the next argument: none - the Lang Check flow (LC1); `extract` - the Lang Extract flow (LX1).
    Otherwise (no args, or a scaffold / `init` intent) run the Init interview, steps 1-6.
 
 ## Init interview
@@ -122,6 +123,16 @@ X3. LOOP - one Bash call per iteration: `python -m taskcontract vocab-check`. Fi
 
 X4. REPORT - the vocab-list output, then one line stating the handoff: ratification is the user's flip of `status: draft` to `ratified` per term (a class-S edit; the PR merge is the interim approval record).
 
+## Lang flows
+
+Controlled language (docs/controlled-language.md): a set-ratified
+dictionary at specs/vocabulary/dictionary.yaml arms lang-check over
+contract prose fields; absent = green. Form checked, meaning not.
+
+LC1. CHECK - one Bash call: `python -m taskcontract lang-check`. REPORT stdout verbatim. Exempt warnings = the standing-red ratchet, never gating. On exit 1 fix exactly what each CLnnn names; cap 5; then report and return.
+
+LX1. EXTRACT - one Bash call: `python -m taskcontract lang-extract`. REPORT stdout verbatim (candidates, banned hits, census; writes nothing). Handoff: dictionary deltas are class-E - adding takes the full lane, banning rides auto; the PR merge is the set-ratification record.
+
 ## Audit flow
 
 A1. RUN - one Bash call, by absolute path: `python "{skill-dir}/audit.py" --cwd .`
@@ -150,6 +161,7 @@ U3. APPLY only on the user's explicit per-file direction - one Bash call per fil
 - `update` is report-only by default: `--apply` writes exactly one named kit-owned file per user-directed call; merge targets and consumer-owned files are never applied; no bulk path exists.
 - intake writes ONLY `specs/{id}/contract.yaml`; a red contract never hands off to development.
 - Vocab writes land ONLY under `specs/vocabulary/`; the List flow is read-only.
+- Lang flows are report-only; dictionary deltas are user-consented class-E edits on the 0014 lanes.
 - NEVER flip a term's status to `ratified` unasked. Extraction and day-2 authoring are born `draft`; the single born-ratified path is the greenfield init seed, where the interviewee is the principal. A TC010/TC011 in a contract loop means fork the term or drop the ref - never ratify to turn a contract green.
 - A failed engine or missing module returns control to the conversation with the failure stated in one line - never a silent stop.
 </constraints>
@@ -163,6 +175,7 @@ U3. APPLY only on the user's explicit per-file direction - one Bash call per fil
 - [ ] Audit flow: audit.py ran by absolute path; findings reported verbatim; nothing written or fixed.
 - [ ] Update flow: update.py ran by absolute path; drift reported by class (kit-owned / merge-target / consumer); apply only per-file on explicit user direction; merge targets and consumer files never applied.
 - [ ] Vocab flows: listing computed and reported verbatim; add scaffolds red and draft; extract reads only declared surfaces, births 5-15 draft terms with sources, loops the door to green (max 5), and leaves every ratification to the user.
+- [ ] Lang flows: one Bash call each, stdout verbatim, nothing written; deltas stay the user's lane.
 - [ ] Greenfield init seeds 5-15 ratified terms through the interview and the same machinery; brownfield init recommends extract instead.
 - [ ] Every Bash call a single segment; no overwrite anywhere.
 </criteria>
