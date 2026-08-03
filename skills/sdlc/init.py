@@ -43,7 +43,7 @@ KIT_REPO = "https://github.com/JJandDjango/sdlc-kit"
 # release-tagging). Bump KIT_VERSION together with pyproject [project].version -
 # tests hold the two equal - and tag v{KIT_VERSION} at the merge that ships the
 # bump. Consumers upgrade by bumping the rendered ref themselves: pull, not push.
-KIT_VERSION = "0.9.0"
+KIT_VERSION = "0.10.0"
 KIT_REF = f"git+{KIT_REPO}.git@v{KIT_VERSION}"
 SCHEMA_URL = ("https://raw.githubusercontent.com/JJandDjango/sdlc-kit/"
               f"v{KIT_VERSION}/taskcontract/schemas/task-contract.schema.json")
@@ -55,6 +55,8 @@ TEMPLATE_TO_TARGET = {
     "reds.yaml.template": ".sdlc/reds.yaml",
     "specs-README.md.template": "specs/README.md",
     "workflow.yml.template": ".github/workflows/sdlc.yml",
+    "findings-TEMPLATE.yaml.template": ".sdlc/findings/TEMPLATE.yaml",
+    "NOTICE.md.template": ".sdlc/NOTICE.md",
 }
 
 # Files a repo commonly already has: written only when absent, else the
@@ -72,6 +74,8 @@ MERGE_TEMPLATE_TO_TARGET = {
 SURFACE_CLASSES = {
     "workflow.yml.template": "kit-owned",
     "specs-README.md.template": "kit-owned",
+    "findings-TEMPLATE.yaml.template": "kit-owned",
+    "NOTICE.md.template": "kit-owned",
     "SDLC.md.template": "consumer",
     "config.yaml.template": "consumer",
     "clocks.yaml.template": "consumer",
@@ -141,6 +145,7 @@ def build_var_dict(answers: dict, today: str) -> dict:
         "date": today,
         "kit_repo": KIT_REPO,
         "kit_ref": KIT_REF,
+        "kit_version": KIT_VERSION,
         "schema_url": SCHEMA_URL,
     }
 

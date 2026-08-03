@@ -16,6 +16,8 @@ FULL_PAYLOAD = {
     ".sdlc/config.yaml",
     ".sdlc/clocks.yaml",
     ".sdlc/reds.yaml",
+    ".sdlc/findings/TEMPLATE.yaml",
+    ".sdlc/NOTICE.md",
     "specs/README.md",
     ".github/workflows/sdlc.yml",
     ".pre-commit-config.yaml",
@@ -43,7 +45,7 @@ def test_second_run_is_pure_no_clobber(tmp_path, skill_init):
     created, skipped, merges = skill_init.render_all(
         ANSWERS, _templates(skill_init), tmp_path, "2026-07-27")
     assert created == []
-    assert len(skipped) == 6  # the normal targets
+    assert len(skipped) == 8  # the normal targets
     assert {rel for rel, _ in merges} == {".pre-commit-config.yaml", ".vscode/settings.json"}
 
 
@@ -77,6 +79,27 @@ def test_rendered_scaffold_pins_release_tag(tmp_path, skill_init):
     settings = (tmp_path / ".vscode/settings.json").read_text(encoding="utf-8")
     assert f"/v{skill_init.KIT_VERSION}/" in settings
     assert "/main/" not in settings  # floating schema-URL shape
+
+
+def test_findings_form_carries_membrane_rule(tmp_path, skill_init):
+    """The return-channel form (ADR 0023) states its own rule and stamps
+    the pin it was rendered under."""
+    skill_init.render_all(ANSWERS, _templates(skill_init), tmp_path, "2026-08-03")
+    form = (tmp_path / ".sdlc/findings/TEMPLATE.yaml").read_text(encoding="utf-8")
+    assert "no identifiers, no code" in form
+    assert f"kit_pinned: v{skill_init.KIT_VERSION}" in form
+    assert "controlled-dictionary terms" in form
+
+
+def test_notice_carries_provenance(tmp_path, skill_init):
+    """The vendored-scaffold NOTICE (ADR 0023) names upstream, the
+    rendering tag, and the license, with a tag-pinned policy link."""
+    skill_init.render_all(ANSWERS, _templates(skill_init), tmp_path, "2026-08-03")
+    notice = (tmp_path / ".sdlc/NOTICE.md").read_text(encoding="utf-8")
+    assert skill_init.KIT_REPO in notice
+    assert f"v{skill_init.KIT_VERSION}" in notice
+    assert "MIT" in notice
+    assert f"/blob/v{skill_init.KIT_VERSION}/USAGE.md" in notice
 
 
 def test_kit_version_matches_packaged_version(skill_init):
@@ -180,8 +203,8 @@ def test_overlay_respects_no_clobber_and_merge_semantics(tmp_path, skill_init):
     skill_init.render_all(answers, templates, out, "2026-07-29")
     created, skipped, merges = skill_init.render_all(answers, templates, out, "2026-07-30")
     assert created == []
-    # overlay kit-owned entries no-clobber like base ones (6 base + 1 overlay)
-    assert len(skipped) == 7
+    # overlay kit-owned entries no-clobber like base ones (8 base + 1 overlay)
+    assert len(skipped) == 9
     # overlay merge-targets print their snippet instead of writing
     merge_rels = {rel for rel, _ in merges}
     assert merge_rels == {".pre-commit-config.yaml", ".vscode/settings.json",
