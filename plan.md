@@ -1,4 +1,4 @@
-# Plan - Session 25 (2026-08-03) - work-adoption payload (ADR 0023)
+# Plan - Session 25 (2026-08-03) - work-adoption payload (ADR 0023) - EXECUTED (step 9 carries to the work machine)
 
 Work C# environment becomes the first dotnet consumer behind a
 one-way membrane; M0 runs second with work findings in hand. This
@@ -23,10 +23,12 @@ return-channel form, membrane docs, v0.10.0.
    posture decision surfacing; ruled consumer-side (ADR 0023),
    documented as the day-one posture menu in docs/dotnet-profile.md.
    Kit templates unchanged; suite stands 190.
-7. Bump 0.10.0 - KIT_VERSION + pyproject together (tests hold them
-   equal); branch, PR, merge.
-8. Tag v0.10.0 + self-pin - scaffold refs -> v0.10.0, standing
-   post-merge sequence.
+7. ~~Bump 0.10.0~~ - 9b28084, PR #29, both checks green (contracts
+   12s, test 13s); merged at e7421e8, sync + branch cleanup done.
+8. ~~Tag v0.10.0 + self-pin~~ - annotated at e7421e8, pushed;
+   d29e060, PR #30, both checks green (contracts 16s proved the tag
+   install); merged at d4ce337; CHANGELOG 0.10.0 entry + USAGE uv
+   line joined the sweep.
 9. User acts at work: runner probe (GitHub-hosted vs self-hosted;
    scratch pip-step run if self-hosted); install skill; init the
    work repo pinned to v0.10.0; NOTICE lands in the copy.
