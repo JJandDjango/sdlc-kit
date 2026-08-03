@@ -84,6 +84,7 @@ def _compare_vars(stack: str) -> dict:
         "stack": stack,
         "kit_repo": INIT.KIT_REPO,
         "kit_ref": INIT.KIT_REF,
+        "kit_version": INIT.KIT_VERSION,
         "schema_url": INIT.SCHEMA_URL,
     }
 

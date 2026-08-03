@@ -129,6 +129,38 @@ Fit notes:
   StyleCop + IDE tiers; the custom tranche instantiates at pilot
   activation ([0009](../decisions/0009-custom-analyzer-adoption-policy.md)).
 
+### Day-one posture - the consumer's toggle set
+
+A fresh render builds red even on a pristine project: SA0001, an
+`EnableGenerateDocumentationFile` refusal (IDE0005 cannot run without
+parsed doc comments), and CA1303 on the first string literal. That is
+not debt and not breakage - it is the strict trio surfacing the two
+postures the kit deliberately does not choose for you (ADR 0023):
+XML documentation and localization. Pick once, at adoption:
+
+- **Doc file on, comments not required** (most shops): in
+  `Directory.Build.props` add
+  `<GenerateDocumentationFile>true</GenerateDocumentationFile>`; in
+  `.editorconfig` add `dotnet_diagnostic.CS1591.severity = none`
+  beside the SA1600-family lines. IDE0005 runs, SA0001 is satisfied,
+  and no one is ever asked to write a doc comment.
+- **Doc file on, comments required** (published-API shops): same
+  props line; leave CS1591 hot. The SA1600 family re-enables when
+  PL-DOC ships.
+- **Doc machinery off entirely**: leave the flag unset and add
+  `dotnet_diagnostic.SA0001.severity = none`; accept that IDE0005
+  never runs in the build (IDE-interactive cleanup still works).
+- **Localization**: keep CA1303 hot only if a resource-table program
+  exists; otherwise `dotnet_diagnostic.CA1303.severity = none`.
+
+Venue and timing carry the enforcement meaning: make these edits in
+the consumer-owned files (both are merge-target class - greenfield
+edits the rendered file, brownfield folds them into the snippet
+merge) and in the **adoption commit itself**. The suppression audit
+is diff-scoped, so posture set at baseline is policy; the same lines
+appearing later inside a feature diff are vector-2 material the
+implementer must justify.
+
 ## 🟢 G4 fit notes for .NET shops (unit: dotnet-g4-doc)
 
 The merge gate's mechanical core: `sdlc-dotnet.yml` stops being

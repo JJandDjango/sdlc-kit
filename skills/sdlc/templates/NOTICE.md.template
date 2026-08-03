@@ -1,0 +1,20 @@
+# NOTICE - vendored gate scaffold
+
+The SDLC gate scaffold in this repository (`SDLC.md`, `.sdlc/`, the
+`specs/` skeleton, the sdlc CI workflows) is rendered output of the
+SDLC kit, an open-source tool:
+
+- Upstream: {{ kit_repo }}
+- Rendered under tag: v{{ kit_version }} ({{ date }})
+- License: MIT (upstream `LICENSE`)
+
+The kit's checks run locally and in CI only - no network calls, no
+telemetry; the one network step is CI installing the kit from the
+pinned tag. Upgrades are pull-only: re-pin, then `/sdlc update`.
+Findings return upstream only through `.sdlc/findings/TEMPLATE.yaml`
+under its stated rule - no identifiers, no code.
+
+Full policy: {{ kit_repo }}/blob/v{{ kit_version }}/USAGE.md
+(section 7, the one-way membrane). Mirroring the kit itself inside
+an org? Copy this file to the mirror root so the copy stays legible
+as vendored open source.

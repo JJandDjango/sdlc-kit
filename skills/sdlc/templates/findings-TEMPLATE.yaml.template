@@ -1,0 +1,26 @@
+# Finding - the return-channel form (SDLC kit, ADR 0023).
+# Copy to .sdlc/findings/<slug>.yaml and fill the TODOs. This form is
+# the only shape a finding takes when it leaves a restricted
+# environment (USAGE section 7 - the one-way membrane).
+#
+# THE RULE: no identifiers, no code. No file, type, member, project,
+# or product names; no snippets; no verbatim error or log text.
+# State the finding in controlled-dictionary terms, gate IDs,
+# diagnostic codes, and counts. If it cannot be said inside those
+# bounds, the finding is a dictionary gap - file that gap instead.
+
+finding: TODO           # slug, ^[a-z][a-z0-9-]{2,63}$
+date: TODO              # YYYY-MM-DD, when observed
+kit_pinned: v{{ kit_version }}      # correct this if your repo re-pinned
+gate: TODO              # gate id (G0, G3.1, ...) or none
+diagnostic: TODO        # TCnnn / VTnnn / CLnnn / PL-PIPE.n or none
+kind: TODO              # gap       the kit lacks a needed thing
+                        # friction  works, but costs each use
+                        # escape    a defect passed a gate green
+                        # breakage  the kit malfunctions
+                        # proposal  an improvement idea
+count: TODO             # occurrences observed, an integer
+statement: >            # what happened - <=3 sentences, controlled register
+  TODO
+proposal: >             # what the kit should change, or none
+  TODO
