@@ -2,59 +2,48 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-08-02 (session 23 close)._
+> _Generated 2026-08-03 (session 24 close)._
 
 ## Now
-- Session 23 (2026-08-02): **the controlled-language layer shipped
-  whole** - designed in a live walk (pros, cons 1-7 at depth, three
-  decisions ruled) and landed the same session. Named "bounded
-  interpretation," never "determinism": form checked, meaning not
-  checked. Shipped: dictionary schema (born 1.0.0) + set-ratified
-  seed at specs/vocabulary/dictionary.yaml (999 words harvested from
-  the seven ready-green contracts; zero bans - census-driven); base
-  layer (function words + vagueness/evasive bans) in the wheel;
-  `lang-check` (CLnnn, verdict-contract native, absence = green,
-  glossary disjointness + use_instead integrity + base shadowing) +
-  `lang-extract` (report-only census); field registry binding the six
-  contract prose fields with text-types; exempt ratchet for the six
-  pre-arc contracts (ledger `cl-legacy-tranche` - warnings, never
-  gating, ratchet on next edit); venue joins (template CI step, audit
-  LANG-INVALID/LANG-EXEMPT, /sdlc lang flows); ADR 0022. The
-  `controlled-language` contract passed its own door after rewrite -
-  the first hard-at-intake conformance.
-- Receipts: suite 158 -> 188; validate 7/7 ready-green; vocab-green
-  17 terms / registry 6 constraints; lang-green armed; audit clean
-  (6 LANG-EXEMPT INFO); kit 0.9.0 (tag rides the shipping merge).
-- PR #26 open at close (branch controlled-language, dcb22c7); user
-  acts at review:
-  set-ratify the dictionary via the merge (seed grew by `exempt` +
-  `binds` during self-adoption - flagged), class-S flips for
-  `controlled-dictionary` + `controlled-field` drafts when ready.
-- Prior close: PR #25 (c077331) - session-23 opener queued; operator
-  + verdict ratified post-close (PR #24).
+- Session 24 (2026-08-03): **the 0.9.0 post-merge sequence ran
+  whole.** PR #26 had merged (54717cf) with the v0.9.0 tag still
+  unlanded; the tag landed first (annotated, at the merge), then the
+  self-pin PR #27 (db11ab4): both scaffold refs -> v0.9.0 and the
+  kit's own workflow gained the controlled-language step the
+  template already carried (the v0.8.0 pin predated the subcommand;
+  ADR 0022). Merged at 793c9b6. The contracts job proved the tag
+  install (pip install @v0.9.0) and ran the lang-check door in the
+  kit's own CI for the first time - green (contracts 15s, test 13s);
+  local run lang-green, the six pre-arc contracts printing exempt
+  warnings, never gating.
+- The #26 merge carried the dictionary set-ratification (seed grew
+  by `exempt` + `binds` during self-adoption - flagged, ratified at
+  merge).
+- Receipts: kit 0.9.0 tagged + self-pinned; suite 188; validate 7/7
+  ready-green; lang-green armed in CI; main 793c9b6, tree clean at
+  close.
+- Prior close: session 23 (7f5c21f) - controlled language v1
+  designed in a live walk and shipped whole (dcb22c7, ADR 0022).
 
 ## Blockers
 - None.
 
 ## Next actions
-1. **Self-pin PR after the v0.9.0 tag** - bumps the kit's own
-   workflow pin AND adds its lang-check CI step (the 0.8.0 pin
-   predates the subcommand; sequenced deliberately, ADR 0022).
-2. **Pilot M0 session** (engine repo): first profile-aware consumer -
-   dotnet payload spans G3 + G4 core, operators to exercise, and now
-   the controlled-language machinery brownfield-style; Q5 reality
-   data + the trace-fed curation feed both start here.
-3. Registered continuations: PL-PIPE.3 eval harness (now carrying
-   the comprehension family - paired prose variants, loop counts,
-   divergence); sdlc-spec / sdlc-qa defs behind venue existence;
-   mechanical loop runner; verdict field-name convergence (lang-check
-   shipped the envelope shape - convergence still rides a dedicated
-   pass).
+1. **Pilot M0 session** (engine repo): first profile-aware consumer -
+   dotnet payload spans G3 + G4 core, operators to exercise, and the
+   controlled-language machinery brownfield-style; Q5 reality data +
+   the trace-fed curation feed both start here.
+2. User act pending: class-S flips for `controlled-dictionary` +
+   `controlled-field` (still drafts).
+3. Registered continuations: PL-PIPE.3 eval harness (comprehension
+   family - paired prose variants, loop counts, divergence);
+   sdlc-spec / sdlc-qa defs behind venue existence; mechanical loop
+   runner; verdict field-name convergence (dedicated pass).
 4. Controlled-language deferrals, triggers on record: base verb
    promotion (self-host evidence), F-item region checking, prompt
    lexicon (foundations-side PromptLang extension), slot templates
    (per-field escape evidence), greenfield day-one arming.
-5. Deferrals unchanged: Q4 numbers (now also lang caps + escape-rate
+5. Deferrals unchanged: Q4 numbers (lang caps + escape-rate
    threshold), PyPI publish, explainer PDF, V8 RDF map; gaps behind
    triggers: Azure DevOps variant, Husky.NET, dotnet-tool wrapper,
    battery-CWE map.
