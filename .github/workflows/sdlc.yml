@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: "3.13"
       - name: install the sdlc kit
-        run: pip install "git+https://github.com/JJandDjango/sdlc-kit.git@v0.9.0"
+        run: pip install "git+https://github.com/JJandDjango/sdlc-kit.git@v0.10.0"
       - name: validate task contracts (G0 backstop)
         if: hashFiles('specs/*/contract.yaml') != ''
         run: python -m taskcontract validate specs/*/contract.yaml --profile ready

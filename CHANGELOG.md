@@ -9,6 +9,29 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.10.0 - 2026-08-03 (tag `v0.10.0`)
+
+- Work adoption behind a one-way membrane (ADR 0023): USAGE gains
+  §7 - kit flows to restricted environments by public tag, findings
+  flow home in controlled-dictionary terms, gate IDs, and counts;
+  no network calls anywhere in the enforcement path; `uv run` line
+  for local checks without managing Python.
+- The base scaffold grows two kit-owned surfaces (6 -> 8):
+  `.sdlc/findings/TEMPLATE.yaml`, the return-channel finding form
+  with its rule printed on the form (no identifiers, no code), and
+  `.sdlc/NOTICE.md`, provenance for the rendered scaffold (upstream,
+  rendering tag, license, tag-pinned policy link). `kit_version`
+  joins the template namespace in both engines (init render, update
+  compare). Consumers at older pins see the new surfaces as honest
+  `absent` rows in `/sdlc update` after they bump.
+- Dotnet day-one posture ruled consumer-side: a fresh render builds
+  red on pristine code (SA0001, the IDE0005 doc-file refusal,
+  CA1303) - that is the posture decision surfacing, not debt. The
+  menu (GenerateDocumentationFile / CS1591 / SA0001 / CA1303) with
+  exact lines and the baseline-not-diff venue rule joins
+  docs/dotnet-profile.md; templates ship maximal, unchanged.
+- Suite 188 -> 190.
+
 ## 0.9.0 - 2026-08-02 (tag `v0.9.0`)
 
 - The controlled-language layer ships whole (contract
