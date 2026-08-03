@@ -1,0 +1,220 @@
+# Base dictionary - the wheel-shipped layer (F7, docs/controlled-language.md).
+# Function words + bans + nothing else in v1: content verbs promote from
+# consumer evidence only (accretion doctrine - nothing enters core
+# speculatively). Never copied per repo (the agents/ anti-fork rule); the
+# door unions base + repo dictionary + glossary, local glossary shadowing
+# base (CL013, info). Ban use_instead here is a suggestion - integrity
+# checks (CL004/CL005) bind the repo artifact only, so a base bump can
+# never brick a consumer. Updates ride the pin bump with CHANGELOG notes.
+
+words:
+  # articles + determiners
+  - {word: a, pos: function}
+  - {word: an, pos: function}
+  - {word: the, pos: function}
+  - {word: this, pos: function}
+  - {word: that, pos: function}
+  - {word: these, pos: function}
+  - {word: those, pos: function}
+  - {word: its, pos: function}
+  - {word: their, pos: function}
+  - {word: each, pos: function}
+  - {word: every, pos: function}
+  - {word: all, pos: function}
+  - {word: any, pos: function}
+  - {word: some, pos: function}
+  - {word: none, pos: function}
+  - {word: both, pos: function}
+  - {word: either, pos: function}
+  - {word: neither, pos: function}
+  - {word: 'no', pos: function}
+  - {word: own, pos: function}
+  - {word: same, pos: function}
+  - {word: such, pos: function}
+  - {word: another, pos: function}
+  - {word: other, pos: function}
+  # pronouns + relatives (CL010 polices subject position)
+  - {word: it, pos: function}
+  - {word: they, pos: function}
+  - {word: them, pos: function}
+  - {word: which, pos: function}
+  - {word: who, pos: function}
+  - {word: whose, pos: function}
+  - {word: what, pos: function}
+  # conjunctions + subordinators
+  - {word: and, pos: function}
+  - {word: or, pos: function}
+  - {word: nor, pos: function}
+  - {word: but, pos: function}
+  - {word: if, pos: function}
+  - {word: then, pos: function}
+  - {word: else, pos: function}
+  - {word: when, pos: function}
+  - {word: while, pos: function}
+  - {word: until, pos: function}
+  - {word: unless, pos: function}
+  - {word: because, pos: function}
+  - {word: so, pos: function}
+  - {word: than, pos: function}
+  - {word: as, pos: function}
+  - {word: whether, pos: function}
+  # prepositions
+  - {word: of, pos: function}
+  - {word: to, pos: function}
+  - {word: in, pos: function}
+  - {word: 'on', pos: function}
+  - {word: at, pos: function}
+  - {word: by, pos: function}
+  - {word: for, pos: function}
+  - {word: with, pos: function}
+  - {word: from, pos: function}
+  - {word: into, pos: function}
+  - {word: onto, pos: function}
+  - {word: over, pos: function}
+  - {word: under, pos: function}
+  - {word: above, pos: function}
+  - {word: below, pos: function}
+  - {word: between, pos: function}
+  - {word: across, pos: function}
+  - {word: through, pos: function}
+  - {word: against, pos: function}
+  - {word: per, pos: function}
+  - {word: via, pos: function}
+  - {word: within, pos: function}
+  - {word: without, pos: function}
+  - {word: before, pos: function}
+  - {word: after, pos: function}
+  - {word: during, pos: function}
+  - {word: inside, pos: function}
+  - {word: outside, pos: function}
+  - {word: near, pos: function}
+  - {word: toward, pos: function}
+  - {word: upon, pos: function}
+  - {word: 'off', pos: function}
+  - {word: out, pos: function}
+  - {word: up, pos: function}
+  - {word: down, pos: function}
+  - {word: about, pos: function}
+  - {word: around, pos: function}
+  - {word: behind, pos: function}
+  - {word: beyond, pos: function}
+  - {word: along, pos: function}
+  - {word: among, pos: function}
+  # auxiliaries + copulas + negation
+  - {word: is, pos: function}
+  - {word: are, pos: function}
+  - {word: was, pos: function}
+  - {word: were, pos: function}
+  - {word: be, pos: function}
+  - {word: been, pos: function}
+  - {word: being, pos: function}
+  - {word: has, pos: function}
+  - {word: have, pos: function}
+  - {word: had, pos: function}
+  - {word: do, pos: function}
+  - {word: does, pos: function}
+  - {word: did, pos: function}
+  - {word: done, pos: function}
+  - {word: must, pos: function}
+  - {word: can, pos: function}
+  - {word: cannot, pos: function}
+  - {word: will, pos: function}
+  - {word: shall, pos: function}
+  - {word: not, pos: function}
+  - {word: never, pos: function}
+  # adverbial function words
+  - {word: only, pos: function}
+  - {word: also, pos: function}
+  - {word: too, pos: function}
+  - {word: here, pos: function}
+  - {word: there, pos: function}
+  - {word: now, pos: function}
+  - {word: still, pos: function}
+  - {word: yet, pos: function}
+  - {word: again, pos: function}
+  - {word: once, pos: function}
+  - {word: twice, pos: function}
+  - {word: always, pos: function}
+  - {word: ever, pos: function}
+  - {word: first, pos: function}
+  - {word: last, pos: function}
+  - {word: next, pos: function}
+  - {word: together, pos: function}
+  - {word: instead, pos: function}
+  - {word: otherwise, pos: function}
+  - {word: thus, pos: function}
+  - {word: however, pos: function}
+  - {word: already, pos: function}
+  # quantifiers
+  - {word: many, pos: function}
+  - {word: few, pos: function}
+  - {word: most, pos: function}
+  - {word: least, pos: function}
+  # number words (also satisfy CL011's number requirement)
+  - {word: zero, pos: function}
+  - {word: one, pos: function}
+  - {word: two, pos: function}
+  - {word: three, pos: function}
+  - {word: four, pos: function}
+  - {word: five, pos: function}
+  - {word: six, pos: function}
+  - {word: seven, pos: function}
+  - {word: eight, pos: function}
+  - {word: nine, pos: function}
+  - {word: ten, pos: function}
+
+banned:
+  # evasive verbs - name the check or the observable outcome
+  - word: ensure
+    use_instead: [verify]
+    reason: state the check, not the hope
+  - word: ensures
+    use_instead: [verify]
+    reason: state the check, not the hope
+  - word: ensured
+    use_instead: [verify]
+    reason: state the check, not the hope
+  - word: ensuring
+    use_instead: [verify]
+    reason: state the check, not the hope
+  - word: handle
+    use_instead: [accept, reject, report]
+    reason: evasive - name the observable outcome
+  - word: handles
+    use_instead: [accept, reject, report]
+    reason: evasive - name the observable outcome
+  - word: handled
+    use_instead: [accept, reject, report]
+    reason: evasive - name the observable outcome
+  - word: handling
+    use_instead: [accept, reject, report]
+    reason: evasive - name the observable outcome
+  # vague adverbs - state the measurable bound
+  - {word: properly, reason: vague - state the measurable bound}
+  - {word: appropriately, reason: vague - state the measurable bound}
+  - {word: correctly, reason: vague - state the measurable bound}
+  - {word: adequately, reason: vague - state the measurable bound}
+  - {word: reasonably, reason: vague - state the measurable bound}
+  - {word: robustly, reason: vague - state the measurable bound}
+  - {word: seamlessly, reason: vague - state the measurable bound}
+  - {word: efficiently, reason: vague - state the measurable bound}
+  - {word: effectively, reason: vague - state the measurable bound}
+  - {word: significantly, reason: vague - state the measurable bound}
+  - {word: quickly, reason: vague - state the measurable bound}
+  - {word: easily, reason: vague - state the measurable bound}
+  - {word: simply, reason: vague - state the measurable bound}
+  # vague adjectives - name the property and its bound
+  - {word: appropriate, reason: vague - name the property and its bound}
+  - {word: adequate, reason: vague - name the property and its bound}
+  - {word: reasonable, reason: vague - name the property and its bound}
+  - {word: robust, reason: vague - name the property and its bound}
+  - {word: seamless, reason: vague - name the property and its bound}
+  - {word: efficient, reason: vague - name the property and its bound}
+  - {word: effective, reason: vague - name the property and its bound}
+  - {word: significant, reason: vague - name the property and its bound}
+  # vague quantifiers - give the count or the set
+  - {word: several, reason: vague - give the count or the set}
+  - {word: various, reason: vague - give the count or the set}
+  - {word: numerous, reason: vague - give the count or the set}
+  - {word: very, reason: intensifier - state the bound instead}
+  - {word: etc, reason: open-ended - enumerate or bound the set}

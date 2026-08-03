@@ -1,0 +1,22 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Ratification is the human act: flip status draft -> ratified in review
+# (class-S edit; the PR merge is the interim approval record).
+
+term: controlled-dictionary
+
+name: Controlled dictionary
+
+definition: The closed general-word class of the controlled-language layer - specs/vocabulary/dictionary.yaml. Carries approved entries (word, pos, gloss), bans with use_instead replacements, the exempt ratchet list, and the field registry the lang-check door enforces. Set-ratified; deltas ride the 0014 lanes - adding a word loosens (full lane), banning tightens (auto). Disjoint from the glossary by mechanical check - the glossary is the open domain class, the dictionary the closed general one. The artifact filename reserves the stem, so the term carries the controlled- prefix.
+
+kind: entity
+
+relations:
+  disjoint_with:
+    - vocabulary-term
+
+status: draft
+since: 2026-08-02
+
+sources:
+  - docs/controlled-language.md
+  - taskcontract/schemas/dictionary.schema.json

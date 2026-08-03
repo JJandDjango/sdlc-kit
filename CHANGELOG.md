@@ -9,6 +9,39 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.9.0 - 2026-08-02 (tag `v0.9.0`)
+
+- The controlled-language layer ships whole (contract
+  `controlled-language`, ADR 0022): bounded interpretation for
+  executed prose - form checked, meaning not checked. A set-ratified
+  dictionary at `specs/vocabulary/dictionary.yaml` (closed
+  general-word class + field registry + exempt ratchet) arms
+  `python -m taskcontract lang-check` over the six contract prose
+  fields: CLnnn codes, tier-1 rules (unknown/banned word, caps by
+  text type, modal policing, pronoun subjects,
+  comparative-without-number, verb-first sketches) + integrity
+  checks (glossary disjointness, use_instead resolution, base
+  shadowing at info). Absence of the dictionary = green.
+- `lang-extract` is the report-only calibration harvest (candidates,
+  banned hits, per-contract census); the seed is born from the
+  repo's own ready-green corpus. `/sdlc lang` + `/sdlc lang extract`
+  join the skill; the audit gains `LANG-INVALID` / `LANG-EXEMPT`;
+  the scaffolded workflow template gains the backstop step.
+  Consumers at older pins are unaffected until they bump - the
+  kit's own workflow takes the step with the self-pin PR.
+- Base layer (function words + vagueness/evasive-verb bans, no
+  content verbs) rides the wheel at
+  `taskcontract/data/base_dictionary.yaml` - never copied per repo;
+  local glossary shadows base. New wheel data path packaged
+  (`data/*.yaml`).
+- Vocabulary: `controlled-dictionary` + `controlled-field` enter as
+  drafts; the constraint registry gains
+  `glossary-dictionary-disjointness` (enforced, entry 6);
+  `dictionary` joins the reserved stems beside `constraints`.
+- Schemas: `dictionary.schema.json` born `1.0.0` (new file - no
+  migration; the artifact is optional and absent = green).
+  task-contract, glossary-term, constraint-registry unchanged.
+
 ## 0.8.0 - 2026-07-31 (tag `v0.8.0`)
 
 - The operator layer ships its first slice (contract

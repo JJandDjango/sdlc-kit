@@ -2,4 +2,10 @@
 # entry, one artifact - fix-lane admission, release interlocks, and
 # disposition tracking all query here; none redeclare.
 # Entry schema: {id, condition, class, clock_origin, window, status}.
-reds: []
+reds:
+  - id: cl-legacy-tranche
+    condition: lang-check prose rules (CL006-CL012) on the six pre-arc contracts - exempt list in specs/vocabulary/dictionary.yaml
+    class: E
+    clock_origin: 2026-08-02
+    window: per contract, until its next edit (ratchet - removal rides the auto lane)
+    status: open

@@ -21,6 +21,8 @@ jobs:
         run: python -m taskcontract validate specs/*/contract.yaml --profile ready
       - name: validate vocabulary (door check, ADR 0017)
         run: python -m taskcontract vocab-check
+      - name: controlled language (lang-check door)
+        run: python -m taskcontract lang-check
   # Future gate jobs land here as the kit's activation program builds
   # them (analyzer battery, pre-merge suite, docs build, staleness sweep):
   # {{ kit_repo }}/blob/main/docs/gates.md

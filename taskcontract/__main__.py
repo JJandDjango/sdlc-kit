@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from .checker import PROFILES, load_schema, validate_path
+from .lang import main_lang_check, main_lang_extract
 from .scaffold import scaffold
 from .suppression_audit import main_audit
 from .vocabulary import (VOCAB_DIR, list_terms, load_glossary_schema,
@@ -49,6 +50,22 @@ def main(argv=None) -> int:
     vadd.add_argument("slug", help="term slug (schema pattern: lowercase, digits, hyphens)")
     vadd.add_argument("--root", type=Path, default=Path("."),
                       help="repo root that holds specs/ (default: cwd)")
+    lang = sub.add_parser(
+        "lang-check",
+        help="controlled-language door: tier-1 rules over registry-bound "
+             "prose fields (form checked; meaning not checked)")
+    lang.add_argument("--root", type=Path, default=Path("."),
+                      help="repo root that holds specs/ (default: cwd)")
+    lang.add_argument("--json", action="store_true", dest="as_json",
+                      help="emit findings in the note+findings envelope")
+    lang.add_argument("--schema", type=Path, default=None,
+                      help="override the packaged dictionary schema file")
+    lext = sub.add_parser(
+        "lang-extract",
+        help="report-only calibration harvest: candidate words, banned hits, "
+             "per-contract census; writes nothing")
+    lext.add_argument("--root", type=Path, default=Path("."),
+                      help="repo root that holds specs/ (default: cwd)")
     audit = sub.add_parser(
         "suppression-audit",
         help="G4.10 four-vector diff check: no new weakening of gating constraints")
@@ -64,6 +81,12 @@ def main(argv=None) -> int:
 
     if args.command == "suppression-audit":
         return main_audit(args)
+
+    if args.command == "lang-check":
+        return main_lang_check(args)
+
+    if args.command == "lang-extract":
+        return main_lang_extract(args)
 
     if args.command == "new":
         try:
