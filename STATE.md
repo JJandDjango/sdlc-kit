@@ -2,35 +2,29 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-08-03 (session 25 close)._
+> _Generated 2026-08-06 (post-25 reconcile, home machine)._
 
 ## Now
-- Session 25 (2026-08-03): **work adoption designed and shipped
-  whole (ADR 0023).** The work C# environment becomes the first
-  dotnet consumer behind a one-way membrane: kit -> work by public
-  tag; findings -> home in controlled-dictionary terms, gate IDs,
-  and counts; work-side code never travels. Payload: USAGE 7 (the
-  membrane, uv run line), two new kit-owned base surfaces -
-  `.sdlc/findings/TEMPLATE.yaml` (return-channel form, rule printed
-  on the form) and `.sdlc/NOTICE.md` (provenance) - kit_version in
-  both engines' namespaces, suite 188 -> 190.
-- The dotnet smoke (greenfield + brownfield scratch repos) proved
-  the battery whole: 12-surface render, pure no-clobber, contract
-  ready-green, three doors green, honest drift scan. Day-one red on
-  pristine code (SA0001 + IDE0005 doc-file refusal + CA1303) ruled
-  **consumer-side**: templates ship maximal; the posture menu +
-  baseline-not-diff venue rule joined docs/dotnet-profile.md.
-  Discovery: the dotnet lane had already shipped whole (0018 G3+G4);
-  0016's comment-stub state was stale - plan step 5 evaporated.
-- Release ran the standing sequence: bump PR #29 (e7421e8), tag
-  v0.10.0 at the merge, self-pin PR #30 (d4ce337; contracts 16s
-  proved the tag install; CHANGELOG 0.10.0 entry + USAGE uv line
-  joined the sweep).
-- Receipts: kit 0.10.0 tagged + self-pinned; suite 190; validate
-  7/7 ready-green; vocab-green 17 terms; lang-green (six pre-arc
-  exempt only); main d4ce337 + close commit, tree clean at close.
-- Prior close: session 24 (6ebf85a) - v0.9.0 tagged + self-pinned,
-  lang door armed in CI.
+- Reconcile session (2026-08-06, home): the session-25 terminal
+  was killed 8/6 with no formal wrap; transcript replay proved the
+  close ran whole on 8/3 - STATE + plan committed, close PR #31
+  merged at 5fd4c90, pushed. The only post-close exchange was a
+  fetch-channels Q&A already recorded in USAGE 2/7. Nothing lost;
+  no spine edit needed.
+- Receipts re-verified 2026-08-06, zero-trust: suite 190 green;
+  validate 7/7 ready-green; vocab-green 17 terms; lang-green (six
+  pre-arc exempt only); /sdlc audit clean (6 informational); tag
+  v0.10.0 -> e7421e8; origin/main unchanged at 5fd4c90; tree clean.
+- Cairn audit ran (first since the close): 0 errors, two chronic
+  classes. 12 ADRs (0012-0023) exceed the half-page budget -
+  recommendation: stand, append-only outranks the budget. 13
+  docs/gates/ pages orphaned by the row-link check - MAP.md names
+  them in prose only; one-row MAP fix offered, unratified.
+- Session 25 (2026-08-03) shipped v0.10.0 whole (ADR 0023): work
+  adoption behind a one-way membrane - USAGE 7, findings form
+  `.sdlc/findings/TEMPLATE.yaml` + `.sdlc/NOTICE.md` as kit-owned
+  surfaces, dotnet day-one posture menu in docs/dotnet-profile.md,
+  tag + self-pin proven by the CI install (PRs #29-#31).
 
 ## Blockers
 - None.
@@ -43,11 +37,13 @@
    v0.10.0; adoption commit carries the posture picks
    (GenerateDocumentationFile true; CS1591 + CA1303 none - menu in
    docs/dotnet-profile.md). Findings return only through the form.
-2. M0 pilot (engine repo) is now the **second** consumer - starts
-   with work findings in hand. Cargo lane parked until ImSim (Rust)
+2. M0 pilot (engine repo) is the second consumer - starts with work
+   findings in hand. Cargo lane parked until ImSim (Rust)
    initializes.
-3. User act pending: class-S flips for `controlled-dictionary` +
-   `controlled-field` (still drafts).
+3. User acts pending: class-S flips for `controlled-dictionary` +
+   `controlled-field` (still drafts); rule on the MAP.md row for
+   docs/gates/ (apply the one-row fix or accept the standing
+   orphan infos).
 4. Registered continuations unchanged: PL-PIPE.3 eval harness,
    sdlc-spec / sdlc-qa defs behind venue existence, mechanical loop
    runner, verdict field-name convergence.
@@ -63,7 +59,7 @@
   of session 26; decides whether the parked distribution fallbacks
   wake.
 - Q4 thresholds, numeric only (unchanged).
-- Q5 decorrelation - now two feeds: M0 raw traces + work findings
+- Q5 decorrelation - two feeds: M0 raw traces + work findings
   pre-sanitized by the form (the lexicon as channel-invariant).
 - Q6 first analyzer tranche - rides pilot activation.
 - Comprehension empirics (PL-PIPE.3 + trace tagging) unchanged.
