@@ -71,3 +71,67 @@ def test_unit_carrying_depends_on_validates_green(tmp_path):
 def test_isolated_units_are_valid(tmp_path):
     """Parallel work is the point - no connectivity check (ADR 0024)."""
     assert _rules(tmp_path, [_unit("alpha"), _unit("beta")]) == set()
+
+
+# --- graph door (unit tc013-tc015-door) ------------------------------------
+
+def _violations(tmp_path, units, profile="ready"):
+    return validate_path(_write(tmp_path, _doc(units)), profile=profile)
+
+
+def test_duplicate_id_yields_tc013_naming_both_units(tmp_path):
+    units = [_unit("twin"), _unit("twin")]
+    hits = [v for v in _violations(tmp_path, units) if v.rule == "TC013"]
+    assert len(hits) == 1
+    assert "twin" in hits[0].message
+    assert "$.decomposition[0]" in hits[0].message  # the first occurrence
+    assert hits[0].path == "$.decomposition[1]"     # and the duplicate
+
+
+def test_dangling_depends_on_yields_tc014(tmp_path):
+    units = [_unit("real"), _unit("second", ["ghost"])]
+    hits = [v for v in _violations(tmp_path, units) if v.rule == "TC014"]
+    assert len(hits) == 1
+    assert "ghost" in hits[0].message
+    assert hits[0].path == "$.decomposition[1].depends_on[0]"
+
+
+def test_self_loop_yields_tc015(tmp_path):
+    hits = [v for v in _violations(tmp_path, [_unit("solo", ["solo"])])
+            if v.rule == "TC015"]
+    assert len(hits) == 1
+    assert hits[0].message.endswith("solo -> solo")
+
+
+def test_two_cycle_yields_tc015(tmp_path):
+    units = [_unit("alpha", ["beta"]), _unit("beta", ["alpha"])]
+    hits = [v for v in _violations(tmp_path, units) if v.rule == "TC015"]
+    assert len(hits) == 1
+    assert "alpha -> beta -> alpha" in hits[0].message
+
+
+def test_three_cycle_message_names_the_ring(tmp_path):
+    units = [_unit("a-one", ["c-three"]), _unit("b-two", ["a-one"]),
+             _unit("c-three", ["b-two"])]
+    hits = [v for v in _violations(tmp_path, units) if v.rule == "TC015"]
+    assert len(hits) == 1
+    assert "a-one -> c-three -> b-two -> a-one" in hits[0].message
+
+
+def test_cycle_is_red_in_draft_too(tmp_path):
+    """A cycle is malformed, not merely unready (ADR 0024)."""
+    units = [_unit("alpha", ["beta"]), _unit("beta", ["alpha"])]
+    assert "TC015" in _rules(tmp_path, units, profile="draft")
+
+
+def test_diamond_is_valid(tmp_path):
+    units = [_unit("root"), _unit("left", ["root"]), _unit("right", ["root"]),
+             _unit("join", ["left", "right"])]
+    assert _rules(tmp_path, units) == set()
+
+
+def test_cycle_reporting_is_deterministic(tmp_path):
+    units = [_unit("alpha", ["beta"]), _unit("beta", ["alpha"])]
+    first = [v.line for v in _violations(tmp_path, units)]
+    second = [v.line for v in _violations(tmp_path, units)]
+    assert first == second

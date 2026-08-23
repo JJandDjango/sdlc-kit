@@ -114,6 +114,13 @@ def validate_path(file, profile: str = "ready", schema_doc: dict | None = None) 
             seen.add(key)
             violations.append(Violation(name, err.json_path, rule, message))
 
+    # Unit-graph validity (ADR 0024) is not expressible in JSON Schema, so
+    # it rides here like the coverage join below. Both profiles: a cycle is
+    # malformed at draft too, not only at the ready gate. Local import -
+    # graph imports Violation from this module.
+    from .graph import graph_checks
+    violations.extend(graph_checks(name, instance))
+
     if profile == "ready":
         # The G0 coverage join (ADR 0017 V3) activates when the contract
         # sits in a specs tree - specs/<id>/contract.yaml - where the
