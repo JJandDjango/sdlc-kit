@@ -8,6 +8,7 @@ non_goals:
   - cart UI changes
 decomposition:
   - unit: guard empty cart
+    id: guard-empty-cart
     done_means: checkout handles zero-item carts without a null dereference
     acceptance_sketch:
       - empty cart proceeds to the order-review page

@@ -8,6 +8,7 @@ non_goals:
   - Passing validation
 decomposition:
   - unit: schema-shape
+    id: schema-shape
     done_means: the empty entities array trips minItems
     acceptance_sketch:
       - a ready validation of this fixture returns TC002

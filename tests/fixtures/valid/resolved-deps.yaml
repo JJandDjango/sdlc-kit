@@ -8,6 +8,7 @@ non_goals:
   - XLSX import
 decomposition:
   - unit: row validation
+    id: row-validation
     done_means: malformed rows produce a per-row diagnostic; valid rows import
     acceptance_sketch:
       - a mixed file imports the valid rows and reports the bad ones by line

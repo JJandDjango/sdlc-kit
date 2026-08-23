@@ -6,6 +6,7 @@ scope:
   - module-a/
 decomposition:
   - unit: the work
+    id: the-work
     done_means: the described outcome holds
     acceptance_sketch:
       - one draft criterion

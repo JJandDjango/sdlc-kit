@@ -34,6 +34,7 @@ non_goals:
 
 decomposition:
   - unit: adr-0024
+    id: adr-0024
     done_means: The ADR records the rulings. The required `id` stands.
       The render stays computed. `.sdlc/progress/` holds execution
       state, never `specs/`. A mechanical migration by the human
@@ -46,6 +47,7 @@ decomposition:
       - verify the ADR records the mechanical migration as no
         write-surface violation
   - unit: schema-1-2-0
+    id: schema-1-2-0
     done_means: >-
       `$defs.unit` needs `id` and accepts an optional `depends_on`
       list. The schema version reads 1.2.0.
@@ -54,6 +56,7 @@ decomposition:
       - verify a unit carrying `depends_on` validates green
       - verify the schema version field reads 1.2.0
   - unit: tc013-tc015-door
+    id: tc013-tc015-door
     done_means: The validator emits TC013 for the same `id` twice,
       TC014 for a reference naming no unit, and TC015 for a loop. The
       TC015 diagnostic names the loop. Both profiles run the rules.
@@ -63,6 +66,7 @@ decomposition:
       - verify a loop yields TC015 naming the loop, in draft and in
         ready
   - unit: g0-contract-migration
+    id: g0-contract-migration
     done_means: Every unit in every contract carries an `id`. The diff
       adds `id` lines only.
     acceptance_sketch:
@@ -70,6 +74,7 @@ decomposition:
         verify exit zero
       - verify the diff adds `id` lines only
   - unit: g0-graph-render
+    id: g0-graph-render
     done_means: >-
       `taskcontract/graph.py` renders one contract as Mermaid under a
       `graph` command. Two runs render the same output.
@@ -78,6 +83,7 @@ decomposition:
       - verify a graph of four units renders four units and four links
       - verify a unit with no links renders as a shape
   - unit: g0-intake-review
+    id: g0-intake-review
     done_means: The intake venue renders the graph after the
       `decomposition` draft. The venue shows the graph and needs a
       human answer for every unit before writing.
@@ -86,6 +92,7 @@ decomposition:
         writing
       - verify the existing intake rules read unchanged
   - unit: g0-1-check-row
+    id: g0-1-check-row
     done_means: The G0.1 check row names unit order. The deep page
       matches the row. The pull merge records the human answer for the
       class-E delta.
@@ -95,6 +102,7 @@ decomposition:
       - verify the pull merge records the human answer for the class-E
         delta
   - unit: g0-docs-and-tests
+    id: g0-docs-and-tests
     done_means: The task-contract page names `id`, `depends_on`,
       TC013, TC014, and TC015. `CONVENTIONS.md` gains one line. The
       suite covers the graph rules.

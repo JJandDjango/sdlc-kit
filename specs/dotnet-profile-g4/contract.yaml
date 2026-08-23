@@ -52,6 +52,7 @@ non_goals:
 
 decomposition:
   - unit: merge-gate-workflow
+    id: merge-gate-workflow
     done_means: the dotnet workflow template grows the mechanical
       core - merge_group trigger beside pull_request and push-main,
       the standing restore / format-verify / strict-build steps
@@ -66,6 +67,7 @@ decomposition:
       - no run step in the rendered workflow contains a pipe,
         semicolon, redirect, or chain operator
   - unit: secrets-scan-step
+    id: secrets-scan-step
     done_means: the workflow gains a gitleaks diff-mode step over
       base..head as a single docker-run segment of the MIT gitleaks
       image (ruled over gitleaks-action - no org license wall), masked
@@ -78,6 +80,7 @@ decomposition:
       - the step's scan scope is the candidate delta, not the full
         tree history
   - unit: dependency-audit
+    id: dependency-audit
     done_means: the Directory.Build.props template gains the
       locked-graph and audit block - RestorePackagesWithLockFile true,
       NuGetAuditMode all, audit warnings NU1901-NU1904 raised to
@@ -90,6 +93,7 @@ decomposition:
       - the rendered workflow restore step carries locked-mode as one
         chain-free segment
   - unit: suppression-audit-subcommand
+    id: suppression-audit-subcommand
     done_means: python -m taskcontract suppression-audit implements
       the four-vector diff check over base..head - in-source
       suppression constructs (pragma disable, SuppressMessage,
@@ -106,6 +110,7 @@ decomposition:
       - the rendered workflow runs the audit from the pinned kit ref
         install
   - unit: dotnet-g4-doc
+    id: dotnet-g4-doc
     done_means: docs/dotnet-profile.md gains a G4 fit-notes section
       authored Pass-0 red-first - venue semantics (merge_group
       queue-ready, pull_request advisory, queue-less fallback strict
@@ -122,6 +127,7 @@ decomposition:
       - at ship the G4 row reads green-core with remainder red and the
         gap register names the battery-CWE re-registration
   - unit: adr-0020
+    id: adr-0020
     done_means: decisions/0020-merge-gate-distribution-shape.md
       records the precedent - one kit-owned workflow serving both
       venues (pull_request advisory preview, merge_group
@@ -133,6 +139,7 @@ decomposition:
       - ADR 0020 exists in house format and docs/dotnet-profile.md
         links it
   - unit: regression-suite
+    id: regression-suite
     done_means: the suite covers the payload - workflow content
       assertions (merge_group, test-step order, gitleaks segment,
       locked-mode restore, audit step), props audit-block assertions,
@@ -146,6 +153,7 @@ decomposition:
       - each suppression vector has at least one tripping and one
         passing fixture
   - unit: version-and-registry
+    id: version-and-registry
     done_means: KIT_VERSION and pyproject bump to 0.7.0 together (the
       equality test holds), CHANGELOG.md carries the 0.7.0 delta
       naming the four bound conditions and the subcommand, MAP.md rows

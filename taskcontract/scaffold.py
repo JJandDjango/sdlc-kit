@@ -33,8 +33,11 @@ non_goals:
   - TODO
 
 # Smallest separately-verifiable pieces; 1-3 sketch criteria each.
+# id is required and unique within the contract; depends_on (optional) names
+# the ids this unit comes after - the graph must stay acyclic (ADR 0024).
 decomposition:
   - unit: TODO
+    id: unit-1
     done_means: TODO
     acceptance_sketch:
       - TODO

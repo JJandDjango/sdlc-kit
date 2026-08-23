@@ -31,6 +31,7 @@ non_goals:
 
 decomposition:
   - unit: vt010-door-join
+    id: vt010-door-join
     done_means: vocab-check compares `name`, `slug`, and `aliases`
       entries across the term files. A shared surface form yields
       VT010 naming both files and the form. A glossary with no
@@ -43,6 +44,7 @@ decomposition:
       - run vocab-check on the live specs/vocabulary/ tree and on an
         absent directory; verify 0 VT010 diagnostics
   - unit: vt010-registry-entry
+    id: vt010-registry-entry
     done_means: specs/vocabulary/constraints.yaml carries the
       `glossary-alias-disjointness` entry - kind `disjointness`,
       subject vocabulary-term, check naming VT010, status
@@ -53,6 +55,7 @@ decomposition:
       - verify the entry carries status `enforced` and a check
         naming VT010
   - unit: vt010-tests-and-docs
+    id: vt010-tests-and-docs
     done_means: the suite covers alias against alias, alias against
       `name`, and alias against `slug`, plus both green paths.
       docs/vocabulary.md names VT010 on the vocab-check door line.

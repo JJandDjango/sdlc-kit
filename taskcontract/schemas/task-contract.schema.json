@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:sdlc-kit:task-contract:v1",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "title": "Task contract (G0 definition-of-ready)",
-  "description": "Phase-0 task contract. Field set: ADR 0005, amended by ADR 0017 V2 (optional entities). Root schema = draft profile (blocked dependencies representable); validate #/$defs/ready for the G0.1 gate. The entities coverage join (ratified-only resolution) is a Python-side ready check - not expressible here.",
+  "description": "Phase-0 task contract. Field set: ADR 0005, amended by ADR 0017 V2 (optional entities) and ADR 0024 (required unit id, optional depends_on). Root schema = draft profile (blocked dependencies representable); validate #/$defs/ready for the G0.1 gate. The entities coverage join (ratified-only resolution) is a Python-side ready check - not expressible here. Unit-graph validity (duplicate id, depends_on resolution, acyclicity) is the same category - TC013-TC015, checked Python-side in both profiles.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -72,11 +72,16 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "id",
         "unit",
         "done_means",
         "acceptance_sketch"
       ],
       "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{2,63}$"
+        },
         "unit": {
           "type": "string",
           "minLength": 1
@@ -92,6 +97,14 @@
           "items": {
             "type": "string",
             "minLength": 1
+          }
+        },
+        "depends_on": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{2,63}$"
           }
         }
       }

@@ -32,34 +32,40 @@ non_goals:
 
 decomposition:
   - unit: dictionary-schema
+    id: dictionary-schema
     done_means: The schema at taskcontract/schemas/dictionary.schema.json validates the dictionary artifact. The schema validates approved entries (word, pos, gloss) and banned entries with required use_instead. The schema also validates the function-word block, the style principle, the exempt list, and field-registry rows with text-type. The file is versioned 1.0.0 and packaged in the wheel.
     acceptance_sketch:
       - Verify the schema rejects a banned entry that lacks use_instead.
       - Verify the schema rejects a registry row with a text-type outside descriptive or procedural.
       - Verify the built wheel packages the schema file.
   - unit: lang-extract
+    id: lang-extract
     done_means: The lang-extract subcommand reads the registry-bound prose fields across specs contracts. The report prints candidate words with frequencies, banned-candidate matches, and the per-contract red census. The run writes no file.
     acceptance_sketch:
       - Run the subcommand over fixture contracts and verify candidate counts match the fixture prose.
       - Verify skip classes (code spans, paths, gate IDs, diagnostic codes, term slugs, numbers) appear in no candidate list.
       - Verify the run leaves the working tree unchanged.
   - unit: dictionary-seed
+    id: dictionary-seed
     done_means: The artifact at specs/vocabulary/dictionary.yaml validates against the schema. The seed is harvested from the ready-green contracts with the synonym collapse applied. The word list stays disjoint from every glossary term name and alias.
     acceptance_sketch:
       - Verify vocab-check and lang-check both exit 0 with the seeded dictionary present.
       - Verify a fixture dictionary that duplicates a glossary term name turns the disjointness check red.
   - unit: lang-check-door
+    id: lang-check-door
     done_means: The lang-check subcommand enforces the tier-1 rules and the integrity set on registry-bound fields only. The door speaks the verdict contract with stable CLnnn codes. Base-shadow findings report at INFO severity. The door exits green when no dictionary exists. The --json envelope carries the form-checked note.
     acceptance_sketch:
       - Verify a fixture contract with a banned word goes red and the finding names the use_instead replacement.
       - Verify a repo without a dictionary exits 0.
       - Verify a use_instead target that is itself banned goes red.
   - unit: venue-joins
+    id: venue-joins
     done_means: The scaffolded CI workflow template carries a lang-check backstop step as one chain-free segment. The audit engine reports dictionary and door findings with stable codes. The skill carries the /sdlc lang and /sdlc lang extract flows.
     acceptance_sketch:
       - Verify the rendered workflow contains the lang-check step as a single segment.
       - Verify audit reports a broken fixture dictionary with a stable code.
   - unit: paper-trail
+    id: paper-trail
     done_means: The markers in docs/controlled-language.md match the shipped units. CONVENTIONS.md carries the register line. The controlled-dictionary and controlled-field terms exist as drafts with sources naming the docs page. The constraint registry carries the disjointness entry. The arc ADR records the rulings.
     acceptance_sketch:
       - Verify vocab-check stays green with the draft terms and the new constraint entry present.

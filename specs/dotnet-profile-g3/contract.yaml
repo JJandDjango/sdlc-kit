@@ -46,6 +46,7 @@ non_goals:
 
 decomposition:
   - unit: strict-compile-props
+    id: strict-compile-props
     done_means: the dotnet overlay ships a Directory.Build.props
       template targeting the consumer repo root with G3.3's ratified
       flags (Nullable enable, TreatWarningsAsErrors true,
@@ -60,6 +61,7 @@ decomposition:
       - an existing Directory.Build.props gets the snippet printed,
         never a write
   - unit: editorconfig
+    id: editorconfig
     done_means: the overlay ships an .editorconfig template targeting
       the consumer repo root carrying the C# layout/whitespace rules
       (the dotnet format whitespace surface) and the severity map that
@@ -71,6 +73,7 @@ decomposition:
       - an existing .editorconfig gets the snippet printed, never a
         write
   - unit: inner-loop-workflow
+    id: inner-loop-workflow
     done_means: the overlay ships .github/workflows/sdlc-dotnet.yml
       running on pull_request beside the G0 backstop - setup, restore,
       dotnet format whitespace --verify-no-changes, and dotnet build
@@ -82,6 +85,7 @@ decomposition:
       - no run step in the rendered workflow contains a pipe,
         semicolon, redirect, or chain operator
   - unit: precommit-formatter-hook
+    id: precommit-formatter-hook
     done_means: the overlay replaces the base pre-commit config target
       with a dotnet variant adding a dotnet-format hook in apply mode
       (G3.1's fix channel); non-dotnet stacks keep the base config;
@@ -93,6 +97,7 @@ decomposition:
       - docs/dotnet-profile.md's gap register names the new Husky.NET
         trigger
   - unit: manifest-and-drift-classes
+    id: manifest-and-drift-classes
     done_means: profile.json declares the four surfaces with the ruled
       classes - .editorconfig and Directory.Build.props merge-target,
       sdlc-dotnet.yml kit-owned, the pre-commit replacement
@@ -106,6 +111,7 @@ decomposition:
       - ADR 0019 exists in house format and docs/dotnet-profile.md
         links it
   - unit: dotnet-g3-doc
+    id: dotnet-g3-doc
     done_means: docs/dotnet-profile.md gains a G3 fit-notes section
       authored Pass-0 red-first - what lands in the consumer, the
       brownfield merge story for the two merge targets, the
@@ -117,6 +123,7 @@ decomposition:
       - at ship the G3 row reads green and the fit notes name the
         brownfield merge story
   - unit: regression-suite
+    id: regression-suite
     done_means: the suite covers the payload - rendered content
       assertions for all four surfaces, class assertions via the
       manifest, the chain-free workflow check, byte-identical
@@ -128,6 +135,7 @@ decomposition:
       - the authoring lock rejects a fixture overlay template carrying
         an interview variable
   - unit: version-and-registry
+    id: version-and-registry
     done_means: KIT_VERSION and pyproject bump to 0.6.0 together (the
       equality test holds), CHANGELOG.md carries the 0.6.0 delta note
       naming the four surfaces and their classes, MAP.md's

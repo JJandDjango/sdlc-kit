@@ -19,6 +19,7 @@ VALID_DOC = {
     "non_goals": ["PDF export"],
     "decomposition": [{
         "unit": "export endpoint",
+        "id": "export-endpoint",
         "done_means": "GET /billing/export returns CSV",
         "acceptance_sketch": ["zero-order account downloads an empty CSV"],
     }],
