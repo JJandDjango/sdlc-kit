@@ -17,11 +17,19 @@ disagree with the gate.
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
+import yaml
+
 from .checker import Violation
 
 TC_DUPLICATE_ID = "TC013"
 TC_DANGLING_REF = "TC014"
 TC_CYCLE = "TC015"
+
+HEADER = "flowchart TD"
+INDENT = "    "
 
 
 def units(instance) -> list[tuple[int, str, list[str]]]:
@@ -126,3 +134,72 @@ def graph_checks(name: str, instance) -> list[Violation]:
             f"dependency cycle: {trail}"))
 
     return violations
+
+
+# --- rendering (ADR 0008's second layer: the graph is shape, Mermaid draws it)
+
+def _labels(instance) -> dict[str, str]:
+    """id -> display label, taken from the unit's own `unit` field."""
+    out: dict[str, str] = {}
+    decomposition = instance.get("decomposition") if isinstance(instance, dict) else None
+    if not isinstance(decomposition, list):
+        return out
+    for unit in decomposition:
+        if not isinstance(unit, dict):
+            continue
+        uid = unit.get("id")
+        if isinstance(uid, str) and uid and uid not in out:
+            text = unit.get("unit")
+            out[uid] = _label(text) if isinstance(text, str) else uid
+    return out
+
+
+def _label(text: str) -> str:
+    """Collapse to one line and neutralise the quote that ends a Mermaid label."""
+    return " ".join(text.split()).replace('"', "#quot;")
+
+
+def render_mermaid(instance) -> str:
+    """One contract's unit graph as Mermaid, byte-identical across runs.
+
+    Every unit is declared as a node before any edge, so a unit with no
+    links still draws - isolated units are valid (ADR 0024). Edges run
+    dependency --> dependent, which is execution order: the arrow points
+    the way the work flows, not the way `depends_on` is written.
+    """
+    rows = units(instance)
+    labels = _labels(instance)
+    known = {uid for _, uid, _ in rows}
+
+    lines = [HEADER]
+    drawn: set[str] = set()
+    for _, uid, _ in rows:
+        if uid in drawn:
+            continue  # duplicate ids are TC013; draw the first, once
+        drawn.add(uid)
+        lines.append(f'{INDENT}{uid}["{labels.get(uid, uid)}"]')
+    for _, uid, deps in rows:
+        for dep in deps:
+            if dep in known:
+                lines.append(f"{INDENT}{dep} --> {uid}")
+    return "\n".join(lines) + "\n"
+
+
+def main_graph(args) -> int:
+    """`taskcontract graph <file>` - Mermaid on stdout, advisories on stderr.
+
+    Rendering never gates: stdout stays the product so a non-interactive
+    caller can consume it, and graph violations are reported on stderr
+    because seeing a cycle drawn is exactly how an author fixes it.
+    `validate` remains the door.
+    """
+    path = Path(args.file)
+    try:
+        instance = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError) as exc:
+        print(f"taskcontract graph: unreadable contract: {exc}", file=sys.stderr)
+        return 1
+    sys.stdout.write(render_mermaid(instance))
+    for violation in graph_checks(str(path), instance):
+        print(violation.line, file=sys.stderr)
+    return 0

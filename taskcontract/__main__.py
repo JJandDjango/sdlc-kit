@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from .checker import PROFILES, load_schema, validate_path
+from .graph import main_graph
 from .lang import main_lang_check, main_lang_extract
 from .scaffold import scaffold
 from .suppression_audit import main_audit
@@ -66,6 +67,10 @@ def main(argv=None) -> int:
              "per-contract census; writes nothing")
     lext.add_argument("--root", type=Path, default=Path("."),
                       help="repo root that holds specs/ (default: cwd)")
+    graph = sub.add_parser(
+        "graph",
+        help="render one contract's unit dependency graph as Mermaid (ADR 0024)")
+    graph.add_argument("file", help="contract file (YAML or JSON)")
     audit = sub.add_parser(
         "suppression-audit",
         help="G4.10 four-vector diff check: no new weakening of gating constraints")
@@ -78,6 +83,9 @@ def main(argv=None) -> int:
     audit.add_argument("--json", action="store_true", dest="as_json",
                        help="emit findings as a JSON array (the agent loop substrate)")
     args = parser.parse_args(argv)
+
+    if args.command == "graph":
+        return main_graph(args)
 
     if args.command == "suppression-audit":
         return main_audit(args)

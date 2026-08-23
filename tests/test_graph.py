@@ -11,7 +11,9 @@ from __future__ import annotations
 
 import yaml
 
+from taskcontract.__main__ import main
 from taskcontract.checker import load_schema, validate_path
+from taskcontract.graph import render_mermaid
 
 INTENT = ("Unit order is declared in the contract and checked at the door, "
           "so the decomposition can be read as a shape rather than a list.")
@@ -135,3 +137,78 @@ def test_cycle_reporting_is_deterministic(tmp_path):
     first = [v.line for v in _violations(tmp_path, units)]
     second = [v.line for v in _violations(tmp_path, units)]
     assert first == second
+
+
+# --- render (unit g0-graph-render) -----------------------------------------
+
+DIAMOND = [_unit("root"), _unit("left", ["root"]), _unit("right", ["root"]),
+           _unit("join", ["left", "right"])]
+
+
+def test_render_opens_a_flowchart():
+    assert render_mermaid(_doc(DIAMOND)).splitlines()[0] == "flowchart TD"
+
+
+def test_diamond_renders_four_units_and_four_links():
+    lines = render_mermaid(_doc(DIAMOND)).splitlines()[1:]
+    nodes = [ln for ln in lines if "-->" not in ln]
+    links = [ln for ln in lines if "-->" in ln]
+    assert len(nodes) == 4
+    assert len(links) == 4
+
+
+def test_edges_run_dependency_to_dependent():
+    """Execution order, not depends_on order: root comes first, so root --> left."""
+    lines = render_mermaid(_doc(DIAMOND))
+    assert "    root --> left" in lines
+    assert "    left --> join" in lines
+    assert "left --> root" not in lines
+
+
+def test_unit_with_no_links_renders_as_a_shape():
+    out = render_mermaid(_doc([_unit("lonely")]))
+    assert '    lonely["work for lonely"]' in out
+    assert "-->" not in out
+
+
+def test_render_is_byte_identical_across_runs():
+    assert render_mermaid(_doc(DIAMOND)) == render_mermaid(_doc(DIAMOND))
+
+
+def test_label_quotes_are_neutralised():
+    unit = _unit("quoted")
+    unit["unit"] = 'ship the "graph" command'
+    assert '#quot;graph#quot;' in render_mermaid(_doc([unit]))
+
+
+def test_label_newlines_collapse():
+    unit = _unit("wrapped")
+    unit["unit"] = "render the graph\n  across two lines"
+    assert '    wrapped["render the graph across two lines"]' in render_mermaid(
+        _doc([unit]))
+
+
+def test_duplicate_id_draws_one_node():
+    out = render_mermaid(_doc([_unit("twin"), _unit("twin")]))
+    assert out.count('twin["') == 1
+
+
+def test_cli_graph_writes_mermaid_and_exits_zero(tmp_path, capsys):
+    path = _write(tmp_path, _doc(DIAMOND))
+    assert main(["graph", str(path)]) == 0
+    assert capsys.readouterr().out == render_mermaid(_doc(DIAMOND))
+
+
+def test_cli_graph_reports_a_cycle_on_stderr_but_still_renders(tmp_path, capsys):
+    units = [_unit("alpha", ["beta"]), _unit("beta", ["alpha"])]
+    path = _write(tmp_path, _doc(units))
+    assert main(["graph", str(path)]) == 0
+    captured = capsys.readouterr()
+    assert captured.out.startswith("flowchart TD")
+    assert "TC015" in captured.err
+
+
+def test_cli_graph_rejects_an_unreadable_contract(tmp_path, capsys):
+    missing = tmp_path / "absent.yaml"
+    assert main(["graph", str(missing)]) == 1
+    assert "unreadable contract" in capsys.readouterr().err
