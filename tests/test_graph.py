@@ -102,14 +102,14 @@ def test_self_loop_yields_tc015(tmp_path):
     hits = [v for v in _violations(tmp_path, [_unit("solo", ["solo"])])
             if v.rule == "TC015"]
     assert len(hits) == 1
-    assert hits[0].message.endswith("solo -> solo")
+    assert hits[0].message.endswith("solo depends on solo")
 
 
 def test_two_cycle_yields_tc015(tmp_path):
     units = [_unit("alpha", ["beta"]), _unit("beta", ["alpha"])]
     hits = [v for v in _violations(tmp_path, units) if v.rule == "TC015"]
     assert len(hits) == 1
-    assert "alpha -> beta -> alpha" in hits[0].message
+    assert "alpha depends on beta depends on alpha" in hits[0].message
 
 
 def test_three_cycle_message_names_the_ring(tmp_path):
@@ -117,7 +117,8 @@ def test_three_cycle_message_names_the_ring(tmp_path):
              _unit("c-three", ["b-two"])]
     hits = [v for v in _violations(tmp_path, units) if v.rule == "TC015"]
     assert len(hits) == 1
-    assert "a-one -> c-three -> b-two -> a-one" in hits[0].message
+    assert ("a-one depends on c-three depends on b-two depends on a-one"
+            in hits[0].message)
 
 
 def test_cycle_is_red_in_draft_too(tmp_path):

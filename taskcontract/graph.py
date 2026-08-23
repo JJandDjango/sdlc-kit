@@ -128,7 +128,10 @@ def graph_checks(name: str, instance) -> list[Violation]:
                     f"depends_on '{dep}' names no unit in this contract"))
 
     for ring in _cycles(rows, first):
-        trail = " -> ".join(ring + [ring[0]])
+        # Spelled out, never an arrow: the render draws edges in execution
+        # order (dependency --> dependent), so reusing "->" here would point
+        # the opposite way in the same feature's other output.
+        trail = " depends on ".join(ring + [ring[0]])
         violations.append(Violation(
             name, f"$.decomposition[{first[ring[0]]}]", TC_CYCLE,
             f"dependency cycle: {trail}"))
