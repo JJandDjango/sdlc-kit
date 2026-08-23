@@ -22,6 +22,11 @@
   against `taskcontract/schemas/task-contract.schema.json` (`ready`
   profile) via `python -m taskcontract validate`
   ([[0006-task-contract-enforcement]]).
+- **Unit order lives in the contract.** Every decomposition unit carries an
+  `id`; a unit that must follow another names it in `depends_on`. The door
+  rejects duplicates, dangling refs, and cycles (TC013-TC015); the picture
+  is `python -m taskcontract graph`, computed on demand and never committed
+  ([[0024-unit-dependency-graph]]).
 - **Register boundary.** Controlled register where prose is executed -
   contract prose fields, checked by `python -m taskcontract lang-check`;
   free register where prose is deliberated (THEORY, ADRs, docs

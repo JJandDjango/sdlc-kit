@@ -46,7 +46,13 @@ classifier that 0014 routes class-E deltas through does not exist -
   unit in every contract gains an `id` in the same commit. The kit
   is pre-1.0 and its own first consumer, and the one outside
   consumer pins v0.10.0, so the migration is contained here and
-  never cheaper than now.
+  never cheaper than now. **This amends 0006 E1**, which ratified
+  the unit shape as `{unit, done_means, acceptance_sketch}` with
+  "No per-unit id" on the grounds that 0011 needed none - criteria
+  cite units by name. That reasoning held while nothing else
+  referenced a unit; `depends_on` is the first thing that does, and
+  a reference needs a referent that survives an edit to the prose.
+  0011's format is untouched: criteria may still cite units by name.
 - **`depends_on` is optional; a unit names the units before it.**
   New diagnostics, firing in both profiles: TC013 duplicate `id`,
   TC014 a `depends_on` entry naming no unit in this contract, TC015
