@@ -14,7 +14,7 @@ relations:
   part_of:
     - task-contract
 
-status: draft
+status: ratified
 since: 2026-08-02
 
 sources:
