@@ -45,7 +45,8 @@ wrong everything downstream.
 - **What (pass condition):** the task contract validates against the
   task-contract schema: all required fields present and non-empty; every
   dependency `resolved`; the decomposition lists >=1 independently gateable
-  unit; every unit carries >=1 acceptance-sketch criterion. Any failure
+  unit; every unit carries a unique `id` and >=1 acceptance-sketch
+  criterion; declared order resolves and is acyclic. Any failure
   rejects the task with the field-level diagnostic.
 - **Why:** the three registered rejection reasons - acceptance criteria
   unwritable, dependencies unresolved, scope unbounded - each decompose into

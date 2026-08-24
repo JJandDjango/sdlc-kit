@@ -8,6 +8,7 @@ non_goals:
   - module-b
 decomposition:
   - unit: the work
+    id: the-work
     done_means: the described outcome holds
     acceptance_sketch:
       - first draft criterion

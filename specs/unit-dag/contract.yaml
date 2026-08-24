@@ -1,0 +1,121 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: unit-dag
+
+intent: >-
+  Unit order stays outside the contract today, in prose no door reads.
+  The task adds order to the task contract. Every unit carries an `id`,
+  and a unit names the units before it under `depends_on`. The ready
+  door rejects the same `id` twice, a reference naming no unit, and a
+  loop. A `graph` command renders the contract as Mermaid, the same
+  output on every run. The intake venue shows the graph and needs a
+  human answer for every unit before the contract lands.
+
+scope:
+  - taskcontract/
+  - specs/
+  - skills/sdlc/
+  - docs/
+  - decisions/
+  - tests/
+  - CONVENTIONS.md
+  - CHANGELOG.md
+
+non_goals:
+  - The graph records order only, never time.
+  - No links between contracts. The `dependencies` field stays
+    separate and unchanged.
+  - No rendered Mermaid file in the tree. The render stays computed,
+    never stored, so no drift exists.
+  - No execution state under `specs/`. Execution state stays local and
+    never rides a gate.
+  - No execution semantics. The graph never runs a unit.
+
+decomposition:
+  - unit: adr-0024
+    id: adr-0024
+    done_means: The ADR records the rulings. The required `id` stands.
+      The render stays computed. `.sdlc/progress/` holds execution
+      state, never `specs/`. A mechanical migration by the human
+      carries no write-surface violation.
+    acceptance_sketch:
+      - verify the ADR names the required `id` ruling and the computed
+        render ruling
+      - verify the ADR names `.sdlc/progress/` as the execution state
+        location
+      - verify the ADR records the mechanical migration as no
+        write-surface violation
+  - unit: schema-1-2-0
+    id: schema-1-2-0
+    done_means: >-
+      `$defs.unit` needs `id` and accepts an optional `depends_on`
+      list. The schema version reads 1.2.0.
+    acceptance_sketch:
+      - verify a unit with no `id` yields a schema diagnostic
+      - verify a unit carrying `depends_on` validates green
+      - verify the schema version field reads 1.2.0
+  - unit: tc013-tc015-door
+    id: tc013-tc015-door
+    done_means: The validator emits TC013 for the same `id` twice,
+      TC014 for a reference naming no unit, and TC015 for a loop. The
+      TC015 diagnostic names the loop. Both profiles run the rules.
+    acceptance_sketch:
+      - verify the same `id` twice yields TC013 naming both units
+      - verify a `depends_on` entry naming no unit yields TC014
+      - verify a loop yields TC015 naming the loop, in draft and in
+        ready
+  - unit: g0-contract-migration
+    id: g0-contract-migration
+    done_means: Every unit in every contract carries an `id`. The diff
+      adds `id` lines only.
+    acceptance_sketch:
+      - run validate over every contract at the ready profile and
+        verify exit zero
+      - verify the diff adds `id` lines only
+  - unit: g0-graph-render
+    id: g0-graph-render
+    done_means: >-
+      `taskcontract/graph.py` renders one contract as Mermaid under a
+      `graph` command. Two runs render the same output.
+    acceptance_sketch:
+      - run `graph` twice on one contract and verify the same output
+      - verify a graph of four units renders four units and four links
+      - verify a unit with no links renders as a shape
+  - unit: g0-intake-review
+    id: g0-intake-review
+    done_means: The intake venue renders the graph after the
+      `decomposition` draft. The venue shows the graph and needs a
+      human answer for every unit before writing.
+    acceptance_sketch:
+      - verify the skill renders, shows, and needs an answer before
+        writing
+      - verify the existing intake rules read unchanged
+  - unit: g0-1-check-row
+    id: g0-1-check-row
+    done_means: The G0.1 check row names unit order. The deep page
+      matches the row. The pull merge records the human answer for the
+      class-E delta.
+    acceptance_sketch:
+      - verify the G0.1 check row names unit order
+      - verify the deep page matches the row
+      - verify the pull merge records the human answer for the class-E
+        delta
+  - unit: g0-docs-and-tests
+    id: g0-docs-and-tests
+    done_means: The task-contract page names `id`, `depends_on`,
+      TC013, TC014, and TC015. `CONVENTIONS.md` gains one line. The
+      suite covers the graph rules.
+    acceptance_sketch:
+      - verify the task-contract page names TC013, TC014, and TC015
+      - run pytest and verify exit zero with the graph tests
+
+dependencies: []
+
+entities:
+  - decomposition-unit
+  - task-contract
+  - gate
+
+provenance:
+  origin: human-request

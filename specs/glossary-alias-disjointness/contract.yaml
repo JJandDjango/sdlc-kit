@@ -1,0 +1,75 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: glossary-alias-disjointness
+
+intent: >-
+  The vocab-check door validates each term file against the schema,
+  never the set of terms. The task adds a glossary join. VT010 goes
+  red when the `name`, `slug`, or an `aliases` entry of one term
+  matches a surface form of another term. The diagnostic names both
+  files and the shared form. The brownfield extractor drafts synonym
+  duplicates; the door flags the pair before ratification. A
+  constraint-registry entry records the join as `enforced`.
+
+scope:
+  - taskcontract/vocabulary.py
+  - tests/
+  - specs/vocabulary/constraints.yaml
+  - docs/vocabulary.md
+  - CHANGELOG.md
+
+non_goals:
+  - No schema change - the `aliases` field shape and the schema
+    version 1.0.0 stand as shipped.
+  - The door reports duplicates and writes nothing. A term merge or
+    alias collapse stays a human edit on the full lane.
+  - The check compares surface forms on string equality. Synonym
+    judgment stays a human act.
+  - The lang-check machinery stays untouched. CL003 covers the
+    dictionary against the glossary; VT010 covers term against term.
+
+decomposition:
+  - unit: vt010-door-join
+    id: vt010-door-join
+    done_means: vocab-check compares `name`, `slug`, and `aliases`
+      entries across the term files. A shared surface form yields
+      VT010 naming both files and the form. A glossary with no
+      duplicates stays green; an absent directory stays green.
+    acceptance_sketch:
+      - verify VT010 names both fixture files when an alias matches
+        across 2 term files
+      - verify VT010 goes red when an alias matches the `slug` or
+        `name` of another term
+      - run vocab-check on the live specs/vocabulary/ tree and on an
+        absent directory; verify 0 VT010 diagnostics
+  - unit: vt010-registry-entry
+    id: vt010-registry-entry
+    done_means: specs/vocabulary/constraints.yaml carries the
+      `glossary-alias-disjointness` entry - kind `disjointness`,
+      subject vocabulary-term, check naming VT010, status
+      `enforced`. The registry validates green at the door.
+    acceptance_sketch:
+      - run vocab-check and verify 0 VC diagnostics with the new
+        entry present
+      - verify the entry carries status `enforced` and a check
+        naming VT010
+  - unit: vt010-tests-and-docs
+    id: vt010-tests-and-docs
+    done_means: the suite covers alias against alias, alias against
+      `name`, and alias against `slug`, plus both green paths.
+      docs/vocabulary.md names VT010 on the vocab-check door line.
+    acceptance_sketch:
+      - run pytest and verify the suite exits 0 with the new tests
+        included
+      - verify docs/vocabulary.md names VT010 in the door section
+
+dependencies:
+  - {ref: vocabulary-layer, status: resolved}
+
+entities:
+  - vocabulary-term
+  - gate
+
+provenance:
+  origin: human-request

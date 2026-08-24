@@ -28,6 +28,7 @@ def test_new_round_trip_fill_then_green(tmp_path):
     doc["non_goals"] = ["PDF export"]
     doc["decomposition"] = [{
         "unit": "export endpoint",
+        "id": "export-endpoint",
         "done_means": "GET /billing/export returns CSV",
         "acceptance_sketch": ["zero-order account downloads an empty CSV"],
     }]

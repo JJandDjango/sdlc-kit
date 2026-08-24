@@ -93,7 +93,7 @@ I2. DERIVE a task id matching `^[a-z][a-z0-9-]{2,63}$` from the request; if the 
 
 I3. SCAFFOLD - one Bash call: `python -m taskcontract new {id}`. If it fails because the contract already exists, ASK before touching anything - existing contracts are never silently edited.
 
-I4. AUTHOR `specs/{id}/contract.yaml` from the request: intent in outcome terms (40-1200 chars - what is true after this task that is not true now); scope paths; non_goals; decomposition units each with done_means and 1-3 acceptance_sketch criteria; dependencies as {ref, status: resolved or blocked, blocked_by}; provenance origin `human-request` unless the task demonstrably originates from an operations escape (`g8-escape`, requires ref) or maintenance (`g9-maintenance`). Check `vocab-list`: when the request's nouns match ratified terms, declare them under `entities:`; when nothing matches, omit the field.
+I4. AUTHOR `specs/{id}/contract.yaml` from the request: intent in outcome terms (40-1200 chars - what is true after this task that is not true now); scope paths; non_goals; decomposition units each with a unique `id`, done_means and 1-3 acceptance_sketch criteria, plus `depends_on` where order matters; dependencies as {ref, status: resolved or blocked, blocked_by}; provenance origin `human-request` unless the task demonstrably originates from an operations escape (`g8-escape`, requires ref) or maintenance (`g9-maintenance`). Check `vocab-list`: when the request's nouns match ratified terms, declare them under `entities:`; when nothing matches, omit the field.
 
 I5. LOOP - one Bash call per iteration:
        python -m taskcontract validate specs/{id}/contract.yaml --profile ready

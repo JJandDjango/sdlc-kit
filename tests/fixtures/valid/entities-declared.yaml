@@ -9,6 +9,7 @@ non_goals:
   - Exercising the coverage join (tmp-tree tests own that)
 decomposition:
   - unit: schema-shape
+    id: schema-shape
     done_means: the entities array is accepted with slug items
     acceptance_sketch:
       - a ready validation of this fixture returns no violations

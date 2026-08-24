@@ -46,6 +46,7 @@ non_goals:
   - Gating on warnings
 decomposition:
   - unit: warn
+    id: warn
     done_means: the join warns without gating
     acceptance_sketch:
       - audit reports CONTRACT-WARNED

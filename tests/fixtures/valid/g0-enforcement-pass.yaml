@@ -15,16 +15,19 @@ non_goals:
   - the /intake skill (deferred to the pilot, Q6)
 decomposition:
   - unit: contract schema
+    id: contract-schema
     done_means: schema validates the fixture set - valid pass, invalid fail
     acceptance_sketch:
       - draft profile accepts a blocked dependency; ready profile rejects it
       - an unknown top-level field is rejected (strict)
   - unit: validator CLI
+    id: validator-cli
     done_means: python -m taskcontract validate exits 0/1 with per-field lines
     acceptance_sketch:
       - invalid fixture yields TC003 naming the unresolved dependency
       - --json emits the same violations as an array
   - unit: regression suite
+    id: regression-suite
     done_means: pytest green over golden fixtures, run by kit CI on push
     acceptance_sketch:
       - every TCnnn rule is covered by at least one named invalid fixture

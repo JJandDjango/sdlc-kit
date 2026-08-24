@@ -66,6 +66,7 @@ non_goals:
   - Anything beyond the join
 decomposition:
   - unit: join
+    id: join
     done_means: the declared entities resolve per ADR 0017 V3
     acceptance_sketch:
       - resolution behaves per term status

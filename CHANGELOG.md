@@ -9,6 +9,37 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.11.0 - 2026-08-24 (tag `v0.11.0`)
+
+- **Schema `version: 1.1.0` -> `1.2.0` - breaking.** `$defs.unit` gains a
+  required `id` (the contract-id pattern, `^[a-z][a-z0-9-]{2,63}$`) and an
+  optional `depends_on`, a unique array of unit ids naming the units a unit
+  comes after (ADR 0024). Unit ordering moves out of plan prose and into
+  the contract, where the door reads it.
+- **Delta note - what breaks.** Every contract authored against 1.1.0 goes
+  red on TC001 (`missing required field 'id'`) the moment it validates
+  against 1.2.0. Consumers pinned to an earlier tag are untouched until
+  they bump the install ref; the break is paid at the bump, not on the
+  push. Migration is mechanical and additive: give each unit an `id`,
+  deriving it from the existing `unit` text when that text is already a
+  slug (this repo migrated 73 units that way, diff `N insertions, 0
+  deletions`). Nothing else in the unit shape moved, so `intent`, `scope`,
+  `done_means`, and `acceptance_sketch` are untouched by the migration.
+- **New diagnostics, both profiles:** TC013 duplicate unit id, TC014
+  `depends_on` naming no unit in the contract, TC015 dependency cycle
+  (the message names the ring). A cycle is malformed rather than merely
+  unready, so `--profile draft` reports it too. Isolated units stay valid -
+  there is no connectivity check.
+- **New subcommand:** `python -m taskcontract graph <file>` renders one
+  contract's unit graph as Mermaid on stdout, byte-identical across runs.
+  Edges run dependency to dependent (execution order). The render is
+  computed on demand and never committed, so no drift check is needed
+  (ADR 0024, following 0017 V5).
+- **`new` skeleton** now emits `id: unit-1`, keeping TC007 on the TODO
+  intent as the skeleton's only tripwire.
+- Amends 0006 E1, which ratified "no per-unit id"; 0011's
+  criterion-traceability format is unchanged.
+
 ## 0.10.0 - 2026-08-03 (tag `v0.10.0`)
 
 - Work adoption behind a one-way membrane (ADR 0023): USAGE gains

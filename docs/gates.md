@@ -118,7 +118,7 @@ and the scope baseline every later gate implicitly checks against.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
-| G0.1 | Definition-of-ready check | mechanical | Contract at `specs/<id>/contract.yaml` validates against `taskcontract/schemas/task-contract.schema.json` (`ready` profile): fields present + bounded, every unit sketched, all dependencies resolved | `python -m taskcontract validate` (jsonschema) | [0005](../decisions/0005-task-contract-fields.md), [0006](../decisions/0006-task-contract-enforcement.md) |
+| G0.1 | Definition-of-ready check | mechanical | Contract at `specs/<id>/contract.yaml` validates against `taskcontract/schemas/task-contract.schema.json` (`ready` profile): fields present + bounded, every unit identified and ordered (acyclic, resolvable), all dependencies resolved | `python -m taskcontract validate` (jsonschema + TC013-TC015 graph checks) | [0005](../decisions/0005-task-contract-fields.md), [0006](../decisions/0006-task-contract-enforcement.md), [0024](../decisions/0024-unit-dependency-graph.md) |
 | G0.2 | Vocabulary coverage join | mechanical | Every contract `entities:` ref resolves to a *ratified* term in `specs/vocabulary/` (missing or draft = unresolved dependency - fork the vocabulary task, never fail the work; deprecated warns inside its sunset window, errors past it); term files and the constraint registry validate at the door | `python -m taskcontract validate` ready profile (TC010-TC012, W001); `vocab-check` door (VT/VC diagnostics); [vocabulary.md](vocabulary.md) | Q4 (notice floor) |
 
 ## G1 - Requirements / Spec

@@ -36,6 +36,7 @@ non_goals:
 
 decomposition:
   - unit: docs-pass-0
+    id: docs-pass-0
     done_means: The distribution and reconciliation story is
       documented user-facing before implementation - the three
       channels (wheel, plugin, committed scaffold), the pull-model
@@ -47,6 +48,7 @@ decomposition:
       - docs/vocabulary.md's migration-notes promise points at
         CHANGELOG.md, not an unmaterialized plugin changelog
   - unit: release-tagging
+    id: release-tagging
     done_means: The kit tags releases and the scaffolded install ref
       pins to one - init renders the workflow with a git ref at
       v{packaged version} resolved at render time, and the tag-on-
@@ -57,6 +59,7 @@ decomposition:
       - v0.3.0 exists on origin and matches the packaged kit version
       - the tag-on-bump rule is stated alongside the delta-note rule
   - unit: changelog
+    id: changelog
     done_means: CHANGELOG.md exists at the repo root, backfilled for
       0.1.0 through 0.3.0 including the task-contract 1.1.0 schema
       delta note, and is the named venue for future migration notes.
@@ -66,6 +69,7 @@ decomposition:
       - the house rule 'no schema version bump merges without its
         delta note' is stated in the file
   - unit: update-command
+    id: update-command
     done_means: /sdlc update exists as a day-2 flow backed by a
       report-only engine - renders current templates, diffs the
       consumer's committed scaffold, reports drift per file, and
