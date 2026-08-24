@@ -9,7 +9,7 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
-## Unreleased
+## 0.11.0 - 2026-08-24 (tag `v0.11.0`)
 
 - **Schema `version: 1.1.0` -> `1.2.0` - breaking.** `$defs.unit` gains a
   required `id` (the contract-id pattern, `^[a-z][a-z0-9-]{2,63}$`) and an
