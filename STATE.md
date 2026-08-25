@@ -2,64 +2,88 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-08-06 (post-25 reconcile, home machine)._
+> _Generated 2026-08-24 (session 26 close, home machine)._
 
 ## Now
-- Reconcile session (2026-08-06, home): the session-25 terminal
-  was killed 8/6 with no formal wrap; transcript replay proved the
-  close ran whole on 8/3 - STATE + plan committed, close PR #31
-  merged at 5fd4c90, pushed. The only post-close exchange was a
-  fetch-channels Q&A already recorded in USAGE 2/7. Nothing lost;
-  no spine edit needed.
-- Receipts re-verified 2026-08-06, zero-trust: suite 190 green;
-  validate 7/7 ready-green; vocab-green 17 terms; lang-green (six
-  pre-arc exempt only); /sdlc audit clean (6 informational); tag
-  v0.10.0 -> e7421e8; origin/main unchanged at 5fd4c90; tree clean.
-- Cairn audit ran (first since the close): 0 errors, two chronic
-  classes. 12 ADRs (0012-0023) exceed the half-page budget -
-  recommendation: stand, append-only outranks the budget. 13
-  docs/gates/ pages orphaned by the row-link check - MAP.md names
-  them in prose only; one-row MAP fix offered, unratified.
-- Session 25 (2026-08-03) shipped v0.10.0 whole (ADR 0023): work
-  adoption behind a one-way membrane - USAGE 7, findings form
-  `.sdlc/findings/TEMPLATE.yaml` + `.sdlc/NOTICE.md` as kit-owned
-  surfaces, dotnet day-one posture menu in docs/dotnet-profile.md,
-  tag + self-pin proven by the CI install (PRs #29-#31).
+- Session 26 (2026-08-22 to 2026-08-24) shipped v0.11.0, the
+  unit-graph release (ADR 0024): unit ordering moves into the task
+  contract. Every decomposition unit carries a required `id`;
+  `depends_on` names the units it comes after; the door rejects
+  duplicate ids (TC013), dangling refs (TC014), and cycles (TC015) in
+  both profiles; `taskcontract graph <file>` renders Mermaid,
+  byte-identical across runs, computed and never committed. Schema
+  1.1.0 -> 1.2.0 is breaking; CHANGELOG 0.11.0 carries the delta
+  note and migration recipe. PR #33 (12 commits) merged at 257ca1c,
+  tag v0.11.0 -> 257ca1c, self-pin PR #34 merged at 3a172c3; the
+  contracts check proved the tag installs. main == origin/main ==
+  3a172c3, tree clean apart from the untracked request doc.
+- Intake for the 2026-08-22 relayed request ran through `/sdlc
+  intake`: specs/unit-dag/contract.yaml, ready-green first pass,
+  prose authored inside the closed dictionary with zero delta (links
+  for edges, loop for cycle, unit for node, execution state for
+  progress). The orphaned specs/glossary-alias-disjointness/ contract
+  (drafted 8/7, never committed) was validated ready-green and landed
+  unedited at 65d52c1.
+- Four approvals taken in chat on rendered before/after text, each
+  its own commit: G0.1 class-E tightening (da3e66c);
+  controlled-dictionary + controlled-field ratified, glossary now
+  17/17 ratified (6c52216); MAP.md row naming all 13 gate deep pages,
+  Cairn orphans 13 -> 0 (074d13a); intake I4 authors ids and
+  depends_on (2005c93, partial - see Blockers).
+- unit-dag contract: 7 of 8 units closed. Open: g0-intake-review.
+- Record corrections this session: docs/task-contract.md E1 ("No
+  per-unit id") now carries the 0024 amendment; ADR 0024 amended in
+  place pre-merge to own the supersession (Cairn reports ADR-EDITED
+  on it, expected). ADR 0014's direction classifier does not exist
+  yet - class-E tightenings still take the human lane; recorded in
+  0024 and PR #33.
+- Receipts at close, zero-trust on main: suite 213 (190 -> 213);
+  validate 9/9 ready-green; vocab-green 17 terms, registry 6;
+  lang-green with the six pre-arc contracts exempt; /sdlc audit
+  clean, 6 informational; Cairn audit 0 errors, 21 warnings (13 ADR
+  budget - stand; ADR-EDITED 0024; 6 DOCS-STALE from the id
+  migration touching contracts whose pages did not change - accept;
+  STATE-STALE clears with this regeneration).
 
 ## Blockers
-- None.
+- g0-intake-review cannot close as approved: skills/sdlc/SKILL.md
+  sits at ~3978 tokens against PromptLang's 4000 fail threshold, and
+  the approved I5 RENDER + CONFIRM step costs ~45 even at one line
+  (measured: approved wording 4149, maximal compression 4036, step
+  dropped passes). No workaround taken - raising the threshold or
+  compressing unrelated approved text are both the user's call.
+  Recommended: trim the frontmatter `description` (~200 tokens of
+  subcommand re-listing) on the class-E lane, then land the step.
 
 ## Next actions
-1. **Work-side day one** (session 26 opens from the work machine,
-   fetching this repo): runner probe (GitHub-hosted vs self-hosted;
-   scratch pip-step run if self-hosted); install the skill via the
-   Cairn channel; init the work repo brownfield/dotnet pinned
-   v0.10.0; adoption commit carries the posture picks
-   (GenerateDocumentationFile true; CS1591 + CA1303 none - menu in
-   docs/dotnet-profile.md). Findings return only through the form.
-2. M0 pilot (engine repo) is the second consumer - starts with work
-   findings in hand. Cargo lane parked until ImSim (Rust)
-   initializes.
-3. User acts pending: class-S flips for `controlled-dictionary` +
-   `controlled-field` (still drafts); rule on the MAP.md row for
-   docs/gates/ (apply the one-row fix or accept the standing
-   orphan infos).
-4. Registered continuations unchanged: PL-PIPE.3 eval harness,
-   sdlc-spec / sdlc-qa defs behind venue existence, mechanical loop
-   runner, verdict field-name convergence.
-5. Parked with triggers (0023 register): dotnet-tool wrapper (Python
-   present at work), Husky.NET, mirror + configurable KIT_REPO and
-   wheel-on-release (both behind the runner probe), uvx console
-   script (offered, not ratified), PyPI; Azure DevOps variant killed
-   (work is GitHub). Controlled-language deferrals + Q4 numbers +
-   explainer PDF + V8 RDF map + battery-CWE map unchanged.
+1. **Work-side upgrade** (from the work machine): update the plugin
+   (`/plugin marketplace update sdlc-kit`, then `/plugin`); bump the
+   work repo's workflow pin to `@v0.11.0`; migrate its contracts
+   (add `id` per unit, derived from the unit slug; the scratchpad
+   migration script from this session is not in the kit - offered as
+   a kit surface if wanted). Expect TC001 on every pre-1.2.0 contract
+   until migrated. Note the local plugin cache pin was e81f9a5
+   (2026-07-29, session 17) - two releases behind - which is why
+   audit.py reported false TC005s against ids this session.
+2. **Close g0-intake-review**: rule on the SKILL.md headroom (see
+   Blockers), then land I5 RENDER + CONFIRM and the criteria line.
+3. **Runner probe** at work (GitHub-hosted vs self-hosted) - still
+   the first fact that decides whether the parked distribution
+   fallbacks wake. Unchanged from session 25.
+4. M0 pilot (engine repo) remains the second consumer, starting
+   with work findings in hand. Cargo lane parked until ImSim.
+5. Registered continuations unchanged: PL-PIPE.3 eval harness,
+   sdlc-spec / sdlc-qa defs, mechanical loop runner, verdict
+   field-name convergence, `.sdlc/progress/<id>.yaml` execution
+   state (ruled in 0024, unbuilt), direction classifier (0014 Q6).
 
 ## Open questions
-- Runner posture at work - GitHub-hosted or self-hosted? First fact
-  of session 26; decides whether the parked distribution fallbacks
-  wake.
-- Q4 thresholds, numeric only (unchanged).
-- Q5 decorrelation - two feeds: M0 raw traces + work findings
-  pre-sanitized by the form (the lexicon as channel-invariant).
-- Q6 first analyzer tranche - rides pilot activation.
-- Comprehension empirics (PL-PIPE.3 + trace tagging) unchanged.
+- SKILL.md headroom: trim the description, split flows into a
+  reference file, or leave the render step open? Every future
+  addition to the intake venue hits the same wall.
+- Should the id-migration script ship as a kit surface (a
+  `taskcontract migrate` subcommand or a skill step) before the
+  work repo upgrades, or is the CHANGELOG recipe enough?
+- Runner posture at work (unchanged).
+- Q4 thresholds, Q5 decorrelation, Q6 first analyzer tranche,
+  comprehension empirics (PL-PIPE.3) - all unchanged from 25.
