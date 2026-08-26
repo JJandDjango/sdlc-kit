@@ -53,6 +53,7 @@ non_goals:
 decomposition:
   - unit: merge-gate-workflow
     id: merge-gate-workflow
+    confirmed_by: [user]
     done_means: the dotnet workflow template grows the mechanical
       core - merge_group trigger beside pull_request and push-main,
       the standing restore / format-verify / strict-build steps
@@ -68,6 +69,7 @@ decomposition:
         semicolon, redirect, or chain operator
   - unit: secrets-scan-step
     id: secrets-scan-step
+    confirmed_by: [user]
     done_means: the workflow gains a gitleaks diff-mode step over
       base..head as a single docker-run segment of the MIT gitleaks
       image (ruled over gitleaks-action - no org license wall), masked
@@ -81,6 +83,7 @@ decomposition:
         tree history
   - unit: dependency-audit
     id: dependency-audit
+    confirmed_by: [user]
     done_means: the Directory.Build.props template gains the
       locked-graph and audit block - RestorePackagesWithLockFile true,
       NuGetAuditMode all, audit warnings NU1901-NU1904 raised to
@@ -94,6 +97,7 @@ decomposition:
         chain-free segment
   - unit: suppression-audit-subcommand
     id: suppression-audit-subcommand
+    confirmed_by: [user]
     done_means: python -m taskcontract suppression-audit implements
       the four-vector diff check over base..head - in-source
       suppression constructs (pragma disable, SuppressMessage,
@@ -111,6 +115,7 @@ decomposition:
         install
   - unit: dotnet-g4-doc
     id: dotnet-g4-doc
+    confirmed_by: [user]
     done_means: docs/dotnet-profile.md gains a G4 fit-notes section
       authored Pass-0 red-first - venue semantics (merge_group
       queue-ready, pull_request advisory, queue-less fallback strict
@@ -128,6 +133,7 @@ decomposition:
         gap register names the battery-CWE re-registration
   - unit: adr-0020
     id: adr-0020
+    confirmed_by: [user]
     done_means: decisions/0020-merge-gate-distribution-shape.md
       records the precedent - one kit-owned workflow serving both
       venues (pull_request advisory preview, merge_group
@@ -140,6 +146,7 @@ decomposition:
         links it
   - unit: regression-suite
     id: regression-suite
+    confirmed_by: [user]
     done_means: the suite covers the payload - workflow content
       assertions (merge_group, test-step order, gitleaks segment,
       locked-mode restore, audit step), props audit-block assertions,
@@ -154,6 +161,7 @@ decomposition:
         passing fixture
   - unit: version-and-registry
     id: version-and-registry
+    confirmed_by: [user]
     done_means: KIT_VERSION and pyproject bump to 0.7.0 together (the
       equality test holds), CHANGELOG.md carries the 0.7.0 delta
       naming the four bound conditions and the subcommand, MAP.md rows

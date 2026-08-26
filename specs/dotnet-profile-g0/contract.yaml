@@ -42,6 +42,7 @@ non_goals:
 decomposition:
   - unit: profile-overlay-resolution
     id: profile-overlay-resolution
+    confirmed_by: [user]
     done_means: init.py resolves the payload as base templates plus
       templates/profiles/{stack}/ overlay entries (add or replace,
       per target); an unknown stack or absent overlay dir renders the
@@ -58,6 +59,7 @@ decomposition:
       - non-dotnet stacks produce today's payload byte-for-byte
   - unit: update-parity
     id: update-parity
+    confirmed_by: [user]
     done_means: update.py reads the consumer's stack from
       .sdlc/config.yaml, resolves the same base-plus-overlay template
       set, and classifies overlay surfaces with the existing
@@ -72,6 +74,7 @@ decomposition:
       - the self-run on this repo (stack python) still exits 0
   - unit: dotnet-g0-doc
     id: dotnet-g0-doc
+    confirmed_by: [user]
     done_means: docs/dotnet-profile.md exists Pass-0 red-first - a
       binding-status table for G0-G10 plus PL-DOC and PL-PIPE, G0 fit
       notes for .NET shops (scope authoring, local-Python note, CI
@@ -84,6 +87,7 @@ decomposition:
         dotnet-tool wrapper with their defer rationale
   - unit: adr-0018
     id: adr-0018
+    confirmed_by: [user]
     done_means: decisions/0018-tooling-profile-distribution.md records
       the in-kit overlay architecture, the zero-delta G0 finding, the
       promotion rule (project to profile to shape), and the revisit
@@ -92,6 +96,7 @@ decomposition:
       - the ADR exists in house format and the docs page links it
   - unit: version-and-registry
     id: version-and-registry
+    confirmed_by: [user]
     done_means: KIT_VERSION and pyproject bump to 0.5.0 together
       (the equality test holds), CHANGELOG.md carries the 0.5.0 delta
       note stating overlay semantics, MAP.md gains the tooling-profile

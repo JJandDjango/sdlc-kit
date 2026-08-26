@@ -1,7 +1,7 @@
 # Glossary term - vocabulary layer (ADR 0017 V1).
-# Born draft at the intake-seats contract's intake (session 27). Ratification
-# is the human act: flip status draft -> ratified in review (class-S edit;
-# the PR merge is the interim approval record).
+# Born draft at the intake-seats contract's intake (session 27); ratified by
+# the user 2026-08-26 at unit g0-seat-term (class-S flip; the PR merge is
+# the outer record, ADR 0025).
 
 term: intake-seat
 
@@ -21,7 +21,7 @@ values:
 aliases:
   - seat
 
-status: draft
+status: ratified
 since: 2026-08-25
 
 sources:

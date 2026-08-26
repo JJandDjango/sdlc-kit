@@ -41,6 +41,7 @@ non_goals:
 decomposition:
   - unit: docs-pass-0
     id: docs-pass-0
+    confirmed_by: [user]
     done_means: docs/vocabulary.md and a USAGE.md vocabulary section
       exist before any vocabulary code ships, every ratified surface
       listed with a red status marker
@@ -52,6 +53,7 @@ decomposition:
         commands, red-marked
   - unit: glossary-door
     id: glossary-door
+    confirmed_by: [user]
     done_means: schemas/glossary-term.schema.json (versioned) ships
       and the validator checks every specs/vocabulary/ term file
       against it at the door; a repo without the directory validates
@@ -65,6 +67,7 @@ decomposition:
         diagnostics
   - unit: entities-join
     id: entities-join
+    confirmed_by: [user]
     done_means: the task-contract schema accepts an optional entities
       array (ADR 0005 amendment path) and the ready profile joins
       every ref against the glossary, resolving ratified terms only;
@@ -79,6 +82,7 @@ decomposition:
         after it
   - unit: vocab-skill-family
     id: vocab-skill-family
+    confirmed_by: [user]
     done_means: /sdlc vocab renders a computed listing (no stored
       index), vocab add scaffolds a term skeleton, vocab extract
       drafts terms from declared surfaces with sources provenance;
@@ -91,6 +95,7 @@ decomposition:
       - a greenfield init interview seeds 5-15 terms born ratified
   - unit: kit-extraction-fixture
     id: kit-extraction-fixture
+    confirmed_by: [user]
     done_means: vocab extract has run against this repo's own
       declared surfaces (gate registry, schemas, ADRs); the kept
       terms are ratified in specs/vocabulary/ and stand as the
@@ -102,6 +107,7 @@ decomposition:
         term) are present and ratified
   - unit: constraint-registry
     id: constraint-registry
+    confirmed_by: [user]
     done_means: specs/vocabulary/constraints.yaml validates at the
       door (id, kind enum, subjects as term refs, check, status) and
       is born non-empty with the four existing pipeline joins (G4.3
@@ -116,6 +122,7 @@ decomposition:
       - the enforcement manifest marks the registry class E
   - unit: docs-to-green
     id: docs-to-green
+    confirmed_by: [user]
     done_means: every shipped surface's marker is flipped green in
       docs/vocabulary.md; the gate registry G0 row and deep page
       carry the coverage join; task-contract.md documents the

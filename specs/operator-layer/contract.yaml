@@ -56,6 +56,7 @@ non_goals:
 decomposition:
   - unit: verdict-contract
     id: verdict-contract
+    confirmed_by: [user]
     done_means: docs/operators.md states the normative verdict
       contract - exit 0 green / 1 red with findings / 2
       not-applicable-or-usage, --json emitting a findings array with
@@ -71,6 +72,7 @@ decomposition:
       - no module's exit semantics change in this slice
   - unit: loop-protocol
     id: loop-protocol
+    confirmed_by: [user]
     done_means: docs/operators.md states the loop discipline
       generalized from intake I5 - one single-segment invocation per
       iteration, fix exactly what the diagnostics name, cap 5,
@@ -85,6 +87,7 @@ decomposition:
         constraints
   - unit: operator-defs
     id: operator-defs
+    confirmed_by: [user]
     done_means: agents/sdlc-developer.md and agents/sdlc-verifier.md
       exist as PromptLang-shaped plugin agents - frontmatter plus
       purpose/context/instructions/constraints/criteria structure -
@@ -103,6 +106,7 @@ decomposition:
         verifier constraints forbid writes
   - unit: venue-map
     id: venue-map
+    confirmed_by: [user]
     done_means: docs/operators.md carries the venue table over all
       thirteen gates - operator persona, agent venue class
       (conversation flow, local preflight, ci-mechanical, scheduled,
@@ -118,6 +122,7 @@ decomposition:
         human conditions read assist-only
   - unit: profile-commands
     id: profile-commands
+    confirmed_by: [user]
     done_means: the dotnet profile.json gains a commands block keyed
       by gate binding - G3 inner loop (format verify, strict build)
       and G4 preflight (solution test, suppression audit) - every
@@ -131,6 +136,7 @@ decomposition:
         nothing)
   - unit: def-test-suite
     id: def-test-suite
+    confirmed_by: [user]
     done_means: the suite covers the layer - frontmatter completeness
       and PromptLang tag structure per def, the chain-free check
       extended over every command string in defs and profile
@@ -144,6 +150,7 @@ decomposition:
       - the version-equality test is green at 0.8.0
   - unit: vocab-drafts
     id: vocab-drafts
+    confirmed_by: [user]
     done_means: operator and verdict scaffold as draft vocabulary
       terms with real definitions and sources naming the design doc;
       ratification stays the user's class-S flip; the contract's own
@@ -154,6 +161,7 @@ decomposition:
       - vocab-check stays green
   - unit: registry-version
     id: registry-version
+    confirmed_by: [user]
     done_means: decisions/0021-operator-layer-shape.md records the
       precedents - persona roster not per-gate files, plugin channel
       for prompt artifacts, verdict and loop contracts normative,
