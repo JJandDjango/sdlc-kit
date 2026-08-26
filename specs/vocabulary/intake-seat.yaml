@@ -1,0 +1,29 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Born draft at the intake-seats contract's intake (session 27). Ratification
+# is the human act: flip status draft -> ratified in review (class-S edit;
+# the PR merge is the interim approval record).
+
+term: intake-seat
+
+name: Intake seat
+
+definition: >-
+  A human position that answers for a decomposition unit at intake. The
+  closed set names the positions a consumer recognizes; a unit's
+  `confirmed_by` names the positions that answered for it. A seat is
+  never delegated to an agent.
+
+kind: value-set
+
+values:
+  - user
+
+aliases:
+  - seat
+
+status: draft
+since: 2026-08-25
+
+sources:
+  - NOTES_phase0_2026-08-25.md
+  - docs/operators.md
