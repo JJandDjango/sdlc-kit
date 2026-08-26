@@ -60,7 +60,7 @@ is the live container, deliberately empty until its G3 slice
    - `audit` - LOAD {skill-dir}/flows/audit.md and EXECUTE the Audit flow (A1-A2).
    - `update` - LOAD {skill-dir}/flows/update.md and EXECUTE the Update flow (U1-U3).
    - `new` - LOAD {skill-dir}/flows/new.md and EXECUTE the New flow (N1-N2); the second argument is the task id.
-   - `intake` - LOAD {skill-dir}/flows/intake.md and EXECUTE the Intake flow (I1-I7); remaining text is the raw request, when given.
+   - `intake` - LOAD {skill-dir}/flows/intake.md and EXECUTE the Intake flow (I1-I9); remaining text is the raw request, when given.
    - `vocab` - LOAD {skill-dir}/flows/vocab.md and sub-dispatch on the next argument: none - the List flow (L1); `add` - the Add flow (VA1-VA2), third argument is the term slug; `extract` - the Extract flow (X1-X4), remaining text names the surfaces, when given.
    - `lang` - LOAD {skill-dir}/flows/lang.md and sub-dispatch on the next argument: none - the Lang Check flow (LC1); `extract` - the Lang Extract flow (LX1).
    Otherwise (no args, or a scaffold / `init` intent) LOAD {skill-dir}/flows/init.md and EXECUTE the Init interview, steps 1-6.
@@ -87,7 +87,7 @@ is the live container, deliberately empty until its G3 slice
 - [ ] Target confirmed (cwd, or git root if chosen); git absence noted, never blocking; Cairn recommended when absent and its files untouched.
 - [ ] Answers captured - project_name / adoption / stack, from the interview or supplied by the invocation; init.py invoked once; stdout reported with created / skipped / merge-by-hand surfaced.
 - [ ] New flow: `taskcontract new` invoked; created path + loop line reported, or the failure + install hint.
-- [ ] Intake flow: contract authored on its own scaffold; validate looped (max 5) to ready-green or PARKED with a named blocker; handoff refused while red; nothing else written.
+- [ ] Intake flow: contract authored on its own scaffold; the unit graph rendered and every unit answered by a human before the contract is final, `confirmed_by` recorded when the seat term is ratified; validate looped (max 5) to ready-green or PARKED with a named blocker; handoff refused while red; nothing else written.
 - [ ] Audit flow: audit.py ran by absolute path; findings reported verbatim; nothing written or fixed.
 - [ ] Update flow: update.py ran by absolute path; drift reported by class (kit-owned / merge-target / consumer); apply only per-file on explicit user direction; merge targets and consumer files never applied.
 - [ ] Vocab flows: listing computed and reported verbatim; add scaffolds red and draft; extract reads only declared surfaces, births 5-15 draft terms with sources, loops the door to green (max 5), and leaves every ratification to the user.
