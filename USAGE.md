@@ -110,7 +110,7 @@ python -m taskcontract validate specs/<task-id>/contract.yaml --profile ready
 
 until green, and refuses the handoff to spec/implementation while red.
 A blocked dependency parks the contract as a valid `draft`; `ready` is
-what gates entry into development. 🔴 With a ratified seat term (§8),
+what gates entry into development. 🟢 With a ratified seat term (§8),
 intake also takes a human answer per unit and records it under
 `confirmed_by` before the contract lands (kit 0.12.0).
 
@@ -223,10 +223,10 @@ uv run --no-project --with "sdlc-taskcontract @ git+https://github.com/JJandDjan
 
 ---
 
-## 8. Intake with more than one seat 🔴
+## 8. Intake with more than one seat 🟢
 
-> 🔴 **Ratified 2026-08-26** ([ADR 0025](decisions/0025-intake-seats.md)),
-> ships in kit 0.12.0. The markers below flip as the units land.
+> 🟢 **Shipped** (kit 0.12.0, [ADR 0025](decisions/0025-intake-seats.md)):
+> the seat term, `confirmed_by`, TC016, and intake's confirm-and-write step.
 
 Intake takes a human answer for every unit before a contract lands.
 When the humans are two teams (a PO team that owns the request, an
@@ -269,7 +269,7 @@ not the author.
 | `acceptance_sketch` | both: the PO names the observable, the engineer confirms a test could decide it |
 | the YAML itself | neither: the agent authors it and loops the doors; both seats answer |
 
-### The answer record 🔴
+### The answer record 🟢
 
 Every unit names the seats that answered for it:
 
@@ -280,14 +280,14 @@ Every unit names the seats that answered for it:
     done_means: ...
 ```
 
-- 🔴 `confirmed_by` (schema 1.3.0, additive): optional in the schema, a
+- 🟢 `confirmed_by` (schema 1.3.0, additive): optional in the schema, a
   unique list of seat values, at least one. Contracts written against
   1.2.0 stay valid.
-- 🔴 G0.3 at the ready door: with `intake-seat` ratified, a unit with no
+- 🟢 G0.3 at the ready door: with `intake-seat` ratified, a unit with no
   `confirmed_by`, or one naming a seat the term lacks, fails with
   `TC016`. A draft term or no term leaves the check off; a parked
   `draft` contract is never asked.
-- 🔴 Intake writes it: after drafting the decomposition, intake renders
+- 🟢 Intake writes it: after drafting the decomposition, intake renders
   the unit graph, asks for an answer per unit, writes `confirmed_by`,
   and only then writes the contract. A red door after the write reports
   the findings and returns.
@@ -382,6 +382,6 @@ a test the implementer cannot edit.
 | "It didn't overwrite my file" | By design (no-clobber). Edit the file in place, or delete it and re-run. |
 | `TC003 dependency unresolved` | The contract is a parked draft — resolve or re-scope the dependency; `ready` requires all resolved. |
 | `TC005 unknown field` | Contracts reject stray keys (`additionalProperties: false`) — a typo or scope smuggling; both fail loudly. |
-| `TC016 unit not confirmed` (🔴 0.12.0) | The seat term is ratified here and a unit lacks `confirmed_by`, or names a seat the term does not list. Run intake's confirm step, or fix the value (§8). |
+| `TC016 unit not confirmed` (🟢 0.12.0) | The seat term is ratified here and a unit lacks `confirmed_by`, or names a seat the term does not list. Run intake's confirm step, or fix the value (§8). |
 | CI job green with no contracts | Expected — the validate step is guarded until a `specs/*/contract.yaml` exists. |
 | `audit` exit 2 | No `.sdlc/` here — run `/sdlc` init first. |

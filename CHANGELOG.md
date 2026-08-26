@@ -9,6 +9,41 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.12.0 - 2026-08-26 (tag `v0.12.0`)
+
+- **Schema `version: 1.2.0` -> `1.3.0` - additive.** `$defs.unit` gains an
+  optional `confirmed_by`: a unique, non-empty list of seat values - the
+  seats whose answer for the unit was taken at intake (ADR 0025). Nothing
+  required changes; every 1.2.0 contract validates unchanged.
+- **Delta note - what changes, and when.** Nothing, until a repo ratifies
+  `specs/vocabulary/intake-seat.yaml` (kind `value-set`, one value per
+  human seat). From that flip on, the ready door demands `confirmed_by`
+  on every unit and every value must be one of the term's: TC016 names
+  the unanswered unit or the unknown seat, with the roster. A draft or
+  absent term leaves the check off; `--profile draft` never runs it;
+  loose files never enter. Migration is mechanical and additive: stamp
+  `confirmed_by: [<seat>]` on each unit in the same commit as the flip
+  (this repo stamped 66 units with `user`, diff `N insertions, 0
+  deletions`).
+- **Intake records the answers.** `/sdlc intake` gains I5 RENDER +
+  CONFIRM (the unit graph and every `done_means` shown, a human answer
+  per unit, the answering seats when the term is ratified) and I6 WRITE
+  (the confirmed contract, `confirmed_by` included); loop and report
+  renumber to I7-I9. This lands ADR 0024's render-and-confirm export.
+- **Skill flows live in files.** The seven `/sdlc` flows move from
+  `SKILL.md` to `skills/sdlc/flows/<flow>.md`, each a PromptLang file of
+  its own; `SKILL.md` keeps dispatch, context, constraints, criteria
+  (3978 -> 1852 tokens). Plugin-delivered; no scaffold surface changes.
+- **G0.3 unit confirmation** joins the gate registry and the G0 deep
+  page (roster 2 -> 3; the overview count also picks up G0.2, uncounted
+  since 0.3.0: 54 -> 56 total). The constraint registry gains
+  `g0-3-unit-confirmation`.
+- **USAGE §8 - intake with more than one seat:** the seat term, the field
+  each seat holds (policy, never enforced), the answer record, running
+  intake with both teams, the brownfield term flow, the `ApplyDiscount`
+  worked example. Troubleshooting moves to §9 and gains the TC016 row.
+- Suite 213 -> 222.
+
 ## 0.11.0 - 2026-08-24 (tag `v0.11.0`)
 
 - **Schema `version: 1.1.0` -> `1.2.0` - breaking.** `$defs.unit` gains a
