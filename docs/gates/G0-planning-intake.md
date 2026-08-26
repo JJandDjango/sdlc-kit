@@ -83,6 +83,7 @@ wrong everything downstream.
 | `dependencies` | list; each `resolved` or `blocked-by: <ref>`; all must be `resolved` to pass | "dependencies unresolved" rejection |
 | `provenance` | origin: human request / G8 escape / G9 maintenance | (derived - principle 8) the convergence loop needs escapes distinguishable at intake |
 | `entities` | optional ([0017](../../decisions/0017-vocabulary-layer.md) amendment) - the ratified vocabulary terms the task operates on | the G0.2 coverage join; absent = join inactive, contract valid |
+| `confirmed_by` (per unit) | optional in the schema ([0025](../../decisions/0025-intake-seats.md) amendment) - the seats whose answer for the unit was taken at intake | the G0.3 join; demanded on every unit once the repo's `intake-seat` term is ratified, inactive before |
 
 ### G0.2 Vocabulary coverage join - added 2026-07-28, [0017](../../decisions/0017-vocabulary-layer.md)
 
@@ -109,6 +110,42 @@ wrong everything downstream.
 - **Lifecycle:** `enforced` in this repo - the join runs in the live
   intake venue and the CI backstop; per-target elsewhere, as with G0.1.
 
+### G0.3 Unit confirmation - added 2026-08-26, [0025](../../decisions/0025-intake-seats.md)
+
+- **What (pass condition):** when the sibling vocabulary carries
+  `intake-seat` at `ratified` (a `value-set` naming the seats this repo
+  recognizes), every decomposition unit carries `confirmed_by` and every
+  value in it is one of the term's values; otherwise TC016, naming the
+  unanswered unit or the unknown seat and the roster. A draft term or
+  no term leaves the check inactive; the draft profile never runs it (a
+  parked contract may lack answers); loose files stay schema-only.
+- **Why:** the intake venue takes a human answer for every unit before
+  a contract lands (0024's render-and-confirm step), and until 0025
+  nothing recorded who answered - the answer lived in chat, and the PR
+  merge records approval of the whole contract, never of a unit. For a
+  consumer with more than one human seat (a PO team and an engineer
+  team) the record is the artifact the seats and the pipeline share.
+  The seat roster is a per-repo term rather than a schema enum because
+  who a consumer's humans are is that consumer's meaning, ratified in
+  its own tree. Not a seventh human condition (0015): the human act is
+  the existing I5 answer; this condition checks the record of it.
+- **Kind & loopability:** mechanical - TC016 from `validate --profile
+  ready`, one line per unanswered unit or unknown seat, the remedy
+  named (return to intake I5 for that unit).
+- **Tooling:** `confirmation_join` beside the coverage join in
+  `taskcontract/vocabulary.py`, wired in `checker.validate_path`'s
+  ready-profile specs-tree block; the record written by `/sdlc intake`
+  I5-I6 (`skills/sdlc/flows/intake.md`); registry entry
+  `g0-3-unit-confirmation` in `specs/vocabulary/constraints.yaml`;
+  deep page: [../task-contract.md](../task-contract.md).
+- **Parameters:** none open. The seat map (which fields each seat
+  holds) is consumer policy recorded in USAGE §8, never enforced: the
+  door reads the answer, not the author.
+- **Lifecycle:** `specified` (0025); `enforced` in this repo since the
+  kit's own `intake-seat` term (one value, `user`) was ratified
+  2026-08-26 and every unit stamped; per-target elsewhere, armed by
+  each consumer's own ratification.
+
 ## Completeness check
 
 Gate purpose: reject malformed work at entry. The CWE pillars do not apply -
@@ -122,8 +159,13 @@ by G0.1's field checks. Examined and **not** proposed:
   harness scheduling concern, not an intake-correctness check. Logged as a
   harness observation.
 
-Roster verdict: complete - two conditions (G0.1 definition-of-ready, G0.2
-vocabulary coverage); fully specifying them *is* the gate.
+- **Per-field authorship check** (did the PO seat write `intent`?):
+  examined at the 0025 walk and rejected - the door reads the answer,
+  never the author; field ownership is consumer policy (USAGE §8).
+
+Roster verdict: complete - three conditions (G0.1 definition-of-ready,
+G0.2 vocabulary coverage, G0.3 unit confirmation); fully specifying them
+*is* the gate.
 
 ## Operators & harness
 
@@ -148,3 +190,9 @@ the mutability model's promise kept.
   built (`taskcontract/` with its packaged `schemas/`, fixtures + CI). E5
   sharpens the G4.6
   input: the protected set becomes the single root `specs/**`.
+- G0.3 added 2026-08-26 ->
+  [0025](../../decisions/0025-intake-seats.md): the roster grows 2 -> 3
+  under 0014's full lane (tightening; the human principal's answer
+  recorded at the pull merge, carried by its own unit `g0-3-row`).
+  Schema 1.3.0 (additive `confirmed_by`), TC016, intake I5-I6, the
+  kit's seat term ratified and every unit stamped in the same arc.

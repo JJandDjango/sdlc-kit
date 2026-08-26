@@ -41,6 +41,14 @@ constraints:
       - vocabulary-term
     check: sunset coherence both ways - class-S record matches compiled mark; vocabulary sunsets ride the same 0013 pattern (G10.1)
     status: specified
+  - id: g0-3-unit-confirmation
+    kind: reference-integrity
+    subjects:
+      - task-contract
+      - decomposition-unit
+      - intake-seat
+    check: python -m taskcontract validate --profile ready (TC016) - every unit's confirmed_by resolves to a value of the ratified intake-seat term; armed by that ratification, inactive otherwise (G0.3, ADR 0025)
+    status: enforced
   - id: glossary-dictionary-disjointness
     kind: disjointness
     subjects:

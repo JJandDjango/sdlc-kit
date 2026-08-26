@@ -27,6 +27,11 @@
   rejects duplicates, dangling refs, and cycles (TC013-TC015); the picture
   is `python -m taskcontract graph`, computed on demand and never committed
   ([[0024-unit-dependency-graph]]).
+- **Intake answers are recorded.** Every unit names the seats that answered
+  for it under `confirmed_by`; seats are the repo's ratified `intake-seat`
+  value-set, and the ready door demands the record once that term is
+  ratified (TC016). Who holds which field is policy (USAGE §8), never a
+  check on the author ([[0025-intake-seats]]).
 - **Register boundary.** Controlled register where prose is executed -
   contract prose fields, checked by `python -m taskcontract lang-check`;
   free register where prose is deliberated (THEORY, ADRs, docs

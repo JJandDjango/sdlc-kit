@@ -1,40 +1,45 @@
-# Plan - Session 25 (2026-08-03) - work-adoption payload (ADR 0023) - EXECUTED (step 9 carries to the work machine)
+# Plan - Session 27 (2026-08-25) - Phase 0 to completeness (intake seats)
 
-Work C# environment becomes the first dotnet consumer behind a
-one-way membrane; M0 runs second with work findings in hand. This
-session builds the payload the work repo will pin: dotnet lane,
-return-channel form, membrane docs, v0.10.0.
+The plan is the task contract `specs/intake-seats/contract.yaml`
+(ready-green at schema 1.2.0); the graph is `python -m taskcontract
+graph specs/intake-seats/contract.yaml`, computed, never committed.
+Companions: draft term `specs/vocabulary/intake-seat.yaml`, notes
+`NOTES_phase0_2026-08-25.md`.
 
-## Steps
+What lands: a per-unit `confirmed_by` field, a ratified seat term the
+ready door joins against (TC016), the intake venue writing the answers
+(closing unit-dag's open `g0-intake-review` on the same edit), the
+skill flows restructured so the venue has room to grow, and a USAGE
+section for a consumer with more than one seat.
 
-1. ~~ADR 0023~~ - design recorded (decisions/0023).
-2. ~~Docs pass 0~~ - USAGE §7 "Restricted environments - the
-   one-way membrane": policy 🟢, findings form + NOTICE 🔴 (ship
-   0.10.0), uv run line for local checks.
-3. ~~Findings template~~ - `.sdlc/findings/TEMPLATE.yaml`, kit-owned
-   surface; membrane rule on the form; suite 189.
-4. ~~NOTICE~~ - `.sdlc/NOTICE.md` rendered by every init (kit-owned);
-   mirror guidance in USAGE §7; suite 190.
-5. ~~Dotnet lane~~ - already shipped (ADR 0018: G3+G4 overlay,
-   suite-locked; found at step 3). Step 6 is the proof.
-6. ~~Smoke~~ - brownfield + greenfield scratch repos: 12-surface
-   render, pure no-clobber, contract ready-green, vocab/lang/audit
-   green, update scan honest. Build red on pristine code = the
-   posture decision surfacing; ruled consumer-side (ADR 0023),
-   documented as the day-one posture menu in docs/dotnet-profile.md.
-   Kit templates unchanged; suite stands 190.
-7. ~~Bump 0.10.0~~ - 9b28084, PR #29, both checks green (contracts
-   12s, test 13s); merged at e7421e8, sync + branch cleanup done.
-8. ~~Tag v0.10.0 + self-pin~~ - annotated at e7421e8, pushed;
-   d29e060, PR #30, both checks green (contracts 16s proved the tag
-   install); merged at d4ce337; CHANGELOG 0.10.0 entry + USAGE uv
-   line joined the sweep.
-9. User acts at work: runner probe (GitHub-hosted vs self-hosted;
-   scratch pip-step run if self-hosted); install skill; init the
-   work repo pinned to v0.10.0; NOTICE lands in the copy.
+## Steps (topological order of the unit graph)
 
-Next: M0 (second consumer) starts from work findings; cargo lane
-waits on ImSim initialization.
+0. ~~Ratify~~ - 2026-08-26: all 9 units kept; skill flows split into
+   reference files; seat map as tabled in the notes; REQ-002 rounds
+   half up on the third decimal (1.25 at 50 returns 0.63). The
+   `intake-seat` term stays draft until step 6.
+1. ~~adr-0025~~ - 266387c.
+2. ~~g0-usage-section~~ - 792aa79 (Pass 0, red markers).
+3. ~~g0-skill-flows~~ - e19bc7d (flows split; description trimmed on
+   the user's word; SKILL.md 3978 -> 1852 tokens).
+4. ~~schema-1-3-0~~ - 10c1218 (additive; version pin moved).
+5. ~~tc016-door~~ - e6d0202 (8 tests; suite 222).
+6. ~~g0-seat-term~~ - 04f986a (term ratified; 66 units stamped;
+   registry row kept on the user's word; pins moved 6 -> 7).
+7. ~~g0-3-row~~ - 95632b5 (G0 count 1 -> 3, total 54 -> 56 corrected).
+8. ~~g0-confirm-write~~ - c2f81da (I5-I6; closes unit-dag).
+9. ~~g0-docs-and-tests~~ - 97a060b (markers green; kit 0.12.0).
+10. Push, open the PR with the human answers in its body (the class-E
+    roster delta, the ratification flip, the trimmed description, the
+    registry row), merge on green.
+11. After merge: tag `v0.12.0` at the merge commit, then the self-pin
+    PR (workflow pin, USAGE uv line -> v0.12.0), the contracts check
+    proving the tag installs, per the v0.11.0 precedent.
+12. Session close: STATE.md regenerated from receipts on main.
 
-House rules in force: no pipes/chains in any authored command string
-(CI steps included); commit messages via Write + git commit -F.
+Steps 2, 3, 4, 7 are parallel after 1; 8 waits on 3 and 5; 9 waits on
+all. Branch `session-27-intake-seats`; the contract + term + notes +
+this plan commit first; one commit per unit after.
+
+House rules in force: no pipes/chains in any authored command string;
+commit messages via Write + git commit -F; Two-Key on every code unit.

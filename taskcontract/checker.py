@@ -129,8 +129,11 @@ def validate_path(file, profile: str = "ready", schema_doc: dict | None = None) 
         # vocabulary module already imports Violation from here.
         parents = list(Path(file).resolve().parents)
         if len(parents) >= 3 and parents[1].name == "specs":
-            from .vocabulary import coverage_join
+            from .vocabulary import confirmation_join, coverage_join
             violations.extend(coverage_join(name, instance, parents[2]))
+            # G0.3 unit confirmation (ADR 0025) rides the same tree rule and
+            # arms itself only when the sibling intake-seat term is ratified.
+            violations.extend(confirmation_join(name, instance, parents[2]))
 
     violations.sort(key=lambda v: (v.path, v.rule))
     return violations

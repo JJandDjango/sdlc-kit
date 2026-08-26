@@ -1,6 +1,6 @@
 ---
 name: sdlc
-description: Lay a spec-first SDLC gate spine into any repository - greenfield or brownfield. Interviews for project name, adoption (greenfield or brownfield), and stack - or takes them from the invocation args - then renders a no-clobber payload - SDLC.md gate status page, .sdlc/ config + clocks + standing-red ledger, the protected specs/ root for immutable task contracts, and a CI job validating every contract (the G0 backstop). Day-2 subcommands - `/sdlc intake` (the G0 venue - turn a raw request into a contract and loop the validator to green), `/sdlc new {id}` (scaffold a contract skeleton), `/sdlc audit` (report-only gate-health check), `/sdlc update` (report-only scaffold drift vs the current kit templates; per-file consented apply), and the vocabulary family (ADR 0017) - `/sdlc vocab` (computed glossary listing), `/sdlc vocab add {slug}` (draft term skeleton), `/sdlc vocab extract` (draft terms from declared surfaces with sources provenance; ratification stays human). Greenfield init also seeds 5-15 ratified terms through the interview. Pairs with /cairn - docs spine first, gate spine second; neither requires the other. Use when starting, adopting, or operating gated agent-driven development.
+description: Lay a spec-first SDLC gate spine into a repository (greenfield or brownfield, no-clobber), then operate it - `intake` (the G0 venue), `new`, `audit`, `update`, and the `vocab` and `lang` families. Pairs with /cairn. Use when starting, adopting, or operating gated agent-driven development.
 ---
 
 # `/sdlc` - lay a spec-first gate spine
@@ -17,10 +17,18 @@ engines.
 
 <context>
 Runs in the target repo's Claude Code session; cwd is the target. This
-skill's own directory holds the engines and templates:
+skill's own directory ({skill-dir}, the directory holding this file)
+holds the engines, templates, and flows:
   {skill-dir}/init.py       (no-clobber renderer)
   {skill-dir}/audit.py      (report-only health check, exit 0/1/2)
+  {skill-dir}/update.py     (scaffold-drift report, per-file apply)
   {skill-dir}/templates/*.template
+  {skill-dir}/flows/*.md    (one file per flow, below)
+
+Flows live beside this file, one PromptLang file per subcommand (ADR
+0025): init.md, new.md, intake.md, vocab.md, lang.md, audit.md,
+update.md. This file dispatches; the flow file executes. The
+constraints and criteria here bind inside every flow.
 
 Contract machinery (`python -m taskcontract` + the schemas) comes from
 the pip-installed kit:
@@ -49,107 +57,15 @@ is the live container, deliberately empty until its G3 slice
 
 <instructions>
 0. DISPATCH. If this skill was invoked with a first argument naming a subcommand, do NOT run the interview:
-   - `audit` - run the Audit flow (A1-A2).
-   - `update` - run the Update flow (U1-U3).
-   - `new` - run the New flow (N1-N2); the second argument is the task id.
-   - `intake` - run the Intake flow (I1-I7); remaining text is the raw request, when given.
-   - `vocab` - sub-dispatch on the next argument: none - the List flow (L1); `add` - the Add flow (VA1-VA2), third argument is the term slug; `extract` - the Extract flow (X1-X4), remaining text names the surfaces, when given.
-   - `lang` - sub-dispatch on the next argument: none - the Lang Check flow (LC1); `extract` - the Lang Extract flow (LX1).
-   Otherwise (no args, or a scaffold / `init` intent) run the Init interview, steps 1-6.
-
-## Init interview
-
-1. CONFIRM the target directory. Default to cwd. Run `git rev-parse --show-toplevel` via Bash; if it succeeds and differs from cwd, ASK the user (AskUserQuestion) whether to target the git root or cwd. A non-git directory is acceptable - NOTE that the CI job and protected-root enforcement only bite on a hosted repo, then proceed.
-
-2. DETECT a Cairn spine: if THEORY.md and MAP.md are absent at the target, RECOMMEND running /cairn first (docs spine, then gate spine) - never require it, never write its files.
-
-3. INTERVIEW batch - but SKIP the questions the invocation already answers: when the invoking text (a charter, script, or explicit user instruction) supplies project name, adoption, and stack, treat those as interview-equivalent and go straight to RENDER; ask only what is missing. Otherwise invoke AskUserQuestion with 3 questions in one call:
-   - Q1 header "Project name": "Name for this project?" options: "Use cwd directory name" / "Use git remote name" (offer only if a remote exists) / Other.
-   - Q2 header "Adoption": "Greenfield or brownfield?" options: "greenfield - gates from commit zero" / "brownfield - adopt gates additively (no-clobber protects what exists)".
-   - Q3 header "Stack": "Primary stack? (selects the tooling profile overlay at render - dotnet's container is live, per-gate payload lands slice by slice)" options: "dotnet" / "python" / "typescript" - Other for anything else, free text.
-
-4. RENDER - one Bash call:
-       python {skill-dir}/init.py --answers '{json}'
-   where {json} is the dict {"project_name": ..., "adoption": ..., "stack": ...} as a single-quoted shell argument (escape inner double quotes as the shell needs). Non-zero exit: REPORT stderr in one line and return to the conversation.
-
-5. SEED (greenfield only) - elicit 5-15 seed terms from the interview (each: slug, display name, one-line meaning, kind - AskUserQuestion, or the invocation text when it supplies them). Author each at specs/vocabulary/{slug}.yaml via the Add flow's machinery, then set `status: ratified` directly - the interviewee is the principal, so answers are interview-equivalent (ADR 0017 V5). LOOP `python -m taskcontract vocab-check` to green (one Bash call per iteration, cap 5). Brownfield: SKIP seeding - RECOMMEND `/sdlc vocab extract` as the day-2 follow-up instead.
-
-6. REPORT the engine's stdout verbatim (created / skipped / merge-by-hand blocks + next steps). If any merge-by-hand snippet printed, restate in one line which files the user must merge manually. When step 5 seeded terms, append the vocab-list line counts.
-
-## New flow
-
-N1. RUN - one Bash call: `python -m taskcontract new {id}`. The skeleton is deliberately red: TC007 trips until a real intent is authored, so a fresh contract can never pass the gate vacuously.
-
-N2. REPORT stdout (the created path + the validate loop line). On failure REPORT stderr verbatim; for a missing module also offer the pip install command from the context section.
-
-## Intake flow
-
-The G0 venue: raw request in, ready contract out. G0.1 reads `enforced`
-for this repo once this flow is how tasks enter development.
-
-I1. COLLECT the raw request - the invocation text after `intake`, or ask the user for it.
-
-I2. DERIVE a task id matching `^[a-z][a-z0-9-]{2,63}$` from the request; if the derivation is unclear, confirm it with the user (AskUserQuestion).
-
-I3. SCAFFOLD - one Bash call: `python -m taskcontract new {id}`. If it fails because the contract already exists, ASK before touching anything - existing contracts are never silently edited.
-
-I4. AUTHOR `specs/{id}/contract.yaml` from the request: intent in outcome terms (40-1200 chars - what is true after this task that is not true now); scope paths; non_goals; decomposition units each with a unique `id`, done_means and 1-3 acceptance_sketch criteria, plus `depends_on` where order matters; dependencies as {ref, status: resolved or blocked, blocked_by}; provenance origin `human-request` unless the task demonstrably originates from an operations escape (`g8-escape`, requires ref) or maintenance (`g9-maintenance`). Check `vocab-list`: when the request's nouns match ratified terms, declare them under `entities:`; when nothing matches, omit the field.
-
-I5. LOOP - one Bash call per iteration:
-       python -m taskcontract validate specs/{id}/contract.yaml --profile ready
-    Fix exactly what each TCnnn diagnostic names. A TC010/TC011 means the vocabulary lacks the term: fork it (`/sdlc vocab add {slug}`, own small task) or drop the ref - NEVER ratify a term just to turn a contract green. Cap at 5 iterations; if still red, REPORT the remaining violations and return to the conversation.
-
-I6. PARKED CASE - if a dependency is blocked in fact: set {status: blocked, blocked_by}, VERIFY `--profile draft` passes, then REPORT the contract as PARKED with the named blocker and REFUSE the development handoff - `ready` is the entry gate.
-
-I7. REPORT the contract path, its state (ready-green, or parked-draft + blocker), and a one-line scope summary. Development starts only from green.
-
-## Vocab flows
-
-Shared language as executable definitions (ADR 0017): one term per
-file at specs/vocabulary/{term-slug}.yaml, the filename is the stable
-ID, and G0 joins contract `entities:` refs against ratified terms.
-
-L1. LIST - one Bash call: `python -m taskcontract vocab-list`. REPORT stdout verbatim - the listing is computed from the term files at call time; there is no stored index to trust or drift.
-
-VA1. ADD - one Bash call: `python -m taskcontract vocab-add {slug}`. The skeleton is deliberately red - VT002 trips on the TODO definition - and born `status: draft`.
-
-VA2. REPORT stdout (the created path + the vocab-check loop line). On failure REPORT stderr verbatim; for a missing module also offer the pip install command from the context section.
-
-X1. SURFACES - collect the declared surfaces to extract from: the invocation text after `extract`, or ask the user (API baselines, schemas, domain types, docs). Extraction reads ONLY what the user declares - never sweep the repo.
-
-X2. DRAFT - read the surfaces and identify candidate terms: recurring nouns, closed value sets, implicit relations. Cap one run at 5-15 candidates - vocabulary grows at the rate work demands it (0017 V7a). For each candidate: scaffold via `python -m taskcontract vocab-add {slug}` (one Bash call per term), then author definition, kind, relations, values as the surface evidences them, and set `sources:` to the exact surface paths read. Status stays `draft` - extraction NEVER ratifies.
-
-X3. LOOP - one Bash call per iteration: `python -m taskcontract vocab-check`. Fix exactly what each VTnnn diagnostic names. Cap at 5 iterations; if still red, REPORT the remaining violations and return to the conversation.
-
-X4. REPORT - the vocab-list output, then one line stating the handoff: ratification is the user's flip of `status: draft` to `ratified` per term (a class-S edit; the PR merge is the interim approval record).
-
-## Lang flows
-
-Controlled language (docs/controlled-language.md): a set-ratified
-dictionary at specs/vocabulary/dictionary.yaml arms lang-check over
-contract prose fields; absent = green. Form checked, meaning not.
-
-LC1. CHECK - one Bash call: `python -m taskcontract lang-check`. REPORT stdout verbatim. Exempt warnings = the standing-red ratchet, never gating. On exit 1 fix exactly what each CLnnn names; cap 5; then report and return.
-
-LX1. EXTRACT - one Bash call: `python -m taskcontract lang-extract`. REPORT stdout verbatim (candidates, banned hits, census; writes nothing). Handoff: dictionary deltas are class-E - adding takes the full lane, banning rides auto; the PR merge is the set-ratification record.
-
-## Audit flow
-
-A1. RUN - one Bash call, by absolute path: `python "{skill-dir}/audit.py" --cwd .`
-
-A2. REPORT stdout verbatim. Exit 0 = clean; 1 = findings, each carrying a code (e.g. CONTRACT-INVALID, SPINE-MISSING, REDS-SCHEMA); 2 = no gate spine here (offer the init interview instead). Do NOT fix findings unasked - audit automates detection; fixes stay with the user or an explicit follow-up task.
-
-## Update flow
-
-The committed scaffold is rendered once and never rewritten by the
-kit (no-clobber); this flow makes the drift visible when the kit
-moves on, and applies fixes only file by file on the user's word.
-
-U1. RUN - one Bash call, by absolute path: `python "{skill-dir}/update.py" --cwd .`
-
-U2. REPORT stdout verbatim. Exit 0 = scaffold current; 1 = drift or absence, one row per surface with its class - `kit-owned` (applyable), `merge-target` (hand-merged; `--show {rel}` prints the current render), `consumer` (existence-only by design - SDLC.md, config, clocks, reds are the consumer's data); 2 = no gate spine (offer the init interview instead).
-
-U3. APPLY only on the user's explicit per-file direction - one Bash call per file: `python "{skill-dir}/update.py" --cwd . --apply {rel}`. Kit-owned surfaces only; the engine refuses merge targets and consumer files. NEVER loop apply over the whole report - each file is its own consent.
+   - `audit` - LOAD {skill-dir}/flows/audit.md and EXECUTE the Audit flow (A1-A2).
+   - `update` - LOAD {skill-dir}/flows/update.md and EXECUTE the Update flow (U1-U3).
+   - `new` - LOAD {skill-dir}/flows/new.md and EXECUTE the New flow (N1-N2); the second argument is the task id.
+   - `intake` - LOAD {skill-dir}/flows/intake.md and EXECUTE the Intake flow (I1-I9); remaining text is the raw request, when given.
+   - `vocab` - LOAD {skill-dir}/flows/vocab.md and sub-dispatch on the next argument: none - the List flow (L1); `add` - the Add flow (VA1-VA2), third argument is the term slug; `extract` - the Extract flow (X1-X4), remaining text names the surfaces, when given.
+   - `lang` - LOAD {skill-dir}/flows/lang.md and sub-dispatch on the next argument: none - the Lang Check flow (LC1); `extract` - the Lang Extract flow (LX1).
+   Otherwise (no args, or a scaffold / `init` intent) LOAD {skill-dir}/flows/init.md and EXECUTE the Init interview, steps 1-6.
+1. EXECUTE the loaded flow's steps in order, exactly as written there; every constraint below binds inside every flow.
+2. REPORT as the flow's final step directs. A failed engine or missing module returns control to the conversation with the failure stated in one line - never a silent stop.
 </instructions>
 
 <constraints>
@@ -167,11 +83,11 @@ U3. APPLY only on the user's explicit per-file direction - one Bash call per fil
 </constraints>
 
 <criteria>
-- [ ] Dispatch honored: a subcommand argument never triggers the interview; no-arg runs init steps 1-6; `vocab` sub-dispatches to List / Add / Extract.
+- [ ] Dispatch honored: a subcommand argument never triggers the interview; no-arg runs init steps 1-6; `vocab` sub-dispatches to List / Add / Extract; every flow is loaded from its own file under {skill-dir}/flows/ before it runs.
 - [ ] Target confirmed (cwd, or git root if chosen); git absence noted, never blocking; Cairn recommended when absent and its files untouched.
 - [ ] Answers captured - project_name / adoption / stack, from the interview or supplied by the invocation; init.py invoked once; stdout reported with created / skipped / merge-by-hand surfaced.
 - [ ] New flow: `taskcontract new` invoked; created path + loop line reported, or the failure + install hint.
-- [ ] Intake flow: contract authored on its own scaffold; validate looped (max 5) to ready-green or PARKED with a named blocker; handoff refused while red; nothing else written.
+- [ ] Intake flow: contract authored on its own scaffold; the unit graph rendered and every unit answered by a human before the contract is final, `confirmed_by` recorded when the seat term is ratified; validate looped (max 5) to ready-green or PARKED with a named blocker; handoff refused while red; nothing else written.
 - [ ] Audit flow: audit.py ran by absolute path; findings reported verbatim; nothing written or fixed.
 - [ ] Update flow: update.py ran by absolute path; drift reported by class (kit-owned / merge-target / consumer); apply only per-file on explicit user direction; merge targets and consumer files never applied.
 - [ ] Vocab flows: listing computed and reported verbatim; add scaffolds red and draft; extract reads only declared surfaces, births 5-15 draft terms with sources, loops the door to green (max 5), and leaves every ratification to the user.

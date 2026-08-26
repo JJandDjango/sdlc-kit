@@ -1,0 +1,35 @@
+# Valid: units carrying the optional confirmed_by list (ADR 0025, schema
+# 1.3.0). A loose fixture never enters the seat-term join, so this proves
+# the schema half only: the field is accepted, unique, non-empty.
+
+id: confirmed-by-optional
+
+intent: >-
+  A fixture contract whose units record the seats that answered for them
+  at intake, proving the optional field validates in both profiles.
+
+scope:
+  - src/example/
+
+non_goals:
+  - No seat-term join here. Loose files stay schema-only.
+
+decomposition:
+  - id: first-unit
+    unit: first-unit
+    confirmed_by: [po, engineer]
+    done_means: The first unit lands with two seats recorded.
+    acceptance_sketch:
+      - verify the unit validates green with two seats
+  - id: second-unit
+    unit: second-unit
+    confirmed_by: [user]
+    depends_on: [first-unit]
+    done_means: The second unit lands with one seat recorded.
+    acceptance_sketch:
+      - verify the unit validates green with one seat
+
+dependencies: []
+
+provenance:
+  origin: human-request
