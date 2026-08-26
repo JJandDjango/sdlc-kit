@@ -281,6 +281,55 @@ def coverage_join(contract_file, instance, root,
     return out
 
 
+SEAT_TERM = "intake-seat"
+TC_UNCONFIRMED = "TC016"
+
+
+def confirmation_join(contract_file, instance, root) -> list[Violation]:
+    """G0.3 unit confirmation (ADR 0025): every unit names who answered.
+
+    Armed only by a *ratified* `intake-seat` term in the sibling
+    vocabulary (a value-set: the seats this repo recognizes). A draft
+    term or no term leaves the check inactive - adoption pace, the
+    coverage-join precedent. Once armed, a unit with no `confirmed_by`
+    fails, and so does any seat the term does not list. Ready profile
+    only; the caller decides that, like the coverage join.
+    """
+    if not isinstance(instance, dict):
+        return []
+    term = load_terms(root).get(SEAT_TERM)
+    if term is None or term.get("status") != "ratified":
+        return []
+    raw_values = term.get("values")
+    seats = {v for v in raw_values if isinstance(v, str)} if isinstance(raw_values, list) else set()
+    roster = ", ".join(sorted(seats)) or "<none>"
+
+    name = str(contract_file)
+    out: list[Violation] = []
+    decomposition = instance.get("decomposition")
+    if not isinstance(decomposition, list):
+        return out
+    for i, unit in enumerate(decomposition):
+        if not isinstance(unit, dict):
+            continue
+        uid = unit.get("id") if isinstance(unit.get("id"), str) else f"#{i}"
+        confirmed = unit.get("confirmed_by")
+        if not isinstance(confirmed, list):
+            out.append(Violation(
+                name, f"$.decomposition[{i}]", TC_UNCONFIRMED,
+                f"unit '{uid}' has no confirmed_by - the seat term "
+                f"'{SEAT_TERM}' is ratified here (seats: {roster}); take the "
+                f"intake answer for this unit"))
+            continue
+        for j, seat in enumerate(confirmed):
+            if isinstance(seat, str) and seat not in seats:
+                out.append(Violation(
+                    name, f"$.decomposition[{i}].confirmed_by[{j}]", TC_UNCONFIRMED,
+                    f"seat '{seat}' is not a value of '{SEAT_TERM}' "
+                    f"(seats: {roster})"))
+    return out
+
+
 def validate_constraints(root=Path("."), schema_doc: dict | None = None,
                          known_terms: set[str] | None = None) -> list[Violation]:
     """Validate <root>/specs/vocabulary/constraints.yaml (ADR 0017 V6).
