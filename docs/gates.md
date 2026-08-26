@@ -81,7 +81,7 @@ the Developer's context contains - test source vs criteria + diagnostics
 
 | ID | Gate | Venue | Cadence | FAIL blocks | Conditions |
 |---|---|---|---|---|---|
-| G0 | Planning / Intake | harness intake step | per task | task entering spec | 1 |
+| G0 | Planning / Intake | harness intake step | per task | task entering spec | 3 |
 | G1 | Requirements / Spec | spec sign-off | per task | spec release downstream | 3 |
 | G2 | Design / Architecture | design sign-off + baseline lock | per task | implementation start | 5 |
 | G3 | Implementation | editor / local build | seconds | code leaving the inner loop | 3 |
@@ -95,10 +95,13 @@ the Developer's context contains - test source vs criteria + diagnostics
 | PL-DOC | Documentation lifecycle | merge CI + scheduled sweep | per merge + sweep (clocks.yaml) | doc-integrity-breaking merges (any class); staleness past window | 3 |
 | PL-PIPE | Pipeline integrity | the second channel + enforcement CI | per class-E change + eval sweep | class-E edits without approval; prompt deploys without eval green | 3 |
 
-54 conditions total - all 54 `specified` (G0.1 through PL-PIPE.3,
+56 conditions total - all 56 `specified` (G0.1 through PL-PIPE.3,
 every gate G0-G10 + PL-DOC + PL-PIPE), 0 `registered` - the
 specification layer is complete
-([0015](../decisions/0015-program-close-out.md)).
+([0015](../decisions/0015-program-close-out.md)). The close-out
+counted 54; G0.2 ([0017](../decisions/0017-vocabulary-layer.md)) and
+G0.3 ([0025](../decisions/0025-intake-seats.md)) joined after it, both
+`enforced` in this repo.
 
 ---
 
@@ -114,12 +117,13 @@ non-goals, decomposition into independently gateable units. Becomes G1's input
 and the scope baseline every later gate implicitly checks against.
 **FAIL blocks:** the task entering the spec stage.
 **Closes:** mis-selection, scope creep (upstream of misinterpretation).
-**Deep page:** [gates/G0-planning-intake.md](gates/G0-planning-intake.md) - G0.1 `specified`; enforcement mechanism shipped ([0006](../decisions/0006-task-contract-enforcement.md), [task-contract.md](task-contract.md)); venue shipped as `/sdlc intake` ([0016](../decisions/0016-distribution-before-activation.md)) - `enforced` flips per-target at first live use: live in this kit repo since the V9 self-host (the vocabulary-layer contract entered through its own intake); the Q6 pilot follows at its M0 session. G0.2 (vocabulary coverage) added by [0017](../decisions/0017-vocabulary-layer.md), `enforced` here.
+**Deep page:** [gates/G0-planning-intake.md](gates/G0-planning-intake.md) - G0.1 `specified`; enforcement mechanism shipped ([0006](../decisions/0006-task-contract-enforcement.md), [task-contract.md](task-contract.md)); venue shipped as `/sdlc intake` ([0016](../decisions/0016-distribution-before-activation.md)) - `enforced` flips per-target at first live use: live in this kit repo since the V9 self-host (the vocabulary-layer contract entered through its own intake); the Q6 pilot follows at its M0 session. G0.2 (vocabulary coverage) added by [0017](../decisions/0017-vocabulary-layer.md), `enforced` here. G0.3 (unit confirmation) added by [0025](../decisions/0025-intake-seats.md), `enforced` here since the seat term's ratification (2026-08-26); per-target elsewhere, armed by each consumer's own ratified `intake-seat` term.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
 | G0.1 | Definition-of-ready check | mechanical | Contract at `specs/<id>/contract.yaml` validates against `taskcontract/schemas/task-contract.schema.json` (`ready` profile): fields present + bounded, every unit identified and ordered (acyclic, resolvable), all dependencies resolved | `python -m taskcontract validate` (jsonschema + TC013-TC015 graph checks) | [0005](../decisions/0005-task-contract-fields.md), [0006](../decisions/0006-task-contract-enforcement.md), [0024](../decisions/0024-unit-dependency-graph.md) |
 | G0.2 | Vocabulary coverage join | mechanical | Every contract `entities:` ref resolves to a *ratified* term in `specs/vocabulary/` (missing or draft = unresolved dependency - fork the vocabulary task, never fail the work; deprecated warns inside its sunset window, errors past it); term files and the constraint registry validate at the door | `python -m taskcontract validate` ready profile (TC010-TC012, W001); `vocab-check` door (VT/VC diagnostics); [vocabulary.md](vocabulary.md) | Q4 (notice floor) |
+| G0.3 | Unit confirmation | mechanical | With `specs/vocabulary/intake-seat.yaml` *ratified* (a value-set: the seats this repo recognizes), every unit carries `confirmed_by` and every value is one of the term's; a draft or absent term leaves the check inactive; ready profile only; loose files never enter. The record is written by the intake venue from the human answer per unit (I5-I6); the door reads the answer, never the author | `python -m taskcontract validate` ready profile (TC016); `/sdlc intake` I5-I6; [task-contract.md](task-contract.md) | [0025](../decisions/0025-intake-seats.md) |
 
 ## G1 - Requirements / Spec
 
