@@ -18,18 +18,24 @@ section for a consumer with more than one seat.
    reference files; seat map as tabled in the notes; REQ-002 rounds
    half up on the third decimal (1.25 at 50 returns 0.63). The
    `intake-seat` term stays draft until step 6.
-1. adr-0025 - rulings recorded.
-2. g0-usage-section - USAGE Pass 0 with red markers (docs first).
-3. g0-skill-flows - SKILL.md passes prompt_lang with I5 present.
-4. schema-1-3-0 - optional `confirmed_by` on units; 1.2.0 stays green.
-5. tc016-door - ready profile joins `confirmed_by` against the term.
-6. g0-seat-term - ratify `intake-seat` (your flip); migrate every
-   contract, `confirmed_by` lines only.
-7. g0-3-row - registry row + deep page; PR records the class-E answer.
-8. g0-confirm-write - intake renders, asks, writes `confirmed_by`.
-9. g0-docs-and-tests - task-contract page, CHANGELOG 0.12.0,
-   CONVENTIONS line, markers flip green, suite covers the door; then
-   bump, tag, self-pin per the v0.11.0 precedent.
+1. ~~adr-0025~~ - 266387c.
+2. ~~g0-usage-section~~ - 792aa79 (Pass 0, red markers).
+3. ~~g0-skill-flows~~ - e19bc7d (flows split; description trimmed on
+   the user's word; SKILL.md 3978 -> 1852 tokens).
+4. ~~schema-1-3-0~~ - 10c1218 (additive; version pin moved).
+5. ~~tc016-door~~ - e6d0202 (8 tests; suite 222).
+6. ~~g0-seat-term~~ - 04f986a (term ratified; 66 units stamped;
+   registry row kept on the user's word; pins moved 6 -> 7).
+7. ~~g0-3-row~~ - 95632b5 (G0 count 1 -> 3, total 54 -> 56 corrected).
+8. ~~g0-confirm-write~~ - c2f81da (I5-I6; closes unit-dag).
+9. ~~g0-docs-and-tests~~ - 97a060b (markers green; kit 0.12.0).
+10. Push, open the PR with the human answers in its body (the class-E
+    roster delta, the ratification flip, the trimmed description, the
+    registry row), merge on green.
+11. After merge: tag `v0.12.0` at the merge commit, then the self-pin
+    PR (workflow pin, USAGE uv line -> v0.12.0), the contracts check
+    proving the tag installs, per the v0.11.0 precedent.
+12. Session close: STATE.md regenerated from receipts on main.
 
 Steps 2, 3, 4, 7 are parallel after 1; 8 waits on 3 and 5; 9 waits on
 all. Branch `session-27-intake-seats`; the contract + term + notes +

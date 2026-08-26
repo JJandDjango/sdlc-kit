@@ -162,7 +162,9 @@ provenance:
 
 ## Open
 
-- I5 render + confirm: unlanded; now units 3 and 8 of the plan.
+- ~~I5 render + confirm~~: landed 2026-08-26 (units 3 and 8; `flows/intake.md`
+  I5-I6). The three seats now have mechanical form: seat term
+  (`intake-seat`), `confirmed_by` per unit, TC016 at the door.
 - The G1 handoff is paper today: `criteria.yaml`, the `[Criterion]` trait,
   and the G4.3 join are designed (ADR 0011), unbuilt; a separate task by
   the plan's own non-goal.
