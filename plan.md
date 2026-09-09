@@ -1,45 +1,56 @@
-# Plan - Session 27 (2026-08-25) - Phase 0 to completeness (intake seats)
+# Plan - Session 29 (2026-09-08) - Playbook alignment: close the six gaps
 
-The plan is the task contract `specs/intake-seats/contract.yaml`
-(ready-green at schema 1.2.0); the graph is `python -m taskcontract
-graph specs/intake-seats/contract.yaml`, computed, never committed.
-Companions: draft term `specs/vocabulary/intake-seat.yaml`, notes
-`NOTES_phase0_2026-08-25.md`.
+Where things stand: v0.12.0 released; PR #37 (self-pin) open, green at cc29aa5,
+mergeable. Branch `session-28-g0-pitch` (e7af41e, pushed, no PR) carries
+NOTES_g0-pitch_2026-09-08.md. Step 1 done: video reviewed, Anthropic's
+AI-Native SDLC playbook fetched (claude.com/blog/the-ai-native-sdlc-playbook,
+2026-08-21) and mapped against the 56 conditions. Verdict: the kit covers every
+play, mostly stronger; six gaps ratified for implementation (user, 2026-09-08).
 
-What lands: a per-unit `confirmed_by` field, a ratified seat term the
-ready door joins against (TC016), the intake venue writing the answers
-(closing unit-dag's open `g0-intake-review` on the same edit), the
-skill flows restructured so the venue has room to grow, and a USAGE
-section for a consumer with more than one seat.
+## The six gaps
 
-## Steps (topological order of the unit graph)
+1. Hooks: deny writes to ready contracts and ratified terms in the session,
+   before merge. 2. Scope check: a G4 condition failing a diff that leaves its
+   contract's `scope`. 3. Code re-scan: a G9 sweep over unchanged first-party
+   code with current rules. 4. Flow metrics: time-to-ready, rework count,
+   first-pass merge, in-scope rate. 5. PO venue: intake without an engineer at
+   the prompt. 6. Advisory review pass named in USAGE; escapes add an agent eval.
 
-0. ~~Ratify~~ - 2026-08-26: all 9 units kept; skill flows split into
-   reference files; seat map as tabled in the notes; REQ-002 rounds
-   half up on the third decimal (1.25 at 50 returns 0.63). The
-   `intake-seat` term stays draft until step 6.
-1. ~~adr-0025~~ - 266387c.
-2. ~~g0-usage-section~~ - 792aa79 (Pass 0, red markers).
-3. ~~g0-skill-flows~~ - e19bc7d (flows split; description trimmed on
-   the user's word; SKILL.md 3978 -> 1852 tokens).
-4. ~~schema-1-3-0~~ - 10c1218 (additive; version pin moved).
-5. ~~tc016-door~~ - e6d0202 (8 tests; suite 222).
-6. ~~g0-seat-term~~ - 04f986a (term ratified; 66 units stamped;
-   registry row kept on the user's word; pins moved 6 -> 7).
-7. ~~g0-3-row~~ - 95632b5 (G0 count 1 -> 3, total 54 -> 56 corrected).
-8. ~~g0-confirm-write~~ - c2f81da (I5-I6; closes unit-dag).
-9. ~~g0-docs-and-tests~~ - 97a060b (markers green; kit 0.12.0).
-10. Push, open the PR with the human answers in its body (the class-E
-    roster delta, the ratification flip, the trimmed description, the
-    registry row), merge on green.
-11. After merge: tag `v0.12.0` at the merge commit, then the self-pin
-    PR (workflow pin, USAGE uv line -> v0.12.0), the contracts check
-    proving the tag installs, per the v0.11.0 precedent.
-12. Session close: STATE.md regenerated from receipts on main.
+## Diagram
 
-Steps 2, 3, 4, 7 are parallel after 1; 8 waits on 3 and 5; 9 waits on
-all. Branch `session-27-intake-seats`; the contract + term + notes +
-this plan commit first; one commit per unit after.
+The plan's diagram source is `plan.workflow.json` beside this file (Archify
+workflow: lanes by actor, phases per wave, an exception lane for parked
+contracts and Verifier fails, three guided views). Render and open:
+
+    node C:/Users/hyden/.claude/skills/archify/bin/archify.mjs deliver workflow plan.workflow.json <scratch>/plan.html --quality showcase --json
+    Start-Process <scratch>/plan.html
+
+The HTML is generated, never committed. Every code unit lands as one commit,
+Developer then Verifier (Two-Key). The unit graph per contract is computed
+(`python -m taskcontract graph`), never committed; the diagram is the
+session-level view of both contracts.
+
+## Steps
+
+1. ~~Video check~~ - done; playbook fetched; six gaps ratified.
+2. Ratify the notes with the five amendments; write ADR 0026 and ADR 0027
+   (alternatives = the playbook's four disagreements: mutable plan, advisory
+   templates, committed plan, co-generated tests).
+3. Close v0.12.0: merge PR #37 on the user's word, sync main, delete
+   `session-27-self-pin`, prune the five gone local branches; PR
+   `session-28-g0-pitch` carrying notes + ADRs, merge on green.
+4. Wave A: intake `playbook-guardrails` (units U1-U7 in the diagram's cards),
+   one commit per unit, Two-Key, PR, merge, tag v0.13.0, self-pin.
+5. Demo intake: one real feature document, contract drafted in a sandbox
+   consumer, not the kit's own specs/.
+6. Wave B: intake `playbook-loop` (V1-V6), same discipline, v0.14.0.
+7. Session close: STATE.md regenerated (stale "cc29aa5 never pushed" line
+   retired), this plan struck through.
+
+Open before intake A: the diff-to-contract binding for the scope check (branch
+name, PR body, or a `Contract:` commit trailer; recommend the trailer, it is
+what the Theory hook already parses). Open before intake B: cadence for the
+re-scan (clocks.yaml, Q4 placeholder) and which four metrics stay.
 
 House rules in force: no pipes/chains in any authored command string;
 commit messages via Write + git commit -F; Two-Key on every code unit.

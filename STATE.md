@@ -2,79 +2,75 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-08 (session 28 close, home machine)._
+> _Generated 2026-09-08 (session 29 close, home machine)._
 
 ## Now
-- v0.12.0 is released; the release's last act is still open. PR #37
-  (self-pin) is OPEN with checks green at e2b5a6a (2026-08-26). The
-  session-27 STATE regeneration cc29aa5 (2026-08-31) was never pushed:
-  the remote branch stops at e2b5a6a, origin/main at 8fbaa7f, tag
-  v0.12.0 at 8fbaa7f (verified 2026-09-07). One push re-runs the checks.
-- Session 28 (2026-09-07 to 2026-09-08) was a conversation, no code:
-  branch `session-28-g0-pitch` off cc29aa5 carries only
-  NOTES_g0-pitch_2026-09-08.md and this regeneration. The user is
-  pitching the kit to a consumer with a PO team and engineers whose
-  venue is a feature document (Google Doc: authors, request, business
-  use case, prerequisites, technical details, Gherkin, Q&A; a feature
-  or a bug fix). Ruled in chat, unratified, recorded in the notes: the
-  kit adheres to the SDLC as V-model stage gates; G0 has zero human
-  conditions and is where the humans are in the room; the document is
-  the raw request and the contract is what intake produces from it
-  (worth and design stay in the document, form and entry in the
-  contract); unit tests never enter the document (G3 write surface);
-  three template changes (Not in scope, Gherkin grouped by unit, Terms).
-- Pitch risks named: immutability is a design claim (G4.6 unbuilt;
-  0010 rejected CODEOWNERS); G1 is paper (Gherkin to `criteria.yaml` by
-  hand); no business fields by design (`provenance.ref` links out).
-- Receipts unchanged from 27 (suite 222; validate 10/10; vocab 18
-  terms; lang-check 0; prompt_lang 8/8). Cairn audit 0 errors, 21
-  warnings, all pre-existing (ADR budgets; four docs pages stale since
-  the 2026-08-26 `confirmed_by` stamp of their covered contracts).
-- Untracked REQUEST_unit-dag_2026-08-22.md is an inbox item kept
-  untracked by the kit rules; unit-dag closed 8/8, so it is served.
-  plan.md is session 27's; refresh when 29 picks its thrust.
+- v0.12.0 is released (tag and origin/main at 8fbaa7f). PR #37 (self-pin,
+  `session-27-self-pin`) is OPEN and mergeable, both checks green at cc29aa5
+  (2026-09-08 13:53 UTC). The session-28 "cc29aa5 never pushed" line was
+  stale: the push landed before session 29. Only the merge remains.
+- Session 29 (2026-09-08) was the direction check, no kit code. Branch
+  `session-28-g0-pitch` (e7af41e pushed, no PR) gains plan.md (rewritten)
+  and plan.workflow.json (new) in the session-close commit. The opener
+  YouTube review held the session-28 mapping. Anthropic's AI-Native SDLC
+  playbook (claude.com/blog/the-ai-native-sdlc-playbook, Claxton,
+  2026-08-21) was fetched and mapped play by play against the 56
+  conditions: every play covered, mostly stronger. Six gaps ratified for
+  implementation: (1) hooks denying writes to ready contracts and ratified
+  terms; (2) a G4 diff-within-contract-scope condition; (3) a G9 scheduled
+  re-scan of unchanged code; (4) flow metrics; (5) a PO venue without an
+  engineer at the prompt; (6) an advisory review pass named in USAGE, and
+  escapes adding agent evals. Plan: two contracts, `playbook-guardrails`
+  (1, 2, 6a; kit 0.13.0, before the pitch) and `playbook-loop` (3, 4, 5,
+  6b; 0.14.0, after the demo intake).
+- Standing rule from this session: every plan is presented as an Archify
+  diagram (skill installed globally, `~/.claude/skills/archify`).
+  plan.workflow.json beside plan.md is the diagram source; HTML is
+  generated, never committed.
+- Session-28 notes still unratified. Five amendments recommended after the
+  video and the playbook: a terms crosswalk to intent.md / spec.md /
+  plan.md; the playbook's three plan questions as intake prompts; "linkage
+  as the minimum bar" named; rework count as a clock; the playbook's four
+  disagreements (mutable plan, advisory templates, committed plan,
+  co-generated tests) as the ADR's alternatives.
+- Receipts not re-run (no code changed): suite 222, validate 10/10, vocab
+  18 terms, lang-check 0, prompt_lang 8/8 as of session 27. Cairn audit 0
+  errors, 21 warnings, all pre-existing (ADR budgets, 0024 edited after
+  creation, four docs pages stale since the 2026-08-26 `confirmed_by`
+  stamp).
+- Untracked REQUEST_unit-dag_2026-08-22.md stays untracked by kit rules.
 
 ## Blockers
-- None. `/sdlc audit` here still reports TC005 on `id` and
-  `confirmed_by`: the pip install is pinned at e81f9a5. Fix:
-  `pip install -e E:\sdlc_development_kit`. Not a finding against the
-  code.
+- None. `/sdlc audit` here still reports TC005 on `id` and `confirmed_by`:
+  the pip install is pinned at e81f9a5. Fix:
+  `pip install -e E:\sdlc_development_kit`. Not a finding against the code.
 
-## Next actions
-1. **Session 29 opener (user's ask):** review a YouTube video on this
-   topic (spec-first intake, agent-driven SDLC, PO/engineer contracting)
-   to check the direction: `/discover-youtube-videos` to find one, or
-   `/review-youtube-video <url>` with one in hand. Ratify or amend the
-   session-28 notes after it.
-2. Push cc29aa5, wait for green, merge PR #37, sync main, delete the
-   branch; then PR `session-28-g0-pitch`.
-3. **Demo intake:** one real feature document through `/sdlc intake`
-   (paste or Drive link), contract drafted as the pitch artifact. On
-   ratification the notes graduate to a USAGE section beside section 8
-   and a candidate ADR (the document as raw request; the mapping; unit
-   tests out).
-4. **Work-side upgrade** (work machine): `/plugin marketplace update
-   sdlc-kit`, `/plugin update`, re-pin to v0.12.0; id migration first
-   (TC001 until every unit carries an `id`), `/sdlc vocab extract`, PO
-   seat ratifies domain terms and engineer seat technical ones, ratify
-   `intake-seat` with `[po, engineer]`, stamp `confirmed_by` in the same
-   commit.
-5. **G1 slice:** `criteria.yaml` + `[Criterion]` + the G4.3 join (0011,
-   designed, unbuilt). New input from 28: Gherkin as the human authoring
-   format for criteria (one scenario = one criterion, tag = REQ-ID).
-   ApplyDiscount stays the first fixture; `graph --labels` and
-   `graph --done` banked.
-6. **Prompt lexicon arc** (later): 395 of 1990 checkable words unknown
-   (20%, 2026-08-26); decision first, never a tidy-up.
-7. Runner probe at work; M0 pilot; continuations unchanged (PL-PIPE.3
-   eval harness, sdlc-spec / sdlc-qa defs, loop runner, verdict
-   field-name convergence, `.sdlc/progress/<id>.yaml`, direction
-   classifier).
+## Next actions (plan.md step numbers)
+1. **Step 2, the session-30 opener:** ratify NOTES_g0-pitch with the five
+   amendments; write ADR 0026 (the feature document is the raw request)
+   and ADR 0027 (playbook crosswalk, four disagreements, six closures).
+   Present the plan first: `node ~/.claude/skills/archify/bin/archify.mjs
+   deliver workflow plan.workflow.json <scratch>/plan.html --quality
+   showcase --json`, then `Start-Process` the HTML.
+2. Step 3: merge PR #37 on the user's word, sync main, delete
+   `session-27-self-pin`, prune the five gone local branches; PR
+   `session-28-g0-pitch` carrying notes + ADRs + plan, merge on green.
+3. Step 4: `/sdlc intake playbook-guardrails`, after deciding the
+   diff-to-contract binding (recommend a `Contract:` commit trailer). Units
+   U1-U7, one commit each, Two-Key, v0.13.0, self-pin.
+4. Step 5: demo intake, one real feature document, in a sandbox consumer.
+5. Step 6: `/sdlc intake playbook-loop` after fixing the re-scan cadence
+   and the final metric set; V1-V6, v0.14.0.
+6. Carried: work-side upgrade to v0.12.0 (id migration, vocab extract,
+   seats); G1 slice (Gherkin as the authoring format); prompt lexicon arc;
+   runner probe, M0 pilot, PL-PIPE.3 harness, other continuations unchanged.
 
 ## Open questions
-- Does the session-28 mapping hold after the video check? If yes: USAGE
-  section or ADR first?
-- Order of the next two arcs: G1 slice or prompt lexicon. Recommend G1
-  first; the Gherkin input makes it more concrete.
-- Q4 thresholds, Q5 decorrelation, Q6 first analyzer tranche,
-  comprehension empirics (PL-PIPE.3): unchanged from 25.
+- Promote "plans as Archify diagrams" to the global CLAUDE.md workflow
+  preferences? Project memory holds it today.
+- Gap 1 for class-E paths: deny outright in wave A, or warn now and require
+  the PL-PIPE.1 approval record later?
+- Gap 4: which four metrics stay (time-to-ready, rework count, first-pass
+  merge, in-scope rate proposed).
+- Q4 thresholds, Q5 decorrelation, Q6 first analyzer tranche, PL-PIPE.3
+  comprehension empirics: unchanged from 25.
