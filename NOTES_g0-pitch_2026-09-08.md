@@ -1,9 +1,10 @@
 # G0 pitch notes - the feature document and the contract
 
-_Session 28, 2026-09-08. Working notes, not a Cairn stratum. Unratified:
-the mapping below is the agent's proposal, discussed and not pushed back
-on. It graduates to USAGE.md (a section beside section 8) and a candidate
-ADR once the user ratifies it after the session-29 video check._
+_Session 28, 2026-09-08. Working notes, not a Cairn stratum. Ratified in
+session 30 (2026-09-08) after the session-29 video check and the playbook
+crosswalk: the ruling is ADR 0026, the crosswalk and the six closures ADR
+0027. The mapping table graduates to USAGE.md (a section beside section
+8) with the demo intake. The amendments section is session 30's._
 
 ## Purpose
 
@@ -114,14 +115,47 @@ answers, new merge.
   whose Gherkin carries the regression scenario, which becomes a test
   the implementer cannot edit.
 
+## Amendments (session 30, from the playbook crosswalk)
+
+Anthropic's AI-native SDLC playbook (ADR 0027) names the same shapes in
+words the consumer will have read. Five additions:
+
+1. Terms crosswalk. Feature document = intent.md (the originator's
+   words; the PO accepts). Contract = spec.md's form half, validated at
+   G0 instead of reviewed, plus plan.md's order half: the unit graph
+   computed from `decomposition` and `depends_on`, never committed
+   (0024). `.sdlc/REVIEW.md` = the review policy, advisory here.
+   Control bands = G8; an escape writes the next document (`g8-escape`).
+2. The plan's three questions become intake prompts. The playbook's
+   plan "names the files that change, the order of the work, and the
+   tests that prove it", and the implementing engineer approves it.
+   Intake asks the engineer seat those three questions in those words;
+   the answers land as `scope`, `depends_on`, and `acceptance_sketch`.
+   A prompt change to I4 and I5 of the intake flow; a unit in intake A.
+3. Linkage as the minimum bar, named. The playbook accepts two sources
+   of truth when "all artifacts note the record ID and all legacy
+   records contain the commit SHA of the markdown file". The status
+   line proposed above is
+   exactly that: the document carries the contract id, its state, and
+   the merge SHA; the contract carries `provenance.ref` back. Use the
+   phrase in the pitch.
+4. Rework count as a clock. The playbook counts "spec.md commits dated
+   after the first plan.md commit for the same change". The kit's
+   analog is re-intakes after ready: merges touching `specs/{id}/`
+   after the first ready merge. `taskcontract metrics` computes it
+   (wave B); its threshold is a clock in `clocks.yaml` (Q4).
+5. The four disagreements are ADR 0027's alternatives: mutable plan,
+   advisory templates, committed plan, co-generated tests. Each is
+   rejected with its reason on record, so the pitch has a cited answer
+   to "why not just follow the playbook".
+
 ## Open
 
 - Next decision: which real feature document goes through intake first
-  (paste, or a Drive link); the agent drafts its contract as the demo
-  artifact.
-- Session 29 opens with a YouTube video review on this topic, the
-  user's check that the direction is right, before any of the above is
-  ratified.
+  (paste, or a Drive link); the agent drafts its contract in a sandbox
+  consumer as the demo artifact (plan step 5).
+- The USAGE section beside section 8 lands with the demo intake: the
+  mapping table above, marked as the units ship.
 
 Sources: docs/gates.md; docs/gates/G0-planning-intake.md;
 docs/gates/G1-requirements-spec.md (G1.3 checklist);

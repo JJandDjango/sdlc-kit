@@ -1,11 +1,13 @@
-# Plan - Session 29 (2026-09-08) - Playbook alignment: close the six gaps
+# Plan - Session 30 (2026-09-08) - Playbook alignment: close the six gaps
 
 Where things stand: v0.12.0 released; PR #37 (self-pin) open, green at cc29aa5,
-mergeable. Branch `session-28-g0-pitch` (e7af41e, pushed, no PR) carries
-NOTES_g0-pitch_2026-09-08.md. Step 1 done: video reviewed, Anthropic's
-AI-Native SDLC playbook fetched (claude.com/blog/the-ai-native-sdlc-playbook,
-2026-08-21) and mapped against the 56 conditions. Verdict: the kit covers every
-play, mostly stronger; six gaps ratified for implementation (user, 2026-09-08).
+mergeable. Branch `session-28-g0-pitch` (no PR yet) carries the ratified
+NOTES_g0-pitch_2026-09-08.md, ADR 0026 and 0027, one CONVENTIONS line, and
+this plan. Step 1 done: video reviewed, Anthropic's AI-Native SDLC playbook
+fetched (claude.com/blog/the-ai-native-sdlc-playbook, 2026-08-21) and mapped
+against the 56 conditions. Verdict: the kit covers every play, mostly
+stronger; six gaps ratified for implementation (user, 2026-09-08). Step 2
+done (session 30): notes ratified with five amendments, both ADRs written.
 
 ## The six gaps
 
@@ -33,9 +35,9 @@ session-level view of both contracts.
 ## Steps
 
 1. ~~Video check~~ - done; playbook fetched; six gaps ratified.
-2. Ratify the notes with the five amendments; write ADR 0026 and ADR 0027
+2. ~~Ratify the notes with the five amendments; write ADR 0026 and ADR 0027
    (alternatives = the playbook's four disagreements: mutable plan, advisory
-   templates, committed plan, co-generated tests).
+   templates, committed plan, co-generated tests).~~ - done, session 30.
 3. Close v0.12.0: merge PR #37 on the user's word, sync main, delete
    `session-27-self-pin`, prune the five gone local branches; PR
    `session-28-g0-pitch` carrying notes + ADRs, merge on green.
