@@ -2,76 +2,75 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-08-31 (session 27 release wrap, home machine)._
+> _Generated 2026-09-08 (session 29 close, home machine)._
 
 ## Now
-- v0.12.0 is released. Session 27 (2026-08-25 to 2026-08-31) walked
-  Phase 0 for a two-team consumer (PO team + engineer team), captured
-  the walk in NOTES_phase0_2026-08-25.md, then ran the `intake-seats`
-  contract to completion: nine units, each confirmed in chat and
-  committed on the user's word. PR #36 merged at 8fbaa7f; tag v0.12.0
-  annotated there and pushed; self-pin PR #37 carries the pin move and
-  this regeneration, both checks green (the contracts job is the proof
-  the tag installs). Merging #37 is the last act of the release.
-- What shipped (ADR 0025, detail in CHANGELOG 0.12.0): an intake seat
-  is a per-repo `value-set` term; every unit records who answered under
-  `confirmed_by` (schema 1.3.0, additive); G0.3 unit confirmation at
-  the ready door (TC016, armed only by a ratified `intake-seat` term,
-  draft profile and loose files never enter); `/sdlc intake` I5-I6
-  render, ask per unit, write the record, then the contract (this
-  closed unit-dag's `g0-intake-review`, so unit-dag is 8/8); the seven
-  skill flows moved to `skills/sdlc/flows/<flow>.md` (SKILL.md 3978 ->
-  1852 tokens); the kit's own seat term ratified (`user`) and 66 units
-  stamped, adds only; G0 registry and deep page (G0 count 1 -> 3, total
-  54 -> 56, G0.2 had gone uncounted); USAGE section 8.
-- Receipts, zero-trust: suite 222; validate 10/10 ready-green with the
-  door armed; vocab-green 18 terms, registry 7; lang-check exit 0 (six
-  pre-arc contracts exempt); prompt_lang 8/8; Cairn 0 errors.
-- CI note worth keeping: GitHub Actions was in a major outage when #36
-  merged, so that merge rode local receipts; the runs landed green
-  afterwards (#36, the push to main, and #37). The kit's workflow runs
-  `python -m taskcontract` from the checkout root, so the working
-  directory shadows the pinned install: the kit's own CI always
-  validates with the branch's validator, never the pin.
-- Plan graph published (private artifact):
-  https://claude.ai/code/artifact/44b0c146-6441-4a00-8163-bad5ea6bee20
+- v0.12.0 is released (tag and origin/main at 8fbaa7f). PR #37 (self-pin,
+  `session-27-self-pin`) is OPEN and mergeable, both checks green at cc29aa5
+  (2026-09-08 13:53 UTC). The session-28 "cc29aa5 never pushed" line was
+  stale: the push landed before session 29. Only the merge remains.
+- Session 29 (2026-09-08) was the direction check, no kit code. Branch
+  `session-28-g0-pitch` (e7af41e pushed, no PR) gains plan.md (rewritten)
+  and plan.workflow.json (new) in the session-close commit. The opener
+  YouTube review held the session-28 mapping. Anthropic's AI-Native SDLC
+  playbook (claude.com/blog/the-ai-native-sdlc-playbook, Claxton,
+  2026-08-21) was fetched and mapped play by play against the 56
+  conditions: every play covered, mostly stronger. Six gaps ratified for
+  implementation: (1) hooks denying writes to ready contracts and ratified
+  terms; (2) a G4 diff-within-contract-scope condition; (3) a G9 scheduled
+  re-scan of unchanged code; (4) flow metrics; (5) a PO venue without an
+  engineer at the prompt; (6) an advisory review pass named in USAGE, and
+  escapes adding agent evals. Plan: two contracts, `playbook-guardrails`
+  (1, 2, 6a; kit 0.13.0, before the pitch) and `playbook-loop` (3, 4, 5,
+  6b; 0.14.0, after the demo intake).
+- Standing rule from this session: every plan is presented as an Archify
+  diagram (skill installed globally, `~/.claude/skills/archify`).
+  plan.workflow.json beside plan.md is the diagram source; HTML is
+  generated, never committed.
+- Session-28 notes still unratified. Five amendments recommended after the
+  video and the playbook: a terms crosswalk to intent.md / spec.md /
+  plan.md; the playbook's three plan questions as intake prompts; "linkage
+  as the minimum bar" named; rework count as a clock; the playbook's four
+  disagreements (mutable plan, advisory templates, committed plan,
+  co-generated tests) as the ADR's alternatives.
+- Receipts not re-run (no code changed): suite 222, validate 10/10, vocab
+  18 terms, lang-check 0, prompt_lang 8/8 as of session 27. Cairn audit 0
+  errors, 21 warnings, all pre-existing (ADR budgets, 0024 edited after
+  creation, four docs pages stale since the 2026-08-26 `confirmed_by`
+  stamp).
+- Untracked REQUEST_unit-dag_2026-08-22.md stays untracked by kit rules.
 
 ## Blockers
-- None. `/sdlc audit` on this machine still reports TC005 on every
-  `id` and `confirmed_by`: audit.py imports `taskcontract` and gets the
-  pip install pinned at e81f9a5 (July). Fix here and at work:
-  `pip install -e E:\sdlc_development_kit`. Not a finding against the
-  code.
+- None. `/sdlc audit` here still reports TC005 on `id` and `confirmed_by`:
+  the pip install is pinned at e81f9a5. Fix:
+  `pip install -e E:\sdlc_development_kit`. Not a finding against the code.
 
-## Next actions
-1. Merge PR #37 (green), then sync main and delete the branch.
-2. **Work-side upgrade** (work machine): `/plugin marketplace update
-   sdlc-kit`, then `/plugin update`; re-pin the work repo to v0.12.0.
-   Its contracts are still pre-1.2.0, so the id migration is owed
-   first (TC001 until every unit carries an `id`), then `/sdlc vocab
-   extract`, the PO seat ratifies domain terms and the engineer seat
-   technical ones, ratify `intake-seat` with `[po, engineer]`, and
-   stamp `confirmed_by` in the same commit as that flip.
-3. **G1 slice** - the next kit surface the stated goal needs (a plan
-   that executes into tests): `criteria.yaml` + the `[Criterion]`
-   trait + the G4.3 join (ADR 0011, designed, unbuilt). The
-   ApplyDiscount toy in USAGE section 8 is its first fixture. Two
-   small graph follow-ups banked: `graph --labels` (unit summaries in
-   nodes) and `graph --done` (ready set from a done list).
-4. **Prompt lexicon arc** (user's stated intent, later session): bring
-   the skill prompts under the controlled dictionary. Measured
-   2026-08-26: 395 of 1990 checkable words unknown (20%). A decision
-   first (new controlled surface, ~200-300 dictionary additions on the
-   full lane; PromptLang owns form), never a tidy-up.
-5. Runner probe at work; M0 pilot as the second consumer.
-6. Registered continuations unchanged: PL-PIPE.3 eval harness,
-   sdlc-spec / sdlc-qa defs, mechanical loop runner, verdict
-   field-name convergence, `.sdlc/progress/<id>.yaml`, direction
-   classifier (0014 Q6).
+## Next actions (plan.md step numbers)
+1. **Step 2, the session-30 opener:** ratify NOTES_g0-pitch with the five
+   amendments; write ADR 0026 (the feature document is the raw request)
+   and ADR 0027 (playbook crosswalk, four disagreements, six closures).
+   Present the plan first: `node ~/.claude/skills/archify/bin/archify.mjs
+   deliver workflow plan.workflow.json <scratch>/plan.html --quality
+   showcase --json`, then `Start-Process` the HTML.
+2. Step 3: merge PR #37 on the user's word, sync main, delete
+   `session-27-self-pin`, prune the five gone local branches; PR
+   `session-28-g0-pitch` carrying notes + ADRs + plan, merge on green.
+3. Step 4: `/sdlc intake playbook-guardrails`, after deciding the
+   diff-to-contract binding (recommend a `Contract:` commit trailer). Units
+   U1-U7, one commit each, Two-Key, v0.13.0, self-pin.
+4. Step 5: demo intake, one real feature document, in a sandbox consumer.
+5. Step 6: `/sdlc intake playbook-loop` after fixing the re-scan cadence
+   and the final metric set; V1-V6, v0.14.0.
+6. Carried: work-side upgrade to v0.12.0 (id migration, vocab extract,
+   seats); G1 slice (Gherkin as the authoring format); prompt lexicon arc;
+   runner probe, M0 pilot, PL-PIPE.3 harness, other continuations unchanged.
 
 ## Open questions
-- Order of the next two arcs: the G1 slice or the prompt lexicon.
-  Recommend G1 first; the lexicon waits on a PromptLang-side
-  extension either way.
-- Q4 thresholds, Q5 decorrelation, Q6 first analyzer tranche,
-  comprehension empirics (PL-PIPE.3): unchanged from 25.
+- Promote "plans as Archify diagrams" to the global CLAUDE.md workflow
+  preferences? Project memory holds it today.
+- Gap 1 for class-E paths: deny outright in wave A, or warn now and require
+  the PL-PIPE.1 approval record later?
+- Gap 4: which four metrics stay (time-to-ready, rework count, first-pass
+  merge, in-scope rate proposed).
+- Q4 thresholds, Q5 decorrelation, Q6 first analyzer tranche, PL-PIPE.3
+  comprehension empirics: unchanged from 25.

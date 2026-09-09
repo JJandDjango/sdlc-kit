@@ -32,6 +32,11 @@
   value-set, and the ready door demands the record once that term is
   ratified (TC016). Who holds which field is policy (USAGE §8), never a
   check on the author ([[0025-intake-seats]]).
+- **The raw request stays the requester's.** Intake consumes the consumer's
+  own document; the contract is what the venue produces from it, never a
+  replacement, and a change after ready re-intakes. The request holds worth
+  and design, the contract form and entry; unit tests enter neither
+  ([[0026-feature-document-as-raw-request]]).
 - **Register boundary.** Controlled register where prose is executed -
   contract prose fields, checked by `python -m taskcontract lang-check`;
   free register where prose is deliberated (THEORY, ADRs, docs

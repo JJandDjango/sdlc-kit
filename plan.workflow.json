@@ -1,0 +1,61 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Playbook Alignment Plan - Session 30",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "views": [
+      { "id": "wave-a", "label": "Wave A: guardrails", "focus": ["ratify", "intake_a", "units_a", "release_a"], "note": "Hooks, the scope check, and the review template ship before the pitch as kit 0.13.0." },
+      { "id": "wave-b", "label": "Wave B: loop closure", "focus": ["demo", "intake_b", "units_b", "release_b"], "note": "Re-scan, metrics, the PO venue, and escape evals follow the demo as kit 0.14.0." },
+      { "id": "loops", "label": "Where work waits", "focus": ["intake_a", "parked", "units_a", "verifier_fail"], "note": "A contract parks until a seat answers; a unit loops until the Verifier grades PASS." }
+    ]
+  },
+  "lanes": [
+    { "id": "principal", "label": "Human principal" },
+    { "id": "intake", "label": "Intake venue (/sdlc intake)" },
+    { "id": "build", "label": "Developer + Verifier" },
+    { "id": "exceptions", "label": "Waits + retries", "variant": "exception" },
+    { "id": "release", "label": "Release pipeline" }
+  ],
+  "phases": [
+    { "id": "decide", "label": "Decide", "fromCol": 0, "toCol": 0 },
+    { "id": "wave_a", "label": "Wave A - playbook-guardrails (0.13.0)", "fromCol": 1, "toCol": 3, "variant": "emphasis" },
+    { "id": "wave_b", "label": "Wave B - playbook-loop (0.14.0)", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "groups": [],
+  "mainPath": ["ratify", "intake_a", "units_a", "release_a", "intake_b", "units_b"],
+  "nodes": [
+    { "id": "ratify", "lane": "principal", "col": 0, "type": "security", "label": "Ratify + ADRs", "sublabel": "notes, 0026, 0027", "tag": "human gate" },
+    { "id": "merge_37", "lane": "release", "col": 0, "type": "cloud", "label": "Merge PR #37", "sublabel": "closes v0.12.0" },
+    { "id": "intake_a", "lane": "intake", "col": 1, "type": "frontend", "label": "Intake A", "sublabel": "playbook-guardrails" },
+    { "id": "units_a", "lane": "build", "col": 2, "type": "backend", "label": "Units U1-U6", "sublabel": "hooks, scope, REVIEW", "tag": "Two-Key" },
+    { "id": "release_a", "lane": "release", "col": 3, "type": "cloud", "label": "Release 0.13.0", "sublabel": "PR, tag, self-pin" },
+    { "id": "demo", "lane": "principal", "col": 3, "type": "frontend", "label": "Demo intake", "sublabel": "real feature document" },
+    { "id": "intake_b", "lane": "intake", "col": 4, "type": "frontend", "label": "Intake B", "sublabel": "playbook-loop" },
+    { "id": "units_b", "lane": "build", "col": 5, "type": "backend", "label": "Units V1-V5", "sublabel": "sweep, metrics, venue", "tag": "Two-Key" },
+    { "id": "release_b", "lane": "release", "col": 5, "type": "cloud", "label": "Release 0.14.0", "sublabel": "PR, tag, self-pin" },
+    { "id": "parked", "lane": "exceptions", "col": 1, "type": "messagebus", "label": "Parked", "sublabel": "seat answer missing" },
+    { "id": "verifier_fail", "lane": "exceptions", "col": 2, "type": "security", "label": "Verifier FAIL", "sublabel": "max 3 rounds" }
+  ],
+  "edges": [
+    { "from": "ratify", "to": "intake_a", "label": "ADR 0027 accepted", "variant": "emphasis" },
+    { "from": "intake_a", "to": "units_a", "label": "ready-green", "variant": "emphasis" },
+    { "from": "units_a", "to": "release_a", "label": "suite green", "variant": "emphasis" },
+    { "from": "merge_37", "to": "release_a", "label": "main synced" },
+    { "from": "release_a", "to": "demo", "label": "pitch" },
+    { "from": "demo", "to": "intake_b", "label": "learnings" },
+    { "from": "release_a", "to": "intake_b", "variant": "emphasis" },
+    { "from": "intake_b", "to": "units_b", "label": "ready-green", "variant": "emphasis" },
+    { "from": "units_b", "to": "release_b", "label": "suite green", "variant": "emphasis" },
+    { "from": "intake_a", "to": "parked", "label": "no answer", "variant": "security", "role": "error" },
+    { "from": "parked", "to": "intake_a", "label": "answer lands", "variant": "dashed", "role": "return" },
+    { "from": "units_a", "to": "verifier_fail", "label": "FAIL", "variant": "security", "role": "error" },
+    { "from": "verifier_fail", "to": "units_a", "label": "retry", "variant": "dashed", "role": "return" }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Wave A units", "items": ["U1 hook denies writes to ready contracts and ratified terms", "U2 /sdlc init renders hook + settings, /sdlc update tracks drift", "U3 managed-settings reference profile", "U4 taskcontract scope-check, U5 CI step + G4.12", "U6 .sdlc/REVIEW.md, advisory pass named"] },
+    { "dot": "cyan", "title": "Wave B units", "items": ["V1 G9.5 scheduled code re-scan, dated coverage", "V2 taskcontract metrics: time-to-ready, rework, first-pass merge, in-scope rate", "V3 resume a parked contract, V4 PO venue from claude.ai", "V5 G8.3 disposition gains eval_ref"] },
+    { "dot": "rose", "title": "Rules in force", "items": ["ADR before intake; intake before any unit", "One commit per unit; Developer then Verifier", "Ready-green or parked, never half-ready", "Registry 56 -> 58 conditions at wave B close"] }
+  ]
+}
