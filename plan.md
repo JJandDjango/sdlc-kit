@@ -1,13 +1,13 @@
 # Plan - Session 30 (2026-09-08) - Playbook alignment: close the six gaps
 
-Where things stand: v0.12.0 released; PR #37 (self-pin) open, green at cc29aa5,
-mergeable. Branch `session-28-g0-pitch` (no PR yet) carries the ratified
-NOTES_g0-pitch_2026-09-08.md, ADR 0026 and 0027, one CONVENTIONS line, and
-this plan. Step 1 done: video reviewed, Anthropic's AI-Native SDLC playbook
-fetched (claude.com/blog/the-ai-native-sdlc-playbook, 2026-08-21) and mapped
-against the 56 conditions. Verdict: the kit covers every play, mostly
-stronger; six gaps ratified for implementation (user, 2026-09-08). Step 2
-done (session 30): notes ratified with five amendments, both ADRs written.
+Where things stand (2026-09-09): v0.12.0 closed, PR #37 merged (673cc24).
+PR #38 merged (7824b7a) carrying the ratified NOTES_g0-pitch_2026-09-08.md,
+ADR 0026 and 0027, one CONVENTIONS line, and this plan; main synced, seven
+branches pruned. Step 1 done: video reviewed, Anthropic's AI-Native SDLC
+playbook fetched (claude.com/blog/the-ai-native-sdlc-playbook, 2026-08-21)
+and mapped against the 56 conditions. Verdict: the kit covers every play,
+mostly stronger; six gaps ratified for implementation (user, 2026-09-08).
+Steps 2 and 3 done. Next: step 4, gated on the diff-to-contract binding.
 
 ## The six gaps
 
@@ -21,8 +21,10 @@ done (session 30): notes ratified with five amendments, both ADRs written.
 ## Diagram
 
 The plan's diagram source is `plan.workflow.json` beside this file (Archify
-workflow: lanes by actor, phases per wave, an exception lane for parked
-contracts and Verifier fails, three guided views). Render and open:
+workflow, reshaped 2026-09-09 into a step spine: one lane of plan steps read
+left to right, human gates dropping onto it from above, an exception lane for
+parked contracts and Verifier fails below, phases per wave, four guided views
+starting with "Where we are"). Render and open:
 
     node C:/Users/hyden/.claude/skills/archify/bin/archify.mjs deliver workflow plan.workflow.json <scratch>/plan.html --quality showcase --json
     Start-Process <scratch>/plan.html
@@ -38,9 +40,10 @@ session-level view of both contracts.
 2. ~~Ratify the notes with the five amendments; write ADR 0026 and ADR 0027
    (alternatives = the playbook's four disagreements: mutable plan, advisory
    templates, committed plan, co-generated tests).~~ - done, session 30.
-3. Close v0.12.0: merge PR #37 on the user's word, sync main, delete
+3. ~~Close v0.12.0: merge PR #37 on the user's word, sync main, delete
    `session-27-self-pin`, prune the five gone local branches; PR
-   `session-28-g0-pitch` carrying notes + ADRs, merge on green.
+   `session-28-g0-pitch` carrying notes + ADRs, merge on green.~~ - done,
+   2026-09-09 (PR #37 at 673cc24, PR #38 at 7824b7a).
 4. Wave A: intake `playbook-guardrails` (units U1-U7 in the diagram's cards),
    one commit per unit, Two-Key, PR, merge, tag v0.13.0, self-pin.
 5. Demo intake: one real feature document, contract drafted in a sandbox

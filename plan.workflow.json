@@ -6,56 +6,53 @@
     "quality_profile": "showcase",
     "locale": "en",
     "views": [
-      { "id": "wave-a", "label": "Wave A: guardrails", "focus": ["ratify", "intake_a", "units_a", "release_a"], "note": "Hooks, the scope check, and the review template ship before the pitch as kit 0.13.0." },
-      { "id": "wave-b", "label": "Wave B: loop closure", "focus": ["demo", "intake_b", "units_b", "release_b"], "note": "Re-scan, metrics, the PO venue, and escape evals follow the demo as kit 0.14.0." },
-      { "id": "loops", "label": "Where work waits", "focus": ["intake_a", "parked", "units_a", "verifier_fail"], "note": "A contract parks until a seat answers; a unit loops until the Verifier grades PASS." }
+      { "id": "now", "label": "Where we are", "focus": ["decide", "binding", "intake_a"], "note": "Steps 2 and 3 done 2026-09-09: notes ratified, ADRs merged (PR #38), v0.12.0 closed (PR #37). Next: the binding decision, then intake A." },
+      { "id": "decided", "label": "What was decided", "focus": ["decide"], "note": "0026: the feature document is the raw request. 0027: the playbook crosswalk, four disagreements, six closures. PR #37: self-pin v0.12.0." },
+      { "id": "wave-a", "label": "Wave A: guardrails", "focus": ["binding", "intake_a", "units_a", "release_a"], "note": "Hooks, the scope check, and the review template ship before the pitch as kit 0.13.0." },
+      { "id": "wave-b", "label": "Wave B: loop closure", "focus": ["demo", "intake_b", "build_b"], "note": "Re-scan, metrics, the PO venue, and escape evals follow the demo as kit 0.14.0." },
+      { "id": "loops", "label": "Where work waits", "focus": ["intake_a", "parked", "units_a", "verifier_fail"], "note": "A contract parks until a seat answers, then re-enters intake; a unit loops until the Verifier grades PASS. Wave B repeats both." }
     ]
   },
   "lanes": [
-    { "id": "principal", "label": "Human principal" },
-    { "id": "intake", "label": "Intake venue (/sdlc intake)" },
-    { "id": "build", "label": "Developer + Verifier" },
-    { "id": "exceptions", "label": "Waits + retries", "variant": "exception" },
-    { "id": "release", "label": "Release pipeline" }
+    { "id": "gates", "label": "Human gates" },
+    { "id": "steps", "label": "Plan steps" },
+    { "id": "waits", "label": "Waits + retries", "variant": "exception" }
   ],
   "phases": [
-    { "id": "decide", "label": "Decide", "fromCol": 0, "toCol": 0 },
+    { "id": "decide_phase", "label": "Decide (done)", "fromCol": 0, "toCol": 0 },
     { "id": "wave_a", "label": "Wave A - playbook-guardrails (0.13.0)", "fromCol": 1, "toCol": 3, "variant": "emphasis" },
     { "id": "wave_b", "label": "Wave B - playbook-loop (0.14.0)", "fromCol": 4, "toCol": 5, "variant": "dashed" }
   ],
   "groups": [],
-  "mainPath": ["ratify", "intake_a", "units_a", "release_a", "intake_b", "units_b"],
+  "mainPath": ["decide", "intake_a", "units_a", "release_a", "intake_b", "build_b"],
   "nodes": [
-    { "id": "ratify", "lane": "principal", "col": 0, "type": "security", "label": "Ratify + ADRs", "sublabel": "notes, 0026, 0027", "tag": "human gate" },
-    { "id": "merge_37", "lane": "release", "col": 0, "type": "cloud", "label": "Merge PR #37", "sublabel": "closes v0.12.0" },
-    { "id": "intake_a", "lane": "intake", "col": 1, "type": "frontend", "label": "Intake A", "sublabel": "playbook-guardrails" },
-    { "id": "units_a", "lane": "build", "col": 2, "type": "backend", "label": "Units U1-U6", "sublabel": "hooks, scope, REVIEW", "tag": "Two-Key" },
-    { "id": "release_a", "lane": "release", "col": 3, "type": "cloud", "label": "Release 0.13.0", "sublabel": "PR, tag, self-pin" },
-    { "id": "demo", "lane": "principal", "col": 3, "type": "frontend", "label": "Demo intake", "sublabel": "real feature document" },
-    { "id": "intake_b", "lane": "intake", "col": 4, "type": "frontend", "label": "Intake B", "sublabel": "playbook-loop" },
-    { "id": "units_b", "lane": "build", "col": 5, "type": "backend", "label": "Units V1-V5", "sublabel": "sweep, metrics, venue", "tag": "Two-Key" },
-    { "id": "release_b", "lane": "release", "col": 5, "type": "cloud", "label": "Release 0.14.0", "sublabel": "PR, tag, self-pin" },
-    { "id": "parked", "lane": "exceptions", "col": 1, "type": "messagebus", "label": "Parked", "sublabel": "seat answer missing" },
-    { "id": "verifier_fail", "lane": "exceptions", "col": 2, "type": "security", "label": "Verifier FAIL", "sublabel": "max 3 rounds" }
+    { "id": "binding", "lane": "gates", "col": 1, "type": "security", "label": "Binding", "sublabel": "Contract: trailer?", "tag": "next" },
+    { "id": "demo", "lane": "gates", "col": 4, "type": "security", "label": "Demo intake", "sublabel": "real document" },
+    { "id": "decide", "lane": "steps", "col": 0, "type": "cloud", "label": "Ratified", "sublabel": "0026, 0027; PR #37", "tag": "done 09-09" },
+    { "id": "intake_a", "lane": "steps", "col": 1, "type": "frontend", "label": "Intake A", "sublabel": "YOU ARE HERE", "tag": "playbook-guardrails" },
+    { "id": "units_a", "lane": "steps", "col": 2, "type": "backend", "label": "Units U1-U6", "sublabel": "hooks, scope, REVIEW", "tag": "Two-Key" },
+    { "id": "release_a", "lane": "steps", "col": 3, "type": "cloud", "label": "Release 0.13.0", "sublabel": "PR, tag, self-pin" },
+    { "id": "intake_b", "lane": "steps", "col": 4, "type": "frontend", "label": "Intake B", "sublabel": "playbook-loop" },
+    { "id": "build_b", "lane": "steps", "col": 5, "type": "backend", "label": "Build B", "sublabel": "V1-V5, ship 0.14.0", "tag": "Two-Key" },
+    { "id": "parked", "lane": "waits", "col": 1, "type": "messagebus", "label": "Parked", "sublabel": "seat answer missing", "tag": "until answered" },
+    { "id": "verifier_fail", "lane": "waits", "col": 2, "type": "security", "label": "Verifier FAIL", "sublabel": "max 3 rounds", "tag": "retry" }
   ],
   "edges": [
-    { "from": "ratify", "to": "intake_a", "label": "ADR 0027 accepted", "variant": "emphasis" },
-    { "from": "intake_a", "to": "units_a", "label": "ready-green", "variant": "emphasis" },
-    { "from": "units_a", "to": "release_a", "label": "suite green", "variant": "emphasis" },
-    { "from": "merge_37", "to": "release_a", "label": "main synced" },
-    { "from": "release_a", "to": "demo", "label": "pitch" },
-    { "from": "demo", "to": "intake_b", "label": "learnings" },
-    { "from": "release_a", "to": "intake_b", "variant": "emphasis" },
-    { "from": "intake_b", "to": "units_b", "label": "ready-green", "variant": "emphasis" },
-    { "from": "units_b", "to": "release_b", "label": "suite green", "variant": "emphasis" },
-    { "from": "intake_a", "to": "parked", "label": "no answer", "variant": "security", "role": "error" },
-    { "from": "parked", "to": "intake_a", "label": "answer lands", "variant": "dashed", "role": "return" },
-    { "from": "units_a", "to": "verifier_fail", "label": "FAIL", "variant": "security", "role": "error" },
-    { "from": "verifier_fail", "to": "units_a", "label": "retry", "variant": "dashed", "role": "return" }
+    { "from": "decide", "to": "intake_a", "label": "0027 accepted", "variant": "emphasis", "route": "straight" },
+    { "from": "intake_a", "to": "units_a", "label": "ready-green", "variant": "emphasis", "route": "straight" },
+    { "from": "units_a", "to": "release_a", "label": "suite green", "variant": "emphasis", "route": "straight" },
+    { "from": "release_a", "to": "intake_b", "label": "pitch shipped", "variant": "emphasis", "route": "straight" },
+    { "from": "intake_b", "to": "build_b", "label": "ready-green", "variant": "emphasis", "route": "straight" },
+    { "from": "binding", "to": "intake_a", "route": "straight" },
+    { "from": "demo", "to": "intake_b", "route": "straight" },
+    { "from": "intake_a", "to": "parked", "variant": "security", "route": "straight" },
+    { "from": "units_a", "to": "verifier_fail", "variant": "security", "route": "straight" }
   ],
   "cards": [
+    { "dot": "amber", "title": "Where we are (2026-09-09)", "items": ["Done: notes ratified, ADR 0026 + 0027, CONVENTIONS line (eccf87c; PR #38 merged 7824b7a)", "Done: PR #37 merged 673cc24, v0.12.0 closed, main synced, seven branches pruned", "Next: the diff-to-contract binding (recommended: Contract: commit trailer), then intake A", "Then: U1-U6 one commit each, Two-Key; release 0.13.0; demo intake"] },
     { "dot": "emerald", "title": "Wave A units", "items": ["U1 hook denies writes to ready contracts and ratified terms", "U2 /sdlc init renders hook + settings, /sdlc update tracks drift", "U3 managed-settings reference profile", "U4 taskcontract scope-check, U5 CI step + G4.12", "U6 .sdlc/REVIEW.md, advisory pass named"] },
-    { "dot": "cyan", "title": "Wave B units", "items": ["V1 G9.5 scheduled code re-scan, dated coverage", "V2 taskcontract metrics: time-to-ready, rework, first-pass merge, in-scope rate", "V3 resume a parked contract, V4 PO venue from claude.ai", "V5 G8.3 disposition gains eval_ref"] },
-    { "dot": "rose", "title": "Rules in force", "items": ["ADR before intake; intake before any unit", "One commit per unit; Developer then Verifier", "Ready-green or parked, never half-ready", "Registry 56 -> 58 conditions at wave B close"] }
+    { "dot": "cyan", "title": "Wave B units", "items": ["V1 G9.5 scheduled code re-scan, dated coverage", "V2 taskcontract metrics: time-to-ready, rework, first-pass merge, in-scope rate", "V3 resume a parked contract, V4 PO venue from claude.ai", "V5 G8.3 disposition gains eval_ref", "Release 0.14.0: PR, tag, self-pin"] },
+    { "dot": "rose", "title": "Rules in force", "items": ["ADR before intake; intake before any unit", "One commit per unit; Developer then Verifier", "Ready-green or parked, never half-ready", "Registry 56 -> 58 conditions at wave B close"] },
+    { "dot": "slate", "title": "Glossary", "items": ["0026: ADR, the feature document is the raw request; the contract is what intake produces from it; section-to-field mapping, three template changes", "0027: ADR, Anthropic's AI-native SDLC playbook mapped to the 56 conditions; its four disagreements are the rejected alternatives; six gaps close in two contracts", "PR #37: self-pin, the kit's own workflow refs take the v0.12.0 tag (merged 673cc24). PR #38: notes, ADRs, CONVENTIONS line, plan (merged 7824b7a)", "Two-Key: a unit is done only when the Verifier re-runs the tests independently and grades PASS", "ready-green: the contract passes the ready validation profile; development starts only from green", "Parked: a seat's answer is missing or a dependency is blocked; the contract validates as draft and waits", "Seat: a human role that answers at intake (PO, engineer), recorded per unit in confirmed_by", "G4.12: new pre-merge condition, the diff stays within its contract's scope. G9.5: new maintenance condition, a scheduled re-scan of unchanged code", "Contract: trailer: the proposed binding of a commit to its contract, a git trailer like the Theory: trailer the commit hook already parses", "Self-pin: after a release, the kit's own workflow refs move to the new tag; the last act of every release"] }
   ]
 }
