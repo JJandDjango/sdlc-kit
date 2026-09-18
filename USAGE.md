@@ -98,10 +98,10 @@ brownfield adoption is additive by construction.
 
 ## 4. Day 2 — the contract flow
 
-### `/sdlc:product-specification-interview` — writing the feature document 🔴
+### `/sdlc:product-specification-interview` — writing the feature document 🟢
 
-> 🔴 **Ratified, not shipped** ([ADR 0028](decisions/0028-specification-interview-skill.md),
-> contract `specs/spec-interview/`). Marks flip green as the units land.
+> 🟢 **Shipped** (kit 0.13.0, [ADR 0028](decisions/0028-specification-interview-skill.md),
+> contract `specs/spec-interview/`); the tag lands with `playbook-guardrails`.
 
 Intake consumes a feature document (§8, ADR 0026). This skill writes one.
 Run it in the target repo with a slug for the feature:
@@ -110,7 +110,7 @@ Run it in the target repo with a slug for the feature:
 /sdlc:product-specification-interview csv-export
 ```
 
-🔴 It asks the template's sections one question at a time: the origin
+🟢 It asks the template's sections one question at a time: the origin
 (feature or bug fix), the seats, and any material you paste first; then
 the story and background, three to five success criteria with two or
 three Gherkin scenarios each, non-goals, previously defined items,
@@ -120,12 +120,12 @@ sixth success criterion prompts a split into two documents. State saves
 after every section to a file beside the document, so a later run resumes
 at the exact question.
 
-🔴 Before writing, it reads the document back and checks what intake will
+🟢 Before writing, it reads the document back and checks what intake will
 need: an outcome-shaped story, a non-goal, scenarios under every
 criterion, seats named. Gaps are marked OPEN. The check advises and never
 blocks, because the document is yours.
 
-🔴 **What it writes:** the document, in the template's shape, at a path
+🟢 **What it writes:** the document, in the template's shape, at a path
 you confirm (default `REQUEST_<slug>_<date>.md` at the repo root), plus
 its state file. It never overwrites, never touches `specs/`, and never
 runs intake. On request it renders the same document paste-ready for
@@ -137,7 +137,7 @@ Google Docs.
 /sdlc intake REQUEST_<slug>_<date>.md
 ```
 
-🔴 Every prompt file of the skill passes `python -m prompt_lang`, and a
+🟢 Every prompt file of the skill passes `python -m prompt_lang`, and a
 structural test in the suite holds the shape.
 
 ### `/sdlc intake` — the G0 venue
