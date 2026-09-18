@@ -6,7 +6,7 @@
     "quality_profile": "showcase",
     "locale": "en",
     "views": [
-      { "id": "now", "label": "Where we are", "focus": ["interview", "decisions_a", "intake_a"], "note": "Session 31. Step 4 ratified (0028): the interview ships as a plugin skill. Next: its intake and units S1-S5, then the two decisions." },
+      { "id": "now", "label": "Where we are", "focus": ["interview", "decisions_a", "intake_a"], "note": "Session 31. Step 4 done: the interview shipped on its branch, Two-Key PASS. Next: the two decisions, then intake A." },
       { "id": "decided", "label": "What was decided", "focus": ["interview"], "note": "0026: the feature document is the raw request. 0027: playbook crosswalk, six closures. 0028: the interview writes the document, re-cut." },
       { "id": "wave-a", "label": "Wave A: guardrails", "focus": ["interview", "decisions_a", "intake_a", "units_a", "release_a"], "note": "The interview, hooks, the scope check, the review template, and the intake prompts ship before the pitch as kit 0.13.0." },
       { "id": "wave-b", "label": "Wave B: loop closure", "focus": ["demo", "intake_b", "build_b"], "note": "Re-scan, metrics, the PO venue, and escape evals follow the demo as kit 0.14.0." },
@@ -29,8 +29,8 @@
     { "id": "decisions_a", "lane": "gates", "col": 1, "type": "security", "label": "Two decisions", "sublabel": "binding, class-E", "tag": "next" },
     { "id": "ratify_5b", "lane": "gates", "col": 3, "type": "security", "label": "Ratify 5b?", "sublabel": "graph emits Archify", "tag": "unratified" },
     { "id": "demo", "lane": "gates", "col": 4, "type": "security", "label": "Demo intake", "sublabel": "real document" },
-    { "id": "interview", "lane": "steps", "col": 0, "type": "frontend", "label": "Spec interview", "sublabel": "YOU ARE HERE", "tag": "0028; S1-S5" },
-    { "id": "intake_a", "lane": "steps", "col": 1, "type": "frontend", "label": "Intake A", "sublabel": "playbook-guardrails", "tag": "after step 4" },
+    { "id": "interview", "lane": "steps", "col": 0, "type": "frontend", "label": "Spec interview", "sublabel": "0028; S1-S5 shipped", "tag": "done 09-17" },
+    { "id": "intake_a", "lane": "steps", "col": 1, "type": "frontend", "label": "Intake A", "sublabel": "YOU ARE HERE", "tag": "playbook-guardrails" },
     { "id": "units_a", "lane": "steps", "col": 2, "type": "backend", "label": "Units U1-U7", "sublabel": "hooks, scope, REVIEW", "tag": "Two-Key" },
     { "id": "release_a", "lane": "steps", "col": 3, "type": "cloud", "label": "Release 0.13.0", "sublabel": "PR, tag, self-pin" },
     { "id": "intake_b", "lane": "steps", "col": 4, "type": "frontend", "label": "Intake B", "sublabel": "playbook-loop" },
@@ -51,7 +51,7 @@
     { "from": "units_a", "to": "verifier_fail", "variant": "security", "route": "straight" }
   ],
   "cards": [
-    { "dot": "amber", "title": "Where we are (2026-09-17)", "items": ["Done: steps 1-3; v0.12.0 closed (PR #37), notes + ADR 0026 + 0027 merged (PR #38), session 30 closed (PR #39, main at 16426dd)", "Ratified today: step 4, the specification interview (ADR 0028); the request is written as the kit's first feature document", "Next: /sdlc intake spec-interview to ready-green, then S1-S5 one commit each, Two-Key; no tag until wave A", "Then: decision 1 (binding: a Contract: commit trailer) and decision 2 (class-E paths: no special case), intake A, U1-U7, release 0.13.0, demo", "Open: ratify step 5b into the plan?"] },
+    { "dot": "amber", "title": "Where we are (2026-09-17)", "items": ["Done: steps 1-3; v0.12.0 closed (PR #37), notes + ADR 0026 + 0027 merged (PR #38), session 30 closed (PR #39, main at 16426dd)", "Done today: step 4, the specification interview (ADR 0028), seven commits on session-31-spec-interview, Two-Key PASS by a workflow verifier; the branch waits for its PR", "Next: decision 1 (binding: a Contract: commit trailer) and decision 2 (class-E paths: no special case), intake A, U1-U7, release 0.13.0, demo", "Open: ratify step 5b into the plan?"] },
     { "dot": "violet", "title": "Step 4 units (spec-interview)", "items": ["S1 USAGE section, pass zero, marks red", "S2 SKILL.md: dispatch, new run or resume, constraints, criteria", "S3 flows: opening (origin, seats, materials, path) and sections (template order, state saves, split guard)", "S4 flows: readiness (advisory, OPEN marks) and output (template shape, no-clobber, Google Docs rendering, names /sdlc intake)", "S5 structural test, prompt_lang receipt, CHANGELOG, MAP row, USAGE marks green"] },
     { "dot": "emerald", "title": "Wave A units", "items": ["U1 hook denies writes to ready contracts and ratified terms", "U2 /sdlc init renders hook + settings, /sdlc update tracks drift", "U3 managed-settings reference profile", "U4 taskcontract scope-check, U5 CI step + G4.12", "U6 .sdlc/REVIEW.md, advisory pass named", "U7 intake asks the engineer seat the playbook's three plan questions (prompts at I4, I5)"] },
     { "dot": "cyan", "title": "Wave B units", "items": ["V1 G9.5 scheduled code re-scan, dated coverage", "V2 taskcontract metrics: time-to-ready, rework, first-pass merge, in-scope rate", "V3 resume a parked contract, V4 PO venue from claude.ai", "V5 G8.3 disposition gains eval_ref", "Release 0.14.0: PR, tag, self-pin"] },

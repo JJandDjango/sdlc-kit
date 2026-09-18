@@ -9,8 +9,9 @@ the 56 conditions. Verdict: the kit covers every play, mostly stronger; six
 gaps ratified for implementation (user, 2026-09-08). Prototype venue decided
 (session 30): Google Docs, the intake-ready template in the user's Drive.
 Session 31 ratified a new first step (ADR 0028): the specification
-interview, a second plugin skill that writes the feature document. Steps
-1-3 done. Next: step 4, its intake; then step 5, gated on two decisions.
+interview, a second plugin skill that writes the feature document, and
+shipped it the same day on `session-31-spec-interview` (unmerged). Steps
+1-4 done. Next: step 5, gated on two decisions.
 
 ## The six gaps
 
@@ -47,11 +48,13 @@ session-level view of both contracts.
    `session-27-self-pin`, prune the five gone local branches; PR
    `session-28-g0-pitch` carrying notes + ADRs, merge on green.~~ - done,
    2026-09-09 (PR #37 at 673cc24, PR #38 at 7824b7a).
-4. Specification interview (ADR 0028, ratified 2026-09-17): the request is
+4. ~~Specification interview (ADR 0028, ratified 2026-09-17): the request is
    the kit's first feature document (`REQUEST_spec-interview_2026-09-17.md`);
    `/sdlc intake spec-interview` to ready-green; units S1-S5 (the diagram's
-   cards), one commit each, Two-Key; USAGE section first (pass zero). Ships
-   in v0.13.0 with wave A, no tag of its own.
+   cards), one commit each, Two-Key; USAGE section first (pass zero).~~ -
+   done, 2026-09-17: seven commits on `session-31-spec-interview` (intake,
+   S1-S5, the verifier's advisories), Two-Key PASS by a workflow verifier
+   (16/16 sketches). Ships in v0.13.0 with wave A, no tag of its own.
 5. Wave A: the two decisions below, then `/sdlc intake playbook-guardrails`
    to ready-green (units U1-U7 in the diagram's cards; U7 is amendment 2's
    intake prompts), one commit per unit, Two-Key, PR, merge, tag v0.13.0
