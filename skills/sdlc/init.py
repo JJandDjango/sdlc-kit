@@ -57,6 +57,7 @@ TEMPLATE_TO_TARGET = {
     "workflow.yml.template": ".github/workflows/sdlc.yml",
     "findings-TEMPLATE.yaml.template": ".sdlc/findings/TEMPLATE.yaml",
     "NOTICE.md.template": ".sdlc/NOTICE.md",
+    "hooks-protect-specs.py.template": ".sdlc/hooks/protect_specs.py",
 }
 
 # Files a repo commonly already has: written only when absent, else the
@@ -64,6 +65,7 @@ TEMPLATE_TO_TARGET = {
 MERGE_TEMPLATE_TO_TARGET = {
     "pre-commit-config.yaml.template": ".pre-commit-config.yaml",
     "vscode-settings.json.template": ".vscode/settings.json",
+    "claude-settings.json.template": ".claude/settings.json",
 }
 
 # Drift classes consumed by update.py - the single source for both engines
@@ -76,12 +78,14 @@ SURFACE_CLASSES = {
     "specs-README.md.template": "kit-owned",
     "findings-TEMPLATE.yaml.template": "kit-owned",
     "NOTICE.md.template": "kit-owned",
+    "hooks-protect-specs.py.template": "kit-owned",
     "SDLC.md.template": "consumer",
     "config.yaml.template": "consumer",
     "clocks.yaml.template": "consumer",
     "reds.yaml.template": "consumer",
     "pre-commit-config.yaml.template": "merge-target",
     "vscode-settings.json.template": "merge-target",
+    "claude-settings.json.template": "merge-target",
 }
 
 PROFILE_MANIFEST = "profile.json"

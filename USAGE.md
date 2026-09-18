@@ -87,8 +87,10 @@ SDLC.md                     gate status page — which gates are live here (🟢
 specs/README.md             the protected root: contracts live at specs/<task-id>/contract.yaml,
                             immutable to implementers (write-surface rule)
 .github/workflows/sdlc.yml  CI: pip-install the kit, validate every contract
+.sdlc/hooks/protect_specs.py  session hook: the spec channel closed to sessions (§4)
 .pre-commit snippet         task-contract ready check (written if absent, else printed)
 .vscode/settings.json       YAML schema mapping for contract editing (written if absent, else printed)
+.claude/settings.json       the hook wired for Edit/Write/MultiEdit/NotebookEdit (written if absent, else printed)
 ```
 
 **Never overwrites.** Existing files are skipped and reported —

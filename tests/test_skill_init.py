@@ -20,8 +20,10 @@ FULL_PAYLOAD = {
     ".sdlc/NOTICE.md",
     "specs/README.md",
     ".github/workflows/sdlc.yml",
+    ".sdlc/hooks/protect_specs.py",
     ".pre-commit-config.yaml",
     ".vscode/settings.json",
+    ".claude/settings.json",
 }
 
 
@@ -45,8 +47,9 @@ def test_second_run_is_pure_no_clobber(tmp_path, skill_init):
     created, skipped, merges = skill_init.render_all(
         ANSWERS, _templates(skill_init), tmp_path, "2026-07-27")
     assert created == []
-    assert len(skipped) == 8  # the normal targets
-    assert {rel for rel, _ in merges} == {".pre-commit-config.yaml", ".vscode/settings.json"}
+    assert len(skipped) == 9  # the normal targets
+    assert {rel for rel, _ in merges} == {".pre-commit-config.yaml", ".vscode/settings.json",
+                                          ".claude/settings.json"}
 
 
 def test_preexisting_merge_target_untouched(tmp_path, skill_init):
@@ -203,12 +206,12 @@ def test_overlay_respects_no_clobber_and_merge_semantics(tmp_path, skill_init):
     skill_init.render_all(answers, templates, out, "2026-07-29")
     created, skipped, merges = skill_init.render_all(answers, templates, out, "2026-07-30")
     assert created == []
-    # overlay kit-owned entries no-clobber like base ones (8 base + 1 overlay)
-    assert len(skipped) == 9
+    # overlay kit-owned entries no-clobber like base ones (9 base + 1 overlay)
+    assert len(skipped) == 10
     # overlay merge-targets print their snippet instead of writing
     merge_rels = {rel for rel, _ in merges}
     assert merge_rels == {".pre-commit-config.yaml", ".vscode/settings.json",
-                          ".steel-hooks.yaml"}
+                          ".claude/settings.json", ".steel-hooks.yaml"}
     snippet = dict(merges)[".steel-hooks.yaml"]
     assert snippet == "hooks: steel (2026-07-30)\n"
 
@@ -359,3 +362,31 @@ def test_dotnet_enforcement_configs_are_merge_targets(tmp_path, skill_init):
     assert {"Directory.Build.props", ".editorconfig"} <= merge_rels
     rels = {p.relative_to(tmp_path).as_posix() for p in created}
     assert ".github/workflows/sdlc-dotnet.yml" in rels  # kit-owned still writes
+
+
+# --- unit: u2-init-renders-hook (contract: playbook-guardrails) ---
+
+def test_greenfield_init_writes_the_hook_and_the_settings(tmp_path, skill_init):
+    skill_init.render_all(ANSWERS, _templates(skill_init), tmp_path, "2026-09-18")
+    hook = (tmp_path / ".sdlc/hooks/protect_specs.py").read_text(encoding="utf-8")
+    assert "{{" not in hook and "2026-09-18" in hook
+    assert "PreToolUse" in hook and "specs/" in hook
+    settings = json.loads((tmp_path / ".claude/settings.json").read_text(encoding="utf-8"))
+    entry = settings["hooks"]["PreToolUse"][0]
+    assert entry["matcher"] == "Edit|Write|MultiEdit|NotebookEdit"
+    assert entry["hooks"][0]["command"] == "python .sdlc/hooks/protect_specs.py"
+    assert skill_init.SURFACE_CLASSES["hooks-protect-specs.py.template"] == "kit-owned"
+    assert skill_init.SURFACE_CLASSES["claude-settings.json.template"] == "merge-target"
+
+
+def test_next_init_prints_the_settings_and_writes_nothing(tmp_path, skill_init):
+    skill_init.render_all(ANSWERS, _templates(skill_init), tmp_path, "2026-09-18")
+    own = '{"permissions": {"allow": ["Bash(git status)"]}}\n'
+    (tmp_path / ".claude/settings.json").write_text(own, encoding="utf-8")
+    created, skipped, merges = skill_init.render_all(
+        ANSWERS, _templates(skill_init), tmp_path, "2026-09-19")
+    assert created == []
+    assert (tmp_path / ".claude/settings.json").read_text(encoding="utf-8") == own
+    printed = dict(merges)[".claude/settings.json"]
+    assert "protect_specs.py" in printed  # the snippet still reaches the user
+    assert tmp_path / ".sdlc/hooks/protect_specs.py" in skipped
