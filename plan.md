@@ -1,13 +1,16 @@
-# Plan - Session 30 (2026-09-08) - Playbook alignment: close the six gaps
+# Plan - Session 31 (2026-09-17) - The interview, then the six gaps
 
-Where things stand (2026-09-09): v0.12.0 closed, PR #37 merged (673cc24).
-PR #38 merged (7824b7a) carrying the ratified NOTES_g0-pitch_2026-09-08.md,
-ADR 0026 and 0027, one CONVENTIONS line, and this plan; main synced, seven
-branches pruned. Step 1 done: video reviewed, Anthropic's AI-Native SDLC
-playbook fetched (claude.com/blog/the-ai-native-sdlc-playbook, 2026-08-21)
-and mapped against the 56 conditions. Verdict: the kit covers every play,
-mostly stronger; six gaps ratified for implementation (user, 2026-09-08).
-Steps 2 and 3 done. Next: step 4, gated on the diff-to-contract binding.
+Where things stand (2026-09-17): main at 16426dd (PR #39, the session 30
+close). v0.12.0 closed, PR #37 merged (673cc24). PR #38 merged (7824b7a)
+carrying the ratified NOTES_g0-pitch_2026-09-08.md, ADR 0026 and 0027, one
+CONVENTIONS line, and this plan. Anthropic's AI-Native SDLC playbook
+(claude.com/blog/the-ai-native-sdlc-playbook, 2026-08-21) is mapped against
+the 56 conditions. Verdict: the kit covers every play, mostly stronger; six
+gaps ratified for implementation (user, 2026-09-08). Prototype venue decided
+(session 30): Google Docs, the intake-ready template in the user's Drive.
+Session 31 ratified a new first step (ADR 0028): the specification
+interview, a second plugin skill that writes the feature document. Steps
+1-3 done. Next: step 4, its intake; then step 5, gated on two decisions.
 
 ## The six gaps
 
@@ -23,7 +26,7 @@ Steps 2 and 3 done. Next: step 4, gated on the diff-to-contract binding.
 The plan's diagram source is `plan.workflow.json` beside this file (Archify
 workflow, reshaped 2026-09-09 into a step spine: one lane of plan steps read
 left to right, human gates dropping onto it from above, an exception lane for
-parked contracts and Verifier fails below, phases per wave, four guided views
+parked contracts and Verifier fails below, phases per wave, five guided views
 starting with "Where we are"). Render and open:
 
     node C:/Users/hyden/.claude/skills/archify/bin/archify.mjs deliver workflow plan.workflow.json <scratch>/plan.html --quality showcase --json
@@ -44,18 +47,33 @@ session-level view of both contracts.
    `session-27-self-pin`, prune the five gone local branches; PR
    `session-28-g0-pitch` carrying notes + ADRs, merge on green.~~ - done,
    2026-09-09 (PR #37 at 673cc24, PR #38 at 7824b7a).
-4. Wave A: intake `playbook-guardrails` (units U1-U7 in the diagram's cards),
-   one commit per unit, Two-Key, PR, merge, tag v0.13.0, self-pin.
-5. Demo intake: one real feature document, contract drafted in a sandbox
-   consumer, not the kit's own specs/.
-6. Wave B: intake `playbook-loop` (V1-V6), same discipline, v0.14.0.
-7. Session close: STATE.md regenerated (stale "cc29aa5 never pushed" line
-   retired), this plan struck through.
+4. Specification interview (ADR 0028, ratified 2026-09-17): the request is
+   the kit's first feature document (`REQUEST_spec-interview_2026-09-17.md`);
+   `/sdlc intake spec-interview` to ready-green; units S1-S5 (the diagram's
+   cards), one commit each, Two-Key; USAGE section first (pass zero). Ships
+   in v0.13.0 with wave A, no tag of its own.
+5. Wave A: the two decisions below, then `/sdlc intake playbook-guardrails`
+   to ready-green (units U1-U7 in the diagram's cards; U7 is amendment 2's
+   intake prompts), one commit per unit, Two-Key, PR, merge, tag v0.13.0
+   (carrying step 4), self-pin.
+   - 5b, proposed and unratified: `taskcontract graph` emits Archify beside
+     its Mermaid, so a contract's picture is derived, never hand authored
+     (0024). Two units, its own small contract, after 0.13.0, before the demo.
+6. Demo intake: the user copies the Drive template for one real feature (3-5
+   success criteria, 2-3 Gherkin scenarios each), or runs the step-4
+   interview; the contract is drafted in a sandbox consumer, not the kit's
+   own specs/; USAGE gains the section beside section 8.
+7. Wave B: intake `playbook-loop` (V1-V5), same discipline, v0.14.0.
+8. Session close: STATE.md regenerated, this plan struck through.
 
-Open before intake A: the diff-to-contract binding for the scope check (branch
-name, PR body, or a `Contract:` commit trailer; recommend the trailer, it is
-what the Theory hook already parses). Open before intake B: cadence for the
-re-scan (clocks.yaml, Q4 placeholder) and which four metrics stay.
+Open before intake A, two decisions. (1) The diff-to-contract binding for the
+scope check: branch name, PR body, or a `Contract:` commit trailer; recommend
+the trailer, it is what the Theory hook already parses. (2) Gap 1 on class-E
+paths (0027's open consequence): deny outright, or warn until PL-PIPE.1's
+approval record exists; recommend no special case: the hook denies the spec
+channel and warns outside the bound contract's scope, tightening to deny in
+wave B. Open before intake B: cadence for the re-scan (clocks.yaml, Q4
+placeholder) and which four metrics stay.
 
 House rules in force: no pipes/chains in any authored command string;
 commit messages via Write + git commit -F; Two-Key on every code unit.
