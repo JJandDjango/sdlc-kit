@@ -2,8 +2,8 @@
 
 _Session 32, 2026-09-18. Working notes, not a Cairn stratum. Ratified
 call by call in session 32: six reconciliation calls and one marker
-rule. Amends ADR 0026's template changes; the ADR follows once the
-definition of done is ratified. Sources: the kit's intake-ready
+rule, then the definition of done. Amends ADR 0026's template changes;
+the ADR follows. Sources: the kit's intake-ready
 template (`skills/product-specification-interview/templates/
 feature-document.md.template`) and the user's work format (seventeen
 sections, a different project, no kit)._
@@ -130,8 +130,8 @@ The record
 
 15. Decisions and open questions `[Both seats · authored]`: question
     and answer, OPEN marked; a decided answer becomes a check, a
-    criterion, a non-goal or a term; an open one carries to the
-    requirements gate.
+    criterion, a non-goal or a term; an open one still standing at
+    intake parks the document.
 16. Traceability. 16.1 Links out `[Both seats · authored]`. 16.2 Record
     `[Intake · derived from rN]`, after merge: unit, commit, tests.
 17. Notes `[Both seats · authored]`: freeform.
@@ -153,14 +153,69 @@ regenerates the contract, re-renders the appendix, and logs a row.
 States, carried in the status line: draft (the interview), ready
 (intake green, contract derived, appendix stamped), merged (PR in, SHA
 recorded, traceability rendered). The definition of done is asked per
-state; it is the next item of this session.
+state.
+
+## Definition of done
+
+The document is ready when intake can derive a ready-green contract
+from it without asking the request half a single new question. Three
+states, three signatures: ready is signed by the PO seat (the request
+half), the engineer seat (the solution half) and the validator (the
+contract); merged is signed by the verifier (a PASS per unit) and
+whoever merges; closed is signed by the PO seat on a closing
+measurement row. The kit enforces the middle; the ends are signatures.
+
+Ready, the checks (1 to 8 the request half's, advisory in the
+interview and hard at intake; 9 and 10 intake's exit):
+
+1. The statement's "so I can" clause names a state of the world.
+2. Three to five success criteria, one line each, an outcome a test
+   can decide.
+3. Two or three checks under every criterion, each with an id, none
+   marked thin.
+4. Non-goals holds the standing line and at least one line specific to
+   this feature.
+5. Every prerequisite is marked exists or missing; a missing one names
+   its ticket or owner.
+6. Existing behavior touched is listed or says "none"; every entry has
+   a regression check.
+7. Every error message a check rejects with is written verbatim.
+8. Both seats are named, and for a bug fix a "Measured:" row for the
+   findings falls inside the consumer's window.
+9. Every check is assigned to exactly one unit; every unit delivers at
+   least one check.
+10. The contract validates ready-green, the revision table carries the
+    intake row naming both seats and the revision they signed, and
+    every derived block is stamped with that revision.
+
+Zero OPEN marks stand anywhere above the line or in Decisions and open
+questions at ready; Notes never carries one. A question that cannot be
+decided parks the document; it does not ready it with caveats.
+Understanding cannot be checked; the signature of a named seat on a
+named revision is its record.
+
+During development a surprise stops the unit and enters the document
+before it enters the conversation: an OPEN entry in Decisions and open
+questions with the unit id and the finding, and a revision row. The
+derived blocks go stale on the row, the status line says so, and no
+unit takes a commit while a derived block is stale or an OPEN mark
+stands. The humans re-read the document with the finding in it,
+decide, the answer lands in its section, intake re-runs, the contract
+and the appendix re-render, work resumes (ADR 0026). Today the pause is
+a rule people keep; the hook can enforce the stale check in wave B.
 
 ## Consequences for the kit (not yet contracted)
 
 - The template: the reorder, the tags, numbered revision rows, the
   status line, Terms, and the three dissolved sections. The interview's
-  sections flow follows the new order. The readiness check gains the
-  stale-stamp rule and the thin-check rule.
+  sections flow follows the new order. The readiness check grows from
+  five rules to the ten above, plus the stale-stamp rule.
+- Intake: an open question no longer carries to the requirements gate
+  (G1.3); a document with one standing parks. Every check is assigned
+  to exactly one unit at intake, and an orphan check or an empty unit
+  is a finding.
+- Wave B: the hook refuses a commit while a derived block is stale or
+  an OPEN mark stands, which is the surprise loop made mechanical.
 - Deriving Gherkin from checks is one interview step and one unit,
   upstream of the carried G1 slice (Gherkin as the authoring format).
 - ADR 0026's template changes amended: Gherkin grouped by criterion and
