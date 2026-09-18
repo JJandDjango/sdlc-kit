@@ -1,0 +1,206 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: playbook-guardrails
+
+intent: >-
+  A session can edit a ready contract or a ratified term today. A merge
+  with a path outside its contract's scope passes with no check. After
+  this task a hook rejects Edit and Write on a ready contract, a ratified
+  term, and every other file under `specs/`. The hook warns on a write
+  outside the bound contract's scope. `taskcontract scope-check` reads
+  the `Contract:` lines of a range and exits red on a path outside the
+  named contract's scope. The scaffolded CI runs it as G4.12.
+  `.sdlc/REVIEW.md` names the advisory pass. Intake records, per unit,
+  which files change, in what order, and which test shows it, as the
+  source states them. `USAGE.md` names the hook, the check, and the pass.
+
+scope:
+  - taskcontract/
+  - skills/sdlc/
+  - tests/
+  - docs/
+  - .github/workflows/
+  - specs/vocabulary/constraints.yaml
+  - USAGE.md
+  - CONVENTIONS.md
+  - CHANGELOG.md
+  - MAP.md
+  - pyproject.toml
+
+non_goals:
+  - No change to the contract schema.
+  - No new human conditions (ADR 0015). The hook and the check are
+    mechanical.
+  - >-
+    The `playbook-loop` contract stays out: the scheduled scan, the flow
+    numbers, the PO venue, the eval refs.
+  - >-
+    The hook rejects no write outside `specs/` in this task: a write
+    outside scope warns.
+  - No change to the interview skill.
+  - No new gate. G4.12 joins the G4 roster; nothing else in the registry
+    changes.
+
+decomposition:
+  - unit: u0-usage-pass-zero
+    id: u0-usage-pass-zero
+    confirmed_by: [user]
+    done_means: >-
+      `USAGE.md` gains a section on the hook, one on the scope check and
+      the `Contract:` line, and one on `.sdlc/REVIEW.md`. Section 8 names
+      what intake records per unit from the seats: files, order, test.
+      The status marks read red at pass zero.
+    acceptance_sketch:
+      - verify each section exists and names its command, the hook path,
+        or the check
+      - verify the status marks in each section read red
+  - unit: u1-hook-script
+    id: u1-hook-script
+    confirmed_by: [user]
+    depends_on: [u0-usage-pass-zero]
+    done_means: >-
+      `skills/sdlc/templates/hooks-protect-specs.py.template` holds the
+      hook. On Edit, Write, MultiEdit, or NotebookEdit under `specs/`, the
+      hook exits 2 with the rationale on `stderr`. The hook rejects a
+      contract that validates ready, a term with `status: ratified`, and
+      any other file there. A draft contract and a draft term pass. With
+      a bound contract, a path outside its scope passes with a warning;
+      with none, the hook stays silent. With no kit present the hook
+      rejects every write under `specs/`.
+      `tests/test_hook_protect_specs.py` covers each rule above.
+    acceptance_sketch:
+      - run the hook with a ready contract path on `stdin` and verify
+        exit 2 with the rationale
+      - run the hook with a draft contract and a draft term and verify
+        exit zero
+      - run the hook with a path outside the bound scope and verify exit
+        zero with the warning
+  - unit: u2-init-renders-hook
+    id: u2-init-renders-hook
+    confirmed_by: [user]
+    depends_on: [u1-hook-script]
+    done_means: >-
+      `init.py` renders `.sdlc/hooks/protect_specs.py` as a kit-owned
+      surface and `.claude/settings.json` as a merge target with the hook
+      bound to Edit, Write, MultiEdit, and NotebookEdit. `update.py`
+      reports drift on the hook and never applies the settings file. The
+      suite covers both surfaces in the init and update tests.
+    acceptance_sketch:
+      - verify a greenfield init writes the hook and the settings file
+      - verify the next init prints the settings and writes nothing
+      - verify update names hook drift and never applies the settings
+        file
+  - unit: u3-managed-settings
+    id: u3-managed-settings
+    confirmed_by: [user]
+    depends_on: [u2-init-renders-hook]
+    done_means: >-
+      `skills/sdlc/templates/reference/managed-settings.json` holds the
+      org profile that pins the hook, never rendered by init. `USAGE.md`
+      names it and the path an org drops it at. A test reads it as JSON
+      and checks the hook is named.
+    acceptance_sketch:
+      - verify the profile file reads as JSON and names the hook path
+      - verify USAGE names the profile and its path
+  - unit: u4-scope-check
+    id: u4-scope-check
+    confirmed_by: [user]
+    depends_on: [u0-usage-pass-zero]
+    done_means: >-
+      `taskcontract/scope_check.py` and the `scope-check` subcommand read
+      the `Contract:` lines of a range, resolve each named contract's
+      `scope`, and report SC001 for a path outside it. A change with no
+      `Contract:` line passes on the `free_paths` of `.sdlc/config.yaml`
+      and reports SC002 on any other path. An unknown id reports SC003.
+      Exit 1 on findings, 2 on a missing base; `--json` emits the
+      envelope. `tests/test_scope_check.py` covers each rule.
+    acceptance_sketch:
+      - run `scope-check` on a range with a path outside the named scope
+        and verify SC001 and exit 1
+      - run `scope-check` on a range with no `Contract:` line and only
+        `free_paths` and verify exit zero
+      - run `scope-check --json` and verify the envelope names every
+        finding
+  - unit: u5-ci-and-g4-12
+    id: u5-ci-and-g4-12
+    confirmed_by: [user]
+    depends_on: [u4-scope-check]
+    done_means: >-
+      `workflow.yml.template` gains a `scope-check` step on pull requests,
+      the base from the event; the kit's own `.github/workflows/sdlc.yml`
+      gains the same step. `docs/gates.md` names G4.12 as a mechanical
+      class-E row; the G4 deep page matches the row; the constraint
+      registry gains `g4-12-scope-check`. `CONVENTIONS.md` gains one line
+      on the `Contract:` line. The pull merge records the human answer
+      for the class-E delta.
+    acceptance_sketch:
+      - verify the workflow template and the kit workflow carry the
+        `scope-check` step on pull requests
+      - verify the registry row, the deep page, and the constraint
+        registry name G4.12
+      - verify the pull merge records the human answer for the class-E
+        delta
+  - unit: u6-review-md
+    id: u6-review-md
+    confirmed_by: [user]
+    depends_on: [u0-usage-pass-zero]
+    done_means: >-
+      `REVIEW.md.template` renders to `.sdlc/REVIEW.md` as a consumer
+      surface. The page names what the advisory pass checks: the
+      contract's scope and non-goals, and the write surface. The pass
+      reads the acceptance sketch of each unit against the tests. The
+      page states the pass is advisory; the eval refs ride
+      `playbook-loop`. The init and update tests hold the surface.
+    acceptance_sketch:
+      - verify a greenfield init writes `.sdlc/REVIEW.md` as a consumer
+        surface
+      - verify the page states the pass is advisory and names the write
+        surface
+  - unit: u7-intake-questions
+    id: u7-intake-questions
+    confirmed_by: [user]
+    depends_on: [u0-usage-pass-zero]
+    done_means: >-
+      I4 and I5 of `skills/sdlc/flows/intake.md` record, per unit, which
+      files change, in what order, and which test shows it, as `scope`,
+      `depends_on`, and `acceptance_sketch`. The words are the source's.
+      When the
+      source carries an Implementation section, intake reads the three
+      from it; the seats keep or change them. The flow passes
+      `prompt_lang`.
+    acceptance_sketch:
+      - verify I4 and I5 name which files change, in what order, and
+        which test shows it
+      - verify the flow reads the three from a source with an
+        Implementation section
+      - run `prompt_lang` on the flow and verify exit zero
+  - unit: u8-docs-and-release
+    id: u8-docs-and-release
+    confirmed_by: [user]
+    depends_on: [u3-managed-settings, u5-ci-and-g4-12, u6-review-md, u7-intake-questions]
+    done_means: >-
+      `CHANGELOG.md` carries the 0.13.0 note for the hook, the check, the
+      page, and the intake change. `docs/task-contract.md` names the SC
+      codes. `MAP.md` marks the row of ADR 0027 as shipped. The
+      `USAGE.md` marks read green. `pyproject.toml` and `KIT_VERSION`
+      read 0.13.0.
+    acceptance_sketch:
+      - verify CHANGELOG names the hook, the check, the page, and the
+        intake change under 0.13.0
+      - run pytest and verify exit zero with the version test
+      - verify the USAGE marks read green and MAP marks the row shipped
+
+dependencies: []
+
+entities:
+  - consumer
+  - task-contract
+  - gate
+  - vocabulary-term
+  - decomposition-unit
+  - scaffold
+
+provenance:
+  origin: human-request
+  ref: REQUEST_playbook-guardrails_2026-09-17.md
