@@ -95,6 +95,42 @@ def test_apply_restores_kit_owned_file(tmp_path, skill_init, skill_update, capsy
     assert rc == 0  # applying converges to clean
 
 
+def test_review_page_is_consumer_owned(tmp_path, skill_init, skill_update, capsys):
+    """Unit u6-review-md (contract: playbook-guardrails): existence only."""
+    _scaffold(tmp_path, skill_init)
+    page = tmp_path / ".sdlc/REVIEW.md"
+    page.write_text("# our own review rules\n", encoding="utf-8")
+    rc = skill_update.main(["--cwd", str(tmp_path)])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert ".sdlc/REVIEW.md" in out and "existence only" in out
+
+
+def test_hook_drift_named_and_settings_never_applied(
+        tmp_path, skill_init, skill_update, capsys):
+    """Unit u2-init-renders-hook (contract: playbook-guardrails)."""
+    _scaffold(tmp_path, skill_init)
+    hook = tmp_path / ".sdlc/hooks/protect_specs.py"
+    hook.write_text(hook.read_text(encoding="utf-8").replace(
+        "return _warn(", "return 0 and _warn("), encoding="utf-8")
+    rc = skill_update.main(["--cwd", str(tmp_path)])
+    out = capsys.readouterr().out
+    assert rc == 1
+    assert ".sdlc/hooks/protect_specs.py" in out and "kit-owned" in out
+
+    rc = skill_update.main(["--cwd", str(tmp_path), "--apply", ".sdlc/hooks/protect_specs.py"])
+    capsys.readouterr()
+    assert rc == 0
+    assert "return 0 and _warn(" not in hook.read_text(encoding="utf-8")
+
+    settings = tmp_path / ".claude/settings.json"
+    settings.write_text('{"hooks": {}}\n', encoding="utf-8")
+    rc = skill_update.main(["--cwd", str(tmp_path), "--apply", ".claude/settings.json"])
+    err = capsys.readouterr().err
+    assert rc == 1 and "refused" in err
+    assert settings.read_text(encoding="utf-8") == '{"hooks": {}}\n'
+
+
 def test_absent_surface_reported(tmp_path, skill_init, skill_update, capsys):
     _scaffold(tmp_path, skill_init)
     (tmp_path / "specs/README.md").unlink()

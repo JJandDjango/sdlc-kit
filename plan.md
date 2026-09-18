@@ -55,10 +55,13 @@ session-level view of both contracts.
    done, 2026-09-17: seven commits on `session-31-spec-interview` (intake,
    S1-S5, the verifier's advisories), Two-Key PASS by a workflow verifier
    (16/16 sketches). Ships in v0.13.0 with wave A, no tag of its own.
-5. Wave A: the two decisions below, then `/sdlc intake playbook-guardrails`
-   to ready-green (units U1-U7 in the diagram's cards; U7 is amendment 2's
-   intake prompts), one commit per unit, Two-Key, PR, merge, tag v0.13.0
-   (carrying step 4), self-pin.
+5. Wave A: the two decisions below (done), then `/sdlc intake
+   playbook-guardrails` to ready-green (done 2026-09-18: nine units u0-u8,
+   the diagram's cards; u7 is amendment 2's intake prompts), one commit per
+   unit with the `Contract:` trailer (done: eleven commits, scope-green),
+   Two-Key (done: workflow verifier, 9/9 units PASS, advisories closed),
+   PR (open), then on the user's word: merge, tag v0.13.0 (carrying step
+   4), self-pin. Branch `session-31-wave-a`, stacked on PR #40.
    - 5b, proposed and unratified: `taskcontract graph` emits Archify beside
      its Mermaid, so a contract's picture is derived, never hand authored
      (0024). Two units, its own small contract, after 0.13.0, before the demo.
@@ -69,14 +72,13 @@ session-level view of both contracts.
 7. Wave B: intake `playbook-loop` (V1-V5), same discipline, v0.14.0.
 8. Session close: STATE.md regenerated, this plan struck through.
 
-Open before intake A, two decisions. (1) The diff-to-contract binding for the
-scope check: branch name, PR body, or a `Contract:` commit trailer; recommend
-the trailer, it is what the Theory hook already parses. (2) Gap 1 on class-E
-paths (0027's open consequence): deny outright, or warn until PL-PIPE.1's
-approval record exists; recommend no special case: the hook denies the spec
-channel and warns outside the bound contract's scope, tightening to deny in
-wave B. Open before intake B: cadence for the re-scan (clocks.yaml, Q4
-placeholder) and which four metrics stay.
+Decided before intake A (user, 2026-09-17, on the recommendation). (1) The
+diff-to-contract binding is a `Contract:` commit trailer, parsed like the
+Theory trailer; every kit commit carries one from intake A on. (2) Gap 1 on
+class-E paths (0027's open consequence): no special case; the hook denies the
+spec channel and warns outside the bound contract's scope, tightening to
+deny in wave B. Open before intake B: cadence for the re-scan (clocks.yaml,
+Q4 placeholder) and which four metrics stay.
 
 House rules in force: no pipes/chains in any authored command string;
 commit messages via Write + git commit -F; Two-Key on every code unit.

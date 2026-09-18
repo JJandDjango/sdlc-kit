@@ -11,6 +11,7 @@ from .checker import PROFILES, load_schema, validate_path
 from .graph import main_graph
 from .lang import main_lang_check, main_lang_extract
 from .scaffold import scaffold
+from .scope_check import main_scope_check
 from .suppression_audit import main_audit
 from .vocabulary import (VOCAB_DIR, list_terms, load_glossary_schema,
                          registry_size, scaffold_term, validate_vocab_root)
@@ -82,6 +83,18 @@ def main(argv=None) -> int:
                        help="repository to diff (default: cwd)")
     audit.add_argument("--json", action="store_true", dest="as_json",
                        help="emit findings as a JSON array (the agent loop substrate)")
+    scope = sub.add_parser(
+        "scope-check",
+        help="G4.12: every commit in the range stays within the scope of the "
+             "contract its Contract: trailer names")
+    scope.add_argument("--base", default=None,
+                       help="range base sha (default: resolved from the Actions event)")
+    scope.add_argument("--head", default="HEAD",
+                       help="range head (default: HEAD)")
+    scope.add_argument("--root", default=".",
+                       help="repo root that holds specs/ and .sdlc/ (default: cwd)")
+    scope.add_argument("--json", action="store_true", dest="as_json",
+                       help="emit findings in the note+findings envelope")
     args = parser.parse_args(argv)
 
     if args.command == "graph":
@@ -89,6 +102,9 @@ def main(argv=None) -> int:
 
     if args.command == "suppression-audit":
         return main_audit(args)
+
+    if args.command == "scope-check":
+        return main_scope_check(args)
 
     if args.command == "lang-check":
         return main_lang_check(args)

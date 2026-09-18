@@ -49,6 +49,12 @@ constraints:
       - intake-seat
     check: python -m taskcontract validate --profile ready (TC016) - every unit's confirmed_by resolves to a value of the ratified intake-seat term; armed by that ratification, inactive otherwise (G0.3, ADR 0025)
     status: enforced
+  - id: g4-12-scope-check
+    kind: reference-integrity
+    subjects:
+      - task-contract
+    check: python -m taskcontract scope-check - every commit in the candidate range carries a Contract trailer that resolves to a contract, and every changed path outside specs/ is inside that contract's scope or in the repo's free paths (SC001-SC003; G4.12, ADR 0027)
+    status: enforced
   - id: glossary-dictionary-disjointness
     kind: disjointness
     subjects:

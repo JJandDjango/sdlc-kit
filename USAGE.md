@@ -87,8 +87,11 @@ SDLC.md                     gate status page — which gates are live here (🟢
 specs/README.md             the protected root: contracts live at specs/<task-id>/contract.yaml,
                             immutable to implementers (write-surface rule)
 .github/workflows/sdlc.yml  CI: pip-install the kit, validate every contract
+.sdlc/hooks/protect_specs.py  session hook: the spec channel closed to sessions (§4)
+.sdlc/REVIEW.md             the advisory review pass, yours to edit (§4)
 .pre-commit snippet         task-contract ready check (written if absent, else printed)
 .vscode/settings.json       YAML schema mapping for contract editing (written if absent, else printed)
+.claude/settings.json       the hook wired for Edit/Write/MultiEdit/NotebookEdit (written if absent, else printed)
 ```
 
 **Never overwrites.** Existing files are skipped and reported —
@@ -168,6 +171,69 @@ Report-only health check — exit 0 clean / 1 findings / 2 no `.sdlc`
 here. Checks: config + ledgers parse, every contract validates, the
 payload surfaces exist, CI job present. It never writes; fixes stay
 with you.
+
+### The session hook — `.sdlc/hooks/protect_specs.py` 🟢
+
+> 🟢 **Shipped** (kit 0.13.0, [ADR 0027](decisions/0027-playbook-crosswalk-and-closures.md)
+> gaps 1, 2, and 6a, contract `specs/playbook-guardrails/`).
+
+🟢 `/sdlc init` renders a Claude Code hook at `.sdlc/hooks/protect_specs.py`
+and wires it into `.claude/settings.json` (a merge target: written when
+absent, printed when present) for Edit, Write, MultiEdit, and NotebookEdit.
+Under `specs/` the hook denies: a contract that validates `ready` ("a
+change re-intakes"), a term with `status: ratified` ("a class-S edit in
+review"), and every other file there (the spec channel). Drafts stay
+writable: intake edits the contract it is authoring. With no kit installed
+the hook denies everything under `specs/`. The wired command names
+`python`; where only `python3` resolves (macOS, some Linux), change the
+word in the settings file, which is yours after the first write.
+
+🟢 Outside `specs/`, the hook warns, never denies, when a write leaves the
+bound contract's `scope`. The session's contract is the branch name when
+`specs/<branch>/` exists, else `SDLC_CONTRACT`; with neither, the hook
+stays silent. Denial outside the spec channel waits for wave B.
+
+🟢 An organization pins the hook for every session with managed settings,
+which user and project settings cannot override: copy
+`skills/sdlc/templates/reference/managed-settings.json` from the kit to
+the platform's managed-settings path (`/Library/Application
+Support/ClaudeCode/managed-settings.json` on macOS,
+`/etc/claude-code/managed-settings.json` on Linux,
+`C:\ProgramData\ClaudeCode\managed-settings.json` on Windows). Its command
+runs the hook only where `.sdlc/hooks/protect_specs.py` exists, so repos
+without the kit are untouched. `/sdlc update` tracks drift on the rendered
+hook (kit-owned), never on your settings file.
+
+### `taskcontract scope-check` — G4.12 and the `Contract:` trailer 🟢
+
+🟢 Every commit names its contract in a git trailer, parsed like the
+`Theory:` trailer:
+
+```
+Contract: csv-export
+```
+
+🟢 `python -m taskcontract scope-check --base <sha>` reads the trailers of
+the range, resolves each contract's `scope`, and fails on a path outside
+it: SC001 (a path outside scope), SC002 (a commit with no trailer touching
+a bound path), SC003 (a trailer naming no contract). A commit with no
+trailer passes when it touches only free paths (`scope_check.free_paths`
+in `.sdlc/config.yaml`, seeded with the docs spine, the plan, the
+changelog). `--json` emits the findings envelope; exit 1 on findings, 2
+when no base can be resolved.
+
+🟢 The scaffolded CI runs it on every pull request as G4.12, "the diff
+stays within its contract's scope" (registry: [docs/gates.md](docs/gates.md)).
+
+### `.sdlc/REVIEW.md` — the advisory review pass 🟢
+
+🟢 `/sdlc init` renders `.sdlc/REVIEW.md`, yours to edit (consumer class):
+what a reviewer, human or agent, checks on a pull request beyond the
+mechanical gates: the diff against the contract's `scope` and `non_goals`,
+each unit's `acceptance_sketch` against the tests that landed, and the
+write surface (nothing under `specs/`, no test weakened). The pass is
+advisory: it blocks nothing. An escape it should have caught adds an
+agent eval in wave B (`playbook-loop`).
 
 ---
 
@@ -312,6 +378,13 @@ not the author.
 | technical-term ratification | engineer |
 | `acceptance_sketch` | both: the PO names the observable, the engineer confirms a test could decide it |
 | the YAML itself | neither: the agent authors it and loops the doors; both seats answer |
+
+🟢 The engineer seat's three answers are the playbook's plan questions,
+asked in those words at I4 and I5: which files change (`scope`), in what
+order (`depends_on`), which tests prove it (`acceptance_sketch`). When the
+raw request is a feature document with an Implementation section, intake
+reads the three from it and asks the seats to keep or change them (kit
+0.13.0).
 
 ### The answer record 🟢
 

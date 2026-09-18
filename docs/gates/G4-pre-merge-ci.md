@@ -498,6 +498,44 @@ and adopted here, where the venue is trusted).
   audited).
 - **Lifecycle:** `specified` (ratified 2026-07-24).
 
+### G4.12 Scope check
+
+Adopted 2026-09-18 under 0014's full lane (ADR
+[0027](../../decisions/0027-playbook-crosswalk-and-closures.md) gap 2,
+contract `playbook-guardrails`; the pull merge is the record). The
+playbook's "the diff stays within the plan" made mechanical: the plan
+is the contract's `scope`, and the binding is a git trailer.
+
+- **Shape (pass condition):** object = candidate diff, per commit in
+  the range base..head. Every commit names its contract in a
+  `Contract: <id>` trailer (git's own trailer block, the final
+  paragraph; parsed like the `Theory:` trailer) and every changed path
+  is inside that contract's `scope` (prefix, exact, or glob entry) or
+  in the repo's free paths (`scope_check.free_paths` in
+  `.sdlc/config.yaml`; default: the docs spine, the plan, the
+  changelog, the readme, the inbox, `.sdlc/`). Diagnostics: SC001 a
+  path outside the named scope; SC002 a commit with no trailer touching
+  a bound path; SC003 a trailer naming no contract. Paths under `specs/`
+  are the spec channel, G4.6's remit, and never counted here.
+- **Reference binding:** `python -m taskcontract scope-check` (base
+  from the Actions event or `--base`); the scaffolded `sdlc.yml` runs it
+  on every pull request, checkout at full depth.
+- **Gap status:** none - git trailers and a YAML scope list are
+  universal. The session-side companion is advisory: the rendered hook
+  warns on a write outside the bound contract's scope and denies only
+  the spec channel until wave B.
+- **Why:** a contract whose scope nobody checks is a plan the diff can
+  drift from silently; the playbook measures that drift as rework, the
+  kit refuses it at the merge. The trailer, not the branch name or the
+  PR body, because it is the one binding every commit carries and git
+  itself parses.
+- **Kind & loopability:** mechanical; the diagnostic names the commit,
+  the path, and the contract - loopable (move the path, split the
+  commit, or re-intake the scope).
+- **Parameters:** the free-path list is per-repo policy (class E).
+- **Lifecycle:** `specified` (ratified 2026-09-17), `enforced` in this
+  repo.
+
 ## Completeness check
 
 Gate purpose: everything minutes-decidable on the merged result blocks
@@ -536,7 +574,10 @@ before main; the check asks what escapes eleven conditions. Examined:
 
 Roster verdict: complete at eleven - two adopted this session (G4.10,
 G4.11), zero further additions; two registry corrections queued
-(authored line, venue line) and two renames (G4.1, G4.6).
+(authored line, venue line) and two renames (G4.1, G4.6). G4.12 joined
+2026-09-18 through the full lane (ADR 0027 gap 2): a check on the
+change-act, admitted because a trailer parse and a scope match are
+minutes-decidable.
 
 ## Operators & harness
 

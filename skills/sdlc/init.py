@@ -18,7 +18,8 @@ Answer keys (all required):
 Behavior:
   - {{ var }} substitution across templates; today's date is stamped.
   - NO-CLOBBER: an existing target is skipped and reported, never overwritten.
-  - MERGE TARGETS (.pre-commit-config.yaml, .vscode/settings.json): when the
+  - MERGE TARGETS (.pre-commit-config.yaml, .vscode/settings.json,
+    .claude/settings.json): when the
     file already exists, its snippet is printed for manual merge instead of
     silently skipped - the payload still reaches the user.
   - TOOLING PROFILE (ADR 0018): the stack answer selects an overlay at
@@ -43,7 +44,7 @@ KIT_REPO = "https://github.com/JJandDjango/sdlc-kit"
 # release-tagging). Bump KIT_VERSION together with pyproject [project].version -
 # tests hold the two equal - and tag v{KIT_VERSION} at the merge that ships the
 # bump. Consumers upgrade by bumping the rendered ref themselves: pull, not push.
-KIT_VERSION = "0.12.0"
+KIT_VERSION = "0.13.0"
 KIT_REF = f"git+{KIT_REPO}.git@v{KIT_VERSION}"
 SCHEMA_URL = ("https://raw.githubusercontent.com/JJandDjango/sdlc-kit/"
               f"v{KIT_VERSION}/taskcontract/schemas/task-contract.schema.json")
@@ -57,6 +58,8 @@ TEMPLATE_TO_TARGET = {
     "workflow.yml.template": ".github/workflows/sdlc.yml",
     "findings-TEMPLATE.yaml.template": ".sdlc/findings/TEMPLATE.yaml",
     "NOTICE.md.template": ".sdlc/NOTICE.md",
+    "hooks-protect-specs.py.template": ".sdlc/hooks/protect_specs.py",
+    "REVIEW.md.template": ".sdlc/REVIEW.md",
 }
 
 # Files a repo commonly already has: written only when absent, else the
@@ -64,6 +67,7 @@ TEMPLATE_TO_TARGET = {
 MERGE_TEMPLATE_TO_TARGET = {
     "pre-commit-config.yaml.template": ".pre-commit-config.yaml",
     "vscode-settings.json.template": ".vscode/settings.json",
+    "claude-settings.json.template": ".claude/settings.json",
 }
 
 # Drift classes consumed by update.py - the single source for both engines
@@ -76,12 +80,15 @@ SURFACE_CLASSES = {
     "specs-README.md.template": "kit-owned",
     "findings-TEMPLATE.yaml.template": "kit-owned",
     "NOTICE.md.template": "kit-owned",
+    "hooks-protect-specs.py.template": "kit-owned",
     "SDLC.md.template": "consumer",
     "config.yaml.template": "consumer",
     "clocks.yaml.template": "consumer",
     "reds.yaml.template": "consumer",
+    "REVIEW.md.template": "consumer",
     "pre-commit-config.yaml.template": "merge-target",
     "vscode-settings.json.template": "merge-target",
+    "claude-settings.json.template": "merge-target",
 }
 
 PROFILE_MANIFEST = "profile.json"

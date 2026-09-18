@@ -37,6 +37,13 @@
   replacement, and a change after ready re-intakes. The request holds worth
   and design, the contract form and entry; unit tests enter neither
   ([[0026-feature-document-as-raw-request]]).
+- **Commits name their contract.** Every commit carries a `Contract: <id>`
+  trailer in its final paragraph (git's trailer block). G4.12,
+  `python -m taskcontract scope-check`, fails a pull request whose commit
+  touches a bound path outside the named contract's `scope`; free paths
+  (`.sdlc/config.yaml` `scope_check.free_paths`) need no trailer, and
+  `specs/` is the spec channel, never in remit
+  ([[0027-playbook-crosswalk-and-closures]]).
 - **Register boundary.** Controlled register where prose is executed -
   contract prose fields, checked by `python -m taskcontract lang-check`;
   free register where prose is deliberated (THEORY, ADRs, docs

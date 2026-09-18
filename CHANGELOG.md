@@ -11,6 +11,45 @@ Two house rules, enforced in review:
 
 ## 0.13.0 - unreleased
 
+- **The session hook: the spec channel closed to sessions**
+  (`playbook-guardrails`, ADR 0027 gap 1). `/sdlc init` renders
+  `.sdlc/hooks/protect_specs.py` (kit-owned) and wires it in
+  `.claude/settings.json` (merge target, printed when present) as a
+  PreToolUse hook for Edit, Write, MultiEdit, and NotebookEdit. Under
+  `specs/` it denies with the rationale: a contract that validates ready
+  (a change re-intakes), a term with `status: ratified` (a class-S edit
+  in review), every other file there (the spec channel); drafts pass;
+  with no kit importable every write under `specs/` is denied. Outside
+  `specs/` a write beyond the bound contract's scope (the branch name
+  when `specs/<branch>/` exists, else `SDLC_CONTRACT`) warns and never
+  denies; denial there is wave B. Org profile:
+  `skills/sdlc/templates/reference/managed-settings.json` (never
+  rendered; its command runs the hook only where the scaffold exists).
+  Delta note: a scaffolded repo gains two surfaces; `/sdlc update`
+  reports the hook absent until applied and prints the settings snippet
+  to merge by hand.
+- **`taskcontract scope-check` - G4.12, the diff stays within its
+  contract's scope** (gap 2). Commits name their contract with a
+  `Contract: <id>` trailer in the final paragraph; over `base..head`
+  every changed path outside `specs/` must sit in the named contract's
+  `scope` or in `scope_check.free_paths` (`.sdlc/config.yaml`; default:
+  the docs spine, the plan, the changelog, the readme, the inbox,
+  `.sdlc/`). SC001 outside scope, SC002 no trailer on a bound path,
+  SC003 unknown id; exit 1 on findings, 2 without a base; `--json`. The
+  scaffolded workflow runs it on pull requests (checkout at full depth).
+  Registry 56 -> 57 (G4 roster 11 -> 12), constraint registry 7 -> 8,
+  one CONVENTIONS line. Delta note: after the kit-owned workflow is
+  applied, every pull request's commits need a trailer or free paths;
+  commits before the upgrade are outside any checked range.
+- **`.sdlc/REVIEW.md`** (gap 6a): rendered by init as a consumer
+  surface, it names the advisory review pass - what it reads, what it
+  asks, what it does not do, where escapes go. Advisory: it blocks
+  nothing; escapes become agent evals in wave B.
+- **Intake asks the engineer's three questions in the playbook's words**
+  (session-30 amendment 2): I4 asks which files change (`scope`), in
+  what order (`depends_on`), which tests prove it (`acceptance_sketch`),
+  and reads them first from a feature document's Implementation section;
+  I5 shows them beside their source for keep-or-change.
 - **`/sdlc:product-specification-interview` - the feature document has a
   writer.** A second skill in the plugin (ADR 0028) interviews for the
   consumer's feature document, the raw request `/sdlc intake` consumes
