@@ -2,74 +2,74 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-10 (session 30 close, home machine)._
+> _Generated 2026-09-18 (session 31 close, home machine)._
 
 ## Now
-- v0.12.0 is closed: PR #37 (self-pin) merged as 673cc24 on 2026-09-09.
-  Main is at 7824b7a after PR #38 (`session-28-g0-pitch`): the session-28
-  notes ratified with five playbook amendments, ADR 0026 (the feature
-  document is the raw request) and ADR 0027 (playbook crosswalk, four
-  disagreements as alternatives, six closures in two contracts), the
-  CONVENTIONS raw-request rule, plan.md and its diagram source. Seven
-  merged local branches pruned; `session-17-*` and `session-18-close` keep
-  live upstreams. No kit code changed this session.
-- Session 30 (2026-09-08 to 2026-09-10) was documentation and direction.
-  The session plan diagram was reshaped from actor swimlanes into a step
-  spine (one lane of plan steps, human gates above, waits below); routing
-  lessons live in project memory. plan.workflow.json beside plan.md is the
-  diagram source; the HTML is generated, never committed. The close commit
-  carries both files with steps 1-3 struck.
-- Prototype venue decided: Google Docs, the consumer's own venue. The
-  consumer's real template was mapped section by section; three additions
-  ratified (a Seats line under the title, an Implementation section after
-  Business Requirements carrying the engineer's three answers, a "Not in
-  scope" line at the top of Requirements with the standing placeholder "No
-  new authorizations are added", confirmed at every intake). The revision
-  table is the linkage record: intake appends contract id, state, merge
-  SHA. Skeleton: "TEMPLATE - Feature Document (intake-ready)" in the
-  user's Drive; the mapping graduates to USAGE beside section 8 with the
-  demo, using this template, not 0026's generic one.
-- Receipts not re-run (no code changed): suite 222, validate 10/10, vocab
-  18 terms, lang-check 0, prompt_lang 8/8 as of session 27. Cairn audit 0
-  errors, 23 warnings: 21 pre-existing plus budget warnings on 0026 (64
-  lines) and 0027 (71), the house pattern since 0012.
-- Untracked REQUEST_unit-dag_2026-08-22.md stays untracked by kit rules.
+- Two pull requests open, both CI-green, neither merged; main is still at
+  16426dd (PR #39). PR #40 `session-31-spec-interview` (eight commits,
+  fb51daa..47bf089): the specification interview ships as the plugin's
+  second skill, `/sdlc:product-specification-interview` (ADR 0028, contract
+  `spec-interview`). PR #41 `session-31-wave-a` (stacked on #40,
+  6f8e92e..13f3709 plus this close): wave A, contract `playbook-guardrails`:
+  the session hook, `taskcontract scope-check` (G4.12), `.sdlc/REVIEW.md`,
+  the engineer's three questions at intake; version 0.13.0 in pyproject and
+  `KIT_VERSION`; the tag and the self-pin wait on the merge.
+- Session 31 (2026-09-17 to 2026-09-18) built and verified plan steps 4 and
+  5. Both Two-Key passes ran as Workflow verifiers (one receipts agent, one
+  zero-trust grader per unit): 5/5 and 9/9 units PASS; their advisories
+  closed in ad95d65 and 9f8c33a. Every unit landed as one commit.
+- Decisions taken 2026-09-17 on the recommendation: (1) the diff-to-contract
+  binding is a `Contract:` trailer, in git's final paragraph with the
+  attribution lines; every kit commit carries one from intake A on (the first
+  live scope-check found six wave-A commits with the trailer in a paragraph
+  of its own, and they were rewritten before their first push). (2) Class-E
+  paths get no special case: the hook denies `specs/`, warns outside the
+  bound contract's scope, and denial there is wave B.
+- Receipts at close: suite 282, prompt_lang skills 13/13 and agents 2/2,
+  twelve contracts ready-green, lang-check 0 (new contracts are not exempt;
+  the authoring recipe is in project memory), scope-check green over
+  `session-31-spec-interview..HEAD`, Cairn audit 0 errors / 25 warnings (23
+  known, a budget note on 0028, and STATE-STALE cleared by this file).
+- Inbox, untracked by the kit rules: `REQUEST_spec-interview_2026-09-17.md`
+  and `REQUEST_playbook-guardrails_2026-09-17.md` (the kit's first two
+  requests in the feature-document template) and
+  `REQUEST_unit-dag_2026-08-22.md`.
 
 ## Blockers
-- None. `/sdlc audit` here still reports TC005 on `id` and `confirmed_by`:
-  the pip install is pinned at e81f9a5. Fix:
-  `pip install -e E:\sdlc_development_kit`. Not a finding against the code.
+- None. The stale pip install persists (`sdlc-taskcontract` 0.10.0,
+  non-editable); `pip install -e E:\sdlc_development_kit` on the user's
+  word. `python -m` from the repo root shadows it, so every receipt above
+  ran the checkout; CI installs editable, which is why one hook test needed
+  a fake `checker.py` (13f3709).
 
 ## Next actions (plan.md step numbers)
-1. **Step 4, the session-31 opener:** two decisions, then
-   `/sdlc intake playbook-guardrails`. The diff-to-contract binding
-   (recommended: a `Contract:` commit trailer, parsed like the Theory
-   trailer) and gap 1 on class-E paths (recommended: no special case; the
-   hook denies the spec channel and warns outside the bound contract's
-   scope, tightening to deny in wave B). Units U1-U6 plus the amendment-2
-   intake prompt (the playbook's three plan questions), one commit each,
-   Two-Key, v0.13.0, self-pin. Present the plan first: `node
-   ~/.claude/skills/archify/bin/archify.mjs deliver workflow
-   plan.workflow.json <scratch>/plan.html --quality showcase --json`, then
-   `Start-Process` the HTML.
-2. Step 4b, proposed and unratified: `taskcontract graph` emits Archify
-   beside its Mermaid, so a contract's picture is derived, never hand
-   authored (ADR 0024's rule). Two units, its own small contract, before
-   the demo.
-3. Step 5: demo intake. The user copies the template for one feature (3-5
-   success criteria, 2-3 Gherkin scenarios each); intake runs in a sandbox
-   consumer, never the kit's own specs/; USAGE gains the section.
-4. Step 6: `/sdlc intake playbook-loop` (V1-V5) after fixing the re-scan
-   cadence and the metric set; v0.14.0.
-5. Carried: work-side upgrade to v0.12.0 (id migration, vocab extract,
-   seats); G1 slice (Gherkin as the authoring format); prompt lexicon arc;
-   runner probe, M0 pilot, PL-PIPE.3 harness, other continuations unchanged.
+1. **The release, on the user's word:** merge #40, then #41 (GitHub retargets
+   it to main); `git tag v0.13.0` at the merge; the self-pin PR moves the
+   kit's own `.github/workflows/sdlc.yml` ref (`@v0.12.0`) and USAGE's
+   install example to the tag, and gives CHANGELOG's "0.13.0 - unreleased"
+   heading its date and tag. Then delete the two branches and sync main.
+2. Step 5b, proposed and unratified: `taskcontract graph` emits Archify
+   beside its Mermaid, so a contract's picture is derived (0024). Two units,
+   its own contract, before the demo.
+3. Step 6, the demo intake in a sandbox consumer: the user copies the Drive
+   template or runs `/sdlc:product-specification-interview` there (its first
+   live run; reinstall the plugin from the tag first, or the command does
+   not exist in the session); intake consumes the document (I4 reads the
+   Implementation section); USAGE gains the mapping section beside §8 on
+   the real template.
+4. Step 7: `/sdlc intake playbook-loop` (V1-V5) after fixing the re-scan
+   cadence and the metric set; the hook's warning outside scope tightens to
+   deny there.
+5. Carried: work-side upgrade to 0.13.0 (id migration, vocab extract, seats,
+   the hook and REVIEW.md via `/sdlc update`, trailers on every commit); G1
+   slice (Gherkin as the authoring format); prompt lexicon arc; runner probe,
+   M0 pilot, PL-PIPE.3 harness.
 
 ## Open questions
-- Promote "plans as Archify diagrams", now in the step-spine shape, to the
-  global CLAUDE.md workflow preferences? Project memory holds it today.
-- Ratify step 4b (the derived contract diagram) into the plan?
-- Gap 4: which four metrics stay (time-to-ready, rework count, first-pass
-  merge, in-scope rate proposed).
-- Q4 thresholds, Q5 decorrelation, Q6 first analyzer tranche, PL-PIPE.3
-  comprehension empirics: unchanged from 25.
+- Promote "plans as Archify diagrams" to the global CLAUDE.md preferences?
+- Ratify step 5b into the plan?
+- The rendered hook command names `python`; USAGE documents the manual swap
+  to `python3` where only that resolves. Render per stack instead?
+  (verifier advisory on u2 and u3)
+- Gap 4: which four metrics stay. Q4 thresholds, Q5 decorrelation, Q6 first
+  analyzer tranche, PL-PIPE.3 comprehension empirics: unchanged from 25.
