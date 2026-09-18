@@ -9,7 +9,7 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
-## 0.13.0 - unreleased
+## 0.13.0 - 2026-09-18 (tag `v0.13.0`)
 
 - **The session hook: the spec channel closed to sessions**
   (`playbook-guardrails`, ADR 0027 gap 1). `/sdlc init` renders
