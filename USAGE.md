@@ -110,8 +110,10 @@ Run it in the target repo with a slug for the feature:
 /sdlc:product-specification-interview csv-export
 ```
 
-🟢 It asks the template's sections one question at a time: the origin
-(feature or bug fix), the seats, and any material you paste first; then
+🟢 It asks the template's sections one question at a time: the path, the
+origin (feature or bug fix; a bug fix also takes the incident reference
+and its regression scenario), the seats, and any material you paste
+first; then
 the story and background, three to five success criteria with two or
 three Gherkin scenarios each, non-goals, previously defined items,
 prerequisites, business requirements, and open questions. The

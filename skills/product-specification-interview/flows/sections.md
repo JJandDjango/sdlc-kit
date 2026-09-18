@@ -36,7 +36,7 @@ Q2. DESCRIPTION - ASK "What is the feature, in prose?" Record `answers.descripti
 
 Q3. BACKGROUND - ASK "Why now? What history and links does a reader need?" Record `answers.background`.
 
-Q4. SUCCESS CRITERIA - ASK for success criteria one at a time: "One line, an outcome a test can decide. SC1?" Probe a line that names an activity instead of an outcome. Stop asking at five. When the user offers a sixth, REPORT "Six criteria is two features. Which criteria form the second document?" and record the answer under `answers.split`; the interview goes on with the kept set. Record `answers.success_criteria: [{id: SC1, text}]`.
+Q4. SUCCESS CRITERIA - ASK for success criteria one at a time: "One line, an outcome a test can decide. SC1?" Each criterion becomes one decomposition unit at intake, so probe a line that names an activity instead of an outcome. The document wants three to five: below three, ASK whether the feature is a slice of a larger one or a bug fix, record the answer, and go on. Stop asking at five. When the user offers a sixth, REPORT "Six criteria is two features. Which criteria form the second document?" and record the answer under `answers.split`; the interview goes on with the kept set. Record `answers.success_criteria: [{id: SC1, text}]`.
 
 Q5. REQUIREMENTS - Three questions in turn. First the standing line: "Not in scope: 'No new authorizations are added.' Still true for this feature?" Then: "What else is out? The test: would an engineer plausibly build it, or a stakeholder expect it? If nobody would wonder, it does not belong here." Then: "Which constraints must hold?" Record `answers.not_in_scope` (list, the standing line first when it holds) and `answers.requirements` (list).
 
@@ -46,7 +46,7 @@ Q7. PREREQUISITES - ASK "What must exist first: a permission, a role, another ti
 
 Q8. BUSINESS REQUIREMENTS - Three questions in turn: the additions, the subtractions, the error messages (each message verbatim). Record `answers.business_requirements: {additions, subtractions, error_messages}`.
 
-Q9. IMPLEMENTATION - When `seats.engineer` is null: record `answers.implementation: null`, add "Implementation: left for intake (no engineer seat)" to `open`, and go to Q10. Else ASK the engineer's three answers in turn: which files change, in what order, which tests prove it. Then ASK for the endpoint table when there is one (method, path, request, response per row). Record `answers.implementation: {files, order, tests, endpoints}`. This step is the seam where a domain module would add its questions; modules are deferred (ADR 0028).
+Q9. IMPLEMENTATION - When `seats.engineer` is null: record `answers.implementation: null`, add "Implementation: left for intake (no engineer seat)" to `open`, WRITE the state file with `next: Q10`, and go to Q10. Else ASK the engineer's three answers in turn: which files change, in what order, which tests prove it. Then ASK for the endpoint table when there is one (method, path, request, response per row). Record `answers.implementation: {files, order, tests, endpoints}`. This step is the seam where a domain module would add its questions; modules are deferred (ADR 0028).
 
 Q10. MISC - ASK "Which questions came up, and which have a decided answer?" Record `answers.misc: [{q, a}]`; an undecided question gets `a: OPEN` and a line in `open`.
 

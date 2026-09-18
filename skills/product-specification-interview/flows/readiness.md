@@ -18,7 +18,7 @@ R1. READBACK - LOAD the state file. SHOW the document as it stands, section by s
 R2. CHECK what intake will need, and record every miss under `open` with its section name:
    - the feature statement's outcome clause names a state of the world ("so I can ...")
    - `not_in_scope` holds at least one line
-   - every success criterion has two or three scenarios, each with Given, When, and Then
+   - three to five success criteria, each with two or three scenarios, each scenario with Given, When, and Then
    - the PO seat is named
    - every answer recorded `thin: true`, and every `misc` entry answered OPEN
 
