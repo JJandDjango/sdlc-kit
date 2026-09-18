@@ -21,6 +21,7 @@ FULL_PAYLOAD = {
     "specs/README.md",
     ".github/workflows/sdlc.yml",
     ".sdlc/hooks/protect_specs.py",
+    ".sdlc/REVIEW.md",
     ".pre-commit-config.yaml",
     ".vscode/settings.json",
     ".claude/settings.json",
@@ -47,7 +48,7 @@ def test_second_run_is_pure_no_clobber(tmp_path, skill_init):
     created, skipped, merges = skill_init.render_all(
         ANSWERS, _templates(skill_init), tmp_path, "2026-07-27")
     assert created == []
-    assert len(skipped) == 9  # the normal targets
+    assert len(skipped) == 10  # the normal targets
     assert {rel for rel, _ in merges} == {".pre-commit-config.yaml", ".vscode/settings.json",
                                           ".claude/settings.json"}
 
@@ -206,8 +207,8 @@ def test_overlay_respects_no_clobber_and_merge_semantics(tmp_path, skill_init):
     skill_init.render_all(answers, templates, out, "2026-07-29")
     created, skipped, merges = skill_init.render_all(answers, templates, out, "2026-07-30")
     assert created == []
-    # overlay kit-owned entries no-clobber like base ones (9 base + 1 overlay)
-    assert len(skipped) == 10
+    # overlay kit-owned entries no-clobber like base ones (10 base + 1 overlay)
+    assert len(skipped) == 11
     # overlay merge-targets print their snippet instead of writing
     merge_rels = {rel for rel, _ in merges}
     assert merge_rels == {".pre-commit-config.yaml", ".vscode/settings.json",
@@ -390,6 +391,18 @@ def test_next_init_prints_the_settings_and_writes_nothing(tmp_path, skill_init):
     printed = dict(merges)[".claude/settings.json"]
     assert "protect_specs.py" in printed  # the snippet still reaches the user
     assert tmp_path / ".sdlc/hooks/protect_specs.py" in skipped
+
+
+# --- unit: u6-review-md (contract: playbook-guardrails) ---
+
+def test_greenfield_init_writes_review_md_as_a_consumer_surface(tmp_path, skill_init):
+    skill_init.render_all(ANSWERS, _templates(skill_init), tmp_path, "2026-09-18")
+    page = (tmp_path / ".sdlc/REVIEW.md").read_text(encoding="utf-8")
+    assert "{{" not in page and "demo" in page
+    assert "Advisory" in page and "blocks nothing" in page
+    assert "The write surface" in page and "`specs/`" in page
+    assert "acceptance_sketch" in page and "playbook-loop" in page
+    assert skill_init.SURFACE_CLASSES["REVIEW.md.template"] == "consumer"
 
 
 # --- unit: u3-managed-settings (contract: playbook-guardrails) ---

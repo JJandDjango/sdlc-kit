@@ -1,0 +1,44 @@
+# Review pass - {{ project_name }}
+
+> Advisory. Written by /sdlc init ({{ date }}), yours to edit: a consumer
+> surface, so /sdlc update checks that it exists and never its content.
+> The mechanical gates decide the merge. This page names what a reviewer,
+> human or agent, checks on top of them, and it blocks nothing. An escape
+> this pass should have caught adds an agent eval (kit wave B,
+> `playbook-loop`).
+
+## What the pass reads
+
+- The pull request's commits, each with a `Contract: <id>` trailer (G4.12
+  checks the paths; the reviewer checks the intent).
+- The contract at `specs/<id>/contract.yaml`: `intent`, `scope`,
+  `non_goals`, and each unit's `done_means` and `acceptance_sketch`.
+- The diff, the tests that landed, and the CI verdicts.
+
+## What the pass asks
+
+1. **Scope and non-goals.** Does the diff do what the contract's intent
+   says, and nothing a non-goal excludes? A change beyond the intent
+   re-intakes; it does not ride this pull request.
+2. **Sketches against tests.** For each unit, does a landed test decide
+   each `acceptance_sketch` line? Name the test per sketch. A sketch with
+   no test is the finding, not a nit.
+3. **The write surface.** Nothing under `specs/` changed (the spec channel
+   re-intakes); no test was weakened, skipped, or quarantined (G4.10's
+   four vectors); no gating config loosened.
+4. **The record.** Every commit names its contract and its why (the
+   `Contract:` and `Theory:` trailers), and the changelog carries the
+   entry the house rules want.
+
+## What the pass does not do
+
+- It does not gate: a finding is a comment, and the merge is the
+  principal's call once the mechanical gates are green.
+- It does not re-run the gates: CI already did.
+- It does not judge style beyond what the committed config enforces.
+
+## Escapes
+
+A defect that reached production and that this pass should have caught is
+recorded with its incident reference in `.sdlc/findings/` (the return
+channel); kit wave B turns each into an agent eval.

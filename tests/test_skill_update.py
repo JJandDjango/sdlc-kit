@@ -95,6 +95,17 @@ def test_apply_restores_kit_owned_file(tmp_path, skill_init, skill_update, capsy
     assert rc == 0  # applying converges to clean
 
 
+def test_review_page_is_consumer_owned(tmp_path, skill_init, skill_update, capsys):
+    """Unit u6-review-md (contract: playbook-guardrails): existence only."""
+    _scaffold(tmp_path, skill_init)
+    page = tmp_path / ".sdlc/REVIEW.md"
+    page.write_text("# our own review rules\n", encoding="utf-8")
+    rc = skill_update.main(["--cwd", str(tmp_path)])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert ".sdlc/REVIEW.md" in out and "existence only" in out
+
+
 def test_hook_drift_named_and_settings_never_applied(
         tmp_path, skill_init, skill_update, capsys):
     """Unit u2-init-renders-hook (contract: playbook-guardrails)."""

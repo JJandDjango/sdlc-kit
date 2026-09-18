@@ -88,6 +88,7 @@ specs/README.md             the protected root: contracts live at specs/<task-id
                             immutable to implementers (write-surface rule)
 .github/workflows/sdlc.yml  CI: pip-install the kit, validate every contract
 .sdlc/hooks/protect_specs.py  session hook: the spec channel closed to sessions (§4)
+.sdlc/REVIEW.md             the advisory review pass, yours to edit (§4)
 .pre-commit snippet         task-contract ready check (written if absent, else printed)
 .vscode/settings.json       YAML schema mapping for contract editing (written if absent, else printed)
 .claude/settings.json       the hook wired for Edit/Write/MultiEdit/NotebookEdit (written if absent, else printed)

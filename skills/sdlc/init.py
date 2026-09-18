@@ -58,6 +58,7 @@ TEMPLATE_TO_TARGET = {
     "findings-TEMPLATE.yaml.template": ".sdlc/findings/TEMPLATE.yaml",
     "NOTICE.md.template": ".sdlc/NOTICE.md",
     "hooks-protect-specs.py.template": ".sdlc/hooks/protect_specs.py",
+    "REVIEW.md.template": ".sdlc/REVIEW.md",
 }
 
 # Files a repo commonly already has: written only when absent, else the
@@ -83,6 +84,7 @@ SURFACE_CLASSES = {
     "config.yaml.template": "consumer",
     "clocks.yaml.template": "consumer",
     "reds.yaml.template": "consumer",
+    "REVIEW.md.template": "consumer",
     "pre-commit-config.yaml.template": "merge-target",
     "vscode-settings.json.template": "merge-target",
     "claude-settings.json.template": "merge-target",
