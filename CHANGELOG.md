@@ -9,6 +9,24 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.13.0 - unreleased
+
+- **`/sdlc:product-specification-interview` - the feature document has a
+  writer.** A second skill in the plugin (ADR 0028) interviews for the
+  consumer's feature document, the raw request `/sdlc intake` consumes
+  (ADR 0026): the template's sections one question at a time, state
+  saved after every section to a file beside the document (a later run
+  resumes at the exact step), an advisory readiness check that marks
+  gaps OPEN and never blocks, then the document in the template's shape
+  at a path the user confirms (no overwrite; a Google Docs form on
+  request). It writes only the document and its state file, never
+  touches `specs/`, and ends by naming `/sdlc intake <path>`. Five
+  PromptLang files (`SKILL.md` dispatch; flows opening, sections,
+  readiness, output) plus the document template;
+  `tests/test_skill_interview.py` holds the shape. Re-cut from the
+  user's global skill; domain modules deferred. Plugin-delivered: no
+  scaffold surface changes, nothing for `/sdlc update` to report.
+
 ## 0.12.0 - 2026-08-26 (tag `v0.12.0`)
 
 - **Schema `version: 1.2.0` -> `1.3.0` - additive.** `$defs.unit` gains an

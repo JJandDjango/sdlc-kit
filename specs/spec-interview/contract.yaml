@@ -1,0 +1,123 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: spec-interview
+
+intent: >-
+  No venue in the kit writes the feature doc, so a PO writes the template
+  by hand or arrives at intake without one. After this task the plugin
+  carries another skill, `/sdlc:product-specification-interview`. The
+  skill covers every section of the template, one question at a time,
+  and writes state after every section. The skill reads the doc back and
+  marks the gaps intake will report. The doc lands in the template's
+  shape at a path the user names. The skill names the intake command
+  with the path and writes nothing else. Every prompt file of the skill
+  passes `prompt_lang`, and a test holds the shape. `USAGE.md` gains a
+  section on writing the feature doc.
+
+scope:
+  - skills/product-specification-interview/
+  - tests/
+  - USAGE.md
+  - CHANGELOG.md
+  - MAP.md
+
+non_goals:
+  - No change to `/sdlc intake`. The map from doc section to contract
+    field lands with the first live intake (ADR 0026).
+  - No output beyond one feature doc.
+  - No module ships. The module mechanism waits until after the first
+    live intake.
+  - No change to the skill under `~/.claude/skills`.
+  - No Drive or Jira writes.
+  - No new gate conditions. The interview stands before G0.
+
+decomposition:
+  - unit: s1-usage-section
+    id: s1-usage-section
+    confirmed_by: [user]
+    done_means: >-
+      `USAGE.md` gains a section on writing the feature doc before the
+      intake section. The section names the command, the write surface,
+      and `/sdlc intake` as the next step. The status marks read red at
+      pass zero.
+    acceptance_sketch:
+      - verify the section stands before the intake section and names
+        the command, the write surface, and `/sdlc intake`
+      - verify the status marks in the section read red
+  - unit: s2-skill-entry
+    id: s2-skill-entry
+    confirmed_by: [user]
+    depends_on: [s1-usage-section]
+    done_means: >-
+      `skills/product-specification-interview/SKILL.md` exists with
+      frontmatter and the `purpose`, `context`, `instructions`,
+      `constraints`, and `criteria` tags. A run with no state file for
+      the id lands on the first question. A run with a state file goes
+      on at the recorded question. The file passes `prompt_lang`.
+    acceptance_sketch:
+      - verify a run with no state file lands on the first question
+      - verify a run with a state file goes on at the question the state
+        file records
+      - run `prompt_lang` on the skill directory and verify exit zero
+  - unit: s3-interview-flows
+    id: s3-interview-flows
+    confirmed_by: [user]
+    depends_on: [s2-skill-entry]
+    done_means: >-
+      `flows/opening.md` records the origin, the id and name, the seats,
+      the user's content, and the path, and writes the state file.
+      `flows/sections.md` covers every section of the template in order
+      and writes state after every section. The flow covers
+      Implementation only when both seats are named. With six units the
+      flow reports two docs. Both files pass `prompt_lang`.
+    acceptance_sketch:
+      - verify the flow covers every section of the template in order
+        with a state write after every section
+      - verify the run leaves Implementation for intake when only one of
+        the seats is named
+      - verify the flow reports two docs at unit 6
+  - unit: s4-document-flows
+    id: s4-document-flows
+    confirmed_by: [user]
+    depends_on: [s3-interview-flows]
+    done_means: >-
+      `flows/readiness.md` reads the doc back and checks the story, the
+      non-goals, the Gherkin under every unit, and the seats. The check
+      marks gaps OPEN and never stops the run. `flows/output.md` writes
+      the doc from `templates/feature-document.md.template` at the named
+      path and rejects an existing path. The flow renders a Google Docs
+      form on the user's word and names `/sdlc intake` with the path.
+      Both files pass `prompt_lang`.
+    acceptance_sketch:
+      - verify a unit with no Gherkin gets the OPEN marks and the doc
+        still lands on the user's word
+      - verify the flow rejects an existing path and needs another
+      - verify the last report names `/sdlc intake` with the path and
+        `specs/` stays unchanged
+  - unit: s5-shape-and-docs
+    id: s5-shape-and-docs
+    confirmed_by: [user]
+    depends_on: [s4-document-flows]
+    done_means: >-
+      `tests/test_skill_interview.py` holds the file set, the frontmatter
+      fields, the tag set, and chain-free command lines. `prompt_lang`
+      over `skills` exits zero. `CHANGELOG.md` names the skill, `MAP.md`
+      carries the row, and the `USAGE.md` marks read green.
+    acceptance_sketch:
+      - run pytest and verify exit zero with the structural test
+      - run `prompt_lang` over `skills` and verify exit zero
+      - verify CHANGELOG names the skill, MAP carries the row, and the
+        USAGE marks read green
+
+dependencies: []
+
+entities:
+  - consumer
+  - task-contract
+  - intake-seat
+  - decomposition-unit
+
+provenance:
+  origin: human-request
+  ref: REQUEST_spec-interview_2026-09-17.md

@@ -1,0 +1,104 @@
+| Revision Date | Revised By | Changes Made |
+| :-: | :-: | :-: |
+| {{ date }} | {{ seats.po }} | Created by /sdlc:product-specification-interview |
+|  | intake | Reserved for intake: contract id, state (ready or parked), merge SHA |
+
+# {{ title }}
+
+*Title matches the Jira key. Intake derives the task id from it and records the key as the contract's provenance reference.*
+
+**Seats:** PO seat: {{ seats.po }} · Engineer seat: {{ seats.engineer, or "none" }}
+
+*Who answers at intake. Recorded per unit in the contract as confirmed_by.*
+
+## Feature statement
+
+As a {{ feature_statement.role }}, I want {{ feature_statement.capability }}, so I can {{ feature_statement.outcome }}.
+
+*Lands as the contract's intent, in the PO's words. The "so I can" clause is the outcome.*
+
+## Description
+
+{{ description }}
+
+*What the feature is, in prose. Stays in this document.*
+
+## Background Information
+
+{{ background }}
+{{ bug fix only: "Incident: " incident_ref, then "Regression: " regression }}
+
+*Why now, history, links. Stays in this document; the contract links back here.*
+
+## Success Criteria
+
+*One line each: an outcome a test can decide. Each becomes one unit's done-meaning.*
+
+{{ success_criteria: one numbered line per criterion, "1. SC1: text" }}
+
+## Requirements
+
+**Not in scope:** {{ not_in_scope: one line each, the standing line first when it holds }}
+
+*Placeholder. Intake confirms it is still true for this feature and asks what else is out. A non-goal is the adjacent thing someone would plausibly build or expect, deliberately left out; anything nobody would wonder about does not belong here.*
+
+{{ requirements: one line each }}
+
+*Then the constraints that must hold.*
+
+## Previously Defined
+
+{{ previously_defined: one line each }}
+
+*Existing CRUD operations and permission rules this feature touches. They become ratified terms and regression scenarios.*
+
+## Prerequisites
+
+{{ prerequisites: one line each, "(exists)" or "(missing)" after the item }}
+
+*What must exist first: a permission, a role, another ticket. Each becomes a dependency (resolved or blocked) or a guard unit.*
+
+## Business Requirements
+
+Additions: {{ business_requirements.additions: one line each }}
+
+Subtractions: {{ business_requirements.subtractions: one line each }}
+
+Error messages: {{ business_requirements.error_messages: one line each, verbatim in quotes }}
+
+*All additions, subtractions, and error messages. Each addition or subtraction is a unit; each error message is a scenario and a term.*
+
+## Implementation
+
+{{ implementation: "Files: ...", "Order: ...", "Tests: ..." on three lines; or the OPEN mark when left for intake }}
+
+*The engineer's three answers at intake: which files change, in what order, which tests prove it. Endpoint table below when there is one.*
+
+| Method | Path | Request | Response |
+| :-: | :-: | :-: | :-: |
+{{ implementation.endpoints: one row each, or one row "none" }}
+
+## Misc.
+
+{{ misc: one line per question, "- Q: ... A: ..." with "A: OPEN" when undecided }}
+
+*Questions asked and answers decided; open ones marked OPEN. Decided answers become scenarios, criteria, non-goals, or terms; open ones carry to the requirements gate.*
+
+## Acceptance Criteria
+
+*Gherkin, grouped under the Success Criterion each scenario proves. Two or three scenarios per group; the groups are the units.*
+
+{{ for each success criterion, in order: }}
+### {{ sc.id }}: {{ sc.text }}
+
+Scenario: {{ scenario.name }}
+  Given {{ scenario.given }}
+  When {{ scenario.when }}
+  Then {{ scenario.then }}
+{{ end; a criterion with no scenario gets "OPEN: no scenario under SCn" }}
+
+## Additional Notes
+
+{{ additional_notes }}
+
+*Anything else. Stays in this document.*
