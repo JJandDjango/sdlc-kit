@@ -70,9 +70,14 @@ def _run(repo: Path, rel: str, tool: str = "Edit", *, kit: bool = True,
     if kit:
         env["PYTHONPATH"] = str(ROOT)  # the checkout's validator, not a stale install
     else:
-        fake = repo / "fake-site" / "taskcontract"  # shadows every taskcontract
+        # A fake package first on sys.path whose checker raises ImportError:
+        # an empty package is not enough, because an editable install's
+        # finder still resolves taskcontract.checker from the checkout.
+        fake = repo / "fake-site" / "taskcontract"
         fake.mkdir(parents=True, exist_ok=True)
         (fake / "__init__.py").write_text("", encoding="utf-8")
+        (fake / "checker.py").write_text(
+            'raise ImportError("no kit present")\n', encoding="utf-8")
         env["PYTHONPATH"] = str(repo / "fake-site")
     env.update(env_extra or {})
     key = "notebook_path" if tool == "NotebookEdit" else "file_path"
