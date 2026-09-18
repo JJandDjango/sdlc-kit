@@ -1,0 +1,185 @@
+#!/usr/bin/env python3
+"""Session hook: the spec channel stays closed to sessions (SDLC kit, {{ date }}).
+
+Rendered by /sdlc init from the kit ({{ kit_repo }}); a kit-owned surface,
+so /sdlc update tracks its drift. Wired as a Claude Code PreToolUse hook
+for Edit, Write, MultiEdit, and NotebookEdit (see .claude/settings.json).
+
+Under specs/ the hook denies (exit 2, the rationale on stderr):
+  - a contract that validates at the ready profile  -> a change re-intakes
+  - a vocabulary term with status: ratified          -> a class-S edit in review
+  - every other file there                           -> the spec channel
+A draft contract and a draft term pass: intake edits the contract it is
+authoring. With no kit importable, every write under specs/ is denied,
+because the hook cannot tell draft from ready.
+
+Outside specs/ the hook warns and never denies: when the session is bound
+to a contract (the branch name when specs/<branch>/ exists, else the
+SDLC_CONTRACT environment variable) and the path is outside that
+contract's scope, it prints a systemMessage. Unbound, it stays silent.
+Denial outside the spec channel is wave B (playbook-loop).
+
+Stdlib only; the kit's validator is imported when present. Exit 0 allows,
+exit 2 denies (the Claude Code hook contract).
+"""
+from __future__ import annotations
+
+import json
+import os
+import re
+import subprocess
+import sys
+from pathlib import Path, PurePosixPath
+
+TOOLS = ("Edit", "Write", "MultiEdit", "NotebookEdit")
+DENY = 2
+REGISTRY_FILES = ("dictionary.yaml", "constraints.yaml")
+
+
+def _read_event() -> dict:
+    try:
+        event = json.loads(sys.stdin.read() or "{}")
+    except json.JSONDecodeError:
+        return {}
+    return event if isinstance(event, dict) else {}
+
+
+def _target_path(event: dict) -> str | None:
+    tool_input = event.get("tool_input") or {}
+    raw = tool_input.get("file_path") or tool_input.get("notebook_path")
+    return str(raw) if raw else None
+
+
+def _relative(raw: str, root: Path) -> str | None:
+    """The path relative to the repo root in POSIX form; None when outside."""
+    path = Path(raw)
+    if not path.is_absolute():
+        path = root / path
+    try:
+        return path.resolve().relative_to(root.resolve()).as_posix()
+    except ValueError:
+        return None
+
+
+def _deny(message: str) -> int:
+    sys.stderr.write(message + "\n")
+    return DENY
+
+
+def _warn(message: str) -> int:
+    sys.stdout.write(json.dumps({"systemMessage": message}) + "\n")
+    return 0
+
+
+def _kit_present() -> bool:
+    try:
+        from taskcontract.checker import validate_path  # noqa: F401
+    except ImportError:
+        return False
+    return True
+
+
+def _contract_is_ready(root: Path, rel: str) -> bool:
+    full = root / rel
+    if not full.is_file():
+        return False  # a new file is a draft by definition
+    from taskcontract.checker import validate_path
+    return not validate_path(full, profile="ready")
+
+
+def _term_is_ratified(root: Path, rel: str) -> bool:
+    try:
+        text = (root / rel).read_text(encoding="utf-8")
+    except OSError:
+        return False
+    return re.search(r"^status:\s*ratified\s*$", text, re.MULTILINE) is not None
+
+
+def _bound_contract(root: Path) -> str | None:
+    """The branch name when a contract of that id exists, else SDLC_CONTRACT."""
+    try:
+        branch = subprocess.run(
+            ["git", "branch", "--show-current"], cwd=root,
+            capture_output=True, encoding="utf-8", errors="replace", timeout=5,
+        ).stdout.strip()
+    except (OSError, subprocess.SubprocessError):
+        branch = ""
+    for candidate in (branch, os.environ.get("SDLC_CONTRACT", "").strip()):
+        if candidate and (root / "specs" / candidate / "contract.yaml").is_file():
+            return candidate
+    return None
+
+
+def _scope(root: Path, contract: str) -> list[str]:
+    """The contract's scope entries, read with stdlib only."""
+    try:
+        lines = (root / "specs" / contract / "contract.yaml").read_text(
+            encoding="utf-8").splitlines()
+    except OSError:
+        return []
+    entries: list[str] = []
+    inside = False
+    for line in lines:
+        if re.match(r"^scope:\s*$", line):
+            inside = True
+            continue
+        if not inside:
+            continue
+        item = re.match(r"^\s+-\s+(.+?)\s*$", line)
+        if item:
+            entries.append(item.group(1).strip("\"'"))
+        elif line.strip() and not line.startswith((" ", "#")):
+            break
+    return entries
+
+
+def _in_scope(rel: str, entries: list[str]) -> bool:
+    for entry in entries:
+        entry = entry.strip()
+        if not entry:
+            continue
+        if entry.endswith("/") and rel.startswith(entry):
+            return True
+        if rel == entry or PurePosixPath(rel).match(entry):
+            return True
+    return False
+
+
+def main() -> int:
+    event = _read_event()
+    if event.get("tool_name") not in TOOLS:
+        return 0
+    raw = _target_path(event)
+    if not raw:
+        return 0
+    root = Path(event.get("cwd") or os.getcwd())
+    rel = _relative(raw, root)
+    if rel is None:
+        return 0
+
+    if rel.startswith("specs/"):
+        if not _kit_present():
+            return _deny(f"Denied: {rel} is under specs/ and the kit is not "
+                         "installed to tell draft from ready; pip install the "
+                         "kit or author the contract through intake.")
+        if re.fullmatch(r"specs/[^/]+/contract\.yaml", rel):
+            if _contract_is_ready(root, rel):
+                return _deny(f"Denied: {rel} validates ready; a change re-intakes.")
+            return 0
+        if (re.fullmatch(r"specs/vocabulary/[^/]+\.yaml", rel)
+                and PurePosixPath(rel).name not in REGISTRY_FILES):
+            if _term_is_ratified(root, rel):
+                return _deny(f"Denied: {rel} is ratified; a change is a "
+                             "class-S edit in review.")
+            return 0
+        return _deny(f"Denied: {rel} is the spec channel; nothing under "
+                     "specs/ is written in a session.")
+
+    contract = _bound_contract(root)
+    if contract is None or _in_scope(rel, _scope(root, contract)):
+        return 0
+    return _warn(f"Warning: {rel} is outside the scope of {contract}.")
+
+
+if __name__ == "__main__":
+    sys.exit(main())
