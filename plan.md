@@ -1,34 +1,34 @@
-# Plan - Session 31 (2026-09-17) - The interview, then the six gaps
+# Plan - Session 32 (2026-09-18) - The feature document, then the release
 
-Where things stand (2026-09-17): main at 16426dd (PR #39, the session 30
-close). v0.12.0 closed, PR #37 merged (673cc24). PR #38 merged (7824b7a)
-carrying the ratified NOTES_g0-pitch_2026-09-08.md, ADR 0026 and 0027, one
-CONVENTIONS line, and this plan. Anthropic's AI-Native SDLC playbook
-(claude.com/blog/the-ai-native-sdlc-playbook, 2026-08-21) is mapped against
-the 56 conditions. Verdict: the kit covers every play, mostly stronger; six
-gaps ratified for implementation (user, 2026-09-08). Prototype venue decided
-(session 30): Google Docs, the intake-ready template in the user's Drive.
-Session 31 ratified a new first step (ADR 0028): the specification
-interview, a second plugin skill that writes the feature document, and
-shipped it the same day on `session-31-spec-interview` (unmerged). Steps
-1-4 done. Next: step 5, gated on two decisions.
+Where things stand (2026-09-18): kit 0.13.0 released. PR #40 (the
+interview skill, ADR 0028) merged at a0a9010, PR #41 (wave A of the
+playbook guardrails) at 210d476, tag `v0.13.0` there; the self-pin PR #42
+merged at f6fb265, main's tip. Session 32 started at the top of the
+workflow: the user's seventeen-section work format was reconciled with
+the kit's intake-ready template, call by call, and the definition of done
+for a feature document was ratified. The record is
+`NOTES_feature-document_2026-09-18.md`; the ruling is ADR 0029. Branch
+`session-32-feature-document`, rebased on main, PR #43. Next: the
+contract that implements 0029, its request written by hand.
 
-## The six gaps
+## What 0029 changes
 
-1. Hooks: deny writes to ready contracts and ratified terms in the session,
-   before merge. 2. Scope check: a G4 condition failing a diff that leaves its
-   contract's `scope`. 3. Code re-scan: a G9 sweep over unchanged first-party
-   code with current rules. 4. Flow metrics: time-to-ready, rework count,
-   first-pass merge, in-scope rate. 5. PO venue: intake without an engineer at
-   the prompt. 6. Advisory review pass named in USAGE; escapes add an agent eval.
+One format, eighteen sections, a seat boundary (request above the line,
+solution below), an owner-and-kind tag on every section, two lists per
+half (whitelist proved, blacklist recorded), three levels of proof
+(criterion, signed checks with ids, derived Gherkin), derived blocks
+read-only and stamped, measurement as a revision row, and done defined:
+ready when intake can derive a ready-green contract without a new
+question to the request half; zero OPEN marks at ready; an undecidable
+question parks; a surprise in development enters the document first.
 
 ## Diagram
 
 The plan's diagram source is `plan.workflow.json` beside this file (Archify
-workflow, reshaped 2026-09-09 into a step spine: one lane of plan steps read
-left to right, human gates dropping onto it from above, an exception lane for
-parked contracts and Verifier fails below, phases per wave, five guided views
-starting with "Where we are"). Render and open:
+workflow, step spine: one lane of plan steps read left to right, human
+gates dropping onto it from above, an exception lane for parked contracts
+and Verifier fails below, phases per release, five guided views starting
+with "Where we are"). Render and open:
 
     node C:/Users/hyden/.claude/skills/archify/bin/archify.mjs deliver workflow plan.workflow.json <scratch>/plan.html --quality showcase --json
     Start-Process <scratch>/plan.html
@@ -36,49 +36,57 @@ starting with "Where we are"). Render and open:
 The HTML is generated, never committed. Every code unit lands as one commit,
 Developer then Verifier (Two-Key). The unit graph per contract is computed
 (`python -m taskcontract graph`), never committed; the diagram is the
-session-level view of both contracts.
+session-level view.
 
 ## Steps
 
-1. ~~Video check~~ - done; playbook fetched; six gaps ratified.
-2. ~~Ratify the notes with the five amendments; write ADR 0026 and ADR 0027
-   (alternatives = the playbook's four disagreements: mutable plan, advisory
-   templates, committed plan, co-generated tests).~~ - done, session 30.
-3. ~~Close v0.12.0: merge PR #37 on the user's word, sync main, delete
-   `session-27-self-pin`, prune the five gone local branches; PR
-   `session-28-g0-pitch` carrying notes + ADRs, merge on green.~~ - done,
-   2026-09-09 (PR #37 at 673cc24, PR #38 at 7824b7a).
-4. ~~Specification interview (ADR 0028, ratified 2026-09-17): the request is
-   the kit's first feature document (`REQUEST_spec-interview_2026-09-17.md`);
-   `/sdlc intake spec-interview` to ready-green; units S1-S5 (the diagram's
-   cards), one commit each, Two-Key; USAGE section first (pass zero).~~ -
-   done, 2026-09-17: seven commits on `session-31-spec-interview` (intake,
-   S1-S5, the verifier's advisories), Two-Key PASS by a workflow verifier
-   (16/16 sketches). Ships in v0.13.0 with wave A, no tag of its own.
-5. Wave A: the two decisions below (done), then `/sdlc intake
-   playbook-guardrails` to ready-green (done 2026-09-18: nine units u0-u8,
-   the diagram's cards; u7 is amendment 2's intake prompts), one commit per
-   unit with the `Contract:` trailer (done: eleven commits, scope-green),
-   Two-Key (done: workflow verifier, 9/9 units PASS, advisories closed),
-   PR (open), then on the user's word: merge, tag v0.13.0 (carrying step
-   4), self-pin. Branch `session-31-wave-a`, stacked on PR #40.
+1. ~~Feature document format and definition of done: the six
+   reconciliation calls, the tag rule, "Measured:" rows, the ten checks,
+   the surprise loop; the note and ADR 0029; `NOTES_*.md` a free path.~~ -
+   done, 2026-09-18 (d116ec8, bb725e3, d12f2c7 on
+   `session-32-feature-document`).
+2. ~~The release, on the user's word: merge #40, then #41; `git tag
+   v0.13.0` at the merge; the self-pin PR moves the kit's own workflow
+   ref and USAGE's install example to the tag and dates CHANGELOG's
+   0.13.0 heading; delete both branches, sync main.~~ - done,
+   2026-09-18: #40 at a0a9010, #41 at 210d476 (tagged), self-pin #42 at
+   f6fb265. One lesson: `gh pr merge --delete-branch` deletes the base
+   through the API, which closes a stacked PR instead of retargeting it;
+   #41 was reopened by restoring the ref for a minute, retargeting, and
+   deleting again. Then `session-32-feature-document` rebased onto main,
+   PR #43 (the note, ADR 0029, the config line, this plan); merge on green.
+3. Feature-document contract: the request is the first document written
+   in the ratified format, by hand (the skill still writes the old shape
+   until F1 and F2 ship); `/sdlc intake feature-document` to ready-green
+   (ADR 0029 cited). Proposed units, the
+   diagram's cards: F1 template (reorder, tags, status line, Terms,
+   numbered revisions, three sections dissolved); F2 the sections flow
+   follows the order; F3 readiness five rules to ten plus the stale stamp;
+   F4 intake assigns every check to one unit, an orphan check or empty
+   unit is a finding, an OPEN question parks; F5 Gherkin derived from
+   checks, one interview step; F6 USAGE, CHANGELOG, MAP, marks green.
+   One commit per unit with the `Contract:` trailer, Two-Key, PR, then on
+   the user's word: merge, tag v0.14.0, self-pin. Version confirmed at
+   intake.
    - 5b, proposed and unratified: `taskcontract graph` emits Archify beside
-     its Mermaid, so a contract's picture is derived, never hand authored
-     (0024). Two units, its own small contract, after 0.13.0, before the demo.
-6. Demo intake: the user copies the Drive template for one real feature (3-5
-   success criteria, 2-3 Gherkin scenarios each), or runs the step-4
-   interview; the contract is drafted in a sandbox consumer, not the kit's
-   own specs/; USAGE gains the section beside section 8.
-7. Wave B: intake `playbook-loop` (V1-V5), same discipline, v0.14.0.
-8. Session close: STATE.md regenerated, this plan struck through.
+     its Mermaid, so a contract's picture is derived (0024). Two units, its
+     own small contract, before the demo.
+4. Demo intake in a sandbox consumer, on the ratified template: the user
+   copies the Drive template for one real feature or runs the interview
+   (reinstall the plugin from the tag first); intake consumes the document;
+   USAGE gains the mapping section beside section 8 on the real template.
+5. Wave B: `/sdlc intake playbook-loop` (V1-V5) plus V6, the hook refuses a
+   commit while a derived block is stale or an OPEN mark stands (the
+   surprise loop made mechanical); the hook's warning outside scope
+   tightens to deny. Kit 0.15.0.
+6. Session close: STATE.md regenerated, this plan struck through.
 
-Decided before intake A (user, 2026-09-17, on the recommendation). (1) The
-diff-to-contract binding is a `Contract:` commit trailer, parsed like the
-Theory trailer; every kit commit carries one from intake A on. (2) Gap 1 on
-class-E paths (0027's open consequence): no special case; the hook denies the
-spec channel and warns outside the bound contract's scope, tightening to
-deny in wave B. Open before intake B: cadence for the re-scan (clocks.yaml,
-Q4 placeholder) and which four metrics stay.
+Carried: work-side upgrade to 0.13.0 (id migration, vocab extract, seats,
+the hook and REVIEW.md via `/sdlc update`, trailers on every commit); G1
+slice (Gherkin as the authoring format, fed by F5); prompt lexicon arc;
+runner probe, M0 pilot, PL-PIPE.3 harness. Open: the four metrics for
+wave B; render the hook command per stack (`python` vs `python3`).
 
-House rules in force: no pipes/chains in any authored command string;
-commit messages via Write + git commit -F; Two-Key on every code unit.
+House rules in force: no pipes or chains in any authored command string;
+commit messages via Write + git commit -F; Two-Key on every code unit; a
+`Contract:` trailer on every commit that touches a non-free path.
