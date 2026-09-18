@@ -180,6 +180,31 @@ so a committed copy would be a second truth needing its own drift check.
 Output is byte-identical across runs - no ordering depends on set or dict
 iteration - which is what lets a non-interactive caller diff it.
 
+## The scope-check command
+
+`python -m taskcontract scope-check [--base <sha>] [--head HEAD] [--root .]
+[--json]` is G4.12 ([0027](../decisions/0027-playbook-crosswalk-and-closures.md)):
+the diff stays within its contract's scope. Every commit in `base..head`
+names its contract in a `Contract: <id>` trailer (git's own trailer block,
+the final paragraph), and every changed path outside `specs/` must match an
+entry of that contract's `scope` (a `dir/` prefix, an exact path, or a glob)
+or one of the repo's free paths (`scope_check.free_paths` in
+`.sdlc/config.yaml`; default: the docs spine, the plan, the changelog, the
+readme, the inbox, `.sdlc/`). Paths under `specs/` are the spec channel and
+never in remit. The base comes from `--base` or the Actions event.
+
+| Code | Meaning |
+|---|---|
+| SC001 | a changed path outside the scope of the named contract(s) |
+| SC002 | a commit with no `Contract:` trailer touching a bound path |
+| SC003 | a `Contract:` trailer naming an id with no contract file |
+
+Exit 0 clean, 1 findings, 2 when no base resolves or git fails. `--json`
+emits the note+findings envelope (form checked, meaning not). The
+session-side companion is the rendered hook, `.sdlc/hooks/protect_specs.py`,
+which denies the spec channel and warns on a write outside the bound
+contract's scope (USAGE section 4).
+
 ## Wiring - venue precision
 
 1. **Intake loop - the G0 venue.** `/sdlc intake`
