@@ -390,3 +390,18 @@ def test_next_init_prints_the_settings_and_writes_nothing(tmp_path, skill_init):
     printed = dict(merges)[".claude/settings.json"]
     assert "protect_specs.py" in printed  # the snippet still reaches the user
     assert tmp_path / ".sdlc/hooks/protect_specs.py" in skipped
+
+
+# --- unit: u3-managed-settings (contract: playbook-guardrails) ---
+
+def test_managed_profile_is_a_reference_never_rendered(tmp_path, skill_init):
+    reference = _templates(skill_init) / "reference" / "managed-settings.json"
+    profile = json.loads(reference.read_text(encoding="utf-8"))
+    assert "protect_specs.py" in profile["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+    mapped = set(skill_init.TEMPLATE_TO_TARGET) | set(skill_init.MERGE_TEMPLATE_TO_TARGET)
+    assert not any("managed" in name for name in mapped)
+    created, _, _ = skill_init.render_all(ANSWERS, _templates(skill_init), tmp_path, "2026-09-18")
+    assert not any("managed" in p.name for p in created)
+    usage = (Path(skill_init.__file__).parent.parent.parent / "USAGE.md").read_text(encoding="utf-8")
+    assert "reference/managed-settings.json" in usage
+    assert "managed-settings.json" in usage and "ProgramData" in usage

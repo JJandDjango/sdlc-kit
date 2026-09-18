@@ -190,10 +190,16 @@ bound contract's `scope`. The session's contract is the branch name when
 `specs/<branch>/` exists, else `SDLC_CONTRACT`; with neither, the hook
 stays silent. Denial outside the spec channel waits for wave B.
 
-🔴 An organization pins the hook for every session with managed settings:
-copy `templates/reference/managed-settings.json` from the kit to your
-platform's managed-settings path. `/sdlc update` tracks drift on the
-rendered hook (kit-owned), never on your settings file.
+🔴 An organization pins the hook for every session with managed settings,
+which user and project settings cannot override: copy
+`skills/sdlc/templates/reference/managed-settings.json` from the kit to
+the platform's managed-settings path (`/Library/Application
+Support/ClaudeCode/managed-settings.json` on macOS,
+`/etc/claude-code/managed-settings.json` on Linux,
+`C:\ProgramData\ClaudeCode\managed-settings.json` on Windows). Its command
+runs the hook only where `.sdlc/hooks/protect_specs.py` exists, so repos
+without the kit are untouched. `/sdlc update` tracks drift on the rendered
+hook (kit-owned), never on your settings file.
 
 ### `taskcontract scope-check` — G4.12 and the `Contract:` trailer 🔴
 

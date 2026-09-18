@@ -180,6 +180,30 @@ def test_uncovered_tools_and_paths_outside_the_repo_pass(repo):
     assert result.returncode == 0
 
 
+def test_managed_profile_command_runs_the_hook_only_where_it_exists(repo):
+    """Unit u3-managed-settings: the org profile's guarded command."""
+    profile = json.loads((ROOT / "skills" / "sdlc" / "templates" / "reference"
+                          / "managed-settings.json").read_text(encoding="utf-8"))
+    entry = profile["hooks"]["PreToolUse"][0]
+    assert entry["matcher"] == "Edit|Write|MultiEdit|NotebookEdit"
+    command = entry["hooks"][0]["command"]
+    assert "protect_specs.py" in command
+    assert not any(ch in command for ch in ";|&>")  # no shell chain
+    event = {"tool_name": "Edit", "cwd": str(repo),
+             "tool_input": {"file_path": str(repo / "specs/ready-task/contract.yaml")}}
+    env = {**os.environ, "PYTHONPATH": str(ROOT)}
+    denied = subprocess.run(command, shell=True, input=json.dumps(event),
+                            capture_output=True, encoding="utf-8", cwd=repo,
+                            env=env, timeout=60)
+    assert denied.returncode == 2 and "validates ready" in denied.stderr
+    bare = repo.parent / "no-kit-repo"
+    bare.mkdir(exist_ok=True)
+    allowed = subprocess.run(command, shell=True, input=json.dumps(event),
+                             capture_output=True, encoding="utf-8", cwd=bare,
+                             env=env, timeout=60)
+    assert allowed.returncode == 0 and allowed.stderr.strip() == ""
+
+
 def test_template_is_stdlib_only_and_substituted(hook_source):
     assert "{{" not in hook_source
     imports = [line for line in hook_source.splitlines()
