@@ -184,7 +184,9 @@ Under `specs/` the hook denies: a contract that validates `ready` ("a
 change re-intakes"), a term with `status: ratified` ("a class-S edit in
 review"), and every other file there (the spec channel). Drafts stay
 writable: intake edits the contract it is authoring. With no kit installed
-the hook denies everything under `specs/`.
+the hook denies everything under `specs/`. The wired command names
+`python`; where only `python3` resolves (macOS, some Linux), change the
+word in the settings file, which is yours after the first write.
 
 🟢 Outside `specs/`, the hook warns, never denies, when a write leaves the
 bound contract's `scope`. The session's contract is the branch name when

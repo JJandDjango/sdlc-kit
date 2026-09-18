@@ -120,7 +120,7 @@ def test_unknown_contract_id_is_sc003(repo, capsys):
     assert _run(repo) == 1
     out = capsys.readouterr().out
     assert "SC003 Contract trailer names nope, which has no contract" in out
-    assert "SC001" in out  # the path had no resolvable scope to be inside
+    assert "SC001" not in out  # one finding per cause: the unknown id, not every path
 
 
 def test_spec_channel_paths_are_never_in_remit(repo, capsys):
@@ -171,7 +171,8 @@ def test_json_envelope_names_every_finding(repo, capsys):
 def test_missing_base_and_git_failure_exit_2(repo, capsys, monkeypatch):
     monkeypatch.delenv("GITHUB_EVENT_PATH", raising=False)
     assert main(["scope-check", "--root", str(repo.root)]) == 2
-    assert "pass --base" in capsys.readouterr().out
+    captured = capsys.readouterr()
+    assert "pass --base" in captured.err and captured.out == ""  # stdout stays parseable
     assert main(["scope-check", "--base", "0000000", "--root", str(repo.root)]) == 2
 
 
@@ -184,7 +185,7 @@ def test_ci_step_in_the_template_and_the_kit_workflow():
         text = (ROOT / rel).read_text(encoding="utf-8")
         assert "fetch-depth: 0" in text, rel
         step = text.split("scope check (G4.12")[1]
-        assert "if: github.event_name == 'pull_request'" in step, rel
+        assert "if: github.event_name == 'pull_request' || github.event_name == 'merge_group'" in step, rel
         assert "run: python -m taskcontract scope-check" in step, rel
 
 

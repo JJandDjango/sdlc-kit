@@ -146,6 +146,17 @@ def test_bound_and_inside_scope_is_silent(repo):
     assert result.returncode == 0 and result.stdout.strip() == ""
 
 
+def test_scope_match_is_exact_or_glob_never_right_anchored(repo):
+    contract = repo / "specs" / "ready-task" / "contract.yaml"
+    text = contract.read_text(encoding="utf-8").replace(
+        "scope:\n  - checkout/\n", "scope: [checkout/, USAGE.md, 'docs/*.md']\n")
+    contract.write_text(text, encoding="utf-8")  # flow-style list parses too
+    env = {"SDLC_CONTRACT": "ready-task"}
+    assert _run(repo, "USAGE.md", env_extra=env).stdout.strip() == ""
+    assert _run(repo, "docs/guide.md", env_extra=env).stdout.strip() == ""
+    assert "outside the scope" in _run(repo, "sub/USAGE.md", env_extra=env).stdout
+
+
 def test_unbound_session_is_silent(repo):
     result = _run(repo, "docs/guide.md")
     assert result.returncode == 0 and result.stdout.strip() == ""
@@ -206,6 +217,7 @@ def test_managed_profile_command_runs_the_hook_only_where_it_exists(repo):
 
 def test_template_is_stdlib_only_and_substituted(hook_source):
     assert "{{" not in hook_source
+    compile(hook_source, "protect_specs.py", "exec")  # a rendered hook that parses
     imports = [line for line in hook_source.splitlines()
                if line.startswith(("import ", "from "))]
     assert all("taskcontract" not in line for line in imports)  # imported lazily

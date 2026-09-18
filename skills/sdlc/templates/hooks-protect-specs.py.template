@@ -29,6 +29,7 @@ import os
 import re
 import subprocess
 import sys
+from fnmatch import fnmatchcase
 from pathlib import Path, PurePosixPath
 
 TOOLS = ("Edit", "Write", "MultiEdit", "NotebookEdit")
@@ -111,7 +112,7 @@ def _bound_contract(root: Path) -> str | None:
 
 
 def _scope(root: Path, contract: str) -> list[str]:
-    """The contract's scope entries, read with stdlib only."""
+    """The contract's scope entries, read with stdlib only (block or flow list)."""
     try:
         lines = (root / "specs" / contract / "contract.yaml").read_text(
             encoding="utf-8").splitlines()
@@ -120,6 +121,9 @@ def _scope(root: Path, contract: str) -> list[str]:
     entries: list[str] = []
     inside = False
     for line in lines:
+        flow = re.match(r"^scope:\s*\[(.*)\]\s*$", line)
+        if flow:
+            return [e.strip().strip("\"'") for e in flow.group(1).split(",") if e.strip()]
         if re.match(r"^scope:\s*$", line):
             inside = True
             continue
@@ -138,9 +142,9 @@ def _in_scope(rel: str, entries: list[str]) -> bool:
         entry = entry.strip()
         if not entry:
             continue
-        if entry.endswith("/") and rel.startswith(entry):
+        if entry.endswith("/") and (rel == entry.rstrip("/") or rel.startswith(entry)):
             return True
-        if rel == entry or PurePosixPath(rel).match(entry):
+        if rel == entry or fnmatchcase(rel, entry):  # exact or glob, never right-anchored
             return True
     return False
 

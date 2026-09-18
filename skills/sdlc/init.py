@@ -18,7 +18,8 @@ Answer keys (all required):
 Behavior:
   - {{ var }} substitution across templates; today's date is stamped.
   - NO-CLOBBER: an existing target is skipped and reported, never overwritten.
-  - MERGE TARGETS (.pre-commit-config.yaml, .vscode/settings.json): when the
+  - MERGE TARGETS (.pre-commit-config.yaml, .vscode/settings.json,
+    .claude/settings.json): when the
     file already exists, its snippet is printed for manual merge instead of
     silently skipped - the payload still reaches the user.
   - TOOLING PROFILE (ADR 0018): the stack answer selects an overlay at

@@ -228,7 +228,7 @@ handling (CWE-703), architectural erosion + duplication entropy,
 secret/vulnerable-dependency introduction, misinterpretation via
 traceability - and agent self-weakening (subject integrity: G4.5/G4.6/G4.10).
 **Deep page:** [gates/G4-pre-merge-ci.md](gates/G4-pre-merge-ci.md) -
-G4.1-G4.11 all `specified`; roster 9 -> 11 (G4.10 suppression audit, G4.11
+G4.1-G4.12 all `specified`; roster 9 -> 11 (G4.10 suppression audit, G4.11
 full test execution adopted); Q1 closed by
 [0010](../decisions/0010-write-surface-immutability.md); traceability format
 fixed by [0011](../decisions/0011-criterion-traceability-format.md); renames

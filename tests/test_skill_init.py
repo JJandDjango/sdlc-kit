@@ -398,7 +398,7 @@ def test_next_init_prints_the_settings_and_writes_nothing(tmp_path, skill_init):
 def test_greenfield_init_writes_review_md_as_a_consumer_surface(tmp_path, skill_init):
     skill_init.render_all(ANSWERS, _templates(skill_init), tmp_path, "2026-09-18")
     page = (tmp_path / ".sdlc/REVIEW.md").read_text(encoding="utf-8")
-    assert "{{" not in page and "demo" in page
+    assert "{{" not in page and "demo" in page and "2026-09-18" in page
     assert "Advisory" in page and "blocks nothing" in page
     assert "The write surface" in page and "`specs/`" in page
     assert "acceptance_sketch" in page and "playbook-loop" in page
@@ -417,4 +417,5 @@ def test_managed_profile_is_a_reference_never_rendered(tmp_path, skill_init):
     assert not any("managed" in p.name for p in created)
     usage = (Path(skill_init.__file__).parent.parent.parent / "USAGE.md").read_text(encoding="utf-8")
     assert "reference/managed-settings.json" in usage
-    assert "managed-settings.json" in usage and "ProgramData" in usage
+    for token in ("ProgramData", "/etc/claude-code/", "Library/Application"):
+        assert token in usage, token  # the three drop paths

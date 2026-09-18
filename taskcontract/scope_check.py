@@ -25,7 +25,8 @@ import json
 import os
 import subprocess
 from dataclasses import asdict, dataclass
-from fnmatch import fnmatch
+import sys
+from fnmatch import fnmatchcase
 from pathlib import Path
 
 import yaml
@@ -110,7 +111,7 @@ def matches(path: str, entry: str) -> bool:
         return False
     if entry.endswith("/"):
         return path == entry.rstrip("/") or path.startswith(entry)
-    return path == entry or fnmatch(path, entry)
+    return path == entry or fnmatchcase(path, entry)  # no case folding on Windows
 
 
 def in_any(path: str, entries: list[str]) -> bool:
@@ -135,6 +136,8 @@ def check_range(root: Path, base: str, head: str = "HEAD") -> list[ScopeFinding]
                     f"Contract trailer names {contract_id}, which has no contract"))
             else:
                 bound.append(contract_id)
+        if ids and not bound:
+            continue  # every named id was SC003; per-path SC001 would repeat the cause
         for path in paths:
             if in_any(path, free):
                 continue
@@ -156,7 +159,7 @@ def main_scope_check(args) -> int:
         base = args.base or resolve_base()
         findings = check_range(root, base, args.head)
     except (ValueError, RuntimeError, OSError, json.JSONDecodeError) as exc:
-        print(f"taskcontract scope-check: {exc}")
+        print(f"taskcontract scope-check: {exc}", file=sys.stderr)
         return 2
     if args.as_json:
         print(json.dumps({"note": NOTE, "base": base, "head": args.head,

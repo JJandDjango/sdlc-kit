@@ -32,7 +32,8 @@ def test_i4_and_i5_take_the_answers_from_an_implementation_section():
     text = FLOW.read_text(encoding="utf-8")
     i4, i5 = _step(text, "I4"), _step(text, "I5")
     assert "Implementation section" in i4 and "READ the three from it" in i4
-    assert "`source: document`" in i4
+    assert "never as a contract field" in i4  # the schema is unchanged
+    assert "files as `scope`, order as `depends_on`, tests as `acceptance_sketch`" in i5
     assert "keep or change them" in i5
     assert "never ask afresh what the document already answers" in i5
 

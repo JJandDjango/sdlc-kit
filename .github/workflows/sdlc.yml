@@ -26,7 +26,7 @@ jobs:
       - name: controlled language (lang-check door)
         run: python -m taskcontract lang-check
       - name: scope check (G4.12, the Contract trailer)
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
         run: python -m taskcontract scope-check
   # Future gate jobs land here as the kit's activation program builds
   # them (analyzer battery, pre-merge suite, docs build, staleness sweep):
