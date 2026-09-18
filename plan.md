@@ -58,9 +58,10 @@ session-level view of both contracts.
 5. Wave A: the two decisions below (done), then `/sdlc intake
    playbook-guardrails` to ready-green (done 2026-09-18: nine units u0-u8,
    the diagram's cards; u7 is amendment 2's intake prompts), one commit per
-   unit with the `Contract:` trailer, Two-Key, PR, merge, tag v0.13.0
-   (carrying step 4), self-pin. Branch `session-31-wave-a`, stacked on PR
-   #40.
+   unit with the `Contract:` trailer (done: eleven commits, scope-green),
+   Two-Key (done: workflow verifier, 9/9 units PASS, advisories closed),
+   PR (open), then on the user's word: merge, tag v0.13.0 (carrying step
+   4), self-pin. Branch `session-31-wave-a`, stacked on PR #40.
    - 5b, proposed and unratified: `taskcontract graph` emits Archify beside
      its Mermaid, so a contract's picture is derived, never hand authored
      (0024). Two units, its own small contract, after 0.13.0, before the demo.
