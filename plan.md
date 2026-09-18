@@ -1,15 +1,15 @@
 # Plan - Session 32 (2026-09-18) - The feature document, then the release
 
-Where things stand (2026-09-18): main at 16426dd (PR #39). PR #40
-(`session-31-spec-interview`, the interview skill, ADR 0028) and PR #41
-(`session-31-wave-a`, wave A of the playbook guardrails, kit 0.13.0) are
-open, CI-green, verified, unmerged. Session 32 started at the top of the
+Where things stand (2026-09-18): kit 0.13.0 released. PR #40 (the
+interview skill, ADR 0028) merged at a0a9010, PR #41 (wave A of the
+playbook guardrails) at 210d476, tag `v0.13.0` there; the self-pin PR #42
+merged at f6fb265, main's tip. Session 32 started at the top of the
 workflow: the user's seventeen-section work format was reconciled with
 the kit's intake-ready template, call by call, and the definition of done
 for a feature document was ratified. The record is
-`NOTES_feature-document_2026-09-18.md`; the ruling is ADR 0029. Three
-commits on `session-32-feature-document`, stacked on #41. Next: the
-release, on the user's word; then the contract that implements 0029.
+`NOTES_feature-document_2026-09-18.md`; the ruling is ADR 0029. Branch
+`session-32-feature-document`, rebased on main, PR #43. Next: the
+contract that implements 0029, its request written by hand.
 
 ## What 0029 changes
 
@@ -45,15 +45,20 @@ session-level view.
    the surprise loop; the note and ADR 0029; `NOTES_*.md` a free path.~~ -
    done, 2026-09-18 (d116ec8, bb725e3, d12f2c7 on
    `session-32-feature-document`).
-2. The release, on the user's word: merge #40, then #41 (GitHub retargets
-   it to main); `git tag v0.13.0` at the merge; the self-pin PR moves the
-   kit's own workflow ref (`@v0.12.0`) and USAGE's install example to the
-   tag and dates CHANGELOG's 0.13.0 heading; delete both branches, sync
-   main. Then rebase `session-32-feature-document` onto main and open PR
-   #42 (the note, ADR 0029, the config line); merge on green.
+2. ~~The release, on the user's word: merge #40, then #41; `git tag
+   v0.13.0` at the merge; the self-pin PR moves the kit's own workflow
+   ref and USAGE's install example to the tag and dates CHANGELOG's
+   0.13.0 heading; delete both branches, sync main.~~ - done,
+   2026-09-18: #40 at a0a9010, #41 at 210d476 (tagged), self-pin #42 at
+   f6fb265. One lesson: `gh pr merge --delete-branch` deletes the base
+   through the API, which closes a stacked PR instead of retargeting it;
+   #41 was reopened by restoring the ref for a minute, retargeting, and
+   deleting again. Then `session-32-feature-document` rebased onto main,
+   PR #43 (the note, ADR 0029, the config line, this plan); merge on green.
 3. Feature-document contract: the request is the first document written
-   in the ratified format (its own dogfood); `/sdlc intake
-   feature-document` to ready-green (ADR 0029 cited). Proposed units, the
+   in the ratified format, by hand (the skill still writes the old shape
+   until F1 and F2 ship); `/sdlc intake feature-document` to ready-green
+   (ADR 0029 cited). Proposed units, the
    diagram's cards: F1 template (reorder, tags, status line, Terms,
    numbered revisions, three sections dissolved); F2 the sections flow
    follows the order; F3 readiness five rules to ten plus the stale stamp;

@@ -6,7 +6,7 @@
     "quality_profile": "showcase",
     "locale": "en",
     "views": [
-      { "id": "now", "label": "Where we are", "focus": ["format", "release_word", "release_a"], "note": "Session 32. Format and definition of done ratified (ADR 0029). Next, your word: merge #40 and #41, tag v0.13.0, self-pin, then PR #42." },
+      { "id": "now", "label": "Where we are", "focus": ["format", "release_a", "intake_fd"], "note": "Session 32. Format and definition of done ratified (ADR 0029); 0.13.0 released and self-pinned. Next: the feature-document request, by hand." },
       { "id": "decided", "label": "What was decided", "focus": ["format"], "note": "0029: one format, a seat boundary, signed checks with derived Gherkin, stamped derived blocks; done = ready-green without a new question." },
       { "id": "fd", "label": "The feature-document contract", "focus": ["intake_fd", "units_fd", "ratify_5b"], "note": "Units F1-F6 implement 0029 in the template, the flows, readiness, intake and the docs; kit 0.14.0. Step 5b waits on ratification." },
       { "id": "demo-b", "label": "Demo, then wave B", "focus": ["demo", "real_doc", "wave_b"], "note": "The demo runs on the ratified template in a sandbox consumer. Wave B closes the loop (V1-V5) and makes the pause mechanical (V6); 0.15.0." },
@@ -27,12 +27,12 @@
   "groups": [],
   "mainPath": ["format", "release_a", "intake_fd", "units_fd", "demo", "wave_b"],
   "nodes": [
-    { "id": "release_word", "lane": "gates", "col": 1, "type": "security", "label": "Your word", "sublabel": "merge, tag, self-pin" },
+    { "id": "release_word", "lane": "gates", "col": 1, "type": "security", "label": "Your word", "sublabel": "merge, tag, self-pin", "tag": "given 09-18" },
     { "id": "ratify_5b", "lane": "gates", "col": 3, "type": "security", "label": "Ratify 5b?", "sublabel": "graph emits Archify", "tag": "unratified" },
     { "id": "real_doc", "lane": "gates", "col": 4, "type": "security", "label": "Real document", "sublabel": "one real feature" },
     { "id": "format", "lane": "steps", "col": 0, "type": "frontend", "label": "Format + done", "sublabel": "note, ADR 0029", "tag": "done 09-18" },
-    { "id": "release_a", "lane": "steps", "col": 1, "type": "cloud", "label": "Release 0.13.0", "sublabel": "YOU ARE HERE", "tag": "#40, #41, then #42" },
-    { "id": "intake_fd", "lane": "steps", "col": 2, "type": "frontend", "label": "Intake FD", "sublabel": "own dogfood request", "tag": "feature-document" },
+    { "id": "release_a", "lane": "steps", "col": 1, "type": "cloud", "label": "Release 0.13.0", "sublabel": "tagged, self-pinned", "tag": "done 09-18" },
+    { "id": "intake_fd", "lane": "steps", "col": 2, "type": "frontend", "label": "Intake FD", "sublabel": "YOU ARE HERE", "tag": "feature-document" },
     { "id": "units_fd", "lane": "steps", "col": 3, "type": "backend", "label": "Units F1-F6", "sublabel": "ship 0.14.0", "tag": "Two-Key" },
     { "id": "demo", "lane": "steps", "col": 4, "type": "frontend", "label": "Demo intake", "sublabel": "sandbox consumer" },
     { "id": "wave_b", "lane": "steps", "col": 5, "type": "backend", "label": "Wave B", "sublabel": "V1-V6, ship 0.15.0", "tag": "Two-Key" },
@@ -41,7 +41,7 @@
   ],
   "edges": [
     { "from": "format", "to": "release_a", "label": "0029 committed", "variant": "emphasis", "route": "straight" },
-    { "from": "release_a", "to": "intake_fd", "label": "tag + PR #42", "variant": "emphasis", "route": "straight" },
+    { "from": "release_a", "to": "intake_fd", "label": "v0.13.0, PR #43", "variant": "emphasis", "route": "straight" },
     { "from": "intake_fd", "to": "units_fd", "label": "ready-green", "variant": "emphasis", "route": "straight" },
     { "from": "units_fd", "to": "demo", "label": "0.14.0 tagged", "variant": "emphasis", "route": "straight" },
     { "from": "demo", "to": "wave_b", "label": "pitch shipped", "variant": "emphasis", "route": "straight" },
@@ -52,7 +52,7 @@
     { "from": "units_fd", "to": "verifier_fail", "variant": "security", "route": "straight" }
   ],
   "cards": [
-    { "dot": "amber", "title": "Where we are (2026-09-18)", "items": ["Done: PR #40 (interview, ADR 0028) and PR #41 (wave A, 0.13.0) open, CI-green, verified, unmerged; main at 16426dd", "Done today: step 1, the format and the definition of done; NOTES_feature-document_2026-09-18.md, ADR 0029, NOTES_*.md a free path; d116ec8, bb725e3, d12f2c7 on session-32-feature-document (stacked on #41)", "Next, your word: merge #40 then #41, tag v0.13.0, self-pin; rebase the session branch, PR #42", "Then step 3: the feature-document contract, its request written in the ratified format", "Open: ratify step 5b? the four metrics for wave B"] },
+    { "dot": "amber", "title": "Where we are (2026-09-18)", "items": ["Done today: step 1, the format and the definition of done; NOTES_feature-document_2026-09-18.md, ADR 0029, NOTES_*.md a free path; four commits on session-32-feature-document, PR #43", "Done today: step 2, the release; #40 merged (a0a9010), #41 merged (210d476, tag v0.13.0), self-pin #42 merged (f6fb265); branches deleted, main synced", "Next: step 3, the feature-document request written by hand in the ratified format, then /sdlc intake feature-document to ready-green", "Open: ratify step 5b? the four metrics for wave B"] },
     { "dot": "violet", "title": "Step 1: the six calls and the bar", "items": ["1 One seat boundary; acceptance criteria above the line, before the solution", "2 Two lists per half: whitelist proved or enforced, blacklist recorded", "3 Three levels of proof: criterion, signed checks with ids, derived Gherkin", "4 Derived blocks read-only and stamped; specs/ the authority where the kit runs", "5 Traceability half authored, half rendered; the status line its subset", "6 Three template sections dissolve; a tag on every section", "Done: ready-green without a new question to the request half; zero OPEN at ready; a surprise enters the document first"] },
     { "dot": "emerald", "title": "Step 3 units (contract feature-document, proposed)", "items": ["F1 template: reorder, tags, status line, Terms, numbered revisions, three sections dissolved", "F2 sections flow follows the new order", "F3 readiness: five rules to ten, plus the stale stamp", "F4 intake: every check to one unit; orphan check or empty unit is a finding; an OPEN question parks", "F5 Gherkin derived from checks, one interview step (feeds the G1 slice)", "F6 USAGE, CHANGELOG, MAP row, marks green, version 0.14.0"] },
     { "dot": "cyan", "title": "Wave B units", "items": ["V1 G9.5 scheduled code re-scan, dated coverage", "V2 taskcontract metrics: time-to-ready, rework, first-pass merge, in-scope rate", "V3 resume a parked contract, V4 PO venue from claude.ai", "V5 G8.3 disposition gains eval_ref", "V6 the hook refuses a commit while a derived block is stale or an OPEN mark stands; warn outside scope becomes deny", "Release 0.15.0: PR, tag, self-pin"] },
