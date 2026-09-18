@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the scope check reads the whole candidate range
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -23,6 +25,9 @@ jobs:
         run: python -m taskcontract vocab-check
       - name: controlled language (lang-check door)
         run: python -m taskcontract lang-check
+      - name: scope check (G4.12, the Contract trailer)
+        if: github.event_name == 'pull_request'
+        run: python -m taskcontract scope-check
   # Future gate jobs land here as the kit's activation program builds
   # them (analyzer battery, pre-merge suite, docs build, staleness sweep):
   # https://github.com/JJandDjango/sdlc-kit/blob/main/docs/gates.md

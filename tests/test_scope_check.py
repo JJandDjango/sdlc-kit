@@ -175,6 +175,33 @@ def test_missing_base_and_git_failure_exit_2(repo, capsys, monkeypatch):
     assert main(["scope-check", "--base", "0000000", "--root", str(repo.root)]) == 2
 
 
+ROOT = Path(__file__).parent.parent
+
+
+def test_ci_step_in_the_template_and_the_kit_workflow():
+    """Unit u5-ci-and-g4-12: the step rides pull requests at full depth."""
+    for rel in ("skills/sdlc/templates/workflow.yml.template", ".github/workflows/sdlc.yml"):
+        text = (ROOT / rel).read_text(encoding="utf-8")
+        assert "fetch-depth: 0" in text, rel
+        step = text.split("scope check (G4.12")[1]
+        assert "if: github.event_name == 'pull_request'" in step, rel
+        assert "run: python -m taskcontract scope-check" in step, rel
+
+
+def test_g4_12_named_in_registry_deep_page_constraints_and_conventions():
+    """Unit u5-ci-and-g4-12: the class-E delta, the pull merge as the record."""
+    registry = (ROOT / "docs" / "gates.md").read_text(encoding="utf-8")
+    assert "| G4.12 | Scope check | mechanical |" in registry
+    assert "| G4 | Pre-merge CI |" in registry and "| merge to main | 12 |" in registry
+    assert "57 conditions total" in registry
+    deep = (ROOT / "docs" / "gates" / "G4-pre-merge-ci.md").read_text(encoding="utf-8")
+    assert "### G4.12 Scope check" in deep and "SC001" in deep
+    constraints = (ROOT / "specs" / "vocabulary" / "constraints.yaml").read_text(encoding="utf-8")
+    assert "id: g4-12-scope-check" in constraints
+    conventions = (ROOT / "CONVENTIONS.md").read_text(encoding="utf-8")
+    assert "**Commits name their contract.**" in conventions
+
+
 def test_matches_prefix_exact_and_glob():
     assert scope_check.matches("src/export/csv.py", "src/export/")
     assert scope_check.matches("src/export", "src/export/")

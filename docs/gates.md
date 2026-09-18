@@ -85,7 +85,7 @@ the Developer's context contains - test source vs criteria + diagnostics
 | G1 | Requirements / Spec | spec sign-off | per task | spec release downstream | 3 |
 | G2 | Design / Architecture | design sign-off + baseline lock | per task | implementation start | 5 |
 | G3 | Implementation | editor / local build | seconds | code leaving the inner loop | 3 |
-| G4 | Pre-merge CI | merge queue (PR CI = preview) | minutes | merge to main | 11 |
+| G4 | Pre-merge CI | merge queue (PR CI = preview) | minutes | merge to main | 12 |
 | G5 | Integration / System | pinned-snapshot pipeline | hours (schedule = policy) | promotion to release candidate | 7 |
 | G6 | UAT / Staging | certified staging environment | per candidate, principal-paced | candidate acceptance | 3 |
 | G7 | Release / Deploy | release pipeline | per release | deploy; rollout continuation | 5 |
@@ -95,13 +95,14 @@ the Developer's context contains - test source vs criteria + diagnostics
 | PL-DOC | Documentation lifecycle | merge CI + scheduled sweep | per merge + sweep (clocks.yaml) | doc-integrity-breaking merges (any class); staleness past window | 3 |
 | PL-PIPE | Pipeline integrity | the second channel + enforcement CI | per class-E change + eval sweep | class-E edits without approval; prompt deploys without eval green | 3 |
 
-56 conditions total - all 56 `specified` (G0.1 through PL-PIPE.3,
+57 conditions total - all 57 `specified` (G0.1 through PL-PIPE.3,
 every gate G0-G10 + PL-DOC + PL-PIPE), 0 `registered` - the
 specification layer is complete
 ([0015](../decisions/0015-program-close-out.md)). The close-out
-counted 54; G0.2 ([0017](../decisions/0017-vocabulary-layer.md)) and
-G0.3 ([0025](../decisions/0025-intake-seats.md)) joined after it, both
-`enforced` in this repo.
+counted 54; G0.2 ([0017](../decisions/0017-vocabulary-layer.md)),
+G0.3 ([0025](../decisions/0025-intake-seats.md)), and G4.12
+([0027](../decisions/0027-playbook-crosswalk-and-closures.md)) joined
+after it, all three `enforced` in this repo.
 
 ---
 
@@ -231,7 +232,10 @@ G4.1-G4.11 all `specified`; roster 9 -> 11 (G4.10 suppression audit, G4.11
 full test execution adopted); Q1 closed by
 [0010](../decisions/0010-write-surface-immutability.md); traceability format
 fixed by [0011](../decisions/0011-criterion-traceability-format.md); renames
-G4.1 + G4.6 per the 0008 precedent.
+G4.1 + G4.6 per the 0008 precedent. G4.12 (scope check) added by
+[0027](../decisions/0027-playbook-crosswalk-and-closures.md) under 0014's
+full lane (the pull merge of `playbook-guardrails` is the record), roster
+11 -> 12, `enforced` here since the kit's own `sdlc.yml` runs it.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|
@@ -246,6 +250,7 @@ G4.1 + G4.6 per the 0008 precedent.
 | G4.9 | Secret/dependency audit | mechanical | No secret material in the diff (masked, rotation-first); dependency delta over the locked graph introduces no advisory-matched or license-disallowed package; nothing past its G9.2 SLA window | gitleaks, NuGetAudit + lockfile, license allowlist | - |
 | G4.10 | Suppression audit | mechanical | Candidate diff introduces no weakening - four vectors: in-source suppressions/skips, severity downgrades, strictness overrides, exclusion widening | write-surface audit job | - |
 | G4.11 | Full test execution | mechanical | Entire discovered suite green on the merged result, unit partition included; zero tests = FAIL; skips zero outside committed quarantine | `dotnet test` solution-wide | - |
+| G4.12 | Scope check | mechanical | Every commit in the candidate range names its contract in a `Contract:` trailer and touches only paths inside that contract's `scope` or the repo's free paths (`.sdlc/config.yaml` `scope_check.free_paths`); a bound path with no trailer, a path outside scope, or a trailer naming no contract = FAIL (SC001-SC003); paths under `specs/` are the spec channel (G4.6), never in remit | `python -m taskcontract scope-check` (CI step on pull requests, base from the event) | [0027](../decisions/0027-playbook-crosswalk-and-closures.md) |
 
 ## G5 - Integration / System
 
