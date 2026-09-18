@@ -6,3 +6,22 @@ active_gates:
   - G0  # contract conformance - CI backstop; /sdlc intake is the venue
 # Gates join this list as the kit's activation program builds their
 # enforcement: https://github.com/JJandDjango/sdlc-kit/blob/main/docs/gates.md
+scope_check:
+  # The seed list plus NOTES_*.md: the kit's working design notes precede
+  # any contract, like REQUEST_*.md and decisions/. A list here replaces
+  # the seed, so every default is repeated.
+  free_paths:
+    - THEORY.md
+    - MAP.md
+    - STATE.md
+    - CONVENTIONS.md
+    - DOCS-SYSTEM.md
+    - decisions/
+    - docs/
+    - plan.md
+    - plan.workflow.json
+    - CHANGELOG.md
+    - README.md
+    - REQUEST_*.md
+    - NOTES_*.md
+    - .sdlc/
