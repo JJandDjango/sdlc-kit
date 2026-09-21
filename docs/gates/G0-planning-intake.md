@@ -152,8 +152,12 @@ wrong everything downstream.
   door reads the answer, not the author.
 - **Lifecycle:** `specified` (0025); `enforced` in this repo since the
   kit's own `intake-seat` term (one value, `user`) was ratified
-  2026-08-26 and every unit stamped; per-target elsewhere, armed by
-  each consumer's own ratification.
+  2026-08-26 and every unit stamped. Since
+  [0030](../../decisions/0030-a-doors-input-is-a-declaration.md) it is
+  enforced in every consumer tree rather than per-target: a consumer
+  with no ratified roster is not waiting for the check to arm, it gets
+  TC018 on every contract at ready until the roster is authored and
+  ratified.
 
 ## Completeness check
 

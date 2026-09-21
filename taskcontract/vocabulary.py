@@ -420,7 +420,9 @@ def validate_vocab_root(root=Path("."), schema_doc: dict | None = None):
     """Validate every term and the constraint registry under <root>/specs/vocabulary/.
 
     Returns (violations, term_count). An absent or empty directory is
-    vacuously green - the layer activates on presence, like the join.
+    vacuously green: this door checks the terms a repo has, not whether
+    it has any. The ready profile is where absence is caught, by TC017
+    and TC018 (ADR 0030).
     """
     vocab = Path(root) / VOCAB_DIR
     if not vocab.is_dir():

@@ -163,7 +163,7 @@ violations as an array - the agent loop substrate.
 | TC013 | duplicate unit id (names the first occurrence) |
 | TC014 | `depends_on` names no unit in this contract |
 | TC015 | dependency cycle (names the ring, spelled "depends on") |
-| TC016 | unit not confirmed: no `confirmed_by`, or a seat the ratified `intake-seat` term lacks (ready profile; armed by that ratification) |
+| TC016 | unit not confirmed: no `confirmed_by`, or a seat the ratified `intake-seat` term lacks (ready profile; the roster being ratified, since without it TC018 fires instead) |
 | TC017 | no `entities:` declaration (ready profile; `entities: []` is the way to declare none) |
 | TC018 | no ratified `intake-seat` roster in the repo (ready profile; one per contract, two wordings: absent, or not ratified) |
 | W001 | entities ref deprecated inside its sunset window (warning - never gates) |
