@@ -189,8 +189,11 @@ door fails is open to the edit that repairs it, and locks again once it
 passes. After the upgrade, a `ready` contract with no `entities:` fails
 `TC017`: add the field, and it locks. The roster works the same way:
 ratify `intake-seat`, each contract fails `TC016` until its units carry
-`confirmed_by`, stamp the answers, and the contracts lock again. Pin the
-kit ref in your workflow (§2) so an upgrade is a choice, never a surprise.
+`confirmed_by`, stamp the answers, and the contracts lock again. A
+contract locks only when it passes both doors: in a repo with no ratified
+roster it stays open after `entities:` is added, until the roster is
+ratified and the answers are stamped. Install the kit by pinned tag (§7,
+"Kit → your repo"), so an upgrade is a choice, never a surprise.
 
 ### `taskcontract new <id>` (or `/sdlc new <id>`)
 Scaffolds the 8-field contract skeleton at
@@ -295,6 +298,11 @@ Ratification stays deliberately human: flip `status: draft →
 ratified` in the term file; the PR merge is the approval record.
 Deprecation sets `sunset:`; the join warns inside the notice window
 and errors past it.
+
+🔴 From kit 0.14.0 ([ADR 0030](decisions/0030-a-doors-input-is-a-declaration.md))
+"may" becomes "must" at the `ready` profile: every contract declares
+`entities:`, and `entities: []` states that it touches no term. See §4,
+"What `ready` requires".
 
 Greenfield init seeds 5–15 terms through the interview (born
 ratified); brownfield repos start with `vocab extract` and ratify the
