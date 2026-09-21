@@ -1,8 +1,9 @@
 id: entities-declared
 intent: >-
-  Prove the optional entities field is schema-legal on a ready contract:
+  Prove a declared entities field is schema-legal on a ready contract:
   this fixture validates outside a specs tree, so the coverage join
-  stays out of play and pure shape is what passes here.
+  stays out of play and pure shape is what passes here. The field is
+  required at ready since ADR 0030, in a specs tree or out of it.
 scope:
   - taskcontract/
 non_goals:
