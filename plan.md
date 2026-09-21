@@ -56,7 +56,8 @@ Developer then Verifier (Two-Key). The unit graph is computed
    ratified-term branch, so the PR names them on two separate grounds.
 4. d7 `d7-audit-parked-rule`. The parked rule reads TC003 present with every
    other error a declaration miss (TC017, TC018), and the parked finding
-   names the misses. Two-Key.
+   names the misses. Committed at `8ce629e`; round 1 failed on a surviving
+   statement of the old rule in `STATE.md`, now regenerated. Two-Key.
 5. d3 `d3-scaffold-comment`. The skeleton names `entities` in a note line
    and sets no value. Two-Key.
 6. d4 `d4-intake-flow`. Intake checks the roster before authoring and stops
@@ -87,7 +88,10 @@ Developer then Verifier (Two-Key). The unit graph is computed
    flipping the marks without rewriting them would publish both as green.
    d6 also takes `docs/gates/G0-planning-intake.md:114`, where G0.2's
    Lifecycle bullet still says "per-target elsewhere" although TC017 lives
-   in the schema and fires in every tree, even outside one. Two-Key.
+   in the schema and fires in every tree, even outside one. And from d7:
+   the parked line names rule ids only, so the TC017 and TC018 remedy text
+   no longer reaches a consumer reading a parked contract's audit; section
+   9 must let those ids resolve to their remedies. Two-Key.
 9. Release, on the user's word: PR, merge by merge commit, tag v0.14.0, the
    self-pin in `.github/workflows/sdlc.yml` bound to this contract. Then
    STATE.md regenerated and this plan struck through.
