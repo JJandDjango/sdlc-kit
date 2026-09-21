@@ -43,6 +43,18 @@ def test_new_round_trip_fill_then_green(tmp_path):
     assert validate_path(path, profile="ready") == []
 
 
+def test_skeleton_names_entities_and_keeps_its_draft_verdict(tmp_path):
+    # SC4.2: the draft verdict stays TC007 alone, and the field is named in
+    # one comment line with no value (ADR 0030).
+    path = scaffold("csv-export", root=tmp_path)
+    assert {v.rule for v in validate_path(path, profile="draft")} == {"TC007"}
+
+    text = path.read_text(encoding="utf-8")
+    assert "entities" not in yaml.safe_load(text), "the scaffold must set no value"
+    notes = [line for line in text.splitlines() if line.startswith("# entities")]
+    assert len(notes) == 1, "entities must be named in exactly one comment line"
+
+
 def test_new_rejects_bad_id(tmp_path):
     with pytest.raises(ValueError):
         scaffold("Bad_Id", root=tmp_path)

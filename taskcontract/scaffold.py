@@ -4,6 +4,12 @@ The skeleton is deliberately red: `intent: TODO` trips TC007 until a real
 intent is authored, so a freshly scaffolded contract can never pass the
 G0.1 gate vacuously. The id pattern comes from the schema - single source
 of truth, never duplicated here.
+
+`entities` is named in one comment line and never set (ADR 0030): a
+default `[]` would declare "no glossary terms" on the author's behalf and
+so restore silence by default, the alternative that ADR rejects. The field
+stays the author's to write, and TC017 names it at ready until they do.
+The draft verdict is unchanged: TC007 only.
 """
 
 from __future__ import annotations
@@ -46,6 +52,8 @@ decomposition:
 # {{ref: <task-id>, status: blocked, blocked_by: <blocker>}} - blocked parks the
 # contract as draft; ready requires every dependency resolved.
 dependencies: []
+
+# entities (required at ready): the glossary terms this task operates on, or []
 
 # origin: human-request | g8-escape | g9-maintenance; g8-escape requires ref
 # (the incident the escape converges from).

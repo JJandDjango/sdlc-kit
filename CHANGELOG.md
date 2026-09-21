@@ -18,7 +18,8 @@ Two house rules, enforced in review:
   omission: it states that the contract operates on no glossary term. A
   contract that carries no `entities:` at all reports the new `TC017`,
   which names the field and the empty-list option. The draft profile is
-  unchanged, so a skeleton and a parked draft still pass it. Delta note:
+  unchanged: a parked draft still passes it, and the `new` skeleton still
+  reports only the `TC007` its TODO intent trips. Delta note:
   every contract a consumer holds at ready gains one field. The fix is
   an edit, not a re-intake - add `entities:` with the glossary terms the
   contract operates on, or `entities: []` when it operates on none - and
@@ -58,6 +59,14 @@ Two house rules, enforced in review:
   what each one owes before they unpark it. Their ready contracts do
   turn red on `TC017` and `TC018` until they declare, as the two notes
   above say.
+- **The `new` skeleton names `entities:` and sets no value**
+  (`g0-declaration`, ADR 0030, unit `d3-scaffold-comment`).
+  `taskcontract new` writes one comment line naming the field and leaves
+  it unset: a default `entities: []` would declare, on the author's
+  behalf, that the contract operates on no glossary term. At the draft
+  profile the skeleton still reports only `TC007`, its TODO-intent
+  tripwire; at ready it also reports `TC017` until the author declares.
+  Delta note: none; a contract already scaffolded keeps its file.
 
 ## 0.13.0 - 2026-09-18 (tag `v0.13.0`)
 
