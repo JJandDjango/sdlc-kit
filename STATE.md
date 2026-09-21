@@ -2,49 +2,52 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-21 (session 37 close)._
+> _Generated 2026-09-21 (session 38 close)._
 
 ## Now
-- **`tree-view` is at r2**, signed by the PO seat on 2026-09-21. The
-  strike kept eight criteria, moved SC9 under Decisions, answered the
-  three OPENs and recorded two more decisions. The first cut starts at the
-  contracts and reads no document. Tasks, approvals, the cursor and check
-  runs live in ADR 0024's `.sdlc/progress/<id>.yaml`, a check's run
-  written by a kit command. Every unit follows one fixed task list, shown
-  and never enforced. A herdr plugin wraps the notify command outside the
-  kit. `REQUEST_tree-view_2026-09-21.md` stays untracked, the requester's.
-- **The pilot vetted G0 on 0.14.0** (engine session 10): M0 is
-  ready-green in CI run 35620384803 and faithful to its document at r3.
-  On 0.14.0's findings: `intake-write-locks-its-own-confirmation` closed,
-  `coverage-join-inactive-on-undeclared-terms` closed in part, the G4.6
-  finding untouched.
-- **New finding, `no-check-reads-the-source-document`** (gap, G0, engine
-  `d7f82ea`): G0 reads the contract alone, so five terms the M0 document
-  defines went undeclared and the door stayed green. Its proposal (engine
-  `631dc0f`): intake copies every term the document defines into
-  `entities:`, so G0.2 fails until the glossary ratifies them.
-- **Kit 0.14.0 is released** (tag `v0.14.0` at `1d306ea`).
-  `session-37-tree-view` carries `c87ef7f` (session 36's close) and this
-  session's two commits in one PR.
+- **`tree-view` is at r3**, signed by both seats on 2026-09-21. The PO seat
+  signed SC1's new wording and 22 checks with three verbatim messages; the
+  engineer seat signed the solution half (ten units, t0 to t9), the risks
+  and cost, and nine decisions. Zero OPEN marks. The REQUEST stays
+  untracked, the requester's.
+- **SC1 changed shape.** A finding names a gate and never a contract (ADR
+  0023 bans identifiers), so the gates stand once at the repository level
+  with their findings, and each contract keeps a verdict per active gate.
+  No finding records a status, so a finding shows its kind.
+- **ADR 0031** (`205818e`) records the rulings: the tree computed at print,
+  never stored; `.sdlc/progress/<id>.yaml` written only by `taskcontract
+  progress`, local, never a gate input; seven tasks per unit, shown and
+  never enforced; a run judged by its expectation (`--expect red` during
+  prove red); each finding once, under its gate; the notify command as
+  the kit's edge. The cursor derives from task states, never stored.
+- **Kit 0.14.0 is released** (tag `v0.14.0` at `1d306ea`). Branch
+  `session-38-tree-view-r3` carries `4e9d474` (the open), `205818e` (the
+  ADR) and this close, in one PR.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. `tree-view` r3, signed by the engineer seat: two or three checks per
-   criterion, then the solution half (scope, out of scope, interfaces,
-   constraints, units, sequencing). Then intake to ready (r4), the units.
+1. `tree-view` intake to ready (r4): `specs/tree-view/contract.yaml` in the
+   controlled register, ten units each `confirmed_by`, the appendix blocks
+   derived and stamped r3. Long checks such as SC1.1 pass the 20-word
+   sketch cap; a compression that drops a fact is an OPEN, not an edit.
+   Then the units, t0 first, about four sessions.
 2. G1, no request yet. The pilot's M0 code waits on G1's criteria review,
    which also gives intake's exit the successor venue
    `intake-exit-names-no-successor-venue` asks for.
 3. Carried: `derived-language`, `feature-document`, `spec-doc-type`; the
    demo intake in a sandbox consumer; wave B (`playbook-loop`, V1-V6); 5b;
-   the G4.6 finding; `no-check-reads-the-source-document`.
+   the G4.6 finding; `no-check-reads-the-source-document`; from r3, a
+   status field on the finding form and the agent personas writing
+   progress.
 
 ## Standing practice
 - At resume, read the pilot's `E:\ImSimProject\engine\STATE.md` beside
   this file: the engine hands work to the kit there, and its REQUESTs
   land untracked in this root.
+- A REQUEST is untracked, so git cannot restore it: copy it to the
+  scratchpad before a revision edits it.
 - Run the release unit's sweep patterns before its verifier round; a hit
   outside scope goes to an OPEN and a re-intake first, and the round then
   passes once.
@@ -58,10 +61,6 @@
   (`hash-object`, then `update-index`), so the commit holds one change.
 
 ## Open questions
-- For `tree-view` r3: does it need its own ADR? The fixed task list
-  extends ADR 0027's plan crosswalk, and the progress file gets its first
-  writer. And a deliberate red run records the check as failed while
-  "prove red" reads done; the tree should show that red as expected.
 - Which request carries `no-check-reads-the-source-document`:
   `derived-language`, which already asks for the contract-to-document
   pointer, or its own?
@@ -83,3 +82,5 @@
   rules and exists only on this machine.
 - Ratify 5b? The hook command per stack? The four metrics for wave B.
   Q4, Q5, Q6, PL-PIPE.3: unchanged.
+- The engine's `plan.md` holds an uncommitted edit, its cursor ticked
+  after the session-10 push; the engine session's to commit.
