@@ -2,42 +2,69 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-21 (session 36, at the 0.14.0 release)._
+> _Generated 2026-09-21 (session 37 close)._
 
 ## Now
-- **Kit 0.14.0 is released.** `g0-declaration` (ADR 0030) merged as PR
-  #44 at `1d306ea` and is tagged `v0.14.0`; the self-pin and this wrap
-  ride PR #45 (`session-36-self-pin`). No contract is in flight.
-- At the ready profile both G0 inputs are required declarations:
-  `entities:` (TC017, schema 1.4.0) and, in a specs tree, a ratified
-  `intake-seat` roster (TC018). The draft profile is unchanged.
-- Session 36 built d6, which passed Two-Key in round 1 with
-  `sweep: true` (`cf518e5`). Its own sweep, run before the verifier,
-  found `skills/sdlc/SKILL.md:43` and `:90` stating retired rules outside
-  scope; the user ruled r8, and the re-intake added the file (`3ad6cb0`).
-- Receipts at the release: pytest 299, `prompt_lang` 13 of 13, thirteen
-  contracts ready-green, `/sdlc audit` clean, lang-green, `vocab-check`
-  green at 18 terms and 8 constraints, scope-green, CI green on #44.
+- **`tree-view` is at r2**, signed by the PO seat on 2026-09-21. The
+  strike kept eight criteria, moved SC9 under Decisions, answered the
+  three OPENs and recorded two more decisions. The first cut starts at the
+  contracts and reads no document. Tasks, approvals, the cursor and check
+  runs live in ADR 0024's `.sdlc/progress/<id>.yaml`, a check's run
+  written by a kit command. Every unit follows one fixed task list, shown
+  and never enforced. A herdr plugin wraps the notify command outside the
+  kit. `REQUEST_tree-view_2026-09-21.md` stays untracked, the requester's.
+- **The pilot vetted G0 on 0.14.0** (engine session 10): M0 is
+  ready-green in CI run 35620384803 and faithful to its document at r3.
+  On 0.14.0's findings: `intake-write-locks-its-own-confirmation` closed,
+  `coverage-join-inactive-on-undeclared-terms` closed in part, the G4.6
+  finding untouched.
+- **New finding, `no-check-reads-the-source-document`** (gap, G0, engine
+  `d7f82ea`): G0 reads the contract alone, so five terms the M0 document
+  defines went undeclared and the door stayed green. Its proposal (engine
+  `631dc0f`): intake copies every term the document defines into
+  `entities:`, so G0.2 fails until the glossary ratifies them.
+- **Kit 0.14.0 is released** (tag `v0.14.0` at `1d306ea`).
+  `session-37-tree-view` carries `c87ef7f` (session 36's close) and this
+  session's two commits in one PR.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. Choose the next request: `derived-language`, `feature-document` or
-   `spec-doc-type`. Each starts with its own plan.
-2. Carried: the demo intake in a sandbox consumer, wave B
-   (`playbook-loop`, V1-V6), 5b, the engine's G4.6 finding.
+1. `tree-view` r3, signed by the engineer seat: two or three checks per
+   criterion, then the solution half (scope, out of scope, interfaces,
+   constraints, units, sequencing). Then intake to ready (r4), the units.
+2. G1, no request yet. The pilot's M0 code waits on G1's criteria review,
+   which also gives intake's exit the successor venue
+   `intake-exit-names-no-successor-venue` asks for.
+3. Carried: `derived-language`, `feature-document`, `spec-doc-type`; the
+   demo intake in a sandbox consumer; wave B (`playbook-loop`, V1-V6); 5b;
+   the G4.6 finding; `no-check-reads-the-source-document`.
 
-## Standing practice, learned this session
+## Standing practice
+- At resume, read the pilot's `E:\ImSimProject\engine\STATE.md` beside
+  this file: the engine hands work to the kit there, and its REQUESTs
+  land untracked in this root.
 - Run the release unit's sweep patterns before its verifier round; a hit
   outside scope goes to an OPEN and a re-intake first, and the round then
   passes once.
 - Attribution is off in the user's settings, so a commit's final
   paragraph is `Contract:` alone and a PR body ends at its last sentence.
+- Release shape: PR, merge commit, annotated tag at the merge, then the
+  self-pin through its own PR; main's ruleset requires a PR for every
+  change. `gh pr checks --watch` started right after `gh pr create` can
+  exit 1 on "no checks reported"; start it again.
 - A settings file with unrelated uncommitted edits is staged by blob
   (`hash-object`, then `update-index`), so the commit holds one change.
 
 ## Open questions
+- For `tree-view` r3: does it need its own ADR? The fixed task list
+  extends ADR 0027's plan crosswalk, and the progress file gets its first
+  writer. And a deliberate red run records the check as failed while
+  "prove red" reads done; the tree should show that red as expected.
+- Which request carries `no-check-reads-the-source-document`:
+  `derived-language`, which already asks for the contract-to-document
+  pointer, or its own?
 - d6's two open advisories, wording only: USAGE section 8 labels
   `confirmed_by` "optional in the schema", and the G0.2 hook test does
   not assert that its replace changed the text.

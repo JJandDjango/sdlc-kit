@@ -2,63 +2,60 @@
   "schema_version": 2,
   "diagram_type": "workflow",
   "meta": {
-    "title": "g0-declaration Released - Session 36",
+    "title": "tree-view: the Strike Pass - Session 37",
     "quality_profile": "showcase",
     "locale": "en",
     "views": [
-      { "id": "now", "label": "Where we are", "focus": ["adopt", "flows", "release"], "note": "Session 36. All eight units passed; d6 in round 1 with the one sweep. 0.14.0 is merged, tagged v0.14.0 and self-pinned." },
-      { "id": "the-bar", "label": "The blocking bar", "focus": ["verifier_fail", "checks"], "note": "Only a shipped surface can fail a unit. The wrap files never do; the repo-wide sweep runs once, in d6; focus is the unit's own sketches." },
-      { "id": "units", "label": "The eight units", "focus": ["checks", "flows", "adopt"], "note": "d1, d2 and d7 close the checks; d3, d4 and d5 bring the kit's own flows to the door; d6 flips USAGE green and cuts 0.14.0." },
-      { "id": "ship", "label": "The release", "focus": ["adopt", "release", "release_word"], "note": "PR #44 named both extra spec-channel writes and merged at 1d306ea; tag v0.14.0; the self-pin and the wrap ride PR #45." },
-      { "id": "loops", "label": "Where work waits", "focus": ["checks", "flows", "verifier_fail"], "note": "Each unit is one commit graded by an independent Verifier; a FAIL sends it back, three rounds at most. Only a shipped surface can fail it." }
+      { "id": "now", "label": "Where we are", "focus": ["r2", "close"], "note": "Session 37 closed. tree-view is at r2, signed by the PO seat, zero OPEN marks. The PR waits on your word." },
+      { "id": "decide", "label": "What you decided", "focus": ["batch_ok", "rulings", "po_sign", "pr_word"], "note": "Five decisions, not eight: the batch, SC1 with OPEN 2, SC3 with SC7, OPEN 3, the r2 signature." },
+      { "id": "cut", "label": "The later cut", "focus": ["strike", "later_cut"], "note": "The spec doc level and the served-criteria link wait for spec-doc-type; the first cut reads no document." },
+      { "id": "herdr", "label": "The herdr seam", "focus": ["strike", "opens"], "note": "The kit ships the tree as a plain command; the herdr plugin wraps it outside the kit. SC8's notify command is the seam." },
+      { "id": "after", "label": "After r2", "focus": ["close", "next"], "note": "Next session: checks and the solution half (r3), intake to ready (r4), the units. G1 follows; the pilot waits on it." }
     ]
   },
   "lanes": [
     { "id": "gates", "label": "Human gates" },
     { "id": "steps", "label": "Plan steps" },
-    { "id": "waits", "label": "Waits + retries", "variant": "exception" }
+    { "id": "waits", "label": "Later cut", "variant": "exception" }
   ],
   "phases": [
-    { "id": "verified", "label": "Verified", "fromCol": 0, "toCol": 0, "variant": "emphasis" },
-    { "id": "contract", "label": "Step 1 - the contract", "fromCol": 1, "toCol": 1, "variant": "emphasis" },
-    { "id": "units", "label": "Steps 2-8 - the units", "fromCol": 2, "toCol": 4, "variant": "emphasis" },
-    { "id": "ship", "label": "Step 9 - ship", "fromCol": 5, "toCol": 5, "variant": "dashed" }
+    { "id": "open", "label": "Step 1 - open", "fromCol": 0, "toCol": 0, "variant": "emphasis" },
+    { "id": "strike_pass", "label": "Steps 2-4 - the strike pass", "fromCol": 1, "toCol": 3, "variant": "emphasis" },
+    { "id": "close_phase", "label": "Step 5 - close", "fromCol": 4, "toCol": 4, "variant": "emphasis" },
+    { "id": "deferred", "label": "Next session", "fromCol": 5, "toCol": 5, "variant": "dashed" }
   ],
   "groups": [],
-  "mainPath": ["done", "amend", "checks", "flows", "adopt", "release"],
+  "mainPath": ["state", "strike", "opens", "r2", "close", "next"],
   "nodes": [
-    { "id": "open_ruled", "lane": "gates", "col": 1, "type": "security", "label": "OPEN ruled", "sublabel": "SC4.3, owned by d7", "tag": "r5 answered" },
-    { "id": "po_seat", "lane": "gates", "col": 2, "type": "security", "label": "PO seat", "sublabel": "the five terms" },
-    { "id": "sc42_ruled", "lane": "gates", "col": 3, "type": "security", "label": "SC4.2 ruled", "sublabel": "draft: TC007 only", "tag": "r7" },
-    { "id": "r8_ruled", "lane": "gates", "col": 4, "type": "security", "label": "SKILL.md ruled", "sublabel": "r8: into scope", "tag": "d6 sweep" },
-    { "id": "release_word", "lane": "gates", "col": 5, "type": "security", "label": "Your word", "sublabel": "merge and tag" },
-    { "id": "done", "lane": "steps", "col": 0, "type": "cloud", "label": "d0 PASS", "sublabel": "USAGE at pass zero", "tag": "two rounds" },
-    { "id": "amend", "lane": "steps", "col": 1, "type": "backend", "label": "Re-intake", "sublabel": "r6, ready-green", "tag": "step 1, done" },
-    { "id": "checks", "lane": "steps", "col": 2, "type": "backend", "label": "The checks", "sublabel": "d1, d2, d7 PASS", "tag": "steps 2-4" },
-    { "id": "flows", "lane": "steps", "col": 3, "type": "backend", "label": "The flows", "sublabel": "d3, d4, d5 PASS", "tag": "steps 5-7" },
-    { "id": "adopt", "lane": "steps", "col": 4, "type": "frontend", "label": "Adoption", "sublabel": "d6 PASS, round 1", "tag": "step 8, done" },
-    { "id": "release", "lane": "steps", "col": 5, "type": "cloud", "label": "Release 0.14.0", "sublabel": "DONE: v0.14.0", "tag": "step 9, done" },
-    { "id": "verifier_fail", "lane": "waits", "col": 2, "type": "security", "label": "Verifier FAIL", "sublabel": "shipped surfaces", "tag": "max 3 rounds" }
+    { "id": "batch_ok", "lane": "gates", "col": 1, "type": "security", "label": "Your strikes", "sublabel": "batch + 2 contested" },
+    { "id": "rulings", "lane": "gates", "col": 2, "type": "security", "label": "Your rulings", "sublabel": "3 of 3 ruled" },
+    { "id": "po_sign", "lane": "gates", "col": 3, "type": "security", "label": "PO seat signs", "sublabel": "r2 signed" },
+    { "id": "pr_word", "lane": "gates", "col": 4, "type": "security", "label": "Your word", "sublabel": "merge the PR" },
+    { "id": "state", "lane": "steps", "col": 0, "type": "cloud", "label": "STATE + plan", "sublabel": "done: ce0cdec", "tag": "step 1, done" },
+    { "id": "strike", "lane": "steps", "col": 1, "type": "backend", "label": "The strike", "sublabel": "8 kept, SC9 moved", "tag": "step 2, done" },
+    { "id": "opens", "lane": "steps", "col": 2, "type": "backend", "label": "The OPENs", "sublabel": "3 answered", "tag": "step 3, done" },
+    { "id": "r2", "lane": "steps", "col": 3, "type": "frontend", "label": "r2 written", "sublabel": "signed, PO seat", "tag": "step 4, done" },
+    { "id": "close", "lane": "steps", "col": 4, "type": "cloud", "label": "Close + PR", "sublabel": "HERE: your word", "tag": "step 5" },
+    { "id": "next", "lane": "steps", "col": 5, "type": "cloud", "label": "Next session", "sublabel": "r3: the checks", "tag": "deferred" },
+    { "id": "later_cut", "lane": "waits", "col": 1, "type": "security", "label": "Later cut", "sublabel": "the spec doc level", "tag": "not a wait" }
   ],
   "edges": [
-    { "from": "done", "to": "amend", "label": "OPEN ruled", "variant": "emphasis", "route": "straight" },
-    { "from": "amend", "to": "checks", "label": "ready-green at r6", "variant": "emphasis", "route": "straight" },
-    { "from": "checks", "to": "flows", "label": "TC017, TC018 live", "variant": "emphasis", "route": "straight" },
-    { "from": "flows", "to": "adopt", "label": "the kit meets its door", "variant": "emphasis", "route": "straight" },
-    { "from": "adopt", "to": "release", "label": "marks green", "variant": "emphasis", "route": "straight" },
-    { "from": "open_ruled", "to": "amend", "route": "straight" },
-    { "from": "po_seat", "to": "checks", "route": "straight" },
-    { "from": "sc42_ruled", "to": "flows", "route": "straight" },
-    { "from": "r8_ruled", "to": "adopt", "route": "straight" },
-    { "from": "release_word", "to": "release", "route": "straight" },
-    { "from": "checks", "to": "verifier_fail", "variant": "security", "route": "straight" }
+    { "from": "state", "to": "strike", "label": "plan approved", "variant": "emphasis", "route": "straight" },
+    { "from": "strike", "to": "opens", "label": "kept set", "variant": "emphasis", "route": "straight" },
+    { "from": "opens", "to": "r2", "label": "rulings in", "variant": "emphasis", "route": "straight" },
+    { "from": "r2", "to": "close", "label": "PO signed", "variant": "emphasis", "route": "straight" },
+    { "from": "close", "to": "next", "label": "one PR", "variant": "emphasis", "route": "straight" },
+    { "from": "batch_ok", "to": "strike", "route": "straight" },
+    { "from": "rulings", "to": "opens", "route": "straight" },
+    { "from": "po_sign", "to": "r2", "route": "straight" },
+    { "from": "pr_word", "to": "close", "route": "straight" },
+    { "from": "strike", "to": "later_cut", "variant": "security", "route": "straight" }
   ],
   "cards": [
-    { "dot": "amber", "title": "Where we are (2026-09-21, session 36)", "items": ["Kit 0.14.0 released: PR #44 merged at 1d306ea by merge commit, tag v0.14.0, the self-pin and this wrap on PR #45", "The request ended at r8; ADR 0030 stands; eight units, every one PASS by an independent Two-Key round", "d6 passed in round 1 with the one repo-wide sweep; the builder's own sweep found SKILL.md outside scope first, ruled r8", "Receipts at the release: suite 299 green, prompt_lang 13 of 13, /sdlc audit clean, lang-green, vocab-green, CI green on #44", "Next: a new plan for derived-language, feature-document or spec-doc-type"] },
-    { "dot": "rose", "title": "The blocking bar (applied)", "items": ["Blocking: a sketch fails, done_means is false, a path sits outside scope, a trailer is missing, or a shipped surface states something false", "Shipped surfaces: code, the schema, docs/, USAGE.md, CHANGELOG.md", "plan.md, plan.workflow.json and STATE.md are rewritten at every wrap; a defect there is advisory", "The repo-wide stale-claim sweep runs once, inside d6", "Each unit's focus is its own sketches, unchanged between rounds", "It lives in .claude/workflows/two-key-unit-verifier.js: the prompt states it, the verdict code enforces it; launch it by scriptPath"] },
-    { "dot": "violet", "title": "The units in order", "items": ["d1 schema-entities: entities required at ready, empty list valid, schema 1.4.0, TC017, the vocabulary-layer contract's five terms", "d2 roster-required: TC018 when intake-seat is absent or draft, at ready only", "d7 audit-parked-rule: parked means TC003 present with every other error a declaration miss, and the finding names the misses", "d3 scaffold-comment: the skeleton names entities in a note line and sets no value", "d4 intake-flow: the roster checked before authoring, entities always written, the empty list only on the seat's answer", "d5 init-seeds-roster: greenfield records the seats, brownfield names the command", "d6 adoption-and-release: the hook unlock and re-lock, USAGE green, kit 0.14.0"] },
-    { "dot": "emerald", "title": "What d6 cleared", "items": ["r8: SKILL.md lines 43, 90 and 95 now state the required declaration and follow the intake and init flows","Section 8's worked example, USAGE.md:478-524, the flagship ready exemplar, has no entities field and would now fail ready", "The green intake sentences near lines 149-160 imply intake runs without a roster, and omit entities from the fields intake authors", "'Add the field, and it locks' is false read alone; fold the both-doors condition into it", "The new section names greenfield init and omits the brownfield half", "Section 9 Troubleshooting needs TC017 and TC018 rows beside TC016, so the ids on the parked line resolve to their remedies", "Two green sentences state the retired rule, USAGE.md:384-385 and :448; rewrite them before the marks flip", "docs/gates/G0-planning-intake.md:114 still says per-target elsewhere; TC017 fires in every tree", "CHANGELOG.md:56 says parked contracts raise no new red; ratifying intake-seat arms TC016 and turns them invalid", "The repo-wide stale-claim sweep, run once here"] },
-    { "dot": "cyan", "title": "Carried, not this session", "items": ["derived-language, feature-document, spec-doc-type: the three requests behind this one", "The demo intake in a sandbox consumer", "Wave B: playbook-loop, V1-V6", "5b: taskcontract graph emits Archify, unratified", "The engine's G4.6 finding: the write-guard binds an editing-tool list; no request yet"] },
-    { "dot": "slate", "title": "Glossary", "items": ["G0.2: the coverage join; every declared entity must resolve to a ratified glossary term", "G0.3: the confirmation join; every unit's confirmed_by must name a seat on the ratified roster (TC016)", "Declaration: an input a door reads, required at ready so absence cannot pass", "TC017: contract declares no entities; TC018: no ratified seat roster", "TC003: a dependency is blocked; alone, or beside only declaration misses (TC017, TC018), it means parked, not invalid", "TC004: a unit holds at most three acceptance sketches", "TC007: intent must be 40-1200 chars; the skeleton's TODO intent trips it at both profiles, by design (ADR 0016)", "Parked: a legal contract waiting on a blocked dependency; the audit reports it INFO at exit zero", "Two-Key: a unit is done only when the Verifier re-runs the tests independently and grades PASS", "ready-green: the contract passes the ready validation profile", "Free path: a file outside the contract's scope that needs no scope entry (docs/, CHANGELOG.md)", "Shipped surface: code, the schema, docs/, USAGE.md, CHANGELOG.md; the only prose that can fail a unit"] }
+    { "dot": "amber", "title": "Where we are (2026-09-21, session 37 closed)", "items": ["tree-view is at r2, signed by the PO seat, with zero OPEN marks; the REQUEST stays untracked, the requester's file", "Five decisions, not eight: ADR 0024 had already answered OPEN 1, and OPEN 2 was SC1's question", "STATE.md records engine session 10: G0 vetted on 0.14.0 and the finding no-check-reads-the-source-document", "One PR carries c87ef7f (session 36's close), ce0cdec (session 37's open) and this close; it merges on your word", "Next: r3, the checks and the solution half, signed by the engineer seat"] },
+    { "dot": "violet", "title": "The strike, as signed", "items": ["SC1 reworded: one command prints the work as a tree from the repository's contracts, with active gates and findings, units, tasks and checks", "SC2, SC3, SC4, SC6, SC7, SC8 kept as written", "SC5 reworded: links are a unit's depends_on and a finding's gate", "SC9 struck: its home, ADR 0024's .sdlc/progress/<id>.yaml, stands under Decisions and becomes a constraint", "Non-goals added: no spec doc level in the first cut; no multiplexer plugin in the kit"] },
+    { "dot": "rose", "title": "The decisions", "items": ["Tasks, approvals and the cursor live at .sdlc/progress/<id>.yaml: disposable local state, never under specs/, never a gate input", "The first cut reads no document; a feature document joins its contract as a file reference at docs/features/<id>.md", "One fixed task list per unit: approve the test list, write the tests, prove red, green, approve the commit, commit, Two-Key PASS; shown, never enforced", "A kit command runs a check's command and records its result, the command and the commit; display evidence, never a gate input", "A gate node's summary is a one-line name from a structured source, never a paragraph read out of a document"] },
+    { "dot": "cyan", "title": "Deferred, not this session", "items": ["tree-view r3: the checks and the solution half; whether it needs its own ADR; then intake to ready (r4), the units, the herdr plugin", "G1: the pilot's M0 code waits on its criteria review", "no-check-reads-the-source-document: which request carries it", "derived-language, feature-document, spec-doc-type", "The demo intake in a sandbox consumer; wave B (playbook-loop, V1-V6); 5b; the G4.6 finding"] },
+    { "dot": "slate", "title": "Glossary", "items": ["Strike pass: each candidate criterion kept, struck or reworded by the seats before any check is written", "r2: the request's second revision row, the struck criteria signed by the PO seat", "OPEN: a question the request cannot close alone; a seat rules it under Decisions", "Cursor: the one node in flight; the pane keeps its path open", "ADR 0024: the unit graph, and the home of execution state at .sdlc/progress/<id>.yaml", "ADR 0027: no committed plan; the unit graph derives from the contract", "ADR 0029: the feature document format; no tooling reads a document's headings", "herdr: the terminal multiplexer the pilot runs sessions in; version 0.9.1 takes plugins", "Later cut: a criterion moved out of the first build because it needs a request not yet built"] }
   ]
 }

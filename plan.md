@@ -1,24 +1,20 @@
-# Plan - Session 36 (2026-09-21) - g0-declaration released
+# Plan - Session 37 (2026-09-21) - tree-view: the strike pass
 
-**Closed.** Every step is done: `g0-declaration` merged as PR #44 at
-`1d306ea` by merge commit and is tagged `v0.14.0`; the self-pin rides PR
-#45. The next session starts a new plan.
+**Closed.** The deliverable is met: `REQUEST_tree-view_2026-09-21.md` is
+at r2, signed by the PO seat, with zero OPEN marks. The next session starts
+a new plan at r3.
 
-Where things stand: kit 0.14.0 is out. At the ready profile both G0
-inputs are required declarations, `entities:` (TC017) and a ratified
-`intake-seat` roster in a specs tree (TC018); the draft profile is
-unchanged. All eight units passed Two-Key under the blocking bar, which
-lives in the untracked verifier, `.claude/workflows/two-key-unit-verifier.js`.
-d6, the release unit, passed in round 1 with the one repo-wide sweep. The
-request ended at r8: d6's own sweep, run before the verifier, found two
-`SKILL.md` lines outside scope stating retired rules, and the re-intake
-added the file.
+Where things stand: the strike kept eight of the nine candidates, moved SC9
+under Decisions, answered the three OPENs and recorded two more decisions.
+It took five human decisions, not the eight planned: ADR 0024 had already
+answered OPEN 1, and OPEN 2 was SC1's question.
 
 ## Diagram
 
 The plan's diagram source is `plan.workflow.json` beside this file (Archify
-workflow, step spine: the units read left to right, human gates dropping onto
-it from above, an exception lane below for a Verifier FAIL). Render and open:
+workflow, step spine: the steps read left to right, human gates dropping onto
+it from above, an exception lane below for a criterion that needs an unbuilt
+request). Render and open:
 
     node C:/Users/hyden/.claude/skills/archify/bin/archify.mjs deliver workflow plan.workflow.json <scratch>/plan.html --quality showcase --json
     Start-Process <scratch>/plan.html
@@ -27,29 +23,29 @@ The HTML is generated, never committed.
 
 ## Steps
 
-1. ~~Amend the request and re-intake.~~ Done at r6: SC4.3 and unit d7.
-2. ~~d1 `d1-schema-entities`.~~ PASS at `6939082`.
-3. ~~d2 `d2-roster-required`.~~ PASS at round 5, `c1af342` through
-   `d420f80`; the two extra spec-channel writes, named in PR #44.
-4. ~~d7 `d7-audit-parked-rule`.~~ PASS at round 3, `8ce629e` with
-   `ff55f5b`.
-5. ~~d3 `d3-scaffold-comment`.~~ PASS at `ee3ff6d`, after r7 ruled SC4.2.
-6. ~~d4 `d4-intake-flow`.~~ PASS at round 2, `5114f74` with `13f0ca5`.
-7. ~~d5 `d5-init-seeds-roster`.~~ PASS at `964f156`.
-8. ~~d6 `d6-adoption-and-release`.~~ PASS at round 1, `cf518e5`, after
-   r8 (`3ad6cb0`) brought `skills/sdlc/SKILL.md` into scope. Two of its
-   four advisories closed at the self-pin; two wording nits stay open in
-   `STATE.md`.
-9. ~~Release.~~ PR #44 merged at `1d306ea`, tag `v0.14.0`, self-pin
-   `af9e587` on PR #45 with this wrap.
+1. ~~STATE.md takes engine session 10.~~ Done at `ce0cdec`, with this plan.
+2. ~~The strike.~~ One batch: SC2, SC4, SC6 and SC8 kept, SC5 reworded, SC9
+   struck, OPEN 1 answered by ADR 0024, two non-goals. Two contested calls:
+   SC1 starts at the contracts and reads no document; check runs are
+   recorded, so SC3 and SC7 stand as written.
+3. ~~The three OPENs.~~ OPEN 1 in the batch, OPEN 2 with SC1, OPEN 3 its
+   own call: one fixed task list per unit, Two-Key last, never enforced.
+4. ~~r2 into the REQUEST.~~ Written and signed by the PO seat, 2026-09-21.
+5. ~~Close.~~ STATE.md regenerated and this plan struck through; the PR
+   carrying this commit merges on your word.
 
-Carried, unordered: `derived-language`, `feature-document`,
-`spec-doc-type`; the demo intake in a sandbox consumer; wave B
-(`playbook-loop`, V1-V6); 5b (graph emits Archify), unratified; the
-engine's G4.6 finding once it has a request.
+Deferred, not this session:
+- `tree-view` after r2: the checks and the solution half (r3), intake to
+  ready (r4), the units, the herdr plugin.
+- G1: the pilot's M0 code waits on its criteria review.
+- `no-check-reads-the-source-document`: which request carries it.
+- `derived-language`, `feature-document`, `spec-doc-type`; the demo intake
+  in a sandbox consumer; wave B (`playbook-loop`, V1-V6); 5b; the G4.6
+  finding.
 
 House rules in force: no pipes or chains in any authored command string;
 commit messages via Write + `git commit -F`; Two-Key on every code unit; a
 `Contract:` trailer, alone in the final paragraph, on every commit that
-touches a non-free path; one decision per message, each with a
-recommendation; approval content shown in chat in full.
+touches a non-free path; uncontested decisions batched in one message,
+contested ones one per message, each with a recommendation; approval
+content shown in chat in full.
