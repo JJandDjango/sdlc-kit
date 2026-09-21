@@ -1,15 +1,13 @@
 # Plan - Session 37 (2026-09-21) - tree-view: the strike pass
 
-**Deliverable:** `REQUEST_tree-view_2026-09-21.md` at r2: the nine
-candidate criteria struck or kept, the three OPENs ruled, signed by the PO
-seat. No check is written before r2.
+**Closed.** The deliverable is met: `REQUEST_tree-view_2026-09-21.md` is
+at r2, signed by the PO seat, with zero OPEN marks. The next session starts
+a new plan at r3.
 
-Where things stand: kit 0.14.0 is released and nothing is in flight. The
-pilot consumer, ImSim Engine, closed its session 10 by vetting G0 on 0.14.0
-and handing the kit a finding (`no-check-reads-the-source-document`) and
-the request half of `tree-view`. The user chose `tree-view` for this
-session; G1 follows it. About eight decisions: one batch of uncontested
-criteria, about three contested ones, the three OPENs, the r2 signature.
+Where things stand: the strike kept eight of the nine candidates, moved SC9
+under Decisions, answered the three OPENs and recorded two more decisions.
+It took five human decisions, not the eight planned: ADR 0024 had already
+answered OPEN 1, and OPEN 2 was SC1's question.
 
 ## Diagram
 
@@ -25,27 +23,16 @@ The HTML is generated, never committed.
 
 ## Steps
 
-1. STATE.md takes engine session 10: the G0 vetting, the new finding, the
-   `tree-view` pick, G1 next. Committed with this plan on
-   `session-37-tree-view`, which carries `c87ef7f`.
-2. The strike, nine criteria. One message lists all nine with my
-   recommendation (keep, strike, reword); you accept the uncontested ones
-   as a set, and each contested one gets its own message. The grounds: ADRs
-   0024, 0027 and 0029, the engine's cursor prototype
-   (`tools/plan_graph.py`) and its `plan-granularity-one-node-one-task`
-   finding. A criterion that needs `spec-doc-type` or `derived-language`
-   moves to a later cut, not a wait. SC8 carries the herdr seam: the kit
-   ships the tree as a plain command, and the herdr plugin wraps it outside
-   the kit.
-3. The three OPENs, one message each, each with a recommendation: where
-   tasks, approvals and the cursor live under ADR 0027; how the view reads
-   the spec doc's rows while ADR 0029 keeps tooling off headings; whether
-   the per-unit task template becomes the kit's code-writing plan.
-4. r2 into the REQUEST: the kept criteria reworded where the strike changed
-   them, the OPENs answered under Decisions, a revision row signed by the
-   PO seat. The file stays the requester's, untracked.
-5. Close: STATE.md regenerated, this plan struck through, one PR carrying
-   `c87ef7f` and this session's commits, merged on your word.
+1. ~~STATE.md takes engine session 10.~~ Done at `ce0cdec`, with this plan.
+2. ~~The strike.~~ One batch: SC2, SC4, SC6 and SC8 kept, SC5 reworded, SC9
+   struck, OPEN 1 answered by ADR 0024, two non-goals. Two contested calls:
+   SC1 starts at the contracts and reads no document; check runs are
+   recorded, so SC3 and SC7 stand as written.
+3. ~~The three OPENs.~~ OPEN 1 in the batch, OPEN 2 with SC1, OPEN 3 its
+   own call: one fixed task list per unit, Two-Key last, never enforced.
+4. ~~r2 into the REQUEST.~~ Written and signed by the PO seat, 2026-09-21.
+5. ~~Close.~~ STATE.md regenerated and this plan struck through; the PR
+   carrying this commit merges on your word.
 
 Deferred, not this session:
 - `tree-view` after r2: the checks and the solution half (r3), intake to

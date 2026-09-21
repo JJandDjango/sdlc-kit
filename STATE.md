@@ -2,35 +2,38 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-21 (session 37 open)._
+> _Generated 2026-09-21 (session 37 close)._
 
 ## Now
-- **Session 37 takes `tree-view`**, the user's pick (2026-09-21): one tree
-  of the work, derived from the kit's files and followed from a terminal
-  pane. This session's deliverable is the strike pass: the nine candidate
-  criteria struck or kept and the three OPENs ruled, signed as r2.
-  `REQUEST_tree-view_2026-09-21.md` sits untracked in the root.
-- **The pilot vetted G0 on 0.14.0** (engine session 10). Its M0 contract
-  is ready-green locally and in CI run 35620384803, the first under the
-  `v0.14.0` pin; traced field by field against its document at r3, it is
-  faithful. On 0.14.0's findings: `intake-write-locks-its-own-confirmation`
-  closed, `coverage-join-inactive-on-undeclared-terms` closed in part,
-  `write-guard-binds-to-an-editing-tool-list` (G4.6) untouched.
+- **`tree-view` is at r2**, signed by the PO seat on 2026-09-21. The
+  strike kept eight criteria, moved SC9 under Decisions, answered the
+  three OPENs and recorded two more decisions. The first cut starts at the
+  contracts and reads no document. Tasks, approvals, the cursor and check
+  runs live in ADR 0024's `.sdlc/progress/<id>.yaml`, a check's run
+  written by a kit command. Every unit follows one fixed task list, shown
+  and never enforced. A herdr plugin wraps the notify command outside the
+  kit. `REQUEST_tree-view_2026-09-21.md` stays untracked, the requester's.
+- **The pilot vetted G0 on 0.14.0** (engine session 10): M0 is
+  ready-green in CI run 35620384803 and faithful to its document at r3.
+  On 0.14.0's findings: `intake-write-locks-its-own-confirmation` closed,
+  `coverage-join-inactive-on-undeclared-terms` closed in part, the G4.6
+  finding untouched.
 - **New finding, `no-check-reads-the-source-document`** (gap, G0, engine
   `d7f82ea`): G0 reads the contract alone, so five terms the M0 document
   defines went undeclared and the door stayed green. Its proposal (engine
   `631dc0f`): intake copies every term the document defines into
   `entities:`, so G0.2 fails until the glossary ratifies them.
-- **Kit 0.14.0 is released**: PR #44 at `1d306ea`, tag `v0.14.0`; the
-  self-pin and wrap in PR #45 at `36c0720`. `c87ef7f`, session 36's
-  close, rides this session's branch, `session-37-tree-view`.
+- **Kit 0.14.0 is released** (tag `v0.14.0` at `1d306ea`).
+  `session-37-tree-view` carries `c87ef7f` (session 36's close) and this
+  session's two commits in one PR.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. `tree-view`: the strike pass (session 37), then the checks and the
-   solution half, intake to ready, the units.
+1. `tree-view` r3, signed by the engineer seat: two or three checks per
+   criterion, then the solution half (scope, out of scope, interfaces,
+   constraints, units, sequencing). Then intake to ready (r4), the units.
 2. G1, no request yet. The pilot's M0 code waits on G1's criteria review,
    which also gives intake's exit the successor venue
    `intake-exit-names-no-successor-venue` asks for.
@@ -55,6 +58,10 @@
   (`hash-object`, then `update-index`), so the commit holds one change.
 
 ## Open questions
+- For `tree-view` r3: does it need its own ADR? The fixed task list
+  extends ADR 0027's plan crosswalk, and the progress file gets its first
+  writer. And a deliberate red run records the check as failed while
+  "prove red" reads done; the tree should show that red as expected.
 - Which request carries `no-check-reads-the-source-document`:
   `derived-language`, which already asks for the contract-to-document
   pointer, or its own?
