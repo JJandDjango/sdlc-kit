@@ -66,14 +66,18 @@ paths) never enter the join.
 
 The third is the **confirmation join**
 ([0025](../decisions/0025-intake-seats.md), G0.3), ready-profile only
-and armed only by a *ratified* `specs/vocabulary/intake-seat.yaml` (a
+and reading a *ratified* `specs/vocabulary/intake-seat.yaml` (a
 value-set naming the repo's human seats): every unit must carry
 `confirmed_by` and every value must be one of the term's, else TC016
-names the unanswered unit or the unknown seat with the roster. A draft
-or absent term leaves it inactive, the draft profile never runs it, and
-loose files never enter - the coverage join's three habits, inherited
-by sharing its tree rule in `validate_path`. The record itself is
-written by the intake venue (I5-I6), never by the door.
+names the unanswered unit or the unknown seat with the roster. Since
+[0030](../decisions/0030-a-doors-input-is-a-declaration.md) the term
+is required rather than arming: a repo with no term, or one still at
+draft, gets TC018 once per contract naming the file to author and
+ratify, because a join that reads nothing cannot report green
+honestly. The draft profile never runs it and loose files never enter
+- the coverage join's habits, inherited by sharing its tree rule in
+`validate_path`. The record itself is written by the intake venue
+(I5-I6), never by the door.
 
 ## Ratified decisions (0006)
 

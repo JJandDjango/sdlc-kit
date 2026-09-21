@@ -142,8 +142,9 @@ def validate_path(file, profile: str = "ready", schema_doc: dict | None = None) 
         if len(parents) >= 3 and parents[1].name == "specs":
             from .vocabulary import confirmation_join, coverage_join
             violations.extend(coverage_join(name, instance, parents[2]))
-            # G0.3 unit confirmation (ADR 0025) rides the same tree rule and
-            # arms itself only when the sibling intake-seat term is ratified.
+            # G0.3 unit confirmation (ADR 0025) rides the same tree rule. Since
+            # ADR 0030 the sibling intake-seat term is required rather than
+            # arming: absent or draft, it reports TC018 once per contract.
             violations.extend(confirmation_join(name, instance, parents[2]))
 
     violations.sort(key=lambda v: (v.path, v.rule))
