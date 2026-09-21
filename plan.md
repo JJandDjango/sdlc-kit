@@ -1,4 +1,4 @@
-# Plan - Session 34 (2026-09-20) - g0-declaration to release
+# Plan - Session 35 (2026-09-21) - g0-declaration to release
 
 Where things stand: branch `session-33-g0-declaration`, unpushed over main
 (`5e26c1b`, kit 0.13.0). The OPEN at r5 is ruled: take the proposal, and the
@@ -19,7 +19,7 @@ schema 1.4.0. The editable install is live (`sdlc-taskcontract` from the
 working tree), so a standalone audit reads the working tree, not a pinned
 copy.
 
-## The blocking bar (apply first, next session)
+## The blocking bar (apply first)
 
 Session 34 spent seven FAIL verdicts and about 1.5M subagent tokens, and
 not one of them was a code defect: every sketch passed on its first round.
@@ -38,6 +38,16 @@ point. Three corrections, to apply before d3:
    release lives, not once per unit.
 3. **The focus list per unit is its own sketches, fixed.** Session 34
    widened it every round, raising a bar and then failing it.
+
+The bar lands in the verifier, `.claude/workflows/two-key-unit-verifier.js`
+(untracked). Today its grade prompt calls any false statement blocking
+(line 112) and its verdict code fails on any blocking defect (line 135).
+After: the prompt names the shipped surfaces and makes a defect on the three
+wrap files advisory; a `sweep` argument, true only for d6, is the one place
+the grader searches surfaces the commit does not touch; the verdict code
+demotes a blocking defect on a wrap file to advisory, so the bar is
+computed, not asserted. The third correction binds the caller: `focus`
+restates the unit's sketches and does not change between rounds.
 
 ## Diagram
 
@@ -84,8 +94,8 @@ Developer then Verifier (Two-Key). The unit graph is computed
    verifier built all four cases itself in a temp repo and confirmed the
    exact output lines and exit codes. Both rounds failed only on stale
    prose in `STATE.md` and `plan.workflow.json`, both fixed at this wrap.
-   Under the blocking bar above, d7 is PASS; re-run one round next session
-   to record it that way.
+   Under the blocking bar above, d7 is PASS; one round this session records
+   it that way.
 5. d3 `d3-scaffold-comment`. The skeleton names `entities` in a note line
    and sets no value. Two-Key.
 6. d4 `d4-intake-flow`. Intake checks the roster before authoring and stops
