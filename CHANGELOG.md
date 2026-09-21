@@ -67,6 +67,15 @@ Two house rules, enforced in review:
   profile the skeleton still reports only `TC007`, its TODO-intent
   tripwire; at ready it also reports `TC017` until the author declares.
   Delta note: none; a contract already scaffolded keeps its file.
+- **Intake checks the roster first and always declares `entities:`**
+  (`g0-declaration`, ADR 0030, unit `d4-intake-flow`). `/sdlc intake`
+  reads `vocab-list` before it scaffolds anything; with no ratified
+  `intake-seat` it stops with one line naming
+  `specs/vocabulary/intake-seat.yaml` and `/sdlc vocab add intake-seat`,
+  so it never authors a contract that cannot reach ready. Every contract
+  it writes carries `entities:`. When the request matches no ratified
+  term it proposes `entities: []` and writes it only on the PO seat's
+  confirmed answer. Delta note: none; the flow arrives with the install.
 
 ## 0.13.0 - 2026-09-18 (tag `v0.13.0`)
 
