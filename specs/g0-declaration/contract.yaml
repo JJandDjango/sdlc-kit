@@ -106,10 +106,11 @@ decomposition:
     depends_on: [d1-schema-entities]
     done_means: >-
       The scaffold names `entities` in a note line and declares no list.
-      The file from `taskcontract new` still passes the draft profile.
+      At the draft profile the file from `taskcontract new` gets only
+      `TC007`, as before.
     acceptance_sketch:
-      - verify the scaffold passes the draft profile, names `entities` in
-        a note line, and declares no list (SC4.2)
+      - verify the scaffold gets only `TC007` at the draft profile, names
+        `entities` in a note line, and declares no list (SC4.2)
   - unit: d4-intake-flow
     id: d4-intake-flow
     confirmed_by: [user]
