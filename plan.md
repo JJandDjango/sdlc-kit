@@ -52,8 +52,17 @@ Developer then Verifier (Two-Key). The unit graph per contract is computed
    with the `Contract:` trailer, Two-Key by a workflow verifier. (f) The
    kit's own contracts and vocabulary must pass the new door first: every
    ready contract declares `entities:`, `intake-seat` stays ratified.
-   (g) PR, then on the user's word: merge, tag v0.13.1 or v0.14.0 (decided
-   at intake by the schema delta), self-pin.
+   (g) PR, then on the user's word: merge, tag v0.14.0, self-pin.
+   Progress: intake ready-green (7fd7127); d0 PASS after two verifier
+   rounds (8239468, 1ad319a; round 1 caught a false cross-reference).
+   d6 carries five USAGE advisories from d0's verifier: (1) section 8's
+   worked example shows a contract with no `entities:`; (2) the green
+   intake sentences near lines 149-160 imply intake runs without a roster
+   and omit `entities` from the fields intake authors; (3) "add the field,
+   and it locks" is false read alone, so fold the both-doors condition
+   into it; (4) the new section names greenfield init and omits the
+   brownfield half; (5) section 9 Troubleshooting needs TC017 and TC018
+   rows beside TC016.
 2. `derived-language`: same discipline. Its SC3 (the token rule) unblocks
    leading check ids for steps 3 and 4.
 3. `feature-document`: fold the queued 0029 amendments into the note and the
