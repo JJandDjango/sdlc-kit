@@ -161,6 +161,37 @@ what gates entry into development. 🟢 With a ratified seat term (§8),
 intake also takes a human answer per unit and records it under
 `confirmed_by` before the contract lands (kit 0.12.0).
 
+### What `ready` requires — two declarations 🔴
+
+> 🔴 **Ratified, not shipped** ([ADR 0030](decisions/0030-a-doors-input-is-a-declaration.md),
+> contract `specs/g0-declaration/`, kit 0.14.0, schema 1.4.0). Marks flip green as the units land.
+
+🔴 At the `ready` profile, the input a door reads is required, so a green
+G0 means every condition checked something. A contract carries
+`entities:`, the glossary terms it operates on (§5). An empty list is valid
+and is a statement: `entities: []` says the contract operates on no
+glossary term. A contract with no field fails `TC017`. `/sdlc intake`
+always writes the field, and writes `[]` only on the PO seat's confirmed
+answer; `taskcontract new` names the field in a comment and sets no value.
+
+🔴 Inside a specs tree, a ratified `intake-seat` (§8) must exist before any
+contract reaches `ready`. With the term absent or at draft, every contract
+fails `TC018`, and the diagnostic names the file to author:
+`specs/vocabulary/intake-seat.yaml` (`/sdlc vocab add intake-seat` drafts
+it; ratifying it is yours). Intake checks this first and stops before
+authoring. Greenfield `/sdlc init` asks who holds the seats and seeds the
+term; a repo with one human ratifies a one-value roster. The `draft`
+profile is unchanged: a parked contract may carry neither.
+
+🔴 **Adopting on an existing repo needs no re-intake.** The session hook
+protects only a contract that validates `ready`, so a contract the new
+door fails is open to the edit that repairs it, and locks again once it
+passes. After the upgrade, a `ready` contract with no `entities:` fails
+`TC017`: add the field, and it locks. The roster works the same way:
+ratify `intake-seat`, each contract fails `TC016` until its units carry
+`confirmed_by`, stamp the answers, and the contracts lock again. Pin the
+kit ref in your workflow (§2) so an upgrade is a choice, never a surprise.
+
 ### `taskcontract new <id>` (or `/sdlc new <id>`)
 Scaffolds the 8-field contract skeleton at
 `specs/<id>/contract.yaml` with inline field guidance. The id must
@@ -345,6 +376,10 @@ engineer team that owns the decomposition), the kit gives each a
 record at the door. A repo with one human changes nothing: leave the
 seat term unratified and the check stays off.
 
+🔴 From kit 0.14.0 ([ADR 0030](decisions/0030-a-doors-input-is-a-declaration.md))
+the roster is required: a repo with one human ratifies a one-value roster
+before its first contract reaches `ready`. See §4, "What `ready` requires".
+
 ### The seats: a term you ratify
 
 Seats are a `value-set` term in your own vocabulary, one value per
@@ -404,6 +439,9 @@ Every unit names the seats that answered for it:
   `confirmed_by`, or one naming a seat the term lacks, fails with
   `TC016`. A draft term or no term leaves the check off; a parked
   `draft` contract is never asked.
+- 🔴 From kit 0.14.0 (ADR 0030): a draft term or no term fails every
+  contract at the ready door with `TC018`, which names the file to
+  author. A parked `draft` contract is still never asked.
 - 🟢 Intake writes it: after drafting the decomposition, intake renders
   the unit graph, asks for an answer per unit, writes `confirmed_by`,
   and only then writes the contract. A red door after the write reports
