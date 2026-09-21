@@ -53,10 +53,11 @@ Two house rules, enforced in review:
   line names them: `legal draft parked on <blockers>; still to declare:
   TC017, TC018`. A parked contract owing nothing keeps today's line. Any
   other failure beside `TC003`, such as a missing `non_goals`, still
-  reads `CONTRACT-INVALID`. Delta note: a consumer whose CI runs
-  `/sdlc audit` and who parks contracts sees no new red from this
-  release; the parked line tells them what each parked contract owes
-  before they unpark it.
+  reads `CONTRACT-INVALID`. Delta note: a consumer's *parked* contracts
+  raise no new red from this release, and the parked line tells them
+  what each one owes before they unpark it. Their ready contracts do
+  turn red on `TC017` and `TC018` until they declare, as the two notes
+  above say.
 
 ## 0.13.0 - 2026-09-18 (tag `v0.13.0`)
 

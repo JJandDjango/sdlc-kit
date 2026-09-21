@@ -8,12 +8,36 @@ contract is ready-green with eight units. The goal is the whole request
 delivered and released, so a consumer on 0.14.0 gets a door that checks
 something and an audit that reads a parked contract correctly.
 
-Verified so far: d0 (`1ad319a`) and d1 (`6939082`), each PASS by an
-independent Two-Key round. Receipts at d1: suite 285 green, thirteen
-contracts ready-green, `/sdlc audit` clean, the language door at zero for
-this contract, schema 1.4.0, the TC017 string byte-equal to the request. The
-editable install is live (`sdlc-taskcontract` from the working tree), so a
-standalone audit reads the working tree, not a pinned copy.
+Verified: d0 (`1ad319a`), d1 (`6939082`), d2 (round 5, `c1af342` through
+`d420f80`), each PASS by an independent Two-Key round. d7 is committed at
+`8ce629e` with `ff55f5b`: its three sketches PASS and `done_means` holds,
+but its verdict stands FAIL on stale prose in this plan's own files, which
+the blocking-bar fix below settles. Receipts at HEAD: suite 292 green,
+thirteen contracts ready-green, `/sdlc audit` clean, the language door at
+zero for this contract, `vocab-check` green at 18 terms and 8 constraints,
+schema 1.4.0. The editable install is live (`sdlc-taskcontract` from the
+working tree), so a standalone audit reads the working tree, not a pinned
+copy.
+
+## The blocking bar (apply first, next session)
+
+Session 34 spent seven FAIL verdicts and about 1.5M subagent tokens, and
+not one of them was a code defect: every sketch passed on its first round.
+Each FAIL was a sentence somewhere else stating a rule the unit had
+retired. The kit describes its own rules on about forty surfaces, and each
+verifier round searched where the last had not, so the loop had no fixed
+point. Three corrections, to apply before d3:
+
+1. **Blocking** means a sketch fails, `done_means` is false, a path sits
+   outside scope, a trailer is missing, or a *shipped* surface states
+   something false: code, the schema, `docs/`, `USAGE.md`, `CHANGELOG.md`.
+   Files regenerated at every wrap (`plan.md`, `plan.workflow.json`,
+   `STATE.md`) are session scratch and do not gate a unit; they are fixed
+   at the wrap, which is where they are rewritten anyway.
+2. **The repo-wide stale-claim sweep runs once, inside d6**, where the
+   release lives, not once per unit.
+3. **The focus list per unit is its own sketches, fixed.** Session 34
+   widened it every round, raising a bar and then failing it.
 
 ## Diagram
 
@@ -54,10 +78,14 @@ Developer then Verifier (Two-Key). The unit graph is computed
    ruled both legitimate corrections rather than scope creep. They trip
    different branches of the write-guard, the registry-file branch and the
    ratified-term branch, so the PR names them on two separate grounds.
-4. d7 `d7-audit-parked-rule`. The parked rule reads TC003 present with every
-   other error a declaration miss (TC017, TC018), and the parked finding
-   names the misses. Committed at `8ce629e`; round 1 failed on a surviving
-   statement of the old rule in `STATE.md`, now regenerated. Two-Key.
+4. d7 `d7-audit-parked-rule`. DONE in substance at `8ce629e` with
+   `ff55f5b`: the parked rule reads TC003 present with every other error a
+   declaration miss (TC017, TC018), the parked line names them, and the
+   verifier built all four cases itself in a temp repo and confirmed the
+   exact output lines and exit codes. Both rounds failed only on stale
+   prose in `STATE.md` and `plan.workflow.json`, both fixed at this wrap.
+   Under the blocking bar above, d7 is PASS; re-run one round next session
+   to record it that way.
 5. d3 `d3-scaffold-comment`. The skeleton names `entities` in a note line
    and sets no value. Two-Key.
 6. d4 `d4-intake-flow`. Intake checks the roster before authoring and stops
