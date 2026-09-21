@@ -9,7 +9,7 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
-## 0.14.0 - unreleased
+## 0.14.0 - 2026-09-21 (tag `v0.14.0`)
 
 - **`entities:` is required at the ready profile** (`g0-declaration`,
   ADR 0030, unit `d1-schema-entities`). Schema `1.3.0` -> `1.4.0`: the
