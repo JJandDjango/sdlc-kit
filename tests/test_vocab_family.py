@@ -13,6 +13,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+from conftest import write_seat_roster
 
 from taskcontract.__main__ import main
 from taskcontract.vocabulary import (
@@ -47,6 +48,7 @@ non_goals:
 decomposition:
   - unit: warn
     id: warn
+    confirmed_by: [user]
     done_means: the join warns without gating
     acceptance_sketch:
       - audit reports CONTRACT-WARNED
@@ -169,6 +171,7 @@ def test_audit_reports_warned_contract_as_info(tmp_path, skill_audit):
     vocab = tmp_path / "specs" / "vocabulary"
     vocab.mkdir()
     (vocab / "fading-term.yaml").write_text(FADING, encoding="utf-8")
+    write_seat_roster(tmp_path)  # the ready profile needs one (ADR 0030)
 
     findings, _ = skill_audit.audit(tmp_path)
     codes = {f.code for f in findings}

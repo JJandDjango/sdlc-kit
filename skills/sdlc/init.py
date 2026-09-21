@@ -27,6 +27,10 @@ Behavior:
     overlay entries add surfaces or replace base ones by target, under the
     same no-clobber and merge semantics. No or empty overlay = the base
     payload exactly.
+  - SEAT ROSTER (ADR 0030): a brownfield target without a ratified
+    `intake-seat` term gets a report note naming the need and the command
+    that drafts it; greenfield seeds the term in the interview
+    (flows/init.md step 5), so its report carries no note.
 """
 
 from __future__ import annotations
@@ -44,7 +48,7 @@ KIT_REPO = "https://github.com/JJandDjango/sdlc-kit"
 # release-tagging). Bump KIT_VERSION together with pyproject [project].version -
 # tests hold the two equal - and tag v{KIT_VERSION} at the merge that ships the
 # bump. Consumers upgrade by bumping the rendered ref themselves: pull, not push.
-KIT_VERSION = "0.13.0"
+KIT_VERSION = "0.14.0"
 KIT_REF = f"git+{KIT_REPO}.git@v{KIT_VERSION}"
 SCHEMA_URL = ("https://raw.githubusercontent.com/JJandDjango/sdlc-kit/"
               f"v{KIT_VERSION}/taskcontract/schemas/task-contract.schema.json")
@@ -119,6 +123,18 @@ your .NET build workflow is untouched. Per-gate binding status and fit
 notes: docs/dotnet-profile.md in the kit repo.
 """
 
+# Every contract needs a ratified seat roster at ready (ADR 0030, TC018).
+# Greenfield seeds it in the interview; a brownfield target gets this note
+# until the term stands ratified.
+ROSTER_TERM = Path("specs") / "vocabulary" / "intake-seat.yaml"
+
+ROSTER_NOTE = """
+Seat roster, before step 1: no contract here reaches ready until
+`intake-seat` is ratified (TC018), and `/sdlc intake` stops without it.
+Draft it with `/sdlc vocab add intake-seat`, list the seats that answer
+at intake as its values, then ratify it.
+"""
+
 
 def substitute(template_text: str, variables: dict) -> str:
     """Substitute {{ var }} placeholders in one pass."""
@@ -131,6 +147,18 @@ def substitute(template_text: str, variables: dict) -> str:
         return str(variables[key])
 
     return pattern.sub(replace, template_text)
+
+
+def roster_ratified(cwd: Path) -> bool:
+    """True when the target already holds a ratified `intake-seat` term.
+
+    A line match, not a YAML parse: the engine stays zero-dependency.
+    """
+    path = cwd / ROSTER_TERM
+    if not path.exists():
+        return False
+    text = path.read_text(encoding="utf-8")
+    return re.search(r"^status:\s*ratified\s*$", text, re.MULTILINE) is not None
 
 
 def build_var_dict(answers: dict, today: str) -> dict:
@@ -298,6 +326,8 @@ def main(argv: list[str] | None = None) -> int:
     print(NEXT_STEPS.rstrip())
     if str(answers.get("stack", "")).strip() == "dotnet":
         print(DOTNET_NOTE.rstrip())
+    if answers["adoption"] == "brownfield" and not roster_ratified(cwd):
+        print(ROSTER_NOTE.rstrip())
     return 0
 
 

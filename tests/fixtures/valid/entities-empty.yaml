@@ -1,0 +1,18 @@
+id: entities-empty
+intent: >-
+  An entities field that is present and empty is a declaration: the
+  contract states that it operates on no glossary term (ADR 0030).
+scope:
+  - taskcontract/
+non_goals:
+  - Resolving any term - an empty list joins against nothing
+decomposition:
+  - unit: schema-shape
+    id: schema-shape
+    done_means: the empty entities array validates at the ready profile
+    acceptance_sketch:
+      - a ready validation of this fixture returns no diagnostic
+dependencies: []
+provenance:
+  origin: human-request
+entities: []

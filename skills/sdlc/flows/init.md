@@ -1,6 +1,6 @@
 ---
 name: sdlc-flow-init
-description: The Init interview of /sdlc - confirm the target, detect Cairn, interview, render the no-clobber payload, seed greenfield terms, report.
+description: The Init interview of /sdlc - confirm the target, detect Cairn, interview, render the no-clobber payload, seed greenfield terms and the seat roster, report.
 ---
 
 <purpose>
@@ -24,7 +24,7 @@ criteria bind here. {skill-dir} is the directory holding SKILL.md.
        python {skill-dir}/init.py --answers '{json}'
    where {json} is the dict {"project_name": ..., "adoption": ..., "stack": ...} as a single-quoted shell argument (escape inner double quotes as the shell needs). Non-zero exit: REPORT stderr in one line and return to the conversation.
 
-5. SEED (greenfield only) - elicit 5-15 seed terms from the interview (each: slug, display name, one-line meaning, kind - AskUserQuestion, or the invocation text when it supplies them). Author each at specs/vocabulary/{slug}.yaml via the Add flow's machinery ({skill-dir}/flows/vocab.md, VA1), then set `status: ratified` directly - the interviewee is the principal, so answers are interview-equivalent (ADR 0017 V5). LOOP `python -m taskcontract vocab-check` to green (one Bash call per iteration, cap 5). Brownfield: SKIP seeding - RECOMMEND `/sdlc vocab extract` as the day-2 follow-up instead.
+5. SEED (greenfield only) - elicit 5-15 seed terms from the interview (each: slug, display name, one-line meaning, kind - AskUserQuestion, or the invocation text when it supplies them). Author each at specs/vocabulary/{slug}.yaml via the Add flow's machinery ({skill-dir}/flows/vocab.md, VA1), then set `status: ratified` directly - the interviewee is the principal, so answers are interview-equivalent (ADR 0017 V5). Then ASK who holds the seats - the human positions that answer for a unit at intake (AskUserQuestion, or the invocation text when it names them) - and author `intake-seat` the same way: kind `value-set`, the seats as its `values`, `status: ratified`. Without it no contract reaches ready and intake stops (ADR 0030). LOOP `python -m taskcontract vocab-check` to green (one Bash call per iteration, cap 5). Brownfield: SKIP seeding - RECOMMEND `/sdlc vocab extract` as the day-2 follow-up instead; the engine's report already names the seat roster the repo needs and `/sdlc vocab add intake-seat`, and step 6 carries it.
 
 6. REPORT the engine's stdout verbatim (created / skipped / merge-by-hand blocks + next steps). If any merge-by-hand snippet printed, restate in one line which files the user must merge manually. When step 5 seeded terms, append the vocab-list line counts.
 </instructions>

@@ -29,9 +29,11 @@
   ([[0024-unit-dependency-graph]]).
 - **Intake answers are recorded.** Every unit names the seats that answered
   for it under `confirmed_by`; seats are the repo's ratified `intake-seat`
-  value-set, and the ready door demands the record once that term is
-  ratified (TC016). Who holds which field is policy (USAGE §8), never a
-  check on the author ([[0025-intake-seats]]).
+  value-set, and the ready door demands the record (TC016). The term
+  itself is required at ready, not the switch that arms the check: a repo
+  without it gets TC018 until the roster is authored and ratified
+  ([[0030-a-doors-input-is-a-declaration]]). Who holds which field is
+  policy (USAGE §8), never a check on the author ([[0025-intake-seats]]).
 - **The raw request stays the requester's.** Intake consumes the consumer's
   own document; the contract is what the venue produces from it, never a
   replacement, and a change after ready re-intakes. The request holds worth

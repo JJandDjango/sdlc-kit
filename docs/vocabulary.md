@@ -60,10 +60,15 @@ pattern, and `specs/vocabulary/` joins the protected write surface.
 
 ## 🟢 `entities:` field + the G0 coverage join
 
-Contracts gain an optional `entities:` array - the terms a task
-operates on - via the [0005](../decisions/0005-task-contract-fields.md)
-amendment path: existing contracts stay valid (schema `version: 1.1.0`,
-field optional, unique slug refs), the join activates on presence.
+Contracts gain an `entities:` array - the terms a task operates on -
+via the [0005](../decisions/0005-task-contract-fields.md) amendment
+path (unique slug refs). It arrived optional at schema `version: 1.1.0`
+so existing contracts stayed valid and the join activated on presence;
+since [0030](../decisions/0030-a-doors-input-is-a-declaration.md) and
+schema `1.4.0` it is required at the ready profile, because a join that
+activates on presence reports green when it reads nothing. A contract
+with no field reports `TC017`, and `entities: []` is how a contract
+declares that it operates on no term. The draft profile is unchanged.
 Ready-profile semantics, live in `validate --profile ready` whenever
 the contract sits in a specs tree (loose files stay schema-only):
 

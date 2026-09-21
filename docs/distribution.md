@@ -29,10 +29,17 @@ moves it:
 
 The safety rails that make updates survivable are already house law:
 additive-first schema deltas (0005 amendment path; the 1.1.0
-`entities` delta is the exemplar - old contracts stay valid, semantics
-activate on presence), sunset windows for removals (0013; W001 warns
-inside the window, TC012 errors past it), and stable diagnostic codes
-so a break announces itself by name in the consumer's own CI.
+`entities` delta was the exemplar - old contracts stayed valid because
+the semantics activated on presence), sunset windows for removals
+(0013; W001 warns inside the window, TC012 errors past it), and stable
+diagnostic codes so a break announces itself by name in the consumer's
+own CI. A tightening is the case the rails do not cover:
+[0030](../decisions/0030-a-doors-input-is-a-declaration.md) made both
+of G0's inputs required at ready - `entities` in schema 1.4.0, and the
+seat roster Python-side, because no schema can see a repository - so
+contracts that were green go red until they declare. That delta rides
+the CHANGELOG note, the `USAGE.md` adoption path, and the pin - a
+consumer on a pinned install upgrades when it chooses to.
 
 ## 🟢 Pinned install ref (F1 - unit: release-tagging)
 

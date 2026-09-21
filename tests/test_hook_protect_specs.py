@@ -17,6 +17,9 @@ import sys
 from pathlib import Path
 
 import pytest
+from conftest import write_seat_roster
+
+from taskcontract.checker import validate_path
 
 ROOT = Path(__file__).parent.parent
 TEMPLATE = ROOT / "skills" / "sdlc" / "templates" / "hooks-protect-specs.py.template"
@@ -48,7 +51,12 @@ def repo(tmp_path, hook_source) -> Path:
     hook.write_text(hook_source, encoding="utf-8")
     ready = tmp_path / "specs" / "ready-task" / "contract.yaml"
     ready.parent.mkdir(parents=True)
-    ready.write_text(READY_CONTRACT.read_text(encoding="utf-8"), encoding="utf-8")
+    # Inside a specs tree a ready contract now needs the seat answer too
+    # (ADR 0030 makes the roster below required, which arms TC016).
+    ready.write_text(READY_CONTRACT.read_text(encoding="utf-8").replace(
+        "    id: guard-empty-cart\n",
+        "    id: guard-empty-cart\n    confirmed_by: [user]\n"),
+        encoding="utf-8")
     draft = tmp_path / "specs" / "parked-task" / "contract.yaml"
     draft.parent.mkdir(parents=True)
     draft.write_text(READY_CONTRACT.read_text(encoding="utf-8").replace(
@@ -60,6 +68,7 @@ def repo(tmp_path, hook_source) -> Path:
     (vocab / "checkout.yaml").write_text(RATIFIED_TERM, encoding="utf-8")
     (vocab / "cart.yaml").write_text(DRAFT_TERM, encoding="utf-8")
     (vocab / "dictionary.yaml").write_text("class: E\nwords: []\n", encoding="utf-8")
+    write_seat_roster(tmp_path)  # the ready profile needs it (ADR 0030)
     (tmp_path / "specs" / "README.md").write_text("# specs\n", encoding="utf-8")
     return tmp_path
 
@@ -227,3 +236,51 @@ def test_template_is_stdlib_only_and_substituted(hook_source):
                if line.startswith(("import ", "from "))]
     assert all("taskcontract" not in line for line in imports)  # imported lazily
     assert "from taskcontract.checker import validate_path" in hook_source
+
+
+# --- unit: d6-adoption-and-release (contract: g0-declaration) ---
+# SC5: a contract that was ready before ADR 0030 adopts by an edit, never a
+# re-intake. The hook guards only a contract that validates ready, so the new
+# door opens the contract to the edit that repairs it, and passing locks it.
+
+READY_TASK = "specs/ready-task/contract.yaml"
+
+
+def _ready_rules(repo: Path) -> set[str]:
+    return {v.rule for v in validate_path(repo / READY_TASK, profile="ready")}
+
+
+def test_a_missing_entities_declaration_unlocks_and_declaring_relocks(repo):
+    """SC5.1 and SC5.2 for G0.2: TC017 opens the contract, `entities:` shuts it."""
+    contract = repo / READY_TASK
+    declared = contract.read_text(encoding="utf-8")
+    contract.write_text(declared.replace("entities: []\n", ""), encoding="utf-8")
+    assert _ready_rules(repo) == {"TC017"}
+    assert _run(repo, READY_TASK).returncode == 0
+    contract.write_text(declared, encoding="utf-8")
+    assert _ready_rules(repo) == set()
+    result = _run(repo, READY_TASK)
+    assert result.returncode == 2 and "validates ready" in result.stderr
+
+
+def test_ratifying_the_roster_unlocks_until_the_answers_are_stamped(repo):
+    """SC5.1 and SC5.2 for G0.3: TC018, then TC016, open it; the answers shut it."""
+    contract = repo / READY_TASK
+    stamped = contract.read_text(encoding="utf-8")
+    contract.write_text(stamped.replace("    confirmed_by: [user]\n", ""),
+                        encoding="utf-8")
+    (repo / "specs" / "vocabulary" / "intake-seat.yaml").unlink()
+    # Ready as a repo held it before ADR 0030: the roster is all it lacks, so
+    # declaring entities alone leaves it open.
+    assert _ready_rules(repo) == {"TC018"}
+    assert _run(repo, READY_TASK).returncode == 0
+    write_seat_roster(repo, status="draft")
+    assert _ready_rules(repo) == {"TC018"}
+    assert _run(repo, READY_TASK).returncode == 0
+    write_seat_roster(repo)  # ratified: TC018 clears and TC016 arms
+    assert _ready_rules(repo) == {"TC016"}
+    assert _run(repo, READY_TASK).returncode == 0
+    contract.write_text(stamped, encoding="utf-8")  # the answers stamped
+    assert _ready_rules(repo) == set()
+    result = _run(repo, READY_TASK)
+    assert result.returncode == 2 and "validates ready" in result.stderr

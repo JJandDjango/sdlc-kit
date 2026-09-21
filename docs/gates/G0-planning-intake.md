@@ -82,8 +82,8 @@ wrong everything downstream.
 | `acceptance_sketch` | 1-3 draft criteria per unit | the writability witness - "criteria unwritable" is decidable only by attempting one; full criteria remain G1's job |
 | `dependencies` | list; each `resolved` or `blocked-by: <ref>`; all must be `resolved` to pass | "dependencies unresolved" rejection |
 | `provenance` | origin: human request / G8 escape / G9 maintenance | (derived - principle 8) the convergence loop needs escapes distinguishable at intake |
-| `entities` | optional ([0017](../../decisions/0017-vocabulary-layer.md) amendment) - the ratified vocabulary terms the task operates on | the G0.2 coverage join; absent = join inactive, contract valid |
-| `confirmed_by` (per unit) | optional in the schema ([0025](../../decisions/0025-intake-seats.md) amendment) - the seats whose answer for the unit was taken at intake | the G0.3 join; demanded on every unit once the repo's `intake-seat` term is ratified, inactive before |
+| `entities` | required at ready, optional at draft ([0017](../../decisions/0017-vocabulary-layer.md) amendment, tightened by [0030](../../decisions/0030-a-doors-input-is-a-declaration.md)) - the ratified vocabulary terms the task operates on; `entities: []` declares that it operates on none | the G0.2 coverage join; absent at ready = `TC017`, so the join can no longer be skipped by silence |
+| `confirmed_by` (per unit) | optional in the schema ([0025](../../decisions/0025-intake-seats.md) amendment) - the seats whose answer for the unit was taken at intake | the G0.3 join; demanded on every unit, because [0030](../../decisions/0030-a-doors-input-is-a-declaration.md) makes the repo's ratified `intake-seat` term required at ready (`TC018`) rather than the switch that arms the join |
 
 ### G0.2 Vocabulary coverage join - added 2026-07-28, [0017](../../decisions/0017-vocabulary-layer.md)
 
@@ -100,15 +100,23 @@ wrong everything downstream.
   one cheap human action, concentrated exactly on meaning.
 - **Kind & loopability:** mechanical - stable rule ids on both surfaces:
   TC010/TC011/TC012 + W001 from `validate --profile ready`; VT000-VT009 /
-  VC000-VC003 from `vocab-check`. The field is optional, so the join
-  activates on presence and existing contracts stay valid.
+  VC000-VC003 from `vocab-check`. Since
+  [0030](../../decisions/0030-a-doors-input-is-a-declaration.md) the field
+  is required at ready (`TC017`), so the join reads a declaration rather
+  than activating on presence; the empty list is how a contract declares
+  that it operates on no term. The draft profile is unchanged.
 - **Tooling:** `taskcontract/schemas/glossary-term.schema.json` +
   `constraint-registry.schema.json`, the coverage join inside the
   validator, the `/sdlc vocab` family (list / add / extract); deep page:
   [../vocabulary.md](../vocabulary.md).
 - **Parameters:** the sunset notice floor rides Q4.
 - **Lifecycle:** `enforced` in this repo - the join runs in the live
-  intake venue and the CI backstop; per-target elsewhere, as with G0.1.
+  intake venue and the CI backstop. Since
+  [0030](../../decisions/0030-a-doors-input-is-a-declaration.md) the
+  declaration is enforced in every consumer tree rather than per-target,
+  and outside one too: `TC017` sits in the schema's `ready_delta`, so any
+  ready validation reads it. The join that resolves the declared terms
+  still runs only where the contract sits in a specs tree.
 
 ### G0.3 Unit confirmation - added 2026-08-26, [0025](../../decisions/0025-intake-seats.md)
 
@@ -116,9 +124,13 @@ wrong everything downstream.
   `intake-seat` at `ratified` (a `value-set` naming the seats this repo
   recognizes), every decomposition unit carries `confirmed_by` and every
   value in it is one of the term's values; otherwise TC016, naming the
-  unanswered unit or the unknown seat and the roster. A draft term or
-  no term leaves the check inactive; the draft profile never runs it (a
-  parked contract may lack answers); loose files stay schema-only.
+  unanswered unit or the unknown seat and the roster. Since
+  [0030](../../decisions/0030-a-doors-input-is-a-declaration.md) the
+  roster is required rather than arming: a repo with no term, or one
+  still at draft, reports TC018 once per contract with the file to
+  write, in two wordings (the term does not exist; the term is not
+  ratified). The draft profile never runs it (a parked contract may
+  lack answers); loose files stay schema-only.
 - **Why:** the intake venue takes a human answer for every unit before
   a contract lands (0024's render-and-confirm step), and until 0025
   nothing recorded who answered - the answer lived in chat, and the PR
@@ -131,7 +143,9 @@ wrong everything downstream.
   the existing I5 answer; this condition checks the record of it.
 - **Kind & loopability:** mechanical - TC016 from `validate --profile
   ready`, one line per unanswered unit or unknown seat, the remedy
-  named (return to intake I5 for that unit).
+  named (return to intake I5 for that unit); TC018 once per contract
+  when the roster is absent or unratified, naming the file to author
+  and ratify.
 - **Tooling:** `confirmation_join` beside the coverage join in
   `taskcontract/vocabulary.py`, wired in `checker.validate_path`'s
   ready-profile specs-tree block; the record written by `/sdlc intake`
@@ -143,8 +157,12 @@ wrong everything downstream.
   door reads the answer, not the author.
 - **Lifecycle:** `specified` (0025); `enforced` in this repo since the
   kit's own `intake-seat` term (one value, `user`) was ratified
-  2026-08-26 and every unit stamped; per-target elsewhere, armed by
-  each consumer's own ratification.
+  2026-08-26 and every unit stamped. Since
+  [0030](../../decisions/0030-a-doors-input-is-a-declaration.md) it is
+  enforced in every consumer tree rather than per-target: a consumer
+  with no ratified roster is not waiting for the check to arm, it gets
+  TC018 on every contract at ready until the roster is authored and
+  ratified.
 
 ## Completeness check
 

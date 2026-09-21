@@ -14,12 +14,15 @@
 
 The 8-field set is fixed by 0005 (field table lives on the G0 page - not
 duplicated here); [0017](../decisions/0017-vocabulary-layer.md) V2 amends
-it with one optional field, `entities:` - unique term-slug refs;
+it with one field, `entities:` - unique term-slug refs, optional at
+draft and required at ready since
+[0030](../decisions/0030-a-doors-input-is-a-declaration.md), where the empty
+list is a declaration that the contract operates on no term;
 [0024](../decisions/0024-unit-dependency-graph.md) amends the unit shape
 with a required `id` and an optional `depends_on`; and
 [0025](../decisions/0025-intake-seats.md) adds an optional
 `confirmed_by`, the seats that answered for the unit at intake. Schema
-`version: 1.3.0`. Every pass-condition clause maps to vanilla JSON Schema
+`version: 1.4.0`. Every pass-condition clause maps to vanilla JSON Schema
 Draft 2020-12:
 
 | G0.1 clause | Schema encoding |
@@ -31,7 +34,9 @@ Draft 2020-12:
 | every unit identified | unit requires `id`, same pattern as the contract id (0024) |
 | unit order declared | optional `depends_on`: unique array of unit ids (0024) |
 | the order is a graph, not a list | *not schema* - TC013-TC015, Python-side (0024) |
-| every unit answered, once the seat term is ratified | *not schema* - TC016, Python-side, ready profile only (0025) |
+| every unit answered, the seat term being ratified | *not schema* - TC016, Python-side, ready profile only (0025) |
+| the terms the contract operates on are declared | `ready` profile: `required: [entities]`, no `minItems`, so `[]` declares none - TC017 (0030) |
+| the repo carries a ratified seat roster | *not schema* - TC018, Python-side, ready profile only, one per contract (0030) |
 | dependency `resolved` / `blocked-by: <ref>` | item object + `if/then` (E2) |
 | all dependencies resolved to pass | `ready` profile: `status: const resolved` (E2) |
 | `provenance` origin fixed | enum; `ref` required on escape (E3) |
@@ -61,14 +66,18 @@ paths) never enter the join.
 
 The third is the **confirmation join**
 ([0025](../decisions/0025-intake-seats.md), G0.3), ready-profile only
-and armed only by a *ratified* `specs/vocabulary/intake-seat.yaml` (a
+and reading a *ratified* `specs/vocabulary/intake-seat.yaml` (a
 value-set naming the repo's human seats): every unit must carry
 `confirmed_by` and every value must be one of the term's, else TC016
-names the unanswered unit or the unknown seat with the roster. A draft
-or absent term leaves it inactive, the draft profile never runs it, and
-loose files never enter - the coverage join's three habits, inherited
-by sharing its tree rule in `validate_path`. The record itself is
-written by the intake venue (I5-I6), never by the door.
+names the unanswered unit or the unknown seat with the roster. Since
+[0030](../decisions/0030-a-doors-input-is-a-declaration.md) the term
+is required rather than arming: a repo with no term, or one still at
+draft, gets TC018 once per contract naming the file to author and
+ratify, because a join that reads nothing cannot report green
+honestly. The draft profile never runs it and loose files never enter
+- the coverage join's habits, inherited by sharing its tree rule in
+`validate_path`. The record itself is written by the intake venue
+(I5-I6), never by the door.
 
 ## Ratified decisions (0006)
 
@@ -85,7 +94,8 @@ written by the intake venue (I5-I6), never by the door.
   to the prose. 0011's format is unchanged.
   [0025](../decisions/0025-intake-seats.md) adds an optional
   `confirmed_by` to the same shape - a unique, non-empty list of seat
-  values; 1.3.0 is additive, so 1.2.0 contracts validate unchanged.
+  values; 1.3.0 was additive, so every 1.2.0 contract validated
+  unchanged.
 - **E2** one schema file, two profiles: root = `draft` (a parked contract
   with a blocked dependency is representable, per 0005's own grammar);
   `$defs/ready` = draft + every `status: resolved`. The gate checks `ready`.
@@ -154,7 +164,9 @@ violations as an array - the agent loop substrate.
 | TC013 | duplicate unit id (names the first occurrence) |
 | TC014 | `depends_on` names no unit in this contract |
 | TC015 | dependency cycle (names the ring, spelled "depends on") |
-| TC016 | unit not confirmed: no `confirmed_by`, or a seat the ratified `intake-seat` term lacks (ready profile; armed by that ratification) |
+| TC016 | unit not confirmed: no `confirmed_by`, or a seat the ratified `intake-seat` term lacks (ready profile; the roster being ratified, since without it TC018 fires instead) |
+| TC017 | no `entities:` declaration (ready profile; `entities: []` is the way to declare none) |
+| TC018 | no ratified `intake-seat` roster in the repo (ready profile; one per contract, two wordings: absent, or not ratified) |
 | W001 | entities ref deprecated inside its sunset window (warning - never gates) |
 
 Regression suite: golden fixtures `tests/fixtures/{valid,invalid}/*.yaml` -
@@ -210,9 +222,11 @@ contract's scope (USAGE section 4).
 1. **Intake loop - the G0 venue.** `/sdlc intake`
    ([0016](../decisions/0016-distribution-before-activation.md),
    `skills/sdlc/flows/intake.md`, dispatched by `SKILL.md`): the agent
-   authors the contract from the raw request onto a `taskcontract new`
-   scaffold, renders the unit graph and takes a human answer per unit
-   (writing `confirmed_by` when the seat term is ratified - I5-I6,
+   checks for a ratified seat roster first and stops without one (I1,
+   [0030](../decisions/0030-a-doors-input-is-a-declaration.md)), authors
+   the contract from the raw request onto a `taskcontract new` scaffold,
+   declaring `entities`, renders the unit graph and takes a human answer
+   per unit (writing `confirmed_by` - I5-I6,
    [0025](../decisions/0025-intake-seats.md)), loops `validate --profile
    ready` to green, writes `specs/<id>/contract.yaml`, refuses the
    spec-stage handoff while red. *This venue running live in a repo is

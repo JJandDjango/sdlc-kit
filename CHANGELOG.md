@@ -9,6 +9,101 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.14.0 - unreleased
+
+- **`entities:` is required at the ready profile** (`g0-declaration`,
+  ADR 0030, unit `d1-schema-entities`). Schema `1.3.0` -> `1.4.0`: the
+  field moves into `ready_delta`, and the base drops `minItems: 1` so
+  `entities: []` validates. The empty list is a declaration, not an
+  omission: it states that the contract operates on no glossary term. A
+  contract that carries no `entities:` at all reports the new `TC017`,
+  which names the field and the empty-list option. The draft profile is
+  unchanged: a parked draft still passes it, and the `new` skeleton still
+  reports only the `TC007` its TODO intent trips. Delta note:
+  every contract a consumer holds at ready gains one field. The fix is
+  an edit, not a re-intake - add `entities:` with the glossary terms the
+  contract operates on, or `entities: []` when it operates on none - and
+  `USAGE.md` carries the adoption path. A consumer on an unpinned
+  install turns red at upgrade; pin the install ref to the tag.
+- **A ratified `intake-seat` roster is required at the ready profile**
+  (`g0-declaration`, ADR 0030, unit `d2-roster-required`). The
+  confirmation join used to return early when the term was absent or
+  still draft, so G0.3 checked no unit at all in a repo without a
+  roster. It now reports the new `TC018` once per contract at `$`, in
+  two wordings: the term does not exist, or the term is not ratified.
+  Both name `specs/vocabulary/intake-seat.yaml`, the file to author and
+  ratify. With the roster ratified, TC016 behaves exactly as before.
+  Ready profile only, and only for a contract inside a `specs` tree, so
+  the draft profile and loose files are unchanged. Delta note: a repo
+  that never authored a roster turns red on every contract at once, and
+  one remedy clears them all - `/sdlc vocab add intake-seat` drafts the
+  term, and ratifying it is the single human action. Ratifying the
+  roster also arms TC016, so units that never recorded an answer report
+  it; that is the adoption path in `USAGE.md`, and the session
+  write-guard unlocks the contract for exactly those edits while it
+  fails ready.
+- **`/sdlc audit` still reads a parked draft as parked** (`g0-declaration`,
+  ADR 0030, unit `d7-audit-parked-rule`). The audit called a contract
+  parked only when its ready failures were exactly `TC003`. Once the two
+  declarations became required, a parked draft that had not yet declared
+  returned `TC003` with `TC017` or `TC018` and read `CONTRACT-INVALID` at
+  exit 1 - which would have made this release break the promise it
+  states, that the draft profile is unchanged and a parked contract may
+  carry neither input. A contract is now parked when `TC003` stands and
+  every other failure is a declaration it has yet to make, and the parked
+  line names them: `legal draft parked on <blockers>; still to declare:
+  TC017, TC018`. A parked contract owing nothing keeps today's line. Any
+  other failure beside `TC003`, such as a missing `non_goals`, still
+  reads `CONTRACT-INVALID`. Delta note: a consumer's *parked* contracts
+  raise no new red from the upgrade itself, and the parked line tells
+  them what each one owes before they unpark it. That holds until the
+  consumer ratifies `intake-seat` to clear `TC018`: the ratification
+  arms `TC016`, and a parked contract whose units carry no
+  `confirmed_by` then reads `TC003` with `TC016`, which the audit does
+  not park, so it reads `CONTRACT-INVALID` until its units carry
+  answers. The parked contract fails ready, so the session hook leaves
+  it open to that edit. Their ready contracts do turn red on `TC017`
+  and `TC018` until they declare, as the two notes above say.
+- **The `new` skeleton names `entities:` and sets no value**
+  (`g0-declaration`, ADR 0030, unit `d3-scaffold-comment`).
+  `taskcontract new` writes one comment line naming the field and leaves
+  it unset: a default `entities: []` would declare, on the author's
+  behalf, that the contract operates on no glossary term. At the draft
+  profile the skeleton still reports only `TC007`, its TODO-intent
+  tripwire; at ready it also reports `TC017` until the author declares.
+  Delta note: none; a contract already scaffolded keeps its file.
+- **Intake checks the roster first and always declares `entities:`**
+  (`g0-declaration`, ADR 0030, unit `d4-intake-flow`). `/sdlc intake`
+  reads `vocab-list` before it scaffolds anything; with no ratified
+  `intake-seat` it stops with one line naming
+  `specs/vocabulary/intake-seat.yaml` and `/sdlc vocab add intake-seat`,
+  so it never authors a contract that `TC018` would block. Every contract
+  it writes carries `entities:`. When the request matches no ratified
+  term it proposes `entities: []` and writes it only on the PO seat's
+  confirmed answer, including when the fix loop drops the last ref.
+  Delta note: none; the flow arrives with the install.
+- **Init seeds the seat roster in a greenfield repo and names it in a
+  brownfield one** (`g0-declaration`, ADR 0030, unit
+  `d5-init-seeds-roster`). Greenfield `/sdlc init` asks who holds the
+  seats and writes `specs/vocabulary/intake-seat.yaml` ratified, with the
+  seats as its values, beside the other seed terms. A brownfield run
+  whose roster is absent or still draft ends its report with a note: no
+  contract reaches ready until `intake-seat` is ratified, and
+  `/sdlc vocab add intake-seat` drafts it. Delta note: none; a repo
+  already initialized re-runs nothing.
+- **The adoption path is pinned and written down** (`g0-declaration`,
+  ADR 0030, unit `d6-adoption-and-release`). Two hook tests hold the
+  session hook's dynamic exemption to what adoption needs, one per
+  declaration: a contract the new doors fail (`TC017`; or `TC018`, then
+  `TC016` once the roster is ratified) is open to the edit that repairs
+  it, and it locks again once it passes. `USAGE.md` marks this release
+  green: the adoption path, the roster step in both init modes, the
+  `ApplyDiscount` example declaring its terms, and `TC017` and `TC018`
+  rows in troubleshooting. The skill's `SKILL.md` states the required
+  declaration and follows the intake and init flows. Kit `0.13.0` ->
+  `0.14.0`. Delta note: none beyond the notes above; pin the install ref
+  to the tag.
+
 ## 0.13.0 - 2026-09-18 (tag `v0.13.0`)
 
 - **The session hook: the spec channel closed to sessions**

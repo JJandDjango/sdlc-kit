@@ -1,0 +1,175 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: g0-declaration
+
+intent: >-
+  Two G0 conditions read an optional field, so a contract that lacks the
+  field passes both and nothing is checked. After this task the ready
+  profile needs both fields. The schema needs `entities` at ready and
+  accepts an empty list: the list records that the contract covers no
+  term. A contract without the field reports `TC017`. Inside a `specs`
+  tree the ready profile needs a ratified `intake-seat` term, and a repo
+  without the term reports `TC018` with the file to write. The draft
+  profile stays unchanged. Intake checks the term first and writes
+  `entities` in every contract. The `init` flow records the seats in a
+  new repo. The scaffold names the field in a note line. `USAGE.md`
+  records the adoption path: an edit and no new intake.
+
+scope:
+  - taskcontract/schemas/task-contract.schema.json
+  - taskcontract/checker.py
+  - taskcontract/vocabulary.py
+  - taskcontract/scaffold.py
+  - skills/sdlc/flows/intake.md
+  - skills/sdlc/flows/init.md
+  - skills/sdlc/flows/new.md
+  - skills/sdlc/init.py
+  - skills/sdlc/audit.py
+  - skills/sdlc/SKILL.md
+  - tests/
+  - USAGE.md
+  - pyproject.toml
+  - .github/workflows/sdlc.yml
+
+non_goals:
+  - No check reads the words of a contract for terms; a finding covers
+    that rule.
+  - No change to the meaning of `ratified` or to the seats that set the
+    status.
+  - No new gate and no new conditions.
+  - No check on the author of an answer.
+  - No change to the `specs` hook.
+  - No rule on the terms a consumer holds as `ratified`.
+
+decomposition:
+  - unit: d0-usage-pass-zero
+    id: d0-usage-pass-zero
+    confirmed_by: [user]
+    done_means: >-
+      `USAGE.md` gains a section on the two fields the ready profile
+      needs. The section records the adoption path with an edit and no
+      new intake. The status marks read red at pass zero.
+    acceptance_sketch:
+      - verify `USAGE.md` records both fields and the adoption path with
+        no new intake (SC5.3)
+      - verify the status marks in the section read red
+  - unit: d1-schema-entities
+    id: d1-schema-entities
+    confirmed_by: [user]
+    depends_on: [d0-usage-pass-zero]
+    done_means: >-
+      The schema needs `entities` at the ready profile and accepts an
+      empty list. The schema version reads `1.4.0` and `CHANGELOG.md`
+      carries the note. A contract without the field reports `TC017`.
+      The `vocabulary-layer` contract lists its terms.
+    acceptance_sketch:
+      - verify a contract without `entities` gets `TC017` at the ready
+        profile, and the report names the empty list (SC1.1)
+      - verify a contract with `entities` as an empty list passes the
+        ready profile with no report (SC1.2)
+      - verify a contract with a draft term still gets `TC011` (SC1.3)
+  - unit: d2-roster-required
+    id: d2-roster-required
+    confirmed_by: [user]
+    depends_on: [d1-schema-entities]
+    done_means: >-
+      Inside a `specs` tree the ready profile reports `TC018` for every
+      contract when `intake-seat` is absent or draft. The report names
+      the file to write. A repo with the ratified term gets the same
+      verdicts as before.
+    acceptance_sketch:
+      - verify a repo with no ratified `intake-seat` gets `TC018` for
+        every contract, and the report names the file (SC2.1, SC2.2)
+      - verify a repo with the ratified term gets the same verdicts as
+        before this task (SC2.3)
+      - verify a contract without both fields passes the draft profile
+        (SC4.1)
+  - unit: d7-audit-parked-rule
+    id: d7-audit-parked-rule
+    confirmed_by: [user]
+    depends_on: [d2-roster-required]
+    done_means: >-
+      The audit reports `CONTRACT-PARKED` when a contract gets `TC003`
+      and every other error names a missing field. The report names
+      each missing field. Any other error still gets
+      `CONTRACT-INVALID`.
+    acceptance_sketch:
+      - verify a contract that gets `TC003` and `TC017` reads
+        `CONTRACT-PARKED` at exit zero (SC4.3)
+      - verify the report names `TC017` and `TC018` in a repo with no
+        ratified roster
+      - verify a contract that gets `TC003` and `TC001` reads
+        `CONTRACT-INVALID`
+  - unit: d3-scaffold-comment
+    id: d3-scaffold-comment
+    confirmed_by: [user]
+    depends_on: [d1-schema-entities]
+    done_means: >-
+      The scaffold names `entities` in a note line and declares no list.
+      At the draft profile the file from `taskcontract new` gets only
+      `TC007`, as before.
+    acceptance_sketch:
+      - verify the scaffold gets only `TC007` at the draft profile, names
+        `entities` in a note line, and declares no list (SC4.2)
+  - unit: d4-intake-flow
+    id: d4-intake-flow
+    confirmed_by: [user]
+    depends_on: [d1-schema-entities, d2-roster-required]
+    done_means: >-
+      Intake checks for a ratified `intake-seat` before the contract and
+      stops with one line when the term is absent. Intake writes
+      `entities` in every contract. Intake writes an empty list only on
+      an answer from the seats. The flow passes `prompt_lang`.
+    acceptance_sketch:
+      - verify intake writes `entities` in every contract, and an empty
+        list only on an answer from the seats (SC3.1)
+      - verify intake stops before the contract when no ratified
+        `intake-seat` stands, and names the file and the command (SC3.2)
+      - run `prompt_lang` on `skills` and verify exit zero
+  - unit: d5-init-seeds-roster
+    id: d5-init-seeds-roster
+    confirmed_by: [user]
+    depends_on: [d2-roster-required]
+    done_means: >-
+      In a `greenfield` repo the `init` flow records who holds the seats
+      and writes a ratified `intake-seat` term. In a `brownfield` repo
+      the flow reports that the repo needs the term and names the
+      command.
+    acceptance_sketch:
+      - verify `greenfield` `init` records the seats and writes a
+        ratified `intake-seat` term (SC3.3)
+      - verify `brownfield` `init` reports that the repo needs the term
+      - run `prompt_lang` on `skills` and verify exit zero
+  - unit: d6-adoption-and-release
+    id: d6-adoption-and-release
+    confirmed_by: [user]
+    depends_on: [d3-scaffold-comment, d4-intake-flow, d5-init-seeds-roster,
+                 d7-audit-parked-rule]
+    done_means: >-
+      A hook test covers each field. The hook accepts an edit to a
+      contract that the ready profile rejects. The hook rejects the edit
+      again after the contract passes. The `USAGE.md` marks read green
+      and the version reads `0.14.0`.
+    acceptance_sketch:
+      - verify a ready contract gets `TC016` after the term is ratified,
+        and the hook accepts the edit (SC5.1)
+      - verify the hook rejects the edit again after the contract passes
+        (SC5.2)
+      - verify the version reads `0.14.0` and the `USAGE.md` marks read
+        green
+
+dependencies: []
+
+entities:
+  - task-contract
+  - contract-profile
+  - vocabulary-term
+  - intake-seat
+  - scaffold
+  - consumer
+  - gate
+
+provenance:
+  origin: human-request
+  ref: REQUEST_g0-declaration_2026-09-20.md

@@ -1,0 +1,17 @@
+id: tc017-missing-entities
+intent: >-
+  A contract that carries no entities field says nothing about the
+  glossary terms it operates on, so it cannot reach ready (ADR 0030).
+scope:
+  - taskcontract/
+non_goals:
+  - Passing validation
+decomposition:
+  - unit: schema-shape
+    id: schema-shape
+    done_means: the missing declaration trips the ready delta
+    acceptance_sketch:
+      - a ready validation of this fixture returns TC017
+dependencies: []
+provenance:
+  origin: human-request

@@ -15,6 +15,7 @@ decomposition:
 dependencies:
   - ref: import-error-reporting-api
     status: resolved
+entities: []
 provenance:
   origin: g8-escape
   ref: INC-2214

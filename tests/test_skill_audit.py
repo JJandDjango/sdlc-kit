@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 import yaml
+from conftest import write_seat_roster
 
 from taskcontract.scaffold import scaffold
 
@@ -22,8 +23,10 @@ VALID_DOC = {
         "id": "export-endpoint",
         "done_means": "GET /billing/export returns CSV",
         "acceptance_sketch": ["zero-order account downloads an empty CSV"],
+        "confirmed_by": ["user"],
     }],
     "dependencies": [],
+    "entities": [],  # the empty list is the declaration (ADR 0030)
     "provenance": {"origin": "human-request"},
 }
 
@@ -31,6 +34,9 @@ VALID_DOC = {
 def _init(tmp_path, skill_init):
     templates = Path(skill_init.__file__).parent / "templates"
     skill_init.render_all(ANSWERS, templates, tmp_path, "2026-07-26")
+    # ADR 0030: a repo needs a ratified roster before any contract reaches
+    # ready. Unit d5 makes greenfield init seed it; until then, seed it here.
+    write_seat_roster(tmp_path)
 
 
 def _write_contract(tmp_path, doc):
@@ -70,6 +76,72 @@ def test_parked_draft_reads_info_not_error(tmp_path, skill_init, skill_audit, ca
     assert skill_audit.main(["--cwd", str(tmp_path)]) == 0
     out = capsys.readouterr().out
     assert "CONTRACT-PARKED" in out and "schema-migration" in out
+
+
+# --- SC4.3: a parked draft may still owe its declarations -------------------
+
+def _parked(doc):
+    parked = dict(doc)
+    parked["dependencies"] = [{"ref": "schema-migration", "status": "blocked",
+                               "blocked_by": "auth-rework"}]
+    return parked
+
+
+def test_parked_draft_owing_entities_reads_parked(tmp_path, skill_init, skill_audit, capsys):
+    """SC4.3: TC003 with a declaration miss is parked, not invalid."""
+    _init(tmp_path, skill_init)
+    doc = _parked(VALID_DOC)
+    del doc["entities"]
+    _write_contract(tmp_path, doc)
+    assert skill_audit.main(["--cwd", str(tmp_path)]) == 0
+    out = capsys.readouterr().out
+    assert "CONTRACT-PARKED" in out and "CONTRACT-INVALID" not in out
+    assert "schema-migration" in out
+    assert "still to declare: TC017" in out
+
+
+def test_parked_draft_with_no_roster_names_both(tmp_path, skill_init, skill_audit, capsys):
+    """The line names every declaration owed, in ascending order."""
+    _init(tmp_path, skill_init)
+    (tmp_path / "specs" / "vocabulary" / "intake-seat.yaml").unlink()
+    doc = _parked(VALID_DOC)
+    del doc["entities"]
+    _write_contract(tmp_path, doc)
+    assert skill_audit.main(["--cwd", str(tmp_path)]) == 0
+    out = capsys.readouterr().out
+    assert "CONTRACT-PARKED" in out
+    assert "still to declare: TC017, TC018" in out
+
+
+def test_parked_draft_owing_nothing_keeps_todays_line(tmp_path, skill_init, skill_audit, capsys):
+    """A parked contract that declares both keeps the line unchanged."""
+    _init(tmp_path, skill_init)
+    _write_contract(tmp_path, _parked(VALID_DOC))
+    assert skill_audit.main(["--cwd", str(tmp_path)]) == 0
+    out = capsys.readouterr().out
+    assert "CONTRACT-PARKED" in out and "still to declare" not in out
+
+
+def test_parked_draft_with_another_error_is_still_invalid(tmp_path, skill_init, skill_audit, capsys):
+    """Only a declaration miss rides the parked line; TC001 is a real defect."""
+    _init(tmp_path, skill_init)
+    doc = _parked(VALID_DOC)
+    del doc["non_goals"]  # TC001
+    _write_contract(tmp_path, doc)
+    assert skill_audit.main(["--cwd", str(tmp_path)]) == 1
+    out = capsys.readouterr().out
+    assert "CONTRACT-INVALID" in out and "CONTRACT-PARKED" not in out
+
+
+def test_declaration_miss_without_a_blocker_is_invalid(tmp_path, skill_init, skill_audit, capsys):
+    """TC003 must be present: a contract that is merely unready is not parked."""
+    _init(tmp_path, skill_init)
+    doc = dict(VALID_DOC)
+    del doc["entities"]
+    _write_contract(tmp_path, doc)
+    assert skill_audit.main(["--cwd", str(tmp_path)]) == 1
+    out = capsys.readouterr().out
+    assert "CONTRACT-INVALID" in out and "CONTRACT-PARKED" not in out
 
 
 def test_orphan_dir_and_id_mismatch_warn(tmp_path, skill_init, skill_audit, capsys):

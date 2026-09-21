@@ -12,7 +12,7 @@ constraints:
     subjects:
       - task-contract
       - vocabulary-term
-    check: python -m taskcontract validate --profile ready (TC010-TC012, W001)
+    check: python -m taskcontract validate --profile ready (TC010-TC012, TC017, W001) - the entities field is required at ready, the empty list declaring that the contract operates on no term (ADR 0030)
     status: enforced
   - id: g4-3-criterion-traceability
     kind: reference-integrity
@@ -47,7 +47,7 @@ constraints:
       - task-contract
       - decomposition-unit
       - intake-seat
-    check: python -m taskcontract validate --profile ready (TC016) - every unit's confirmed_by resolves to a value of the ratified intake-seat term; armed by that ratification, inactive otherwise (G0.3, ADR 0025)
+    check: python -m taskcontract validate --profile ready (TC016, TC018) - every unit's confirmed_by resolves to a value of the ratified intake-seat term, and the term itself is required at ready, absent or draft reporting TC018 once per contract (G0.3, ADR 0025, ADR 0030)
     status: enforced
   - id: g4-12-scope-check
     kind: reference-integrity

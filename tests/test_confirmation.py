@@ -1,10 +1,11 @@
 """Unit-confirmation suite for ADR 0025 (G0.3, TC016).
 
 The schema admits `confirmed_by` (1.3.0, optional); the checker decides
-whether it is demanded. The rule is armed only by a *ratified*
-`intake-seat` term in the sibling vocabulary, runs at the ready profile
-only, and never sees a loose file - the coverage join's three habits,
-inherited on purpose.
+whether it is demanded. The rule reads a *ratified* `intake-seat` term
+in the sibling vocabulary, runs at the ready profile only, and never
+sees a loose file - the coverage join's three habits, inherited on
+purpose. Since ADR 0030 the term is required rather than arming: a repo
+with no term, or one still at draft, reports TC018 once per contract.
 """
 
 from __future__ import annotations
@@ -38,6 +39,7 @@ def _doc(units):
         "non_goals": ["No author check"],
         "decomposition": units,
         "dependencies": [],
+        "entities": [],  # ADR 0030: the declaration is required at ready
         "provenance": {"origin": "human-request"},
     }
 
@@ -66,7 +68,7 @@ def _findings(path, profile="ready"):
     return [v for v in validate_path(path, profile=profile) if v.rule == "TC016"]
 
 
-# --- armed: the ratified term demands an answer per unit --------------------
+# --- the roster ratified: an answer is demanded per unit --------------------
 
 def test_unit_without_confirmed_by_is_tc016_naming_the_unit(tmp_path):
     path = _tree(tmp_path, [_unit("alpha", ["po"]), _unit("beta")], term_status="ratified")
@@ -90,16 +92,41 @@ def test_every_unit_confirmed_by_listed_seats_is_green(tmp_path):
     assert validate_path(path, profile="ready") == []
 
 
-# --- inactive: no term, draft term, draft profile, loose file ---------------
+# --- required: the roster is a declaration, not an arming switch ------------
 
-def test_tree_with_no_seat_term_is_green(tmp_path):
+def test_tree_with_no_seat_term_is_tc018_naming_the_file(tmp_path):
     path = _tree(tmp_path, [_unit("alpha")])
-    assert validate_path(path, profile="ready") == []
+    found = validate_path(path, profile="ready")
+    assert [(v.rule, v.path) for v in found] == [("TC018", "$")]
+    assert found[0].message == (
+        "no seat roster - the term 'intake-seat' does not exist; author "
+        "specs/vocabulary/intake-seat.yaml (a value-set of the seats this "
+        "repo recognizes) and ratify it before any contract reaches ready")
 
 
-def test_draft_seat_term_leaves_the_check_inactive(tmp_path):
+def test_draft_seat_term_is_tc018_in_its_not_ratified_wording(tmp_path):
     path = _tree(tmp_path, [_unit("alpha")], term_status="draft")
-    assert validate_path(path, profile="ready") == []
+    found = validate_path(path, profile="ready")
+    assert [(v.rule, v.path) for v in found] == [("TC018", "$")]
+    assert found[0].message == (
+        "seat roster not ratified - 'intake-seat' is draft; ratify "
+        "specs/vocabulary/intake-seat.yaml before any contract reaches ready")
+
+
+def test_tc018_fires_once_per_contract_not_once_per_unit(tmp_path):
+    path = _tree(tmp_path, [_unit("alpha"), _unit("beta"), _unit("gamma")])
+    assert len(validate_path(path, profile="ready")) == 1
+
+
+def test_contract_lacking_both_inputs_passes_draft(tmp_path):
+    """SC4.1: the draft profile is untouched, so a parked draft may carry neither."""
+    doc = _doc([_unit("alpha")])
+    del doc["entities"]
+    path = tmp_path / "specs" / "seat-case" / "contract.yaml"
+    path.parent.mkdir(parents=True)
+    path.write_text(yaml.safe_dump(doc, sort_keys=False), encoding="utf-8")
+    assert validate_path(path, profile="draft") == []
+    assert {v.rule for v in validate_path(path, profile="ready")} == {"TC017", "TC018"}
 
 
 def test_draft_profile_never_runs_the_rule(tmp_path):
@@ -117,7 +144,7 @@ def test_loose_file_never_enters_the_join(tmp_path):
 
 # --- the CLI speaks the verdict contract ------------------------------------
 
-def test_cli_exit_is_red_when_armed_and_unanswered(tmp_path, capsys):
+def test_cli_exit_is_red_when_rostered_and_unanswered(tmp_path, capsys):
     path = _tree(tmp_path, [_unit("alpha")], term_status="ratified")
     assert main(["validate", str(path), "--profile", "ready"]) == 1
     assert "TC016" in capsys.readouterr().out

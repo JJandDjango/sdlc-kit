@@ -2,15 +2,15 @@
   "schema_version": 2,
   "diagram_type": "workflow",
   "meta": {
-    "title": "Feature Document Plan - Session 32",
+    "title": "g0-declaration to Release - Session 35",
     "quality_profile": "showcase",
     "locale": "en",
     "views": [
-      { "id": "now", "label": "Where we are", "focus": ["format", "release_a", "intake_fd"], "note": "Session 32. Format and definition of done ratified (ADR 0029); 0.13.0 released and self-pinned. Next: the feature-document request, by hand." },
-      { "id": "decided", "label": "What was decided", "focus": ["format"], "note": "0029: one format, a seat boundary, signed checks with derived Gherkin, stamped derived blocks; done = ready-green without a new question." },
-      { "id": "fd", "label": "The feature-document contract", "focus": ["intake_fd", "units_fd", "ratify_5b"], "note": "Units F1-F6 implement 0029 in the template, the flows, readiness, intake and the docs; kit 0.14.0. Step 5b waits on ratification." },
-      { "id": "demo-b", "label": "Demo, then wave B", "focus": ["demo", "real_doc", "wave_b"], "note": "The demo runs on the ratified template in a sandbox consumer. Wave B closes the loop (V1-V5) and makes the pause mechanical (V6); 0.15.0." },
-      { "id": "loops", "label": "Where work waits", "focus": ["intake_fd", "parked", "units_fd", "verifier_fail"], "note": "A document with an OPEN question parks until a seat answers, then re-enters intake; a unit loops until the Verifier grades PASS." }
+      { "id": "now", "label": "Where we are", "focus": ["adopt", "flows", "release"], "note": "Session 35. d0 to d5 and d7 are verified. Next d6, which owns the one repo-wide sweep, then the release on your word." },
+      { "id": "the-bar", "label": "The blocking bar", "focus": ["verifier_fail", "checks"], "note": "Only a shipped surface can fail a unit. The wrap files never do; the repo-wide sweep runs once, in d6; focus is the unit's own sketches." },
+      { "id": "units", "label": "The eight units", "focus": ["checks", "flows", "adopt"], "note": "d1, d2 and d7 close the checks; d3, d4 and d5 bring the kit's own flows to the door; d6 flips USAGE green and cuts 0.14.0." },
+      { "id": "ship", "label": "The release", "focus": ["adopt", "release", "release_word"], "note": "The PR names the two extra spec-channel writes on separate grounds. Merge commit, tag v0.14.0, self-pin. The merge waits on your word." },
+      { "id": "loops", "label": "Where work waits", "focus": ["checks", "flows", "verifier_fail"], "note": "Each unit is one commit graded by an independent Verifier; a FAIL sends it back, three rounds at most. Only a shipped surface can fail it." }
     ]
   },
   "lanes": [
@@ -19,44 +19,44 @@
     { "id": "waits", "label": "Waits + retries", "variant": "exception" }
   ],
   "phases": [
-    { "id": "step_1", "label": "Step 1 - format + done (0029)", "fromCol": 0, "toCol": 0, "variant": "emphasis" },
-    { "id": "release", "label": "Step 2 - release 0.13.0", "fromCol": 1, "toCol": 1, "variant": "emphasis" },
-    { "id": "fd", "label": "Step 3 - feature-document (0.14.0)", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
-    { "id": "wave_b", "label": "Steps 4-5 - demo, wave B (0.15.0)", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+    { "id": "verified", "label": "Verified", "fromCol": 0, "toCol": 0, "variant": "emphasis" },
+    { "id": "contract", "label": "Step 1 - the contract", "fromCol": 1, "toCol": 1, "variant": "emphasis" },
+    { "id": "units", "label": "Steps 2-8 - the units", "fromCol": 2, "toCol": 4, "variant": "emphasis" },
+    { "id": "ship", "label": "Step 9 - ship", "fromCol": 5, "toCol": 5, "variant": "dashed" }
   ],
   "groups": [],
-  "mainPath": ["format", "release_a", "intake_fd", "units_fd", "demo", "wave_b"],
+  "mainPath": ["done", "amend", "checks", "flows", "adopt", "release"],
   "nodes": [
-    { "id": "release_word", "lane": "gates", "col": 1, "type": "security", "label": "Your word", "sublabel": "merge, tag, self-pin", "tag": "given 09-18" },
-    { "id": "ratify_5b", "lane": "gates", "col": 3, "type": "security", "label": "Ratify 5b?", "sublabel": "graph emits Archify", "tag": "unratified" },
-    { "id": "real_doc", "lane": "gates", "col": 4, "type": "security", "label": "Real document", "sublabel": "one real feature" },
-    { "id": "format", "lane": "steps", "col": 0, "type": "frontend", "label": "Format + done", "sublabel": "note, ADR 0029", "tag": "done 09-18" },
-    { "id": "release_a", "lane": "steps", "col": 1, "type": "cloud", "label": "Release 0.13.0", "sublabel": "tagged, self-pinned", "tag": "done 09-18" },
-    { "id": "intake_fd", "lane": "steps", "col": 2, "type": "frontend", "label": "Intake FD", "sublabel": "YOU ARE HERE", "tag": "feature-document" },
-    { "id": "units_fd", "lane": "steps", "col": 3, "type": "backend", "label": "Units F1-F6", "sublabel": "ship 0.14.0", "tag": "Two-Key" },
-    { "id": "demo", "lane": "steps", "col": 4, "type": "frontend", "label": "Demo intake", "sublabel": "sandbox consumer" },
-    { "id": "wave_b", "lane": "steps", "col": 5, "type": "backend", "label": "Wave B", "sublabel": "V1-V6, ship 0.15.0", "tag": "Two-Key" },
-    { "id": "parked", "lane": "waits", "col": 2, "type": "messagebus", "label": "Parked", "sublabel": "OPEN question stands", "tag": "until answered" },
-    { "id": "verifier_fail", "lane": "waits", "col": 3, "type": "security", "label": "Verifier FAIL", "sublabel": "max 3 rounds", "tag": "retry" }
+    { "id": "open_ruled", "lane": "gates", "col": 1, "type": "security", "label": "OPEN ruled", "sublabel": "SC4.3, owned by d7", "tag": "r5 answered" },
+    { "id": "po_seat", "lane": "gates", "col": 2, "type": "security", "label": "PO seat", "sublabel": "the five terms" },
+    { "id": "sc42_ruled", "lane": "gates", "col": 3, "type": "security", "label": "SC4.2 ruled", "sublabel": "draft: TC007 only", "tag": "r7" },
+    { "id": "release_word", "lane": "gates", "col": 5, "type": "security", "label": "Your word", "sublabel": "merge and tag" },
+    { "id": "done", "lane": "steps", "col": 0, "type": "cloud", "label": "d0 PASS", "sublabel": "USAGE at pass zero", "tag": "two rounds" },
+    { "id": "amend", "lane": "steps", "col": 1, "type": "backend", "label": "Re-intake", "sublabel": "r6, ready-green", "tag": "step 1, done" },
+    { "id": "checks", "lane": "steps", "col": 2, "type": "backend", "label": "The checks", "sublabel": "d1, d2, d7 PASS", "tag": "steps 2-4" },
+    { "id": "flows", "lane": "steps", "col": 3, "type": "backend", "label": "The flows", "sublabel": "d3, d4, d5 PASS", "tag": "steps 5-7" },
+    { "id": "adopt", "lane": "steps", "col": 4, "type": "frontend", "label": "Adoption", "sublabel": "YOU ARE HERE: d6", "tag": "step 8" },
+    { "id": "release", "lane": "steps", "col": 5, "type": "cloud", "label": "Release 0.14.0", "sublabel": "merge, tag, pin", "tag": "step 9" },
+    { "id": "verifier_fail", "lane": "waits", "col": 2, "type": "security", "label": "Verifier FAIL", "sublabel": "shipped surfaces", "tag": "max 3 rounds" }
   ],
   "edges": [
-    { "from": "format", "to": "release_a", "label": "0029 committed", "variant": "emphasis", "route": "straight" },
-    { "from": "release_a", "to": "intake_fd", "label": "v0.13.0, PR #43", "variant": "emphasis", "route": "straight" },
-    { "from": "intake_fd", "to": "units_fd", "label": "ready-green", "variant": "emphasis", "route": "straight" },
-    { "from": "units_fd", "to": "demo", "label": "0.14.0 tagged", "variant": "emphasis", "route": "straight" },
-    { "from": "demo", "to": "wave_b", "label": "pitch shipped", "variant": "emphasis", "route": "straight" },
-    { "from": "release_word", "to": "release_a", "route": "straight" },
-    { "from": "ratify_5b", "to": "units_fd", "variant": "dashed", "route": "straight" },
-    { "from": "real_doc", "to": "demo", "route": "straight" },
-    { "from": "intake_fd", "to": "parked", "variant": "security", "route": "straight" },
-    { "from": "units_fd", "to": "verifier_fail", "variant": "security", "route": "straight" }
+    { "from": "done", "to": "amend", "label": "OPEN ruled", "variant": "emphasis", "route": "straight" },
+    { "from": "amend", "to": "checks", "label": "ready-green at r6", "variant": "emphasis", "route": "straight" },
+    { "from": "checks", "to": "flows", "label": "TC017, TC018 live", "variant": "emphasis", "route": "straight" },
+    { "from": "flows", "to": "adopt", "label": "the kit meets its door", "variant": "emphasis", "route": "straight" },
+    { "from": "adopt", "to": "release", "label": "marks green", "variant": "emphasis", "route": "straight" },
+    { "from": "open_ruled", "to": "amend", "route": "straight" },
+    { "from": "po_seat", "to": "checks", "route": "straight" },
+    { "from": "sc42_ruled", "to": "flows", "route": "straight" },
+    { "from": "release_word", "to": "release", "route": "straight" },
+    { "from": "checks", "to": "verifier_fail", "variant": "security", "route": "straight" }
   ],
   "cards": [
-    { "dot": "amber", "title": "Where we are (2026-09-18)", "items": ["Done today: step 1, the format and the definition of done; NOTES_feature-document_2026-09-18.md, ADR 0029, NOTES_*.md a free path; four commits on session-32-feature-document, PR #43", "Done today: step 2, the release; #40 merged (a0a9010), #41 merged (210d476, tag v0.13.0), self-pin #42 merged (f6fb265); branches deleted, main synced", "Next: step 3, the feature-document request written by hand in the ratified format, then /sdlc intake feature-document to ready-green", "Open: ratify step 5b? the four metrics for wave B"] },
-    { "dot": "violet", "title": "Step 1: the six calls and the bar", "items": ["1 One seat boundary; acceptance criteria above the line, before the solution", "2 Two lists per half: whitelist proved or enforced, blacklist recorded", "3 Three levels of proof: criterion, signed checks with ids, derived Gherkin", "4 Derived blocks read-only and stamped; specs/ the authority where the kit runs", "5 Traceability half authored, half rendered; the status line its subset", "6 Three template sections dissolve; a tag on every section", "Done: ready-green without a new question to the request half; zero OPEN at ready; a surprise enters the document first"] },
-    { "dot": "emerald", "title": "Step 3 units (contract feature-document, proposed)", "items": ["F1 template: reorder, tags, status line, Terms, numbered revisions, three sections dissolved", "F2 sections flow follows the new order", "F3 readiness: five rules to ten, plus the stale stamp", "F4 intake: every check to one unit; orphan check or empty unit is a finding; an OPEN question parks", "F5 Gherkin derived from checks, one interview step (feeds the G1 slice)", "F6 USAGE, CHANGELOG, MAP row, marks green, version 0.14.0"] },
-    { "dot": "cyan", "title": "Wave B units", "items": ["V1 G9.5 scheduled code re-scan, dated coverage", "V2 taskcontract metrics: time-to-ready, rework, first-pass merge, in-scope rate", "V3 resume a parked contract, V4 PO venue from claude.ai", "V5 G8.3 disposition gains eval_ref", "V6 the hook refuses a commit while a derived block is stale or an OPEN mark stands; warn outside scope becomes deny", "Release 0.15.0: PR, tag, self-pin"] },
-    { "dot": "rose", "title": "Rules in force", "items": ["ADR before intake; intake before any unit", "One commit per unit; Developer then Verifier", "Ready-green or parked, never half-ready", "A Contract: trailer on every commit touching a non-free path", "New context enters the document before the conversation"] },
-    { "dot": "slate", "title": "Glossary", "items": ["0026: ADR, the feature document is the raw request; the contract is what intake produces from it", "0028: ADR, the interview writes the feature document; /sdlc:product-specification-interview; ships in 0.13.0", "0029: ADR, one format and a definition of done for the feature document; amends 0026's template changes", "The line: the seat boundary in the document; the PO seat signs above, the engineer seat below", "Check: a one-line acceptance criterion with an id (SC3.1) under a success criterion; the contract's acceptance_sketch; the Gherkin is derived from it", "Derived block: the contract, the Gherkin, the traceability record; read-only, stamped with the revision it came from; stale when a newer row exists", "Measured: row: a revision row that records a look at the real system; the newest is the last-measured date", "Parked: a seat's answer is missing, a dependency is blocked, or an OPEN question stands; the contract validates as draft and waits", "Two-Key: a unit is done only when the Verifier re-runs the tests independently and grades PASS", "ready-green: the contract passes the ready validation profile; development starts only from green", "Seat: a human role that answers at intake (PO, engineer), recorded per unit in confirmed_by", "Contract: trailer: the binding of a commit to its contract; scope-check (G4.12) reads it; free paths pass without one", "Self-pin: after a release, the kit's own workflow refs move to the new tag; the last act of every release", "5b: proposed step, taskcontract graph emits Archify beside its Mermaid (0024); two units, its own contract, before the demo", "F1-F6: the proposed units of the feature-document contract; V1-V6: wave B's"] }
+    { "dot": "amber", "title": "Where we are (2026-09-21, session 35)", "items": ["Branch session-33-g0-declaration, unpushed over main (5e26c1b, kit 0.13.0)", "The request stands at r7; ADR 0030 stands; the contract is ready-green with eight units", "Verified: d0, d1, d2, d7, d3, d4, d5; all five rounds under the blocking bar passed, d4's second after an advisory fix", "r7: SC4.2 checks that the scaffold's draft verdict is unchanged, TC007 only; its TODO intent trips TC007 by design", "Receipts at HEAD: suite 297 green, prompt_lang 13 of 13, /sdlc audit clean, lang-green, vocab-green", "Next: d6 with the one repo-wide sweep, then the release on your word"] },
+    { "dot": "rose", "title": "The blocking bar (applied)", "items": ["Blocking: a sketch fails, done_means is false, a path sits outside scope, a trailer is missing, or a shipped surface states something false", "Shipped surfaces: code, the schema, docs/, USAGE.md, CHANGELOG.md", "plan.md, plan.workflow.json and STATE.md are rewritten at every wrap; a defect there is advisory", "The repo-wide stale-claim sweep runs once, inside d6", "Each unit's focus is its own sketches, unchanged between rounds", "It lives in .claude/workflows/two-key-unit-verifier.js: the prompt states it, the verdict code enforces it; launch it by scriptPath"] },
+    { "dot": "violet", "title": "The units in order", "items": ["d1 schema-entities: entities required at ready, empty list valid, schema 1.4.0, TC017, the vocabulary-layer contract's five terms", "d2 roster-required: TC018 when intake-seat is absent or draft, at ready only", "d7 audit-parked-rule: parked means TC003 present with every other error a declaration miss, and the finding names the misses", "d3 scaffold-comment: the skeleton names entities in a note line and sets no value", "d4 intake-flow: the roster checked before authoring, entities always written, the empty list only on the seat's answer", "d5 init-seeds-roster: greenfield records the seats, brownfield names the command", "d6 adoption-and-release: the hook unlock and re-lock, USAGE green, kit 0.14.0"] },
+    { "dot": "emerald", "title": "What d6 also clears", "items": ["Section 8's worked example, USAGE.md:478-524, the flagship ready exemplar, has no entities field and would now fail ready", "The green intake sentences near lines 149-160 imply intake runs without a roster, and omit entities from the fields intake authors", "'Add the field, and it locks' is false read alone; fold the both-doors condition into it", "The new section names greenfield init and omits the brownfield half", "Section 9 Troubleshooting needs TC017 and TC018 rows beside TC016, so the ids on the parked line resolve to their remedies", "Two green sentences state the retired rule, USAGE.md:384-385 and :448; rewrite them before the marks flip", "docs/gates/G0-planning-intake.md:114 still says per-target elsewhere; TC017 fires in every tree", "CHANGELOG.md:56 says parked contracts raise no new red; ratifying intake-seat arms TC016 and turns them invalid", "The repo-wide stale-claim sweep, run once here"] },
+    { "dot": "cyan", "title": "Carried, not this session", "items": ["derived-language, feature-document, spec-doc-type: the three requests behind this one", "The demo intake in a sandbox consumer", "Wave B: playbook-loop, V1-V6", "5b: taskcontract graph emits Archify, unratified", "The engine's G4.6 finding: the write-guard binds an editing-tool list; no request yet"] },
+    { "dot": "slate", "title": "Glossary", "items": ["G0.2: the coverage join; every declared entity must resolve to a ratified glossary term", "G0.3: the confirmation join; every unit's confirmed_by must name a seat on the ratified roster (TC016)", "Declaration: an input a door reads, required at ready so absence cannot pass", "TC017: contract declares no entities; TC018: no ratified seat roster", "TC003: a dependency is blocked; alone, or beside only declaration misses (TC017, TC018), it means parked, not invalid", "TC004: a unit holds at most three acceptance sketches", "TC007: intent must be 40-1200 chars; the skeleton's TODO intent trips it at both profiles, by design (ADR 0016)", "Parked: a legal contract waiting on a blocked dependency; the audit reports it INFO at exit zero", "Two-Key: a unit is done only when the Verifier re-runs the tests independently and grades PASS", "ready-green: the contract passes the ready validation profile", "Free path: a file outside the contract's scope that needs no scope entry (docs/, CHANGELOG.md)", "Shipped surface: code, the schema, docs/, USAGE.md, CHANGELOG.md; the only prose that can fail a unit"] }
   ]
 }
