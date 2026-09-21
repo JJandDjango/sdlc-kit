@@ -111,7 +111,12 @@ wrong everything downstream.
   [../vocabulary.md](../vocabulary.md).
 - **Parameters:** the sunset notice floor rides Q4.
 - **Lifecycle:** `enforced` in this repo - the join runs in the live
-  intake venue and the CI backstop; per-target elsewhere, as with G0.1.
+  intake venue and the CI backstop. Since
+  [0030](../../decisions/0030-a-doors-input-is-a-declaration.md) the
+  declaration is enforced in every consumer tree rather than per-target,
+  and outside one too: `TC017` sits in the schema's `ready_delta`, so any
+  ready validation reads it. The join that resolves the declared terms
+  still runs only where the contract sits in a specs tree.
 
 ### G0.3 Unit confirmation - added 2026-08-26, [0025](../../decisions/0025-intake-seats.md)
 

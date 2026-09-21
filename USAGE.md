@@ -146,10 +146,12 @@ Google Docs.
 structural test in the suite holds the shape.
 
 ### `/sdlc intake` — the G0 venue
-Give it a raw request ("add CSV export"). The agent authors
-`specs/<task-id>/contract.yaml` — intent, scope, non-goals,
-decomposition with a done-meaning and 1–3 acceptance-sketch criteria
-per unit, dependencies, provenance — then loops
+Give it a raw request ("add CSV export"). 🟢 Intake first checks for a
+ratified seat term (§8); with none, it stops before authoring and names
+the file to author and the command that drafts it (kit 0.14.0). The
+agent authors `specs/<task-id>/contract.yaml` — intent, scope,
+non-goals, decomposition with a done-meaning and 1–3 acceptance-sketch
+criteria per unit, dependencies, entities, provenance — then loops
 
 ```bash
 python -m taskcontract validate specs/<task-id>/contract.yaml --profile ready
@@ -157,16 +159,16 @@ python -m taskcontract validate specs/<task-id>/contract.yaml --profile ready
 
 until green, and refuses the handoff to spec/implementation while red.
 A blocked dependency parks the contract as a valid `draft`; `ready` is
-what gates entry into development. 🟢 With a ratified seat term (§8),
-intake also takes a human answer per unit and records it under
-`confirmed_by` before the contract lands (kit 0.12.0).
+what gates entry into development. 🟢 Intake also takes a human answer
+per unit and records it under `confirmed_by` before the contract lands
+(kit 0.12.0).
 
-### What `ready` requires — two declarations 🔴
+### What `ready` requires — two declarations 🟢
 
-> 🔴 **Ratified, not shipped** ([ADR 0030](decisions/0030-a-doors-input-is-a-declaration.md),
-> contract `specs/g0-declaration/`, kit 0.14.0, schema 1.4.0). Marks flip green as the units land.
+> 🟢 **Shipped** (kit 0.14.0, [ADR 0030](decisions/0030-a-doors-input-is-a-declaration.md),
+> contract `specs/g0-declaration/`, schema 1.4.0).
 
-🔴 At the `ready` profile, the input a door reads is required, so a green
+🟢 At the `ready` profile, the input a door reads is required, so a green
 G0 means every condition checked something. A contract carries
 `entities:`, the glossary terms it operates on (§5). An empty list is valid
 and is a statement: `entities: []` says the contract operates on no
@@ -174,26 +176,28 @@ glossary term. A contract with no field fails `TC017`. `/sdlc intake`
 always writes the field, and writes `[]` only on the PO seat's confirmed
 answer; `taskcontract new` names the field in a comment and sets no value.
 
-🔴 Inside a specs tree, a ratified `intake-seat` (§8) must exist before any
+🟢 Inside a specs tree, a ratified `intake-seat` (§8) must exist before any
 contract reaches `ready`. With the term absent or at draft, every contract
 fails `TC018`, and the diagnostic names the file to author:
 `specs/vocabulary/intake-seat.yaml` (`/sdlc vocab add intake-seat` drafts
 it; ratifying it is yours). Intake checks this first and stops before
 authoring. Greenfield `/sdlc init` asks who holds the seats and seeds the
-term; a repo with one human ratifies a one-value roster. The `draft`
-profile is unchanged: a parked contract may carry neither.
+term ratified; brownfield `/sdlc init` ends its report with a note naming
+the same command while the term is not ratified. A repo with one human
+ratifies a one-value roster. The `draft` profile is unchanged: a parked
+contract may carry neither.
 
-🔴 **Adopting on an existing repo needs no re-intake.** The session hook
+🟢 **Adopting on an existing repo needs no re-intake.** The session hook
 protects only a contract that validates `ready`, so a contract the new
-door fails is open to the edit that repairs it, and locks again once it
-passes. After the upgrade, a `ready` contract with no `entities:` fails
-`TC017`: add the field, and it locks. The roster works the same way:
-ratify `intake-seat`, each contract fails `TC016` until its units carry
-`confirmed_by`, stamp the answers, and the contracts lock again. A
-contract locks only when it passes both doors: in a repo with no ratified
-roster it stays open after `entities:` is added, until the roster is
-ratified and the answers are stamped. Install the kit by pinned tag (§7,
-"Kit → your repo"), so an upgrade is a choice, never a surprise.
+doors fail is open to the edits that repair it. After the upgrade, a
+`ready` contract with no `entities:` fails `TC017`, and in a repo with no
+ratified roster it fails `TC018` too. Add the field. Ratify
+`intake-seat`, and each contract fails `TC016` until its units carry
+`confirmed_by`; stamp the answers. A contract locks again only when it
+passes both doors, so adding `entities:` locks it on its own only where
+the roster is already ratified and its units already carry answers.
+Install the kit by pinned tag (§7, "Kit → your repo"), so an upgrade is a
+choice, never a surprise.
 
 ### `taskcontract new <id>` (or `/sdlc new <id>`)
 Scaffolds the 8-field contract skeleton at
@@ -290,7 +294,7 @@ Engine equivalents for CI and scripts: `python -m taskcontract
 vocab-list` / `vocab-add <slug>` / `vocab-check` (the door — VTnnn
 diagnostics; the scaffolded CI workflow runs it as a backstop step).
 
-Contracts may declare `entities:` — the terms the task touches. G0
+Contracts declare `entities:`, the terms the task touches. G0
 resolves each ref against **ratified** terms only: a missing or draft
 term surfaces as an unresolved dependency naming the term — fork a
 small vocabulary task; the work itself never fails for vocabulary.
@@ -299,14 +303,15 @@ ratified` in the term file; the PR merge is the approval record.
 Deprecation sets `sunset:`; the join warns inside the notice window
 and errors past it.
 
-🔴 From kit 0.14.0 ([ADR 0030](decisions/0030-a-doors-input-is-a-declaration.md))
-"may" becomes "must" at the `ready` profile: every contract declares
-`entities:`, and `entities: []` states that it touches no term. See §4,
-"What `ready` requires".
+🟢 From kit 0.14.0 ([ADR 0030](decisions/0030-a-doors-input-is-a-declaration.md))
+the declaration is required at the `ready` profile; `entities: []`
+states that the contract touches no term, and the `draft` profile still
+accepts a contract without the field. See §4, "What `ready` requires".
 
 Greenfield init seeds 5–15 terms through the interview (born
-ratified); brownfield repos start with `vocab extract` and ratify the
-keepers.
+ratified), then asks who holds the seats and seeds `intake-seat` the
+same way; brownfield repos start with `vocab extract`, ratify the
+keepers, and ratify `intake-seat` (§8).
 
 ---
 
@@ -324,7 +329,9 @@ mkdir billing-service && cd billing-service && git init
 
 Brownfield is the same flow on an existing repo — init skips whatever
 already exists, and the first `intake` is where gate discipline
-actually starts.
+actually starts. 🟢 One step comes before it there: init's report names
+the seat roster the repo needs, and intake stops until `intake-seat` is
+ratified (kit 0.14.0).
 
 ---
 
@@ -381,12 +388,11 @@ Intake takes a human answer for every unit before a contract lands.
 When the humans are two teams (a PO team that owns the request, an
 engineer team that owns the decomposition), the kit gives each a
 **seat**, records which seats answered for each unit, and checks that
-record at the door. A repo with one human changes nothing: leave the
-seat term unratified and the check stays off.
-
-🔴 From kit 0.14.0 ([ADR 0030](decisions/0030-a-doors-input-is-a-declaration.md))
-the roster is required: a repo with one human ratifies a one-value roster
-before its first contract reaches `ready`. See §4, "What `ready` requires".
+record at the door. 🟢 Every repo needs a roster (kit 0.14.0,
+[ADR 0030](decisions/0030-a-doors-input-is-a-declaration.md)): a repo
+with one human ratifies a one-value roster before its first contract
+reaches `ready`, and that one seat answers for every unit. See §4, "What
+`ready` requires".
 
 ### The seats: a term you ratify
 
@@ -416,6 +422,7 @@ not the author.
 | Field | Seat |
 |---|---|
 | `intent`, `non_goals`, `provenance` | PO, in their words |
+| `entities` | PO: the ratified terms the request names, or `[]` on their answer |
 | domain-term ratification | PO |
 | `scope` (paths), `decomposition`, `depends_on`, `dependencies` | engineer |
 | technical-term ratification | engineer |
@@ -441,15 +448,13 @@ Every unit names the seats that answered for it:
 ```
 
 - 🟢 `confirmed_by` (schema 1.3.0, additive): optional in the schema, a
-  unique list of seat values, at least one. Contracts written against
-  1.2.0 stay valid.
+  unique list of seat values, at least one. Adding it broke no contract
+  written against 1.2.0.
 - 🟢 G0.3 at the ready door: with `intake-seat` ratified, a unit with no
   `confirmed_by`, or one naming a seat the term lacks, fails with
-  `TC016`. A draft term or no term leaves the check off; a parked
-  `draft` contract is never asked.
-- 🔴 From kit 0.14.0 (ADR 0030): a draft term or no term fails every
-  contract at the ready door with `TC018`, which names the file to
-  author. A parked `draft` contract is still never asked.
+  `TC016`. From kit 0.14.0 (ADR 0030), a draft term or no term fails
+  every contract in the specs tree with `TC018`, which names the file to
+  author. The `draft` profile never runs the check.
 - 🟢 Intake writes it: after drafting the decomposition, intake renders
   the unit graph, asks for an answer per unit, writes `confirmed_by`,
   and only then writes the contract. A red door after the write reports
@@ -477,7 +482,7 @@ ones; then ratify `intake-seat`.
 
 Raw request: "add a helper that applies a percent discount to a line
 price for the checkout summary." Intake lands this contract (shown as
-it reads under 1.3.0, answers included):
+it reads under 1.4.0, answers and declarations included):
 
 ```yaml
 id: apply-discount
@@ -521,6 +526,10 @@ decomposition:
 
 dependencies: []
 
+entities:  # terms this repo's glossary holds ratified (§5)
+  - line-price
+  - discount
+
 provenance:
   origin: human-request
 ```
@@ -543,8 +552,10 @@ a test the implementer cannot edit.
 |---|---|
 | "`/sdlc` isn't listed" | Reload the Claude Code session after installing. |
 | "It didn't overwrite my file" | By design (no-clobber). Edit the file in place, or delete it and re-run. |
-| `TC003 dependency unresolved` | The contract is a parked draft — resolve or re-scope the dependency; `ready` requires all resolved. |
+| `TC003 dependency unresolved` | The contract is a parked draft — resolve or re-scope the dependency; `ready` requires all resolved. 🟢 `/sdlc audit` reads it `CONTRACT-PARKED` at exit 0, and a `still to declare:` suffix names what it also owes: `TC017`, `TC018` or both (rows below). |
 | `TC005 unknown field` | Contracts reject stray keys (`additionalProperties: false`) — a typo or scope smuggling; both fail loudly. |
-| `TC016 unit not confirmed` (🟢 0.12.0) | The seat term is ratified here and a unit lacks `confirmed_by`, or names a seat the term does not list. Run intake's confirm step, or fix the value (§8). |
+| `TC016 unit not confirmed` (🟢 0.12.0) | The seat term is ratified here and a unit lacks `confirmed_by`, or names a seat the term does not list. Run intake's confirm step, or fix the value (§8). On a parked contract `/sdlc audit` does not park it: `TC003` beside `TC016` reads `CONTRACT-INVALID` until the units carry answers. |
+| `TC017 contract declares no entities` (🟢 0.14.0) | The field is required at `ready`. List the glossary terms the contract operates on, or write `entities: []` to state that it operates on none: an edit, not a re-intake (§4, "What `ready` requires"). |
+| `TC018 no seat roster` or `seat roster not ratified` (🟢 0.14.0) | The repo holds no ratified `intake-seat`, so no contract under `specs/` reaches `ready`. Author `specs/vocabulary/intake-seat.yaml` (`/sdlc vocab add intake-seat` drafts it) and ratify it; one remedy clears every contract, and ratifying arms `TC016` (§8). |
 | CI job green with no contracts | Expected — the validate step is guarded until a `specs/*/contract.yaml` exists. |
 | `audit` exit 2 | No `.sdlc/` here — run `/sdlc` init first. |

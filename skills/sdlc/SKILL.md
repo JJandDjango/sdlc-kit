@@ -40,9 +40,10 @@ install command and continue with whatever needs no validator.
 
 The vocabulary layer (ADR 0017): terms live one-per-file at
 specs/vocabulary/{term-slug}.yaml (filename = stable ID), validated at
-the door by `vocab-check`; contracts may declare `entities:` refs that
-G0 resolves against ratified terms only. Ratification is always a human
-act - the status flip is a class-S edit approved in review.
+the door by `vocab-check`; contracts declare `entities:` refs, required
+at ready since ADR 0030 (`[]` declares none), that G0 resolves against
+ratified terms only. Ratification is always a human act - the status
+flip is a class-S edit approved in review.
 
 Payload (no-clobber; the two merge targets are printed instead of
 written when they already exist):
@@ -87,11 +88,11 @@ is the live container, deliberately empty until its G3 slice
 - [ ] Target confirmed (cwd, or git root if chosen); git absence noted, never blocking; Cairn recommended when absent and its files untouched.
 - [ ] Answers captured - project_name / adoption / stack, from the interview or supplied by the invocation; init.py invoked once; stdout reported with created / skipped / merge-by-hand surfaced.
 - [ ] New flow: `taskcontract new` invoked; created path + loop line reported, or the failure + install hint.
-- [ ] Intake flow: contract authored on its own scaffold; the unit graph rendered and every unit answered by a human before the contract is final, `confirmed_by` recorded when the seat term is ratified; validate looped (max 5) to ready-green or PARKED with a named blocker; handoff refused while red; nothing else written.
+- [ ] Intake flow: stopped before any contract when no ratified `intake-seat` stands; contract authored on its own scaffold with `entities` declared; the unit graph rendered and every unit answered by a human before the contract is final, `confirmed_by` recorded on every unit; validate looped (max 5) to ready-green or PARKED with a named blocker; handoff refused while red; nothing else written.
 - [ ] Audit flow: audit.py ran by absolute path; findings reported verbatim; nothing written or fixed.
 - [ ] Update flow: update.py ran by absolute path; drift reported by class (kit-owned / merge-target / consumer); apply only per-file on explicit user direction; merge targets and consumer files never applied.
 - [ ] Vocab flows: listing computed and reported verbatim; add scaffolds red and draft; extract reads only declared surfaces, births 5-15 draft terms with sources, loops the door to green (max 5), and leaves every ratification to the user.
 - [ ] Lang flows: one Bash call each, stdout verbatim, nothing written; deltas stay the user's lane.
-- [ ] Greenfield init seeds 5-15 ratified terms through the interview and the same machinery; brownfield init recommends extract instead.
+- [ ] Greenfield init seeds 5-15 ratified terms and the ratified `intake-seat` roster through the interview and the same machinery; brownfield init recommends extract instead, and its report names the roster the repo needs.
 - [ ] Every Bash call a single segment; no overwrite anywhere.
 </criteria>

@@ -94,7 +94,8 @@ honestly. The draft profile never runs it and loose files never enter
   to the prose. 0011's format is unchanged.
   [0025](../decisions/0025-intake-seats.md) adds an optional
   `confirmed_by` to the same shape - a unique, non-empty list of seat
-  values; 1.3.0 is additive, so 1.2.0 contracts validate unchanged.
+  values; 1.3.0 was additive, so every 1.2.0 contract validated
+  unchanged.
 - **E2** one schema file, two profiles: root = `draft` (a parked contract
   with a blocked dependency is representable, per 0005's own grammar);
   `$defs/ready` = draft + every `status: resolved`. The gate checks `ready`.
@@ -221,9 +222,11 @@ contract's scope (USAGE section 4).
 1. **Intake loop - the G0 venue.** `/sdlc intake`
    ([0016](../decisions/0016-distribution-before-activation.md),
    `skills/sdlc/flows/intake.md`, dispatched by `SKILL.md`): the agent
-   authors the contract from the raw request onto a `taskcontract new`
-   scaffold, renders the unit graph and takes a human answer per unit
-   (writing `confirmed_by` when the seat term is ratified - I5-I6,
+   checks for a ratified seat roster first and stops without one (I1,
+   [0030](../decisions/0030-a-doors-input-is-a-declaration.md)), authors
+   the contract from the raw request onto a `taskcontract new` scaffold,
+   declaring `entities`, renders the unit graph and takes a human answer
+   per unit (writing `confirmed_by` - I5-I6,
    [0025](../decisions/0025-intake-seats.md)), loops `validate --profile
    ready` to green, writes `specs/<id>/contract.yaml`, refuses the
    spec-stage handoff while red. *This venue running live in a repo is

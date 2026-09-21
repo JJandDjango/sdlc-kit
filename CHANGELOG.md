@@ -55,10 +55,15 @@ Two house rules, enforced in review:
   TC017, TC018`. A parked contract owing nothing keeps today's line. Any
   other failure beside `TC003`, such as a missing `non_goals`, still
   reads `CONTRACT-INVALID`. Delta note: a consumer's *parked* contracts
-  raise no new red from this release, and the parked line tells them
-  what each one owes before they unpark it. Their ready contracts do
-  turn red on `TC017` and `TC018` until they declare, as the two notes
-  above say.
+  raise no new red from the upgrade itself, and the parked line tells
+  them what each one owes before they unpark it. That holds until the
+  consumer ratifies `intake-seat` to clear `TC018`: the ratification
+  arms `TC016`, and a parked contract whose units carry no
+  `confirmed_by` then reads `TC003` with `TC016`, which the audit does
+  not park, so it reads `CONTRACT-INVALID` until its units carry
+  answers. The parked contract fails ready, so the session hook leaves
+  it open to that edit. Their ready contracts do turn red on `TC017`
+  and `TC018` until they declare, as the two notes above say.
 - **The `new` skeleton names `entities:` and sets no value**
   (`g0-declaration`, ADR 0030, unit `d3-scaffold-comment`).
   `taskcontract new` writes one comment line naming the field and leaves
@@ -86,6 +91,18 @@ Two house rules, enforced in review:
   contract reaches ready until `intake-seat` is ratified, and
   `/sdlc vocab add intake-seat` drafts it. Delta note: none; a repo
   already initialized re-runs nothing.
+- **The adoption path is pinned and written down** (`g0-declaration`,
+  ADR 0030, unit `d6-adoption-and-release`). Two hook tests hold the
+  session hook's dynamic exemption to what adoption needs, one per
+  declaration: a contract the new doors fail (`TC017`; or `TC018`, then
+  `TC016` once the roster is ratified) is open to the edit that repairs
+  it, and it locks again once it passes. `USAGE.md` marks this release
+  green: the adoption path, the roster step in both init modes, the
+  `ApplyDiscount` example declaring its terms, and `TC017` and `TC018`
+  rows in troubleshooting. The skill's `SKILL.md` states the required
+  declaration and follows the intake and init flows. Kit `0.13.0` ->
+  `0.14.0`. Delta note: none beyond the notes above; pin the install ref
+  to the tag.
 
 ## 0.13.0 - 2026-09-18 (tag `v0.13.0`)
 
