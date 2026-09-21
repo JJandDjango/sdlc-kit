@@ -2,12 +2,13 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-21 (session 36, at the 0.14.0 release)._
+> _Generated 2026-09-21 (session 36 wrap)._
 
 ## Now
 - **Kit 0.14.0 is released.** `g0-declaration` (ADR 0030) merged as PR
-  #44 at `1d306ea` and is tagged `v0.14.0`; the self-pin and this wrap
-  ride PR #45 (`session-36-self-pin`). No contract is in flight.
+  #44 at `1d306ea` and is tagged `v0.14.0`; the self-pin and the release
+  wrap merged as PR #45 at `36c0720`. Local `main` sits there. No contract
+  is in flight.
 - At the ready profile both G0 inputs are required declarations:
   `entities:` (TC017, schema 1.4.0) and, in a specs tree, a ratified
   `intake-seat` roster (TC018). The draft profile is unchanged.
@@ -15,9 +16,11 @@
   `sweep: true` (`cf518e5`). Its own sweep, run before the verifier,
   found `skills/sdlc/SKILL.md:43` and `:90` stating retired rules outside
   scope; the user ruled r8, and the re-intake added the file (`3ad6cb0`).
+  The request file (untracked) carries the "Merged:" row and the Record.
 - Receipts at the release: pytest 299, `prompt_lang` 13 of 13, thirteen
   contracts ready-green, `/sdlc audit` clean, lang-green, `vocab-check`
-  green at 18 terms and 8 constraints, scope-green, CI green on #44.
+  green at 18 terms and 8 constraints, scope-green; CI green on #44 and
+  #45, whose `contracts` job installed the kit from the new tag.
 
 ## Blockers
 - None.
@@ -34,6 +37,10 @@
   passes once.
 - Attribution is off in the user's settings, so a commit's final
   paragraph is `Contract:` alone and a PR body ends at its last sentence.
+- Release shape: PR, merge commit, annotated tag at the merge, then the
+  self-pin through its own PR; main's ruleset requires a PR for every
+  change. `gh pr checks --watch` started right after `gh pr create` can
+  exit 1 on "no checks reported"; start it again.
 - A settings file with unrelated uncommitted edits is staged by blob
   (`hash-object`, then `update-index`), so the commit holds one change.
 
