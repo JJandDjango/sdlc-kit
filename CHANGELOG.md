@@ -41,6 +41,22 @@ Two house rules, enforced in review:
   it; that is the adoption path in `USAGE.md`, and the session
   write-guard unlocks the contract for exactly those edits while it
   fails ready.
+- **`/sdlc audit` still reads a parked draft as parked** (`g0-declaration`,
+  ADR 0030, unit `d7-audit-parked-rule`). The audit called a contract
+  parked only when its ready failures were exactly `TC003`. Once the two
+  declarations became required, a parked draft that had not yet declared
+  returned `TC003` with `TC017` or `TC018` and read `CONTRACT-INVALID` at
+  exit 1 - which would have made this release break the promise it
+  states, that the draft profile is unchanged and a parked contract may
+  carry neither input. A contract is now parked when `TC003` stands and
+  every other failure is a declaration it has yet to make, and the parked
+  line names them: `legal draft parked on <blockers>; still to declare:
+  TC017, TC018`. A parked contract owing nothing keeps today's line. Any
+  other failure beside `TC003`, such as a missing `non_goals`, still
+  reads `CONTRACT-INVALID`. Delta note: a consumer whose CI runs
+  `/sdlc audit` and who parks contracts sees no new red from this
+  release; the parked line tells them what each parked contract owes
+  before they unpark it.
 
 ## 0.13.0 - 2026-09-18 (tag `v0.13.0`)
 

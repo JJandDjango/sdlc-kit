@@ -27,8 +27,10 @@ Finding codes:
   REDS-SCHEMA       a reds entry lacks the ledger fields
                     {id, condition, class, clock_origin, window, status}
   CONTRACT-INVALID  a specs/*/contract.yaml fails the ready profile (ERROR)
-  CONTRACT-PARKED   a contract fails ready ONLY on unresolved
-                    dependencies (TC003) - a legal parked draft   (INFO)
+  CONTRACT-PARKED   a contract fails ready on unresolved dependencies
+                    (TC003) and nothing but a declaration it has yet to
+                    make (TC017, TC018, named on the line) - a legal
+                    parked draft                                  (INFO)
   CONTRACT-WARNED   a contract is ready-green with warnings only
                     (e.g. W001 sunset window)                     (INFO)
   CONTRACT-ORPHAN   a specs/<dir>/ carries no contract.yaml
@@ -51,6 +53,11 @@ from pathlib import Path
 SEVERITY_RANK = {"ERROR": 0, "WARN": 1, "INFO": 2}
 
 PIP_HINT = 'pip install "git+https://github.com/JJandDjango/sdlc-kit.git"'
+
+# The two declarations the ready profile requires (ADR 0030). A parked
+# draft may owe them, so they ride the parked line rather than flipping
+# the verdict to invalid.
+DECLARATION_RULES = frozenset({"TC017", "TC018"})
 
 SURFACES = (
     "SDLC.md",
@@ -169,10 +176,17 @@ def _check_contracts(cwd: Path, findings: list[Finding]) -> None:
         warnings = [v for v in violations
                     if getattr(v, "severity", "error") != "error"]
         rules = {v.rule for v in errors}
-        if errors and rules == {"TC003"}:
-            blockers = "; ".join(v.message for v in errors)
+        # A parked contract is one whose only ready failure is a blocked
+        # dependency. Since ADR 0030 the ready profile also requires two
+        # declarations, and a draft that carries neither is still legal
+        # (SC4.1), so a declaration miss beside TC003 must not turn the
+        # verdict to invalid - it rides the parked line instead (SC4.3).
+        if errors and "TC003" in rules and rules <= {"TC003", *DECLARATION_RULES}:
+            blockers = "; ".join(v.message for v in errors if v.rule == "TC003")
+            owed = sorted(rules & DECLARATION_RULES)
+            still = f"; still to declare: {', '.join(owed)}" if owed else ""
             findings.append(Finding("INFO", "CONTRACT-PARKED",
-                                    f"legal draft parked on {blockers}", rel))
+                                    f"legal draft parked on {blockers}{still}", rel))
         elif errors:
             head = "; ".join(f"{v.rule} {v.message}" for v in errors[:3])
             more = f" (+{len(errors) - 3} more)" if len(errors) > 3 else ""
