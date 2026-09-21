@@ -1,14 +1,16 @@
 """Round-trip suite for the F11 scaffold (ADR 0016).
 
-`new <id>` writes a deliberately red skeleton - TC007 on the TODO intent
-and TC017 on the undeclared entities are the tripwires - that turns green
-only once a real contract is authored.
+`new <id>` writes a deliberately red skeleton - TC007 on the TODO intent,
+TC017 on the undeclared entities, and, in a repo with a ratified roster,
+TC016 on the unanswered placeholder unit - that turns green only once a
+real contract is authored.
 """
 
 from __future__ import annotations
 
 import pytest
 import yaml
+from conftest import write_seat_roster
 
 from taskcontract.__main__ import main
 from taskcontract.checker import validate_path
@@ -16,12 +18,13 @@ from taskcontract.scaffold import scaffold
 
 
 def test_new_round_trip_fill_then_green(tmp_path):
+    write_seat_roster(tmp_path)  # a ready contract needs one (ADR 0030)
     path = scaffold("csv-export", root=tmp_path)
     assert path == tmp_path / "specs" / "csv-export" / "contract.yaml"
 
     rules = {v.rule for v in validate_path(path, profile="ready")}
-    assert rules == {"TC007", "TC017"}, \
-        "fresh skeleton must be red on exactly the intent and entities tripwires"
+    assert rules == {"TC007", "TC016", "TC017"}, \
+        "fresh skeleton must be red on exactly the intent, seat and entities tripwires"
 
     doc = yaml.safe_load(path.read_text(encoding="utf-8"))
     doc["intent"] = ("Orders export as CSV from the billing screen; the download "
@@ -33,6 +36,7 @@ def test_new_round_trip_fill_then_green(tmp_path):
         "id": "export-endpoint",
         "done_means": "GET /billing/export returns CSV",
         "acceptance_sketch": ["zero-order account downloads an empty CSV"],
+        "confirmed_by": ["user"],
     }]
     doc["entities"] = []  # the empty list is the declaration (ADR 0030)
     path.write_text(yaml.safe_dump(doc, sort_keys=False), encoding="utf-8")

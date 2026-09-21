@@ -24,6 +24,23 @@ Two house rules, enforced in review:
   contract operates on, or `entities: []` when it operates on none - and
   `USAGE.md` carries the adoption path. A consumer on an unpinned
   install turns red at upgrade; pin the install ref to the tag.
+- **A ratified `intake-seat` roster is required at the ready profile**
+  (`g0-declaration`, ADR 0030, unit `d2-roster-required`). The
+  confirmation join used to return early when the term was absent or
+  still draft, so G0.3 checked no unit at all in a repo without a
+  roster. It now reports the new `TC018` once per contract at `$`, in
+  two wordings: the term does not exist, or the term is not ratified.
+  Both name `specs/vocabulary/intake-seat.yaml`, the file to author and
+  ratify. With the roster ratified, TC016 behaves exactly as before.
+  Ready profile only, and only for a contract inside a `specs` tree, so
+  the draft profile and loose files are unchanged. Delta note: a repo
+  that never authored a roster turns red on every contract at once, and
+  one remedy clears them all - `/sdlc vocab add intake-seat` drafts the
+  term, and ratifying it is the single human action. Ratifying the
+  roster also arms TC016, so units that never recorded an answer report
+  it; that is the adoption path in `USAGE.md`, and the session
+  write-guard unlocks the contract for exactly those edits while it
+  fails ready.
 
 ## 0.13.0 - 2026-09-18 (tag `v0.13.0`)
 

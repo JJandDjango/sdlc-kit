@@ -34,7 +34,9 @@ Draft 2020-12:
 | every unit identified | unit requires `id`, same pattern as the contract id (0024) |
 | unit order declared | optional `depends_on`: unique array of unit ids (0024) |
 | the order is a graph, not a list | *not schema* - TC013-TC015, Python-side (0024) |
-| every unit answered, once the seat term is ratified | *not schema* - TC016, Python-side, ready profile only (0025) |
+| every unit answered, the seat term being ratified | *not schema* - TC016, Python-side, ready profile only (0025) |
+| the terms the contract operates on are declared | `ready` profile: `required: [entities]`, no `minItems`, so `[]` declares none - TC017 (0030) |
+| the repo carries a ratified seat roster | *not schema* - TC018, Python-side, ready profile only, one per contract (0030) |
 | dependency `resolved` / `blocked-by: <ref>` | item object + `if/then` (E2) |
 | all dependencies resolved to pass | `ready` profile: `status: const resolved` (E2) |
 | `provenance` origin fixed | enum; `ref` required on escape (E3) |
@@ -159,6 +161,7 @@ violations as an array - the agent loop substrate.
 | TC015 | dependency cycle (names the ring, spelled "depends on") |
 | TC016 | unit not confirmed: no `confirmed_by`, or a seat the ratified `intake-seat` term lacks (ready profile; armed by that ratification) |
 | TC017 | no `entities:` declaration (ready profile; `entities: []` is the way to declare none) |
+| TC018 | no ratified `intake-seat` roster in the repo (ready profile; one per contract, two wordings: absent, or not ratified) |
 | W001 | entities ref deprecated inside its sunset window (warning - never gates) |
 
 Regression suite: golden fixtures `tests/fixtures/{valid,invalid}/*.yaml` -

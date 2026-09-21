@@ -17,6 +17,7 @@ import sys
 from pathlib import Path
 
 import pytest
+from conftest import write_seat_roster
 
 ROOT = Path(__file__).parent.parent
 TEMPLATE = ROOT / "skills" / "sdlc" / "templates" / "hooks-protect-specs.py.template"
@@ -48,7 +49,12 @@ def repo(tmp_path, hook_source) -> Path:
     hook.write_text(hook_source, encoding="utf-8")
     ready = tmp_path / "specs" / "ready-task" / "contract.yaml"
     ready.parent.mkdir(parents=True)
-    ready.write_text(READY_CONTRACT.read_text(encoding="utf-8"), encoding="utf-8")
+    # Inside a specs tree a ready contract now needs the seat answer too
+    # (ADR 0030 makes the roster below required, which arms TC016).
+    ready.write_text(READY_CONTRACT.read_text(encoding="utf-8").replace(
+        "    id: guard-empty-cart\n",
+        "    id: guard-empty-cart\n    confirmed_by: [user]\n"),
+        encoding="utf-8")
     draft = tmp_path / "specs" / "parked-task" / "contract.yaml"
     draft.parent.mkdir(parents=True)
     draft.write_text(READY_CONTRACT.read_text(encoding="utf-8").replace(
@@ -60,6 +66,7 @@ def repo(tmp_path, hook_source) -> Path:
     (vocab / "checkout.yaml").write_text(RATIFIED_TERM, encoding="utf-8")
     (vocab / "cart.yaml").write_text(DRAFT_TERM, encoding="utf-8")
     (vocab / "dictionary.yaml").write_text("class: E\nwords: []\n", encoding="utf-8")
+    write_seat_roster(tmp_path)  # the ready profile needs it (ADR 0030)
     (tmp_path / "specs" / "README.md").write_text("# specs\n", encoding="utf-8")
     return tmp_path
 

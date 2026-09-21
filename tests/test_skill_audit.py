@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 import yaml
+from conftest import write_seat_roster
 
 from taskcontract.scaffold import scaffold
 
@@ -22,6 +23,7 @@ VALID_DOC = {
         "id": "export-endpoint",
         "done_means": "GET /billing/export returns CSV",
         "acceptance_sketch": ["zero-order account downloads an empty CSV"],
+        "confirmed_by": ["user"],
     }],
     "dependencies": [],
     "entities": [],  # the empty list is the declaration (ADR 0030)
@@ -32,6 +34,9 @@ VALID_DOC = {
 def _init(tmp_path, skill_init):
     templates = Path(skill_init.__file__).parent / "templates"
     skill_init.render_all(ANSWERS, templates, tmp_path, "2026-07-26")
+    # ADR 0030: a repo needs a ratified roster before any contract reaches
+    # ready. Unit d5 makes greenfield init seed it; until then, seed it here.
+    write_seat_roster(tmp_path)
 
 
 def _write_contract(tmp_path, doc):

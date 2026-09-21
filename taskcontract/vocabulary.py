@@ -283,28 +283,48 @@ def coverage_join(contract_file, instance, root,
 
 SEAT_TERM = "intake-seat"
 TC_UNCONFIRMED = "TC016"
+TC_NO_ROSTER = "TC018"
+
+# G0.3's declaration (ADR 0030): the roster the confirmation join reads is
+# required at ready, so its absence cannot leave the join inactive. Two
+# wordings, because a term that does not exist and a term that is not
+# ratified need different remedies. One per contract, at `$`.
+TC018_ABSENT = (
+    f"no seat roster - the term '{SEAT_TERM}' does not exist; author "
+    f"specs/vocabulary/{SEAT_TERM}.yaml (a value-set of the seats this repo "
+    f"recognizes) and ratify it before any contract reaches ready")
+TC018_UNRATIFIED = (
+    "seat roster not ratified - '{term}' is {status}; ratify "
+    "specs/vocabulary/{term}.yaml before any contract reaches ready")
 
 
 def confirmation_join(contract_file, instance, root) -> list[Violation]:
     """G0.3 unit confirmation (ADR 0025): every unit names who answered.
 
-    Armed only by a *ratified* `intake-seat` term in the sibling
-    vocabulary (a value-set: the seats this repo recognizes). A draft
-    term or no term leaves the check inactive - adoption pace, the
-    coverage-join precedent. Once armed, a unit with no `confirmed_by`
-    fails, and so does any seat the term does not list. Ready profile
-    only; the caller decides that, like the coverage join.
+    The roster is a *ratified* `intake-seat` term in the sibling
+    vocabulary (a value-set: the seats this repo recognizes). Since ADR
+    0030 it is required rather than arming: a repo with no term, or a
+    term still at draft, reports TC018 once per contract with the file
+    to write, because a join that reads nothing cannot report green
+    honestly. With the roster ratified, a unit with no `confirmed_by`
+    fails, and so does any seat the term does not list, exactly as
+    before. Ready profile only; the caller decides that, like the
+    coverage join.
     """
     if not isinstance(instance, dict):
         return []
+    name = str(contract_file)
     term = load_terms(root).get(SEAT_TERM)
-    if term is None or term.get("status") != "ratified":
-        return []
+    if term is None:
+        return [Violation(name, "$", TC_NO_ROSTER, TC018_ABSENT)]
+    status = term.get("status")
+    if status != "ratified":
+        return [Violation(name, "$", TC_NO_ROSTER,
+                          TC018_UNRATIFIED.format(term=SEAT_TERM, status=status))]
     raw_values = term.get("values")
     seats = {v for v in raw_values if isinstance(v, str)} if isinstance(raw_values, list) else set()
     roster = ", ".join(sorted(seats)) or "<none>"
 
-    name = str(contract_file)
     out: list[Violation] = []
     decomposition = instance.get("decomposition")
     if not isinstance(decomposition, list):

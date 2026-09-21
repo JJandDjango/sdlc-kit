@@ -16,6 +16,8 @@ from pathlib import Path
 
 import pytest
 
+from conftest import write_seat_roster
+
 from taskcontract.__main__ import main
 from taskcontract.checker import TC017_MESSAGE, validate_path
 
@@ -69,6 +71,7 @@ non_goals:
 decomposition:
   - unit: join
     id: join
+    confirmed_by: [user]
     done_means: the declared entities resolve per ADR 0017 V3
     acceptance_sketch:
       - resolution behaves per term status
@@ -85,6 +88,9 @@ def _tree(tmp_path, entities, terms):
     contract_dir.mkdir(parents=True)
     vocab = tmp_path / "specs" / "vocabulary"
     vocab.mkdir()
+    # The ready profile needs a ratified roster (ADR 0030); seeding it keeps
+    # these cases about the coverage join and nothing else.
+    write_seat_roster(tmp_path)
     for stem, text in terms.items():
         (vocab / f"{stem}.yaml").write_text(text, encoding="utf-8")
     lines = "\n".join(f"  - {e}" for e in entities)
@@ -139,7 +145,9 @@ def test_no_vocabulary_directory_means_every_ref_forks(tmp_path):
     contract.write_text(
         CONTRACT.format(entities="  - gate"), encoding="utf-8")
     violations = validate_path(contract, profile="ready")
-    assert {v.rule for v in violations} == {"TC010"}
+    # No vocabulary directory means no roster either, so the ready profile
+    # reports both misses (ADR 0030).
+    assert {v.rule for v in violations} == {"TC010", "TC018"}
 
 
 def test_draft_profile_skips_the_join(tmp_path):
@@ -159,6 +167,7 @@ def test_contract_without_entities_fails_tc017(tmp_path):
     contract.write_text(NO_ENTITIES, encoding="utf-8")
     (tmp_path / "specs" / "vocabulary").mkdir()
     (tmp_path / "specs" / "vocabulary" / "gate.yaml").write_text(RATIFIED, encoding="utf-8")
+    write_seat_roster(tmp_path)  # isolate the entities miss from the roster miss
     violations = validate_path(contract, profile="ready")
     assert [v.rule for v in violations] == ["TC017"]
     assert violations[0].path == "$"
@@ -179,6 +188,7 @@ def test_empty_entities_is_a_declaration(tmp_path):
     vocab.mkdir()
     (vocab / "gate.yaml").write_text(RATIFIED, encoding="utf-8")
     (vocab / "draft-term.yaml").write_text(DRAFT, encoding="utf-8")
+    write_seat_roster(tmp_path)
     assert validate_path(contract, profile="ready") == []
     assert validate_path(contract, profile="draft") == []
 
