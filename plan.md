@@ -55,6 +55,11 @@ Developer then Verifier (Two-Key). The unit graph per contract is computed
    (g) PR, then on the user's word: merge, tag v0.14.0, self-pin.
    Progress: intake ready-green (7fd7127); d0 PASS after two verifier
    rounds (8239468, 1ad319a; round 1 caught a false cross-reference).
+   d1 is saved as WIP 3a3261a (unverified, 3 tests red, amend before push)
+   and is paused on an OPEN entry in the request (r5): the audit's parked
+   rule misreads a parked draft that carries neither input; recommended
+   SC4.3, `skills/sdlc/audit.py` into scope, the fix in d2. Session 33
+   wrapped here; STATE.md has the resume.
    d6 carries five USAGE advisories from d0's verifier: (1) section 8's
    worked example shows a contract with no `entities:`; (2) the green
    intake sentences near lines 149-160 imply intake runs without a roster
