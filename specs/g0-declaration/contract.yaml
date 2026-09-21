@@ -26,6 +26,7 @@ scope:
   - skills/sdlc/flows/new.md
   - skills/sdlc/init.py
   - skills/sdlc/audit.py
+  - skills/sdlc/SKILL.md
   - tests/
   - USAGE.md
   - pyproject.toml
