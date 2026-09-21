@@ -23,9 +23,9 @@
   defines went undeclared and the door stayed green. Its proposal (engine
   `631dc0f`): intake copies every term the document defines into
   `entities:`, so G0.2 fails until the glossary ratifies them.
-- **Kit 0.14.0 is released** (tag `v0.14.0` at `1d306ea`).
-  `session-37-tree-view` carries `c87ef7f` (session 36's close) and this
-  session's two commits in one PR.
+- **Kit 0.14.0 is released** (tag `v0.14.0` at `1d306ea`). PR #46 merged
+  at `db5db28`, carrying `c87ef7f` (session 36's close) and session 37's
+  two commits.
 
 ## Blockers
 - None.
