@@ -77,6 +77,15 @@ Two house rules, enforced in review:
   term it proposes `entities: []` and writes it only on the PO seat's
   confirmed answer, including when the fix loop drops the last ref.
   Delta note: none; the flow arrives with the install.
+- **Init seeds the seat roster in a greenfield repo and names it in a
+  brownfield one** (`g0-declaration`, ADR 0030, unit
+  `d5-init-seeds-roster`). Greenfield `/sdlc init` asks who holds the
+  seats and writes `specs/vocabulary/intake-seat.yaml` ratified, with the
+  seats as its values, beside the other seed terms. A brownfield run
+  whose roster is absent or still draft ends its report with a note: no
+  contract reaches ready until `intake-seat` is ratified, and
+  `/sdlc vocab add intake-seat` drafts it. Delta note: none; a repo
+  already initialized re-runs nothing.
 
 ## 0.13.0 - 2026-09-18 (tag `v0.13.0`)
 

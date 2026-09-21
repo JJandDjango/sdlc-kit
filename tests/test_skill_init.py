@@ -419,3 +419,46 @@ def test_managed_profile_is_a_reference_never_rendered(tmp_path, skill_init):
     assert "reference/managed-settings.json" in usage
     for token in ("ProgramData", "/etc/claude-code/", "Library/Application"):
         assert token in usage, token  # the three drop paths
+
+
+# --- unit: d5-init-seeds-roster (contract: g0-declaration) ---
+
+BROWNFIELD = {**ANSWERS, "adoption": "brownfield"}
+
+
+def _roster(root: Path, status: str) -> None:
+    path = root / "specs" / "vocabulary" / "intake-seat.yaml"
+    path.parent.mkdir(parents=True)
+    path.write_text(f"term: intake-seat\nkind: value-set\nstatus: {status}\n", encoding="utf-8")
+
+
+def test_cli_roster_note_is_brownfield_conditional(tmp_path, skill_init, capsys):
+    # SC3.3: brownfield init reports the roster the repo needs and names the
+    # command, while the term is absent or draft; greenfield seeds it in the
+    # flow, so its report carries no note.
+    for case, status in (("bf", None), ("draft", "draft")):
+        if status:
+            _roster(tmp_path / case, status)
+        rc = skill_init.main(["--answers", json.dumps(BROWNFIELD), "--cwd", str(tmp_path / case)])
+        out = capsys.readouterr().out
+        assert rc == 0
+        assert "`/sdlc vocab add intake-seat`" in out and "TC018" in out, case
+
+    _roster(tmp_path / "held", "ratified")
+    assert skill_init.main(["--answers", json.dumps(BROWNFIELD), "--cwd", str(tmp_path / "held")]) == 0
+    assert "intake-seat" not in capsys.readouterr().out
+
+    assert skill_init.main(["--answers", json.dumps(ANSWERS), "--cwd", str(tmp_path / "gf")]) == 0
+    assert "intake-seat" not in capsys.readouterr().out
+
+
+def test_greenfield_flow_seeds_a_ratified_roster(skill_init):
+    # SC3.3: the interview asks who holds the seats and writes intake-seat
+    # ratified with the seats as its values; brownfield seeds nothing and
+    # carries the engine's note.
+    flow = (Path(skill_init.__file__).parent / "flows" / "init.md").read_text(encoding="utf-8")
+    seed = flow[flow.index("5. SEED"):flow.index("6. REPORT")]
+    for words in ("ASK who holds the seats", "`intake-seat`", "kind `value-set`",
+                  "the seats as its `values`", "`status: ratified`",
+                  "`/sdlc vocab add intake-seat`"):
+        assert words in seed, words
