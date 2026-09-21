@@ -2,36 +2,46 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-21 (session 36 wrap)._
+> _Generated 2026-09-21 (session 37 open)._
 
 ## Now
-- **Kit 0.14.0 is released.** `g0-declaration` (ADR 0030) merged as PR
-  #44 at `1d306ea` and is tagged `v0.14.0`; the self-pin and the release
-  wrap merged as PR #45 at `36c0720`. Local `main` sits there. No contract
-  is in flight.
-- At the ready profile both G0 inputs are required declarations:
-  `entities:` (TC017, schema 1.4.0) and, in a specs tree, a ratified
-  `intake-seat` roster (TC018). The draft profile is unchanged.
-- Session 36 built d6, which passed Two-Key in round 1 with
-  `sweep: true` (`cf518e5`). Its own sweep, run before the verifier,
-  found `skills/sdlc/SKILL.md:43` and `:90` stating retired rules outside
-  scope; the user ruled r8, and the re-intake added the file (`3ad6cb0`).
-  The request file (untracked) carries the "Merged:" row and the Record.
-- Receipts at the release: pytest 299, `prompt_lang` 13 of 13, thirteen
-  contracts ready-green, `/sdlc audit` clean, lang-green, `vocab-check`
-  green at 18 terms and 8 constraints, scope-green; CI green on #44 and
-  #45, whose `contracts` job installed the kit from the new tag.
+- **Session 37 takes `tree-view`**, the user's pick (2026-09-21): one tree
+  of the work, derived from the kit's files and followed from a terminal
+  pane. This session's deliverable is the strike pass: the nine candidate
+  criteria struck or kept and the three OPENs ruled, signed as r2.
+  `REQUEST_tree-view_2026-09-21.md` sits untracked in the root.
+- **The pilot vetted G0 on 0.14.0** (engine session 10). Its M0 contract
+  is ready-green locally and in CI run 35620384803, the first under the
+  `v0.14.0` pin; traced field by field against its document at r3, it is
+  faithful. On 0.14.0's findings: `intake-write-locks-its-own-confirmation`
+  closed, `coverage-join-inactive-on-undeclared-terms` closed in part,
+  `write-guard-binds-to-an-editing-tool-list` (G4.6) untouched.
+- **New finding, `no-check-reads-the-source-document`** (gap, G0, engine
+  `d7f82ea`): G0 reads the contract alone, so five terms the M0 document
+  defines went undeclared and the door stayed green. Its proposal (engine
+  `631dc0f`): intake copies every term the document defines into
+  `entities:`, so G0.2 fails until the glossary ratifies them.
+- **Kit 0.14.0 is released**: PR #44 at `1d306ea`, tag `v0.14.0`; the
+  self-pin and wrap in PR #45 at `36c0720`. `c87ef7f`, session 36's
+  close, rides this session's branch, `session-37-tree-view`.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. Choose the next request: `derived-language`, `feature-document` or
-   `spec-doc-type`. Each starts with its own plan.
-2. Carried: the demo intake in a sandbox consumer, wave B
-   (`playbook-loop`, V1-V6), 5b, the engine's G4.6 finding.
+1. `tree-view`: the strike pass (session 37), then the checks and the
+   solution half, intake to ready, the units.
+2. G1, no request yet. The pilot's M0 code waits on G1's criteria review,
+   which also gives intake's exit the successor venue
+   `intake-exit-names-no-successor-venue` asks for.
+3. Carried: `derived-language`, `feature-document`, `spec-doc-type`; the
+   demo intake in a sandbox consumer; wave B (`playbook-loop`, V1-V6); 5b;
+   the G4.6 finding; `no-check-reads-the-source-document`.
 
-## Standing practice, learned this session
+## Standing practice
+- At resume, read the pilot's `E:\ImSimProject\engine\STATE.md` beside
+  this file: the engine hands work to the kit there, and its REQUESTs
+  land untracked in this root.
 - Run the release unit's sweep patterns before its verifier round; a hit
   outside scope goes to an OPEN and a re-intake first, and the round then
   passes once.
@@ -45,6 +55,9 @@
   (`hash-object`, then `update-index`), so the commit holds one change.
 
 ## Open questions
+- Which request carries `no-check-reads-the-source-document`:
+  `derived-language`, which already asks for the contract-to-document
+  pointer, or its own?
 - d6's two open advisories, wording only: USAGE section 8 labels
   `confirmed_by` "optional in the schema", and the G0.2 hook test does
   not assert that its replace changed the text.
