@@ -25,6 +25,7 @@ scope:
   - skills/sdlc/flows/init.md
   - skills/sdlc/flows/new.md
   - skills/sdlc/init.py
+  - skills/sdlc/audit.py
   - tests/
   - USAGE.md
   - pyproject.toml
@@ -83,6 +84,22 @@ decomposition:
         before this task (SC2.3)
       - verify a contract without both fields passes the draft profile
         (SC4.1)
+  - unit: d7-audit-parked-rule
+    id: d7-audit-parked-rule
+    confirmed_by: [user]
+    depends_on: [d2-roster-required]
+    done_means: >-
+      The audit reports `CONTRACT-PARKED` when a contract gets `TC003`
+      and every other error names a missing field. The report names
+      each missing field. Any other error still gets
+      `CONTRACT-INVALID`.
+    acceptance_sketch:
+      - verify a contract that gets `TC003` and `TC017` reads
+        `CONTRACT-PARKED` at exit zero (SC4.3)
+      - verify the report names `TC017` and `TC018` in a repo with no
+        ratified roster
+      - verify a contract that gets `TC003` and `TC001` reads
+        `CONTRACT-INVALID`
   - unit: d3-scaffold-comment
     id: d3-scaffold-comment
     confirmed_by: [user]
@@ -125,7 +142,8 @@ decomposition:
   - unit: d6-adoption-and-release
     id: d6-adoption-and-release
     confirmed_by: [user]
-    depends_on: [d3-scaffold-comment, d4-intake-flow, d5-init-seeds-roster]
+    depends_on: [d3-scaffold-comment, d4-intake-flow, d5-init-seeds-roster,
+                 d7-audit-parked-rule]
     done_means: >-
       A hook test covers each field. The hook accepts an edit to a
       contract that the ready profile rejects. The hook rejects the edit

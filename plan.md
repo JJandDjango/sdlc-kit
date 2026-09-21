@@ -1,89 +1,87 @@
-# Plan - Session 33 (2026-09-20) - Four requests, the door first
+# Plan - Session 34 (2026-09-20) - g0-declaration to release
 
-Where things stand (2026-09-20): kit 0.13.0 released (tag at 210d476, main at
-5e26c1b after PR #43). Session 32 ratified the feature document's format and
-its definition of done (ADR 0029) and settled the Google Docs look. Since
-then the pilot consumer, ImSim Engine, wrote the first spec doc by hand and
-sent three requests through the return channel; with the kit's own, four
-wait in the inbox, all in 0029's format. Order agreed with the user,
-2026-09-20: the door that passes on nothing first, then the language
-boundary that the two document contracts need, then the documents.
+Where things stand: branch `session-33-g0-declaration`, eight commits over
+main (`5e26c1b`, kit 0.13.0). The request is signed at r3, ADR 0030 stands,
+and the contract is ready-green with seven units. d0 (USAGE at pass zero) is
+PASS after two verifier rounds. d1 is saved as WIP `3a3261a`: unverified,
+three tests red. The OPEN at r5 is ruled this session: take the proposal, and
+the fix gets its own unit rather than d2, which already holds four checks in
+three sketches. The goal is the whole request delivered and released, so a
+consumer on 0.14.0 gets a door that checks something and an audit that reads
+a parked contract correctly.
 
-## The four requests
-
-1. `g0-declaration` (engine, 09-20): G0.2 reads `entities:` and G0.3 reads a
-   ratified `intake-seat`; both inputs are optional, so a contract passes
-   both green having checked nothing. At ready, `entities:` must be present
-   (an empty list allowed and meaningful) and a ratified seat roster must
-   exist. Draft unchanged. Adoption needs no re-intake; USAGE says so.
-2. `derived-language` (engine, 09-19): the controlled language binds derived
-   text only (the contract, the Gherkin), never authored sections; intake
-   loops the door beside the validator; a check id at the head of a sketch
-   survives the verb-first rule; a contract names its source document.
-3. `feature-document` (the kit's own, 09-18): units F1-F6 implement 0029 in
-   the template, the flows, readiness and intake.
-4. `spec-doc-type` (engine, 09-19): the spec doc, cut from the engine's
-   feature map; amends 0028's non-goal.
+Receipts at the last verified commit (`26b464b`): suite 282 green, thirteen
+contracts ready-green, the language door at zero for the new contract.
+Today the suite reads 282 green and 3 red, and `/sdlc audit` reports one
+finding, `specs/vocabulary-layer/contract.yaml` missing `entities`. The
+editable install is live (`sdlc-taskcontract` 0.13.0 from the working tree),
+so a standalone audit reads the working tree, not a pinned copy.
 
 ## Diagram
 
 The plan's diagram source is `plan.workflow.json` beside this file (Archify
-workflow, step spine: one lane of plan steps read left to right, human gates
-dropping onto it from above, an exception lane for parked contracts and
-Verifier fails below, five guided views starting with "Where we are"). Render
-and open:
+workflow, step spine: the units read left to right, human gates dropping onto
+it from above, an exception lane below for a Verifier FAIL). Render and open:
 
     node C:/Users/hyden/.claude/skills/archify/bin/archify.mjs deliver workflow plan.workflow.json <scratch>/plan.html --quality showcase --json
     Start-Process <scratch>/plan.html
 
 The HTML is generated, never committed. Every code unit lands as one commit,
-Developer then Verifier (Two-Key). The unit graph per contract is computed
+Developer then Verifier (Two-Key). The unit graph is computed
 (`python -m taskcontract graph`), never committed.
 
 ## Steps
 
-1. `g0-declaration`. (a) Read the two findings in the engine's return
-   channel. (b) The engineer half of the request, one decision per message:
-   scope, out of scope, units, sequencing, the schema delta (`entities`
-   loses `minItems: 1`; version bump and CHANGELOG delta note), the two new
-   diagnostic ids. (c) An ADR under 0014's lane (an enforcement change).
-   (d) `/sdlc intake g0-declaration` to ready-green; sketches verb-first
-   with the check id trailing until step 2 lands. (e) Units, one commit each
-   with the `Contract:` trailer, Two-Key by a workflow verifier. (f) The
-   kit's own contracts and vocabulary must pass the new door first: every
-   ready contract declares `entities:`, `intake-seat` stays ratified.
-   (g) PR, then on the user's word: merge, tag v0.14.0, self-pin.
-   Progress: intake ready-green (7fd7127); d0 PASS after two verifier
-   rounds (8239468, 1ad319a; round 1 caught a false cross-reference).
-   d1 is saved as WIP 3a3261a (unverified, 3 tests red, amend before push)
-   and is paused on an OPEN entry in the request (r5): the audit's parked
-   rule misreads a parked draft that carries neither input; recommended
-   SC4.3, `skills/sdlc/audit.py` into scope, the fix in d2. Session 33
-   wrapped here; STATE.md has the resume.
-   d6 carries five USAGE advisories from d0's verifier: (1) section 8's
-   worked example shows a contract with no `entities:`; (2) the green
-   intake sentences near lines 149-160 imply intake runs without a roster
-   and omit `entities` from the fields intake authors; (3) "add the field,
-   and it locks" is false read alone, so fold the both-doors condition
-   into it; (4) the new section names greenfield init and omits the
-   brownfield half; (5) section 9 Troubleshooting needs TC017 and TC018
-   rows beside TC016.
-2. `derived-language`: same discipline. Its SC3 (the token rule) unblocks
-   leading check ids for steps 3 and 4.
-3. `feature-document`: fold the queued 0029 amendments into the note and the
-   ADR first (state in revision rows, no Statement heading, three-column
-   revision table, no owner tags, a spec doc is living); then intake and
-   units F1-F6. The styled rendering joins as its own small request.
-4. `spec-doc-type`: intake from the engine's request; the engine's feature
-   map is the worked example.
-5. Carried, unordered: the demo intake in a sandbox consumer; wave B
-   (`playbook-loop`, V1-V6); 5b (graph emits Archify), unratified; the
-   engine's G4.6 finding (the write-guard binds an editing-tool list) once
-   it has a request.
-6. Session close: STATE.md regenerated, this plan struck through.
+1. Amend the request and re-intake. The OPEN's answer written into the
+   decision log; SC4.3 added under SC4 (`/sdlc audit` reads a parked
+   contract that declares neither input as CONTRACT-PARKED at exit zero,
+   and the finding names the missing declarations); `skills/sdlc/audit.py`
+   added to scope; unit `d7-audit-parked-rule` added after d2, and d6
+   depends on it; revision row r6. Then `/sdlc intake g0-declaration`
+   re-derives the contract and re-stamps the appendix. Receipt: the
+   contract validates ready-green and reads zero at the language door.
+   No new ADR: 0030 carries the ruling and this is its consequence.
+2. d1 `d1-schema-entities`. Finish the WIP: the `test_new` round trip (the
+   fresh skeleton is red on TC007 and TC017, the fill declares the field);
+   `VALID_DOC` in the audit tests; the CHANGELOG delta note under a 0.14.0
+   heading; `docs/task-contract.md`; the `vocabulary-layer` contract
+   declares its five terms (vocabulary-term, task-contract, gate,
+   dependency, spec-artifact, the PO seat's answer of 2026-09-20). Amend
+   into `3a3261a` so no unverified commit survives. Two-Key.
+3. d2 `d2-roster-required`. `confirmation_join` returns TC018 when
+   `intake-seat` is absent or draft, at the ready profile only; the G0 gate
+   page. Two-Key.
+4. d7 `d7-audit-parked-rule`. The parked rule reads TC003 present with every
+   other error a declaration miss (TC017, TC018), and the parked finding
+   names the misses. Two-Key.
+5. d3 `d3-scaffold-comment`. The skeleton names `entities` in a note line
+   and sets no value. Two-Key.
+6. d4 `d4-intake-flow`. Intake checks the roster before authoring and stops
+   with the verbatim line; it always writes `entities`, and writes `[]` only
+   on the PO seat's confirmed answer. Two-Key.
+7. d5 `d5-init-seeds-roster`. Greenfield init records the seats and writes a
+   ratified `intake-seat`; brownfield init reports the need and names the
+   command. Two-Key.
+8. d6 `d6-adoption-and-release`. Hook tests for the unlock and the re-lock;
+   USAGE marks flip green; kit 0.14.0. d6 also clears the five USAGE
+   advisories d0's verifier raised: (a) section 8's worked example shows a
+   contract with no `entities:`; (b) the green intake sentences near lines
+   149-160 imply intake runs without a roster and omit `entities` from the
+   fields intake authors; (c) "add the field, and it locks" is false read
+   alone, so fold the both-doors condition into it; (d) the new section
+   names greenfield init and omits the brownfield half; (e) section 9
+   Troubleshooting needs TC017 and TC018 rows beside TC016. Two-Key.
+9. Release, on the user's word: PR, merge by merge commit, tag v0.14.0, the
+   self-pin in `.github/workflows/sdlc.yml` bound to this contract. Then
+   STATE.md regenerated and this plan struck through.
+
+Carried, unordered and not this session: `derived-language`,
+`feature-document`, `spec-doc-type`; the demo intake in a sandbox consumer;
+wave B (`playbook-loop`, V1-V6); 5b (graph emits Archify), unratified; the
+engine's G4.6 finding once it has a request.
 
 House rules in force: no pipes or chains in any authored command string;
-commit messages via Write + git commit -F; Two-Key on every code unit; a
+commit messages via Write + `git commit -F`; Two-Key on every code unit; a
 `Contract:` trailer on every commit that touches a non-free path; one
 decision per message, each with a recommendation; approval content shown in
 chat in full.
