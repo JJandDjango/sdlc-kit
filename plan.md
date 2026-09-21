@@ -1,21 +1,19 @@
 # Plan - Session 34 (2026-09-20) - g0-declaration to release
 
-Where things stand: branch `session-33-g0-declaration`, eight commits over
-main (`5e26c1b`, kit 0.13.0). The request is signed at r3, ADR 0030 stands,
-and the contract is ready-green with seven units. d0 (USAGE at pass zero) is
-PASS after two verifier rounds. d1 is saved as WIP `3a3261a`: unverified,
-three tests red. The OPEN at r5 is ruled this session: take the proposal, and
-the fix gets its own unit rather than d2, which already holds four checks in
-three sketches. The goal is the whole request delivered and released, so a
-consumer on 0.14.0 gets a door that checks something and an audit that reads
-a parked contract correctly.
+Where things stand: branch `session-33-g0-declaration`, unpushed over main
+(`5e26c1b`, kit 0.13.0). The OPEN at r5 is ruled: take the proposal, and the
+fix gets its own unit rather than d2, which already holds four checks in
+three sketches. The request is signed at r6, ADR 0030 stands, and the
+contract is ready-green with eight units. The goal is the whole request
+delivered and released, so a consumer on 0.14.0 gets a door that checks
+something and an audit that reads a parked contract correctly.
 
-Receipts at the last verified commit (`26b464b`): suite 282 green, thirteen
-contracts ready-green, the language door at zero for the new contract.
-Today the suite reads 282 green and 3 red, and `/sdlc audit` reports one
-finding, `specs/vocabulary-layer/contract.yaml` missing `entities`. The
-editable install is live (`sdlc-taskcontract` 0.13.0 from the working tree),
-so a standalone audit reads the working tree, not a pinned copy.
+Verified so far: d0 (`1ad319a`) and d1 (`6939082`), each PASS by an
+independent Two-Key round. Receipts at d1: suite 285 green, thirteen
+contracts ready-green, `/sdlc audit` clean, the language door at zero for
+this contract, schema 1.4.0, the TC017 string byte-equal to the request. The
+editable install is live (`sdlc-taskcontract` from the working tree), so a
+standalone audit reads the working tree, not a pinned copy.
 
 ## Diagram
 
@@ -41,16 +39,20 @@ Developer then Verifier (Two-Key). The unit graph is computed
    re-derives the contract and re-stamps the appendix. Receipt: the
    contract validates ready-green and reads zero at the language door.
    No new ADR: 0030 carries the ruling and this is its consequence.
-2. d1 `d1-schema-entities`. Finish the WIP: the `test_new` round trip (the
-   fresh skeleton is red on TC007 and TC017, the fill declares the field);
-   `VALID_DOC` in the audit tests; the CHANGELOG delta note under a 0.14.0
-   heading; `docs/task-contract.md`; the `vocabulary-layer` contract
-   declares its five terms (vocabulary-term, task-contract, gate,
-   dependency, spec-artifact, the PO seat's answer of 2026-09-20). Amend
-   into `3a3261a` so no unverified commit survives. Two-Key.
+2. d1 `d1-schema-entities`. DONE, PASS at `6939082`. The WIP `3a3261a` was
+   lifted out of the branch, so no unverified commit survives.
 3. d2 `d2-roster-required`. `confirmation_join` returns TC018 when
    `intake-seat` is absent or draft, at the ready profile only; the G0 gate
-   page. Two-Key.
+   page. The joins fire only for `specs/<id>/contract.yaml`
+   (`taskcontract/checker.py:142`), and the audit and init tests build that
+   shape in a tmp repo with no roster, so d2 seeds a ratified `intake-seat`
+   in those helpers: that is SC2.3, behavior exactly today's with the roster
+   ratified. d2 also clears three of d1's advisories, all of them the same
+   sentence in three places, that `entities:` is optional:
+   `docs/gates/G0-planning-intake.md:85` (the authoritative field table,
+   which `docs/task-contract.md:13` defers to), `docs/vocabulary.md:63`, and
+   the missing clause row in the G0.1 table at `docs/task-contract.md:27`.
+   Two-Key.
 4. d7 `d7-audit-parked-rule`. The parked rule reads TC003 present with every
    other error a declaration miss (TC017, TC018), and the parked finding
    names the misses. Two-Key.
@@ -58,7 +60,10 @@ Developer then Verifier (Two-Key). The unit graph is computed
    and sets no value. Two-Key.
 6. d4 `d4-intake-flow`. Intake checks the roster before authoring and stops
    with the verbatim line; it always writes `entities`, and writes `[]` only
-   on the PO seat's confirmed answer. Two-Key.
+   on the PO seat's confirmed answer. This clears d1's advisory that
+   `skills/sdlc/flows/intake.md:21` still says to omit the field when
+   nothing matches, which would author contracts that fail ready on TC017.
+   Two-Key.
 7. d5 `d5-init-seeds-roster`. Greenfield init records the seats and writes a
    ratified `intake-seat`; brownfield init reports the need and names the
    command. Two-Key.
@@ -70,7 +75,10 @@ Developer then Verifier (Two-Key). The unit graph is computed
    fields intake authors; (c) "add the field, and it locks" is false read
    alone, so fold the both-doors condition into it; (d) the new section
    names greenfield init and omits the brownfield half; (e) section 9
-   Troubleshooting needs TC017 and TC018 rows beside TC016. Two-Key.
+   Troubleshooting needs TC017 and TC018 rows beside TC016. d1's verifier
+   raised (a) again from the other side: the worked example at
+   `USAGE.md:478-524` is the kit's flagship ready exemplar and would now
+   fail ready. Two-Key.
 9. Release, on the user's word: PR, merge by merge commit, tag v0.14.0, the
    self-pin in `.github/workflows/sdlc.yml` bound to this contract. Then
    STATE.md regenerated and this plan struck through.
