@@ -11,9 +11,10 @@ delivered and released, so a consumer on 0.14.0 gets a door that checks
 something and an audit that reads a parked contract correctly.
 
 Verified: d0 (`1ad319a`), d1 (`6939082`), d2 (round 5, `c1af342` through
-`d420f80`) and d7 (round 3, `8ce629e` with `ff55f5b`, the first round under
-the blocking bar), each PASS by an independent Two-Key round. Receipts at
-HEAD: suite 292 green,
+`d420f80`), d7 (round 3, `8ce629e` with `ff55f5b`, the first round under
+the blocking bar), d3 (`ee3ff6d`), d4 (round 2, `5114f74` with `13f0ca5`)
+and d5 (`964f156`), each PASS by an independent Two-Key round. Receipts at
+HEAD: suite 297 green, `prompt_lang` 13 of 13,
 thirteen contracts ready-green, `/sdlc audit` clean, the language door at
 zero for this contract, `vocab-check` green at 18 terms and 8 constraints,
 schema 1.4.0. The editable install is live (`sdlc-taskcontract` from the
@@ -100,16 +101,23 @@ Developer then Verifier (Two-Key). The unit graph is computed
    the scaffold's file still validates draft, but its TODO intent trips
    TC007 at both profiles by design (ADR 0016), so SC4.2 now checks that
    the draft verdict is unchanged, TC007 only. Re-intaked: the contract
-   stays ready-green and reads zero at the language door. Two-Key.
+   stays ready-green and reads zero at the language door. DONE, PASS at
+   round 1 (`ee3ff6d`). One advisory stands, wording only: three lines name
+   TC017 at ready without the TC018 a repo with no roster also gets.
 6. d4 `d4-intake-flow`. Intake checks the roster before authoring and stops
    with the verbatim line; it always writes `entities`, and writes `[]` only
    on the PO seat's confirmed answer. This clears d1's advisory that
    `skills/sdlc/flows/intake.md:21` still says to omit the field when
    nothing matches, which would author contracts that fail ready on TC017.
-   Two-Key.
+   DONE, PASS at round 2 (`5114f74`, `13f0ca5`). Round 1 passed too; its
+   fix commit closed a side door, I7's fix loop emptying `entities`
+   without the PO seat, and a CHANGELOG overclaim.
 7. d5 `d5-init-seeds-roster`. Greenfield init records the seats and writes a
    ratified `intake-seat`; brownfield init reports the need and names the
-   command. Two-Key.
+   command. DONE, PASS at round 1 (`964f156`). Two advisories stand, both
+   harmless: `roster_ratified` matches the status line, so a quoted or
+   commented `ratified` prints a spurious note; the seat step does not ask
+   for the term's definition, which the `vocab-check` loop catches.
 8. d6 `d6-adoption-and-release`. Hook tests for the unlock and the re-lock;
    USAGE marks flip green; kit 0.14.0. d6 also clears the five USAGE
    advisories d0's verifier raised: (a) section 8's worked example shows a
@@ -139,7 +147,7 @@ Developer then Verifier (Two-Key). The unit graph is computed
    whose units lack `confirmed_by` reads TC003 with TC016, which the audit
    does not park, so it turns CONTRACT-INVALID. The note must say so;
    whether TC016 should ride the parked line is another request's question.
-   Two-Key.
+   Two-Key with `sweep: true`: d6 owns the one repo-wide stale-claim sweep.
 9. Release, on the user's word: PR, merge by merge commit, tag v0.14.0, the
    self-pin in `.github/workflows/sdlc.yml` bound to this contract. Then
    STATE.md regenerated and this plan struck through.
