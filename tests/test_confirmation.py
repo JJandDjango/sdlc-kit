@@ -68,7 +68,7 @@ def _findings(path, profile="ready"):
     return [v for v in validate_path(path, profile=profile) if v.rule == "TC016"]
 
 
-# --- armed: the ratified term demands an answer per unit --------------------
+# --- the roster ratified: an answer is demanded per unit --------------------
 
 def test_unit_without_confirmed_by_is_tc016_naming_the_unit(tmp_path):
     path = _tree(tmp_path, [_unit("alpha", ["po"]), _unit("beta")], term_status="ratified")
@@ -144,7 +144,7 @@ def test_loose_file_never_enters_the_join(tmp_path):
 
 # --- the CLI speaks the verdict contract ------------------------------------
 
-def test_cli_exit_is_red_when_armed_and_unanswered(tmp_path, capsys):
+def test_cli_exit_is_red_when_rostered_and_unanswered(tmp_path, capsys):
     path = _tree(tmp_path, [_unit("alpha")], term_status="ratified")
     assert main(["validate", str(path), "--profile", "ready"]) == 1
     assert "TC016" in capsys.readouterr().out
