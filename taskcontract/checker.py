@@ -18,6 +18,13 @@ from jsonschema import Draft202012Validator
 SCHEMA_PATH = Path(__file__).resolve().parent / "schemas" / "task-contract.schema.json"
 PROFILES = ("ready", "draft")
 
+# G0.2's declaration (ADR 0030): a contract with no `entities` at the ready
+# profile. The empty list is the way to say "none", so the words name it.
+TC017_MESSAGE = (
+    "contract declares no entities - the field is required at ready; list "
+    "the glossary terms this contract operates on, or write `entities: []` "
+    "to state that it operates on none")
+
 
 @dataclass(frozen=True)
 class Violation:
@@ -75,6 +82,10 @@ def _classify(err, instance) -> tuple[str, str]:
         return "TC009", err.message
     if kw == "required":
         name = err.message.split("'")[1] if "'" in err.message else "?"
+        if name == "entities" and not path:
+            # ADR 0030: the declaration is required at ready (ready_delta);
+            # the words are the request's, verbatim.
+            return "TC017", TC017_MESSAGE
         return "TC001", f"missing required field '{name}'"
     if kw == "additionalProperties":
         return "TC005", err.message

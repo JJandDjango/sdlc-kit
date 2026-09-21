@@ -24,6 +24,7 @@ VALID_DOC = {
         "acceptance_sketch": ["zero-order account downloads an empty CSV"],
     }],
     "dependencies": [],
+    "entities": [],  # the empty list is the declaration (ADR 0030)
     "provenance": {"origin": "human-request"},
 }
 

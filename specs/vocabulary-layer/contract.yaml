@@ -134,5 +134,14 @@ decomposition:
 
 dependencies: []
 
+# Declared at the ready profile since ADR 0030 (unit d1-schema-entities);
+# the terms this contract operates on, answered by the PO seat 2026-09-20.
+entities:
+  - vocabulary-term
+  - task-contract
+  - gate
+  - dependency
+  - spec-artifact
+
 provenance:
   origin: human-request

@@ -38,6 +38,7 @@ def _doc(units):
         "non_goals": ["No author check"],
         "decomposition": units,
         "dependencies": [],
+        "entities": [],  # ADR 0030: the declaration is required at ready
         "provenance": {"origin": "human-request"},
     }
 

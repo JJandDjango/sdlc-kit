@@ -27,6 +27,7 @@ def _doc(units):
         "non_goals": ["No scheduling"],
         "decomposition": units,
         "dependencies": [],
+        "entities": [],  # ADR 0030: the declaration is required at ready
         "provenance": {"origin": "human-request"},
     }
 
@@ -53,10 +54,11 @@ def _rules(tmp_path, units, profile="ready"):
     return {v.rule for v in validate_path(_write(tmp_path, _doc(units)), profile=profile)}
 
 
-# --- schema surface (unit schema-1-2-0; pin moved by schema-1-3-0) ---------
+# --- schema surface (unit schema-1-2-0; pin moved by schema-1-3-0, then by
+# d1-schema-entities to 1.4.0: entities required at ready, ADR 0030) --------
 
-def test_schema_version_is_1_3_0():
-    assert load_schema()["version"] == "1.3.0"
+def test_schema_version_is_1_4_0():
+    assert load_schema()["version"] == "1.4.0"
 
 
 def test_unit_without_id_is_red(tmp_path):

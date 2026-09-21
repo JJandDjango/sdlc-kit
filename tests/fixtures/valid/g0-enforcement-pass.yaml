@@ -32,5 +32,6 @@ decomposition:
     acceptance_sketch:
       - every TCnnn rule is covered by at least one named invalid fixture
 dependencies: []
+entities: []
 provenance:
   origin: human-request

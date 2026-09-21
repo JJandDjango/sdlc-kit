@@ -31,5 +31,7 @@ decomposition:
 
 dependencies: []
 
+entities: []
+
 provenance:
   origin: human-request

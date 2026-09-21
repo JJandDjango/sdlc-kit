@@ -5,7 +5,9 @@ specs/<id>/contract.yaml with a sibling specs/vocabulary/. Ratified
 resolves silently; missing forks (TC010); draft does not resolve
 (TC011); deprecated warns inside its sunset window (W001, non-gating)
 and errors past it (TC012). Loose files - the golden fixtures - never
-enter the join.
+enter the join. At ready the field itself is required (ADR 0030): a
+contract with none fails TC017, in a specs tree or out of it, and the
+empty list is a declaration that joins against nothing.
 """
 
 from __future__ import annotations
@@ -15,7 +17,7 @@ from pathlib import Path
 import pytest
 
 from taskcontract.__main__ import main
-from taskcontract.checker import validate_path
+from taskcontract.checker import TC017_MESSAGE, validate_path
 
 RATIFIED = """\
 term: gate
@@ -145,13 +147,47 @@ def test_draft_profile_skips_the_join(tmp_path):
     assert validate_path(contract, profile="draft") == []
 
 
-def test_contract_without_entities_untouched(tmp_path):
+NO_ENTITIES = CONTRACT.replace("entities:\n{entities}\n", "")
+EMPTY_ENTITIES = CONTRACT.replace("entities:\n{entities}\n", "entities: []\n")
+
+
+def test_contract_without_entities_fails_tc017(tmp_path):
+    """ADR 0030, SC1.1: at ready the declaration is required; silence is a miss."""
     contract_dir = tmp_path / "specs" / "join-case"
     contract_dir.mkdir(parents=True)
     contract = contract_dir / "contract.yaml"
-    text = CONTRACT.replace("entities:\n{entities}\n", "")
-    contract.write_text(text, encoding="utf-8")
+    contract.write_text(NO_ENTITIES, encoding="utf-8")
+    (tmp_path / "specs" / "vocabulary").mkdir()
+    (tmp_path / "specs" / "vocabulary" / "gate.yaml").write_text(RATIFIED, encoding="utf-8")
+    violations = validate_path(contract, profile="ready")
+    assert [v.rule for v in violations] == ["TC017"]
+    assert violations[0].path == "$"
+    assert violations[0].message == TC017_MESSAGE  # the request's words, verbatim
+    assert "entities" in violations[0].message
+    assert "`entities: []`" in violations[0].message  # names the empty-list option
+    # The draft profile is unchanged: a parked contract may carry no field.
+    assert validate_path(contract, profile="draft") == []
+
+
+def test_empty_entities_is_a_declaration(tmp_path):
+    """ADR 0030, SC1.2: `entities: []` validates ready and joins against nothing."""
+    contract_dir = tmp_path / "specs" / "join-case"
+    contract_dir.mkdir(parents=True)
+    contract = contract_dir / "contract.yaml"
+    contract.write_text(EMPTY_ENTITIES, encoding="utf-8")
+    vocab = tmp_path / "specs" / "vocabulary"
+    vocab.mkdir()
+    (vocab / "gate.yaml").write_text(RATIFIED, encoding="utf-8")
+    (vocab / "draft-term.yaml").write_text(DRAFT, encoding="utf-8")
     assert validate_path(contract, profile="ready") == []
+    assert validate_path(contract, profile="draft") == []
+
+
+def test_loose_file_without_entities_fails_tc017(tmp_path):
+    """The requirement lives in the schema, so a contract outside a specs tree cannot skip it."""
+    loose = tmp_path / "contract.yaml"
+    loose.write_text(NO_ENTITIES, encoding="utf-8")
+    assert [v.rule for v in validate_path(loose, profile="ready")] == ["TC017"]
 
 
 def test_loose_files_never_join():

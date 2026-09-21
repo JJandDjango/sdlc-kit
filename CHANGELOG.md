@@ -9,6 +9,22 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.14.0 - unreleased
+
+- **`entities:` is required at the ready profile** (`g0-declaration`,
+  ADR 0030, unit `d1-schema-entities`). Schema `1.3.0` -> `1.4.0`: the
+  field moves into `ready_delta`, and the base drops `minItems: 1` so
+  `entities: []` validates. The empty list is a declaration, not an
+  omission: it states that the contract operates on no glossary term. A
+  contract that carries no `entities:` at all reports the new `TC017`,
+  which names the field and the empty-list option. The draft profile is
+  unchanged, so a skeleton and a parked draft still pass it. Delta note:
+  every contract a consumer holds at ready gains one field. The fix is
+  an edit, not a re-intake - add `entities:` with the glossary terms the
+  contract operates on, or `entities: []` when it operates on none - and
+  `USAGE.md` carries the adoption path. A consumer on an unpinned
+  install turns red at upgrade; pin the install ref to the tag.
+
 ## 0.13.0 - 2026-09-18 (tag `v0.13.0`)
 
 - **The session hook: the spec channel closed to sessions**

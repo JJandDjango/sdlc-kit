@@ -14,12 +14,15 @@
 
 The 8-field set is fixed by 0005 (field table lives on the G0 page - not
 duplicated here); [0017](../decisions/0017-vocabulary-layer.md) V2 amends
-it with one optional field, `entities:` - unique term-slug refs;
+it with one field, `entities:` - unique term-slug refs, optional at
+draft and required at ready since
+[0030](../decisions/0030-a-doors-input-is-a-declaration.md), where the empty
+list is a declaration that the contract operates on no term;
 [0024](../decisions/0024-unit-dependency-graph.md) amends the unit shape
 with a required `id` and an optional `depends_on`; and
 [0025](../decisions/0025-intake-seats.md) adds an optional
 `confirmed_by`, the seats that answered for the unit at intake. Schema
-`version: 1.3.0`. Every pass-condition clause maps to vanilla JSON Schema
+`version: 1.4.0`. Every pass-condition clause maps to vanilla JSON Schema
 Draft 2020-12:
 
 | G0.1 clause | Schema encoding |
@@ -155,6 +158,7 @@ violations as an array - the agent loop substrate.
 | TC014 | `depends_on` names no unit in this contract |
 | TC015 | dependency cycle (names the ring, spelled "depends on") |
 | TC016 | unit not confirmed: no `confirmed_by`, or a seat the ratified `intake-seat` term lacks (ready profile; armed by that ratification) |
+| TC017 | no `entities:` declaration (ready profile; `entities: []` is the way to declare none) |
 | W001 | entities ref deprecated inside its sunset window (warning - never gates) |
 
 Regression suite: golden fixtures `tests/fixtures/{valid,invalid}/*.yaml` -
