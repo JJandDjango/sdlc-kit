@@ -41,18 +41,19 @@ Developer then Verifier (Two-Key). The unit graph is computed
    No new ADR: 0030 carries the ruling and this is its consequence.
 2. d1 `d1-schema-entities`. DONE, PASS at `6939082`. The WIP `3a3261a` was
    lifted out of the branch, so no unverified commit survives.
-3. d2 `d2-roster-required`. `confirmation_join` returns TC018 when
-   `intake-seat` is absent or draft, at the ready profile only; the G0 gate
-   page. The joins fire only for `specs/<id>/contract.yaml`
-   (`taskcontract/checker.py:142`), and the audit and init tests build that
-   shape in a tmp repo with no roster, so d2 seeds a ratified `intake-seat`
-   in those helpers: that is SC2.3, behavior exactly today's with the roster
-   ratified. d2 also clears three of d1's advisories, all of them the same
-   sentence in three places, that `entities:` is optional:
-   `docs/gates/G0-planning-intake.md:85` (the authoritative field table,
-   which `docs/task-contract.md:13` defers to), `docs/vocabulary.md:63`, and
-   the missing clause row in the G0.1 table at `docs/task-contract.md:27`.
-   Two-Key.
+3. d2 `d2-roster-required`. DONE, PASS at round 5: `c1af342`, `b41229d`,
+   `0851bb0`, `5abd3d0`, `d420f80`. Five rounds, and every failure was the
+   same class: a surface still stating the rule the unit retired, each
+   found where the last search had not looked (`docs/`, the G0 deep page,
+   the schema's own `description`, a fixture's intent). The lesson, now
+   standing practice for d3 to d6: run `git grep` for the retired claim
+   across every tracked file while building the unit, not after the
+   verifier fails it. Two writes landed in the spec channel beyond the two
+   the request budgeted, `specs/vocabulary/constraints.yaml` and the
+   class-S edit to `specs/vocabulary/task-contract.yaml`; the verifier
+   ruled both legitimate corrections rather than scope creep. They trip
+   different branches of the write-guard, the registry-file branch and the
+   ratified-term branch, so the PR names them on two separate grounds.
 4. d7 `d7-audit-parked-rule`. The parked rule reads TC003 present with every
    other error a declaration miss (TC017, TC018), and the parked finding
    names the misses. Two-Key.
@@ -78,7 +79,15 @@ Developer then Verifier (Two-Key). The unit graph is computed
    Troubleshooting needs TC017 and TC018 rows beside TC016. d1's verifier
    raised (a) again from the other side: the worked example at
    `USAGE.md:478-524` is the kit's flagship ready exemplar and would now
-   fail ready. Two-Key.
+   fail ready. d2's verifier added the one that would otherwise slip: two
+   sentences marked 🟢 state the retired rule, `USAGE.md:384-385` ("leave
+   the seat term unratified and the check stays off") and `USAGE.md:448`
+   ("a draft term or no term leaves the check off"). They read as honest
+   only because the 🔴 paragraphs beside them mark 0.14.0 unreleased, so
+   flipping the marks without rewriting them would publish both as green.
+   d6 also takes `docs/gates/G0-planning-intake.md:114`, where G0.2's
+   Lifecycle bullet still says "per-target elsewhere" although TC017 lives
+   in the schema and fires in every tree, even outside one. Two-Key.
 9. Release, on the user's word: PR, merge by merge commit, tag v0.14.0, the
    self-pin in `.github/workflows/sdlc.yml` bound to this contract. Then
    STATE.md regenerated and this plan struck through.
