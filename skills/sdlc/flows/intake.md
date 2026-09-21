@@ -26,7 +26,7 @@ I6. WRITE the confirmed contract: apply every change and strike, add `confirmed_
 
 I7. LOOP - one Bash call per iteration:
        python -m taskcontract validate specs/{id}/contract.yaml --profile ready
-    Fix exactly what each TCnnn diagnostic names. A TC010/TC011 means the vocabulary lacks the term: fork it (`/sdlc vocab add {slug}`, own small task) or drop the ref - NEVER ratify a term just to turn a contract green. A TC016 means a unit went unanswered or an answer named a seat the term lacks: return to I5 for that unit. Cap at 5 iterations; if still red, REPORT the remaining violations and return to the conversation.
+    Fix exactly what each TCnnn diagnostic names. A TC010/TC011 means the vocabulary lacks the term: fork it (`/sdlc vocab add {slug}`, own small task) or drop the ref - NEVER ratify a term just to turn a contract green. A drop that leaves `entities` empty returns to I5: the PO seat confirms `[]` or names the terms, as for any empty list. A TC016 means a unit went unanswered or an answer named a seat the term lacks: return to I5 for that unit. Cap at 5 iterations; if still red, REPORT the remaining violations and return to the conversation.
 
 I8. PARKED CASE - if a dependency is blocked in fact: set {status: blocked, blocked_by}, VERIFY `--profile draft` passes, then REPORT the contract as PARKED with the named blocker and REFUSE the development handoff - `ready` is the entry gate.
 

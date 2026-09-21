@@ -56,12 +56,13 @@ def test_entities_is_always_declared_and_the_empty_list_waits_for_the_po_seat():
     # SC3.1: every contract carries entities, and [] is written only on the
     # PO seat's confirmed answer, never by default (ADR 0030).
     text = FLOW.read_text(encoding="utf-8")
-    i4, i5, i6 = _step(text, "I4"), _step(text, "I5"), _step(text, "I6")
+    i4, i5, i6, i7 = (_step(text, step) for step in ("I4", "I5", "I6", "I7"))
     assert "omit the field" not in text
     assert "ALWAYS declare `entities:`" in i4
     assert "never write the empty list by default" in i4
     assert "`entities: []`" in i5 and "PO seat" in i5
     assert "`entities: []` only when the PO seat confirmed it" in i6
+    assert "A drop that leaves `entities` empty returns to I5" in i7  # no side door
 
 
 def test_flow_keeps_the_promptlang_shape_and_budget():

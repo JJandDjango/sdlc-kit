@@ -72,10 +72,11 @@ Two house rules, enforced in review:
   reads `vocab-list` before it scaffolds anything; with no ratified
   `intake-seat` it stops with one line naming
   `specs/vocabulary/intake-seat.yaml` and `/sdlc vocab add intake-seat`,
-  so it never authors a contract that cannot reach ready. Every contract
+  so it never authors a contract that `TC018` would block. Every contract
   it writes carries `entities:`. When the request matches no ratified
   term it proposes `entities: []` and writes it only on the PO seat's
-  confirmed answer. Delta note: none; the flow arrives with the install.
+  confirmed answer, including when the fix loop drops the last ref.
+  Delta note: none; the flow arrives with the install.
 
 ## 0.13.0 - 2026-09-18 (tag `v0.13.0`)
 
