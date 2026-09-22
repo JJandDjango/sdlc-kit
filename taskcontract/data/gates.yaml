@@ -1,0 +1,44 @@
+# The kit's gates (ADR 0031): the id, the one-line name, and the kit page
+# that defines the gate, in registry order. The names are the Overview table
+# of docs/gates.md, which stays the human index. `taskcontract tree` reads
+# this list; no gate reads it.
+gates:
+  - id: G0
+    name: Planning / Intake
+    page: docs/gates/G0-planning-intake.md
+  - id: G1
+    name: Requirements / Spec
+    page: docs/gates/G1-requirements-spec.md
+  - id: G2
+    name: Design / Architecture
+    page: docs/gates/G2-design-architecture.md
+  - id: G3
+    name: Implementation
+    page: docs/gates/G3-implementation.md
+  - id: G4
+    name: Pre-merge CI
+    page: docs/gates/G4-pre-merge-ci.md
+  - id: G5
+    name: Integration / System
+    page: docs/gates/G5-integration-system.md
+  - id: G6
+    name: UAT / Staging
+    page: docs/gates/G6-uat-staging.md
+  - id: G7
+    name: Release / Deploy
+    page: docs/gates/G7-release-deploy.md
+  - id: G8
+    name: Operations
+    page: docs/gates/G8-operations.md
+  - id: G9
+    name: Maintenance / Evolution
+    page: docs/gates/G9-maintenance.md
+  - id: G10
+    name: Deprecation / Retirement
+    page: docs/gates/G10-retirement.md
+  - id: PL-DOC
+    name: Documentation lifecycle
+    page: docs/gates/PL-DOC-documentation.md
+  - id: PL-PIPE
+    name: Pipeline integrity
+    page: docs/gates/PL-PIPE-pipeline-integrity.md

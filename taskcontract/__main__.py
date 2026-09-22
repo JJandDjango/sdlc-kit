@@ -13,6 +13,7 @@ from .lang import main_lang_check, main_lang_extract
 from .scaffold import scaffold
 from .scope_check import main_scope_check
 from .suppression_audit import main_audit
+from .tree_view import main_tree
 from .vocabulary import (VOCAB_DIR, list_terms, load_glossary_schema,
                          registry_size, scaffold_term, validate_vocab_root)
 
@@ -72,6 +73,11 @@ def main(argv=None) -> int:
         "graph",
         help="render one contract's unit dependency graph as Mermaid (ADR 0024)")
     graph.add_argument("file", help="contract file (YAML or JSON)")
+    tree = sub.add_parser(
+        "tree",
+        help="print the work as one tree, derived from the repo's files at each run (ADR 0031)")
+    tree.add_argument("--root", type=Path, default=Path("."),
+                      help="repo root that holds specs/ and .sdlc/ (default: cwd)")
     audit = sub.add_parser(
         "suppression-audit",
         help="G4.10 four-vector diff check: no new weakening of gating constraints")
@@ -99,6 +105,9 @@ def main(argv=None) -> int:
 
     if args.command == "graph":
         return main_graph(args)
+
+    if args.command == "tree":
+        return main_tree(args)
 
     if args.command == "suppression-audit":
         return main_audit(args)
