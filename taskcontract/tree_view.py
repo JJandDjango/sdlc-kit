@@ -4,7 +4,8 @@ One item per line, two spaces of indent per level. The line opens on the
 item's full id, the node path ADR 0031 gives it, so the print states every
 id whole. Then the status in brackets, or a finding's kind in its place,
 then the item's marks (`inactive` on a gate a finding names that is not
-active).
+active, `current` on the current task), then its evidence (on a `G0`
+verdict, the validator command and the `HEAD` it read).
 """
 
 from __future__ import annotations
@@ -24,7 +25,8 @@ def render(items: list[Item]) -> str:
     def walk(item: Item, depth: int) -> None:
         tag = f"kind: {item.kind}" if item.level == "finding" else item.status
         marks = "".join(f" {mark}" for mark in item.marks)
-        lines.append(f"{INDENT * depth}{item.id} [{tag}]{marks}")
+        evidence = f" {item.evidence}" if item.evidence else ""
+        lines.append(f"{INDENT * depth}{item.id} [{tag}]{marks}{evidence}")
         for child in item.children:
             walk(child, depth + 1)
 
