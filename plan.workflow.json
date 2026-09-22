@@ -2,15 +2,15 @@
   "schema_version": 2,
   "diagram_type": "workflow",
   "meta": {
-    "title": "tree-view Intake to Ready (r4) - Session 38, Second Deliverable",
+    "title": "tree-view t0 and t1 - Session 39",
     "quality_profile": "showcase",
     "locale": "en",
     "views": [
-      { "id": "now", "label": "Where we are", "focus": ["close", "next"], "note": "Intake closed: the contract is ready-green at f3c80d0. The PR waits on your word; the units start fresh." },
-      { "id": "decide", "label": "What you decided", "focus": ["readback_ok", "intake_ok", "merge_word"], "note": "Five decisions, each a yes: the open commit, the readback, the intake commit, the close commit and PR, the merge." },
-      { "id": "doors", "label": "The doors", "focus": ["author", "write"], "note": "Draft-green and ready-green on the first pass; the language door at zero after one rewrite of the sketches." },
-      { "id": "open_lane", "label": "If a fact won't fit", "focus": ["author", "open_q"], "note": "No OPEN was needed: every r3 check kept its facts in the controlled register." },
-      { "id": "after", "label": "After intake", "focus": ["close", "next"], "note": "A fresh session starts the units at t0; ten units, about four sessions, then the release." }
+      { "id": "now", "label": "Where we are", "focus": ["close", "merge_ok"], "note": "Closed: t0 (the USAGE page) and t1 (the tree's shape) each passed Two-Key at round 1. The PR waits on your word." },
+      { "id": "decide", "label": "What you decided", "focus": ["t0_ok", "tests_ok", "commit_ok", "merge_ok"], "note": "Six decisions: four yes (the plan, t0's commit, t1's test list, t1's commit); the push with the PR and the merge wait." },
+      { "id": "page_first", "label": "t0: the page first", "focus": ["t0", "t0_key"], "note": "USAGE section 9 landed red at 73c4987 before any code; its two wording notes go to t9." },
+      { "id": "tree_shape", "label": "t1: the tree's shape", "focus": ["t1_red", "t1_green"], "note": "18 tests red first, then 317 green at c6f1222; every status reads to do until t3 derives them." },
+      { "id": "exceptions", "label": "If a round fails", "focus": ["t0_key", "fail", "open_q"], "note": "No round failed and no OPEN was needed: both units passed at round 1." }
     ]
   },
   "lanes": [
@@ -20,39 +20,43 @@
   ],
   "phases": [
     { "id": "open_phase", "label": "Step 1 - open", "fromCol": 0, "toCol": 0, "variant": "emphasis" },
-    { "id": "intake_phase", "label": "Steps 2-4 - intake", "fromCol": 1, "toCol": 3, "variant": "emphasis" },
-    { "id": "close_phase", "label": "Step 5 - close", "fromCol": 4, "toCol": 4, "variant": "emphasis" },
-    { "id": "deferred", "label": "Fresh session", "fromCol": 5, "toCol": 5, "variant": "dashed" }
+    { "id": "t0_phase", "label": "Steps 2-3 - t0", "fromCol": 1, "toCol": 2, "variant": "emphasis" },
+    { "id": "t1_phase", "label": "Steps 4-8 - t1", "fromCol": 3, "toCol": 4, "variant": "emphasis" },
+    { "id": "close_phase", "label": "Step 9 - close", "fromCol": 5, "toCol": 5, "variant": "emphasis" }
   ],
   "groups": [],
-  "mainPath": ["open", "author", "readback", "write", "close", "next"],
+  "mainPath": ["open", "t0", "t0_key", "t1_red", "t1_green", "close"],
   "nodes": [
-    { "id": "readback_ok", "lane": "gates", "col": 2, "type": "security", "label": "Your answers", "sublabel": "all ten kept" },
-    { "id": "intake_ok", "lane": "gates", "col": 3, "type": "security", "label": "Your word", "sublabel": "intake committed" },
-    { "id": "merge_word", "lane": "gates", "col": 4, "type": "security", "label": "Your word", "sublabel": "merge the PR" },
-    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "Branch + plan", "sublabel": "done: ef1d99d", "tag": "step 1, done" },
-    { "id": "author", "lane": "steps", "col": 1, "type": "backend", "label": "Author", "sublabel": "lang zero, draft", "tag": "step 2, done" },
-    { "id": "readback", "lane": "steps", "col": 2, "type": "frontend", "label": "Readback", "sublabel": "ten units kept", "tag": "step 3, done" },
-    { "id": "write", "lane": "steps", "col": 3, "type": "backend", "label": "Write + loop", "sublabel": "ready: f3c80d0", "tag": "step 4, done" },
-    { "id": "close", "lane": "steps", "col": 4, "type": "cloud", "label": "Close + PR", "sublabel": "HERE: your word", "tag": "step 5" },
-    { "id": "next", "lane": "steps", "col": 5, "type": "cloud", "label": "Units", "sublabel": "t0 first", "tag": "fresh session" },
-    { "id": "open_q", "lane": "waits", "col": 1, "type": "security", "label": "OPEN", "sublabel": "none needed", "tag": "not taken" }
+    { "id": "t0_ok", "lane": "gates", "col": 1, "type": "security", "label": "Your word", "sublabel": "t0 commit: yes" },
+    { "id": "tests_ok", "lane": "gates", "col": 3, "type": "security", "label": "Your word", "sublabel": "test list: yes" },
+    { "id": "commit_ok", "lane": "gates", "col": 4, "type": "security", "label": "Your word", "sublabel": "t1 commit: yes" },
+    { "id": "merge_ok", "lane": "gates", "col": 5, "type": "security", "label": "Your word", "sublabel": "push, PR, merge" },
+    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "Branch + plan", "sublabel": "done: 9c2fbe4", "tag": "step 1, done" },
+    { "id": "t0", "lane": "steps", "col": 1, "type": "frontend", "label": "t0 USAGE", "sublabel": "done: 73c4987", "tag": "step 2, done" },
+    { "id": "t0_key", "lane": "steps", "col": 2, "type": "security", "label": "t0 Two-Key", "sublabel": "PASS, round 1", "tag": "step 3, done" },
+    { "id": "t1_red", "lane": "steps", "col": 3, "type": "backend", "label": "t1 tests red", "sublabel": "18 red, proven", "tag": "steps 4-5, done" },
+    { "id": "t1_green", "lane": "steps", "col": 4, "type": "backend", "label": "t1 green", "sublabel": "done: c6f1222", "tag": "steps 6-8, PASS" },
+    { "id": "close", "lane": "steps", "col": 5, "type": "cloud", "label": "Close + PR", "sublabel": "HERE: your word", "tag": "step 9" },
+    { "id": "fail", "lane": "waits", "col": 2, "type": "security", "label": "FAIL", "sublabel": "fix, rerun, max 3", "tag": "not taken" },
+    { "id": "open_q", "lane": "waits", "col": 4, "type": "security", "label": "OPEN", "sublabel": "re-intake", "tag": "not taken" }
   ],
   "edges": [
-    { "from": "open", "to": "author", "label": "plan approved", "variant": "emphasis", "route": "straight" },
-    { "from": "author", "to": "readback", "label": "doors green", "variant": "emphasis", "route": "straight" },
-    { "from": "readback", "to": "write", "label": "answered", "variant": "emphasis", "route": "straight" },
-    { "from": "write", "to": "close", "label": "ready-green", "variant": "emphasis", "route": "straight" },
-    { "from": "close", "to": "next", "label": "one PR", "variant": "emphasis", "route": "straight" },
-    { "from": "readback_ok", "to": "readback", "route": "straight" },
-    { "from": "intake_ok", "to": "write", "route": "straight" },
-    { "from": "merge_word", "to": "close", "route": "straight" },
-    { "from": "author", "to": "open_q", "variant": "security", "route": "straight" }
+    { "from": "open", "to": "t0", "label": "plan approved", "variant": "emphasis", "route": "straight" },
+    { "from": "t0", "to": "t0_key", "label": "committed", "variant": "emphasis", "route": "straight" },
+    { "from": "t0_key", "to": "t1_red", "label": "PASS", "variant": "emphasis", "route": "straight" },
+    { "from": "t1_red", "to": "t1_green", "label": "red proven", "variant": "emphasis", "route": "straight" },
+    { "from": "t1_green", "to": "close", "label": "PASS", "variant": "emphasis", "route": "straight" },
+    { "from": "t0_ok", "to": "t0", "route": "straight" },
+    { "from": "tests_ok", "to": "t1_red", "route": "straight" },
+    { "from": "commit_ok", "to": "t1_green", "route": "straight" },
+    { "from": "merge_ok", "to": "close", "route": "straight" },
+    { "from": "t0_key", "to": "fail", "variant": "security", "route": "straight" },
+    { "from": "t1_green", "to": "open_q", "variant": "security", "route": "straight" }
   ],
   "cards": [
-    { "dot": "amber", "title": "Where we are (2026-09-21, session 38, second deliverable closed)", "items": ["specs/tree-view/contract.yaml is ready-green at f3c80d0: ten units t0 to t9, each confirmed_by user, seven ratified entities", "The language door reads zero; all fourteen kit contracts stay ready-green; pytest 299 passed", "The REQUEST carries the r4 Ready row and the appendix: the contract pointer, 22 Gherkin scenarios, ten terms", "One PR carries ef1d99d (the plan), f3c80d0 (the intake) and the close; it merges on your word"] },
-    { "dot": "violet", "title": "What was decided", "items": ["1. The open commit: yes", "2. The readback: all ten units kept as written, confirmed_by user on each, the seven entities confirmed", "3. The intake commit: the contract alone, with Contract: tree-view", "4. The close commit and the PR: pending", "5. The merge: pending"] },
-    { "dot": "cyan", "title": "Deferred, not this session", "items": ["tree-view units t0 to t9, then the release; the herdr plugin outside the kit", "G1: the pilot's M0 code waits on its criteria review", "no-check-reads-the-source-document: which request carries it", "derived-language, feature-document, spec-doc-type; the demo intake in a sandbox consumer; wave B; 5b; the G4.6 finding", "From r3: a status field on the finding form; the agent personas writing progress"] },
-    { "dot": "slate", "title": "Glossary", "items": ["Intake: the G0 venue; a signed request in, a ready contract out", "Controlled register: the closed dictionary a contract's prose must use; the language door (lang-check) counts every miss", "Draft and ready: the validator's two profiles; development starts only from ready-green", "Readback: the unit graph and each unit shown to the seats before the contract is final", "confirmed_by: the seats that answered for a unit, checked against the ratified intake-seat roster (G0.3)", "r4: the REQUEST's intake row, Ready with the contract id and the revision both seats signed", "OPEN: a fact the contract cannot keep whole goes back to the REQUEST as a question, never a silent edit"] }
+    { "dot": "amber", "title": "Where we are (2026-09-22, session 39 closed)", "items": ["The deliverable is met: t0, the USAGE section for the tree, at 73c4987; t1, taskcontract tree printing the whole tree, at c6f1222; each a Two-Key PASS at round 1", "Suite 317 green (18 new); the 14 contracts ready-green; the vocabulary, language and scope checks clean", "The kit's own tree prints 1,053 lines; the pilot's files each of its 16 findings once", "The PR carries 971b57a, the plan, t0, t1 and the close; it opens and merges on your word"] },
+    { "dot": "violet", "title": "What you decided", "items": ["1. This plan: yes", "2. t0's section and its commit: yes", "3. t1's test list, eighteen tests: yes", "4. t1's commit: yes", "5. The push and the PR: pending", "6. The merge: pending"] },
+    { "dot": "cyan", "title": "Deferred, not this session", "items": ["tree-view t2 to t9, then the release (0.15.0); the herdr plugin outside the kit", "For t6: an id that repeats when a sketch names a task key or a unit shares an active gate's id", "For t9: t0's two wording notes, and t1's note that a .yml finding is not read", "G1: the pilot's M0 code waits on its criteria review", "derived-language, feature-document, spec-doc-type; the demo intake in a sandbox consumer; wave B; 5b; the G4.6 finding"] },
+    { "dot": "slate", "title": "Glossary", "items": ["t0, t1: the first two of tree-view's ten units; t1 depends on t0", "Pass zero: the user-facing page written before the code, its status marks red until the release turns them green", "The seven tasks: approve the test list, write the tests, prove red, green, approve the commit, commit, Two-Key PASS", "Two-Key: a receipts agent re-runs every check, a zero-trust grader reads the commit against its sketches; the script computes the verdict", "Sweep: the repo-wide search for stale claims; it runs once, in the release unit t9", "OPEN: a fact the contract cannot keep goes back to the REQUEST as a question and a re-intake, never a silent edit", "Receipts: the suite, every contract ready-green, vocab-check, lang-check, scope-check"] }
   ]
 }

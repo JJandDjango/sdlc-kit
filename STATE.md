@@ -2,37 +2,45 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-21 (session 38 close, second deliverable)._
+> _Generated 2026-09-22 (session 39 close)._
 
 ## Now
-- **`tree-view` is ready (r4).** `specs/tree-view/contract.yaml`
-  (`f3c80d0`) validates ready-green and reads zero at the language door:
-  ten units t0 to t9, each `confirmed_by: [user]`, seven ratified
-  entities, the graph matching r3's sequencing. The REQUEST, untracked,
-  carries the r4 "Ready:" row and the appendix (contract pointer, 22
-  Gherkin scenarios, terms), stamped r3.
-- **r3 and ADR 0031 are merged** (PR #47 at `7d66466`). Both seats signed
-  r3; ADR 0031 (`205818e`) records the rulings: the tree computed at
-  print; `.sdlc/progress/<id>.yaml` written only by `taskcontract
-  progress`, never a gate input; seven tasks per unit, shown and never
-  enforced; a run judged by its expectation; each finding once, under its
-  gate, showing its kind; the cursor derived from task states.
-- **Kit 0.14.0 is released** (tag `v0.14.0` at `1d306ea`). Branch
-  `session-38-tree-view-intake` carries `ef1d99d` (the plan), `f3c80d0`
-  (the intake) and this close, in one PR.
+- **`tree-view` t0 and t1 are built, each a Two-Key PASS at round 1**, on
+  branch `session-39-tree-view-t0-t1`. t0 (`73c4987`, the page before the
+  code): USAGE section 9, "Following the work", every part red;
+  Troubleshooting moved to section 10. t1 (`c6f1222`, the tree's shape):
+  `taskcontract tree` prints the gates with their findings, then each
+  contract with a verdict per active gate, its units, seven tasks and
+  checks, one item per line, full id first. Every status reads `to do`
+  until t3 derives them. New: `taskcontract/tree.py`, `tree_view.py`,
+  `data/gates.yaml` (13 gates), `data/tasks.yaml` (7 tasks),
+  `tests/test_tree.py` (18 tests). Suite 317 green; 14 contracts
+  ready-green; the doors and the scope check clean.
+- t0 fixed two details the request left open: an unnamed check is
+  `sketch-<n>` by position from 1, and an inactive gate prints only when a
+  finding names it. On the pilot the tree files each of its 16 findings
+  once: ten under G0, one under G3, one under G4, four under `none`.
+- **The PR carries** `971b57a` (session 38's STATE fix), `9c2fbe4` (the
+  plan), t0, t1 and this close; it opens and merges on your word. Kit
+  0.14.0 stays the release (tag `v0.14.0` at `1d306ea`).
 
 ## Blockers
 - None.
 
 ## Next actions
-1. `tree-view` units, in a fresh session: t0 first (USAGE at pass zero,
-   marks red), each unit through the seven tasks, Two-Key last; about four
-   sessions, t9 releasing 0.15.0. The build tracks its own tasks in
-   `plan.md` until t4 and t5 give it `taskcontract progress`.
-2. G1, no request yet. The pilot's M0 code waits on G1's criteria review,
+1. `tree-view` t2 (summaries and links) and t3 (status and cursor), in a
+   fresh session; both follow t1. Then t4, t5 and t7 after t3, t6 after t2
+   and t3, t8 after t7, t9 last, releasing 0.15.0. The build tracks its
+   tasks in `plan.md` until t4 and t5 ship `taskcontract progress`.
+2. Carried advisories. t6: t1's id collision, where a sketch naming
+   `(commit)` or a unit named like an active gate repeats an id the query
+   needs unique. t9: t0's two wording notes (the line after the `progress
+   run` block lacks its red mark; "about fifteen lines" against t7's "at
+   most 15") and t1's note that a `.yml` finding is not read.
+3. G1, no request yet. The pilot's M0 code waits on G1's criteria review,
    which also gives intake's exit the successor venue
    `intake-exit-names-no-successor-venue` asks for.
-3. Carried: `derived-language`, `feature-document`, `spec-doc-type`; the
+4. Carried: `derived-language`, `feature-document`, `spec-doc-type`; the
    demo intake in a sandbox consumer; wave B (`playbook-loop`, V1-V6); 5b;
    the G4.6 finding; `no-check-reads-the-source-document`; from r3, a
    status field on the finding form and the agent personas writing
@@ -46,9 +54,12 @@
   scratchpad before a revision edits it.
 - The language door checks every sentence of a sketch for an approved
   opening verb, not only the first; open each one on "verify".
+- Run the verifier's receipts yourself before its round, then leave
+  tracked files alone while it runs: its receipts agent re-runs the suite
+  on the working tree, so a red test written early fails the round. t0
+  and t1 each passed at round 1 this way.
 - Run the release unit's sweep patterns before its verifier round; a hit
-  outside scope goes to an OPEN and a re-intake first, and the round then
-  passes once.
+  outside scope goes to an OPEN and a re-intake first.
 - Attribution is off in the user's settings, so a commit's final
   paragraph is `Contract:` alone and a PR body ends at its last sentence.
 - Release shape: PR, merge commit, annotated tag at the merge, then the
@@ -77,7 +88,9 @@
 - Should TC016 ride the parked line? The d7 note in `CHANGELOG.md`
   records the case.
 - Track `.claude/workflows/two-key-unit-verifier.js`? It holds the gate's
-  rules and exists only on this machine.
+  rules and exists only on this machine. Its grade prompt still names a
+  Co-Authored-By line, stale since attribution went off; the verdict code
+  does not read it.
 - Ratify 5b? The hook command per stack? The four metrics for wave B.
   Q4, Q5, Q6, PL-PIPE.3: unchanged.
 - The engine's `plan.md` holds an uncommitted edit, its cursor ticked

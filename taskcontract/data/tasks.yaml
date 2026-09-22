@@ -1,0 +1,26 @@
+# The task list every unit follows (ADR 0031): the key, the one-line name,
+# and the kit page that defines the task, in order. `taskcontract tree`
+# shows the tasks under each unit; nothing enforces them, and nothing blocks
+# a unit that skips one. USAGE section 9 gives the command that records each.
+tasks:
+  - id: approve-tests
+    name: Approve the test list
+    page: USAGE.md
+  - id: write-tests
+    name: Write the tests
+    page: USAGE.md
+  - id: prove-red
+    name: Prove red
+    page: USAGE.md
+  - id: green
+    name: Green
+    page: USAGE.md
+  - id: approve-commit
+    name: Approve the commit
+    page: USAGE.md
+  - id: commit
+    name: Commit
+    page: USAGE.md
+  - id: two-key
+    name: Two-Key PASS
+    page: USAGE.md
