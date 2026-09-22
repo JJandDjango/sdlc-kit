@@ -20,9 +20,12 @@
   `sketch-<n>` by position from 1, and an inactive gate prints only when a
   finding names it. On the pilot the tree files each of its 16 findings
   once: ten under G0, one under G3, one under G4, four under `none`.
-- **The PR carries** `971b57a` (session 38's STATE fix), `9c2fbe4` (the
-  plan), t0, t1 and this close; it opens and merges on your word. Kit
-  0.14.0 stays the release (tag `v0.14.0` at `1d306ea`).
+- **PR #49 is merged** (merge commit `fe83804`), carrying `971b57a`
+  (session 38's STATE fix), `9c2fbe4` (the plan), t0, t1 and the close
+  (`4d05adc`). Both CI jobs passed. Kit 0.14.0 stays the release (tag
+  `v0.14.0` at `1d306ea`). This STATE fix sits on local main, one commit
+  ahead of origin; the next session's PR carries it, as PR #49 carried
+  `971b57a`.
 
 ## Blockers
 - None.
