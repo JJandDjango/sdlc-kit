@@ -1,20 +1,19 @@
-# Plan - Session 38 (2026-09-21) - tree-view r3: the checks and the solution half
+# Plan - Session 38, second deliverable (2026-09-21) - tree-view intake to ready (r4)
 
-**Closed.** The deliverable is met: `REQUEST_tree-view_2026-09-21.md` is
-at r3, the checks signed by the PO seat and the solution half by the
-engineer seat, with zero OPEN marks. The next session starts a new plan at
-intake (r4).
+**Closed.** The deliverable is met: `specs/tree-view/contract.yaml` is
+ready-green at `f3c80d0`, the language door at zero, every unit
+`confirmed_by: [user]`, committed alone. The REQUEST carries its r4 row and
+the appendix. The units start in a fresh session.
 
-Where things stand: the nine decisions went as planned, each as
-recommended. One surprise rode the checks batch: a finding names a gate and
-never a contract, and records no status, so SC1 changed shape before any
-check was written. ADR 0031 records the rulings.
+Where things stand: five decisions as planned, each answered yes. The
+readback kept all ten units as written; no fact of r3 was lost to the
+controlled register, so no OPEN entered the REQUEST.
 
 ## Diagram
 
 The plan's diagram source is `plan.workflow.json` beside this file (Archify
 workflow, step spine: the steps read left to right, human gates dropping onto
-it from above, an exception lane below for a question r3 cannot close).
+it from above, an exception lane below for a fact the contract cannot keep).
 Render and open:
 
     node C:/Users/hyden/.claude/skills/archify/bin/archify.mjs deliver workflow plan.workflow.json <scratch>/plan.html --quality showcase --json
@@ -24,19 +23,21 @@ The HTML is generated, never committed.
 
 ## Steps
 
-1. ~~Open.~~ Done at `4e9d474`, with this plan.
-2. ~~The checks.~~ The red run ruled: a run records its expectation. SC1
-   reworded for the findings; 22 checks and three verbatim messages signed
-   by the PO seat.
-3. ~~The solution half.~~ An ADR ruled in; the cursor derived from task
-   states. Ten units, t0 to t9, signed by the engineer seat.
-4. ~~r3 into the REQUEST.~~ Written with both signatures; ADR 0031
-   committed at `205818e`.
+1. ~~Open.~~ Done at `ef1d99d`, with this plan.
+2. ~~Author.~~ Scaffolded and written from r3; draft-green on the first
+   pass, the language door at zero after one rewrite (every sketch
+   sentence opens on "verify").
+3. ~~Readback.~~ The unit graph, the ten units, the three plan answers and
+   the seven entities; all kept.
+4. ~~Write and loop.~~ `confirmed_by: [user]` on every unit, ready-green on
+   the first pass; the r4 row and the appendix written; the intake
+   committed at `f3c80d0`.
 5. ~~Close.~~ STATE.md regenerated and this plan struck through; the PR
    carrying this commit merges on your word.
 
 Deferred, not this session:
-- `tree-view` after r3: intake to ready (r4), the units, the herdr plugin.
+- `tree-view` units t0 to t9, then the release; the herdr plugin outside
+  the kit.
 - G1: the pilot's M0 code waits on its criteria review.
 - `no-check-reads-the-source-document`: which request carries it.
 - `derived-language`, `feature-document`, `spec-doc-type`; the demo intake
@@ -44,8 +45,6 @@ Deferred, not this session:
   finding.
 - From r3: a status field on the finding form; the agent personas writing
   progress.
-- The engine's uncommitted `plan.md` edit (its cursor ticked after the
-  push) is the engine session's to commit.
 
 House rules in force: no pipes or chains in any authored command string;
 commit messages via Write + `git commit -F`; Two-Key on every code unit; a

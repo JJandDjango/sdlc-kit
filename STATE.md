@@ -2,37 +2,33 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-21 (session 38 close)._
+> _Generated 2026-09-21 (session 38 close, second deliverable)._
 
 ## Now
-- **`tree-view` is at r3**, signed by both seats on 2026-09-21. The PO seat
-  signed SC1's new wording and 22 checks with three verbatim messages; the
-  engineer seat signed the solution half (ten units, t0 to t9), the risks
-  and cost, and nine decisions. Zero OPEN marks. The REQUEST stays
-  untracked, the requester's.
-- **SC1 changed shape.** A finding names a gate and never a contract (ADR
-  0023 bans identifiers), so the gates stand once at the repository level
-  with their findings, and each contract keeps a verdict per active gate.
-  No finding records a status, so a finding shows its kind.
-- **ADR 0031** (`205818e`) records the rulings: the tree computed at print,
-  never stored; `.sdlc/progress/<id>.yaml` written only by `taskcontract
-  progress`, local, never a gate input; seven tasks per unit, shown and
-  never enforced; a run judged by its expectation (`--expect red` during
-  prove red); each finding once, under its gate; the notify command as
-  the kit's edge. The cursor derives from task states, never stored.
+- **`tree-view` is ready (r4).** `specs/tree-view/contract.yaml`
+  (`f3c80d0`) validates ready-green and reads zero at the language door:
+  ten units t0 to t9, each `confirmed_by: [user]`, seven ratified
+  entities, the graph matching r3's sequencing. The REQUEST, untracked,
+  carries the r4 "Ready:" row and the appendix (contract pointer, 22
+  Gherkin scenarios, terms), stamped r3.
+- **r3 and ADR 0031 are merged** (PR #47 at `7d66466`). Both seats signed
+  r3; ADR 0031 (`205818e`) records the rulings: the tree computed at
+  print; `.sdlc/progress/<id>.yaml` written only by `taskcontract
+  progress`, never a gate input; seven tasks per unit, shown and never
+  enforced; a run judged by its expectation; each finding once, under its
+  gate, showing its kind; the cursor derived from task states.
 - **Kit 0.14.0 is released** (tag `v0.14.0` at `1d306ea`). Branch
-  `session-38-tree-view-r3` carries `4e9d474` (the open), `205818e` (the
-  ADR) and this close, in one PR.
+  `session-38-tree-view-intake` carries `ef1d99d` (the plan), `f3c80d0`
+  (the intake) and this close, in one PR.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. `tree-view` intake to ready (r4): `specs/tree-view/contract.yaml` in the
-   controlled register, ten units each `confirmed_by`, the appendix blocks
-   derived and stamped r3. Long checks such as SC1.1 pass the 20-word
-   sketch cap; a compression that drops a fact is an OPEN, not an edit.
-   Then the units, t0 first, about four sessions.
+1. `tree-view` units, in a fresh session: t0 first (USAGE at pass zero,
+   marks red), each unit through the seven tasks, Two-Key last; about four
+   sessions, t9 releasing 0.15.0. The build tracks its own tasks in
+   `plan.md` until t4 and t5 give it `taskcontract progress`.
 2. G1, no request yet. The pilot's M0 code waits on G1's criteria review,
    which also gives intake's exit the successor venue
    `intake-exit-names-no-successor-venue` asks for.
@@ -48,6 +44,8 @@
   land untracked in this root.
 - A REQUEST is untracked, so git cannot restore it: copy it to the
   scratchpad before a revision edits it.
+- The language door checks every sentence of a sketch for an approved
+  opening verb, not only the first; open each one on "verify".
 - Run the release unit's sweep patterns before its verifier round; a hit
   outside scope goes to an OPEN and a re-intake first, and the round then
   passes once.
