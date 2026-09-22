@@ -6,11 +6,11 @@
     "quality_profile": "showcase",
     "locale": "en",
     "views": [
-      { "id": "now", "label": "Where we are", "focus": ["open", "t0"], "note": "t0 (the USAGE page, marked red) and t1 (the tree command's shape) on one PR, each with a Two-Key PASS. Plan approved." },
-      { "id": "decide", "label": "What you decide", "focus": ["t0_ok", "tests_ok", "commit_ok", "merge_ok"], "note": "Six decisions: this plan, t0's commit, t1's test list, t1's commit, the push with the PR, and the merge." },
-      { "id": "page_first", "label": "t0: the page first", "focus": ["t0", "t0_key"], "note": "USAGE section 9 lands red before any code, so each later unit is graded against words the reader already has." },
-      { "id": "tree_shape", "label": "t1: the tree's shape", "focus": ["t1_red", "t1_green"], "note": "Tests first and red proven, then the model, the print and the two name lists; every status reads to do until t3." },
-      { "id": "exceptions", "label": "If a round fails", "focus": ["t0_key", "fail", "open_q"], "note": "A FAIL gets one fix commit and another round, at most three; a fact the contract cannot keep goes to an OPEN." }
+      { "id": "now", "label": "Where we are", "focus": ["close", "merge_ok"], "note": "Closed: t0 (the USAGE page) and t1 (the tree's shape) each passed Two-Key at round 1. The PR waits on your word." },
+      { "id": "decide", "label": "What you decided", "focus": ["t0_ok", "tests_ok", "commit_ok", "merge_ok"], "note": "Six decisions: four yes (the plan, t0's commit, t1's test list, t1's commit); the push with the PR and the merge wait." },
+      { "id": "page_first", "label": "t0: the page first", "focus": ["t0", "t0_key"], "note": "USAGE section 9 landed red at 73c4987 before any code; its two wording notes go to t9." },
+      { "id": "tree_shape", "label": "t1: the tree's shape", "focus": ["t1_red", "t1_green"], "note": "18 tests red first, then 317 green at c6f1222; every status reads to do until t3 derives them." },
+      { "id": "exceptions", "label": "If a round fails", "focus": ["t0_key", "fail", "open_q"], "note": "No round failed and no OPEN was needed: both units passed at round 1." }
     ]
   },
   "lanes": [
@@ -27,18 +27,18 @@
   "groups": [],
   "mainPath": ["open", "t0", "t0_key", "t1_red", "t1_green", "close"],
   "nodes": [
-    { "id": "t0_ok", "lane": "gates", "col": 1, "type": "security", "label": "Your word", "sublabel": "t0 commit" },
-    { "id": "tests_ok", "lane": "gates", "col": 3, "type": "security", "label": "Your word", "sublabel": "t1 test list" },
-    { "id": "commit_ok", "lane": "gates", "col": 4, "type": "security", "label": "Your word", "sublabel": "t1 commit" },
+    { "id": "t0_ok", "lane": "gates", "col": 1, "type": "security", "label": "Your word", "sublabel": "t0 commit: yes" },
+    { "id": "tests_ok", "lane": "gates", "col": 3, "type": "security", "label": "Your word", "sublabel": "test list: yes" },
+    { "id": "commit_ok", "lane": "gates", "col": 4, "type": "security", "label": "Your word", "sublabel": "t1 commit: yes" },
     { "id": "merge_ok", "lane": "gates", "col": 5, "type": "security", "label": "Your word", "sublabel": "push, PR, merge" },
-    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "Branch + plan", "sublabel": "approved", "tag": "step 1" },
-    { "id": "t0", "lane": "steps", "col": 1, "type": "frontend", "label": "t0 USAGE", "sublabel": "HERE: section 9", "tag": "step 2" },
-    { "id": "t0_key", "lane": "steps", "col": 2, "type": "security", "label": "t0 Two-Key", "sublabel": "sweep off", "tag": "step 3" },
-    { "id": "t1_red", "lane": "steps", "col": 3, "type": "backend", "label": "t1 tests red", "sublabel": "test_tree.py", "tag": "steps 4-5" },
-    { "id": "t1_green", "lane": "steps", "col": 4, "type": "backend", "label": "t1 green", "sublabel": "tree.py, lists", "tag": "steps 6-8" },
-    { "id": "close", "lane": "steps", "col": 5, "type": "cloud", "label": "Close + PR", "sublabel": "STATE, one PR", "tag": "step 9" },
-    { "id": "fail", "lane": "waits", "col": 2, "type": "security", "label": "FAIL", "sublabel": "fix, rerun, max 3", "tag": "t1 too" },
-    { "id": "open_q", "lane": "waits", "col": 4, "type": "security", "label": "OPEN", "sublabel": "re-intake", "tag": "ADR 0029" }
+    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "Branch + plan", "sublabel": "done: 9c2fbe4", "tag": "step 1, done" },
+    { "id": "t0", "lane": "steps", "col": 1, "type": "frontend", "label": "t0 USAGE", "sublabel": "done: 73c4987", "tag": "step 2, done" },
+    { "id": "t0_key", "lane": "steps", "col": 2, "type": "security", "label": "t0 Two-Key", "sublabel": "PASS, round 1", "tag": "step 3, done" },
+    { "id": "t1_red", "lane": "steps", "col": 3, "type": "backend", "label": "t1 tests red", "sublabel": "18 red, proven", "tag": "steps 4-5, done" },
+    { "id": "t1_green", "lane": "steps", "col": 4, "type": "backend", "label": "t1 green", "sublabel": "done: c6f1222", "tag": "steps 6-8, PASS" },
+    { "id": "close", "lane": "steps", "col": 5, "type": "cloud", "label": "Close + PR", "sublabel": "HERE: your word", "tag": "step 9" },
+    { "id": "fail", "lane": "waits", "col": 2, "type": "security", "label": "FAIL", "sublabel": "fix, rerun, max 3", "tag": "not taken" },
+    { "id": "open_q", "lane": "waits", "col": 4, "type": "security", "label": "OPEN", "sublabel": "re-intake", "tag": "not taken" }
   ],
   "edges": [
     { "from": "open", "to": "t0", "label": "plan approved", "variant": "emphasis", "route": "straight" },
@@ -54,9 +54,9 @@
     { "from": "t1_green", "to": "open_q", "variant": "security", "route": "straight" }
   ],
   "cards": [
-    { "dot": "amber", "title": "Where we are (2026-09-21, session 39 open)", "items": ["The deliverable: t0, the USAGE section for the tree, written before any code and marked red; t1, taskcontract tree printing the whole tree and writing no file", "main at 971b57a, one commit ahead of origin: the session-38 STATE fix, which this session's PR carries", "specs/tree-view/contract.yaml is ready-green at r4 (f3c80d0); ADR 0031 holds the rulings", "None of the ten units exists yet: no tree.py, no gates.yaml or tasks.yaml, no USAGE section", "The build tracks its tasks in plan.md until t4 and t5 ship taskcontract progress"] },
-    { "dot": "violet", "title": "What you decide", "items": ["1. This plan: yes", "2. t0's section, shown in chat in full, and its commit", "3. t1's test list, one line per test with the check it proves", "4. t1's commit: the diff summary and the message", "5. The push and the PR", "6. The merge"] },
-    { "dot": "cyan", "title": "Deferred, not this session", "items": ["tree-view t2 to t9, then the release (0.15.0); the herdr plugin outside the kit", "G1: the pilot's M0 code waits on its criteria review", "no-check-reads-the-source-document: which request carries it", "derived-language, feature-document, spec-doc-type; the demo intake in a sandbox consumer; wave B; 5b; the G4.6 finding", "From r3: a status field on the finding form; the agent personas writing progress"] },
+    { "dot": "amber", "title": "Where we are (2026-09-22, session 39 closed)", "items": ["The deliverable is met: t0, the USAGE section for the tree, at 73c4987; t1, taskcontract tree printing the whole tree, at c6f1222; each a Two-Key PASS at round 1", "Suite 317 green (18 new); the 14 contracts ready-green; the vocabulary, language and scope checks clean", "The kit's own tree prints 1,053 lines; the pilot's files each of its 16 findings once", "The PR carries 971b57a, the plan, t0, t1 and the close; it opens and merges on your word"] },
+    { "dot": "violet", "title": "What you decided", "items": ["1. This plan: yes", "2. t0's section and its commit: yes", "3. t1's test list, eighteen tests: yes", "4. t1's commit: yes", "5. The push and the PR: pending", "6. The merge: pending"] },
+    { "dot": "cyan", "title": "Deferred, not this session", "items": ["tree-view t2 to t9, then the release (0.15.0); the herdr plugin outside the kit", "For t6: an id that repeats when a sketch names a task key or a unit shares an active gate's id", "For t9: t0's two wording notes, and t1's note that a .yml finding is not read", "G1: the pilot's M0 code waits on its criteria review", "derived-language, feature-document, spec-doc-type; the demo intake in a sandbox consumer; wave B; 5b; the G4.6 finding"] },
     { "dot": "slate", "title": "Glossary", "items": ["t0, t1: the first two of tree-view's ten units; t1 depends on t0", "Pass zero: the user-facing page written before the code, its status marks red until the release turns them green", "The seven tasks: approve the test list, write the tests, prove red, green, approve the commit, commit, Two-Key PASS", "Two-Key: a receipts agent re-runs every check, a zero-trust grader reads the commit against its sketches; the script computes the verdict", "Sweep: the repo-wide search for stale claims; it runs once, in the release unit t9", "OPEN: a fact the contract cannot keep goes back to the REQUEST as a question and a re-intake, never a silent edit", "Receipts: the suite, every contract ready-green, vocab-check, lang-check, scope-check"] }
   ]
 }
