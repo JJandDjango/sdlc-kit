@@ -3,8 +3,11 @@
 The tree is computed at every print and never stored: ADR 0024's rule for
 the unit graph, carried to the whole work. `build` reads the contracts under
 specs/, `active_gates` from .sdlc/config.yaml, the findings under
-.sdlc/findings/, and the two name lists the package ships (data/gates.yaml,
-data/tasks.yaml). It reads no document and writes no file.
+.sdlc/findings/, each contract's progress file under .sdlc/progress/, and
+the two name lists the package ships (data/gates.yaml, data/tasks.yaml).
+When a `G0` verdict shows, it also runs the validator on that contract and
+runs git once for `HEAD`. It asks only whether docs/features/<id>.md exists,
+never opens it, reads no other document and writes no file.
 
 The gates stand first, at the repository level. A finding names a gate and
 never a contract (ADR 0023's form bans identifiers), so each finding stands
@@ -25,6 +28,17 @@ children, so it reads `done` only when every child does.
 The current task is derived from the task states, never stored: the task
 whose `doing` record is latest, else the first `to do` task in the contract
 with the latest record. An approval that holds it reads `waiting on a seat`.
+
+Each item carries its summary from one source field, unchanged but for its
+whitespace: a contract's `intent`, a unit's `done_means`, a check's sketch
+line, a finding's `statement`, and the name gates.yaml or tasks.yaml gives a
+gate, a verdict's gate or a task. The field's ends are stripped and each line
+break reads as one space; a field that is absent, not text or blank gives no
+summary. Links come from two fields only: a unit's `depends_on` entries, as
+the unit graph reads them, and a finding's `gate:` value as written. A
+contract with a file at docs/features/<id>.md carries that path as its
+feature doc reference. A line prints its links, then the reference, then the
+summary, after the marks and evidence.
 """
 
 from __future__ import annotations
@@ -73,6 +87,21 @@ class Item:
     marks: list[str] = field(default_factory=list)
     children: list[Item] = field(default_factory=list)
     evidence: str | None = None  # what the status was read from
+    links: list[str] = field(default_factory=list)  # each `<kind>: <target>`
+    doc: str | None = None  # a contract's feature doc path, never opened
+    summary: str | None = None  # the source field, by the text rule
+
+
+@dataclass(frozen=True)
+class Finding:
+    """One finding file: the gate it files under, its slug and kind, the
+    `gate:` value it links to (None under the no-gate item) and its statement."""
+
+    gate: str
+    slug: str
+    kind: str
+    link: str | None
+    statement: str | None
 
 
 @dataclass(frozen=True)
@@ -97,16 +126,25 @@ def task_list() -> list[dict]:
 def build(root: Path) -> tuple[list[Item], list[str]]:
     """The tree in print order, and one line per source that could not be read."""
     problems: list[str] = []
-    order = [gate["id"] for gate in gate_list()]
-    tasks = [task["id"] for task in task_list()]
+    gates = {gate["id"]: text(gate.get("name")) for gate in gate_list()}
+    tasks = {task["id"]: text(task.get("name")) for task in task_list()}
+    order = list(gates)
     active = _in_order(active_gates(root, problems), order)
     findings = read_findings(root, problems)
-    items = _gate_items(order, active, findings)
-    contracts = [_contract_item(cid, instance, active, tasks)
+    items = _gate_items(order, active, findings, gates)
+    contracts = [_contract_item(root, cid, instance, active, gates, tasks)
                  for cid, instance in read_contracts(root, problems)]
     items += contracts
     derive(root, contracts, read_progress(root, problems))
     return items, problems
+
+
+def text(value) -> str | None:
+    """A source field as a summary: ends stripped, each line break one space;
+    None when the field is not text or is blank."""
+    if not isinstance(value, str):
+        return None
+    return " ".join(value.strip().splitlines()) or None
 
 
 def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]]) -> None:
@@ -263,20 +301,22 @@ def active_gates(root: Path, problems: list[str]) -> list[str]:
     return [g for g in gates if isinstance(g, str)] if isinstance(gates, list) else []
 
 
-def read_findings(root: Path, problems: list[str]) -> list[tuple[str, str, str]]:
-    """(gate, finding, kind) per file under .sdlc/findings/, in file-name order."""
+def read_findings(root: Path, problems: list[str]) -> list[Finding]:
+    """One finding per file under .sdlc/findings/, in file-name order."""
     folder = root / ".sdlc" / "findings"
     if not folder.is_dir():
         return []
-    found: list[tuple[str, str, str]] = []
+    found: list[Finding] = []
     for path in sorted(folder.glob("*.yaml"), key=lambda p: p.name):
         if path.name == FORM:
             continue
         doc = _load(path, root, problems, "finding")
         if doc is not None:
             kind = doc.get("kind")
-            found.append((gate_of(doc.get("gate")), path.stem,
-                          "none" if kind is None else str(kind)))
+            gate = gate_of(doc.get("gate"))
+            found.append(Finding(gate, path.stem, "none" if kind is None else str(kind),
+                                 None if gate == NO_GATE else doc["gate"].strip(),
+                                 text(doc.get("statement"))))
     return found
 
 
@@ -315,13 +355,14 @@ def _named(sketch) -> str | None:
     return "+".join(parts) if all(_CHECK_ID.match(part) for part in parts) else None
 
 
-def _gate_items(order: list[str], active: list[str],
-                findings: list[tuple[str, str, str]]) -> list[Item]:
+def _gate_items(order: list[str], active: list[str], findings: list[Finding],
+                gates: dict[str, str | None]) -> list[Item]:
     """Each active gate and each gate a finding names, then the no-gate item."""
-    named = [gate for gate, _, _ in findings]
+    named = [finding.gate for finding in findings]
     items = [Item(f"gates/{gate}", "gate",
                   marks=[] if gate in active else [INACTIVE],
-                  children=_finding_items(gate, findings))
+                  children=_finding_items(gate, findings),
+                  summary=gates.get(gate))
              for gate in _in_order(active + named, order)]
     if NO_GATE in named:
         items.append(Item(f"gates/{NO_GATE}", "none",
@@ -329,41 +370,51 @@ def _gate_items(order: list[str], active: list[str],
     return items
 
 
-def _finding_items(gate: str, findings: list[tuple[str, str, str]]) -> list[Item]:
-    return [Item(f"gates/{gate}/{slug}", "finding", status=None, kind=kind)
-            for named, slug, kind in findings if named == gate]
+def _finding_items(gate: str, findings: list[Finding]) -> list[Item]:
+    return [Item(f"gates/{gate}/{finding.slug}", "finding", status=None,
+                 kind=finding.kind, summary=finding.statement,
+                 links=[f"gate: {finding.link}"] if finding.link else [])
+            for finding in findings if finding.gate == gate]
 
 
-def _contract_item(cid: str, instance: dict | None, active: list[str],
-                   tasks: list[str]) -> Item:
+def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str],
+                   gates: dict[str, str | None], tasks: dict[str, str | None]) -> Item:
     """A contract: its verdict at each active gate, then its units. An
     unreadable contract keeps its verdicts and shows no unit."""
+    doc = f"docs/features/{cid}.md"
     item = Item(cid, "contract",
-                children=[Item(f"{cid}/{gate}", "verdict") for gate in active])
-    for uid, unit in _units(instance):
+                children=[Item(f"{cid}/{gate}", "verdict", summary=gates.get(gate))
+                          for gate in active],
+                doc=doc if (root / doc).is_file() else None,
+                summary=text(instance.get("intent")) if instance is not None else None)
+    for uid, unit, deps in _units(instance):
         base = f"{cid}/{uid}"
         sketches = unit.get("acceptance_sketch")
+        sketches = sketches if isinstance(sketches, list) else []
         unit_item = Item(base, "unit",
-                         children=[Item(f"{base}/{task}", "task") for task in tasks])
+                         children=[Item(f"{base}/{task}", "task", summary=name)
+                                   for task, name in tasks.items()],
+                         links=[f"depends_on: {cid}/{dep}" for dep in deps],
+                         summary=text(unit.get("done_means")))
         unit_item.children += [
-            Item(f"{base}/{check}", "check")
-            for check in check_ids(sketches if isinstance(sketches, list) else [])]
+            Item(f"{base}/{check}", "check", summary=text(sketch))
+            for check, sketch in zip(check_ids(sketches), sketches)]
         item.children.append(unit_item)
     return item
 
 
-def _units(instance: dict | None) -> list[tuple[str, dict]]:
-    """(id, unit) per unit with a usable id; of a duplicate id (TC013), the
-    first only, as the unit graph draws it (ADR 0024)."""
+def _units(instance: dict | None) -> list[tuple[str, dict, list[str]]]:
+    """(id, unit, depends_on) per unit with a usable id; of a duplicate id
+    (TC013), the first only, as the unit graph draws it (ADR 0024)."""
     if instance is None:
         return []
     decomposition = instance.get("decomposition")
     seen: set[str] = set()
-    out: list[tuple[str, dict]] = []
-    for index, uid, _ in unit_rows(instance):
+    out: list[tuple[str, dict, list[str]]] = []
+    for index, uid, deps in unit_rows(instance):
         if uid not in seen:
             seen.add(uid)
-            out.append((uid, decomposition[index]))
+            out.append((uid, decomposition[index], deps))
     return out
 
 

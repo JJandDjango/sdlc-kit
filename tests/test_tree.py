@@ -6,11 +6,18 @@ a verdict per active gate, its units, each unit's seven tasks and its
 checks. Unit t1-tree-shape fixes that shape (SC1.1), the one place each
 finding prints (SC1.2), and a print that is derived, never stored (SC1.3).
 Statuses are asserted only as members of the six values: t3 derives them.
+
+Unit t2-summaries-and-links ends each line with what its sources say: a
+unit's `depends_on` links, a finding's `gate` link, a contract's feature
+document as a file reference only, then, after ` | `, the item's summary,
+its source field's own text (SC4.1, SC4.2, SC5.1, SC5.2).
 """
 
 from __future__ import annotations
 
+import os
 import re
+import sys
 from pathlib import Path
 
 import yaml
@@ -345,3 +352,366 @@ def test_an_unreadable_source_never_stops_the_print(tmp_path, capsys):
     ids = _ids(_rows(out))
     assert "alpha/a2-edges/sketch-3" in ids
     assert "gates/none/loose-end" in ids
+
+
+# --- t2-summaries-and-links ---------------------------------------------------
+# After its tag, its marks and its evidence, a line carries its links, then its
+# file reference, then " | " and its summary: the source field's own text, last
+# because it is free text. A line with no summary prints no bar. The tests split
+# the summary off at the first " | " after the tag.
+
+BAR = " | "
+BETA_INTENT = ("A second fixture contract, so that each contract's line shows "
+               "its own intent.")
+
+
+def _gate_names():
+    """{id: name} from the kit's gate list, the source of a gate's summary."""
+    gates = yaml.safe_load((DATA / "gates.yaml").read_text(encoding="utf-8"))["gates"]
+    return {gate["id"]: gate["name"] for gate in gates}
+
+
+def _task_names():
+    """The seven names from the kit's task list, in order."""
+    tasks = yaml.safe_load((DATA / "tasks.yaml").read_text(encoding="utf-8"))["tasks"]
+    return [task["name"] for task in tasks]
+
+
+def _printed(root, capsys):
+    """(rows, stdout) of one print, which exits 0."""
+    code, out, _ = _run(root, capsys)
+    assert code == 0
+    return _rows(out), out
+
+
+def _parts(rows, rid):
+    """(head, summary) of an item's line: the text after its tag, split at the
+    first " | ". The head holds the marks, the evidence, the links and the file
+    reference; the summary is None when no bar prints."""
+    head, bar, summary = _row(rows, rid)[3].partition(BAR)
+    return head, (summary if bar else None)
+
+
+def _head(rows, rid):
+    return _parts(rows, rid)[0]
+
+
+def _summary(rows, rid):
+    return _parts(rows, rid)[1]
+
+
+def _one_line_each(out):
+    """Whether every line printed is one item's line."""
+    return len(out.splitlines()) == len(_rows(out))
+
+
+def _contract_path(root, cid):
+    return root / "specs" / cid / "contract.yaml"
+
+
+def _finding_path(root, slug):
+    return root / ".sdlc" / "findings" / f"{slug}.yaml"
+
+
+def _edit(path, **fields):
+    """Rewrite the YAML mapping at `path` with `fields` set; None drops a field."""
+    doc = yaml.safe_load(path.read_text(encoding="utf-8"))
+    for key, value in fields.items():
+        if value is None:
+            doc.pop(key, None)
+        else:
+            doc[key] = value
+    _dump(path, doc)
+
+
+# --- SC4.1 each item's summary is its source's text (unit t2) -----------------
+
+def test_a_contract_shows_its_intent(tmp_path, capsys):
+    root = _repo(tmp_path)
+    _edit(_contract_path(root, "beta"), intent=BETA_INTENT)
+    rows = _tree(root, capsys)
+    assert _summary(rows, "alpha") == INTENT
+    assert _summary(rows, "beta") == BETA_INTENT
+
+
+def test_a_unit_shows_its_done_means(tmp_path, capsys):
+    rows = _tree(_repo(tmp_path), capsys)
+    for rid in ("alpha/a1-core", "alpha/a2-edges", "beta/b1-solo"):
+        assert _summary(rows, rid) == f"the work for {rid.split('/')[1]} is done", rid
+
+
+def test_a_check_shows_its_sketch_line(tmp_path, capsys):
+    rows = _tree(_repo(tmp_path), capsys)
+    for cid, units in (("alpha", ALPHA), ("beta", BETA)):
+        for unit in units:
+            base = f"{cid}/{unit['id']}"
+            # a check whose id falls back to its position still shows its own line
+            shown = [_summary(rows, f"{base}/{check}") for check in _checks(rows, base)]
+            assert shown == unit["acceptance_sketch"], base
+
+
+def test_a_finding_shows_its_statement(tmp_path, capsys):
+    root = _repo(tmp_path)
+    findings = ["gates/G0/stale-pin", "gates/G3/slow-loop", "gates/none/idea",
+                "gates/none/loose-end"]
+    for rid in findings:
+        slug = rid.rsplit("/", 1)[1]
+        _edit(_finding_path(root, slug), statement=f"The {slug} finding, in its own words.")
+    rows = _tree(root, capsys)
+    for rid in findings:
+        assert _summary(rows, rid) == f"The {rid.rsplit('/', 1)[1]} finding, in its own words."
+
+
+def test_a_gate_shows_its_name_from_the_gate_list(tmp_path, capsys):
+    names = _gate_names()
+    rows = _tree(_repo(tmp_path), capsys)
+    assert _summary(rows, "gates/G0") == names["G0"]  # active
+    assert _summary(rows, "gates/G3") == names["G3"]  # inactive, named by a finding's G3.1
+
+
+def test_a_task_step_shows_its_name_from_the_task_list(tmp_path, capsys):
+    names = _task_names()
+    rows = _tree(_repo(tmp_path), capsys)
+    for unit in ("alpha/a1-core", "alpha/a2-edges", "beta/b1-solo"):
+        assert [_summary(rows, f"{unit}/{task}") for task in TASK_KEYS] == names, unit
+
+
+def test_a_verdict_shows_the_name_of_its_gate(tmp_path, capsys):
+    root = _repo(tmp_path)
+    _config(root, ["G0", "G4"])
+    names = _gate_names()
+    rows = _tree(root, capsys)
+    for cid in ("alpha", "beta"):
+        assert _summary(rows, f"{cid}/G0") == names["G0"], cid  # after its evidence
+        assert _summary(rows, f"{cid}/G4") == names["G4"], cid
+
+
+def test_the_no_gate_item_shows_no_summary(tmp_path, capsys):
+    rows = _tree(_repo(tmp_path), capsys)
+    assert _summary(rows, "gates/G0") == _gate_names()["G0"]  # the gate beside it shows its name
+    assert _row(rows, "gates/none")[3] == ""  # no source field names it: nothing after the tag
+
+
+def test_a_gate_the_gate_list_lacks_shows_no_summary(tmp_path, capsys):
+    root = _repo(tmp_path)
+    _config(root, ["G0", "X1"])  # X1: an id the kit's gate list does not hold
+    names = _gate_names()
+    assert "X1" not in names
+    rows = _tree(root, capsys)
+    assert [_summary(rows, rid) for rid in ("gates/G0", "alpha/G0")] == [names["G0"]] * 2
+    assert [_row(rows, rid)[3] for rid in ("gates/X1", "alpha/X1")] == ["", ""]
+
+
+def test_a_field_absent_blank_or_not_a_string_gives_no_summary(tmp_path, capsys):
+    root = _repo(tmp_path)
+    alpha = _contract("alpha", [
+        {**_unit("a1-core", ["verify the core prints (SC1.1)", {"verify": "a mapping"}]),
+         "done_means": 42},
+        {**_unit("a2-edges", ["verify an edge holds"]), "done_means": " \n"},
+        _unit("a3-plain", ["verify it holds"]),
+    ])
+    del alpha["intent"]
+    _dump(_contract_path(root, "alpha"), alpha)
+    _edit(_finding_path(root, "stale-pin"), statement=None)
+    rows = _tree(root, capsys)
+    assert _summary(rows, "alpha/a3-plain") == "the work for a3-plain is done"  # a string shows
+    assert _summary(rows, "alpha/a1-core/SC1.1") == "verify the core prints (SC1.1)"
+    for rid in ("alpha",                   # no intent
+                "alpha/a1-core",           # done_means a number
+                "alpha/a2-edges",          # done_means blank
+                "alpha/a1-core/sketch-2",  # a sketch line that is a mapping
+                "gates/G0/stale-pin"):     # no statement
+        assert _summary(rows, rid) is None, rid
+
+
+# --- SC4.1 the text unchanged: stripped, on one line, whole -------------------
+
+# A finding as the form writes it: `statement: >` folds its lines into one and
+# keeps a line break at the end.
+FORM_SHAPED = """\
+finding: slow-loop
+date: 2026-09-22
+kit_pinned: v0.14.0
+gate: G3.1
+diagnostic: none
+kind: friction
+count: 1
+statement: >
+  The loop runs slow on each save.
+  It costs a minute each run.
+proposal: >
+  none
+"""
+
+
+def test_a_summary_drops_the_whitespace_around_its_text(tmp_path, capsys):
+    root = _repo(tmp_path)
+    assert yaml.safe_load(FORM_SHAPED)["statement"].endswith("run.\n")  # the form's `>`
+    _finding_path(root, "slow-loop").write_text(FORM_SHAPED, encoding="utf-8")
+    _dump(_contract_path(root, "beta"), _contract("beta", [
+        {**BETA[0], "done_means": " \tthe work for b1-solo is done  \n"}]))
+    rows, out = _printed(root, capsys)
+    assert _summary(rows, "gates/G3/slow-loop") == (
+        "The loop runs slow on each save. It costs a minute each run.")
+    assert _summary(rows, "beta/b1-solo") == "the work for b1-solo is done"
+    assert _one_line_each(out)
+
+
+def test_each_line_break_inside_a_summary_prints_as_one_space(tmp_path, capsys):
+    root = _repo(tmp_path)
+    _dump(_contract_path(root, "beta"), _contract("beta", [
+        {**BETA[0],
+         "done_means": "first line\nsecond line\r\nthird line\n\nafter a blank line\n"}]))
+    rows, out = _printed(root, capsys)
+    # \r\n is one line break; a blank line is two, so two spaces
+    assert _summary(rows, "beta/b1-solo") == (
+        "first line second line third line  after a blank line")
+    assert _one_line_each(out)
+
+
+LONG_INTENT = (
+    "A contract whose intent runs long on purpose: it holds 'single quotes', "
+    '"double quotes", a bar | inside it, [brackets], a hash # and `backticks`, '
+    "two  spaces kept as two, and it runs on well past the width of any "
+    "terminal, so a tree that cut, wrapped or quoted its summary would print "
+    "something other than this text, which the line must carry whole.")
+
+
+def test_a_summary_prints_its_text_whole(tmp_path, capsys):
+    root = _repo(tmp_path)
+    _edit(_contract_path(root, "alpha"), intent=LONG_INTENT)
+    rows, out = _printed(root, capsys)
+    assert _summary(rows, "alpha") == LONG_INTENT  # no cut, no wrap, no quotes, its bar kept
+    assert _one_line_each(out)
+
+
+# --- the line: marks, evidence, links, the reference, then the summary --------
+
+FEATURE_DOC = ("# A feature\n\nFEATURE-DOC-ONLY: these words live in the feature "
+               "document and in no source field.\n")
+
+
+def _feature_doc(root, cid):
+    """docs/features/<cid>.md, holding words no source field holds."""
+    path = root / "docs" / "features" / f"{cid}.md"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(FEATURE_DOC, encoding="utf-8")
+
+
+def test_the_summary_comes_last_after_one_bar(tmp_path, capsys):
+    root = _repo(tmp_path)
+    _feature_doc(root, "alpha")
+    names = _gate_names()
+    statement = "A fixture finding for the tree suite."
+    rows = _tree(root, capsys)
+    assert _row(rows, "gates/G3")[3] == f" inactive | {names['G3']}"
+    assert _row(rows, "gates/G3/slow-loop")[3] == f" gate: G3.1 | {statement}"
+    assert _row(rows, "alpha")[3] == f" doc: docs/features/alpha.md | {INTENT}"
+    assert _row(rows, "alpha/a1-core")[3] == " | the work for a1-core is done"
+    assert _row(rows, "alpha/a2-edges")[3] == (
+        " depends_on: alpha/a1-core | the work for a2-edges is done")
+    head, summary = _parts(rows, "alpha/G0")
+    assert (head.split()[:1], summary) == (["via"], names["G0"])  # t3's evidence, then the name
+
+
+# --- SC5.1, SC5.2 links, typed and read from source fields --------------------
+
+def test_a_unit_shows_one_depends_on_link_per_entry_in_its_order(tmp_path, capsys):
+    root = _repo(tmp_path)
+    _dump(_contract_path(root, "alpha"), _contract("alpha", ALPHA + [
+        _unit("a3-join", ["verify the join holds"], depends_on=["a2-edges", "a1-core"])]))
+    rows = _tree(root, capsys)
+    assert _head(rows, "alpha/a2-edges") == " depends_on: alpha/a1-core"
+    assert _head(rows, "alpha/a3-join") == (
+        " depends_on: alpha/a2-edges depends_on: alpha/a1-core")  # the field's order, full ids
+
+
+def test_a_finding_links_to_the_gate_its_field_names_as_written(tmp_path, capsys):
+    rows = _tree(_repo(tmp_path), capsys)
+    assert _head(rows, "gates/G0/stale-pin") == " gate: G0"
+    assert _head(rows, "gates/G3/slow-loop") == " gate: G3.1"  # the condition, kept, under G3
+
+
+def test_a_link_prints_only_from_depends_on_or_a_finding_gate(tmp_path, capsys):
+    root = _repo(tmp_path)
+    beta = _contract("beta", [{**BETA[0], "depends_on": []}])
+    beta["dependencies"] = [{"ref": "vendor-feed", "status": "blocked",
+                             "blocked_by": "the vendor feed"}]  # names other work, links nothing
+    _dump(_contract_path(root, "beta"), beta)
+    rows = _tree(root, capsys)
+    assert _head(rows, "alpha/a2-edges") == " depends_on: alpha/a1-core"  # a source field
+    assert [_head(rows, rid) for rid in (
+        "alpha/a1-core",         # no depends_on
+        "beta/b1-solo",          # depends_on: []
+        "gates/none/idea",       # gate: none
+        "gates/none/loose-end",  # no gate field
+    )] == [""] * 4
+    linked = [rid for _, rid, _, rest in rows
+              if {"depends_on:", "gate:"} & set(rest.partition(BAR)[0].split())]
+    assert linked == ["gates/G0/stale-pin", "gates/G3/slow-loop", "alpha/a2-edges"]
+
+
+# --- SC4.2 no document read: a feature document is a file reference only ------
+
+_WATCHES: list[list[str]] = []  # while a list is here, it collects each path opened
+_HOOKED: list = []
+
+
+def _on_audit(event, args):
+    if event == "open" and _WATCHES and args and isinstance(args[0], (str, bytes, os.PathLike)):
+        for seen in _WATCHES:
+            seen.append(os.fsdecode(os.fspath(args[0])))
+
+
+def _opened_while(action):
+    """(each path the process opened while `action` ran, what it returned).
+    An audit hook (PEP 578) sees every open; it is added once and does
+    nothing while no test watches. Checking that a file exists opens nothing."""
+    if not _HOOKED:
+        sys.addaudithook(_on_audit)
+        _HOOKED.append(_on_audit)
+    seen: list[str] = []
+    _WATCHES.append(seen)
+    try:
+        result = action()
+    finally:
+        _WATCHES.remove(seen)
+    return seen, result
+
+
+def _under(path, place):
+    """Whether `path` is `place` or lies below it, compared as the OS compares paths."""
+    path, place = (os.path.normcase(os.path.realpath(p)) for p in (path, place))
+    return path == place or path.startswith(place.rstrip(os.sep) + os.sep)
+
+
+def test_a_feature_doc_shows_only_as_a_file_reference(tmp_path, capsys):
+    root = _repo(tmp_path)
+    _feature_doc(root, "alpha")
+    (root / "docs" / "gates").mkdir()
+    (root / "docs" / "gates" / "G0-planning-intake.md").write_text("# G0\n", encoding="utf-8")
+    documents = [root / name for name in ("REQUEST_alpha_2026-09-22.md", "STATE.md", "plan.md")]
+    for path in documents:
+        path.write_text("# A document, never a source\n", encoding="utf-8")
+    opened, (code, out, _) = _opened_while(lambda: _run(root, capsys))
+    assert code == 0
+    rows = _rows(out)
+    assert _head(rows, "alpha") == " doc: docs/features/alpha.md"
+    assert _head(rows, "beta") == ""  # no feature doc, no reference
+    assert "FEATURE-DOC-ONLY" not in out
+    assert any(_under(path, _contract_path(root, "alpha")) for path in opened)  # the watch works
+    assert [path for path in opened if _under(path, root / "docs")
+            or any(_under(path, doc) for doc in documents)] == []
+
+
+def test_with_docs_gone_every_line_prints_the_same_but_its_reference(tmp_path, capsys):
+    root = _repo(tmp_path)
+    _feature_doc(root, "alpha")
+    _feature_doc(root, "beta")
+    rows, first = _printed(root, capsys)
+    references = [" doc: docs/features/alpha.md", " doc: docs/features/beta.md"]
+    assert [_head(rows, "alpha"), _head(rows, "beta")] == references
+    assert _summary(rows, "alpha") == INTENT  # the print holds summaries to compare
+    (root / "docs").rename(tmp_path / "docs-aside")
+    _, second = _printed(root, capsys)
+    assert second == first.replace(references[0], "").replace(references[1], "")
