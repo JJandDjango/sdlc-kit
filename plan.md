@@ -1,31 +1,30 @@
-# Plan - Session 39 (2026-09-21) - tree-view t0 and t1
+# Plan - Session 40 (2026-09-22) - tree-view t3 and t2
 
 **Deliverable:** two units of `tree-view` (the request for one derived tree
 of the work) on one PR, each with a Two-Key PASS (one agent re-runs every
 check, a second grades the commit against the contract, and a script
-computes the verdict):
+computes the verdict), t3 first because t4, t5 and t7 wait on it alone:
 
-- t0 `t0-usage-pass-zero`: the USAGE section on `taskcontract tree` and
-  `taskcontract progress`, written before any code, every part marked red
-  until the release.
-- t1 `t1-tree-shape`: `taskcontract tree` prints the gates with their
-  findings, and each contract with its gate verdicts, units, seven tasks
-  and checks; it writes no file.
+- t3 `t3-status-and-cursor`: every item shows one of the six statuses, a
+  parent reads `done` only when every item under it does, each `G0`
+  verdict reads from the validator and names its command and `HEAD` id,
+  and the current task derives from the progress files, whose format
+  lands here.
+- t2 `t2-summaries-and-links`: each item shows its source field unchanged,
+  links name their kind and come only from `depends_on` or a finding's
+  `gate`, and a feature doc shows only as a file reference.
 
-**Closed.** The deliverable is met: t0 at `73c4987` and t1 at `c6f1222`,
-each a Two-Key PASS at round 1. The PR carrying them opens and merges on
-your word.
-
-Where things stand: suite 317 green (299 before, 18 new), the 14 contracts
-ready-green (ready-green: they pass the validator's strict profile), the
-vocabulary, language and scope checks clean. The kit's own tree prints
-1,053 lines; the pilot's files each of its 16 findings once. Every status
-reads `to do` until t3 derives them.
+**Who does what.** The user delegated this session's in-work approvals to
+Claude, on review. A subagent does each unit's work through the Workflow
+tool (this session has no Agent tool): a spec-channel agent writes the
+tests and proves red, and a developer agent makes them green without
+opening `tests/` (ADR 0031: tests and red are the spec channel's, green
+the developer's). The push, the PR and the merge stay on the user's word.
 
 ## Diagram
 
 The plan's diagram source is `plan.workflow.json` beside this file (Archify
-workflow, step spine: the steps read left to right, human gates dropping onto
+workflow, step spine: the steps read left to right, approvals dropping onto
 it from above, an exception lane below for a Two-Key FAIL or an OPEN).
 Render and open:
 
@@ -36,31 +35,28 @@ The HTML is generated, never committed.
 
 ## Steps
 
-1. ~~Open.~~ Done at `9c2fbe4`, with this plan.
-2. ~~t0, the page first.~~ Done at `73c4987`: USAGE section 9, "Following
-   the work", every part red; Troubleshooting moved to section 10. Two
-   details the request left open were fixed there and approved with it: an
-   unnamed check is `sketch-<n>` by position from 1, and an inactive gate
-   prints only when a finding names it.
-3. ~~t0 Two-Key.~~ PASS at round 1, about 145K tokens. Three advisories:
-   two wording notes go to t9, and the third (t1 and t6 must meet the two
-   fixed details) is held by t1's tests 4 and 8.
-4. ~~t1, approve the test list.~~ Eighteen tests, approved as listed.
-5. ~~t1, write the tests and prove red.~~ 18 failed, 299 passed.
-6. ~~t1, green.~~ `taskcontract/tree.py`, `tree_view.py`, `data/gates.yaml`,
-   `data/tasks.yaml`, the `tree` subcommand with `--root`; 317 passed.
-7. ~~t1, approve the commit and commit.~~ Done at `c6f1222`.
-8. ~~t1 Two-Key.~~ PASS at round 1, about 167K tokens. Two advisories, both
-   deferred below.
-9. ~~Close.~~ STATE.md regenerated and this plan struck through; push and
-   PR on your word; merge on your word.
+1. Open: branch `session-40-tree-view-t3-t2` from main (it carries
+   `50b691b`, session 39's STATE fix), and this plan.
+2. t3, draft and approve the test list, with the progress file's format
+   and the print's new words.
+3. t3, write the tests and prove red.
+4. t3, green.
+5. t3, approve the commit and commit.
+6. t3 Two-Key.
+7. t2, draft and approve the test list.
+8. t2, write the tests and prove red.
+9. t2, green.
+10. t2, approve the commit and commit.
+11. t2 Two-Key.
+12. Close: STATE.md regenerated and this plan struck through; push and PR
+    on the user's word; merge on the user's word.
 
-Decisions this session: six. (1) this plan: yes; (2) t0's section and
-commit: yes; (3) t1's test list: yes; (4) t1's commit: yes; (5) the push
-and the PR: pending; (6) the merge: pending.
+Decisions this session: seven. Claude's on review: (1) this plan, (2) t3's
+test list, (3) t3's commit, (4) t2's test list, (5) t2's commit. The
+user's: (6) the push and the PR, (7) the merge.
 
 Deferred, not this session:
-- `tree-view` t2 to t9, then the release (0.15.0); the herdr plugin outside
+- `tree-view` t4 to t9, then the release (0.15.0); the herdr plugin outside
   the kit.
 - For t6: t1's id collision, where a sketch naming `(commit)`, or a unit
   named like an active gate, repeats an id the query needs unique.
@@ -76,8 +72,8 @@ Deferred, not this session:
   progress.
 
 House rules in force: no pipes or chains in any authored command string;
-commit messages via Write + `git commit -F`; Two-Key on every code unit; a
-`Contract:` trailer, alone in the final paragraph, on every commit that
-touches a non-free path; uncontested decisions batched in one message,
-contested ones one per message, each with a recommendation; approval
-content shown in chat in full.
+commit messages via Write + `git commit -F`; Two-Key on every code unit,
+launched by `scriptPath`; a `Contract:` trailer, alone in the final
+paragraph, on every commit that touches a non-free path; receipts run
+before each verifier round, and no tracked file touched while it runs; a
+surprise mid-build is an OPEN and a re-intake, never a silent edit.
