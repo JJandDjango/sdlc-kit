@@ -2,15 +2,15 @@
   "schema_version": 2,
   "diagram_type": "workflow",
   "meta": {
-    "title": "tree-view r3: the Checks and the Solution Half - Session 38",
+    "title": "tree-view Intake to Ready (r4) - Session 38, Second Deliverable",
     "quality_profile": "showcase",
     "locale": "en",
     "views": [
-      { "id": "now", "label": "Where we are", "focus": ["close", "next"], "note": "Session 38 closed. tree-view is at r3, signed by both seats, zero OPEN marks. The PR waits on your word." },
-      { "id": "decide", "label": "What you decided", "focus": ["po_calls", "eng_calls", "adr_ok", "merge_word"], "note": "Nine decisions as planned: the red run, the checks with SC1 reshaped, the ADR, the cursor, the half, the commits." },
-      { "id": "rulings", "label": "The rulings", "focus": ["po_calls", "eng_calls"], "note": "Runs carry their expectation; findings stand once under their gate; ADR 0031; the cursor derives from task states." },
-      { "id": "seats", "label": "Two seats, one row", "focus": ["checks", "solution", "r3"], "note": "ADR 0029: the PO seat signed the checks above the line, the engineer seat the half below; r3's row records both." },
-      { "id": "after", "label": "After r3", "focus": ["close", "next"], "note": "Next session: intake to ready (r4), then ten units, t0 first. G1 follows; the pilot's M0 code waits on it." }
+      { "id": "now", "label": "Where we are", "focus": ["open", "author"], "note": "r3 is signed and merged with ADR 0031. Intake turns it into the contract; the plan waits on your overview." },
+      { "id": "decide", "label": "What you decide", "focus": ["readback_ok", "intake_ok", "merge_word"], "note": "Five decisions: the open commit, the readback batch, the intake commit, the close commit and PR, the merge." },
+      { "id": "doors", "label": "The doors", "focus": ["author", "write"], "note": "The language door at zero and the draft profile green before you see it; the ready profile green after your answers." },
+      { "id": "open_lane", "label": "If a fact won't fit", "focus": ["author", "open_q"], "note": "A check the controlled register cannot keep whole becomes an OPEN in the REQUEST, never a silent edit." },
+      { "id": "after", "label": "After intake", "focus": ["close", "next"], "note": "A fresh session starts the units at t0; ten units, about four sessions, then the release." }
     ]
   },
   "lanes": [
@@ -20,41 +20,39 @@
   ],
   "phases": [
     { "id": "open_phase", "label": "Step 1 - open", "fromCol": 0, "toCol": 0, "variant": "emphasis" },
-    { "id": "r3_phase", "label": "Steps 2-4 - r3", "fromCol": 1, "toCol": 3, "variant": "emphasis" },
+    { "id": "intake_phase", "label": "Steps 2-4 - intake", "fromCol": 1, "toCol": 3, "variant": "emphasis" },
     { "id": "close_phase", "label": "Step 5 - close", "fromCol": 4, "toCol": 4, "variant": "emphasis" },
-    { "id": "deferred", "label": "Next session", "fromCol": 5, "toCol": 5, "variant": "dashed" }
+    { "id": "deferred", "label": "Fresh session", "fromCol": 5, "toCol": 5, "variant": "dashed" }
   ],
   "groups": [],
-  "mainPath": ["open", "checks", "solution", "r3", "close", "next"],
+  "mainPath": ["open", "author", "readback", "write", "close", "next"],
   "nodes": [
-    { "id": "po_calls", "lane": "gates", "col": 1, "type": "security", "label": "PO seat", "sublabel": "red run + checks" },
-    { "id": "eng_calls", "lane": "gates", "col": 2, "type": "security", "label": "Engineer seat", "sublabel": "ADR, cursor, half" },
-    { "id": "adr_ok", "lane": "gates", "col": 3, "type": "security", "label": "Your word", "sublabel": "ADR committed" },
+    { "id": "readback_ok", "lane": "gates", "col": 2, "type": "security", "label": "Your answers", "sublabel": "ten units, seats" },
+    { "id": "intake_ok", "lane": "gates", "col": 3, "type": "security", "label": "Your word", "sublabel": "the intake commit" },
     { "id": "merge_word", "lane": "gates", "col": 4, "type": "security", "label": "Your word", "sublabel": "merge the PR" },
-    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "STATE + plan", "sublabel": "done: 4e9d474", "tag": "step 1, done" },
-    { "id": "checks", "lane": "steps", "col": 1, "type": "backend", "label": "The checks", "sublabel": "22 checks signed", "tag": "step 2, done" },
-    { "id": "solution", "lane": "steps", "col": 2, "type": "backend", "label": "Solution half", "sublabel": "10 units signed", "tag": "step 3, done" },
-    { "id": "r3", "lane": "steps", "col": 3, "type": "frontend", "label": "r3 written", "sublabel": "ADR 0031: 205818e", "tag": "step 4, done" },
-    { "id": "close", "lane": "steps", "col": 4, "type": "cloud", "label": "Close + PR", "sublabel": "HERE: your word", "tag": "step 5" },
-    { "id": "next", "lane": "steps", "col": 5, "type": "cloud", "label": "Next session", "sublabel": "intake to r4", "tag": "deferred" },
-    { "id": "parked", "lane": "waits", "col": 2, "type": "security", "label": "Parked", "sublabel": "zero OPEN marks", "tag": "not taken" }
+    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "Branch + plan", "sublabel": "HERE: overview", "tag": "step 1" },
+    { "id": "author", "lane": "steps", "col": 1, "type": "backend", "label": "Author", "sublabel": "lang zero, draft", "tag": "step 2" },
+    { "id": "readback", "lane": "steps", "col": 2, "type": "frontend", "label": "Readback", "sublabel": "graph + units", "tag": "step 3" },
+    { "id": "write", "lane": "steps", "col": 3, "type": "backend", "label": "Write + loop", "sublabel": "ready-green, r4", "tag": "step 4" },
+    { "id": "close", "lane": "steps", "col": 4, "type": "cloud", "label": "Close + PR", "sublabel": "STATE, plan", "tag": "step 5" },
+    { "id": "next", "lane": "steps", "col": 5, "type": "cloud", "label": "Units", "sublabel": "t0 first", "tag": "fresh session" },
+    { "id": "open_q", "lane": "waits", "col": 1, "type": "security", "label": "OPEN", "sublabel": "back to r5", "tag": "exception" }
   ],
   "edges": [
-    { "from": "open", "to": "checks", "label": "plan approved", "variant": "emphasis", "route": "straight" },
-    { "from": "checks", "to": "solution", "label": "PO signed", "variant": "emphasis", "route": "straight" },
-    { "from": "solution", "to": "r3", "label": "eng signed", "variant": "emphasis", "route": "straight" },
-    { "from": "r3", "to": "close", "label": "r3 in", "variant": "emphasis", "route": "straight" },
+    { "from": "open", "to": "author", "label": "plan approved", "variant": "emphasis", "route": "straight" },
+    { "from": "author", "to": "readback", "label": "doors green", "variant": "emphasis", "route": "straight" },
+    { "from": "readback", "to": "write", "label": "answered", "variant": "emphasis", "route": "straight" },
+    { "from": "write", "to": "close", "label": "ready-green", "variant": "emphasis", "route": "straight" },
     { "from": "close", "to": "next", "label": "one PR", "variant": "emphasis", "route": "straight" },
-    { "from": "po_calls", "to": "checks", "route": "straight" },
-    { "from": "eng_calls", "to": "solution", "route": "straight" },
-    { "from": "adr_ok", "to": "r3", "route": "straight" },
+    { "from": "readback_ok", "to": "readback", "route": "straight" },
+    { "from": "intake_ok", "to": "write", "route": "straight" },
     { "from": "merge_word", "to": "close", "route": "straight" },
-    { "from": "solution", "to": "parked", "variant": "security", "route": "straight" }
+    { "from": "author", "to": "open_q", "variant": "security", "route": "straight" }
   ],
   "cards": [
-    { "dot": "amber", "title": "Where we are (2026-09-21, session 38 closed)", "items": ["tree-view is at r3, signed by both seats: SC1 reworded and 22 checks by the PO seat, the solution half by the engineer seat; zero OPEN marks", "ADR 0031 committed at 205818e: the tree computed at print, the progress file's writers, the seven-task list, runs judged by expectation, findings once under their gate, the notify edge", "One PR carries 4e9d474 (the open), 205818e (the ADR) and the close; it merges on your word", "Next: intake to ready (r4), then ten units, about four sessions"] },
-    { "dot": "violet", "title": "What was decided", "items": ["Red run: a run records its expectation; a red under prove red reads doing, and a miss reads failed; SC3's six values stand", "SC1 reshaped: a finding names a gate and never a contract (ADR 0023), so the gates stand once at the repository level; a finding shows its kind", "ADR 0031: yes, extending 0024 and 0027 and amending neither", "Cursor: derived from task states, never stored; the doing task set last, else the first task to do in the contract changed last", "Solution half: taskcontract tree (print, query, --follow) and taskcontract progress (start, done, block, run); ten units t0 to t9; kit 0.15.0, schema unchanged"] },
-    { "dot": "cyan", "title": "Deferred, not this session", "items": ["tree-view after r3: intake to ready (r4), the units, the herdr plugin", "G1: the pilot's M0 code waits on its criteria review", "no-check-reads-the-source-document: which request carries it", "derived-language, feature-document, spec-doc-type; the demo intake in a sandbox consumer; wave B (playbook-loop, V1-V6); 5b; the G4.6 finding", "From r3: a status field on the finding form; the agent personas writing progress"] },
-    { "dot": "slate", "title": "Glossary", "items": ["r3: the request's third revision row; here the checks and the solution half, one signature per half", "Check: a one-line proof under a criterion, with an id such as SC3.1; the PO seat signs it, intake stores it per unit", "Solution half: scope, out of scope, interfaces, constraints, units, sequencing, risks and cost; the engineer seat signs it", "OPEN: a question the request cannot close alone; at ready none may stand, and an undecidable one parks the request", "Prove red: the task that runs a unit's new tests before the code exists, expecting them to fail", "Cursor: the one task in flight; the pane keeps its path open", "Progress file: .sdlc/progress/<id>.yaml, ADR 0024's home for execution state; disposable, never a gate input", "ADR 0024: the unit graph. ADR 0027: no committed plan. ADR 0029: the request format, checks above the line. ADR 0031: this request's rulings", "herdr: the terminal multiplexer the pilot runs sessions in; its plugin wraps the notify command outside the kit"] }
+    { "dot": "amber", "title": "Where we are (2026-09-21, session 38, second deliverable)", "items": ["tree-view r3 is signed by both seats and merged with ADR 0031 (PR #47 at 7d66466)", "The seat roster is ratified, so intake can author the contract", "Deliverable: specs/tree-view/contract.yaml, ready-green, language door at zero, every unit confirmed_by, committed alone", "The REQUEST gains the r4 Ready row and the appendix; the units start in a fresh session"] },
+    { "dot": "violet", "title": "The decisions, five after this plan", "items": ["1. The open commit", "2. The readback, one batch: each unit kept, changed or struck; the seats; the entities", "3. The intake commit: the contract alone, with Contract: tree-view", "4. The close commit and the PR", "5. The merge"] },
+    { "dot": "cyan", "title": "Deferred, not this session", "items": ["tree-view units t0 to t9, then the release; the herdr plugin outside the kit", "G1: the pilot's M0 code waits on its criteria review", "no-check-reads-the-source-document: which request carries it", "derived-language, feature-document, spec-doc-type; the demo intake in a sandbox consumer; wave B; 5b; the G4.6 finding", "From r3: a status field on the finding form; the agent personas writing progress"] },
+    { "dot": "slate", "title": "Glossary", "items": ["Intake: the G0 venue; a signed request in, a ready contract out", "Controlled register: the closed dictionary a contract's prose must use; the language door (lang-check) counts every miss", "Draft and ready: the validator's two profiles; development starts only from ready-green", "Readback: the unit graph and each unit shown to the seats before the contract is final", "confirmed_by: the seats that answered for a unit, checked against the ratified intake-seat roster (G0.3)", "r4: the REQUEST's intake row, Ready with the contract id and the revision both seats signed", "OPEN: a fact the contract cannot keep whole goes back to the REQUEST as a question, never a silent edit"] }
   ]
 }
