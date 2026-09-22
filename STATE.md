@@ -2,7 +2,7 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-21 (session 38 close, second deliverable)._
+> _Generated 2026-09-21 (session 38 close)._
 
 ## Now
 - **`tree-view` is ready (r4).** `specs/tree-view/contract.yaml`
@@ -17,9 +17,11 @@
   progress`, never a gate input; seven tasks per unit, shown and never
   enforced; a run judged by its expectation; each finding once, under its
   gate, showing its kind; the cursor derived from task states.
-- **Kit 0.14.0 is released** (tag `v0.14.0` at `1d306ea`). Branch
-  `session-38-tree-view-intake` carries `ef1d99d` (the plan), `f3c80d0`
-  (the intake) and this close, in one PR.
+- **The intake is merged** (PR #48 at `d4d897b`), carrying `ef1d99d` (the
+  plan), `f3c80d0` (the intake) and `b6cffa1` (the close). Kit 0.14.0 is
+  the release (tag `v0.14.0` at `1d306ea`). This STATE fix sits on local
+  main, one commit ahead of origin; the next session's PR carries it, as
+  PR #46 carried `c87ef7f`.
 
 ## Blockers
 - None.
