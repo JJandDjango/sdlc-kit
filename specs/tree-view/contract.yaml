@@ -1,0 +1,268 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: tree-view
+
+intent: >-
+  A repo holds its work in contracts, gates, findings and units, and no
+  command joins them. After this task `taskcontract tree` prints the work
+  as one tree. The tree derives from the repo files at each run, and the
+  command writes no file. The tree shows the gates with their findings,
+  then each contract with its verdicts, units, task steps and checks. Each
+  item shows one of six status values, its source field, its links and,
+  when `done`, its evidence. With an item id, the command prints that item
+  in at most 20 lines. With `--follow`, the command renders the path to the
+  current task and runs a `notify` command at a step that needs seats.
+  `taskcontract progress` records task steps and check runs in a local
+  file under `.sdlc/progress/`, and no gate reads that file. The contract
+  schema stays unchanged, and the kit version reads `0.15.0`.
+
+scope:
+  - taskcontract/tree.py
+  - taskcontract/tree_view.py
+  - taskcontract/progress.py
+  - taskcontract/data/gates.yaml
+  - taskcontract/data/tasks.yaml
+  - taskcontract/__main__.py
+  - tests/
+  - USAGE.md
+  - pyproject.toml
+  - skills/sdlc/init.py
+  - .github/workflows/sdlc.yml
+
+non_goals:
+  - No stored state; the tree holds nothing that a contract, a doc or a
+    finding already states.
+  - No edit through the tree; `taskcontract tree` only reads.
+  - No image output; the tree prints lines in a shell window.
+  - No tree across repos.
+  - No layer for the feature map in this slice; that layer waits for
+    `spec-doc-type`.
+  - No `herdr` plugin in the kit; that plugin runs the `notify` command
+    outside the kit.
+  - No change to what any gate checks.
+  - No replacement for `STATE.md`.
+  - No agent persona or skill flow writes task steps in this slice.
+  - No change to the findings form or the config template.
+
+decomposition:
+  - unit: t0-usage-pass-zero
+    id: t0-usage-pass-zero
+    confirmed_by: [user]
+    done_means: >-
+      `USAGE.md` gains a section on `taskcontract tree` and `taskcontract
+      progress`. The section covers each mode, the seven task steps, the
+      `notify` config and history backfilled by `done`. The status marks
+      read red at pass zero.
+    acceptance_sketch:
+      - >-
+        verify `USAGE.md` covers each mode, the seven task steps, the
+        `progress` commands and the `notify` config
+      - verify the status marks in the section read red
+  - unit: t1-tree-shape
+    id: t1-tree-shape
+    depends_on: [t0-usage-pass-zero]
+    confirmed_by: [user]
+    done_means: >-
+      `taskcontract tree` prints the gates with their findings and each
+      contract with its verdicts, units, task steps and checks. The command
+      reads the contracts, `active_gates`, the findings, `gates.yaml` and
+      `tasks.yaml`. The command writes no file.
+    acceptance_sketch:
+      - >-
+        verify the tree prints the gates with their findings, then each
+        contract with a verdict per gate in `active_gates`. Verify each
+        contract lists its units, and each unit its seven task steps and
+        its checks. Verify each item but a finding shows a status, and a
+        finding shows its kind (SC1.1)
+      - >-
+        verify each finding file prints once, under the gate it names.
+        Verify a gate outside `active_gates` prints as `inactive`, `gate:
+        none` prints under a `none` item, and `TEMPLATE.yaml` prints nothing
+        (SC1.2)
+      - >-
+        verify the tree writes no file, and each source change shows at the
+        next run with no other step. Verify this for a new unit, an absent
+        finding file and a new entry in `active_gates` (SC1.3)
+  - unit: t2-summaries-and-links
+    id: t2-summaries-and-links
+    depends_on: [t1-tree-shape]
+    confirmed_by: [user]
+    done_means: >-
+      Each item shows its source field unchanged. A contract shows its
+      `intent`, a unit its `done_means`, a finding its `statement`. A gate
+      or a task step shows its name from `gates.yaml` or `tasks.yaml`. Links
+      name their kind and read from `depends_on` or a finding `gate` field
+      only.
+    acceptance_sketch:
+      - >-
+        verify each item shows its source field unchanged: `intent`,
+        `done_means`, acceptance sketch, `statement`, or a `gates.yaml` or
+        `tasks.yaml` name (SC4.1)
+      - >-
+        verify the tree reads no doc: with `docs/` and each feature doc
+        absent, each item prints unchanged. Verify a feature doc shows only
+        as a file reference (SC4.2)
+      - >-
+        verify a unit shows `depends_on` links, one per unit its contract
+        names. Verify a finding links to the id in its `gate` field. Verify
+        links appear only from source fields, so `gate: none` gets no links
+        (SC5.1, SC5.2)
+  - unit: t3-status-and-cursor
+    id: t3-status-and-cursor
+    depends_on: [t1-tree-shape]
+    confirmed_by: [user]
+    done_means: >-
+      Each item shows one of six status values. An item reads `done` only
+      when every item under it reads `done`. Each `G0` verdict reads from
+      the validator at the ready and draft profiles. The current task
+      derives from the task steps in the `progress` files, never from a
+      stored marker. The file format under `.sdlc/progress/` lands in this
+      unit.
+    acceptance_sketch:
+      - >-
+        verify each status the tree prints is one of `to do`, `doing`,
+        `done`, `failed`, `blocked` or `waiting on a seat`. Verify an item
+        reads `done` only when every item under it reads `done` (SC3.1)
+      - >-
+        verify a contract `G0` verdict reads `done` only at ready-green, and
+        shows the validator command and `HEAD` id (SC7.3)
+      - >-
+        verify the current task is the `doing` step with the last change.
+        Verify the current task is the first `to do` step in the contract
+        with the last change when none reads `doing`. Verify no current task
+        shows without a `progress` file
+  - unit: t4-check-runs
+    id: t4-check-runs
+    depends_on: [t3-status-and-cursor]
+    confirmed_by: [user]
+    done_means: >-
+      `taskcontract progress run` runs a check command and records red or
+      green beside the `--expect` setting. Each record also holds the
+      command, the `HEAD` id, a `dirty` marker and the time. The command
+      exits `0` when red or green matches the `--expect` setting, else `1`.
+      The directory under `.sdlc/progress/` holds a `.gitignore` of `*`.
+    acceptance_sketch:
+      - >-
+        verify a check with no run reads `to do`, red under `--expect red`
+        reads `doing`, and green without `--expect` reads `done` (SC3.2)
+      - >-
+        verify red or green that differs from the `--expect` setting reads
+        `failed`: green under `--expect red`, or red without `--expect`
+        (SC3.3)
+      - >-
+        verify a `done` check shows the command of its green run and the
+        `HEAD` id. Verify a `dirty` marker shows when a file differs from
+        `HEAD` (SC7.1)
+  - unit: t5-task-writers
+    id: t5-task-writers
+    depends_on: [t3-status-and-cursor]
+    confirmed_by: [user]
+    done_means: >-
+      `taskcontract progress` gains `start`, `done` and `block` for task
+      steps, each record with the time and the `HEAD` id. A `done` on
+      `approve-tests` or `approve-commit` needs `--by`, and `block` needs
+      `--reason`. A `done` on a unit or a contract closes every step and
+      check under it.
+    acceptance_sketch:
+      - >-
+        verify a `done` step shows the `HEAD` id of its `done` call, plus
+        the seats for `approve-tests` and `approve-commit` (SC7.2)
+      - >-
+        verify `done` on `approve-tests` or `approve-commit` without `--by`
+        exits with an error and writes nothing
+      - >-
+        verify `done` on a contract closes every step and check under it,
+        and the tree reads that contract `done`
+  - unit: t6-query-face
+    id: t6-query-face
+    depends_on: [t2-summaries-and-links, t3-status-and-cursor]
+    confirmed_by: [user]
+    done_means: >-
+      `taskcontract tree` with an item id prints that item in at most 20
+      lines. The output holds its source field, status, links and each file
+      reference. An unknown id exits `2` and prints one line.
+    acceptance_sketch:
+      - >-
+        verify an item id prints its source field, status, links and each
+        file reference in at most 20 lines (SC6.1)
+      - >-
+        verify `taskcontract tree` accepts every id the tree prints. Verify
+        an unknown id exits `2` and prints `no node '{id}' - print the tree
+        to list every node id` (SC6.2)
+      - >-
+        verify each file reference is a repo path plus the line of its
+        source. Verify a gate or a task step points to its kit page (SC6.3)
+  - unit: t7-pane-face
+    id: t7-pane-face
+    depends_on: [t3-status-and-cursor]
+    confirmed_by: [user]
+    done_means: >-
+      `taskcontract tree --follow` shows every item on the path to the
+      current task. The other items under each item of that path collapse
+      to one line with counts per status. The mode renders the tree again
+      within a 2-second window of a source change.
+    acceptance_sketch:
+      - >-
+        verify the `--follow` mode shows every item on the path to the
+        current task. Verify other items under each path item collapse to
+        one line with counts per status (SC2.1)
+      - >-
+        verify the `--follow` mode prints at most 15 lines with the current
+        task in the last unit. Verify this on a fixture of five contracts
+        with seven units each (SC2.2)
+      - >-
+        verify the `--follow` mode renders the tree again within a 2-second
+        window of a source change. Verify the mode renders nothing new while
+        no source changes (SC2.3)
+  - unit: t8-approval-notify
+    id: t8-approval-notify
+    depends_on: [t7-pane-face]
+    confirmed_by: [user]
+    done_means: >-
+      When the current task is `approve-tests` or `approve-commit`, the
+      first line of the `--follow` mode is the `waiting on a seat` line.
+      The `notify` command in `.sdlc/config.yaml` runs once each time the
+      current task arrives at such a step. The command gets the item id in
+      `SDLC_NODE`. A `notify` failure prints one line, and the mode stays
+      running.
+    acceptance_sketch:
+      - >-
+        verify the first line of the `--follow` mode reads `waiting on a
+        seat: {approval} for {unit}` when the current task is
+        `approve-tests` or `approve-commit` (SC8.1)
+      - >-
+        verify the `notify` command runs once each time the current task
+        arrives at `approve-tests` or `approve-commit`. Verify a new render
+        with the same current task never runs the command again. Verify the
+        command gets the item id in `SDLC_NODE` (SC8.2)
+      - >-
+        verify the `--follow` mode stays running on a `notify` failure and
+        with no `notify` in the config. Verify a failure prints `notify
+        failed, exit {code}: {command}` (SC8.3)
+  - unit: t9-release
+    id: t9-release
+    depends_on: [t4-check-runs, t5-task-writers, t6-query-face,
+                 t8-approval-notify]
+    confirmed_by: [user]
+    done_means: >-
+      The `USAGE.md` marks read green and the version reads `0.15.0` in
+      `pyproject.toml` and `KIT_VERSION`. `CHANGELOG.md` gains the entry and
+      `MAP.md` gains a row.
+    acceptance_sketch:
+      - verify the version reads `0.15.0` and the `USAGE.md` marks read green
+
+dependencies: []
+
+entities:
+  - task-contract
+  - decomposition-unit
+  - acceptance-sketch
+  - gate
+  - verdict
+  - contract-profile
+  - intake-seat
+
+provenance:
+  origin: human-request
+  ref: REQUEST_tree-view_2026-09-21.md
