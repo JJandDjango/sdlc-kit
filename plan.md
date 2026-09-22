@@ -1,14 +1,13 @@
 # Plan - Session 38, second deliverable (2026-09-21) - tree-view intake to ready (r4)
 
-**Deliverable:** `specs/tree-view/contract.yaml`, derived from r3,
-validating ready-green with the language door at zero, every unit
-`confirmed_by`, committed alone. The REQUEST gains its r4 "Ready:" row and
+**Closed.** The deliverable is met: `specs/tree-view/contract.yaml` is
+ready-green at `f3c80d0`, the language door at zero, every unit
+`confirmed_by: [user]`, committed alone. The REQUEST carries its r4 row and
 the appendix. The units start in a fresh session.
 
-Where things stand: r3 is signed by both seats and merged with ADR 0031
-(PR #47 at `7d66466`). The seat roster is ratified, so intake can author.
-The contract restates r3 in the controlled register; any fact a rewrite
-cannot keep becomes an OPEN, not a silent edit.
+Where things stand: five decisions as planned, each answered yes. The
+readback kept all ten units as written; no fact of r3 was lost to the
+controlled register, so no OPEN entered the REQUEST.
 
 ## Diagram
 
@@ -24,32 +23,17 @@ The HTML is generated, never committed.
 
 ## Steps
 
-1. Open. Branch `session-38-tree-view-intake`, this plan and its diagram.
-   The open commit lands on your word.
-2. Author. Scaffold `specs/tree-view/contract.yaml` and write it from r3:
-   intent, scope, non-goals, ten units t0 to t9 with their done_means and
-   sketches (check ids trailing), `depends_on` from the sequencing, and
-   `entities` from the ratified glossary. Loop the language door to zero
-   and the draft profile to green before you see it.
-3. Readback. The unit graph, every unit's done_means and sketches, the
-   three plan answers beside r3, and the entities, in one message. You
-   keep, change or strike each unit and name the seats that answered.
-4. Write and loop. `confirmed_by` on every unit; the ready profile to green
-   and the language door at zero. The REQUEST gains the r4 row and the
-   appendix: the contract pointer, 22 Gherkin scenarios, the terms. The
-   intake commit, the contract alone with `Contract: tree-view`, lands on
-   your word.
-5. Close. STATE.md regenerated, this plan struck through, the close commit
-   and the PR. The PR merges on your word.
-
-## Decisions: five after this plan
-
-1. The open commit.
-2. The readback, one batch: each unit kept, changed or struck; the seats;
-   the entities.
-3. The intake commit.
-4. The close commit and the PR.
-5. The merge.
+1. ~~Open.~~ Done at `ef1d99d`, with this plan.
+2. ~~Author.~~ Scaffolded and written from r3; draft-green on the first
+   pass, the language door at zero after one rewrite (every sketch
+   sentence opens on "verify").
+3. ~~Readback.~~ The unit graph, the ten units, the three plan answers and
+   the seven entities; all kept.
+4. ~~Write and loop.~~ `confirmed_by: [user]` on every unit, ready-green on
+   the first pass; the r4 row and the appendix written; the intake
+   committed at `f3c80d0`.
+5. ~~Close.~~ STATE.md regenerated and this plan struck through; the PR
+   carrying this commit merges on your word.
 
 Deferred, not this session:
 - `tree-view` units t0 to t9, then the release; the herdr plugin outside
