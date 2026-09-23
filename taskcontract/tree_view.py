@@ -13,20 +13,22 @@ when it applies; on a task blocked by its own record, `because <reason>`).
 Then its links (`depends_on: <contract>/<unit>` on a unit, `gate: <value>`
 on a finding), then a contract's feature doc reference (`doc:
 docs/features/<id>.md`), and last its summary after ` | `. Each part but the
-id and status prints only when the item has it, after exactly one space.
+id and status prints only when the item has it, after exactly one space. A
+line break inside a part reads as one space, so an item keeps one line.
 
-`taskcontract tree <id>` queries one item: the id matched whole, every item
-with it printed as one block, in the tree's order, with one empty line
-between blocks. A block opens on the item's line cut after the evidence,
-then gives one labeled field per line, each only when the item has it:
-`summary:` whole, one line per link kind with its targets joined by `, `,
-`doc:` with the feature doc's path at line 1, `file: <path>:<line>` (a
-contract or verdict at line 1, a unit or check at its entry's first line, a
-finding's file at line 1), and `page:`, the kit page that defines a gate, a
-verdict's gate or a task. So a block never passes seven lines. The
-unreadable sources follow on stderr. An unknown id prints `no node '<id>' -
-print the tree to list every node id` on stderr alone and exits 2; an id
-with `--follow` exits 2 too.
+`taskcontract tree <id>` queries one item: the id matched whole, as the model
+holds it or as the tree prints it, every item with it printed as one block,
+in the tree's order, with one empty line between blocks. A block opens on
+the item's line cut after the evidence, then gives one labeled field per
+line, each only when the item has it: `summary:` whole, one line per link
+kind with its targets joined by `, `, `doc:` with the feature doc's path at
+line 1, `file: <path>:<line>` (a contract or verdict at line 1, a unit or
+check at its entry's first line, a finding's file at line 1), and `page:`,
+the kit page that defines a gate, a verdict's gate or a task. So a block
+never passes seven lines, whatever a field holds. The unreadable sources
+follow on stderr. An unknown id prints `no node '<id>' - print the tree to
+list every node id` on stderr alone and exits 2; an id with `--follow`
+exits 2 too.
 
 `--follow` keeps a pane on the current task. It prints the where-am-I line,
 `specs/<contract>/contract.yaml > <contract> > <unit> > <task>`, the unit
@@ -122,8 +124,15 @@ def line(item: Item, parts: list[str] | None = None) -> str:
         "doc": f" doc: {item.doc}" if item.doc else "",
         "summary": f" | {item.summary}" if item.summary else "",
     }
-    return item.id + "".join(text for name, text in fields.items()
-                             if parts is None or name in parts)
+    return _flat(item.id) + "".join(_flat(text) for name, text in fields.items()
+                                    if parts is None or name in parts)
+
+
+def _flat(text: str) -> str:
+    """A field or a line by the text rule, save that it keeps its leading
+    space: each line break inside it reads as one space, so it prints on
+    one line."""
+    return " ".join(text.splitlines())
 
 
 def block(root: Path, item: Item) -> str:
@@ -144,14 +153,15 @@ def block(root: Path, item: Item) -> str:
         lines.append(f"file: {reference}")
     if item.page:
         lines.append(f"page: {item.page}")
-    return "".join(text + "\n" for text in lines)
+    return "".join(_flat(text) + "\n" for text in lines)
 
 
 def _matches(items: list[Item], item_id: str) -> list[Item]:
-    """Every item with this id, in print order."""
+    """Every item with this id, as the model holds it or as the tree prints
+    it, in print order."""
     found: list[Item] = []
     for item in items:
-        if item.id == item_id:
+        if item_id in (item.id, _flat(item.id)):
             found.append(item)
         found += _matches(item.children, item_id)
     return found
@@ -183,7 +193,7 @@ def pane(items: list[Item], parts: list[str] | None = None,
             lines.append(f"{INDENT * depth}{len(others)} more: {_fold(others, depth, fold)}")
         text = line(chosen, parts)
         if depth:  # under another item: the id's last segment, the rest whole
-            text = chosen.id.rpartition("/")[2] + text[len(chosen.id):]
+            text = _flat(chosen.id.rpartition("/")[2]) + text[len(_flat(chosen.id)):]
         lines.append(INDENT * depth + text)
         siblings = chosen.children
     return lines
@@ -256,7 +266,9 @@ def forget(cache: dict[str, str], before: dict, after: dict) -> None:
 def follow(root: Path, out, sleep=None) -> int:
     """The pane: render, then each second check the notify commands still
     running and render again when a source changed; Ctrl-C exits 0 and
-    neither stops nor waits on the commands it started."""
+    neither stops nor waits on the commands it started, though on POSIX the
+    same Ctrl-C reaches them too, since they share the terminal's process
+    group."""
     cache: dict[str, str] = {}
     running: list[tuple[subprocess.Popen, str]] = []
     try:
@@ -368,7 +380,7 @@ def main_tree(args) -> int:
     else:
         found = _matches(items, node)
         if not found:
-            print(_no_node(node), file=sys.stderr)
+            print(_no_node(_flat(node)), file=sys.stderr)
             return 2
         sys.stdout.write("\n".join(block(Path(args.root), item) for item in found))
     for problem in problems:

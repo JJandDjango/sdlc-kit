@@ -471,6 +471,70 @@ def test_sc6_3_a_gate_a_task_and_a_verdict_point_to_their_kit_page(tmp_path, cap
         0, ["specs/alpha/contract.yaml:1"], [])
 
 
+# --- a line break inside a field ------------------------------------------------
+
+REASON = "\n".join(f"reason line {n}" for n in range(25))
+
+
+def test_sc6_1_a_field_holding_line_breaks_prints_on_one_line(tmp_path, capsys):
+    """A progress record and a finding hold their text as written, line
+    breaks included; each item's line reads them as spaces, on the whole
+    tree and in the query, so a block keeps within its cap."""
+    root = _repo(tmp_path)
+    _dump(root / ".sdlc" / "progress" / "alpha.yaml", {"records": [
+        {"item": "alpha/a1-core/SC1.1", "run": "green", "expect": "green",
+         "command": "python -m pytest\n-k sc1_1", "head": "abc1234",
+         "at": "2026-09-22T10:00:00Z"},
+        {"item": "alpha/a1-core/approve-tests", "state": "done", "by": "the\nuser",
+         "head": "abc1234", "at": "2026-09-22T10:01:00Z"},
+        {"item": "alpha/a1-core/write-tests", "state": "blocked", "reason": REASON,
+         "head": "abc1234", "at": "2026-09-22T10:02:00Z"},
+    ]})
+    _dump(root / ".sdlc" / "findings" / "odd-kind.yaml",
+          _finding("odd-kind", "G0", "friction\nand more"))
+    rows, _ = _whole(root, capsys)  # every line of the whole tree is one item's line
+    expected = {
+        "alpha/a1-core/SC1.1": "alpha/a1-core/SC1.1 [done] via python -m pytest -k sc1_1 at abc1234",
+        "alpha/a1-core/approve-tests": "alpha/a1-core/approve-tests [done] by the user at abc1234",
+        "alpha/a1-core/write-tests":
+            "alpha/a1-core/write-tests [blocked] because " + REASON.replace("\n", " "),
+        "gates/G0/odd-kind": "gates/G0/odd-kind [kind: friction and more]",
+    }
+    for node, first in expected.items():
+        assert _first(_rows_of(rows, node)[0]) == first, node
+        code, out, err = _query(root, capsys, node)
+        assert (code, err) == (0, ""), node
+        lines = out.splitlines()
+        assert lines[0] == first, node
+        assert len(lines) <= LIMIT, out
+
+
+def test_sc6_2_an_unknown_id_holding_a_line_break_prints_one_line(tmp_path, capsys):
+    root = _repo(tmp_path)
+    assert _query(root, capsys, "alpha/no\nsuch") == (
+        2, "", UNKNOWN.format(id="alpha/no such"))
+
+
+def test_sc6_2_an_id_holding_a_line_break_answers_as_the_tree_prints_it(tmp_path, capsys):
+    alpha = ALPHA + (
+        "  - unit: work named on two lines\n"
+        '    id: "two\\nlines"\n'
+        "    confirmed_by: [user]\n"
+        "    done_means: the work on two lines is done\n"
+        "    acceptance_sketch:\n"
+        "      - verify the id folds\n")
+    root = _repo(tmp_path, alpha=alpha)
+    code, out, _ = _call(["tree", "--root", str(root)], capsys)
+    assert code == 0
+    assert "  alpha/two lines [to do] | the work on two lines is done" in out.splitlines()
+    unit = (
+        "alpha/two lines [to do]\n"
+        "summary: the work on two lines is done\n"
+        f"file: specs/alpha/contract.yaml:{_line_of(alpha, '  - unit: work named on two lines')}\n")
+    assert _query(root, capsys, "alpha/two lines") == (0, unit, "")  # as the tree prints it
+    assert _query(root, capsys, "alpha/two\nlines") == (0, unit, "")  # as the contract holds it
+
+
 # --- a link prints once --------------------------------------------------------
 
 def test_a_repeated_depends_on_entry_links_once_in_its_first_order(tmp_path, capsys):
