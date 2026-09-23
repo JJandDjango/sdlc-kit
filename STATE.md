@@ -34,7 +34,12 @@
 1. Ask the user: is the pane enough to unpark G1 and to replace the
    Archify plans? If yes, G1 (its criteria review before the pilot's M0
    code), then the pilot's M0 code.
-2. t6 (the query face) and t9 (the release, 0.15.0).
+2. `pane-view` (`REQUEST_pane-view_2026-09-23.md`, untracked, at r2):
+   features 1 to 4 kept (a where-am-I line, `tree: pane: parts:`, short
+   ids in the pane, `fold: names`), 5 and 6 struck. Next: its checks and
+   solution half (r3), with OPEN 1 (can the id be hidden), then intake.
+   It lands before tree-view's t6; then t6 (the query face) and t9 (the
+   release, 0.15.0), whose USAGE pass documents it.
 3. The pilot's config line, in the engine's session.
 4. Deferred: flag the Claude pane itself (a local `claude.toml` detection
    rule shadowing herdr's remote one, or a herdr change); the hook's key
