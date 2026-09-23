@@ -266,6 +266,7 @@ def test_sc2_1_the_pane_shows_the_path_and_folds_each_levels_other_items_into_on
     _, renders = _pane(root)
     whole = _whole(root, capsys)
     assert renders == [[
+        "specs/alpha/contract.yaml > alpha > a2-edges > prove-red",  # the where-am-I line
         "3 more: 2 to do, 1 done",                    # gates/G0, gates/none, beta
         whole["alpha"],
         "  2 more: 1 done, 1 blocked",                # alpha/G0, alpha/a1-core
@@ -286,6 +287,7 @@ def test_sc2_1_a_level_with_no_other_item_prints_no_fold_line(tmp_path, capsys):
     whole = _whole(root, capsys)
     assert renders == [[
         "waiting on a seat: approve-tests for lone/l1-lone",  # the current task is an approval
+        "specs/lone/contract.yaml > lone > l1-lone > approve-tests",  # the where-am-I line
         whole["lone"],
         whole["lone/l1-lone"],
         "    7 more: 7 to do",  # six tasks and one check
@@ -560,7 +562,8 @@ def test_in_follow_a_line_longer_than_the_width_is_cut_to_the_width_ending_in_do
         tmp_path, capsys, monkeypatch):
     root = _path_repo(tmp_path)
     _, (full,) = _pane(root)  # at 500 columns, every line whole
-    exact = len(full[1])      # the contract line, exactly as wide as the pane
+    assert full[0] == "specs/alpha/contract.yaml > alpha > a2-edges > prove-red"
+    exact = len(full[2])      # the contract line, exactly as wide as the pane
     monkeypatch.setenv("COLUMNS", str(exact))
 
     def narrower():
@@ -569,14 +572,14 @@ def test_in_follow_a_line_longer_than_the_width_is_cut_to_the_width_ending_in_do
 
     _, renders = _pane(root, narrower)
     assert renders[0] == _cut(full, exact)
-    assert renders[0][1] == full[1]            # a line exactly the width stays whole
+    assert renders[0][2] == full[2]            # a line exactly the width stays whole
     assert renders[1] == _cut(full, 40)        # the width is read at each render
     assert any(line.endswith("...") and len(line) == 40 for line in renders[1])
     assert all(len(line) <= 40 for line in renders[1])
     # the whole tree, without --follow, prints every line whole at any width
     code = main(["tree", "--root", str(root)])
     out = capsys.readouterr().out
-    assert code == 0 and full[1] in out.splitlines()
+    assert code == 0 and full[2] in out.splitlines()
 
 
 def test_in_follow_a_width_below_ten_columns_cuts_as_ten(tmp_path, monkeypatch):
@@ -635,8 +638,10 @@ def test_the_pane_recomputes_a_verdict_only_when_its_contract_or_the_vocabulary_
         ["alpha", "beta", "gamma"], [], [], [], ["alpha"],
         ["alpha", "beta", "gamma"], ["beta"], []]
     assert sleeper.renders == [1, 1, 2, 3, 4, 5, 6, 6]
+    assert all(render[0] == "specs/alpha/contract.yaml > alpha > a1-core > write-tests"
+               for render in renders)
     # the recomputed verdict reads: alpha is draft-red from the fourth render on
-    assert [render[1].split()[:2] for render in renders] == [
+    assert [render[2].split()[:2] for render in renders] == [
         ["alpha", "[doing]"], ["alpha", "[doing]"], ["alpha", "[doing]"],
         ["alpha", "[failed]"], ["alpha", "[failed]"], ["alpha", "[failed]"]]
 
@@ -885,7 +890,8 @@ def test_sc8_1_on_approve_tests_the_first_line_is_the_waiting_line_cut_like_the_
     _, (full,) = _pane(root)
     whole = _whole(root, capsys)
     assert full[0] == WAIT_LONE
-    assert full == [WAIT_LONE, whole["lone"], whole["lone/l1-lone"], "    7 more: 7 to do",
+    assert full == [WAIT_LONE, "specs/lone/contract.yaml > lone > l1-lone > approve-tests",
+                    whole["lone"], whole["lone/l1-lone"], "    7 more: 7 to do",
                     whole["lone/l1-lone/approve-tests"]]
     monkeypatch.setenv("COLUMNS", "40")
     out = _Writes()
@@ -906,6 +912,7 @@ def test_sc8_1_on_approve_commit_the_waiting_line_names_the_approval_and_its_uni
     assert renders[0][0] == "waiting on a seat: approve-commit for alpha/a2-edges"
     assert renders == [[
         "waiting on a seat: approve-commit for alpha/a2-edges",
+        "specs/alpha/contract.yaml > alpha > a2-edges > approve-commit",  # the where-am-I line
         "1 more: 1 to do",                   # beta
         whole["alpha"],
         "  1 more: 1 to do",                 # alpha/a1-core
@@ -924,7 +931,8 @@ def test_sc8_1_the_waiting_line_leaves_when_the_current_task_moves_off_the_appro
         root, "alpha", first, _step("alpha/a2-edges/commit", "doing", "10:01")))
     whole = _whole(root, capsys)
     assert [render[0] for render in renders] == [
-        "waiting on a seat: approve-commit for alpha/a2-edges", "1 more: 1 to do"]
+        "waiting on a seat: approve-commit for alpha/a2-edges",
+        "specs/alpha/contract.yaml > alpha > a2-edges > commit"]
     assert renders[1][-1] == whole["alpha/a2-edges/commit"]
     assert not any(line.startswith("waiting on a seat") for line in renders[1])
 
