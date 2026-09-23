@@ -31,9 +31,9 @@
 - None. The push and the PR wait on the user's word.
 
 ## Next actions
-1. Ask the user: is the pane enough to unpark G1 and to replace the
-   Archify plans? If yes, G1 (its criteria review before the pilot's M0
-   code), then the pilot's M0 code.
+1. G1 is unparked (the user, 2026-09-23, session 43): it queues after
+   `pane-view`, t6 and t9; G1's criteria review comes before the pilot's
+   M0 code. Still open: whether the pane replaces the Archify plans.
 2. `pane-view` (`REQUEST_pane-view_2026-09-23.md`, untracked, at r2):
    features 1 to 4 kept (a where-am-I line, `tree: pane: parts:`, short
    ids in the pane, `fold: names`), 5 and 6 struck. Next: its checks and
