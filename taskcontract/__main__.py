@@ -10,6 +10,7 @@ from pathlib import Path
 from .checker import PROFILES, load_schema, validate_path
 from .graph import main_graph
 from .lang import main_lang_check, main_lang_extract
+from .progress import RUNS, main_progress
 from .scaffold import scaffold
 from .scope_check import main_scope_check
 from .suppression_audit import main_audit
@@ -78,6 +79,34 @@ def main(argv=None) -> int:
         help="print the work as one tree, derived from the repo's files at each run (ADR 0031)")
     tree.add_argument("--root", type=Path, default=Path("."),
                       help="repo root that holds specs/ and .sdlc/ (default: cwd)")
+    progress = sub.add_parser(
+        "progress",
+        help="record the work's progress under .sdlc/progress/ (ADR 0031)")
+    actions = progress.add_subparsers(dest="action", required=True)
+    run = actions.add_parser(
+        "run",
+        help="run a check's command and record red or green beside what it expected")
+    run.add_argument("check", help="the check's id, as the tree prints it")
+    run.add_argument("--expect", choices=RUNS, default="green",
+                     help="the result the run should give (default: green)")
+    run.add_argument("--root", type=Path, default=Path("."),
+                     help="repo root that holds specs/ and .sdlc/ (default: cwd)")
+    run.add_argument("argv", nargs="+", metavar="COMMAND",
+                     help="the command and its arguments, after --")
+    start = actions.add_parser("start", help="record a task step doing")
+    start.add_argument("item", help="the task's id, as the tree prints it")
+    done = actions.add_parser(
+        "done", help="record a task step done, or close a unit or a contract")
+    done.add_argument("item", help="the task's, unit's or contract's id, as the tree prints it")
+    done.add_argument("--by", default=None, metavar="SEAT",
+                      help="the seat that approved; approve-tests and approve-commit need it")
+    block = actions.add_parser("block", help="record a task step blocked, with its reason")
+    block.add_argument("item", help="the task's id, as the tree prints it")
+    block.add_argument("--reason", default=None, metavar="TEXT",
+                       help="why the step is blocked; needed")
+    for action in (start, done, block):
+        action.add_argument("--root", type=Path, default=Path("."),
+                            help="repo root that holds specs/ and .sdlc/ (default: cwd)")
     audit = sub.add_parser(
         "suppression-audit",
         help="G4.10 four-vector diff check: no new weakening of gating constraints")
@@ -108,6 +137,9 @@ def main(argv=None) -> int:
 
     if args.command == "tree":
         return main_tree(args)
+
+    if args.command == "progress":
+        return main_progress(args)
 
     if args.command == "suppression-audit":
         return main_audit(args)

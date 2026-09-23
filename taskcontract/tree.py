@@ -6,7 +6,8 @@ specs/, `active_gates` from .sdlc/config.yaml, the findings under
 .sdlc/findings/, each contract's progress file under .sdlc/progress/, and
 the two name lists the package ships (data/gates.yaml, data/tasks.yaml).
 When a `G0` verdict shows, it also runs the validator on that contract and
-runs git once for `HEAD`. It asks only whether docs/features/<id>.md exists,
+runs git twice: once for `HEAD`, once for the contract files that differ
+from it. It asks only whether docs/features/<id>.md exists,
 never opens it, reads no other document and writes no file.
 
 The gates stand first, at the repository level. A finding names a gate and
@@ -20,8 +21,15 @@ Every item but a finding carries one of six statuses; a finding records
 none, so it shows its kind. A task step reads its last record in the
 contract's progress file, a check its last run judged by what the run
 expected, and a close of a unit or contract reads everything under it
-done. A `G0` verdict reads the validator at the draft and ready profiles
-and names the command and the `HEAD` it read; a verdict at any other gate,
+done. A check whose last run was green as expected names that run's
+command and `HEAD`, and `dirty` when the run recorded it. A task that reads
+done by its own done record names that record's `HEAD`, the seat it gives
+an approval, and `dirty`; a task that reads blocked by its own record names
+its reason. A unit or contract that reads done names its latest close's
+`HEAD` and `dirty`. A close neither adds evidence to the items under it nor
+hides theirs. A `G0` verdict reads the validator at the
+draft and ready profiles and names the command and the `HEAD` it read, and
+`dirty` when its contract file differs from `HEAD`; a verdict at any other gate,
 and every gate item, reads `to do`. A unit or contract rolls up its
 children, so it reads `done` only when every child does.
 
@@ -44,7 +52,6 @@ summary, after the marks and evidence.
 from __future__ import annotations
 
 import re
-import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -52,7 +59,7 @@ import yaml
 
 from . import checker
 from .graph import units as unit_rows
-from .progress import Record, read_progress
+from .progress import Record, head_id, read_progress, run_git
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 GATES_PATH = DATA_DIR / "gates.yaml"
@@ -67,7 +74,7 @@ FORM = "TEMPLATE.yaml"  # the findings form, never a finding
 INACTIVE = "inactive"
 CURRENT = "current"
 APPROVALS = ("approve-tests", "approve-commit")
-NO_COMMIT = "no commit"
+DIRTY = "dirty"
 
 # A check's id is the ids in its sketch's trailing parentheses, where intake
 # writes them, joined with "+"; parentheses that hold words name no id.
@@ -151,15 +158,27 @@ def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]])
     """Set every status under the contracts, the verdicts' evidence and the
     current mark; the gate items keep `to do`."""
     readings: dict[str, _Reading] = {}
+    # Each check's last run and each task's own last record, whatever closed
+    # it after, and each unit's and contract's latest close.
+    own: dict[str, Record] = {}
     latest: tuple[tuple, Item] | None = None  # the greatest counted key, its contract
     for position, contract in enumerate(contracts):
-        key = _apply(contract, position, progress.get(contract.id, []), readings)
+        key = _apply(contract, position, progress.get(contract.id, []), readings, own)
         if key is not None and (latest is None or key > latest[0]):
             latest = (key, contract)
     for contract in contracts:
         for item in _walk(contract):
             if item.level in ("task", "check") and item.id in readings:
                 item.status = readings[item.id].status
+            record = own.get(item.id)
+            if record is None:
+                continue
+            if item.level == "check" and record.run == record.expect == "green":
+                item.evidence = run_evidence(record)
+            elif item.level == "task" and record.state == item.status == DONE:
+                item.evidence = state_evidence(record)
+            elif item.level == "task" and record.state == item.status == BLOCKED:
+                item.evidence = f"because {record.reason}" if record.reason else None
     current = _current(contracts, readings, latest[1] if latest else None)
     if current is not None:
         if current.id.rsplit("/", 1)[-1] in APPROVALS:
@@ -168,11 +187,15 @@ def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]])
     _verdicts(root, contracts)
     for contract in contracts:
         _roll_up(contract)
+        for item in _walk(contract):
+            if item.level in ("unit", "contract") and item.status == DONE and item.id in own:
+                item.evidence = state_evidence(own[item.id])
 
 
 def _apply(contract: Item, position: int, records: list[Record],
-           readings: dict[str, _Reading]) -> tuple | None:
-    """Apply one contract's records in file order; the greatest key counted."""
+           readings: dict[str, _Reading], own: dict[str, Record]) -> tuple | None:
+    """Apply one contract's records in file order, noting each item's own
+    last record that fits it; the greatest key counted."""
     index = {item.id: item for item in _walk(contract)}
     latest = None
     for n, record in enumerate(records):
@@ -180,6 +203,7 @@ def _apply(contract: Item, position: int, records: list[Record],
         placed = _place(record, index.get(record.item))
         if placed is None:
             continue
+        own[record.item] = record
         for item, status in placed:
             readings[item.id] = _Reading(status, key)
         latest = key if latest is None or key > latest else latest
@@ -224,8 +248,9 @@ def _current(contracts: list[Item], readings: dict[str, _Reading],
 
 
 def _verdicts(root: Path, contracts: list[Item]) -> None:
-    """Each `G0` verdict from the validator, with its command and `HEAD`; the
-    schema loads and git runs once per print, and only when a `G0` shows."""
+    """Each `G0` verdict from the validator, with its command and `HEAD`, and
+    `dirty` when its contract file differs from `HEAD`; the schema loads and
+    git runs twice per print, and only when a `G0` shows."""
     verdicts = [(contract.id, item) for contract in contracts
                 for item in contract.children
                 if item.level == "verdict" and item.id == f"{contract.id}/G0"]
@@ -233,11 +258,40 @@ def _verdicts(root: Path, contracts: list[Item]) -> None:
         return
     schema = checker.load_schema()
     head = head_id(root)
+    dirty = dirty_contracts(root)
     for cid, verdict in verdicts:
         path = f"specs/{cid}/contract.yaml"
         verdict.status = g0_status(root / path, schema)
         verdict.evidence = (f"via python -m taskcontract validate {path} "
-                            f"--profile ready at {head}")
+                            f"--profile ready at {head}"
+                            + (f" {DIRTY}" if cid in dirty else ""))
+
+
+def run_evidence(record: Record) -> str | None:
+    """A green run's evidence: its command, the `HEAD` it ran at, and `dirty`
+    when a tracked file differed; each part only when the record has it."""
+    parts = []
+    if record.command is not None:
+        parts.append(f"via {record.command}")
+    if record.head is not None:
+        parts.append(f"at {record.head}")
+    if record.dirty:
+        parts.append(DIRTY)
+    return " ".join(parts) or None
+
+
+def state_evidence(record: Record) -> str | None:
+    """A done record's evidence: the seat it names, the `HEAD` it was
+    written at, and `dirty` when a tracked file differed; each part only when
+    the record has it."""
+    parts = []
+    if record.by is not None:
+        parts.append(f"by {record.by}")
+    if record.head is not None:
+        parts.append(f"at {record.head}")
+    if record.dirty:
+        parts.append(DIRTY)
+    return " ".join(parts) or None
 
 
 def g0_status(path: Path, schema: dict) -> str:
@@ -255,15 +309,26 @@ def g0_status(path: Path, schema: dict) -> str:
     return BLOCKED if any(v.rule == "TC003" for v in ready) else TO_DO
 
 
-def head_id(root: Path) -> str:
-    """`git rev-parse --short HEAD` at the root, or `no commit`."""
-    try:
-        result = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root,
-                                capture_output=True, encoding="utf-8", errors="replace")
-    except OSError:
-        return NO_COMMIT
-    head = (result.stdout or "").strip()
-    return head if result.returncode == 0 and head else NO_COMMIT
+def dirty_contracts(root: Path) -> set[str]:
+    """The ids whose specs/<id>/contract.yaml differs from `HEAD`: modified,
+    staged or not, or not in `HEAD` at all. One git call for every contract;
+    none outside git."""
+    result = run_git(root, "status", "--porcelain", "-z", "--untracked-files=all",
+                     "--", ":(glob)specs/*/contract.yaml")
+    if result is None or result.returncode != 0:
+        return set()
+    dirty: set[str] = set()
+    entries = iter(result.stdout.split("\0"))
+    for entry in entries:
+        if len(entry) < 4:
+            continue
+        if entry[0] in "RC":
+            next(entries, None)  # a rename's or copy's source path follows
+        # The path runs from the repo's top; its last three parts are ours.
+        parts = entry[3:].split("/")
+        if len(parts) >= 3:
+            dirty.add(parts[-2])
+    return dirty
 
 
 def _roll_up(item: Item) -> None:
