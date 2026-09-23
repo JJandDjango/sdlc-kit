@@ -16,25 +16,36 @@ contract, and a script computes the verdict):
   and a missing setting keep the counts; any other value keeps them and
   prints `pane fold ignored: ...` on stderr.
 
+**Closed.** The deliverable is met: p3 at `4e298af`, p4 at `3be9db2`, each
+Two-Key PASS at round 1 with advisories only. Suite 577 passed, all fifteen
+contracts ready-green, scope-check green. The live check after p4 passed in
+herdr. pane-view's five units and the contract are closed in progress. The
+push and the PR wait on the user's word.
+
 ## Steps
 
-1. Open. Branch `session-46-pane-view-p3-p4` cut from `ee05d24`; this plan.
-2. p3, draft and approve the test list. SC2.1 to SC2.3; the drafter writes
-   `tests/test_pane_view.py` whole and moves `_cut` and `_short` into
-   `tests/conftest.py` (p2's Two-Key advisory).
-3. p3, write the tests and prove red.
-4. p3, green: the developer adds the `tree: pane:` reader to `tree.py`.
-5. p3, approve the commit and commit.
-6. p3 Two-Key. p4's drafter may run beside it.
-7. p4, draft and approve the test list. SC4.1 and SC4.2.
-8. p4, write the tests and prove red.
-9. p4, green.
-10. p4, approve the commit and commit.
-11. p4 Two-Key.
-12. The live check in herdr: a probe pane on a scratch copy of the root,
-    with `parts:` and `fold: names` set.
-13. Close. STATE.md regenerated; this plan struck; the push and the PR go
-    to the user.
+1. ~~Open.~~ Branch cut from `ee05d24`; the plan at `b2d8541`.
+2. ~~p3, draft and approve the test list.~~ Nineteen tests; `_cut` and
+   `_short` moved to `tests/conftest.py`; one p1 test name the rename
+   glued (`..._iscut_lines`) restored at placement; approved by Claude.
+3. ~~p3, write the tests and prove red.~~ SC2.1 to SC2.3 red as expected;
+   the suite 41 failed, 505 passed.
+4. ~~p3, green.~~ Suite 546 passed; every receipt green.
+5. ~~p3, approve the commit and commit.~~ At `4e298af`; the three checks
+   green.
+6. ~~p3 Two-Key.~~ PASS at round 1; its docstring advisory fixed at p4.
+7. ~~p4, draft and approve the test list.~~ Fifteen tests; approved by
+   Claude.
+8. ~~p4, write the tests and prove red.~~ SC4.1 and SC4.2 red as expected;
+   the suite 31 failed, 546 passed.
+9. ~~p4, green.~~ Suite 577 passed; every receipt green.
+10. ~~p4, approve the commit and commit.~~ At `3be9db2`; both checks green.
+11. ~~p4 Two-Key.~~ PASS at round 1; three advisories, carried to t9.
+12. ~~The live check in herdr.~~ The request's example drawn live at t6's
+    first approval; the hook flagged the probe `sdlc`, `blocked`; a bad
+    `fold:` brought the counts back with its message.
+13. ~~Close.~~ STATE.md regenerated; this plan struck; the push and the PR
+    go to the user.
 
 Steps 1, 12 and 13 sit outside a contract unit, so the pane does not show
 them.
