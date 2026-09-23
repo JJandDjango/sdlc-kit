@@ -1,4 +1,4 @@
-"""The pane-view suite (contract pane-view, unit p1-where-line).
+"""The pane-view suite (contract pane-view, units p1-where-line and p2-short-ids).
 
 `taskcontract tree --follow` prints one where-am-I line for the current
 task: `specs/<contract>/contract.yaml > <contract> > <unit> > <task>`, the
@@ -6,17 +6,30 @@ contract's file from the repository root with forward slashes, then the
 contract's id, then the last segment of the unit's id and of the task's id,
 joined by ` > `, with no indent. When the current task is `approve-tests` or
 `approve-commit` the line stands directly under the waiting line, which stays
-the pane's first line word for word; otherwise it is the pane's first line,
-above the top-level fold line (SC1.1). A where-am-I line longer than the
-pane's width is cut to the width and ends in `...`, as every pane line is,
-and with no current task the pane prints none (SC1.2).
+the pane's first line word for word; otherwise it is the pane's first line.
+Either way it stands above the rest of the pane: the top-level fold line, or
+the contract's line when the top level holds no other item (SC1.1). A
+where-am-I line longer than the pane's width is cut to the width and ends in
+`...`, as every pane line is, and with no current task the pane prints none
+(SC1.2).
 
-The rest of the pane reads as tree-view t7 and t8 built it: each item line
-equals the whole tree's line for its item, and `taskcontract tree` prints no
-where-am-I line. The loop runs in-process: `follow(root, out, sleep=...)`
-takes an injected sleep, which changes source files between scans and raises
-KeyboardInterrupt to end the loop, as Ctrl-C does. No test waits on a real
-second.
+In the pane, each item line under another item opens on the last segment of
+its id, the part after the id's last `/`: a unit's line on `a2-edges`, not
+`alpha/a2-edges`, and a task's on `prove-red`, not
+`alpha/a2-edges/prove-red`. A top-level item's line opens on its full id.
+After the id each item line reads exactly as the whole tree's line for that
+item, at the same indent, and only the id that opens the line shortens: a
+summary that names a full id keeps it (SC3.1). `taskcontract tree` prints
+the same bytes as before; the waiting line, every link (`depends_on:
+<contract>/<unit>` on a unit's line) and the notify command's `SDLC_NODE`
+keep full ids (SC3.2).
+
+The rest of the pane reads as tree-view t7 and t8 built it: the fold lines
+and their counts, the cut to the pane's width, the `no current task`
+render; and `taskcontract tree` prints no where-am-I line. The loop runs
+in-process: `follow(root, out, sleep=...)` takes an injected sleep, which
+changes source files between scans and raises KeyboardInterrupt to end the
+loop, as Ctrl-C does. No test waits on a real second.
 """
 
 from __future__ import annotations
@@ -24,6 +37,7 @@ from __future__ import annotations
 import importlib
 import io
 import re
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -141,6 +155,21 @@ def _query_face_repo(tmp_path):
     return root
 
 
+def _hyphens_and_digits_repo(tmp_path):
+    """pane-view-2, whose ids carry hyphens and digits, at its unit
+    p10-where-line-3's two-key; no active gate."""
+    root = tmp_path / "repo"
+    _config(root, [])
+    _dump(root / "specs" / "pane-view-2" / "contract.yaml", _contract("pane-view-2", [
+        _unit("p9-short-ids-2", ["verify it holds (SC3.1)"]),
+        _unit("p10-where-line-3", ["verify it reads (SC1.1)"], depends_on=["p9-short-ids-2"]),
+    ]))
+    write_seat_roster(root)
+    _progress(root, "pane-view-2",
+              _step("pane-view-2/p10-where-line-3/two-key", "doing", "10:00"))
+    return root
+
+
 def _at(clock):
     return f"2026-09-22T{clock}:00Z"
 
@@ -240,9 +269,23 @@ def _whole(root, capsys):
     return lines
 
 
+def _short(line):
+    """The whole tree's line for an item under another item, as the pane
+    prints it: the leading full id cut to its last segment, the indent and
+    the rest of the line kept byte for byte."""
+    match = ROW.match(line)
+    assert match, f"not an item line: {line!r}"
+    indent, full = match["indent"], match["id"]
+    return indent + full.rsplit("/", 1)[-1] + line[len(indent) + len(full):]
+
+
 def _where_lines(render):
     """The render's lines that open on a contract file's path."""
     return [line for line in render if line.startswith("specs/")]
+
+
+def _cut(lines, width):
+    return [line if len(line) <= width else line[:width - 3] + "..." for line in lines]
 
 
 # --- SC1.1 the where-am-I line and its place ----------------------------------------
@@ -257,9 +300,9 @@ def test_sc1_1_at_a_task_that_is_not_an_approval_the_where_line_is_the_panes_fir
         "2 more: 1 to do, 1 done",                    # gates/G0, beta
         whole["alpha"],
         "  2 more: 1 done, 1 blocked",                # alpha/G0, alpha/a1-core
-        whole["alpha/a2-edges"],
+        _short(whole["alpha/a2-edges"]),
         "    9 more: 6 to do, 2 done, 1 failed",      # the other tasks and the checks
-        whole["alpha/a2-edges/prove-red"],
+        _short(whole["alpha/a2-edges/prove-red"]),
     ]]
     assert _where_lines(renders[0]) == [WHERE_PROVE_RED]
 
@@ -275,9 +318,9 @@ def test_sc1_1_at_approve_tests_the_where_line_stands_directly_under_the_waiting
         "1 more: 1 to do",                            # pane-view
         whole["tree-view"],
         "  1 more: 1 to do",                          # tree-view/t5-pane-face
-        whole["tree-view/t6-query-face"],
+        _short(whole["tree-view/t6-query-face"]),
         "    7 more: 7 to do",                        # six tasks and one check
-        whole["tree-view/t6-query-face/approve-tests"],
+        _short(whole["tree-view/t6-query-face/approve-tests"]),
     ]]
     assert _where_lines(renders[0]) == [WHERE_QUERY_FACE]
 
@@ -295,23 +338,15 @@ def test_sc1_1_at_approve_commit_the_where_line_stands_directly_under_the_waitin
         "1 more: 1 to do",                            # beta
         whole["alpha"],
         "  1 more: 1 to do",                          # alpha/a1-core
-        whole["alpha/a2-edges"],
+        _short(whole["alpha/a2-edges"]),
         "    9 more: 8 to do, 1 done",                # the other tasks and the checks
-        whole["alpha/a2-edges/approve-commit"],
+        _short(whole["alpha/a2-edges/approve-commit"]),
     ]]
 
 
 def test_sc1_1_the_where_line_names_a_contract_and_a_unit_whose_ids_carry_hyphens_and_digits(
         tmp_path, capsys):
-    root = tmp_path / "repo"
-    _config(root, [])
-    _dump(root / "specs" / "pane-view-2" / "contract.yaml", _contract("pane-view-2", [
-        _unit("p9-short-ids-2", ["verify it holds (SC3.1)"]),
-        _unit("p10-where-line-3", ["verify it reads (SC1.1)"], depends_on=["p9-short-ids-2"]),
-    ]))
-    write_seat_roster(root)
-    _progress(root, "pane-view-2",
-              _step("pane-view-2/p10-where-line-3/two-key", "doing", "10:00"))
+    root = _hyphens_and_digits_repo(tmp_path)
     _, renders = _pane(root)
     whole = _whole(root, capsys)
     where = "specs/pane-view-2/contract.yaml > pane-view-2 > p10-where-line-3 > two-key"
@@ -319,9 +354,9 @@ def test_sc1_1_the_where_line_names_a_contract_and_a_unit_whose_ids_carry_hyphen
         where,
         whole["pane-view-2"],
         "  1 more: 1 to do",                          # pane-view-2/p9-short-ids-2
-        whole["pane-view-2/p10-where-line-3"],
+        _short(whole["pane-view-2/p10-where-line-3"]),
         "    7 more: 7 to do",                        # six tasks and one check
-        whole["pane-view-2/p10-where-line-3/two-key"],
+        _short(whole["pane-view-2/p10-where-line-3/two-key"]),
     ]]
     assert where.isascii()
 
@@ -414,3 +449,235 @@ def test_sc1_2_with_no_current_task_the_pane_prints_no_where_line(tmp_path):
     assert renders[0] == ["no current task", "2 items: 2 to do"]
     assert renders[1][0] == WHERE_WRITE_TESTS
     assert renders[2] == ["no current task", "2 items: 1 to do, 1 done"]
+
+
+# --- SC3.1 short ids under a parent ------------------------------------------------------
+#
+# The pane's item lines are the lines that open, after their indent, on an id
+# then ` [`; the where-am-I line, the waiting line and the fold lines are not
+# item lines. On the path to the current task the top-level item is a
+# contract, whose id has no `/`, the unit's id is `<contract>/<unit>` and the
+# task's `<contract>/<unit>/<task>`.
+
+PROVE_RED_UNIT = "  a2-edges [failed] depends_on: alpha/a1-core | the work for a2-edges is done"
+PROVE_RED_TASK = "    prove-red [doing] current | Prove red"
+
+
+def _item_lines(render):
+    """(indent width, id) of each item line in a render, top to bottom."""
+    rows = [ROW.match(line) for line in render]
+    return [(len(row["indent"]), row["id"]) for row in rows if row is not None]
+
+
+def test_sc3_1_a_unit_line_and_a_task_line_open_on_the_last_segment_of_their_ids(
+        tmp_path, capsys):
+    root = _path_repo(tmp_path)
+    _, renders = _pane(root)
+    whole = _whole(root, capsys)
+    assert renders == [[
+        WHERE_PROVE_RED,
+        "2 more: 1 to do, 1 done",
+        f"alpha [failed] | {INTENT}",
+        "  2 more: 1 done, 1 blocked",
+        PROVE_RED_UNIT,                               # not `  alpha/a2-edges [failed] ...`
+        "    9 more: 6 to do, 2 done, 1 failed",
+        PROVE_RED_TASK,                               # not `    alpha/a2-edges/prove-red ...`
+    ]]
+    # after the short id, each line reads as the whole tree's line for its item
+    assert whole["alpha/a2-edges"] == (
+        "  alpha/a2-edges [failed] depends_on: alpha/a1-core | the work for a2-edges is done")
+    assert whole["alpha/a2-edges/prove-red"] == (
+        "    alpha/a2-edges/prove-red [doing] current | Prove red")
+
+
+def test_sc3_1_the_top_level_line_opens_on_its_full_id_and_every_line_under_it_on_a_last_segment(
+        tmp_path, capsys):
+    root = _query_face_repo(tmp_path)
+    _, (render,) = _pane(root)
+    whole = _whole(root, capsys)
+    # the request's own example: `t6-query-face`, `approve-tests`
+    assert _item_lines(render) == [
+        (0, "tree-view"), (2, "t6-query-face"), (4, "approve-tests")]
+    assert render[3] == whole["tree-view"] == f"tree-view [waiting on a seat] | {INTENT}"
+    assert render[5] == ("  t6-query-face [waiting on a seat] depends_on: "
+                         "tree-view/t5-pane-face | the work for t6-query-face is done")
+    assert render[7] == "    approve-tests [waiting on a seat] current | Approve the test list"
+
+
+def test_sc3_1_ids_whose_segments_carry_hyphens_and_digits_open_on_their_whole_last_segment(
+        tmp_path, capsys):
+    root = _hyphens_and_digits_repo(tmp_path)
+    _, (render,) = _pane(root)
+    assert _item_lines(render) == [
+        (0, "pane-view-2"), (2, "p10-where-line-3"), (4, "two-key")]
+    assert render[1] == f"pane-view-2 [doing] | {INTENT}"
+    assert render[3] == ("  p10-where-line-3 [doing] depends_on: pane-view-2/p9-short-ids-2"
+                         " | the work for p10-where-line-3 is done")
+    assert render[5] == "    two-key [doing] current | Two-Key PASS"
+
+
+def test_sc3_1_only_the_opening_id_shortens_and_a_summary_that_names_a_full_id_keeps_it(
+        tmp_path, capsys):
+    root = _repo(tmp_path, gates=())
+    edges = _unit("a2-edges", ["verify an edge holds"], depends_on=["a1-core"])
+    edges["done_means"] = "alpha/a2-edges is done when alpha/a1-core is"
+    _dump(root / "specs" / "alpha" / "contract.yaml",
+          _contract("alpha", [ALPHA[0], edges]))
+    _progress(root, "alpha", _step("alpha/a2-edges/write-tests", "doing", "10:00"))
+    _, (render,) = _pane(root)
+    whole = _whole(root, capsys)
+    assert render[-3] == ("  a2-edges [doing] depends_on: alpha/a1-core"
+                          " | alpha/a2-edges is done when alpha/a1-core is")
+    assert render[-1] == "    write-tests [doing] current | Write the tests"
+    assert render[-3] == _short(whole["alpha/a2-edges"])
+
+
+def test_sc3_1_the_cut_to_the_panes_width_applies_to_the_shortened_line(
+        tmp_path, monkeypatch):
+    root = _path_repo(tmp_path)
+    width = len(PROVE_RED_TASK)   # the task's short line fits exactly; its full line would not
+    monkeypatch.setenv("COLUMNS", str(width))
+    _, (render,) = _pane(root)
+    assert render[-1] == PROVE_RED_TASK
+    assert render[-3] == PROVE_RED_UNIT[:width - 3] + "..."
+    assert render == _cut([
+        WHERE_PROVE_RED, "2 more: 1 to do, 1 done", f"alpha [failed] | {INTENT}",
+        "  2 more: 1 done, 1 blocked", PROVE_RED_UNIT,
+        "    9 more: 6 to do, 2 done, 1 failed", PROVE_RED_TASK], width)
+
+
+def test_sc3_1_the_short_ids_follow_the_current_task_to_another_unit_and_another_contract(
+        tmp_path):
+    root = _repo(tmp_path, gates=())
+    first = _step("alpha/a1-core/write-tests", "doing", "10:00")
+    _progress(root, "alpha", first)
+    _, renders = _pane(
+        root,
+        lambda: _progress(root, "alpha", first,
+                          _step("alpha/a2-edges/prove-red", "doing", "10:01")),
+        lambda: _progress(root, "beta", _step("beta/b1-solo/commit", "doing", "10:02")))
+    assert [_item_lines(render) for render in renders] == [
+        [(0, "alpha"), (2, "a1-core"), (4, "write-tests")],
+        [(0, "alpha"), (2, "a2-edges"), (4, "prove-red")],
+        [(0, "beta"), (2, "b1-solo"), (4, "commit")],
+    ]
+    assert renders[2][-3:] == [
+        "  b1-solo [doing] | the work for b1-solo is done",
+        "    7 more: 7 to do",                        # six tasks and one check
+        "    commit [doing] current | Commit",
+    ]
+
+
+# --- SC3.2 full ids everywhere else -------------------------------------------------------
+
+SOLO_TREE = f"""\
+solo-2 [waiting on a seat] | {INTENT}
+  solo-2/s1-base [done] at {HEAD} | the work for s1-base is done
+    solo-2/s1-base/approve-tests [done] | Approve the test list
+    solo-2/s1-base/write-tests [done] | Write the tests
+    solo-2/s1-base/prove-red [done] | Prove red
+    solo-2/s1-base/green [done] | Green
+    solo-2/s1-base/approve-commit [done] | Approve the commit
+    solo-2/s1-base/commit [done] | Commit
+    solo-2/s1-base/two-key [done] | Two-Key PASS
+    solo-2/s1-base/SC3.1 [done] | verify it holds (SC3.1)
+  solo-2/s2-top [waiting on a seat] depends_on: solo-2/s1-base | the work for s2-top is done
+    solo-2/s2-top/approve-tests [waiting on a seat] current | Approve the test list
+    solo-2/s2-top/write-tests [to do] | Write the tests
+    solo-2/s2-top/prove-red [to do] | Prove red
+    solo-2/s2-top/green [to do] | Green
+    solo-2/s2-top/approve-commit [to do] | Approve the commit
+    solo-2/s2-top/commit [to do] | Commit
+    solo-2/s2-top/two-key [to do] | Two-Key PASS
+    solo-2/s2-top/SC3.2 [to do] | verify it stays (SC3.2)
+"""
+
+
+def _solo_repo(tmp_path):
+    """solo-2: s1-base closed, s2-top at approve-tests; no active gate."""
+    root = tmp_path / "repo"
+    _config(root, [])
+    _dump(root / "specs" / "solo-2" / "contract.yaml", _contract("solo-2", [
+        _unit("s1-base", ["verify it holds (SC3.1)"]),
+        _unit("s2-top", ["verify it stays (SC3.2)"], depends_on=["s1-base"]),
+    ]))
+    write_seat_roster(root)
+    _progress(root, "solo-2", _step("solo-2/s1-base", "done", "09:00"),
+              _step("solo-2/s2-top/approve-tests", "doing", "10:00"))
+    return root
+
+
+def test_sc3_2_taskcontract_tree_prints_the_same_bytes_with_every_id_full(tmp_path, capsys):
+    root = _solo_repo(tmp_path)
+    _, (render,) = _pane(root)
+    capsys.readouterr()
+    code = main(["tree", "--root", str(root)])
+    printed = capsys.readouterr()
+    assert code == 0
+    assert printed.out == SOLO_TREE
+    assert printed.err == ""
+    # the pane beside it shortens the same two items the tree prints whole
+    assert render[-3:] == [
+        "  s2-top [waiting on a seat] depends_on: solo-2/s1-base | the work for s2-top is done",
+        "    7 more: 7 to do",                        # six tasks and one check
+        "    approve-tests [waiting on a seat] current | Approve the test list",
+    ]
+
+
+class _Starts:
+    """The spy on subprocess.Popen: each start through the shell notes its
+    `SDLC_NODE` and returns a process that has already ended with 0; every
+    other call passes through."""
+
+    def __init__(self, real):
+        self.real = real
+        self.nodes = []
+
+    def __call__(self, args, *more, **kwargs):
+        if not kwargs.get("shell"):
+            return self.real(args, *more, **kwargs)
+        self.nodes.append((kwargs.get("env") or {}).get("SDLC_NODE"))
+        return _Ended()
+
+
+class _Ended:
+    returncode = 0
+
+    def poll(self):
+        return 0
+
+    def wait(self, timeout=None):
+        return 0
+
+
+def test_sc3_2_at_an_approval_the_waiting_line_and_sdlc_node_keep_the_full_ids(
+        tmp_path, capsys, monkeypatch):
+    starts = _Starts(subprocess.Popen)
+    monkeypatch.setattr(subprocess, "Popen", starts)
+    root = _repo(tmp_path, gates=())
+    _config(root, [], tree={"notify": "notify-the-seat"})
+    _progress(root, "alpha", _step("alpha/a2-edges/green", "done", "10:00"),
+              _step("alpha/a2-edges/approve-commit", "doing", "10:01"))
+    _, (render,) = _pane(root)
+    assert render[0] == WAIT_APPROVE_COMMIT          # `for alpha/a2-edges`, whole
+    assert starts.nodes == ["alpha/a2-edges/approve-commit"]
+    assert capsys.readouterr().err == ""
+    assert render[-3] == ("  a2-edges [waiting on a seat] depends_on: alpha/a1-core"
+                          " | the work for a2-edges is done")
+    assert render[-1] == "    approve-commit [waiting on a seat] current | Approve the commit"
+
+
+def test_sc3_2_every_depends_on_link_on_a_short_unit_line_keeps_its_full_id(tmp_path):
+    root = tmp_path / "repo"
+    _config(root, [])
+    _dump(root / "specs" / "gamma-7" / "contract.yaml", _contract("gamma-7", [
+        _unit("g1-first", ["verify it holds"]),
+        _unit("g2-second", ["verify it holds"]),
+        _unit("g3-third", ["verify it holds"], depends_on=["g1-first", "g2-second"]),
+    ]))
+    write_seat_roster(root)
+    _progress(root, "gamma-7", _step("gamma-7/g3-third/prove-red", "doing", "10:00"))
+    _, (render,) = _pane(root)
+    assert render[-3] == ("  g3-third [doing] depends_on: gamma-7/g1-first"
+                          " depends_on: gamma-7/g2-second | the work for g3-third is done")
+    assert render[0] == "specs/gamma-7/contract.yaml > gamma-7 > g3-third > prove-red"

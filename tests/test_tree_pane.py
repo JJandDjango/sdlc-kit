@@ -239,6 +239,16 @@ def _cut(lines, width):
     return [line if len(line) <= width else line[:width - 3] + "..." for line in lines]
 
 
+def _short(line):
+    """The whole tree's line for an item under another item, as the pane
+    prints it since pane-view's p2-short-ids: the leading full id cut to its
+    last segment, the indent and the rest of the line kept byte for byte."""
+    match = ROW.match(line)
+    assert match, f"not an item line: {line!r}"
+    indent, full = match["indent"], match["id"]
+    return indent + full.rsplit("/", 1)[-1] + line[len(indent) + len(full):]
+
+
 # --- the SC2.1 fixture ----------------------------------------------------------
 
 def _path_repo(tmp_path):
@@ -270,9 +280,9 @@ def test_sc2_1_the_pane_shows_the_path_and_folds_each_levels_other_items_into_on
         "3 more: 2 to do, 1 done",                    # gates/G0, gates/none, beta
         whole["alpha"],
         "  2 more: 1 done, 1 blocked",                # alpha/G0, alpha/a1-core
-        whole["alpha/a2-edges"],
+        _short(whole["alpha/a2-edges"]),
         "    9 more: 6 to do, 2 done, 1 failed",      # the other tasks and the checks
-        whole["alpha/a2-edges/prove-red"],
+        _short(whole["alpha/a2-edges/prove-red"]),
     ]]
     assert whole["alpha/a2-edges/prove-red"].split()[1:4] == ["[doing]", "current", "|"]
 
@@ -289,9 +299,9 @@ def test_sc2_1_a_level_with_no_other_item_prints_no_fold_line(tmp_path, capsys):
         "waiting on a seat: approve-tests for lone/l1-lone",  # the current task is an approval
         "specs/lone/contract.yaml > lone > l1-lone > approve-tests",  # the where-am-I line
         whole["lone"],
-        whole["lone/l1-lone"],
+        _short(whole["lone/l1-lone"]),
         "    7 more: 7 to do",  # six tasks and one check
-        whole["lone/l1-lone/approve-tests"],
+        _short(whole["lone/l1-lone/approve-tests"]),
     ]]
     assert "waiting on a seat" in whole["lone/l1-lone/approve-tests"]
 
@@ -330,9 +340,10 @@ def test_sc2_2_five_contracts_of_seven_units_print_at_most_fifteen_lines(tmp_pat
     assert len(renders) == 1
     lines = renders[0]
     assert len(lines) <= 15, lines
-    for rid in ("work-5", "work-5/u7", "work-5/u7/write-tests"):
-        assert whole[rid] in lines, rid
-    assert lines[-1] == whole["work-5/u7/write-tests"]
+    assert whole["work-5"] in lines
+    for rid in ("work-5/u7", "work-5/u7/write-tests"):
+        assert _short(whole[rid]) in lines, rid
+    assert lines[-1] == _short(whole["work-5/u7/write-tests"])
     assert "current" in lines[-1].split()
 
 
@@ -353,8 +364,8 @@ def test_sc2_3_the_first_scan_after_a_change_renders_and_scans_are_at_most_a_sec
     # one render at start, then one at the scan right after the change, then none
     assert sleeper.renders == [1, 2, 2, 2]
     assert len(renders) == 2
-    assert renders[0][-1].split()[0] == "alpha/a2-edges/write-tests"
-    assert renders[1][-1] == whole["alpha/a2-edges/prove-red"]
+    assert renders[0][-1].split()[0] == "write-tests"
+    assert renders[1][-1] == _short(whole["alpha/a2-edges/prove-red"])
 
 
 def test_sc2_3_while_no_source_changes_the_pane_renders_nothing_new_and_writes_no_file(
@@ -395,7 +406,7 @@ def test_sc2_3_the_command_takes_follow_and_ctrl_c_exits_0_with_no_traceback(
     assert captured.err == ""
     renders = _renders(captured.out)
     assert len(renders) == 1
-    assert renders[0][-1].split()[:3] == ["alpha/a2-edges/prove-red", "[doing]", "current"]
+    assert renders[0][-1].split()[:3] == ["prove-red", "[doing]", "current"]
 
 
 class _InterruptedOut(io.StringIO):
@@ -658,7 +669,7 @@ def test_the_pane_prints_each_unreadable_source_on_stderr_at_each_render(tmp_pat
     assert len(err) == 2 and all(UNREADABLE.match(line) for line in err), err
     assert not any(line.startswith("taskcontract tree:") for render in renders
                    for line in render)
-    assert renders[0][-1].split()[:3] == ["alpha/a2-edges/prove-red", "[doing]", "current"]
+    assert renders[0][-1].split()[:3] == ["prove-red", "[doing]", "current"]
 
 
 # --- git status takes no optional lock --------------------------------------------------------------
@@ -891,8 +902,8 @@ def test_sc8_1_on_approve_tests_the_first_line_is_the_waiting_line_cut_like_the_
     whole = _whole(root, capsys)
     assert full[0] == WAIT_LONE
     assert full == [WAIT_LONE, "specs/lone/contract.yaml > lone > l1-lone > approve-tests",
-                    whole["lone"], whole["lone/l1-lone"], "    7 more: 7 to do",
-                    whole["lone/l1-lone/approve-tests"]]
+                    whole["lone"], _short(whole["lone/l1-lone"]), "    7 more: 7 to do",
+                    _short(whole["lone/l1-lone/approve-tests"])]
     monkeypatch.setenv("COLUMNS", "40")
     out = _Writes()
     _, (narrow,) = _pane(root, out=out)
@@ -916,9 +927,9 @@ def test_sc8_1_on_approve_commit_the_waiting_line_names_the_approval_and_its_uni
         "1 more: 1 to do",                   # beta
         whole["alpha"],
         "  1 more: 1 to do",                 # alpha/a1-core
-        whole["alpha/a2-edges"],
+        _short(whole["alpha/a2-edges"]),
         "    9 more: 8 to do, 1 done",       # the other tasks and the checks
-        whole["alpha/a2-edges/approve-commit"],
+        _short(whole["alpha/a2-edges/approve-commit"]),
     ]]
 
 
@@ -933,7 +944,7 @@ def test_sc8_1_the_waiting_line_leaves_when_the_current_task_moves_off_the_appro
     assert [render[0] for render in renders] == [
         "waiting on a seat: approve-commit for alpha/a2-edges",
         "specs/alpha/contract.yaml > alpha > a2-edges > commit"]
-    assert renders[1][-1] == whole["alpha/a2-edges/commit"]
+    assert renders[1][-1] == _short(whole["alpha/a2-edges/commit"])
     assert not any(line.startswith("waiting on a seat") for line in renders[1])
 
 
