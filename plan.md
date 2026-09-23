@@ -15,67 +15,46 @@ contract, and a script computes the verdict):
   segment of its id (`p2-short-ids`, `approve-tests`); the whole tree, the
   waiting line, the links and `SDLC_NODE` keep full ids.
 
+**Closed.** The deliverable is met: p0 at `7d31d4a`, p1 at `b80aed3`, p2 at
+`3802a8c`, each Two-Key PASS at round 1 with advisories only. Suite 505
+passed, all fifteen contracts ready-green, scope-check green. The live
+check after p1 passed in herdr. The push and the PR wait on the user's
+word.
+
 p3 and p4 take session 46: they share the `tree: pane:` reader p3 adds, and
 five units in one session is five Two-Key rounds.
 
-Where things stand: PR #54 merged at `22c4982`; `main` is clean and even
-with origin. At session 44's close the suite read 486 passed and all
-fifteen contracts ready-green. p1 and p2 change pane lines that t7's and
-t8's tests pin as equal to the whole tree's lines, so each drafter names
-those tests and amends them in `tests/test_tree_pane.py`; new tests go in
-`tests/test_pane_view.py`.
-
-**Who does what.** The user rules on the deliverable, the delegation, this
-plan and p0's section, and at the close on the push and the merge.
-Subagents do p1's and p2's work through the Workflow tool, launched by
-`scriptPath`: the drafter drafts the test list, proves it red from the
-scratchpad and prototypes the interface; the developer greens the tests
-from the interface note without opening `tests/`; Two-Key grades last.
-Claude approves each test list and each commit (`--by claude`), places the
-tests, records each task with `taskcontract progress`, and runs the
-receipts (the commands the verifier re-runs) before each verifier round.
-
 ## Steps
 
-1. **Open.** Branch `session-45-pane-view-p0-p2` from `22c4982`; this plan
-   committed on the user's word.
-2. **p0, the section.** "The pane's lines", written into USAGE section 9,
-   every mark red, shown in chat in full. p0 has no test, so approve-tests,
-   write-tests and prove-red close with the unit; the pane shows p0's
-   `green` while the section is written and its `approve-commit` while the
-   section waits on the user.
-3. **p0, commit** on the user's word, `Contract: pane-view`.
-4. **p0 Two-Key**, sweep off (the repo-wide search runs only in a release
-   unit), focus on p0's two sketches; on PASS, `progress done` closes p0.
-5. **p1, draft and approve the test list**: SC1.1, SC1.2, and the t7 and
-   t8 tests the new line shifts.
-6. **p1, write the tests and prove red**, each check's red recorded with
-   `progress run --expect red`.
-7. **p1, green**, then the receipts: the suite, every contract ready-green,
-   the vocabulary and language doors (`vocab-check`, `lang-check`), and
-   `scope-check --base 22c4982`.
-8. **p1, approve the commit and commit**, each check's green recorded with
-   `progress run`.
-9. **p1 Two-Key**, with p2's drafter beside it (neither touches tracked
-   files); on PASS, `progress done` closes p1.
-10. **The live check in herdr.** While the kit sits on p2's
-    `approve-tests`, a pane split with `--no-focus` runs the new pane: the
-    waiting line stays first, and the hook flags the seat. The pane closes
-    after.
-11. **p2, approve the test list**: SC3.1, SC3.2, and the t7 and t8 tests
-    whose lines shorten.
-12. **p2, write the tests and prove red.**
-13. **p2, green**, then the receipts.
-14. **p2, approve the commit and commit.**
-15. **p2 Two-Key**; on PASS, `progress done` closes p2.
-16. **Close.** STATE.md regenerated and this plan struck; the push and the
-    PR on the user's word.
+1. ~~Open.~~ Branch cut from `22c4982`; the plan at `0ba7289`.
+2. ~~p0, the section.~~ "The pane's lines", shown in chat in full.
+3. ~~p0, commit.~~ At `7d31d4a`, on the user's word.
+4. ~~p0 Two-Key.~~ PASS at round 1; advisory: the example's `14 more` now
+   reads `15 more`, carried to t9.
+5. ~~p1, draft and approve the test list.~~ Ten tests, seven t7 and t8
+   tests amended; approved by Claude.
+6. ~~p1, write the tests and prove red.~~ SC1.1 and SC1.2 red as expected.
+7. ~~p1, green.~~ Suite 496 passed; every receipt green.
+8. ~~p1, approve the commit and commit.~~ At `b80aed3`; both checks green.
+9. ~~p1 Two-Key.~~ PASS at round 1; its docstring advisory fixed at p2's
+   placement.
+10. ~~The live check in herdr.~~ A probe pane at p2's `approve-tests` kept
+    the waiting line first, and the hook flagged it `sdlc`, `blocked`.
+11. ~~p2, draft and approve the test list.~~ Nine tests, four p1 and nine
+    t7 and t8 tests amended; approved by Claude.
+12. ~~p2, write the tests and prove red.~~ SC3.1 and SC3.2 red as expected.
+13. ~~p2, green.~~ Suite 505 passed; every receipt green.
+14. ~~p2, approve the commit and commit.~~ At `3802a8c`; both checks green.
+15. ~~p2 Two-Key.~~ PASS at round 1; advisory: the copied test helpers,
+    carried to p3.
+16. ~~Close.~~ STATE.md regenerated; this plan struck; the push and the PR
+    go to the user.
 
-Decisions this session: ten. The user's, now: (1) the deliverable, p0 to
-p2; (2) the delegation of p1's and p2's approvals; (3) this plan. The
-user's, mid-session: (4) p0's section. Claude's, on review: (5) p1's test
-list; (6) p1's commit; (7) p2's test list; (8) p2's commit. The user's at
-the close: (9) the push and the PR; (10) the merge.
+Decisions this session: ten. The user's: (1) the deliverable, p0 to p2:
+yes; (2) the delegation of p1's and p2's approvals: yes; (3) this plan:
+yes; (4) p0's section: yes. Claude's, on review: (5) p1's test list; (6)
+p1's commit; (7) p2's test list; (8) p2's commit. The user's at the close:
+(9) the push and the PR; (10) the merge.
 
 Deferred, not this session:
 - p3 and p4 (session 46), then tree-view t6 and t9 (0.15.0), then G1.
