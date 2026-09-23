@@ -2,61 +2,63 @@
   "schema_version": 2,
   "diagram_type": "workflow",
   "meta": {
-    "title": "tree-view t0 and t1 - Session 39",
+    "title": "tree-view t3 and t2 - Session 40",
     "quality_profile": "showcase",
     "locale": "en",
     "views": [
-      { "id": "now", "label": "Where we are", "focus": ["close", "merge_ok"], "note": "Closed: t0 (the USAGE page) and t1 (the tree's shape) each passed Two-Key at round 1. The PR waits on your word." },
-      { "id": "decide", "label": "What you decided", "focus": ["t0_ok", "tests_ok", "commit_ok", "merge_ok"], "note": "Six decisions: four yes (the plan, t0's commit, t1's test list, t1's commit); the push with the PR and the merge wait." },
-      { "id": "page_first", "label": "t0: the page first", "focus": ["t0", "t0_key"], "note": "USAGE section 9 landed red at 73c4987 before any code; its two wording notes go to t9." },
-      { "id": "tree_shape", "label": "t1: the tree's shape", "focus": ["t1_red", "t1_green"], "note": "18 tests red first, then 317 green at c6f1222; every status reads to do until t3 derives them." },
-      { "id": "exceptions", "label": "If a round fails", "focus": ["t0_key", "fail", "open_q"], "note": "No round failed and no OPEN was needed: both units passed at round 1." }
+      { "id": "now", "label": "Where we are", "focus": ["close", "merge_ok"], "note": "Closed: t3 and t2 each passed Two-Key at round 1. The push, the PR and the merge wait on your word." },
+      { "id": "decide", "label": "Who decided", "focus": ["t3_tests_ok", "t3_commit_ok", "t2_tests_ok", "t2_commit_ok", "merge_ok"], "note": "Five yes from Claude on review (the plan, both lists, both commits); the push, the PR and the merge stay yours." },
+      { "id": "status", "label": "t3: status and cursor", "focus": ["t3_red", "t3_green"], "note": "39 cases red first, then 356 green at ff3fbfb; progress.py fixes the format of .sdlc/progress/." },
+      { "id": "summaries", "label": "t2: summaries and links", "focus": ["t2_red", "t2_green"], "note": "19 tests red first, then 375 green at 5bd596a; each line ends in its links and its summary." },
+      { "id": "exceptions", "label": "If a round fails", "focus": ["t3_green", "fail", "open_q"], "note": "No round failed and no OPEN was needed: both units passed at round 1." }
     ]
   },
   "lanes": [
-    { "id": "gates", "label": "Human gates" },
+    { "id": "gates", "label": "Approvals" },
     { "id": "steps", "label": "Plan steps" },
     { "id": "waits", "label": "Exception", "variant": "exception" }
   ],
   "phases": [
     { "id": "open_phase", "label": "Step 1 - open", "fromCol": 0, "toCol": 0, "variant": "emphasis" },
-    { "id": "t0_phase", "label": "Steps 2-3 - t0", "fromCol": 1, "toCol": 2, "variant": "emphasis" },
-    { "id": "t1_phase", "label": "Steps 4-8 - t1", "fromCol": 3, "toCol": 4, "variant": "emphasis" },
-    { "id": "close_phase", "label": "Step 9 - close", "fromCol": 5, "toCol": 5, "variant": "emphasis" }
+    { "id": "t3_phase", "label": "Steps 2-6 - t3", "fromCol": 1, "toCol": 2, "variant": "emphasis" },
+    { "id": "t2_phase", "label": "Steps 7-11 - t2", "fromCol": 3, "toCol": 4, "variant": "emphasis" },
+    { "id": "close_phase", "label": "Step 12 - close", "fromCol": 5, "toCol": 5, "variant": "emphasis" }
   ],
   "groups": [],
-  "mainPath": ["open", "t0", "t0_key", "t1_red", "t1_green", "close"],
+  "mainPath": ["open", "t3_red", "t3_green", "t2_red", "t2_green", "close"],
   "nodes": [
-    { "id": "t0_ok", "lane": "gates", "col": 1, "type": "security", "label": "Your word", "sublabel": "t0 commit: yes" },
-    { "id": "tests_ok", "lane": "gates", "col": 3, "type": "security", "label": "Your word", "sublabel": "test list: yes" },
-    { "id": "commit_ok", "lane": "gates", "col": 4, "type": "security", "label": "Your word", "sublabel": "t1 commit: yes" },
+    { "id": "t3_tests_ok", "lane": "gates", "col": 1, "type": "security", "label": "Claude", "sublabel": "t3 list: yes" },
+    { "id": "t3_commit_ok", "lane": "gates", "col": 2, "type": "security", "label": "Claude", "sublabel": "t3 commit: yes" },
+    { "id": "t2_tests_ok", "lane": "gates", "col": 3, "type": "security", "label": "Claude", "sublabel": "t2 list: yes" },
+    { "id": "t2_commit_ok", "lane": "gates", "col": 4, "type": "security", "label": "Claude", "sublabel": "t2 commit: yes" },
     { "id": "merge_ok", "lane": "gates", "col": 5, "type": "security", "label": "Your word", "sublabel": "push, PR, merge" },
-    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "Branch + plan", "sublabel": "done: 9c2fbe4", "tag": "step 1, done" },
-    { "id": "t0", "lane": "steps", "col": 1, "type": "frontend", "label": "t0 USAGE", "sublabel": "done: 73c4987", "tag": "step 2, done" },
-    { "id": "t0_key", "lane": "steps", "col": 2, "type": "security", "label": "t0 Two-Key", "sublabel": "PASS, round 1", "tag": "step 3, done" },
-    { "id": "t1_red", "lane": "steps", "col": 3, "type": "backend", "label": "t1 tests red", "sublabel": "18 red, proven", "tag": "steps 4-5, done" },
-    { "id": "t1_green", "lane": "steps", "col": 4, "type": "backend", "label": "t1 green", "sublabel": "done: c6f1222", "tag": "steps 6-8, PASS" },
-    { "id": "close", "lane": "steps", "col": 5, "type": "cloud", "label": "Close + PR", "sublabel": "HERE: your word", "tag": "step 9" },
+    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "Branch + plan", "sublabel": "done: 48a96ae", "tag": "step 1, done" },
+    { "id": "t3_red", "lane": "steps", "col": 1, "type": "backend", "label": "t3 tests red", "sublabel": "39 red, proven", "tag": "steps 2-3, done" },
+    { "id": "t3_green", "lane": "steps", "col": 2, "type": "backend", "label": "t3 green", "sublabel": "done: ff3fbfb", "tag": "steps 4-6, PASS" },
+    { "id": "t2_red", "lane": "steps", "col": 3, "type": "backend", "label": "t2 tests red", "sublabel": "19 red, proven", "tag": "steps 7-8, done" },
+    { "id": "t2_green", "lane": "steps", "col": 4, "type": "backend", "label": "t2 green", "sublabel": "done: 5bd596a", "tag": "steps 9-11, PASS" },
+    { "id": "close", "lane": "steps", "col": 5, "type": "cloud", "label": "Close + PR", "sublabel": "HERE: your word", "tag": "step 12" },
     { "id": "fail", "lane": "waits", "col": 2, "type": "security", "label": "FAIL", "sublabel": "fix, rerun, max 3", "tag": "not taken" },
     { "id": "open_q", "lane": "waits", "col": 4, "type": "security", "label": "OPEN", "sublabel": "re-intake", "tag": "not taken" }
   ],
   "edges": [
-    { "from": "open", "to": "t0", "label": "plan approved", "variant": "emphasis", "route": "straight" },
-    { "from": "t0", "to": "t0_key", "label": "committed", "variant": "emphasis", "route": "straight" },
-    { "from": "t0_key", "to": "t1_red", "label": "PASS", "variant": "emphasis", "route": "straight" },
-    { "from": "t1_red", "to": "t1_green", "label": "red proven", "variant": "emphasis", "route": "straight" },
-    { "from": "t1_green", "to": "close", "label": "PASS", "variant": "emphasis", "route": "straight" },
-    { "from": "t0_ok", "to": "t0", "route": "straight" },
-    { "from": "tests_ok", "to": "t1_red", "route": "straight" },
-    { "from": "commit_ok", "to": "t1_green", "route": "straight" },
+    { "from": "open", "to": "t3_red", "label": "plan approved", "variant": "emphasis", "route": "straight" },
+    { "from": "t3_red", "to": "t3_green", "label": "red proven", "variant": "emphasis", "route": "straight" },
+    { "from": "t3_green", "to": "t2_red", "label": "PASS", "variant": "emphasis", "route": "straight" },
+    { "from": "t2_red", "to": "t2_green", "label": "red proven", "variant": "emphasis", "route": "straight" },
+    { "from": "t2_green", "to": "close", "label": "PASS", "variant": "emphasis", "route": "straight" },
+    { "from": "t3_tests_ok", "to": "t3_red", "route": "straight" },
+    { "from": "t3_commit_ok", "to": "t3_green", "route": "straight" },
+    { "from": "t2_tests_ok", "to": "t2_red", "route": "straight" },
+    { "from": "t2_commit_ok", "to": "t2_green", "route": "straight" },
     { "from": "merge_ok", "to": "close", "route": "straight" },
-    { "from": "t0_key", "to": "fail", "variant": "security", "route": "straight" },
-    { "from": "t1_green", "to": "open_q", "variant": "security", "route": "straight" }
+    { "from": "t3_green", "to": "fail", "variant": "security", "route": "straight" },
+    { "from": "t2_green", "to": "open_q", "variant": "security", "route": "straight" }
   ],
   "cards": [
-    { "dot": "amber", "title": "Where we are (2026-09-22, session 39 closed)", "items": ["The deliverable is met: t0, the USAGE section for the tree, at 73c4987; t1, taskcontract tree printing the whole tree, at c6f1222; each a Two-Key PASS at round 1", "Suite 317 green (18 new); the 14 contracts ready-green; the vocabulary, language and scope checks clean", "The kit's own tree prints 1,053 lines; the pilot's files each of its 16 findings once", "The PR carries 971b57a, the plan, t0, t1 and the close; it opens and merges on your word"] },
-    { "dot": "violet", "title": "What you decided", "items": ["1. This plan: yes", "2. t0's section and its commit: yes", "3. t1's test list, eighteen tests: yes", "4. t1's commit: yes", "5. The push and the PR: pending", "6. The merge: pending"] },
-    { "dot": "cyan", "title": "Deferred, not this session", "items": ["tree-view t2 to t9, then the release (0.15.0); the herdr plugin outside the kit", "For t6: an id that repeats when a sketch names a task key or a unit shares an active gate's id", "For t9: t0's two wording notes, and t1's note that a .yml finding is not read", "G1: the pilot's M0 code waits on its criteria review", "derived-language, feature-document, spec-doc-type; the demo intake in a sandbox consumer; wave B; 5b; the G4.6 finding"] },
-    { "dot": "slate", "title": "Glossary", "items": ["t0, t1: the first two of tree-view's ten units; t1 depends on t0", "Pass zero: the user-facing page written before the code, its status marks red until the release turns them green", "The seven tasks: approve the test list, write the tests, prove red, green, approve the commit, commit, Two-Key PASS", "Two-Key: a receipts agent re-runs every check, a zero-trust grader reads the commit against its sketches; the script computes the verdict", "Sweep: the repo-wide search for stale claims; it runs once, in the release unit t9", "OPEN: a fact the contract cannot keep goes back to the REQUEST as a question and a re-intake, never a silent edit", "Receipts: the suite, every contract ready-green, vocab-check, lang-check, scope-check"] }
+    { "dot": "amber", "title": "Where we are (2026-09-22, session 40 closed)", "items": ["The deliverable is met: t3 (statuses and the current task) at ff3fbfb and t2 (summaries and links) at 5bd596a, each a Two-Key PASS at round 1", "Suite 375 green (58 new cases); the 14 contracts ready-green; the vocabulary, language and scope checks clean", "The kit's tree prints 1052 lines, each ending in its summary; tasks read to do until t4 and t5 ship the writers", "The PR carries 50b691b, the plan, t3, t2 and the close; it opens and merges on your word"] },
+    { "dot": "violet", "title": "Who decided", "items": ["1. This plan: Claude, yes", "2. t3's test list, 25 tests: Claude, yes", "3. t3's commit: Claude, yes", "4. t2's test list, 19 tests: Claude, yes, imports moved up", "5. t2's commit: Claude, yes", "6. The push and the PR: you, pending", "7. The merge: you, pending"] },
+    { "dot": "cyan", "title": "Deferred, not this session", "items": ["tree-view t4 to t7 (all unblocked), t8, then t9 and the release (0.15.0)", "For t4: name the evidence keys in progress.py; mark a G0 verdict dirty when its contract differs from HEAD", "For t6: t1's id collision; a repeated depends_on entry prints twice; tree_view.py's docstring on spacing", "For t9: USAGE's backfill qualifier, the line's words and the text rule, plus t0's and t1's notes", "G1; derived-language, feature-document, spec-doc-type; the demo intake; wave B; 5b; the G4.6 finding"] },
+    { "dot": "slate", "title": "Glossary", "items": ["t2, t3: units of tree-view; both follow t1, and t4, t5 and t7 wait on t3", "The seven tasks: approve the test list, write the tests, prove red, green, approve the commit, commit, Two-Key PASS", "Spec channel: the agent that drafts the tests and proves red; the developer agent makes them green without opening tests/", "Two-Key: a receipts agent re-runs every check, a zero-trust grader reads the commit against its sketches; the script computes the verdict", "OPEN: a fact the contract cannot keep goes back to the REQUEST as a question and a re-intake, never a silent edit", "Receipts: the suite, every contract ready-green, vocab-check, lang-check, scope-check"] }
   ]
 }
