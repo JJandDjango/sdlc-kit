@@ -20,25 +20,35 @@ when the item has it, after exactly one space.
 top-level item, its unit and the task, each line as the whole tree prints
 it; above each, when the level holds other items, one line folds them as
 `<n> more: <counts>`, the count per status in the six statuses' order, zeros
-left out. So the task is always the last line. With no current task the
-pane reads `no current task`, then `<n> items: <counts>` for the top level.
+left out. So the task is always the last line. When the task is
+`approve-tests` or `approve-commit`, the first line reads `waiting on a
+seat: <approval> for <contract>/<unit>`. With no current task the pane
+reads `no current task`, then `<n> items: <counts>` for the top level.
 Each line longer than the pane's width is cut to it and ends in `...`. The
 pane lists its sources' files once a second and redraws, clearing the
 screen with ANSI escapes, only when a file was added, removed or changed;
 it keeps each `G0` reading in memory until its contract or the vocabulary
 changes, and writes no file. Ctrl-C ends it.
+
+Each time a render arrives at an approval, the pane starts the command set
+as `tree: notify:` in .sdlc/config.yaml through the shell, once, with the
+task's id in `SDLC_NODE`; with none set, it starts nothing. It never waits
+on the command: at each second it checks the commands it started, and one
+that ended nonzero prints `notify failed, exit <code>: <command>` on
+stderr, as does one that cannot start, with code 127.
 """
 
 from __future__ import annotations
 
 import os
 import shutil
+import subprocess
 import sys
 import time
 from pathlib import Path
 
 from . import tree
-from .tree import CURRENT, STATUSES, Item, build
+from .tree import APPROVALS, CURRENT, STATUSES, Item, build
 
 INDENT = "  "
 CLEAR = "\x1b[H\x1b[2J"  # cursor home, then erase the screen
@@ -76,12 +86,16 @@ def line(item: Item) -> str:
 
 def pane(items: list[Item]) -> list[str]:
     """The `--follow` lines, uncut: the path to the current task, each
-    level's other items folded above the item on the path."""
+    level's other items folded above the item on the path; the waiting
+    line first when the current task is an approval."""
     path = _path(items)
     if path is None:
         counts = _counts(items)
         return ["no current task", f"{len(items)} items" + (f": {counts}" if counts else "")]
     lines: list[str] = []
+    unit, _, key = path[-1].id.rpartition("/")
+    if key in APPROVALS:
+        lines.append(f"waiting on a seat: {key} for {unit}")
     siblings = items
     for depth, chosen in enumerate(path):
         others = [item for item in siblings if item is not chosen]
@@ -147,31 +161,69 @@ def forget(cache: dict[str, str], before: dict, after: dict) -> None:
 
 
 def follow(root: Path, out, sleep=None) -> int:
-    """The pane: render, then each second render again when a source
-    changed; Ctrl-C exits 0."""
+    """The pane: render, then each second check the notify commands still
+    running and render again when a source changed; Ctrl-C exits 0 and
+    leaves the commands running."""
     cache: dict[str, str] = {}
+    running: list[tuple[subprocess.Popen, str]] = []
     try:
         seen = scan(root)
-        _draw(root, out, cache)
+        current = _draw(root, out, cache)
+        _arrive(root, current, None, running)
         while True:
             (sleep or time.sleep)(1)
+            running[:] = [run for run in running if not _ended(*run)]
             now = scan(root)
             if now != seen:
                 forget(cache, seen, now)
                 seen = now
-                _draw(root, out, cache)
+                current, before = _draw(root, out, cache), current
+                _arrive(root, current, before, running)
     except KeyboardInterrupt:
         return 0
 
 
-def _draw(root: Path, out, cache: dict[str, str]) -> None:
-    """One render in one write, then each unreadable source on stderr."""
+def _draw(root: Path, out, cache: dict[str, str]) -> str | None:
+    """One render in one write, then each unreadable source on stderr;
+    returns the current task's id, or None."""
     items, problems = build(root, cache)
     width = max(shutil.get_terminal_size().columns, MIN_WIDTH)
     out.write(CLEAR + "".join(cut(text, width) + "\n" for text in pane(items)))
     out.flush()
     for problem in problems:
         print(f"taskcontract tree: {problem}", file=sys.stderr)
+    path = _path(items)
+    return path[-1].id if path else None
+
+
+def _arrive(root: Path, current: str | None, before: str | None,
+            running: list[tuple[subprocess.Popen, str]]) -> None:
+    """Start the notify command when the render arrived at an approval: the
+    current task is one, and the previous render's was another task or none."""
+    if current is None or current == before or current.rsplit("/", 1)[-1] not in APPROVALS:
+        return
+    command = tree.notify_command(root)
+    if command is None:
+        return
+    try:
+        run = subprocess.Popen(command, shell=True, cwd=root,
+                               env={**os.environ, "SDLC_NODE": current},
+                               stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                               stderr=subprocess.DEVNULL)
+    except OSError:
+        print(f"notify failed, exit 127: {command}", file=sys.stderr)
+        return
+    running.append((run, command))
+
+
+def _ended(run: subprocess.Popen, command: str) -> bool:
+    """Whether the command has ended; a nonzero exit prints one line."""
+    code = run.poll()
+    if code is None:
+        return False
+    if code != 0:
+        print(f"notify failed, exit {code}: {command}", file=sys.stderr)
+    return True
 
 
 def _key(path: Path, root: Path) -> str:

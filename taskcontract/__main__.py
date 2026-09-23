@@ -80,8 +80,8 @@ def main(argv=None) -> int:
     tree.add_argument("--root", type=Path, default=Path("."),
                       help="repo root that holds specs/ and .sdlc/ (default: cwd)")
     tree.add_argument("--follow", action="store_true",
-                      help="keep a pane on the current task, redrawn when a source changes; "
-                           "Ctrl-C exits")
+                      help="keep a pane on the current task, redrawn when a source changes, "
+                           "running the config's tree.notify at each approval; Ctrl-C exits")
     progress = sub.add_parser(
         "progress",
         help="record the work's progress under .sdlc/progress/ (ADR 0031)")

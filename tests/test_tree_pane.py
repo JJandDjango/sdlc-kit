@@ -285,6 +285,7 @@ def test_sc2_1_a_level_with_no_other_item_prints_no_fold_line(tmp_path, capsys):
     _, renders = _pane(root)
     whole = _whole(root, capsys)
     assert renders == [[
+        "waiting on a seat: approve-tests for lone/l1-lone",  # the current task is an approval
         whole["lone"],
         whole["lone/l1-lone"],
         "    7 more: 7 to do",  # six tasks and one check
@@ -703,3 +704,380 @@ def test_every_git_status_of_the_pane_takes_no_optional_locks(tmp_path, monkeypa
     status = _status_calls(calls)
     assert len(status) >= 2, calls  # each render reads the G0 verdict's dirty mark
     assert all(_takes_no_lock(argv) for argv in status), status
+
+
+# --- the waiting line and the notify command ------------------------------------------------------
+#
+# When the current task is approve-tests or approve-commit, the pane's first
+# line reads `waiting on a seat: {approval} for {unit}`, with the approval's
+# task key and the unit's id, above the path and cut to the width like every
+# line of the render, in the render's one write (SC8.1). The command at
+# `tree: notify:` in .sdlc/config.yaml starts through the shell, as
+# subprocess.Popen(command, shell=True, ...), once at each arrival: a render
+# whose current task is an approval and differs from the previous render's,
+# the first render included. It runs at the repo root with the pane's
+# environment plus the approval's id in SDLC_NODE, its streams on DEVNULL
+# (SC8.2). The pane never waits on it: at each tick it checks each command it
+# started, and one that ended with a nonzero exit prints
+# `notify failed, exit {code}: {command}` once, whole, on stderr (SC8.3). A
+# start that raises OSError prints the line at once with code 127. A notify
+# value that is not a string holding a non-blank command counts as unset.
+#
+# The tests spy on subprocess.Popen, where a call with shell=True is a notify
+# start. A test that needs a command's effect waits for the process itself, a
+# bounded real wait inside one injected sleep.
+
+LIMIT = 10  # seconds: the bound on every real wait for a notify command
+WAIT_LONE = "waiting on a seat: approve-tests for lone/l1-lone"
+
+# Appends SDLC_NODE, the working folder and NOTIFY_TEST_MARK to <script>.log,
+# writes to both streams, then exits with the given code.
+LOG_SCRIPT = """\
+import os
+import sys
+from pathlib import Path
+
+fields = [os.environ.get("SDLC_NODE", "-"), os.getcwd(), os.environ.get("NOTIFY_TEST_MARK", "-")]
+with Path(__file__).with_suffix(".log").open("a", encoding="utf-8") as log:
+    log.write("\\t".join(fields) + "\\n")
+print("notify-out-marker")
+print("notify-err-marker", file=sys.stderr)
+sys.exit({code})
+"""
+
+# Holds until <script>.release exists, at most five seconds, then writes
+# <script>.ended with how it stopped.
+HOLD_SCRIPT = """\
+import time
+from pathlib import Path
+
+here = Path(__file__)
+deadline = time.monotonic() + 5
+while not here.with_suffix(".release").exists() and time.monotonic() < deadline:
+    time.sleep(0.01)
+released = here.with_suffix(".release").exists()
+here.with_suffix(".ended").write_text("released" if released else "timed out", encoding="utf-8")
+"""
+
+
+def _script(tmp_path, name, text):
+    """A script under tmp_path, and the command that runs it through either
+    shell (cmd.exe or /bin/sh): the interpreter's path, then the script's."""
+    path = tmp_path / "scripts" / f"{name}.py"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+    return path, f'"{sys.executable}" "{path}"'
+
+
+def _logger(tmp_path, code=0):
+    """(the log path, the command) of a notify script that exits with `code`."""
+    path, command = _script(tmp_path, "notify", LOG_SCRIPT.format(code=code))
+    return path.with_suffix(".log"), command
+
+
+def _log(path):
+    """One (SDLC_NODE, working folder, mark) per run the log holds."""
+    if not path.is_file():
+        return []
+    return [tuple(line.split("\t")) for line in path.read_text(encoding="utf-8").splitlines()]
+
+
+def _notify(command):
+    return {"tree": {"notify": command}}
+
+
+def _approve_tests(clock="10:00"):
+    return _step("lone/l1-lone/approve-tests", "doing", clock)
+
+
+def _lone_repo(tmp_path, *records, **config):
+    """lone, one unit, with no active gate, so no render runs the validator or
+    git; `config` joins .sdlc/config.yaml."""
+    root = tmp_path / "repo"
+    _config(root, [], **config)
+    _dump(root / "specs" / "lone" / "contract.yaml", _contract("lone", LONE))
+    write_seat_roster(root)
+    _progress(root, "lone", *records)
+    return root
+
+
+class ShellRuns:
+    """The spy on subprocess.Popen: each start through the shell as (the
+    command, the keyword arguments, the process); every other call passes
+    through. With `refuse` set, a start through the shell raises OSError, as
+    a missing shell would."""
+
+    def __init__(self, real):
+        self.real = real
+        self.runs = []
+        self.refuse = False
+
+    def __call__(self, args, *more, **kwargs):
+        if not kwargs.get("shell"):
+            return self.real(args, *more, **kwargs)
+        if self.refuse:
+            self.runs.append((args, kwargs, None))
+            raise OSError("the shell cannot start")
+        process = self.real(args, *more, **kwargs)
+        self.runs.append((args, kwargs, process))
+        return process
+
+    def wait(self):
+        """Each started command's end: a bounded real wait."""
+        for _, _, process in self.runs:
+            if process is not None:
+                process.wait(timeout=LIMIT)
+
+
+@pytest.fixture
+def shell_runs(monkeypatch):
+    runs = ShellRuns(subprocess.Popen)
+    monkeypatch.setattr(subprocess, "Popen", runs)
+    yield runs
+    for _, _, process in runs.runs:
+        if process is not None and process.poll() is None:
+            try:
+                process.wait(timeout=LIMIT)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait()
+
+
+class Noting(Sleeper):
+    """A Sleeper that also notes `note()` at each call, before its step."""
+
+    def __init__(self, out, steps, note):
+        super().__init__(out, steps)
+        self.note = note
+        self.notes = []
+
+    def __call__(self, seconds):
+        self.notes.append(self.note())
+        return super().__call__(seconds)
+
+
+def _noting(root, note, *steps, out=None):
+    """(sleeper, renders) of one pane run, as _pane, noting `note()` at each tick."""
+    out = io.StringIO() if out is None else out
+    sleeper = Noting(out, steps, note)
+    code = _follow()(Path(root), out, sleep=sleeper)
+    assert code == 0, f"the pane ended with {code!r}, not 0"
+    return sleeper, _renders(out.getvalue())
+
+
+class _Writes(io.StringIO):
+    """A stream that keeps each write."""
+
+    def __init__(self):
+        super().__init__()
+        self.writes = []
+
+    def write(self, text):
+        self.writes.append(text)
+        return super().write(text)
+
+
+# --- SC8.1 the waiting line ------------------------------------------------------------------------
+
+def test_sc8_1_on_approve_tests_the_first_line_is_the_waiting_line_cut_like_the_rest_in_one_write(
+        tmp_path, capsys, monkeypatch):
+    root = _lone_repo(tmp_path, _approve_tests())
+    _, (full,) = _pane(root)
+    whole = _whole(root, capsys)
+    assert full[0] == WAIT_LONE
+    assert full == [WAIT_LONE, whole["lone"], whole["lone/l1-lone"], "    7 more: 7 to do",
+                    whole["lone/l1-lone/approve-tests"]]
+    monkeypatch.setenv("COLUMNS", "40")
+    out = _Writes()
+    _, (narrow,) = _pane(root, out=out)
+    assert narrow == _cut(full, 40)
+    assert narrow[0] == WAIT_LONE[:37] + "..."
+    writes = [text for text in out.writes if text]
+    assert len(writes) == 1 and writes[0].startswith(CLEAR + narrow[0] + "\n"), writes
+
+
+def test_sc8_1_on_approve_commit_the_waiting_line_names_the_approval_and_its_unit(
+        tmp_path, capsys):
+    root = _repo(tmp_path, gates=())
+    _progress(root, "alpha", _step("alpha/a2-edges/green", "done", "10:00"),
+              _step("alpha/a2-edges/approve-commit", "doing", "10:01"))
+    _, renders = _pane(root)
+    whole = _whole(root, capsys)
+    assert renders[0][0] == "waiting on a seat: approve-commit for alpha/a2-edges"
+    assert renders == [[
+        "waiting on a seat: approve-commit for alpha/a2-edges",
+        "1 more: 1 to do",                   # beta
+        whole["alpha"],
+        "  1 more: 1 to do",                 # alpha/a1-core
+        whole["alpha/a2-edges"],
+        "    9 more: 8 to do, 1 done",       # the other tasks and the checks
+        whole["alpha/a2-edges/approve-commit"],
+    ]]
+
+
+def test_sc8_1_the_waiting_line_leaves_when_the_current_task_moves_off_the_approval(
+        tmp_path, capsys):
+    root = _repo(tmp_path, gates=())
+    first = _step("alpha/a2-edges/approve-commit", "doing", "10:00")
+    _progress(root, "alpha", first)
+    _, renders = _pane(root, lambda: _progress(
+        root, "alpha", first, _step("alpha/a2-edges/commit", "doing", "10:01")))
+    whole = _whole(root, capsys)
+    assert [render[0] for render in renders] == [
+        "waiting on a seat: approve-commit for alpha/a2-edges", "1 more: 1 to do"]
+    assert renders[1][-1] == whole["alpha/a2-edges/commit"]
+    assert not any(line.startswith("waiting on a seat") for line in renders[1])
+
+
+# --- SC8.2 notify once per arrival ------------------------------------------------------------------
+
+def test_sc8_2_a_pane_that_starts_on_an_approval_runs_notify_once_with_the_item_id_in_sdlc_node(
+        tmp_path, capsys, shell_runs):
+    log, command = _logger(tmp_path)
+    root = _lone_repo(tmp_path, _approve_tests(), **_notify(command))
+    sleeper, renders = _noting(
+        root, lambda: len(shell_runs.runs),
+        shell_runs.wait,                                              # the command ends
+        lambda: _append(root / ".sdlc" / "config.yaml"),              # a redraw, the same task
+        lambda: _append(root / ".sdlc" / "progress" / "lone.yaml"),   # another
+        None)
+    assert sleeper.notes == [1, 1, 1, 1, 1]  # started by the first render, never again
+    assert [run[0] for run in shell_runs.runs] == [command]
+    assert len(renders) == 3 and all(render[0] == WAIT_LONE for render in renders)
+    assert [node for node, _, _ in _log(log)] == ["lone/l1-lone/approve-tests"]
+    assert capsys.readouterr().err == ""  # a zero exit prints nothing
+
+
+def test_sc8_2_notify_runs_at_each_arrival_at_an_approval_and_never_on_a_redraw_of_the_same_task(
+        tmp_path, shell_runs):
+    log, command = _logger(tmp_path)
+    root = _repo(tmp_path, gates=())
+    _config(root, [], **_notify(command))
+    records = [_step("alpha/a2-edges/write-tests", "doing", "10:00")]
+    _progress(root, "alpha", *records)
+
+    def then(item, clock):
+        def step():
+            records.append(_step(item, "doing", clock))
+            _progress(root, "alpha", *records)
+        return step
+
+    sleeper, renders = _noting(
+        root, lambda: len(shell_runs.runs),
+        then("alpha/a2-edges/approve-commit", "10:01"),    # arrives
+        lambda: _append(root / ".sdlc" / "config.yaml"),   # a redraw, the same task
+        None,                                              # no change
+        then("alpha/a2-edges/commit", "10:02"),            # leaves
+        then("alpha/a2-edges/approve-commit", "10:03"),    # comes back: a new arrival
+        then("alpha/a1-core/approve-tests", "10:04"))      # another approval: a new arrival
+    shell_runs.wait()
+    assert sleeper.renders == [1, 2, 3, 3, 4, 5, 6]
+    assert sleeper.notes == [0, 1, 1, 1, 1, 2, 3]
+    assert [render[0].startswith("waiting on a seat:") for render in renders] == [
+        False, True, True, False, True, True]
+    assert sorted(node for node, _, _ in _log(log)) == [
+        "alpha/a1-core/approve-tests",
+        "alpha/a2-edges/approve-commit", "alpha/a2-edges/approve-commit"]
+
+
+def test_the_notify_command_runs_at_the_repo_root_with_the_panes_environment_and_prints_nowhere(
+        tmp_path, capfd, monkeypatch, shell_runs):
+    monkeypatch.setenv("NOTIFY_TEST_MARK", "kept")
+    monkeypatch.delenv("SDLC_NODE", raising=False)
+    log, command = _logger(tmp_path)
+    root = _lone_repo(tmp_path, _approve_tests(), **_notify(command))
+    _, renders = _noting(root, lambda: None, shell_runs.wait, None)
+    captured = capfd.readouterr()
+    runs = _log(log)
+    assert len(runs) == 1, runs
+    node, cwd, mark = runs[0]
+    assert node == "lone/l1-lone/approve-tests"
+    assert os.path.samefile(cwd, root)
+    assert mark == "kept"
+    assert "SDLC_NODE" not in os.environ  # the pane's own environment stays as it was
+    assert "marker" not in captured.out + captured.err
+    assert not any("marker" in line for render in renders for line in render)
+
+
+def test_the_pane_never_waits_on_the_notify_command(tmp_path, capsys, shell_runs):
+    script, command = _script(tmp_path, "hold", HOLD_SCRIPT)
+    root = _lone_repo(tmp_path, _approve_tests(), **_notify(command))
+    running = []
+
+    def first_tick():
+        running.append([process.poll() is None for _, _, process in shell_runs.runs])
+        script.with_suffix(".release").write_text("go", encoding="utf-8")
+
+    sleeper, _ = _noting(root, lambda: len(shell_runs.runs), first_tick, shell_runs.wait, None)
+    # started at the first render, and still holding when the pane reached its first tick
+    assert sleeper.notes[0] == 1
+    assert running == [[True]]
+    assert script.with_suffix(".ended").read_text(encoding="utf-8") == "released"
+    assert capsys.readouterr().err == ""
+
+
+# --- SC8.3 a notify failure ----------------------------------------------------------------------
+
+def test_sc8_3_a_failing_notify_prints_one_failure_line_on_stderr_and_the_pane_keeps_running(
+        tmp_path, capsys, monkeypatch, shell_runs):
+    monkeypatch.setenv("COLUMNS", "40")
+    _, command = _logger(tmp_path, code=3)
+    root = _lone_repo(tmp_path, _approve_tests(), **_notify(command))
+    sleeper, renders = _noting(
+        root, lambda: capsys.readouterr().err,
+        shell_runs.wait,                                              # the command ends, exit 3
+        None,                                                         # no change
+        lambda: _append(root / ".sdlc" / "progress" / "lone.yaml"),   # a redraw, the same task
+        None)
+    line = f"notify failed, exit 3: {command}"
+    assert len(line) > 40  # printed whole: stderr lines are not cut
+    # found at the tick after the command ended, with no render, and printed once
+    assert sleeper.notes == ["", line + "\n", "", "", ""]
+    assert len(shell_runs.runs) == 1
+    assert len(renders) == 2 and all(render[0] == WAIT_LONE[:37] + "..." for render in renders)
+    assert not any("notify failed" in text for render in renders for text in render)
+
+
+def test_sc8_3_with_no_notify_set_the_pane_shows_the_waiting_line_starts_nothing_and_keeps_running(
+        tmp_path, capsys, shell_runs):
+    root = _lone_repo(tmp_path, _approve_tests())
+    _, renders = _pane(root, lambda: _append(root / ".sdlc" / "progress" / "lone.yaml"), None)
+    assert [render[0] for render in renders] == [WAIT_LONE, WAIT_LONE]
+    assert shell_runs.runs == []
+    assert capsys.readouterr().err == ""
+
+
+NO_COMMAND = [
+    pytest.param({"tree": {}}, id="a-tree-key-without-notify"),
+    pytest.param({"tree": {"notify": None}}, id="notify-null"),
+    pytest.param({"tree": {"notify": 5}}, id="notify-a-number"),
+    pytest.param({"tree": {"notify": ""}}, id="notify-empty"),
+    pytest.param({"tree": {"notify": "   "}}, id="notify-blank"),
+    pytest.param({"tree": {"notify": ["echo", "hi"]}}, id="notify-a-list"),
+    pytest.param({"tree": "echo hi"}, id="tree-not-a-mapping"),
+]
+
+
+@pytest.mark.parametrize("config", NO_COMMAND)
+def test_a_notify_value_that_is_not_a_command_counts_as_unset(
+        tmp_path, capsys, shell_runs, config):
+    root = _lone_repo(tmp_path, _approve_tests(), **config)
+    _, renders = _pane(root, lambda: _append(root / ".sdlc" / "progress" / "lone.yaml"), None)
+    assert [render[0] for render in renders] == [WAIT_LONE, WAIT_LONE]
+    assert shell_runs.runs == []
+    assert capsys.readouterr().err == ""
+
+
+def test_a_notify_command_that_cannot_start_prints_the_failure_line_with_exit_127_and_keeps_running(
+        tmp_path, capsys, shell_runs):
+    shell_runs.refuse = True
+    command = "notify-that-cannot-start --now"
+    root = _lone_repo(tmp_path, _approve_tests(), **_notify(command))
+    sleeper, renders = _noting(
+        root, lambda: capsys.readouterr().err,
+        lambda: _append(root / ".sdlc" / "progress" / "lone.yaml"),   # a redraw, the same task
+        None)
+    # printed at the arrival itself, once
+    assert sleeper.notes == [f"notify failed, exit 127: {command}\n", "", ""]
+    assert len(shell_runs.runs) == 1
+    assert len(renders) == 2 and all(render[0] == WAIT_LONE for render in renders)

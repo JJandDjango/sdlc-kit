@@ -380,6 +380,19 @@ def active_gates(root: Path, problems: list[str]) -> list[str]:
     return [g for g in gates if isinstance(g, str)] if isinstance(gates, list) else []
 
 
+def notify_command(root: Path) -> str | None:
+    """`tree.notify` from .sdlc/config.yaml, as written; None when it is not
+    set to text that holds more than blanks, or the config is missing or
+    unreadable (the tree itself names an unreadable config)."""
+    path = root / ".sdlc" / "config.yaml"
+    if not path.is_file():
+        return None
+    doc = _load(path, root, [], "config")
+    section = doc.get("tree") if doc is not None else None
+    command = section.get("notify") if isinstance(section, dict) else None
+    return command if isinstance(command, str) and command.strip() else None
+
+
 def read_findings(root: Path, problems: list[str]) -> list[Finding]:
     """One finding per file under .sdlc/findings/, in file-name order."""
     folder = root / ".sdlc" / "findings"
