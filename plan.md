@@ -4,8 +4,11 @@
 When the tree pane arrives at an approval, herdr shows that a seat is
 waiting; once the seat is answered, the flag clears.
 
-Where things stand: PR #52 (t7, t8) merged at `fa0e944`, where this branch
-starts. The pane runs on the kit and stands on t6's `approve-tests`.
+**Closed.** The deliverable is met: the hook at `787e415` in
+`E:\herdr-sdlc`, a Two-Key PASS at round 1, its README verified at
+`a03ee84`; the kit's config line at `28d09d8`. Started on the kit, the
+pane reads `waiting on a seat` for t6's `approve-tests`, and herdr shows it
+as `sdlc`, `blocked`. The push and the PR wait on the user's word.
 
 ## What the probe found
 
@@ -71,31 +74,28 @@ The HTML is generated, never committed.
 
 ## Steps
 
-1. Open: this branch from `fa0e944` and this plan.
-2. README first: `git init E:\herdr-sdlc`; the README records the kept
-   features, the probe's facts and the interface (the environment in, the
-   herdr calls out, the exit codes), each feature marked 🔴.
-3. Test list: drafted against a fake herdr; Claude approves it.
-4. Tests red: placed and proven red.
-5. Green: a developer subagent writes `herdr_seat.py` from the README,
-   without opening the tests.
-6. Live check in herdr: a scratch pane shows a waiting line and runs the
-   hook; `herdr pane get` reads `sdlc` `blocked` and the toast shows; the
-   line changes and the flag clears; Ctrl-C clears it too.
-7. Commit in `E:\herdr-sdlc`: Claude approves on review.
-8. Two-Key: a verifier subagent re-runs the tests and the live check and
-   grades against the README; a FAIL goes back to step 5, at most three
-   rounds.
-9. The config line on the kit, committed on this branch; the kit's pane,
-   started in herdr, flags t6's `approve-tests` at once.
-10. Close: README markers 🟢; STATE.md regenerated; this plan struck; ask
-    whether the pane is enough to unpark G1; the push and the PR on your
-    word.
+1. ~~Open.~~ Done at `12e2275`, after herdr's server moved to 0.9.1 and
+   the probe, re-run, held.
+2. ~~README first.~~ Done at `5b9219b` in `E:\herdr-sdlc`.
+3. ~~Test list.~~ 31 tests (37 cases), drafted in the scratchpad, red on a
+   stub, green on a prototype; approved as drafted. One README line added
+   from its questions: another seat's exit carries a failed toast as 1.
+4. ~~Tests red.~~ The module absent: collection fails.
+5. ~~Green.~~ `herdr_seat.py`, 37 passed, no deviations.
+6. ~~Live check.~~ Flag in 1.6 s, cleared about 2 s after the line went;
+   Ctrl-C released it; hook exit 0 both times.
+7. ~~Commit.~~ Done at `787e415`.
+8. ~~Two-Key.~~ PASS at round 1, about 133K tokens: 37 green, four live
+   paths ok, no blocking finding; four advisories, recorded in the README.
+9. ~~The config line.~~ Done at `28d09d8`; the kit's pane flags t6's
+   `approve-tests`.
+10. ~~Close.~~ README markers 🟢 at `a03ee84`; STATE.md regenerated; this
+    plan struck; the G1 question and the push and the PR go to the user.
 
 Deferred, not this session:
 - Flag the Claude pane itself: it needs a detection rule (a local
   `claude.toml` shadows herdr's remote one) or a change in herdr.
-- Feature 4, if struck.
+- Feature 4, the key action.
 - The pilot's config line, in the engine's session.
 - t6 (the query face) and t9 (the 0.15.0 release), with the advisories
   carried in STATE.md.

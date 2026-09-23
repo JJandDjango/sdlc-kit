@@ -6,7 +6,7 @@
     "quality_profile": "showcase",
     "locale": "en",
     "views": [
-      { "id": "now", "label": "Where we are", "focus": ["open", "plan_ok"], "note": "Step 1: this plan waits on your word: the features, the placement, the delegation." },
+      { "id": "now", "label": "Where we are", "focus": ["close", "pr_ok"], "note": "Closed: the hook passed Two-Key at round 1 and the kit's pane flags its seat in herdr; the push and the PR wait on your word." },
       { "id": "probe", "label": "What the probe found", "focus": ["readme", "green"], "note": "herdr ignores an outside state report on a Claude pane; a pane with no agent shows it, so the tree pane carries the flag." },
       { "id": "decide", "label": "Who decides", "focus": ["plan_ok", "list_ok", "commit_ok", "pr_ok"], "note": "You: the features, the placement, the delegation, then the push and the PR. Claude on review: the test list and the commit." },
       { "id": "exceptions", "label": "If a round fails", "focus": ["twokey", "fail"], "note": "A Two-Key FAIL goes back to green; at most three rounds, then it comes to you." }
@@ -31,13 +31,13 @@
     { "id": "list_ok", "lane": "gates", "col": 2, "type": "security", "label": "Claude", "sublabel": "test list" },
     { "id": "commit_ok", "lane": "gates", "col": 4, "type": "security", "label": "Claude", "sublabel": "commit" },
     { "id": "pr_ok", "lane": "gates", "col": 5, "type": "security", "label": "Your word", "sublabel": "push + PR" },
-    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "Branch + plan", "sublabel": "HERE: your review", "tag": "step 1" },
-    { "id": "readme", "lane": "steps", "col": 1, "type": "cloud", "label": "README first", "sublabel": "the kept features", "tag": "step 2" },
-    { "id": "red", "lane": "steps", "col": 2, "type": "backend", "label": "Tests red", "sublabel": "a fake herdr", "tag": "steps 3-4" },
-    { "id": "green", "lane": "steps", "col": 3, "type": "backend", "label": "Green + live", "sublabel": "a real herdr pane", "tag": "steps 5-6" },
-    { "id": "twokey", "lane": "steps", "col": 4, "type": "backend", "label": "Two-Key", "sublabel": "after the commit", "tag": "steps 7-8" },
-    { "id": "close", "lane": "steps", "col": 5, "type": "cloud", "label": "Wire + close", "sublabel": "the kit pane flags t6", "tag": "steps 9-10" },
-    { "id": "fail", "lane": "waits", "col": 4, "type": "security", "label": "FAIL", "sublabel": "fix, rerun, max 3", "tag": "exception" }
+    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "Branch + plan", "sublabel": "done: 12e2275", "tag": "step 1, done" },
+    { "id": "readme", "lane": "steps", "col": 1, "type": "cloud", "label": "README first", "sublabel": "done: 5b9219b", "tag": "step 2, done" },
+    { "id": "red", "lane": "steps", "col": 2, "type": "backend", "label": "Tests red", "sublabel": "37 cases, proven", "tag": "steps 3-4, done" },
+    { "id": "green", "lane": "steps", "col": 3, "type": "backend", "label": "Green + live", "sublabel": "flag in 1.6 s", "tag": "steps 5-6, done" },
+    { "id": "twokey", "lane": "steps", "col": 4, "type": "backend", "label": "Two-Key", "sublabel": "done: 787e415", "tag": "steps 7-8, PASS" },
+    { "id": "close", "lane": "steps", "col": 5, "type": "cloud", "label": "Wire + close", "sublabel": "HERE: the push", "tag": "steps 9-10" },
+    { "id": "fail", "lane": "waits", "col": 4, "type": "security", "label": "FAIL", "sublabel": "fix, rerun, max 3", "tag": "not taken" }
   ],
   "edges": [
     { "from": "open", "to": "readme", "label": "plan approved", "variant": "emphasis", "route": "straight" },
@@ -52,7 +52,7 @@
     { "from": "twokey", "to": "fail", "variant": "security", "route": "straight" }
   ],
   "cards": [
-    { "dot": "amber", "title": "Where we are (2026-09-23, session 43 open)", "items": ["PR #52 (t7, t8) merged at fa0e944; this branch, session-43-herdr-hook, starts there", "The probe answered STATE's question: herdr ignores an outside state report on a Claude pane", "This plan waits on your word: the features, the placement, the delegation"] },
+    { "dot": "amber", "title": "Where we are (2026-09-23, session 43 closed)", "items": ["The hook at 787e415 in E:/herdr-sdlc passed Two-Key at round 1: 37 green, four live paths ok, no blocking finding", "The kit's config line at 28d09d8: its pane reads waiting on a seat for t6's approve-tests, and herdr shows it as sdlc, blocked", "Open: is the pane enough to unpark G1? The push and the PR wait on your word"] },
     { "dot": "cyan", "title": "What the probe found (herdr 0.9.1 client, 0.9.0 server)", "items": ["An outside report-agent --state blocked never changes a Claude pane's state: idle or working, any source, with or without the session id", "herdr agent explain shows why: Claude's state comes only from herdr's screen-detection rules", "On a pane with no detected agent the same report shows as agent sdlc, state blocked; release-agent clears it", "The tree pane is such a pane, and the notify command inherits its HERDR_PANE_ID: the hook needs no other pane's id"] },
     { "dot": "violet", "title": "Features (strike what you don't want)", "items": ["1. Seat flag: at each arrival the tree pane shows in herdr's sidebar as agent sdlc, state blocked, with the approval and the unit", "2. The flag clears once the pane's first line stops reading waiting on a seat, and on Ctrl-C; a different seat's hook keeps its own flag", "3. Toast: waiting on a seat, the approval and the unit, the request sound", "4. One key opens the pane (a herdr plugin action). Recommended: strike for now", "5. The config line: tree: notify: python E:/herdr-sdlc/herdr_seat.py in the kit's .sdlc/config.yaml, a free path"] },
     { "dot": "violet", "title": "Decisions for you (three)", "items": ["1. The features: keep 1, 2, 3 and 5; strike 4. Recommended", "2. Placement: a new local repo, E:/herdr-sdlc, with the script, its tests and a README; no GitHub remote until you ask", "3. Delegation as in session 42: Workflow subagents build and verify; Claude approves the test list and the commit; you approve the push and the PR"] },
