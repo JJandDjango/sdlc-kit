@@ -6,11 +6,11 @@
     "quality_profile": "showcase",
     "locale": "en",
     "views": [
-      { "id": "now", "label": "Where we are", "focus": ["open"], "note": "Session open: PR #51 merged at f2d400a. This plan and its five rulings wait on your review." },
-      { "id": "decide", "label": "Who decides", "focus": ["t7_tests_ok", "t7_commit_ok", "t8_tests_ok", "t8_commit_ok", "merge_ok"], "note": "You: this plan, its rulings, then the push, PR and merge. Claude on review: both lists and both commits." },
-      { "id": "pane", "label": "t7: the pane", "focus": ["t7_red", "t7_green"], "note": "tree --follow: the path to the current task, the rest folded by status; a redraw within 2 s of a change." },
-      { "id": "notify", "label": "t8: the notify", "focus": ["t8_red", "t8_green"], "note": "At an approval: the waiting line first, the notify command once per arrival with SDLC_NODE; a failure prints one line." },
-      { "id": "exceptions", "label": "If a round fails", "focus": ["t7_green", "fail", "open_q"], "note": "A Two-Key FAIL loops fix and rerun, max 3. A fact the contract cannot keep becomes an OPEN and a re-intake." }
+      { "id": "now", "label": "Where we are", "focus": ["close", "merge_ok"], "note": "Closed: t7 and t8 each passed Two-Key at round 1. The branch is pushed and its PR open; the merge waits on your word." },
+      { "id": "decide", "label": "Who decided", "focus": ["t7_tests_ok", "t7_commit_ok", "t8_tests_ok", "t8_commit_ok", "merge_ok"], "note": "You: the plan, its rulings, the delegation, PR #51's merge, the push and the PR. Claude on review: both lists, both commits." },
+      { "id": "pane", "label": "t7: the pane", "focus": ["t7_red", "t7_green"], "note": "37 cases red first, then 469 green at 2f8ef03; a warm redraw on the kit takes 0.23 s against 1.22 s cold." },
+      { "id": "notify", "label": "t8: the notify", "focus": ["t8_red", "t8_green"], "note": "17 cases red first, then 486 green at 0e89078; the kit's pane now waits on t6's approve-tests." },
+      { "id": "exceptions", "label": "If a round fails", "focus": ["t7_green", "fail", "open_q"], "note": "No round failed and no OPEN was needed: both units passed at round 1." }
     ]
   },
   "lanes": [
@@ -27,19 +27,19 @@
   "groups": [],
   "mainPath": ["open", "t7_red", "t7_green", "t8_red", "t8_green", "close"],
   "nodes": [
-    { "id": "t7_tests_ok", "lane": "gates", "col": 1, "type": "security", "label": "Claude", "sublabel": "t7 test list" },
-    { "id": "t7_commit_ok", "lane": "gates", "col": 2, "type": "security", "label": "Claude", "sublabel": "t7 commit" },
-    { "id": "t8_tests_ok", "lane": "gates", "col": 3, "type": "security", "label": "Claude", "sublabel": "t8 test list" },
-    { "id": "t8_commit_ok", "lane": "gates", "col": 4, "type": "security", "label": "Claude", "sublabel": "t8 commit" },
-    { "id": "merge_ok", "lane": "gates", "col": 5, "type": "security", "label": "Your word", "sublabel": "push, PR, merge" },
-    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "Branch + plan", "sublabel": "HERE: your review", "tag": "step 1" },
-    { "id": "t7_red", "lane": "steps", "col": 1, "type": "backend", "label": "t7 tests red", "sublabel": "SC2.1 to SC2.3", "tag": "steps 2-3" },
-    { "id": "t7_green", "lane": "steps", "col": 2, "type": "backend", "label": "t7 green", "sublabel": "the pane", "tag": "steps 4-6" },
-    { "id": "t8_red", "lane": "steps", "col": 3, "type": "backend", "label": "t8 tests red", "sublabel": "SC8.1 to SC8.3", "tag": "steps 7-8" },
-    { "id": "t8_green", "lane": "steps", "col": 4, "type": "backend", "label": "t8 green", "sublabel": "the notify", "tag": "steps 9-11" },
-    { "id": "close", "lane": "steps", "col": 5, "type": "cloud", "label": "Close + PR", "sublabel": "STATE, then PR", "tag": "step 12" },
-    { "id": "fail", "lane": "waits", "col": 2, "type": "security", "label": "FAIL", "sublabel": "fix, rerun, max 3", "tag": "if Two-Key fails" },
-    { "id": "open_q", "lane": "waits", "col": 4, "type": "security", "label": "OPEN", "sublabel": "re-intake", "tag": "if a fact breaks" }
+    { "id": "t7_tests_ok", "lane": "gates", "col": 1, "type": "security", "label": "Claude", "sublabel": "t7 list: yes" },
+    { "id": "t7_commit_ok", "lane": "gates", "col": 2, "type": "security", "label": "Claude", "sublabel": "t7 commit: yes" },
+    { "id": "t8_tests_ok", "lane": "gates", "col": 3, "type": "security", "label": "Claude", "sublabel": "t8 list: yes" },
+    { "id": "t8_commit_ok", "lane": "gates", "col": 4, "type": "security", "label": "Claude", "sublabel": "t8 commit: yes" },
+    { "id": "merge_ok", "lane": "gates", "col": 5, "type": "security", "label": "Your word", "sublabel": "merge pending" },
+    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "Branch + plan", "sublabel": "done: f71c283", "tag": "step 1, done" },
+    { "id": "t7_red", "lane": "steps", "col": 1, "type": "backend", "label": "t7 tests red", "sublabel": "37 red, proven", "tag": "steps 2-3, done" },
+    { "id": "t7_green", "lane": "steps", "col": 2, "type": "backend", "label": "t7 green", "sublabel": "done: 2f8ef03", "tag": "steps 4-6, PASS" },
+    { "id": "t8_red", "lane": "steps", "col": 3, "type": "backend", "label": "t8 tests red", "sublabel": "18 red, proven", "tag": "steps 7-8, done" },
+    { "id": "t8_green", "lane": "steps", "col": 4, "type": "backend", "label": "t8 green", "sublabel": "done: 0e89078", "tag": "steps 9-11, PASS" },
+    { "id": "close", "lane": "steps", "col": 5, "type": "cloud", "label": "Close + PR", "sublabel": "HERE: the merge", "tag": "step 12" },
+    { "id": "fail", "lane": "waits", "col": 2, "type": "security", "label": "FAIL", "sublabel": "fix, rerun, max 3", "tag": "not taken" },
+    { "id": "open_q", "lane": "waits", "col": 4, "type": "security", "label": "OPEN", "sublabel": "re-intake", "tag": "not taken" }
   ],
   "edges": [
     { "from": "open", "to": "t7_red", "label": "plan approved", "variant": "emphasis", "route": "straight" },
@@ -56,10 +56,10 @@
     { "from": "t8_green", "to": "open_q", "variant": "security", "route": "straight" }
   ],
   "cards": [
-    { "dot": "amber", "title": "Where we are (2026-09-22, session 42 open)", "items": ["PR #51 (t4, t5) merged at f2d400a; branch session-42-tree-view-t7-t8 starts there", "Suite 432 green, the 14 contracts ready-green; USAGE section 9 already pins most of t7 and t8", "A render of the kit costs 1.3 s today, nearly all of it the G0 validator; ruling 3 keeps the 2-second window", "Next: your review of this plan and its five rulings"] },
-    { "dot": "cyan", "title": "Rulings for your review (five)", "items": ["1. The pane reads down to the current task, always the last line; each level's other items fold into one line above the path item; in --follow only, lines are cut to the pane's width", "2. The pane watches the files the tree reads (specs/, .sdlc/ config, findings and progress, docs/features/, the kit's two lists); git is not watched", "3. The pane keeps each G0 verdict in memory, recomputed only when its contract or the vocabulary changes; nothing is written", "4. A pane that starts on an approval notifies once: its first render counts as an arrival", "5. The pane never waits on the notify command: it checks it each tick and prints the failure line on a nonzero exit"] },
-    { "dot": "violet", "title": "Who decides (ten decisions)", "items": ["1. PR #51's merge: you, yes (f2d400a)", "2. The deliverable, t7 and t8: you, yes", "3. The delegation of the in-work approvals: you, yes", "4. This plan and its five rulings: you, pending", "5 to 8. t7's list and commit, t8's list and commit: Claude, on review", "9. The push and the PR: you, at the close", "10. The merge: you, at the close"] },
-    { "dot": "slate", "title": "Deferred, not this session", "items": ["The herdr hook on t8's notify, outside the kit; first question: does herdr's screen detection overwrite an outside report-agent --state blocked?", "t6 (the query face) and t9 (the release, 0.15.0), with the advisories carried from t0 to t5", "The backfill of the 13 earlier contracts, once each is checked finished", "Parked until the pane follows them: G1, then the pilot's M0 code", "derived-language, feature-document, spec-doc-type; the demo intake; wave B; 5b; the G4.6 finding"] },
+    { "dot": "amber", "title": "Where we are (2026-09-23, session 42 closed)", "items": ["The deliverable is met: t7 (the pane) at 2f8ef03 and t8 (the waiting line and the notify command) at 0e89078, each a Two-Key PASS at round 1", "Suite 486 green (54 new cases); the 14 contracts ready-green; the vocabulary, language and scope checks clean", "The pane runs on the kit: it reads waiting on a seat for t6's approve-tests, and t7 and t8 are closed", "The branch is pushed and its PR open; the merge waits on your word"] },
+    { "dot": "violet", "title": "Who decided (ten decisions)", "items": ["1. PR #51's merge: you, yes (f2d400a)", "2. The deliverable, t7 and t8: you, yes", "3. The delegation of the in-work approvals: you, yes", "4. This plan and its five rulings: you, yes", "5. t7's test list, 18 tests: Claude, yes, with one change", "6. t7's commit: Claude, yes", "7. t8's test list, 11 tests: Claude, yes, its two questions answered", "8. t8's commit: Claude, yes", "9. The push and the PR: you, yes", "10. The merge: you, pending"] },
+    { "dot": "cyan", "title": "Rulings, now pinned by tests", "items": ["1. The pane reads down to the current task, always the last line; each level's other items fold into one line above the path item; in --follow only, lines are cut to the pane's width", "2. The pane watches the files the tree reads (specs/, .sdlc/ config, findings and progress, docs/features/, the kit's two lists); git is not watched", "3. The pane keeps each G0 verdict in memory, recomputed only when its contract or the vocabulary changes; nothing is written", "4. A pane that starts on an approval notifies once: its first render counts as an arrival", "5. The pane never waits on the notify command: it checks it each tick and prints the failure line on a nonzero exit"] },
+    { "dot": "slate", "title": "Deferred, not this session", "items": ["The herdr hook on t8's notify, outside the kit; first question: does herdr's screen detection overwrite an outside report-agent --state blocked?", "t6 (the query face) and t9 (the release, 0.15.0), with the advisories carried from t0 to t8", "The backfill of the 13 earlier contracts, once each is checked finished", "Parked until the pane follows them: G1, then the pilot's M0 code", "derived-language, feature-document, spec-doc-type; the demo intake; wave B; 5b; the G4.6 finding"] },
     { "dot": "slate", "title": "Glossary", "items": ["t7, t8: units of tree-view; t7 follows t3, t8 follows t7, and t9 (the release) waits on t8", "Current task: derived from the progress records, never stored; the pane's last line", "The seven tasks: approve the test list, write the tests, prove red, green, approve the commit, commit, Two-Key PASS", "Spec channel: the agent that drafts the tests and proves red; the developer agent makes them green without opening tests/", "Two-Key: a receipts agent re-runs every check, a zero-trust grader reads the commit against its sketches; the script computes the verdict", "OPEN: a fact the contract cannot keep goes back to the REQUEST as a question and a re-intake, never a silent edit"] }
   ]
 }

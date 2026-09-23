@@ -18,70 +18,62 @@ computes the verdict). Together they are the kit's half of the herdr pane.
   `SDLC_NODE`. A failure prints `notify failed, exit {code}: {command}`,
   and the pane keeps running.
 
-Where things stand: PR #51 (t4, t5) merged at `f2d400a`, and branch
-`session-42-tree-view-t7-t8` starts there. Suite 432 green, the 14
-contracts ready-green. USAGE section 9, written at t0, already pins most of
-both units: the one-second poll of modification times, ANSI redraws,
-Ctrl-C exiting 0, the shell, the config key and the failure line. The
-kit's current mark sits on t6's `approve-tests`; step 1 moves it to t7's.
+**Closed.** The deliverable is met: t7 at `2f8ef03` and t8 at `0e89078`,
+each a Two-Key PASS at round 1. The branch is pushed and its PR open on
+the user's word; the merge waits on it.
 
-**Who does what.** The user approved PR #51's merge, this deliverable and
-the delegation, and reviews this plan and its rulings. Subagents do each
-unit's work through the Workflow tool, launched by `scriptPath`: the
-drafter drafts the test list, proves it red from the scratchpad and
-prototypes the interface; the developer makes the tests green from the
-interface note without opening `tests/`; Two-Key grades last. Claude
-approves each list and each commit, places the tests, records each task
-with `taskcontract progress` (`--by claude` on the approvals it gives), and
-runs the receipts before each verifier round.
+Where things stand: PR #51 (t4, t5) merged at `f2d400a`, where this
+branch starts. Suite 486 green (432 before; t7 added 37 cases, t8 17), the
+14 contracts ready-green, the vocabulary, language and scope checks clean.
+t7 and t8 are closed in the kit's progress file, and the pane on the kit
+now stands on t6's `approve-tests`.
+
+**Who did what.** The user approved PR #51's merge, this deliverable, the
+delegation, and this plan with its five rulings, then asked for the push
+and the PR at the wrap. Subagents did each unit's work through the
+Workflow tool: a drafter drafted the test list, proved it red from the
+scratchpad and prototyped the interface; a developer made the tests green
+without opening `tests/`; Two-Key graded last. t8's drafter ran beside
+t7's Two-Key. Claude approved each list and each commit, placed the tests,
+recorded each task with `taskcontract progress`, and ran the receipts
+before each verifier round.
 
 ## Rulings for the test lists
 
-Details the contract and USAGE leave open, for the user to rule:
+Details the contract and USAGE left open, ruled by the user at plan
+review:
 
 1. **The pane reads down to the current task.** Each level's other items
    fold into one line above the item on the path, so the current task is
    always the last line. In `--follow` only, each line is cut to the
    pane's width and ends in `...`: a cut prefix, never other words, and
-   the whole tree still prints every line whole. Recommended: a contract's
-   intent alone runs to about 900 characters, eleven rows of an 80-column
-   pane, which breaks the fifteen-line pane.
+   the whole tree still prints every line whole.
 2. **The pane watches the files the tree reads:** everything under
-   `specs/` (the contracts, and the vocabulary the validator reads),
-   `.sdlc/config.yaml`, `.sdlc/findings/`, `.sdlc/progress/`,
+   `specs/`, `.sdlc/config.yaml`, `.sdlc/findings/`, `.sdlc/progress/`,
    `docs/features/` and the kit's two lists, listed afresh each second so
-   a new or deleted file counts. Git is not watched. Recommended: it
-   matches USAGE's words, and a commit shows at the next progress record,
-   which the task list writes after every commit.
+   a new or deleted file counts. Git is not watched: a commit shows at the
+   next progress record, which the task list writes after every commit.
 3. **The pane keeps each `G0` verdict in memory** and recomputes it only
-   when its contract or the vocabulary changes; nothing is written.
-   Recommended: a render of the kit costs 1.3 s today, nearly all of it
-   the validator reloading the vocabulary for each of 28 validations, so a
-   one-second poll can take 2.3 s. With the verdicts kept, a redraw after
-   a progress record costs about 0.2 s. A vocabulary change still costs
-   the full render, a rare case. The validator's files sit outside the
-   contract's scope, so the fix stays in `tree.py`.
+   when its contract or the vocabulary changes; nothing is written. A
+   render of the kit cost 1.3 s; a warm redraw now costs 0.23 s. A
+   vocabulary change still costs the full render, a rare case.
 4. **A pane that starts on an approval notifies once:** its first render
-   counts as an arrival. Recommended: the pane may start after the
-   approval was reached, and nothing else tells the seat; a restart
-   repeats one notice at most.
+   counts as an arrival.
 5. **The pane never waits on the notify command.** It starts the command,
    checks it at each one-second tick, and prints the failure line when it
-   ends nonzero. Recommended: a command that hangs never freezes the pane,
-   and the pinned failure line has no form for a timeout.
+   ends nonzero.
 
-## The pane, as the rulings draw it
+## The pane on the kit, at the close
 
-The kit at step 1, once both units land, in an 80-column pane. The first
-line is t8's; the rest is t7's. t7's test list pins the fold lines' words.
+At 80 columns; the first line is t8's, the rest t7's:
 
-    waiting on a seat: approve-tests for tree-view/t7-pane-face
+    waiting on a seat: approve-tests for tree-view/t6-query-face
     14 more: 14 to do
     tree-view [waiting on a seat] | A repo holds its work in contracts, gates, fi...
-      10 more: 7 done, 3 to do
-      tree-view/t7-pane-face [waiting on a seat] depends_on: tree-view/t3-status-...
+      10 more: 1 to do, 9 done
+      tree-view/t6-query-face [waiting on a seat] depends_on: tree-view/t2-summar...
         9 more: 9 to do
-        tree-view/t7-pane-face/approve-tests [waiting on a seat] | Approve the te...
+        tree-view/t6-query-face/approve-tests [waiting on a seat] current | Appro...
 
 ## Diagram
 
@@ -97,35 +89,50 @@ The HTML is generated, never committed.
 
 ## Steps
 
-1. **Open.** Branch cut from `f2d400a` (done); this plan and its diagram,
-   committed once the user approves them; then `progress start
-   tree-view/t7-pane-face/approve-tests`, so the current mark leaves t6.
-2. **t7, draft and approve the test list.** The drafter covers SC2.1 to
-   SC2.3 and rulings 1 to 3, with the loop driven in-process through an
-   injected clock, so no test waits on a real second.
-3. **t7, write the tests and prove red.** Each check's red recorded with
-   `progress run --expect red`.
-4. **t7, green.** Then the receipts: the suite, the 14 contracts
-   ready-green, the doors, the scope check, and one timed redraw on the
-   kit itself, under two seconds.
-5. **t7, approve the commit and commit.** Each check's green recorded with
-   `progress run` at the commit.
-6. **t7 Two-Key.**
-7. **t8, draft and approve the test list.** SC8.1 to SC8.3 and rulings 4
-   and 5.
-8. **t8, write the tests and prove red.**
-9. **t8, green.**
-10. **t8, approve the commit and commit.**
-11. **t8 Two-Key.**
-12. **Close.** t7 and t8 closed with `progress done`; STATE.md regenerated
+1. ~~Open.~~ Done at `f71c283`: branch cut from `f2d400a` after PR #51's
+   merge, and this plan; the current mark moved to t7's `approve-tests`.
+2. ~~t7, draft and approve the test list.~~ 18 tests (37 cases), approved
+   with one change: the pane's git test asserts at least two `git status`
+   calls, so the dirty mark is read at every render. Settled with it: the
+   fold line `<n> more: <counts>`, `no current task` then `<n> items`, a
+   10-column floor, unreadable sources on stderr.
+3. ~~t7, write the tests and prove red.~~ 37 failed, 432 passed.
+4. ~~t7, green.~~ `tree_view.py`, `tree.py`, `progress.py`, `__main__.py`;
+   469 passed; a warm redraw on the kit 0.23 s against 1.22 s cold.
+5. ~~t7, approve the commit and commit.~~ Done at `2f8ef03`; SC2.1 to
+   SC2.3 recorded green there.
+6. ~~t7 Two-Key.~~ PASS at round 1, about 200K tokens. Three advisories,
+   to t9's notes.
+7. ~~t8, draft and approve the test list.~~ 11 tests (17 cases), approved
+   as drafted. Its two questions, answered: one t7 test gains the waiting
+   line, since its fixture stands on an approval; the failure line prints
+   whole on stderr, as t7's stderr lines do.
+8. ~~t8, write the tests and prove red.~~ 18 failed, 468 passed.
+9. ~~t8, green.~~ `tree_view.py`, `tree.py`, `__main__.py`; 486 passed.
+10. ~~t8, approve the commit and commit.~~ Done at `0e89078`; SC8.1 to
+    SC8.3 recorded green there, and SC2.1 again.
+11. ~~t8 Two-Key.~~ PASS at round 1, about 177K tokens. Two wording
+    advisories, to t9.
+12. ~~Close.~~ t7 and t8 closed with `progress done`; STATE.md regenerated
     and this plan struck through; the push and the PR on the user's word.
 
 Decisions this session: ten. The user's: (1) PR #51's merge: yes, at
 `f2d400a`; (2) the deliverable, t7 and t8: yes; (3) the delegation of the
-in-work approvals: yes; (4) this plan and its five rulings: pending.
-Claude's on review: (5) t7's test list; (6) t7's commit; (7) t8's test
-list; (8) t8's commit. The user's at the close: (9) the push and the PR;
-(10) the merge.
+in-work approvals: yes; (4) this plan and its five rulings: yes. Claude's
+on review: (5) t7's test list: yes, with one change; (6) t7's commit: yes;
+(7) t8's test list: yes, its two questions answered; (8) t8's commit: yes.
+The user's at the close: (9) the push and the PR: yes; (10) the merge:
+pending.
+
+Details the rulings left open, fixed with the test lists: a scan that
+finds a change always renders; HEAD and the dirty marks are read fresh at
+every render; the width is shutil's, never under 10 columns; on Windows
+the pane turns on the console's escape processing. The waiting line names
+the task key and the unit's full id; `SDLC_NODE` holds the approval
+task's full id; the command runs at the repo root with its output sent
+nowhere; a command that cannot start prints the failure line with exit
+127; a notify value that is not a string holding a command counts as
+unset, silently.
 
 Deferred, not this session:
 - The herdr hook on t8's notify, outside the kit. Its first question: does
@@ -136,8 +143,10 @@ Deferred, not this session:
   id collision; a repeated `depends_on` entry printing twice;
   `tree_view.py`'s docstring on spacing.
 - t9 last, releasing 0.15.0: USAGE's `progress` rows and the notes carried
-  from t0 to t5 (full list in STATE.md), plus what t7 and t8 leave for
-  USAGE.
+  from t0 to t5 (full list in STATE.md), the pane's text, and the wording
+  advisories from t7 and t8.
+- Noted: a cached `G0` reading goes stale across a deprecated term's
+  sunset date; `cut()` counts characters, not display columns.
 - The backfill of the 13 earlier contracts, once each is checked finished.
 - Parked until the pane can follow them: G1, then the pilot's M0 code.
 - `no-check-reads-the-source-document`: which request carries it.
