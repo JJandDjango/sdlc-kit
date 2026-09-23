@@ -1,0 +1,139 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: pane-view
+
+intent: >-
+  The `--follow` mode renders the path to the current task, but no single
+  line names the contract file and the path. Each item line shows every
+  field, so a line in a shell window drops the source field. After this
+  task the mode shows a `where-am-I` line with the contract file and the id
+  of each item on the path. Each item under another item shows only the
+  last segment of its id. The `tree: pane: parts:` setting lists the fields
+  an item line shows, and the id always shows. The `tree: pane: fold:
+  names` setting lists the other items by id and status instead of counts.
+  `taskcontract tree` prints the same output as before.
+
+scope:
+  - taskcontract/tree_view.py
+  - taskcontract/tree.py
+  - tests/
+  - USAGE.md
+
+non_goals:
+  - No change to what `taskcontract tree` prints, with or without an item
+    id.
+  - No change to the `waiting on a seat` line or the `notify` command.
+  - No change to what any gate checks.
+  - No new file that the kit holds; the `--follow` mode still writes no
+    file.
+  - No layer above the contracts; the feature map layer waits for
+    `spec-doc-type`.
+  - No change to the config template; `USAGE.md` covers the two settings.
+  - No version change; the `t9-release` unit of `tree-view` ships this
+    work.
+
+decomposition:
+  - unit: p0-usage-pass-zero
+    id: p0-usage-pass-zero
+    confirmed_by: [user]
+    done_means: >-
+      `USAGE.md` gains a section on the lines of the `--follow` mode. The
+      section covers the `where-am-I` line, the last id segment and the two
+      `tree: pane:` settings. The status marks read red at pass zero.
+    acceptance_sketch:
+      - >-
+        verify `USAGE.md` covers the `where-am-I` line, the last id segment,
+        the `parts` setting and the `fold` setting
+      - verify the status marks in the section read red
+  - unit: p1-where-line
+    id: p1-where-line
+    depends_on: [p0-usage-pass-zero]
+    confirmed_by: [user]
+    done_means: >-
+      The `--follow` mode shows a `where-am-I` line for the current task.
+      The line names the contract file, the contract, the unit and the task
+      step. The line stands under the `waiting on a seat` line, else first.
+    acceptance_sketch:
+      - >-
+        verify the `where-am-I` line reads `specs/<contract>/contract.yaml >
+        <contract> > <unit> > <task>`, with the last segment of each id.
+        Verify the line stands under the `waiting on a seat` line, else
+        first (SC1.1)
+      - >-
+        verify the `waiting on a seat` line stays first and unchanged.
+        Verify a `where-am-I` line that does not fit the window gets the
+        `...` marker, as each other line does. Verify the mode shows no
+        `where-am-I` line without a current task (SC1.2)
+  - unit: p2-short-ids
+    id: p2-short-ids
+    depends_on: [p0-usage-pass-zero]
+    confirmed_by: [user]
+    done_means: >-
+      In the `--follow` mode, each item under another item shows only the
+      last segment of its id. A root item shows its full id. The tree, the
+      links and `SDLC_NODE` keep the full id.
+    acceptance_sketch:
+      - >-
+        verify each item line under another item in the `--follow` mode
+        shows the last segment of its id first. Verify a root item line
+        shows its full id first (SC3.1)
+      - >-
+        verify `taskcontract tree`, the `waiting on a seat` line, the links
+        and `SDLC_NODE` keep the full id (SC3.2)
+  - unit: p3-line-parts
+    id: p3-line-parts
+    depends_on: [p2-short-ids]
+    confirmed_by: [user]
+    done_means: >-
+      The `tree: pane: parts:` setting in `.sdlc/config.yaml` lists the
+      fields each item line of the `--follow` mode shows. The id always
+      shows, and the fields keep the fixed order. A setting that is not a
+      list, or an unknown entry, leaves every field and prints one line.
+    acceptance_sketch:
+      - >-
+        verify each item line shows its id, then only the fields in
+        `parts`, in the fixed order `status`, `marks`, `evidence`, `links`,
+        `doc`, `summary`. Verify `id` in the list changes nothing, and `[]`
+        shows only the id (SC2.1)
+      - >-
+        verify each item line shows every field without `parts`. Verify
+        `parts` leaves the `waiting on a seat` line, the `where-am-I` line,
+        each collapse line and `taskcontract tree` unchanged (SC2.2)
+      - >-
+        verify a `parts` setting that is not a list, or that names an
+        unknown field, leaves every field. Verify the mode prints `pane
+        parts ignored: {value} - give a list from id, status, marks,
+        evidence, links, doc, summary` (SC2.3)
+  - unit: p4-fold-names
+    id: p4-fold-names
+    depends_on: [p3-line-parts]
+    confirmed_by: [user]
+    done_means: >-
+      The `tree: pane: fold: names` setting makes each collapse line list
+      the other items by id and status, instead of counts. The `counts`
+      setting and a missing setting keep the counts. Other `fold` values
+      keep the counts, and the mode prints one line.
+    acceptance_sketch:
+      - >-
+        verify `fold: names` makes each collapse line read `<n> more: `,
+        then `<id> [<status>]` per other item, with `, ` between items in
+        tree order. Verify each id reads as in `p2-short-ids`. Verify the
+        `<n> items:` line under `no current task` names the root items as
+        each collapse line does (SC4.1)
+      - >-
+        verify `fold: counts` and a missing `fold` setting keep the counts.
+        Verify other values keep the counts, and the mode prints `pane fold
+        ignored: {value} - give names or counts` (SC4.2)
+
+dependencies: []
+
+entities:
+  - task-contract
+  - decomposition-unit
+  - gate
+  - intake-seat
+
+provenance:
+  origin: human-request
+  ref: REQUEST_pane-view_2026-09-23.md
