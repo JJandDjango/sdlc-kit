@@ -2,50 +2,43 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-23 (session 43 close)._
+> _Generated 2026-09-23 (session 44 close)._
 
 ## Now
-- **The herdr hook is built, a Two-Key PASS at round 1**, outside the kit
-  in a new local repo, `E:\herdr-sdlc` (no remote): `herdr_seat.py` at
-  `787e415`, its README verified at `a03ee84`. At each arrival at an
-  approval it reports the tree pane to herdr as agent `sdlc`, `blocked`,
-  with the seat as its message, and shows a toast; it reads the pane once
-  a second and releases the flag after two readings without this seat's
-  waiting line, leaves another seat's flag alone, and releases on Ctrl-C.
-  37 tests; live checks in real herdr panes: flag in about 1.6 s, release
-  about 2 s after the line goes.
-- **Why the tree pane carries the flag.** Measured on herdr 0.9.0 and
-  0.9.1: an outside `report-agent` never changes a Claude pane's state
-  (`herdr agent explain`: Claude's state comes only from screen
-  detection); a pane with no detected agent shows it. So STATE's old
-  question is answered, and no Claude pane id is needed.
-- **The kit's config line** (`28d09d8`): `tree: notify: python
-  E:/herdr-sdlc/herdr_seat.py`. Started on the kit, the pane reads
-  `waiting on a seat` for t6's `approve-tests`, and herdr shows it as
-  `sdlc`, `blocked`. That pane (`w9:p8`) was left running.
-- PR #52 (t7, t8) merged at `fa0e944`; branch `session-43-herdr-hook`
-  starts there. herdr's server moved to 0.9.1 mid-session (the user ran
-  the update); the Claude integration is current.
+- **`pane-view` is ready at intake**: `specs/pane-view/contract.yaml` at
+  `6fd9c17`, on branch `session-44-pane-view`. Ready-green on the first
+  pass, language door zero after one rewrite, five units p0 to p4, each
+  `confirmed_by: [user]`; all fifteen kit contracts ready-green, pytest 486
+  passed, scope-check green. The REQUEST (untracked) stands at r4: nine
+  checks, two verbatim messages, eight decisions, no ADR; the intake
+  commit's message carries the rulings' reasons.
+- **Archify plans are retired** (the user, 2026-09-23): `plan.workflow.json`
+  and plan.md's Diagram section went at `cf200b0`. A plan is a numbered
+  list, shown in chat at the gate.
+- The tree pane (`w9:p8`) still runs, flagged `sdlc`, `blocked` on t6's
+  `approve-tests`. It shows pane-view once its units record progress.
+- PR #53 (the herdr hook's config line) merged at `199802e`.
 
 ## Blockers
 - None. The push and the PR wait on the user's word.
 
 ## Next actions
-1. G1 is unparked (the user, 2026-09-23, session 43): it queues after
-   `pane-view`, t6 and t9; G1's criteria review comes before the pilot's
-   M0 code. Still open: whether the pane replaces the Archify plans.
-2. `pane-view` (`REQUEST_pane-view_2026-09-23.md`, untracked, at r2):
-   features 1 to 4 kept (a where-am-I line, `tree: pane: parts:`, short
-   ids in the pane, `fold: names`), 5 and 6 struck. Next: its checks and
-   solution half (r3), with OPEN 1 (can the id be hidden), then intake.
-   It lands before tree-view's t6; then t6 (the query face) and t9 (the
-   release, 0.15.0), whose USAGE pass documents it.
-3. The pilot's config line, in the engine's session.
-4. Deferred: flag the Claude pane itself (a local `claude.toml` detection
+1. Session 45: pane-view's units by the delegated method, in order: p0
+   (USAGE pass zero, marks red), p1 (the where-am-I line) and p2 (short
+   ids) in either order, then p3 (`tree: pane: parts:`), then p4 (`fold:
+   names`). p1 and p2 amend t7's and t8's pane tests, which expect each
+   pane line to equal the whole tree's; each drafter names them in its
+   pins. After p1, one live check in herdr that the hook still flags the
+   seat. Record each task with `taskcontract progress`.
+2. Then tree-view's t6 (the query face) and t9 (the release, 0.15.0); t9's
+   USAGE pass also turns p0's marks green.
+3. G1 after t9: its criteria review comes before the pilot's M0 code.
+4. The pilot's config line, in the engine's session.
+5. Deferred: flag the Claude pane itself (a local `claude.toml` detection
    rule shadowing herdr's remote one, or a herdr change); the hook's key
-   action that opens the pane; the hook's four known edges, in its
-   README.
-5. Carried advisories. t6: `tree.py`'s docstring says a close reads
+   action; the hook's four known edges, in its README; `.sdlc/config.yaml`
+   still lists `plan.workflow.json` as a free path.
+6. Carried advisories. t6: `tree.py`'s docstring says a close reads
    everything under it done (tasks and checks only); t1's id collision; a
    repeated `depends_on` entry prints twice; `tree_view.py`'s docstring on
    spacing. t9, USAGE: the `progress` rows (`--expect green`, the exit-2
@@ -60,7 +53,7 @@
    arrival at an approval". Noted: a cached `G0` reading goes stale across
    a deprecated term's sunset date; `cut()` counts characters, not
    display columns.
-6. Carried: the backfill of the 13 earlier contracts, once each is checked
+7. Carried: the backfill of the 13 earlier contracts, once each is checked
    finished; `derived-language`, `feature-document`, `spec-doc-type`; the
    demo intake; wave B (`playbook-loop`, V1-V6); 5b; the G4.6 finding;
    `no-check-reads-the-source-document`; from r3, a status field on the
@@ -70,8 +63,9 @@
 - At resume, read the pilot's `E:\ImSimProject\engine\STATE.md` beside
   this file: the engine hands work to the kit there, and its REQUESTs land
   untracked in this root.
-- Plans render as Archify diagrams until the user retires them for the
-  pane.
+- A plan is plan.md's numbered steps, shown in chat for the user's
+  overview; nothing renders it. Work outside a contract unit does not show
+  in the pane; the plan says so.
 - Record each task as it finishes: `progress start|done <task>`, `--by
   <seat>` on an approval, and each check's run through `progress run
   <check> [--expect red] -- <test command>`, selecting its tests with `-k`
@@ -79,7 +73,9 @@
 - A REQUEST is untracked, so git cannot restore it: copy it to the
   scratchpad before a revision edits it.
 - The language door checks every sentence of a sketch for an approved
-  opening verb; open each one on "verify".
+  opening verb; open each one on "verify". Filter its output to one
+  contract (a ten-line script over `lang-check --json`); the rest is
+  other contracts' findings.
 - A delegated session: one Workflow per step, launched by `scriptPath`.
   `.claude/workflows/` holds the drafter (`spec-channel-drafter.js`), the
   developer (`unit-developer.js`) and Two-Key. The drafter proves red from
@@ -89,7 +85,8 @@
   Two-Key, leaving tracked files alone while it runs. A drafter may run
   beside the previous unit's Two-Key, since neither touches tracked files.
   Session 42's subagents: drafters about 182K and 161K tokens, developers
-  98K and 72K, Two-Key 200K and 177K.
+  98K and 72K, Two-Key 200K and 177K; session 43's: drafter 78K,
+  developer 52K, Two-Key 133K.
 - Before placing a drafted list: strip session labels (`ruling_2`) from its
   names, then check the module for a repeated test name, since a later
   `def` silently replaces an earlier one. A later unit may amend an
@@ -108,8 +105,6 @@
   after; never report state on another session's pane. A manual
   `release-agent` for the hook's flag needs a `--seq` above the hook's
   (the time in milliseconds).
-- Session 43's subagents (inline Workflow scripts, persisted in the session
-  folder): drafter about 78K tokens, developer 52K, Two-Key 133K.
 - A settings file with unrelated uncommitted edits is staged by blob
   (`hash-object`, then `update-index`), so the commit holds one change.
 
