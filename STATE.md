@@ -2,46 +2,50 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-23 (session 42 wrap)._
+> _Generated 2026-09-23 (session 43 close)._
 
 ## Now
-- **`tree-view` t7 and t8 are built, each a Two-Key PASS at round 1**, on
-  branch `session-42-tree-view-t7-t8`, pushed as PR #52 with both CI jobs
-  green (`contracts`, `test`); the merge waits on the user. t7 (`2f8ef03`): `taskcontract tree --follow` keeps a pane
-  on the current task: the path to it, each level's other items folded to
-  one line of counts by status, the task last; lines cut to the pane's
-  width; a redraw within about 1.3 s of a change to a watched file (0.23 s
-  warm on the kit), never while nothing changes; each `G0` reading kept in
-  memory until its contract or the vocabulary changes; every `git status`
-  with `--no-optional-locks`. t8 (`0e89078`): on an approval the first
-  line reads `waiting on a seat: {approval} for {unit}`, and `tree:
-  notify:` in `.sdlc/config.yaml` runs through the shell once per
-  arrival, with `SDLC_NODE`, never waited on; a failure prints `notify
-  failed, exit {code}: {command}` on stderr. Suite 486 green (t7 37
-  cases, t8 17, in `tests/test_tree_pane.py`); 14 contracts ready-green;
-  the doors and the scope check clean.
-- **The pane runs on the kit itself.** t7 and t8 are closed with
-  `progress done` and their checks carry their red and green runs; the
-  pane reads `waiting on a seat: approve-tests for tree-view/t6-query-face`.
-  The progress file is local and ignored: a fresh clone starts with none.
-- PR #51 (t4, t5) merged at `f2d400a`; this branch starts there. The user
-  ruled five details at plan review and delegated the in-work approvals
-  to Claude on review; Workflow subagents did the work.
+- **The herdr hook is built, a Two-Key PASS at round 1**, outside the kit
+  in a new local repo, `E:\herdr-sdlc` (no remote): `herdr_seat.py` at
+  `787e415`, its README verified at `a03ee84`. At each arrival at an
+  approval it reports the tree pane to herdr as agent `sdlc`, `blocked`,
+  with the seat as its message, and shows a toast; it reads the pane once
+  a second and releases the flag after two readings without this seat's
+  waiting line, leaves another seat's flag alone, and releases on Ctrl-C.
+  37 tests; live checks in real herdr panes: flag in about 1.6 s, release
+  about 2 s after the line goes.
+- **Why the tree pane carries the flag.** Measured on herdr 0.9.0 and
+  0.9.1: an outside `report-agent` never changes a Claude pane's state
+  (`herdr agent explain`: Claude's state comes only from screen
+  detection); a pane with no detected agent shows it. So STATE's old
+  question is answered, and no Claude pane id is needed.
+- **The kit's config line** (`28d09d8`): `tree: notify: python
+  E:/herdr-sdlc/herdr_seat.py`. Started on the kit, the pane reads
+  `waiting on a seat` for t6's `approve-tests`, and herdr shows it as
+  `sdlc`, `blocked`. That pane (`w9:p8`) was left running.
+- PR #52 (t7, t8) merged at `fa0e944`; branch `session-43-herdr-hook`
+  starts there. herdr's server moved to 0.9.1 mid-session (the user ran
+  the update); the Claude integration is current.
 
 ## Blockers
-- None. PR #52's merge waits on the user's word.
+- None. The push and the PR wait on the user's word.
 
 ## Next actions
-1. Next session: merge PR #52 on the user's word. Then run
-   `python -m taskcontract tree --follow` in a herdr pane, and build the
-   herdr hook on t8's notify, outside the kit (a script or a config line).
-   Its first question: does herdr's own screen detection overwrite an
-   outside `herdr pane report-agent --state blocked`? The notify command
-   runs from the pane, so it needs the Claude pane's id.
-2. Then t6 (the query face) and t9 (the release, 0.15.0).
-3. Parked until the pane can follow them: G1, then the pilot's M0 code.
-   The pane now runs; the user says when it replaces the Archify plans.
-4. Carried advisories. t6: `tree.py`'s docstring says a close reads
+1. G1 is unparked (the user, 2026-09-23, session 43): it queues after
+   `pane-view`, t6 and t9; G1's criteria review comes before the pilot's
+   M0 code. Still open: whether the pane replaces the Archify plans.
+2. `pane-view` (`REQUEST_pane-view_2026-09-23.md`, untracked, at r2):
+   features 1 to 4 kept (a where-am-I line, `tree: pane: parts:`, short
+   ids in the pane, `fold: names`), 5 and 6 struck. Next: its checks and
+   solution half (r3), with OPEN 1 (can the id be hidden), then intake.
+   It lands before tree-view's t6; then t6 (the query face) and t9 (the
+   release, 0.15.0), whose USAGE pass documents it.
+3. The pilot's config line, in the engine's session.
+4. Deferred: flag the Claude pane itself (a local `claude.toml` detection
+   rule shadowing herdr's remote one, or a herdr change); the hook's key
+   action that opens the pane; the hook's four known edges, in its
+   README.
+5. Carried advisories. t6: `tree.py`'s docstring says a close reads
    everything under it done (tasks and checks only); t1's id collision; a
    repeated `depends_on` entry prints twice; `tree_view.py`'s docstring on
    spacing. t9, USAGE: the `progress` rows (`--expect green`, the exit-2
@@ -56,7 +60,7 @@
    arrival at an approval". Noted: a cached `G0` reading goes stale across
    a deprecated term's sunset date; `cut()` counts characters, not
    display columns.
-5. Carried: the backfill of the 13 earlier contracts, once each is checked
+6. Carried: the backfill of the 13 earlier contracts, once each is checked
    finished; `derived-language`, `feature-document`, `spec-doc-type`; the
    demo intake; wave B (`playbook-loop`, V1-V6); 5b; the G4.6 finding;
    `no-check-reads-the-source-document`; from r3, a status field on the
@@ -100,6 +104,12 @@
   self-pin through its own PR; main's ruleset requires a PR for every
   change. `gh pr checks --watch` can exit 1 on "no checks reported"; start
   it again.
+- herdr probes run in panes Claude splits with `--no-focus` and closes
+  after; never report state on another session's pane. A manual
+  `release-agent` for the hook's flag needs a `--seq` above the hook's
+  (the time in milliseconds).
+- Session 43's subagents (inline Workflow scripts, persisted in the session
+  folder): drafter about 78K tokens, developer 52K, Two-Key 133K.
 - A settings file with unrelated uncommitted edits is staged by blob
   (`hash-object`, then `update-index`), so the commit holds one change.
 
@@ -107,6 +117,8 @@
 - The `intake-seat` term says a seat is never delegated to an agent, while
   a delegated session's approvals record `--by claude` (sessions 40 to 42).
   Does the term need a word for a delegated approval?
+- Push `E:\herdr-sdlc` to GitHub, so herdr can install it as a plugin
+  later? It has no remote.
 - Which request carries `no-check-reads-the-source-document`:
   `derived-language` or its own?
 - d6's two open advisories, wording only: USAGE section 8 labels

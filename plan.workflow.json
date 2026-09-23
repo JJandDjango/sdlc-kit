@@ -2,15 +2,14 @@
   "schema_version": 2,
   "diagram_type": "workflow",
   "meta": {
-    "title": "tree-view t7 and t8 - Session 42",
+    "title": "The herdr hook - Session 43",
     "quality_profile": "showcase",
     "locale": "en",
     "views": [
-      { "id": "now", "label": "Where we are", "focus": ["close", "merge_ok"], "note": "Closed: t7 and t8 each passed Two-Key at round 1. The branch is pushed and its PR open; the merge waits on your word." },
-      { "id": "decide", "label": "Who decided", "focus": ["t7_tests_ok", "t7_commit_ok", "t8_tests_ok", "t8_commit_ok", "merge_ok"], "note": "You: the plan, its rulings, the delegation, PR #51's merge, the push and the PR. Claude on review: both lists, both commits." },
-      { "id": "pane", "label": "t7: the pane", "focus": ["t7_red", "t7_green"], "note": "37 cases red first, then 469 green at 2f8ef03; a warm redraw on the kit takes 0.23 s against 1.22 s cold." },
-      { "id": "notify", "label": "t8: the notify", "focus": ["t8_red", "t8_green"], "note": "17 cases red first, then 486 green at 0e89078; the kit's pane now waits on t6's approve-tests." },
-      { "id": "exceptions", "label": "If a round fails", "focus": ["t7_green", "fail", "open_q"], "note": "No round failed and no OPEN was needed: both units passed at round 1." }
+      { "id": "now", "label": "Where we are", "focus": ["close", "pr_ok"], "note": "Closed: the hook passed Two-Key at round 1 and the kit's pane flags its seat in herdr; the push and the PR wait on your word." },
+      { "id": "probe", "label": "What the probe found", "focus": ["readme", "green"], "note": "herdr ignores an outside state report on a Claude pane; a pane with no agent shows it, so the tree pane carries the flag." },
+      { "id": "decide", "label": "Who decides", "focus": ["plan_ok", "list_ok", "commit_ok", "pr_ok"], "note": "You: the features, the placement, the delegation, then the push and the PR. Claude on review: the test list and the commit." },
+      { "id": "exceptions", "label": "If a round fails", "focus": ["twokey", "fail"], "note": "A Two-Key FAIL goes back to green; at most three rounds, then it comes to you." }
     ]
   },
   "lanes": [
@@ -20,46 +19,44 @@
   ],
   "phases": [
     { "id": "open_phase", "label": "Step 1 - open", "fromCol": 0, "toCol": 0, "variant": "emphasis" },
-    { "id": "t7_phase", "label": "Steps 2-6 - t7", "fromCol": 1, "toCol": 2, "variant": "emphasis" },
-    { "id": "t8_phase", "label": "Steps 7-11 - t8", "fromCol": 3, "toCol": 4, "variant": "emphasis" },
-    { "id": "close_phase", "label": "Step 12 - close", "fromCol": 5, "toCol": 5, "variant": "emphasis" }
+    { "id": "doc_phase", "label": "Step 2 - README", "fromCol": 1, "toCol": 1, "variant": "emphasis" },
+    { "id": "build_phase", "label": "Steps 3-6 - build", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "verify_phase", "label": "Steps 7-8 - verify", "fromCol": 4, "toCol": 4, "variant": "emphasis" },
+    { "id": "close_phase", "label": "Steps 9-10 - wire, close", "fromCol": 5, "toCol": 5, "variant": "emphasis" }
   ],
   "groups": [],
-  "mainPath": ["open", "t7_red", "t7_green", "t8_red", "t8_green", "close"],
+  "mainPath": ["open", "readme", "red", "green", "twokey", "close"],
   "nodes": [
-    { "id": "t7_tests_ok", "lane": "gates", "col": 1, "type": "security", "label": "Claude", "sublabel": "t7 list: yes" },
-    { "id": "t7_commit_ok", "lane": "gates", "col": 2, "type": "security", "label": "Claude", "sublabel": "t7 commit: yes" },
-    { "id": "t8_tests_ok", "lane": "gates", "col": 3, "type": "security", "label": "Claude", "sublabel": "t8 list: yes" },
-    { "id": "t8_commit_ok", "lane": "gates", "col": 4, "type": "security", "label": "Claude", "sublabel": "t8 commit: yes" },
-    { "id": "merge_ok", "lane": "gates", "col": 5, "type": "security", "label": "Your word", "sublabel": "merge pending" },
-    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "Branch + plan", "sublabel": "done: f71c283", "tag": "step 1, done" },
-    { "id": "t7_red", "lane": "steps", "col": 1, "type": "backend", "label": "t7 tests red", "sublabel": "37 red, proven", "tag": "steps 2-3, done" },
-    { "id": "t7_green", "lane": "steps", "col": 2, "type": "backend", "label": "t7 green", "sublabel": "done: 2f8ef03", "tag": "steps 4-6, PASS" },
-    { "id": "t8_red", "lane": "steps", "col": 3, "type": "backend", "label": "t8 tests red", "sublabel": "18 red, proven", "tag": "steps 7-8, done" },
-    { "id": "t8_green", "lane": "steps", "col": 4, "type": "backend", "label": "t8 green", "sublabel": "done: 0e89078", "tag": "steps 9-11, PASS" },
-    { "id": "close", "lane": "steps", "col": 5, "type": "cloud", "label": "Close + PR", "sublabel": "HERE: the merge", "tag": "step 12" },
-    { "id": "fail", "lane": "waits", "col": 2, "type": "security", "label": "FAIL", "sublabel": "fix, rerun, max 3", "tag": "not taken" },
-    { "id": "open_q", "lane": "waits", "col": 4, "type": "security", "label": "OPEN", "sublabel": "re-intake", "tag": "not taken" }
+    { "id": "plan_ok", "lane": "gates", "col": 1, "type": "security", "label": "Your word", "sublabel": "features, placement" },
+    { "id": "list_ok", "lane": "gates", "col": 2, "type": "security", "label": "Claude", "sublabel": "test list" },
+    { "id": "commit_ok", "lane": "gates", "col": 4, "type": "security", "label": "Claude", "sublabel": "commit" },
+    { "id": "pr_ok", "lane": "gates", "col": 5, "type": "security", "label": "Your word", "sublabel": "push + PR" },
+    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "Branch + plan", "sublabel": "done: 12e2275", "tag": "step 1, done" },
+    { "id": "readme", "lane": "steps", "col": 1, "type": "cloud", "label": "README first", "sublabel": "done: 5b9219b", "tag": "step 2, done" },
+    { "id": "red", "lane": "steps", "col": 2, "type": "backend", "label": "Tests red", "sublabel": "37 cases, proven", "tag": "steps 3-4, done" },
+    { "id": "green", "lane": "steps", "col": 3, "type": "backend", "label": "Green + live", "sublabel": "flag in 1.6 s", "tag": "steps 5-6, done" },
+    { "id": "twokey", "lane": "steps", "col": 4, "type": "backend", "label": "Two-Key", "sublabel": "done: 787e415", "tag": "steps 7-8, PASS" },
+    { "id": "close", "lane": "steps", "col": 5, "type": "cloud", "label": "Wire + close", "sublabel": "HERE: the push", "tag": "steps 9-10" },
+    { "id": "fail", "lane": "waits", "col": 4, "type": "security", "label": "FAIL", "sublabel": "fix, rerun, max 3", "tag": "not taken" }
   ],
   "edges": [
-    { "from": "open", "to": "t7_red", "label": "plan approved", "variant": "emphasis", "route": "straight" },
-    { "from": "t7_red", "to": "t7_green", "label": "red proven", "variant": "emphasis", "route": "straight" },
-    { "from": "t7_green", "to": "t8_red", "label": "PASS", "variant": "emphasis", "route": "straight" },
-    { "from": "t8_red", "to": "t8_green", "label": "red proven", "variant": "emphasis", "route": "straight" },
-    { "from": "t8_green", "to": "close", "label": "PASS", "variant": "emphasis", "route": "straight" },
-    { "from": "t7_tests_ok", "to": "t7_red", "route": "straight" },
-    { "from": "t7_commit_ok", "to": "t7_green", "route": "straight" },
-    { "from": "t8_tests_ok", "to": "t8_red", "route": "straight" },
-    { "from": "t8_commit_ok", "to": "t8_green", "route": "straight" },
-    { "from": "merge_ok", "to": "close", "route": "straight" },
-    { "from": "t7_green", "to": "fail", "variant": "security", "route": "straight" },
-    { "from": "t8_green", "to": "open_q", "variant": "security", "route": "straight" }
+    { "from": "open", "to": "readme", "label": "plan approved", "variant": "emphasis", "route": "straight" },
+    { "from": "readme", "to": "red", "label": "README set", "variant": "emphasis", "route": "straight" },
+    { "from": "red", "to": "green", "label": "red proven", "variant": "emphasis", "route": "straight" },
+    { "from": "green", "to": "twokey", "label": "live check", "variant": "emphasis", "route": "straight" },
+    { "from": "twokey", "to": "close", "label": "PASS", "variant": "emphasis", "route": "straight" },
+    { "from": "plan_ok", "to": "readme", "route": "straight" },
+    { "from": "list_ok", "to": "red", "route": "straight" },
+    { "from": "commit_ok", "to": "twokey", "route": "straight" },
+    { "from": "pr_ok", "to": "close", "route": "straight" },
+    { "from": "twokey", "to": "fail", "variant": "security", "route": "straight" }
   ],
   "cards": [
-    { "dot": "amber", "title": "Where we are (2026-09-23, session 42 closed)", "items": ["The deliverable is met: t7 (the pane) at 2f8ef03 and t8 (the waiting line and the notify command) at 0e89078, each a Two-Key PASS at round 1", "Suite 486 green (54 new cases); the 14 contracts ready-green; the vocabulary, language and scope checks clean", "The pane runs on the kit: it reads waiting on a seat for t6's approve-tests, and t7 and t8 are closed", "The branch is pushed and its PR open; the merge waits on your word"] },
-    { "dot": "violet", "title": "Who decided (ten decisions)", "items": ["1. PR #51's merge: you, yes (f2d400a)", "2. The deliverable, t7 and t8: you, yes", "3. The delegation of the in-work approvals: you, yes", "4. This plan and its five rulings: you, yes", "5. t7's test list, 18 tests: Claude, yes, with one change", "6. t7's commit: Claude, yes", "7. t8's test list, 11 tests: Claude, yes, its two questions answered", "8. t8's commit: Claude, yes", "9. The push and the PR: you, yes", "10. The merge: you, pending"] },
-    { "dot": "cyan", "title": "Rulings, now pinned by tests", "items": ["1. The pane reads down to the current task, always the last line; each level's other items fold into one line above the path item; in --follow only, lines are cut to the pane's width", "2. The pane watches the files the tree reads (specs/, .sdlc/ config, findings and progress, docs/features/, the kit's two lists); git is not watched", "3. The pane keeps each G0 verdict in memory, recomputed only when its contract or the vocabulary changes; nothing is written", "4. A pane that starts on an approval notifies once: its first render counts as an arrival", "5. The pane never waits on the notify command: it checks it each tick and prints the failure line on a nonzero exit"] },
-    { "dot": "slate", "title": "Deferred, not this session", "items": ["The herdr hook on t8's notify, outside the kit; first question: does herdr's screen detection overwrite an outside report-agent --state blocked?", "t6 (the query face) and t9 (the release, 0.15.0), with the advisories carried from t0 to t8", "The backfill of the 13 earlier contracts, once each is checked finished", "Parked until the pane follows them: G1, then the pilot's M0 code", "derived-language, feature-document, spec-doc-type; the demo intake; wave B; 5b; the G4.6 finding"] },
-    { "dot": "slate", "title": "Glossary", "items": ["t7, t8: units of tree-view; t7 follows t3, t8 follows t7, and t9 (the release) waits on t8", "Current task: derived from the progress records, never stored; the pane's last line", "The seven tasks: approve the test list, write the tests, prove red, green, approve the commit, commit, Two-Key PASS", "Spec channel: the agent that drafts the tests and proves red; the developer agent makes them green without opening tests/", "Two-Key: a receipts agent re-runs every check, a zero-trust grader reads the commit against its sketches; the script computes the verdict", "OPEN: a fact the contract cannot keep goes back to the REQUEST as a question and a re-intake, never a silent edit"] }
+    { "dot": "amber", "title": "Where we are (2026-09-23, session 43 closed)", "items": ["The hook at 787e415 in E:/herdr-sdlc passed Two-Key at round 1: 37 green, four live paths ok, no blocking finding", "The kit's config line at 28d09d8: its pane reads waiting on a seat for t6's approve-tests, and herdr shows it as sdlc, blocked", "Open: is the pane enough to unpark G1? The push and the PR wait on your word"] },
+    { "dot": "cyan", "title": "What the probe found (herdr 0.9.1 client, 0.9.0 server)", "items": ["An outside report-agent --state blocked never changes a Claude pane's state: idle or working, any source, with or without the session id", "herdr agent explain shows why: Claude's state comes only from herdr's screen-detection rules", "On a pane with no detected agent the same report shows as agent sdlc, state blocked; release-agent clears it", "The tree pane is such a pane, and the notify command inherits its HERDR_PANE_ID: the hook needs no other pane's id"] },
+    { "dot": "violet", "title": "Features (strike what you don't want)", "items": ["1. Seat flag: at each arrival the tree pane shows in herdr's sidebar as agent sdlc, state blocked, with the approval and the unit", "2. The flag clears once the pane's first line stops reading waiting on a seat, and on Ctrl-C; a different seat's hook keeps its own flag", "3. Toast: waiting on a seat, the approval and the unit, the request sound", "4. One key opens the pane (a herdr plugin action). Recommended: strike for now", "5. The config line: tree: notify: python E:/herdr-sdlc/herdr_seat.py in the kit's .sdlc/config.yaml, a free path"] },
+    { "dot": "violet", "title": "Decisions for you (three)", "items": ["1. The features: keep 1, 2, 3 and 5; strike 4. Recommended", "2. Placement: a new local repo, E:/herdr-sdlc, with the script, its tests and a README; no GitHub remote until you ask", "3. Delegation as in session 42: Workflow subagents build and verify; Claude approves the test list and the commit; you approve the push and the PR"] },
+    { "dot": "slate", "title": "Deferred, not this session", "items": ["Flag the Claude pane itself: it needs a detection rule (a local claude.toml shadows herdr's remote one) or a change in herdr", "Feature 4, if struck", "The pilot's config line, in the engine's session", "t6 (the query face) and t9 (the 0.15.0 release), with the advisories carried in STATE.md"] },
+    { "dot": "slate", "title": "Glossary", "items": ["t8's notify: the tree: notify: command in .sdlc/config.yaml, run through the shell once per arrival at an approval, with the task's id in SDLC_NODE", "Seat: the human who approves; the pane's first line reads waiting on a seat: <approval> for <unit>", "Free path: a path the kit's scope check lets change without a contract (.sdlc/, plan.md, STATE.md and more)", "Two-Key: an independent verifier re-runs every check and grades the work; no code is done before its PASS"] }
   ]
 }

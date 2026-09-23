@@ -25,3 +25,6 @@ scope_check:
     - REQUEST_*.md
     - NOTES_*.md
     - .sdlc/
+tree:
+  # The herdr hook (E:/herdr-sdlc): flags the pane's seat in herdr's sidebar.
+  notify: python E:/herdr-sdlc/herdr_seat.py
