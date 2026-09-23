@@ -1,64 +1,87 @@
-# Plan - Session 41 (2026-09-22) - tree-view t4 and t5
+# Plan - Session 42 (2026-09-22) - tree-view t7 and t8
 
 **Deliverable:** two units of `tree-view` (the request for one derived tree
 of the work) on one PR, each with a Two-Key PASS (one agent re-runs every
 check, a second grades the commit against the contract, and a script
-computes the verdict). They are the progress writers: nothing in the herdr
-pane moves until they land.
+computes the verdict). Together they are the kit's half of the herdr pane.
 
-- t4 `t4-check-runs`: `taskcontract progress run <check> [--expect red] --
-  <command>` runs a check's command and records red or green beside its
-  expectation, with the command, the `HEAD` id, a `dirty` mark and the
-  time. It exits 0 when the result met the expectation, else 1. The folder
-  `.sdlc/progress/` holds a `.gitignore` of `*`, and a `done` check shows
-  its command and commit in the tree.
-- t5 `t5-task-writers`: `taskcontract progress start|done|block <id>`
-  records task states, each with the time and the `HEAD` id. `done` on
-  `approve-tests` or `approve-commit` needs `--by <seat>`, `block` needs
-  `--reason`, and `done` on a unit or a contract closes everything under
-  it (the backfill). A `done` task shows its commit, an approval its seat.
+- t7 `t7-pane-face`: `taskcontract tree --follow` keeps a pane on the
+  current task. Every item on the path to it shows, each level's other
+  items fold to one line with counts by status, and the pane redraws
+  within two seconds of a source change, never while nothing changes. It
+  also takes the carried advisory: every `git status` the kit runs gets
+  `--no-optional-locks`, since the pane redraws while the user runs git.
+- t8 `t8-approval-notify`: when the current task is `approve-tests` or
+  `approve-commit`, the pane's first line reads `waiting on a seat:
+  {approval} for {unit}`, and the `tree: notify:` command in
+  `.sdlc/config.yaml` runs once per arrival, with the task's id in
+  `SDLC_NODE`. A failure prints `notify failed, exit {code}: {command}`,
+  and the pane keeps running.
 
-**Closed.** The deliverable is met: t4 at `0b650bd` and t5 at `a11eab0`,
-each a Two-Key PASS at round 1. The PR carrying them opens and merges on
-the user's word.
+Where things stand: PR #51 (t4, t5) merged at `f2d400a`, and branch
+`session-42-tree-view-t7-t8` starts there. Suite 432 green, the 14
+contracts ready-green. USAGE section 9, written at t0, already pins most of
+both units: the one-second poll of modification times, ANSI redraws,
+Ctrl-C exiting 0, the shell, the config key and the failure line. The
+kit's current mark sits on t6's `approve-tests`; step 1 moves it to t7's.
 
-Where things stand: PR #50 (t3 and t2) merged at `a1109df`. Suite 432
-green (405 before t5; t4 added 30 cases, t5 27), the 14 contracts
-ready-green, the vocabulary, language and scope checks clean. The kit now
-records its own progress: t4's and t5's checks carry their runs, t0 to t5
-are closed, and the tree reads them done, with the current mark derived to
-t6's `approve-tests`.
-
-**Who did what.** The user approved this plan, its five rulings and the
-delegation, and merged PR #50. Subagents did each unit's work through the
-Workflow tool: a spec-channel agent drafted the test list, proved it red
-from the scratchpad and prototyped the interface; a developer agent made
-the tests green without opening `tests/`. Claude reviewed and approved each
-list and each commit, placed the approved tests, and ran the receipts
-before each verifier round.
+**Who does what.** The user approved PR #51's merge, this deliverable and
+the delegation, and reviews this plan and its rulings. Subagents do each
+unit's work through the Workflow tool, launched by `scriptPath`: the
+drafter drafts the test list, proves it red from the scratchpad and
+prototypes the interface; the developer makes the tests green from the
+interface note without opening `tests/`; Two-Key grades last. Claude
+approves each list and each commit, places the tests, records each task
+with `taskcontract progress` (`--by claude` on the approvals it gives), and
+runs the receipts before each verifier round.
 
 ## Rulings for the test lists
 
-Details the request left open, ruled by the user at plan review:
+Details the contract and USAGE leave open, for the user to rule:
 
-1. A command that cannot start (not found) is an error: exit 2, one line,
-   nothing written. It never counts as red, so a missing test binary
-   cannot prove red.
-2. Each writer checks its id against the tree first: `run` takes a check,
-   `start` and `block` a task, `done` a task, a unit or a contract. An
-   unknown id exits 2 with t6's line, `no node '{id}' - print the tree to
-   list every node id`; a wrong kind exits 2 with one line of its own.
-   Nothing is written either way, since the reader drops a misplaced
-   record without a word.
-3. A malformed progress file stops every writer with one line naming it,
-   and nothing is written: a writer never rewrites records it cannot read.
-4. `--by` takes the seat's name as written. The `intake-seat` term says a
-   seat is never delegated to an agent, but the progress file is display
-   evidence no gate reads, so the tree shows who approved rather than the
-   writer refusing an honest record. TC016 stays the roster check.
-5. Evidence reads like t3's `G0` verdict: a check `via <command> at
-   <head>`, a task `at <head>`, an approval `by <seat> at <head>`, each
-   followed by `dirty` when a tracked file differed from `HEAD`.
+1. **The pane reads down to the current task.** Each level's other items
+   fold into one line above the item on the path, so the current task is
+   always the last line. In `--follow` only, each line is cut to the
+   pane's width and ends in `...`: a cut prefix, never other words, and
+   the whole tree still prints every line whole. Recommended: a contract's
+   intent alone runs to about 900 characters, eleven rows of an 80-column
+   pane, which breaks the fifteen-line pane.
+2. **The pane watches the files the tree reads:** everything under
+   `specs/` (the contracts, and the vocabulary the validator reads),
+   `.sdlc/config.yaml`, `.sdlc/findings/`, `.sdlc/progress/`,
+   `docs/features/` and the kit's two lists, listed afresh each second so
+   a new or deleted file counts. Git is not watched. Recommended: it
+   matches USAGE's words, and a commit shows at the next progress record,
+   which the task list writes after every commit.
+3. **The pane keeps each `G0` verdict in memory** and recomputes it only
+   when its contract or the vocabulary changes; nothing is written.
+   Recommended: a render of the kit costs 1.3 s today, nearly all of it
+   the validator reloading the vocabulary for each of 28 validations, so a
+   one-second poll can take 2.3 s. With the verdicts kept, a redraw after
+   a progress record costs about 0.2 s. A vocabulary change still costs
+   the full render, a rare case. The validator's files sit outside the
+   contract's scope, so the fix stays in `tree.py`.
+4. **A pane that starts on an approval notifies once:** its first render
+   counts as an arrival. Recommended: the pane may start after the
+   approval was reached, and nothing else tells the seat; a restart
+   repeats one notice at most.
+5. **The pane never waits on the notify command.** It starts the command,
+   checks it at each one-second tick, and prints the failure line when it
+   ends nonzero. Recommended: a command that hangs never freezes the pane,
+   and the pinned failure line has no form for a timeout.
+
+## The pane, as the rulings draw it
+
+The kit at step 1, once both units land, in an 80-column pane. The first
+line is t8's; the rest is t7's. t7's test list pins the fold lines' words.
+
+    waiting on a seat: approve-tests for tree-view/t7-pane-face
+    14 more: 14 to do
+    tree-view [waiting on a seat] | A repo holds its work in contracts, gates, fi...
+      10 more: 7 done, 3 to do
+      tree-view/t7-pane-face [waiting on a seat] depends_on: tree-view/t3-status-...
+        9 more: 9 to do
+        tree-view/t7-pane-face/approve-tests [waiting on a seat] | Approve the te...
 
 ## Diagram
 
@@ -74,71 +97,47 @@ The HTML is generated, never committed.
 
 ## Steps
 
-1. ~~Open.~~ Done at `8f6db7d`: branch `session-41-tree-view-t4-t5` from
-   #50's tip, and this plan; PR #50 merged at `a1109df`.
-2. ~~t4, draft and approve the test list.~~ 24 tests (30 cases), approved
-   with three changes: a check keeps its last green run's evidence after a
-   close (one assertion added), durable test names, and two hints in the
-   interface note. Its one question, answered: `gates/none` reads `gate`,
-   unpinned.
-3. ~~t4, write the tests and prove red.~~ 30 failed, 375 passed, each on
-   an assertion.
-4. ~~t4, green.~~ `progress.py`, `tree.py`, `tree_view.py`, `__main__.py`;
-   405 passed.
-5. ~~t4, approve the commit and commit.~~ Done at `0b650bd`; its three
-   checks then recorded green through `progress run`.
-6. ~~t4 Two-Key.~~ PASS at round 1, about 192K tokens. Three advisories,
-   all to t9.
-7. ~~t5, draft and approve the test list.~~ 25 tests (27 cases), approved
-   with durable names (one would have repeated a t4 test's name) and a
-   docstring line. Its two questions, answered: about 7 seconds is
-   acceptable; neither check order needs pinning.
-8. ~~t5, write the tests and prove red.~~ 27 failed, 405 passed; each
-   check's red recorded with `progress run --expect red`.
-9. ~~t5, green.~~ The same four files; 432 passed; each check's green
-   recorded with `progress run` at `a11eab0`.
-10. ~~t5, approve the commit and commit.~~ Done at `a11eab0`.
-11. ~~t5 Two-Key.~~ PASS at round 1, about 193K tokens. Three advisories:
-    one to t6, one to t9, one noted.
-12. ~~Close.~~ t0 to t5 closed with `progress done`, so the kit's tree
-    reads them done; STATE.md regenerated and this plan struck through;
-    the push and the PR on the user's word.
+1. **Open.** Branch cut from `f2d400a` (done); this plan and its diagram,
+   committed once the user approves them; then `progress start
+   tree-view/t7-pane-face/approve-tests`, so the current mark leaves t6.
+2. **t7, draft and approve the test list.** The drafter covers SC2.1 to
+   SC2.3 and rulings 1 to 3, with the loop driven in-process through an
+   injected clock, so no test waits on a real second.
+3. **t7, write the tests and prove red.** Each check's red recorded with
+   `progress run --expect red`.
+4. **t7, green.** Then the receipts: the suite, the 14 contracts
+   ready-green, the doors, the scope check, and one timed redraw on the
+   kit itself, under two seconds.
+5. **t7, approve the commit and commit.** Each check's green recorded with
+   `progress run` at the commit.
+6. **t7 Two-Key.**
+7. **t8, draft and approve the test list.** SC8.1 to SC8.3 and rulings 4
+   and 5.
+8. **t8, write the tests and prove red.**
+9. **t8, green.**
+10. **t8, approve the commit and commit.**
+11. **t8 Two-Key.**
+12. **Close.** t7 and t8 closed with `progress done`; STATE.md regenerated
+    and this plan struck through; the push and the PR on the user's word.
 
-Decisions this session: eight. The user's: (1) this plan, its five rulings
-and the delegation: yes; (2) PR #50's merge: yes. Claude's on review: (3)
-t4's test list: yes, with three changes; (4) t4's commit: yes; (5) t5's
-test list: yes, with the names and a docstring line; (6) t5's commit: yes.
-The user's at the close: (7) the push and the PR: pending; (8) the merge:
-pending.
-
-Details the rulings left open, fixed with the test lists: `--expect` takes
-red or green, default green, always recorded; the command runs at the root
-from its argv, with no shell and its output passed through, then one line,
-`<id>: <result>, expected <expect>`; `HEAD` and dirty are read before the
-command starts; outside git the head reads `no commit` and no dirty key is
-written; a `G0` verdict reads dirty when its own contract file differs from
-`HEAD` or is not in it; a check keeps its last run's evidence when that run
-was green as expected. `--by` on anything but an approval, and a blank
-`--by` or `--reason`, exit 2; start and block take an approval too; every
-call appends; a close is one record; a close neither adds evidence to the
-items under it nor hides theirs; a closed unit or contract shows its close's
-`at <head>`; a blocked task shows `because <reason>` while blocked.
+Decisions this session: ten. The user's: (1) PR #51's merge: yes, at
+`f2d400a`; (2) the deliverable, t7 and t8: yes; (3) the delegation of the
+in-work approvals: yes; (4) this plan and its five rulings: pending.
+Claude's on review: (5) t7's test list; (6) t7's commit; (7) t8's test
+list; (8) t8's commit. The user's at the close: (9) the push and the PR;
+(10) the merge.
 
 Deferred, not this session:
-- `tree-view` t7 (unblocked), t8 after t7, then the herdr hook on t8's
-  notify, outside the kit; t6; t9 last, releasing 0.15.0.
-- For t7: `git status` with `--no-optional-locks`, since the pane redraws
-  while the user runs git.
-- For t6: `tree.py`'s docstring says a close reads everything under it
-  done, where it reads every task and check; t1's id collision; a repeated
-  `depends_on` entry prints the link twice; `tree_view.py`'s docstring on
-  spacing.
-- For t9: USAGE's `progress` rows (`--expect green`, the exit-2 refusals,
-  a malformed file stopping a writer, the task writers' options and
-  evidence), the `G0` verdict's dirty rule, no `dirty` key outside git,
-  "done all the way down" (a close never covers a verdict); t0's two
-  wording notes; t1's `.yml` note; the backfill qualifier; the line's words
-  and the text rule behind "unchanged".
+- The herdr hook on t8's notify, outside the kit. Its first question: does
+  herdr's own screen detection overwrite an outside `herdr pane
+  report-agent --state blocked`? The notify command runs from the pane, so
+  it needs the Claude pane's id.
+- t6, with its carried advisories: `tree.py`'s docstring on a close; t1's
+  id collision; a repeated `depends_on` entry printing twice;
+  `tree_view.py`'s docstring on spacing.
+- t9 last, releasing 0.15.0: USAGE's `progress` rows and the notes carried
+  from t0 to t5 (full list in STATE.md), plus what t7 and t8 leave for
+  USAGE.
 - The backfill of the 13 earlier contracts, once each is checked finished.
 - Parked until the pane can follow them: G1, then the pilot's M0 code.
 - `no-check-reads-the-source-document`: which request carries it.
@@ -151,6 +150,8 @@ Deferred, not this session:
 House rules in force: no pipes or chains in any authored command string;
 commit messages via Write + `git commit -F`; Two-Key on every code unit,
 launched by `scriptPath`; a `Contract:` trailer, alone in the final
-paragraph, on every commit that touches a non-free path; receipts run
-before each verifier round, and no tracked file touched while it runs; a
-surprise mid-build is an OPEN and a re-intake, never a silent edit.
+paragraph, on every commit that touches a non-free path; before placing a
+drafted list, session labels stripped from its names and the module
+checked for a repeated test name; receipts run before each verifier round,
+and no tracked file touched while it runs; a surprise mid-build is an OPEN
+and a re-intake, never a silent edit.
