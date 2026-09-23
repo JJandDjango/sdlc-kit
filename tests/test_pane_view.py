@@ -1,5 +1,5 @@
-"""The pane-view suite (contract pane-view, units p1-where-line, p2-short-ids
-and p3-line-parts).
+"""The pane-view suite (contract pane-view, units p1-where-line, p2-short-ids,
+p3-line-parts and p4-fold-names).
 
 `taskcontract tree --follow` prints one where-am-I line for the current
 task: `specs/<contract>/contract.yaml > <contract> > <unit> > <task>`, the
@@ -47,12 +47,36 @@ ignored: {value} - give a list from id, status, marks, evidence, links, doc,
 summary`, `{value}` the first entry that names no field, else the whole
 value, as str() gives it. The pane reads the key at each render (SC2.3).
 
-The rest of the pane reads as tree-view t7 and t8 built it: the fold lines
-and their counts, the cut to the pane's width, the `no current task`
-render; and `taskcontract tree` prints no where-am-I line. The loop runs
-in-process: `follow(root, out, sleep=...)` takes an injected sleep, which
-changes source files between scans and raises KeyboardInterrupt to end the
-loop, as Ctrl-C does. No test waits on a real second.
+`tree: pane: fold: names` in .sdlc/config.yaml makes each fold line name
+the items it folds in place of the counts: at the fold line's own indent,
+`<n> more: `, then each folded item as `<id> [<status>]`, joined by `, `, in
+the tree's order. The id reads as the item's own line would open: the full
+id at the top level (`gates/G0`, `gates/none`, `beta`), the last segment
+under another item (`G0` for a contract's verdict, `a1-core` for a unit,
+`sketch-1` or `SC5.1+SC5.2` for a check). With no current task the `<n>
+items:` line names the top-level items the same way, and with no item at all
+reads `0 items`. A fold line under names is cut to the pane's width like
+every other line, and `parts:` never changes a fold line: each folded item
+shows its status whatever `parts:` lists. The waiting line, the where-am-I
+line, every item line, the order and count of the lines, the notify command
+and `SDLC_NODE` stay as they were (SC4.1). `fold: counts`, no `fold:`, no
+config, and a `tree:` or `pane:` that is not a mapping keep the counts with
+nothing on stderr. Any other value (another word, `Names`, a number, a list,
+a mapping, null) keeps the counts, and each render prints one line on
+stderr, `taskcontract tree: pane fold ignored: {value} - give names or
+counts`, `{value}` the value as str() gives it, after the render's
+unreadable-source lines and after its parts line. The pane reads the key at
+each render, and reads `parts:` and `fold:` apart: a bad one leaves the
+other working. `taskcontract tree` prints the same stdout and stderr with
+the key set, valid or not (SC4.2).
+
+The rest of the pane reads as tree-view t7 and t8 built it: the fold lines'
+counts when `fold:` does not name the items, the cut to the pane's width,
+the `no current task` render; and `taskcontract tree` prints no where-am-I
+line. The loop runs in-process: `follow(root, out, sleep=...)` takes an
+injected sleep, which changes source files between scans and raises
+KeyboardInterrupt to end the loop, as Ctrl-C does. No test waits on a real
+second.
 """
 
 from __future__ import annotations
@@ -1128,3 +1152,395 @@ def test_sc2_3_the_message_follows_the_renders_unreadable_source_lines(tmp_path,
         assert len(lines) == 2, lines
         assert UNREADABLE_BETA.match(lines[0]), lines
         assert lines[1] == PARTS_IGNORED.format("3")
+
+
+# --- SC4 the fold lines ------------------------------------------------------------------
+#
+# `tree: pane: fold:` in .sdlc/config.yaml chooses what each fold line holds:
+# the counts by status (`counts`, or no key), or each folded item by its id and
+# status (`names`). Each fold line keeps its place and its indent; only the
+# text after `<n> more: ` (or `<n> items`) changes.
+
+FOLD_IGNORED = "taskcontract tree: pane fold ignored: {} - give names or counts"
+
+
+def _fold(root, fold, gates=(), **pane):
+    """The config with `tree: pane: fold:` set to `fold`, beside any other
+    `tree: pane:` key given."""
+    _config(root, gates, tree={"pane": {**pane, "fold": fold}})
+
+
+def _no_gate_finding(root):
+    """A finding with `gate: none`, so the top level holds a `gates/none` item."""
+    _dump(root / ".sdlc" / "findings" / "idea.yaml", {
+        "finding": "idea", "date": "2026-09-22", "kit_pinned": "v0.14.0",
+        "diagnostic": "none", "gate": "none", "kind": "proposal", "count": 1,
+        "statement": "A fixture finding for the pane-view suite.", "proposal": "none"})
+
+
+def _named_repo(tmp_path):
+    """The path fixture (gate G0 active, beta closed, alpha/a2-edges/prove-red
+    doing) with a finding under the no-gate item, and `fold: names`: the top
+    level holds gates/G0, gates/none, alpha and beta, in that order."""
+    root = _path_repo(tmp_path)
+    _no_gate_finding(root)
+    _fold(root, "names", gates=("G0",))
+    return root
+
+
+# the ruling's own example: a gate item and the no-gate item by their full ids
+NAMED_TOP = "3 more: gates/G0 [to do], gates/none [to do], beta [done]"
+NAMED_UNITS = "  2 more: G0 [done], a1-core [blocked]"      # alpha/G0, alpha/a1-core
+NAMED_TASKS = ("    9 more: approve-tests [done], write-tests [done], green [to do], "
+               "approve-commit [to do], commit [to do], two-key [to do], sketch-1 [failed], "
+               "SC2.1 [to do], sketch-3 [to do]")
+
+
+def _path_render(top, units, tasks):
+    """The path fixture's pane with the given fold lines."""
+    return [WHERE_PROVE_RED, top, f"alpha [failed] | {INTENT}", units, PROVE_RED_UNIT,
+            tasks, PROVE_RED_TASK]
+
+
+NAMED = _path_render(NAMED_TOP, NAMED_UNITS, NAMED_TASKS)
+
+# the feature-doc fixture of SC2 (no gate, beta to do, a1-core doing), named
+DOC_NAMED_TASKS = ("    9 more: approve-tests [to do], write-tests [to do], green [to do], "
+                   "approve-commit [to do], commit [to do], two-key [to do], "
+                   "sketch-1 [to do], SC2.1 [to do], sketch-3 [to do]")
+DOC_NAMED = [WHERE_PROVE_RED, "1 more: beta [to do]", FULL_CONTRACT,
+             "  1 more: a1-core [doing]", FULL_UNIT, DOC_NAMED_TASKS, FULL_TASK]
+
+
+# --- SC4.1 fold names -------------------------------------------------------------------------
+
+def test_sc4_1_fold_names_names_each_folded_item_by_id_and_status_at_all_three_depths(
+        tmp_path, capsys):
+    root = _named_repo(tmp_path)
+    _, renders = _pane(root)
+    assert capsys.readouterr().err == ""
+    whole = _whole(root, capsys)
+    assert renders == [[
+        WHERE_PROVE_RED,
+        NAMED_TOP,                                    # the top level
+        whole["alpha"],
+        NAMED_UNITS,                                  # the contract's verdict and other unit
+        short_line(whole["alpha/a2-edges"]),
+        NAMED_TASKS,                                  # the unit's other tasks and its checks
+        short_line(whole["alpha/a2-edges/prove-red"]),
+    ]]
+    # each folded item reads as its own line opens: the id (whole at the top
+    # level, else its last segment) and the status tag, in the whole tree's order
+    for depth, fold, ids in (
+            (0, NAMED_TOP, ["gates/G0", "gates/none", "beta"]),
+            (1, NAMED_UNITS, ["alpha/G0", "alpha/a1-core"]),
+            (2, NAMED_TASKS, [i for i in whole if i.startswith("alpha/a2-edges/")
+                              and i != "alpha/a2-edges/prove-red"])):
+        named = [(i if depth == 0 else i.rsplit("/", 1)[-1]) + f" [{ROW.match(whole[i])['tag']}]"
+                 for i in ids]
+        assert fold == "  " * depth + f"{len(ids)} more: " + ", ".join(named)
+    assert all(line.isascii() for line in renders[0])
+
+
+def test_sc4_1_a_check_whose_id_joins_check_ids_folds_by_its_whole_last_segment(
+        tmp_path, capsys):
+    root = _repo(tmp_path, gates=())
+    _fold(root, "names")
+    _progress(root, "alpha", _step("alpha/a1-core/write-tests", "doing", "10:00"))
+    _, renders = _pane(root)
+    assert renders == [[
+        WHERE_WRITE_TESTS,
+        "1 more: beta [to do]",
+        f"alpha [doing] | {INTENT}",
+        "  1 more: a2-edges [to do]",
+        "  a1-core [doing] | the work for a1-core is done",
+        ("    8 more: approve-tests [to do], prove-red [to do], green [to do], "
+         "approve-commit [to do], commit [to do], two-key [to do], SC1.1 [to do], "
+         "SC5.1+SC5.2 [to do]"),
+        "    write-tests [doing] current | Write the tests",
+    ]]
+    assert capsys.readouterr().err == ""
+
+
+def test_sc4_1_at_an_approval_fold_names_leaves_the_waiting_line_the_where_line_and_the_notify_command(
+        tmp_path, capsys, monkeypatch):
+    starts = _Starts(subprocess.Popen)
+    monkeypatch.setattr(subprocess, "Popen", starts)
+    root = _query_face_repo(tmp_path)
+    _config(root, [], tree={"notify": "notify-the-seat", "pane": {"fold": "names"}})
+    _, renders = _pane(root)
+    assert capsys.readouterr().err == ""
+    whole = _whole(root, capsys)
+    assert renders == [[
+        WAIT_QUERY_FACE,
+        WHERE_QUERY_FACE,
+        "1 more: pane-view [to do]",
+        whole["tree-view"],
+        "  1 more: t5-pane-face [to do]",
+        short_line(whole["tree-view/t6-query-face"]),
+        ("    7 more: write-tests [to do], prove-red [to do], green [to do], "
+         "approve-commit [to do], commit [to do], two-key [to do], SC6.1 [to do]"),
+        short_line(whole["tree-view/t6-query-face/approve-tests"]),
+    ]]
+    assert starts.nodes == ["tree-view/t6-query-face/approve-tests"]
+
+
+def test_sc4_1_the_requests_own_example_at_80_columns_cuts_the_long_fold_line(
+        tmp_path, capsys, monkeypatch):
+    root = _query_face_repo(tmp_path)
+    _fold(root, "names", parts=["status", "marks"])
+    monkeypatch.setenv("COLUMNS", "80")
+    _, renders = _pane(root)
+    assert renders == [[
+        WAIT_QUERY_FACE,
+        WHERE_QUERY_FACE,
+        "1 more: pane-view [to do]",
+        "tree-view [waiting on a seat]",
+        "  1 more: t5-pane-face [to do]",
+        "  t6-query-face [waiting on a seat]",
+        "    7 more: write-tests [to do], prove-red [to do], green [to do], approve-co...",
+        "    approve-tests [waiting on a seat] current",
+    ]]
+    assert len(renders[0][6]) == 80
+    assert capsys.readouterr().err == ""
+
+
+def test_sc4_1_a_fold_line_under_names_is_cut_to_the_panes_width_like_every_other_line(
+        tmp_path, capsys, monkeypatch):
+    root = _named_repo(tmp_path)
+    width = len(NAMED_TOP)        # the top-level fold line fits exactly; the tasks' does not
+    monkeypatch.setenv("COLUMNS", str(width))
+
+    def narrower():
+        monkeypatch.setenv("COLUMNS", str(width - 1))
+        _append(root / ".sdlc" / "config.yaml")  # a change that moves no line
+
+    _, renders = _pane(root, narrower)
+    assert renders == [cut_lines(NAMED, width), cut_lines(NAMED, width - 1)]
+    assert renders[0][1] == NAMED_TOP
+    assert renders[0][5] == NAMED_TASKS[:width - 3] + "..."
+    assert renders[1][1] == NAMED_TOP[:width - 4] + "..."
+    assert capsys.readouterr().err == ""
+
+
+LEAVE_STATUS_OUT = [
+    pytest.param([], ("alpha", "  a2-edges", "    prove-red"), id="the-empty-list"),
+    pytest.param(["marks", "summary"],
+                 (f"alpha | {INTENT}", "  a2-edges | the work for a2-edges is done",
+                  "    prove-red current | Prove red"), id="marks-and-summary"),
+]
+
+
+@pytest.mark.parametrize("parts, lines", LEAVE_STATUS_OUT)
+def test_sc4_1_a_parts_that_leaves_status_out_never_changes_a_fold_line(
+        tmp_path, capsys, parts, lines):
+    root = _doc_repo(tmp_path)
+    _fold(root, "names", parts=parts)
+    _, renders = _pane(root)
+    contract, unit, task = lines
+    # the item lines as parts leaves them; each folded item still shows its status
+    assert renders == [[WHERE_PROVE_RED, "1 more: beta [to do]", contract,
+                        "  1 more: a1-core [doing]", unit, DOC_NAMED_TASKS, task]]
+    assert capsys.readouterr().err == ""
+
+
+def test_sc4_1_with_no_current_task_the_items_line_names_the_top_level_items(tmp_path, capsys):
+    root = _repo(tmp_path)                            # gate G0 active
+    _no_gate_finding(root)
+    _fold(root, "names", gates=("G0",))
+    doing = _step("alpha/a1-core/write-tests", "doing", "10:00")
+    _, renders = _pane(
+        root,
+        lambda: _progress(root, "alpha", doing),                                   # a task
+        lambda: _progress(root, "alpha", doing, _step("alpha", "done", "10:05")))  # closed
+    assert len(renders) == 3
+    assert renders[0] == [
+        "no current task",
+        "4 items: gates/G0 [to do], gates/none [to do], alpha [to do], beta [to do]"]
+    assert renders[1][:4] == [
+        WHERE_WRITE_TESTS,
+        "3 more: gates/G0 [to do], gates/none [to do], beta [to do]",
+        f"alpha [doing] | {INTENT}",
+        "  2 more: G0 [done], a2-edges [to do]"]
+    assert renders[2] == [
+        "no current task",
+        "4 items: gates/G0 [to do], gates/none [to do], alpha [done], beta [to do]"]
+    assert capsys.readouterr().err == ""
+
+
+def test_sc4_1_with_no_item_at_all_the_items_line_reads_0_items_and_names_the_first_that_lands(
+        tmp_path, capsys):
+    root = tmp_path / "repo"
+    _fold(root, "names")
+
+    def land():
+        _dump(root / "specs" / "beta" / "contract.yaml", _contract("beta", BETA))
+        write_seat_roster(root)
+
+    _, renders = _pane(root, land)
+    assert renders == [["no current task", "0 items"],
+                       ["no current task", "1 items: beta [to do]"]]
+    assert capsys.readouterr().err == ""
+
+
+# --- SC4.2 counts, and a bad fold setting -------------------------------------------------------
+
+def _unlink_config(root):
+    (root / ".sdlc" / "config.yaml").unlink()
+
+
+COUNTS = [
+    pytest.param(lambda root: _fold(root, "counts"), id="fold-counts"),
+    pytest.param(lambda root: _config(root, [], tree={"pane": {}}), id="a-pane-key-without-fold"),
+    pytest.param(lambda root: _config(root, [], tree={}), id="a-tree-key-without-pane"),
+    pytest.param(lambda root: _config(root, []), id="no-tree-key"),
+    pytest.param(_unlink_config, id="no-config"),
+    pytest.param(lambda root: _config(root, [], tree="names"), id="tree-text"),
+    pytest.param(lambda root: _config(root, [], tree=["pane"]), id="tree-a-list"),
+    pytest.param(lambda root: _config(root, [], tree={"pane": "names"}), id="pane-text"),
+    pytest.param(lambda root: _config(root, [], tree={"pane": ["fold", "names"]}),
+                 id="pane-a-list"),
+]
+
+
+@pytest.mark.parametrize("setting", COUNTS)
+def test_sc4_2_fold_counts_or_no_fold_keeps_the_counts_with_nothing_on_stderr_for_the_key(
+        tmp_path, capsys, setting):
+    root = _doc_repo(tmp_path)
+    setting(root)
+    errs, steps = _err_at_each_tick(
+        capsys,
+        lambda: _fold(root, "names"),                 # names: the items by id
+        lambda: setting(root),                        # back: the counts
+        None)
+    _, renders = _pane(root, *steps)
+    assert renders == [FULL, DOC_NAMED, FULL]
+    assert errs == ["", "", ""]
+
+
+BAD_FOLD = [
+    pytest.param("sideways", "sideways", id="another-word"),
+    pytest.param("Names", "Names", id="names-in-another-case"),
+    pytest.param("COUNTS", "COUNTS", id="counts-in-another-case"),
+    pytest.param(3, "3", id="a-number"),
+    pytest.param(["names"], "['names']", id="a-list"),
+    pytest.param({"names": "counts"}, "{'names': 'counts'}", id="a-mapping"),
+    pytest.param(None, "None", id="null"),
+]
+
+
+@pytest.mark.parametrize("value, named", BAD_FOLD)
+def test_sc4_2_a_bad_fold_keeps_the_counts_and_names_the_value_on_stderr(
+        tmp_path, capsys, value, named):
+    root = _doc_repo(tmp_path)
+    _fold(root, value)
+    _, renders = _pane(root)
+    assert renders == [FULL]                          # the counts, as if unset
+    message = FOLD_IGNORED.format(named)
+    assert capsys.readouterr().err == message + "\n"
+    assert message.isascii()
+
+
+def test_sc4_2_the_fold_message_prints_once_at_each_render_and_the_pane_writes_no_file(
+        tmp_path, capsys):
+    root = _doc_repo(tmp_path)
+    _fold(root, "sideways")
+    before = _snapshot(root)
+    errs, steps = _err_at_each_tick(
+        capsys,
+        lambda: _append(root / ".sdlc" / "progress" / "alpha.yaml"),   # a redraw
+        None,                                                          # no change, no render
+        None)
+    _, renders = _pane(root, *steps)
+    message = FOLD_IGNORED.format("sideways") + "\n"
+    assert renders == [FULL, FULL]
+    assert errs == [message, message, ""]
+    after = _snapshot(root)
+    before.pop(str(Path(".sdlc") / "progress" / "alpha.yaml"))
+    after.pop(str(Path(".sdlc") / "progress" / "alpha.yaml"))
+    assert after == before
+
+
+def test_sc4_2_a_change_to_fold_shows_at_the_next_render_and_the_message_follows_the_value(
+        tmp_path, capsys):
+    root = _doc_repo(tmp_path)
+    _fold(root, "counts")
+    errs, steps = _err_at_each_tick(
+        capsys,
+        lambda: _fold(root, "names"),                 # the items by id, no message
+        lambda: _fold(root, "Names"),                 # bad: the counts, named
+        lambda: _fold(root, 3),                       # bad again, another value
+        lambda: _config(root, []),                    # unset: the counts, no message
+        None)
+    _, renders = _pane(root, *steps)
+    assert renders == [FULL, DOC_NAMED, FULL, FULL, FULL]
+    assert errs == ["", "", FOLD_IGNORED.format("Names") + "\n",
+                    FOLD_IGNORED.format("3") + "\n", ""]
+
+
+def test_sc4_2_a_bad_parts_leaves_fold_names_working_and_a_bad_fold_leaves_parts_working(
+        tmp_path, capsys):
+    root = _doc_repo(tmp_path)
+    _fold(root, "names", parts="status")              # parts bad, fold good
+    errs, steps = _err_at_each_tick(
+        capsys,
+        lambda: _fold(root, "sideways", parts=[]),    # parts good, fold bad
+        lambda: _fold(root, "sideways", parts="status"),  # both bad
+        None)
+    _, renders = _pane(root, *steps)
+    assert renders == [DOC_NAMED, BARE, FULL]
+    assert errs == [PARTS_IGNORED.format("status") + "\n",
+                    FOLD_IGNORED.format("sideways") + "\n",
+                    PARTS_IGNORED.format("status") + "\n" + FOLD_IGNORED.format("sideways") + "\n"]
+
+
+def test_sc4_2_the_fold_message_follows_the_unreadable_source_lines_and_the_parts_message(
+        tmp_path, capsys):
+    root = _doc_repo(tmp_path)
+    (root / ".sdlc" / "progress" / "beta.yaml").write_text("records: [unclosed\n",
+                                                           encoding="utf-8")
+    _fold(root, ["names"], parts=3)
+    errs, steps = _err_at_each_tick(
+        capsys, lambda: _append(root / ".sdlc" / "progress" / "alpha.yaml"), None)
+    _, renders = _pane(root, *steps)
+    assert renders == [FULL, FULL]
+    for err in errs:
+        lines = err.splitlines()
+        assert len(lines) == 3, lines
+        assert UNREADABLE_BETA.match(lines[0]), lines
+        assert lines[1:] == [PARTS_IGNORED.format("3"), FOLD_IGNORED.format("['names']")]
+
+
+FOLD_WHOLE_TREE = [
+    pytest.param("names", id="fold-names"),
+    pytest.param("sideways", id="a-bad-fold"),
+]
+
+
+@pytest.mark.parametrize("fold", FOLD_WHOLE_TREE)
+def test_sc4_2_taskcontract_tree_prints_the_same_stdout_and_stderr_with_fold_set(
+        tmp_path, capsys, fold):
+    root = _doc_repo(tmp_path)
+    (root / ".sdlc" / "progress" / "beta.yaml").write_text("records: [unclosed\n",
+                                                           encoding="utf-8")
+    _fold(root, fold)
+    _, (render,) = _pane(root)
+    pane_err = capsys.readouterr().err.splitlines()
+    # the pane reads the key: only the --follow mode does
+    if fold == "names":
+        assert render == DOC_NAMED
+        assert len(pane_err) == 1 and UNREADABLE_BETA.match(pane_err[0]), pane_err
+    else:
+        assert render == FULL
+        assert pane_err[1:] == [FOLD_IGNORED.format("sideways")], pane_err
+    code = main(["tree", "--root", str(root)])
+    with_key = capsys.readouterr()
+    assert code == 0
+    _config(root, [])
+    code = main(["tree", "--root", str(root)])
+    without_key = capsys.readouterr()
+    assert code == 0
+    assert with_key.out == without_key.out
+    assert with_key.err == without_key.err
+    assert "pane fold ignored" not in with_key.err
+    assert UNREADABLE_BETA.match(with_key.err.splitlines()[0])
