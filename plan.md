@@ -1,63 +1,64 @@
-# Plan - Session 46 (2026-09-23) - pane-view p3 and p4
+# Plan - Session 47 (2026-09-23) - tree-view t6 and t9, release 0.15.0
 
-**Deliverable:** the last two units of `pane-view` (the request for a pane
-that shows where the current task sits) on one PR, each with a Two-Key PASS
-(one agent re-runs every check, a second grades the commit against the
-contract, and a script computes the verdict):
+**Deliverable:** the last two units of `tree-view` on one PR, each with a
+Two-Key PASS (one agent re-runs every check, a second grades the commit
+against the contract, and a script computes the verdict), then the release:
+the merge, the annotated tag `v0.15.0` at the merge, and the self-pin through
+its own PR.
 
-- p3 `p3-line-parts`: `tree: pane: parts:` in `.sdlc/config.yaml` lists the
-  fields each item line of the pane shows after its id, in the fixed order
-  `status`, `marks`, `evidence`, `links`, `doc`, `summary`. A value that is
-  not a list, or names an unknown field, leaves every field and prints
-  `pane parts ignored: ...` on stderr. The `tree: pane:` reader lands in
-  `tree.py`, beside `notify_command`.
-- p4 `p4-fold-names`: `tree: pane: fold: names` makes each collapse line
-  name the other items as `<id> [<status>]` instead of counts. `counts`
-  and a missing setting keep the counts; any other value keeps them and
-  prints `pane fold ignored: ...` on stderr.
+- t6 `t6-query-face`: `taskcontract tree <id>` prints that item in at most
+  20 lines: its source field, status, links and each file reference (a repo
+  path plus the line of its source; a gate or a task step names its kit
+  page). An unknown id exits `2` and prints `no node '{id}' - print the tree
+  to list every node id`. It lands in `taskcontract/tree_view.py`, tested in
+  `tests/test_tree_query.py`.
+- t9 `t9-release`: the `USAGE.md` marks of tree-view and pane-view read
+  green; the version reads `0.15.0` in `pyproject.toml` and `KIT_VERSION`;
+  `CHANGELOG.md` gains the entry and `MAP.md` a row.
 
-**Closed.** The deliverable is met: p3 at `4e298af`, p4 at `3be9db2`, each
-Two-Key PASS at round 1 with advisories only. Suite 577 passed, all fifteen
-contracts ready-green, scope-check green. The live check after p4 passed in
-herdr. pane-view's five units and the contract are closed in progress. The
-push and the PR wait on the user's word.
+**Rulings at plan review** (the user's):
+
+1. An id that names two items (a check named like a task step, or a unit
+   named like an active gate) prints both, in tree order, each in at most
+   20 lines.
+2. Claude approves t6's test list and commit on review. The user approves
+   t9's commit, shown in chat. The push, the PR, the merge, the tag and the
+   self-pin stay on the user's word.
 
 ## Steps
 
-1. ~~Open.~~ Branch cut from `ee05d24`; the plan at `b2d8541`.
-2. ~~p3, draft and approve the test list.~~ Nineteen tests; `_cut` and
-   `_short` moved to `tests/conftest.py`; one p1 test name the rename
-   glued (`..._iscut_lines`) restored at placement; approved by Claude.
-3. ~~p3, write the tests and prove red.~~ SC2.1 to SC2.3 red as expected;
-   the suite 41 failed, 505 passed.
-4. ~~p3, green.~~ Suite 546 passed; every receipt green.
-5. ~~p3, approve the commit and commit.~~ At `4e298af`; the three checks
-   green.
-6. ~~p3 Two-Key.~~ PASS at round 1; its docstring advisory fixed at p4.
-7. ~~p4, draft and approve the test list.~~ Fifteen tests; approved by
-   Claude.
-8. ~~p4, write the tests and prove red.~~ SC4.1 and SC4.2 red as expected;
-   the suite 31 failed, 546 passed.
-9. ~~p4, green.~~ Suite 577 passed; every receipt green.
-10. ~~p4, approve the commit and commit.~~ At `3be9db2`; both checks green.
-11. ~~p4 Two-Key.~~ PASS at round 1; three advisories, carried to t9.
-12. ~~The live check in herdr.~~ The request's example drawn live at t6's
-    first approval; the hook flagged the probe `sdlc`, `blocked`; a bad
-    `fold:` brought the counts back with its message.
-13. ~~Close.~~ STATE.md regenerated; this plan struck; the push and the PR
-    go to the user.
+1. Open: branch `session-47-tree-view-t6-t9` cut from `84ebc5e`; this plan
+   committed.
+2. t6, draft and approve the test list. The drafter also takes STATE's t6
+   advisories: a repeated `depends_on` entry prints twice, `tree.py`'s
+   docstring on a close, `tree_view.py`'s docstring on spacing.
+3. t6, write the tests and prove red.
+4. t6, green.
+5. t6, approve the commit and commit; the checks green; the query run on
+   the kit's own tree.
+6. t6 Two-Key.
+7. t9, the USAGE pass (STATE's carried wording with it), the version, the
+   CHANGELOG entry and the MAP row.
+8. t9, the user approves the commit; commit.
+9. t9, the release sweep, then Two-Key; t9 and the contract closed.
+10. Close: STATE.md regenerated; this plan struck; the push and the PR go
+    to the user.
+11. Release: merge on the user's word, the annotated tag `v0.15.0` at the
+    merge, then the self-pin (`.github/workflows/sdlc.yml` to `@v0.15.0`)
+    through its own PR.
 
-Steps 1, 12 and 13 sit outside a contract unit, so the pane does not show
-them.
+Steps 1, 10 and 11 sit outside a contract unit, so the pane does not show
+them. If t6 runs long, the session ends after step 6 and t9 opens session
+48.
 
-Decisions this session: nine. The user's: (1) the deliverable, p3 and p4:
-yes; (2) the delegation of p3's and p4's approvals: yes; (3) this plan:
-yes. Claude's, on review: (4) p3's test list; (5) p3's commit; (6) p4's
-test list; (7) p4's commit. The user's at the close: (8) the push and the
-PR; (9) the merge.
+Decisions this session: ten. The user's at plan review: (1) the
+deliverable: yes; (2) the delegation: yes; (3) the id ruling: yes; (4) this
+plan: yes. Claude's, on review: (5) t6's test list; (6) t6's commit. The
+user's: (7) t9's commit; (8) the push and the PR; (9) the merge and the
+tag; (10) the self-pin.
 
 Deferred, not this session:
-- tree-view t6 and t9 (0.15.0), then G1.
+- G1: its criteria review, before the pilot's M0 code.
 - The pilot's config line, in the engine's session.
 - `.sdlc/config.yaml` still lists `plan.workflow.json` as a free path.
 - The rest of STATE.md's carried list.
