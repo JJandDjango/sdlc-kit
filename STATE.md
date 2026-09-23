@@ -2,11 +2,12 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-22 (session 41 close)._
+> _Generated 2026-09-22 (session 41 wrap)._
 
 ## Now
 - **`tree-view` t4 and t5 are built, each a Two-Key PASS at round 1**, on
-  branch `session-41-tree-view-t4-t5`, not yet pushed. t4 (`0b650bd`):
+  branch `session-41-tree-view-t4-t5`, pushed as PR #51 with both CI jobs
+  green (`contracts`, `test`); its merge waits on the user. t4 (`0b650bd`):
   `taskcontract progress run <check> [--expect red|green] -- <command>`
   records red or green beside the expectation, with the command, `HEAD`, a
   `dirty` mark and the time; the folder ignores itself; a done check shows
@@ -27,12 +28,15 @@
   approvals to Claude on review; Workflow subagents did the work.
 
 ## Blockers
-- None. The push, the PR and the merge wait on the user's word.
+- None. PR #51's merge waits on the user's word, and this wrap commit on
+  its push; the PR body already names the wrap.
 
 ## Next actions
-1. Next session: the pane. t7 (`taskcontract tree --follow`), then t8 (the
-   waiting line and the `tree: notify:` command). Open with `progress start
-   tree-view/t7-pane-face/approve-tests`, so the cursor leaves t6.
+1. Next session: push this wrap commit if it is still local, then merge PR
+   #51 on the user's word. Then the pane: t7 (`taskcontract tree
+   --follow`), then t8 (the waiting line and the `tree: notify:` command).
+   Open with `progress start tree-view/t7-pane-face/approve-tests`, so the
+   cursor leaves t6.
 2. Then the herdr hook on t8's notify, outside the kit, maybe a script or a
    config line. Its first question: does herdr's own screen detection
    overwrite an outside `herdr pane report-agent --state blocked`? The
