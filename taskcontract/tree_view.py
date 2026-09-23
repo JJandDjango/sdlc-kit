@@ -10,11 +10,22 @@ run was green as expected, that run's command and `HEAD`; on a task done by
 its own record, `by <seat>` on an approval and the record's `HEAD`; on a
 unit or contract done by its close, the close's `HEAD`; each with `dirty`
 when it applies; on a task blocked by its own record, `because <reason>`).
-Then its links
-(`depends_on: <contract>/<unit>` on a unit, `gate: <value>` on a finding),
-then a contract's feature doc reference (`doc: docs/features/<id>.md`), and
-last its summary after ` | `. Each part but the id and status prints only
-when the item has it, after exactly one space.
+Then its links (`depends_on: <contract>/<unit>` on a unit, `gate: <value>`
+on a finding), then a contract's feature doc reference (`doc:
+docs/features/<id>.md`), and last its summary after ` | `. Each part but the
+id and status prints only when the item has it, after exactly one space.
+
+`taskcontract tree <id>` queries one item: the id matched whole, every item
+with it printed as one block, in the tree's order, with one empty line
+between blocks. A block opens on the item's line cut after the evidence,
+then gives one labeled field per line, each only when the item has it:
+`summary:` whole, one line per link kind with its targets joined by `, `,
+`doc:`, `file: <path>:<line>` (a contract or verdict at line 1, a unit or
+check at its entry's first line, a finding's file at line 1), and `page:`,
+the kit page that defines a gate, a verdict's gate or a task. So a block
+never passes seven lines. The unreadable sources follow on stderr. An
+unknown id prints `no node '<id>' - print the tree to list every node id`
+on stderr alone and exits 2; an id with `--follow` exits 2 too.
 
 `--follow` keeps a pane on the current task. It prints the where-am-I line,
 `specs/<contract>/contract.yaml > <contract> > <unit> > <task>`, the unit
@@ -24,7 +35,8 @@ prints it, save that the unit's and the task's lines open on the last
 segment of their ids; links, the waiting line and `SDLC_NODE` keep full
 ids. Above each, when the level holds other items, one line folds
 them as `<n> more: <counts>`, the count per status in the six statuses'
-order, zeros left out. So the task is always the last line. When the task
+order, zeros left out; `tree: pane: fold: names` names them instead (see
+below). So the task is always the last line. When the task
 is `approve-tests` or `approve-commit`, the first line reads `waiting on a
 seat: <approval> for <contract>/<unit>`, above the where-am-I line. With no
 current task the pane reads `no current task`, then `<n> items: <counts>`
@@ -47,6 +59,7 @@ joined by `, ` in the tree's order; `parts:` changes none of it. `counts`,
 or unset, keeps the counts. Any other value keeps them too, and each
 render then prints `pane fold ignored: <value> - give names or counts` on
 stderr, after the parts line. The key changes no item line.
+
 Each line longer than the pane's width is cut to it and ends in `...`. The
 pane lists its sources' files once a second and redraws, clearing the
 screen with ANSI escapes, only when a file was added, removed or changed;
@@ -71,6 +84,7 @@ import time
 from pathlib import Path
 
 from . import tree
+from .progress import _no_node
 from .tree import APPROVALS, CURRENT, STATUSES, Item, build
 
 INDENT = "  "
@@ -110,6 +124,37 @@ def line(item: Item, parts: list[str] | None = None) -> str:
     }
     return item.id + "".join(text for name, text in fields.items()
                              if parts is None or name in parts)
+
+
+def block(root: Path, item: Item) -> str:
+    """One item as the query prints it: its line cut after the evidence,
+    then one labeled field per line, each only when the item has it."""
+    lines = [line(item, ["status", "marks", "evidence"])]
+    if item.summary:
+        lines.append(f"summary: {item.summary}")
+    kinds: dict[str, list[str]] = {}  # each link kind's targets, in first-seen order
+    for link in item.links:
+        kind, _, target = link.partition(": ")
+        kinds.setdefault(kind, []).append(target)
+    lines += [f"{kind}: {', '.join(targets)}" for kind, targets in kinds.items()]
+    if item.doc:
+        lines.append(f"doc: {item.doc}")
+    reference = tree.reference(root, item)
+    if reference:
+        lines.append(f"file: {reference}")
+    if item.page:
+        lines.append(f"page: {item.page}")
+    return "".join(text + "\n" for text in lines)
+
+
+def _matches(items: list[Item], item_id: str) -> list[Item]:
+    """Every item with this id, in print order."""
+    found: list[Item] = []
+    for item in items:
+        if item.id == item_id:
+            found.append(item)
+        found += _matches(item.children, item_id)
+    return found
 
 
 def pane(items: list[Item], parts: list[str] | None = None,
@@ -211,7 +256,7 @@ def forget(cache: dict[str, str], before: dict, after: dict) -> None:
 def follow(root: Path, out, sleep=None) -> int:
     """The pane: render, then each second check the notify commands still
     running and render again when a source changed; Ctrl-C exits 0 and
-    leaves the commands running."""
+    neither stops nor waits on the commands it started."""
     cache: dict[str, str] = {}
     running: list[tuple[subprocess.Popen, str]] = []
     try:
@@ -305,13 +350,27 @@ def main_tree(args) -> int:
 
     An unreadable file never stops the print: the rest of the tree is still
     the product, so the command exits 0 and names the file it skipped.
-    With `--follow`, the pane instead, until Ctrl-C.
+    With `--follow`, the pane instead, until Ctrl-C. With an id, the query:
+    one block per item with that id, then the unreadable sources, exit 0;
+    an unknown id prints one line and exits 2, as does an id with `--follow`.
     """
+    node = getattr(args, "node", None)
+    if node is not None and getattr(args, "follow", False):
+        print("taskcontract tree: --follow takes no id - give the id or --follow, not both",
+              file=sys.stderr)
+        return 2
     if getattr(args, "follow", False):
         _ansi_on()
         return follow(Path(args.root), sys.stdout)
     items, problems = build(Path(args.root))
-    sys.stdout.write(render(items))
+    if node is None:
+        sys.stdout.write(render(items))
+    else:
+        found = _matches(items, node)
+        if not found:
+            print(_no_node(node), file=sys.stderr)
+            return 2
+        sys.stdout.write("\n".join(block(Path(args.root), item) for item in found))
     for problem in problems:
         print(f"taskcontract tree: {problem}", file=sys.stderr)
     return 0

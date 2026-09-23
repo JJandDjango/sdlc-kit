@@ -23,18 +23,19 @@ unit's seven tasks and its checks.
 Every item but a finding carries one of six statuses; a finding records
 none, so it shows its kind. A task step reads its last record in the
 contract's progress file, a check its last run judged by what the run
-expected, and a close of a unit or contract reads everything under it
-done. A check whose last run was green as expected names that run's
-command and `HEAD`, and `dirty` when the run recorded it. A task that reads
-done by its own done record names that record's `HEAD`, the seat it gives
-an approval, and `dirty`; a task that reads blocked by its own record names
-its reason. A unit or contract that reads done names its latest close's
-`HEAD` and `dirty`. A close neither adds evidence to the items under it nor
-hides theirs. A `G0` verdict reads the validator at the
-draft and ready profiles and names the command and the `HEAD` it read, and
-`dirty` when its contract file differs from `HEAD`; a verdict at any other gate,
-and every gate item, reads `to do`. A unit or contract rolls up its
-children, so it reads `done` only when every child does.
+expected, and a close of a unit or contract reads every task and check
+under it done, never a verdict. A check whose last run was green as
+expected names that run's command and `HEAD`, and `dirty` when the run
+recorded it. A task that reads done by its own done record names that
+record's `HEAD`, the seat it gives an approval, and `dirty`; a task that
+reads blocked by its own record names its reason. A unit or contract that
+reads done names its latest close's `HEAD` and `dirty`. A close neither
+adds evidence to the items under it nor hides theirs. A `G0` verdict reads
+the validator at the draft and ready profiles and names the command and
+the `HEAD` it read, and `dirty` when its contract file differs from
+`HEAD`; a verdict at any other gate, and every gate item, reads `to do`.
+A unit or contract rolls up its children, so it reads `done` only when
+every child does.
 
 The current task is derived from the task states, never stored: the task
 whose `doing` record is latest, else the first `to do` task in the contract
@@ -46,10 +47,16 @@ line, a finding's `statement`, and the name gates.yaml or tasks.yaml gives a
 gate, a verdict's gate or a task. The field's ends are stripped and each line
 break reads as one space; a field that is absent, not text or blank gives no
 summary. Links come from two fields only: a unit's `depends_on` entries, as
-the unit graph reads them, and a finding's `gate:` value as written. A
-contract with a file at docs/features/<id>.md carries that path as its
-feature doc reference. A line prints its links, then the reference, then the
-summary, after the marks and evidence.
+the unit graph reads them, each linked once in the order of its first
+appearance, and a finding's `gate:` value as written. A contract with a
+file at docs/features/<id>.md carries that path as its feature doc
+reference. A line prints its links, then the reference, then the summary,
+after the marks and evidence.
+
+Each item but a gate, a task and the no-gate item names the file it is read
+from, and a unit or check the keys to its entry there; `reference` turns
+that into the entry's line, parsing the file afresh, so only the query calls
+it. A gate, a verdict and a task carry the kit page their list gives.
 """
 
 from __future__ import annotations
@@ -104,6 +111,9 @@ class Item:
     links: list[str] = field(default_factory=list)  # each `<kind>: <target>`
     doc: str | None = None  # a contract's feature doc path, never opened
     summary: str | None = None  # the source field, by the text rule
+    source: str | None = None  # the repo path of the file the item is read from
+    place: tuple = ()  # the keys from that file's top to the item's entry
+    page: str | None = None  # the kit page that defines a gate or a task
 
 
 @dataclass(frozen=True)
@@ -144,8 +154,8 @@ def build(root: Path, cache: dict[str, str] | None = None) -> tuple[list[Item], 
     between prints; without one, every verdict is read afresh.
     """
     problems: list[str] = []
-    gates = {gate["id"]: text(gate.get("name")) for gate in gate_list()}
-    tasks = {task["id"]: text(task.get("name")) for task in task_list()}
+    gates = {gate["id"]: gate for gate in gate_list()}
+    tasks = {task["id"]: task for task in task_list()}
     order = list(gates)
     active = _in_order(active_gates(root, problems), order)
     findings = read_findings(root, problems)
@@ -486,13 +496,13 @@ def _named(sketch) -> str | None:
 
 
 def _gate_items(order: list[str], active: list[str], findings: list[Finding],
-                gates: dict[str, str | None]) -> list[Item]:
+                gates: dict[str, dict]) -> list[Item]:
     """Each active gate and each gate a finding names, then the no-gate item."""
     named = [finding.gate for finding in findings]
     items = [Item(f"gates/{gate}", "gate",
                   marks=[] if gate in active else [INACTIVE],
                   children=_finding_items(gate, findings),
-                  summary=gates.get(gate))
+                  summary=_name(gates.get(gate)), page=_page(gates.get(gate)))
              for gate in _in_order(active + named, order)]
     if NO_GATE in named:
         items.append(Item(f"gates/{NO_GATE}", "none",
@@ -503,49 +513,100 @@ def _gate_items(order: list[str], active: list[str], findings: list[Finding],
 def _finding_items(gate: str, findings: list[Finding]) -> list[Item]:
     return [Item(f"gates/{gate}/{finding.slug}", "finding", status=None,
                  kind=finding.kind, summary=finding.statement,
-                 links=[f"gate: {finding.link}"] if finding.link else [])
+                 links=[f"gate: {finding.link}"] if finding.link else [],
+                 source=f".sdlc/findings/{finding.slug}.yaml")
             for finding in findings if finding.gate == gate]
 
 
 def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str],
-                   gates: dict[str, str | None], tasks: dict[str, str | None]) -> Item:
+                   gates: dict[str, dict], tasks: dict[str, dict]) -> Item:
     """A contract: its verdict at each active gate, then its units. An
     unreadable contract keeps its verdicts and shows no unit."""
     doc = f"docs/features/{cid}.md"
+    source = f"specs/{cid}/contract.yaml"
     item = Item(cid, "contract",
-                children=[Item(f"{cid}/{gate}", "verdict", summary=gates.get(gate))
+                children=[Item(f"{cid}/{gate}", "verdict", summary=_name(gates.get(gate)),
+                               source=source, page=_page(gates.get(gate)))
                           for gate in active],
                 doc=doc if (root / doc).is_file() else None,
-                summary=text(instance.get("intent")) if instance is not None else None)
-    for uid, unit, deps in _units(instance):
+                summary=text(instance.get("intent")) if instance is not None else None,
+                source=source)
+    for index, uid, unit, deps in _units(instance):
         base = f"{cid}/{uid}"
+        place = ("decomposition", index)
         sketches = unit.get("acceptance_sketch")
         sketches = sketches if isinstance(sketches, list) else []
         unit_item = Item(base, "unit",
-                         children=[Item(f"{base}/{task}", "task", summary=name)
-                                   for task, name in tasks.items()],
-                         links=[f"depends_on: {cid}/{dep}" for dep in deps],
-                         summary=text(unit.get("done_means")))
+                         children=[Item(f"{base}/{task}", "task", summary=_name(entry),
+                                        page=_page(entry))
+                                   for task, entry in tasks.items()],
+                         links=[f"depends_on: {cid}/{dep}" for dep in dict.fromkeys(deps)],
+                         summary=text(unit.get("done_means")), source=source, place=place)
         unit_item.children += [
-            Item(f"{base}/{check}", "check", summary=text(sketch))
-            for check, sketch in zip(check_ids(sketches), sketches)]
+            Item(f"{base}/{check}", "check", summary=text(sketch),
+                 source=source, place=place + ("acceptance_sketch", n))
+            for n, (check, sketch) in enumerate(zip(check_ids(sketches), sketches))]
         item.children.append(unit_item)
     return item
 
 
-def _units(instance: dict | None) -> list[tuple[str, dict, list[str]]]:
-    """(id, unit, depends_on) per unit with a usable id; of a duplicate id
-    (TC013), the first only, as the unit graph draws it (ADR 0024)."""
+def _name(entry: dict | None) -> str | None:
+    """A gate's or task's name from its entry in the kit's list, by the text rule."""
+    return text(entry.get("name")) if entry is not None else None
+
+
+def _page(entry: dict | None) -> str | None:
+    """A gate's or task's kit page from its entry in the kit's list, as written."""
+    page = entry.get("page") if entry is not None else None
+    return page if isinstance(page, str) else None
+
+
+def _units(instance: dict | None) -> list[tuple[int, str, dict, list[str]]]:
+    """(index, id, unit, depends_on) per unit with a usable id; of a
+    duplicate id (TC013), the first only, as the unit graph draws it
+    (ADR 0024)."""
     if instance is None:
         return []
     decomposition = instance.get("decomposition")
     seen: set[str] = set()
-    out: list[tuple[str, dict, list[str]]] = []
+    out: list[tuple[int, str, dict, list[str]]] = []
     for index, uid, deps in unit_rows(instance):
         if uid not in seen:
             seen.add(uid)
-            out.append((uid, decomposition[index], deps))
+            out.append((index, uid, decomposition[index], deps))
     return out
+
+
+def reference(root: Path, item: Item) -> str | None:
+    """`<path>:<line>` for the item's source file, or None when it has none:
+    the line its entry starts at, else 1. It parses the file afresh, so only
+    the query calls it, and only for the items it prints."""
+    if item.source is None:
+        return None
+    node = _node(root / item.source, item.place) if item.place else None
+    return f"{item.source}:{node.start_mark.line + 1 if node is not None else 1}"
+
+
+def _node(path: Path, place: tuple):
+    """The YAML node the keys in `place` lead to, or None where the file no
+    longer holds it; a repeated key gives its last value, as the loader does."""
+    try:
+        node = yaml.compose(path.read_text(encoding="utf-8"), Loader=yaml.SafeLoader)
+    except (yaml.YAMLError, OSError, UnicodeDecodeError):
+        return None
+    for key in place:
+        if isinstance(key, int):
+            if not isinstance(node, yaml.SequenceNode) or key >= len(node.value):
+                return None
+            node = node.value[key]
+        elif isinstance(node, yaml.MappingNode):
+            node = next((value for name, value in reversed(node.value)
+                         if isinstance(name, yaml.ScalarNode) and name.value == key), None)
+            if node is None:
+                return None
+        else:
+            return None
+    return node
 
 
 def _in_order(ids: list[str], order: list[str]) -> list[str]:
