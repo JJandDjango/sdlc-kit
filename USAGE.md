@@ -549,7 +549,8 @@ a test the implementer cannot edit.
 ## 9. Following the work 🔴
 
 > 🔴 **Ratified, not shipped** ([ADR 0031](decisions/0031-the-work-is-one-derived-tree.md),
-> contract `specs/tree-view/`, kit 0.15.0). Marks flip green as the units land.
+> contracts `specs/tree-view/` and `specs/pane-view/`, kit 0.15.0). Marks flip
+> green as the units land.
 
 🔴 `taskcontract tree` prints the repo's work as one tree, computed from
 the kit's files at every run and never stored. It reads the contracts,
@@ -705,6 +706,83 @@ keeps running; with no `notify` set, it runs the same. The key is
 optional, and the config template does not carry it. The command is the
 kit's edge: a terminal multiplexer's plugin (herdr's, for one) wraps it
 outside the kit.
+
+### The pane's lines 🔴
+
+🔴 The pane prints one **where-am-I line**: the current task's contract
+file, then its contract, unit and task, joined by ` > `, the unit and the
+task by the last segment of their ids:
+
+```
+specs/tree-view/contract.yaml > tree-view > t6-query-face > approve-tests
+```
+
+🔴 It stands directly under the waiting line (`waiting on a seat: ...`,
+above) when the current task is an approval, and first otherwise; the
+waiting line stays first, word for word, since a multiplexer's plugin may
+read it. A where-am-I line wider than the pane is cut to the pane's width
+and ends in `...`, as every pane line is. With no current task the pane
+prints none.
+
+🔴 Each item line under another item opens on the **last segment of its
+id** (`t6-query-face`, `approve-tests`), since the lines above give the
+rest; a top-level item's line opens on its full id. Everything else keeps
+full ids: `taskcontract tree` with or without an id, the waiting line,
+every link and `SDLC_NODE`.
+
+🔴 Two optional keys under `tree: pane:` in `.sdlc/config.yaml` choose
+what the lines hold. The pane reads them at each render, so a change
+shows within two seconds; the config template does not carry them.
+
+```yaml
+tree:
+  pane:
+    parts: [status, marks]
+    fold: names
+```
+
+- 🔴 **`parts:`** lists what each item line shows after its id, from
+  `status`, `marks`, `evidence`, `links`, `doc` and `summary`. The id
+  always shows, and listing `id` changes nothing. The parts print in that
+  fixed order whatever order the list gives, and `[]` shows the id alone.
+  Unset, each item line shows every part it has. The key leaves the
+  waiting line, the where-am-I line, the fold lines and `taskcontract
+  tree` unchanged.
+- 🔴 **`fold: names`** makes each fold line name the items it folds in
+  place of the counts: `<n> more: `, then each item as `<id> [<status>]`,
+  the id as its own line would show it, joined by `, ` in the tree's
+  order. With no current task, the `<n> items:` line names the top-level
+  items the same way. `fold: counts`, or no `fold:`, keeps the counts by
+  status.
+
+🔴 A bad key never stops the pane. A `parts:` that is not a list, or that
+names anything but the seven parts, is ignored as a whole, so each item
+line shows every part it has. A `fold:` other than `names` or `counts`
+keeps the counts. Either prints one line on stderr at each render, as an
+unreadable source does; `{value}` is the first entry that names no part,
+or the whole value when it is not a list, and for `fold:` the value as
+written:
+
+```
+taskcontract tree: pane parts ignored: {value} - give a list from id, status, marks, evidence, links, doc, summary
+taskcontract tree: pane fold ignored: {value} - give names or counts
+```
+
+🔴 A `tree:` or `pane:` that is not a mapping reads as unset, as it does
+for `notify:`.
+
+🔴 A pane at t6's first approval, with the keys above, 80 columns wide:
+
+```
+waiting on a seat: approve-tests for tree-view/t6-query-face
+specs/tree-view/contract.yaml > tree-view > t6-query-face > approve-tests
+14 more: gates/G0 [to do], controlled-language [to do], distribution-reconcil...
+tree-view [waiting on a seat]
+  10 more: G0 [done], t0-usage-pass-zero [done], t1-tree-shape [done], t2-sum...
+  t6-query-face [waiting on a seat]
+    9 more: write-tests [to do], prove-red [to do], green [to do], approve-co...
+    approve-tests [waiting on a seat] current
+```
 
 ---
 
