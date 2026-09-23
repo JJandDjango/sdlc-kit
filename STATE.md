@@ -18,8 +18,8 @@
   with its message at the next render.
 - The user's tree pane (`w9:p8`) runs the code it started with; restart it
   after the merge to see p1 to p4. The kit's own config sets neither key.
-- The push and the PR wait on the user's word; PR #55 (session 45) merged
-  at `ee05d24`.
+- PR #56 carries the branch, merged on the user's word (2026-09-23) once
+  CI read green; PR #55 (session 45) merged at `ee05d24`.
 
 ## Blockers
 - None.
