@@ -6,8 +6,8 @@
 
 ## Now
 - **`tree-view` t7 and t8 are built, each a Two-Key PASS at round 1**, on
-  branch `session-42-tree-view-t7-t8`, pushed for its PR; the merge waits
-  on the user. t7 (`2f8ef03`): `taskcontract tree --follow` keeps a pane
+  branch `session-42-tree-view-t7-t8`, pushed as PR #52 with both CI jobs
+  green (`contracts`, `test`); the merge waits on the user. t7 (`2f8ef03`): `taskcontract tree --follow` keeps a pane
   on the current task: the path to it, each level's other items folded to
   one line of counts by status, the task last; lines cut to the pane's
   width; a redraw within about 1.3 s of a change to a watched file (0.23 s
@@ -29,10 +29,10 @@
   to Claude on review; Workflow subagents did the work.
 
 ## Blockers
-- None. The PR's merge waits on the user's word.
+- None. PR #52's merge waits on the user's word.
 
 ## Next actions
-1. Next session: merge this branch's PR on the user's word. Then run
+1. Next session: merge PR #52 on the user's word. Then run
    `python -m taskcontract tree --follow` in a herdr pane, and build the
    herdr hook on t8's notify, outside the kit (a script or a config line).
    Its first question: does herdr's own screen detection overwrite an
