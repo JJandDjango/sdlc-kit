@@ -29,6 +29,16 @@ is `approve-tests` or `approve-commit`, the first line reads `waiting on a
 seat: <approval> for <contract>/<unit>`, above the where-am-I line. With no
 current task the pane reads `no current task`, then `<n> items: <counts>`
 for the top level.
+
+`tree: pane: parts:` in .sdlc/config.yaml, read afresh at each render,
+lists the fields each item line shows, from id, status, marks, evidence,
+links, doc and summary. The line still opens on its id, then shows only the
+listed fields, in the order above whatever order the list gives; `id`
+changes nothing, and `[]` leaves the id alone. Unset, a line shows every
+field. Any other value, or a list naming anything else, is ignored as a
+whole, and each render then prints `pane parts ignored: <value> - give a
+list from id, status, marks, evidence, links, doc, summary` on stderr,
+after the unreadable sources. The key changes no other line.
 Each line longer than the pane's width is cut to it and ends in `...`. The
 pane lists its sources' files once a second and redraws, clearing the
 screen with ANSI escapes, only when a file was added, removed or changed;
@@ -78,22 +88,28 @@ def render(items: list[Item]) -> str:
     return "".join(text + "\n" for text in lines)
 
 
-def line(item: Item) -> str:
-    """One item's line without its indent."""
+def line(item: Item, parts: list[str] | None = None) -> str:
+    """One item's line without its indent: the id, then every field it has,
+    or with `parts` only the fields it names, in the same order."""
     tag = f"kind: {item.kind}" if item.level == "finding" else item.status
-    marks = "".join(f" {mark}" for mark in item.marks)
-    evidence = f" {item.evidence}" if item.evidence else ""
-    links = "".join(f" {link}" for link in item.links)
-    doc = f" doc: {item.doc}" if item.doc else ""
-    summary = f" | {item.summary}" if item.summary else ""
-    return f"{item.id} [{tag}]{marks}{evidence}{links}{doc}{summary}"
+    fields = {
+        "status": f" [{tag}]",
+        "marks": "".join(f" {mark}" for mark in item.marks),
+        "evidence": f" {item.evidence}" if item.evidence else "",
+        "links": "".join(f" {link}" for link in item.links),
+        "doc": f" doc: {item.doc}" if item.doc else "",
+        "summary": f" | {item.summary}" if item.summary else "",
+    }
+    return item.id + "".join(text for name, text in fields.items()
+                             if parts is None or name in parts)
 
 
-def pane(items: list[Item]) -> list[str]:
+def pane(items: list[Item], parts: list[str] | None = None) -> list[str]:
     """The `--follow` lines, uncut: the where-am-I line, then the path to
     the current task, each level's other items folded above the item on
     the path, the unit and the task by the last segment of their ids; the
-    waiting line first when the current task is an approval."""
+    waiting line first when the current task is an approval. `parts`, when
+    given, picks the fields of each item line."""
     path = _path(items)
     if path is None:
         counts = _counts(items)
@@ -110,7 +126,7 @@ def pane(items: list[Item]) -> list[str]:
         others = [item for item in siblings if item is not chosen]
         if others:
             lines.append(f"{INDENT * depth}{len(others)} more: {_counts(others)}")
-        text = line(chosen)
+        text = line(chosen, parts)
         if depth:  # under another item: the id's last segment, the rest whole
             text = chosen.id.rpartition("/")[2] + text[len(chosen.id):]
         lines.append(INDENT * depth + text)
@@ -196,11 +212,13 @@ def follow(root: Path, out, sleep=None) -> int:
 
 
 def _draw(root: Path, out, cache: dict[str, str]) -> str | None:
-    """One render in one write, then each unreadable source on stderr;
-    returns the current task's id, or None."""
+    """One render in one write, then each unreadable source on stderr, then
+    a bad `tree: pane:` key; returns the current task's id, or None."""
     items, problems = build(root, cache)
+    settings = tree.pane_settings(root, problems)
     width = max(shutil.get_terminal_size().columns, MIN_WIDTH)
-    out.write(CLEAR + "".join(cut(text, width) + "\n" for text in pane(items)))
+    out.write(CLEAR + "".join(cut(text, width) + "\n"
+                              for text in pane(items, settings.get("parts"))))
     out.flush()
     for problem in problems:
         print(f"taskcontract tree: {problem}", file=sys.stderr)

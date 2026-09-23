@@ -78,6 +78,8 @@ INACTIVE = "inactive"
 CURRENT = "current"
 APPROVALS = ("approve-tests", "approve-commit")
 DIRTY = "dirty"
+# The names `tree: pane: parts:` takes, in the order a line prints them.
+PARTS = ("id", "status", "marks", "evidence", "links", "doc", "summary")
 
 # A check's id is the ids in its sketch's trailing parentheses, where intake
 # writes them, joined with "+"; parentheses that hold words name no id.
@@ -391,6 +393,30 @@ def notify_command(root: Path) -> str | None:
     section = doc.get("tree") if doc is not None else None
     command = section.get("notify") if isinstance(section, dict) else None
     return command if isinstance(command, str) and command.strip() else None
+
+
+def pane_settings(root: Path, problems: list[str]) -> dict[str, list[str]]:
+    """`tree.pane` from .sdlc/config.yaml: each key set to a usable value.
+    `parts` is a list of names from PARTS; any other value of a present key
+    is left out, with one line added to `problems` that names it. Nothing
+    is added for a missing or unreadable config (the tree itself names an
+    unreadable one) or an absent key."""
+    path = root / ".sdlc" / "config.yaml"
+    if not path.is_file():
+        return {}
+    doc = _load(path, root, [], "config")
+    section = doc.get("tree") if doc is not None else None
+    pane = section.get("pane") if isinstance(section, dict) else None
+    if not isinstance(pane, dict) or "parts" not in pane:
+        return {}
+    parts = pane["parts"]
+    # The value named: the first entry outside the names, or the whole value.
+    bad = [parts] if not isinstance(parts, list) else [
+        entry for entry in parts if not (isinstance(entry, str) and entry in PARTS)]
+    if not bad:
+        return {"parts": parts}
+    problems.append(f"pane parts ignored: {bad[0]} - give a list from {', '.join(PARTS)}")
+    return {}
 
 
 def read_findings(root: Path, problems: list[str]) -> list[Finding]:

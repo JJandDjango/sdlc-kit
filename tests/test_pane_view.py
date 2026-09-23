@@ -1,4 +1,5 @@
-"""The pane-view suite (contract pane-view, units p1-where-line and p2-short-ids).
+"""The pane-view suite (contract pane-view, units p1-where-line, p2-short-ids
+and p3-line-parts).
 
 `taskcontract tree --follow` prints one where-am-I line for the current
 task: `specs/<contract>/contract.yaml > <contract> > <unit> > <task>`, the
@@ -24,6 +25,28 @@ the same bytes as before; the waiting line, every link (`depends_on:
 <contract>/<unit>` on a unit's line) and the notify command's `SDLC_NODE`
 keep full ids (SC3.2).
 
+`tree: pane: parts:` in .sdlc/config.yaml lists the fields each item line
+of the pane shows after its id, which always shows: status, marks,
+evidence, links, doc and summary, each read exactly as on the whole tree's
+line (` [<status>]`, each mark after one space, ` <evidence>`, each link
+after one space, ` doc: <path>`, ` | <summary>`), and a field the item lacks
+prints nothing. The fields print in that fixed order whatever order the
+list gives; listing `id` changes nothing, a repeated name shows its field
+once, and `[]` shows the id alone (SC2.1). With `parts:` unset (no config,
+no `tree:`, no `pane:`, a `pane:` without `parts:`, or a `tree:` or `pane:`
+that is not a mapping) each item line shows every field it has. Set, valid
+or not, it leaves the waiting line, the where-am-I line, the fold lines and
+the `no current task` render byte for byte, the cut applies to each line as
+`parts:` leaves it, `tree: notify:` still runs beside it, and `taskcontract
+tree` prints the same stdout and stderr as without it (SC2.2). A `parts:`
+that is not a list (text, a number, a mapping, null), or a list with an
+entry that is not one of the seven names exactly, is ignored as a whole:
+each item line shows every field it has, and each render prints one line on
+stderr after its unreadable-source lines, `taskcontract tree: pane parts
+ignored: {value} - give a list from id, status, marks, evidence, links, doc,
+summary`, `{value}` the first entry that names no field, else the whole
+value, as str() gives it. The pane reads the key at each render (SC2.3).
+
 The rest of the pane reads as tree-view t7 and t8 built it: the fold lines
 and their counts, the cut to the pane's width, the `no current task`
 render; and `taskcontract tree` prints no where-am-I line. The loop runs
@@ -43,7 +66,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from conftest import write_seat_roster
+from conftest import ROW, cut_lines, short_line, write_seat_roster
 from taskcontract.__main__ import main
 
 tree_view = importlib.import_module("taskcontract.tree_view")
@@ -52,7 +75,6 @@ CLEAR = "\x1b[H\x1b[2J"  # cursor home, then clear the screen: every render open
 HEAD = "1a2b3c4"
 INTENT = ("A fixture contract for the pane-view suite; its units carry the "
           "sketch shapes that check ids come from.")
-ROW = re.compile(r"^(?P<indent> *)(?P<id>\S+) \[(?P<tag>[^\]]*)\](?P<rest>.*)$")
 
 WHERE_PROVE_RED = "specs/alpha/contract.yaml > alpha > a2-edges > prove-red"
 WHERE_WRITE_TESTS = "specs/alpha/contract.yaml > alpha > a1-core > write-tests"
@@ -269,23 +291,9 @@ def _whole(root, capsys):
     return lines
 
 
-def _short(line):
-    """The whole tree's line for an item under another item, as the pane
-    prints it: the leading full id cut to its last segment, the indent and
-    the rest of the line kept byte for byte."""
-    match = ROW.match(line)
-    assert match, f"not an item line: {line!r}"
-    indent, full = match["indent"], match["id"]
-    return indent + full.rsplit("/", 1)[-1] + line[len(indent) + len(full):]
-
-
 def _where_lines(render):
     """The render's lines that open on a contract file's path."""
     return [line for line in render if line.startswith("specs/")]
-
-
-def _cut(lines, width):
-    return [line if len(line) <= width else line[:width - 3] + "..." for line in lines]
 
 
 # --- SC1.1 the where-am-I line and its place ----------------------------------------
@@ -300,9 +308,9 @@ def test_sc1_1_at_a_task_that_is_not_an_approval_the_where_line_is_the_panes_fir
         "2 more: 1 to do, 1 done",                    # gates/G0, beta
         whole["alpha"],
         "  2 more: 1 done, 1 blocked",                # alpha/G0, alpha/a1-core
-        _short(whole["alpha/a2-edges"]),
+        short_line(whole["alpha/a2-edges"]),
         "    9 more: 6 to do, 2 done, 1 failed",      # the other tasks and the checks
-        _short(whole["alpha/a2-edges/prove-red"]),
+        short_line(whole["alpha/a2-edges/prove-red"]),
     ]]
     assert _where_lines(renders[0]) == [WHERE_PROVE_RED]
 
@@ -318,9 +326,9 @@ def test_sc1_1_at_approve_tests_the_where_line_stands_directly_under_the_waiting
         "1 more: 1 to do",                            # pane-view
         whole["tree-view"],
         "  1 more: 1 to do",                          # tree-view/t5-pane-face
-        _short(whole["tree-view/t6-query-face"]),
+        short_line(whole["tree-view/t6-query-face"]),
         "    7 more: 7 to do",                        # six tasks and one check
-        _short(whole["tree-view/t6-query-face/approve-tests"]),
+        short_line(whole["tree-view/t6-query-face/approve-tests"]),
     ]]
     assert _where_lines(renders[0]) == [WHERE_QUERY_FACE]
 
@@ -338,9 +346,9 @@ def test_sc1_1_at_approve_commit_the_where_line_stands_directly_under_the_waitin
         "1 more: 1 to do",                            # beta
         whole["alpha"],
         "  1 more: 1 to do",                          # alpha/a1-core
-        _short(whole["alpha/a2-edges"]),
+        short_line(whole["alpha/a2-edges"]),
         "    9 more: 8 to do, 1 done",                # the other tasks and the checks
-        _short(whole["alpha/a2-edges/approve-commit"]),
+        short_line(whole["alpha/a2-edges/approve-commit"]),
     ]]
 
 
@@ -354,9 +362,9 @@ def test_sc1_1_the_where_line_names_a_contract_and_a_unit_whose_ids_carry_hyphen
         where,
         whole["pane-view-2"],
         "  1 more: 1 to do",                          # pane-view-2/p9-short-ids-2
-        _short(whole["pane-view-2/p10-where-line-3"]),
+        short_line(whole["pane-view-2/p10-where-line-3"]),
         "    7 more: 7 to do",                        # six tasks and one check
-        _short(whole["pane-view-2/p10-where-line-3/two-key"]),
+        short_line(whole["pane-view-2/p10-where-line-3/two-key"]),
     ]]
     assert where.isascii()
 
@@ -529,7 +537,7 @@ def test_sc3_1_only_the_opening_id_shortens_and_a_summary_that_names_a_full_id_k
     assert render[-3] == ("  a2-edges [doing] depends_on: alpha/a1-core"
                           " | alpha/a2-edges is done when alpha/a1-core is")
     assert render[-1] == "    write-tests [doing] current | Write the tests"
-    assert render[-3] == _short(whole["alpha/a2-edges"])
+    assert render[-3] == short_line(whole["alpha/a2-edges"])
 
 
 def test_sc3_1_the_cut_to_the_panes_width_applies_to_the_shortened_line(
@@ -540,7 +548,7 @@ def test_sc3_1_the_cut_to_the_panes_width_applies_to_the_shortened_line(
     _, (render,) = _pane(root)
     assert render[-1] == PROVE_RED_TASK
     assert render[-3] == PROVE_RED_UNIT[:width - 3] + "..."
-    assert render == _cut([
+    assert render == cut_lines([
         WHERE_PROVE_RED, "2 more: 1 to do, 1 done", f"alpha [failed] | {INTENT}",
         "  2 more: 1 done, 1 blocked", PROVE_RED_UNIT,
         "    9 more: 6 to do, 2 done, 1 failed", PROVE_RED_TASK], width)
@@ -681,3 +689,442 @@ def test_sc3_2_every_depends_on_link_on_a_short_unit_line_keeps_its_full_id(tmp_
     assert render[-3] == ("  g3-third [doing] depends_on: gamma-7/g1-first"
                           " depends_on: gamma-7/g2-second | the work for g3-third is done")
     assert render[0] == "specs/gamma-7/contract.yaml > gamma-7 > g3-third > prove-red"
+
+
+# --- SC2 the parts of an item line ----------------------------------------------------
+#
+# `tree: pane: parts:` in .sdlc/config.yaml lists the fields each item line
+# of the pane shows after its id. On the fixture's path every field but
+# evidence shows on some line: the contract's status, doc reference and
+# summary, the unit's status, depends_on link and summary, the task's status,
+# `current` mark and summary. The path never carries evidence: the current
+# task is doing, to do or waiting on a seat, never done or blocked by its own
+# record, and its unit and contract read done only when every child does. So
+# evidence's place in the order shows only as nothing where it stands.
+
+PARTS_IGNORED = ("taskcontract tree: pane parts ignored: {} - give a list from id, "
+                 "status, marks, evidence, links, doc, summary")
+UNREADABLE_BETA = re.compile(
+    r"^taskcontract tree: unreadable progress: \.sdlc/progress/beta\.yaml \(.+\)$")
+
+FULL_CONTRACT = f"alpha [doing] doc: docs/features/alpha.md | {INTENT}"
+FULL_UNIT = "  a2-edges [doing] depends_on: alpha/a1-core | the work for a2-edges is done"
+FULL_TASK = "    prove-red [doing] current | Prove red"
+
+
+def _doc_render(contract, unit, task):
+    """The fixture's pane with the given item lines: the where-am-I line and
+    the three fold lines as p1 and p2 print them."""
+    return [
+        WHERE_PROVE_RED,
+        "1 more: 1 to do",                            # beta
+        contract,
+        "  1 more: 1 doing",                          # alpha/a1-core
+        unit,
+        "    9 more: 9 to do",                        # the other tasks and the checks
+        task,
+    ]
+
+
+FULL = _doc_render(FULL_CONTRACT, FULL_UNIT, FULL_TASK)
+BARE = _doc_render("alpha", "  a2-edges", "    prove-red")
+STATUS_ONLY = _doc_render("alpha [doing]", "  a2-edges [doing]", "    prove-red [doing]")
+
+
+def _doc_repo(tmp_path):
+    """alpha and beta, no active gate, alpha's feature doc on disk; the
+    current task is alpha/a2-edges/prove-red, doing, not an approval."""
+    root = _repo(tmp_path, gates=())
+    _append(root / "docs" / "features" / "alpha.md", "# Alpha\n")
+    _progress(root, "alpha",
+              _step("alpha/a1-core/approve-tests", "done", "10:00", by="user"),
+              _step("alpha/a2-edges/prove-red", "doing", "10:04"))
+    return root
+
+
+def _parts(root, parts, gates=(), **tree):
+    """The config with `tree: pane: parts:` set to `parts`, beside any other
+    `tree:` key given."""
+    _config(root, gates, tree={**tree, "pane": {"parts": parts}})
+
+
+def _err_at_each_tick(capsys, *steps):
+    """(the stderr noted at each tick, the steps to hand the pane): each tick
+    notes the stderr printed since the last, then runs its step."""
+    errs = []
+
+    def noting(step):
+        def run():
+            errs.append(capsys.readouterr().err)
+            if step is not None:
+                step()
+        return run
+
+    return errs, [noting(step) for step in steps]
+
+
+# --- SC2.1 the listed fields, in the fixed order ----------------------------------------
+
+ALONE = [
+    pytest.param("status", ("alpha [doing]", "  a2-edges [doing]", "    prove-red [doing]"),
+                 id="status"),
+    pytest.param("marks", ("alpha", "  a2-edges", "    prove-red current"), id="marks"),
+    pytest.param("evidence", ("alpha", "  a2-edges", "    prove-red"), id="evidence"),
+    pytest.param("links", ("alpha", "  a2-edges depends_on: alpha/a1-core", "    prove-red"),
+                 id="links"),
+    pytest.param("doc", ("alpha doc: docs/features/alpha.md", "  a2-edges", "    prove-red"),
+                 id="doc"),
+    pytest.param("summary", (f"alpha | {INTENT}", "  a2-edges | the work for a2-edges is done",
+                             "    prove-red | Prove red"), id="summary"),
+]
+
+
+@pytest.mark.parametrize("field, lines", ALONE)
+def test_sc2_1_each_field_alone_shows_the_id_then_that_field_and_nothing_where_the_item_lacks_it(
+        tmp_path, capsys, field, lines):
+    root = _doc_repo(tmp_path)
+    _parts(root, [field])
+    _, renders = _pane(root)
+    assert renders == [_doc_render(*lines)]
+    assert capsys.readouterr().err == ""
+
+
+def test_sc2_1_each_field_shown_reads_exactly_as_on_the_whole_trees_line(tmp_path, capsys):
+    root = _doc_repo(tmp_path)
+    whole = _whole(root, capsys)
+    _parts(root, ["doc", "links", "evidence", "marks", "status"])   # all but summary
+    _, (render,) = _pane(root)
+    assert capsys.readouterr().err == ""
+    # each item line is the whole tree's line, short id first, up to its summary
+    assert render[2] == whole["alpha"].split(" | ")[0]
+    assert render[4] == short_line(whole["alpha/a2-edges"]).split(" | ")[0]
+    assert render[6] == short_line(whole["alpha/a2-edges/prove-red"]).split(" | ")[0]
+    assert render == _doc_render("alpha [doing] doc: docs/features/alpha.md",
+                                 "  a2-edges [doing] depends_on: alpha/a1-core",
+                                 "    prove-red [doing] current")
+
+
+ORDERS = [
+    pytest.param(["summary", "links", "status"],
+                 (f"alpha [doing] | {INTENT}", "  a2-edges [doing] depends_on: alpha/a1-core"
+                  " | the work for a2-edges is done", "    prove-red [doing] | Prove red"),
+                 id="summary-links-status"),
+    pytest.param(["summary", "marks", "doc"],
+                 (f"alpha doc: docs/features/alpha.md | {INTENT}",
+                  "  a2-edges | the work for a2-edges is done",
+                  "    prove-red current | Prove red"),
+                 id="summary-marks-doc"),
+    pytest.param(["links", "marks", "status"],
+                 ("alpha [doing]", "  a2-edges [doing] depends_on: alpha/a1-core",
+                  "    prove-red [doing] current"),
+                 id="links-marks-status"),
+]
+
+
+@pytest.mark.parametrize("parts, lines", ORDERS)
+def test_sc2_1_the_fields_keep_the_fixed_order_whatever_order_the_list_gives(
+        tmp_path, capsys, parts, lines):
+    root = _doc_repo(tmp_path)
+    _parts(root, parts)
+    _, renders = _pane(root)
+    assert renders == [_doc_render(*lines)]
+    assert capsys.readouterr().err == ""
+
+
+LISTING_ID = [
+    pytest.param(["id"], BARE, id="id-alone-reads-as-the-empty-list"),
+    pytest.param(["id", "status"], STATUS_ONLY, id="id-and-status-reads-as-status"),
+    pytest.param(["status", "id"], STATUS_ONLY, id="status-and-id-reads-as-status"),
+]
+
+
+@pytest.mark.parametrize("parts, render", LISTING_ID)
+def test_sc2_1_listing_id_changes_nothing(tmp_path, capsys, parts, render):
+    root = _doc_repo(tmp_path)
+    _parts(root, parts)
+    _, renders = _pane(root)
+    assert renders == [render]
+    assert capsys.readouterr().err == ""
+
+
+def test_sc2_1_an_empty_list_shows_the_id_alone_on_the_top_level_the_unit_and_the_task_lines(
+        tmp_path, capsys):
+    root = _doc_repo(tmp_path)
+    _parts(root, [])
+    _, renders = _pane(root)
+    assert renders == [BARE]
+    # the top-level line keeps its full id; the unit and the task their last segments
+    assert [renders[0][2], renders[0][4], renders[0][6]] == [
+        "alpha", "  a2-edges", "    prove-red"]
+    assert capsys.readouterr().err == ""
+
+
+def test_sc2_1_a_repeated_name_shows_its_field_once(tmp_path, capsys):
+    root = _doc_repo(tmp_path)
+    _parts(root, ["marks", "status", "marks", "status"])
+    _, renders = _pane(root)
+    assert renders == [_doc_render("alpha [doing]", "  a2-edges [doing]",
+                                   "    prove-red [doing] current")]
+    assert capsys.readouterr().err == ""
+
+
+def test_sc2_1_each_depends_on_link_of_a_unit_line_prints_after_one_space(tmp_path, capsys):
+    root = tmp_path / "repo"
+    _dump(root / "specs" / "gamma-7" / "contract.yaml", _contract("gamma-7", [
+        _unit("g1-first", ["verify it holds"]),
+        _unit("g2-second", ["verify it holds"]),
+        _unit("g3-third", ["verify it holds"], depends_on=["g1-first", "g2-second"]),
+    ]))
+    write_seat_roster(root)
+    _progress(root, "gamma-7", _step("gamma-7/g3-third/prove-red", "doing", "10:00"))
+    _parts(root, ["links"])
+    _, (render,) = _pane(root)
+    assert render == [
+        "specs/gamma-7/contract.yaml > gamma-7 > g3-third > prove-red",
+        "gamma-7",
+        "  2 more: 2 to do",                          # g1-first, g2-second
+        "  g3-third depends_on: gamma-7/g1-first depends_on: gamma-7/g2-second",
+        "    7 more: 7 to do",                        # six tasks and one check
+        "    prove-red",
+    ]
+    assert capsys.readouterr().err == ""
+
+
+# --- SC2.2 what the setting leaves unchanged ----------------------------------------------
+
+UNSET = [
+    pytest.param({}, id="no-tree-key"),
+    pytest.param({"tree": {}}, id="a-tree-key-without-pane"),
+    pytest.param({"tree": {"pane": {}}}, id="a-pane-key-without-parts"),
+]
+
+
+@pytest.mark.parametrize("config", UNSET)
+def test_sc2_2_with_parts_unset_each_item_line_shows_every_field_it_has(
+        tmp_path, capsys, config):
+    root = _doc_repo(tmp_path)
+    _config(root, [], **config)
+    _, renders = _pane(
+        root,
+        lambda: _parts(root, []),                     # set: the id alone
+        lambda: _config(root, [], **config))          # unset again
+    assert renders == [FULL, BARE, FULL]
+    # the where-am-I line and the fold lines read the same set or unset
+    assert [[render[i] for i in (0, 1, 3, 5)] for render in renders] == [
+        [WHERE_PROVE_RED, "1 more: 1 to do", "  1 more: 1 doing", "    9 more: 9 to do"]] * 3
+    assert capsys.readouterr().err == ""
+
+
+def test_sc2_2_a_missing_config_reads_as_parts_unset(tmp_path, capsys):
+    root = _doc_repo(tmp_path)
+    (root / ".sdlc" / "config.yaml").unlink()
+    _, renders = _pane(root, lambda: _parts(root, []))
+    assert renders == [FULL, BARE]
+    assert capsys.readouterr().err == ""
+
+
+NOT_A_MAPPING = [
+    pytest.param({"tree": "status"}, id="tree-text"),
+    pytest.param({"tree": ["pane"]}, id="tree-a-list"),
+    pytest.param({"tree": {"pane": "status"}}, id="pane-text"),
+    pytest.param({"tree": {"pane": ["status"]}}, id="pane-a-list"),
+]
+
+
+@pytest.mark.parametrize("config", NOT_A_MAPPING)
+def test_sc2_2_a_tree_or_pane_key_that_is_not_a_mapping_reads_as_parts_unset_with_no_message(
+        tmp_path, capsys, config):
+    root = _doc_repo(tmp_path)
+    _config(root, [], **config)
+    errs, steps = _err_at_each_tick(capsys, lambda: _parts(root, []), None)
+    _, renders = _pane(root, *steps)
+    assert renders == [FULL, BARE]
+    assert errs == ["", ""]
+
+
+def test_sc2_2_at_an_approval_the_parts_leave_the_waiting_line_and_the_where_line_unchanged(
+        tmp_path, capsys):
+    root = _query_face_repo(tmp_path)
+    _parts(root, ["status", "marks"])
+    _, renders = _pane(root)
+    # the request's own example, at t6's first approval
+    assert renders == [[
+        WAIT_QUERY_FACE,
+        WHERE_QUERY_FACE,
+        "1 more: 1 to do",                            # pane-view
+        "tree-view [waiting on a seat]",
+        "  1 more: 1 to do",                          # tree-view/t5-pane-face
+        "  t6-query-face [waiting on a seat]",
+        "    7 more: 7 to do",                        # six tasks and one check
+        "    approve-tests [waiting on a seat] current",
+    ]]
+    assert capsys.readouterr().err == ""
+
+
+def test_sc2_2_with_no_current_task_the_parts_leave_the_render_unchanged(tmp_path, capsys):
+    root = _repo(tmp_path, gates=())
+    _parts(root, ["status"])
+    doing = _step("alpha/a1-core/write-tests", "doing", "10:00")
+    _, renders = _pane(
+        root,
+        lambda: _progress(root, "alpha", doing),                                   # a task
+        lambda: _progress(root, "alpha", doing, _step("alpha", "done", "10:05")))  # closed
+    assert len(renders) == 3
+    assert renders[0] == ["no current task", "2 items: 2 to do"]
+    assert renders[1] == [WHERE_WRITE_TESTS, "1 more: 1 to do", "alpha [doing]",
+                          "  1 more: 1 to do", "  a1-core [doing]", "    8 more: 8 to do",
+                          "    write-tests [doing]"]
+    assert renders[2] == ["no current task", "2 items: 1 to do, 1 done"]
+    assert capsys.readouterr().err == ""
+
+
+def test_sc2_2_the_cut_to_the_panes_width_applies_to_the_line_as_parts_leaves_it(
+        tmp_path, capsys, monkeypatch):
+    root = _doc_repo(tmp_path)
+    _parts(root, ["summary", "status"])
+    unit = "  a2-edges [doing] | the work for a2-edges is done"
+    width = len(unit)          # the unit's line as parts leaves it fits exactly; its full line would not
+    assert len(FULL_UNIT) > width
+    monkeypatch.setenv("COLUMNS", str(width))
+    _, (render,) = _pane(root)
+    assert render[4] == unit
+    assert render == cut_lines(_doc_render(f"alpha [doing] | {INTENT}", unit,
+                                           "    prove-red [doing] | Prove red"), width)
+    assert render[2] == f"alpha [doing] | {INTENT}"[:width - 3] + "..."
+    assert capsys.readouterr().err == ""
+
+
+def test_sc2_2_the_notify_command_keeps_working_beside_the_pane_key(
+        tmp_path, capsys, monkeypatch):
+    starts = _Starts(subprocess.Popen)
+    monkeypatch.setattr(subprocess, "Popen", starts)
+    root = _repo(tmp_path, gates=())
+    _parts(root, ["status"], notify="notify-the-seat")
+    _progress(root, "alpha", _step("alpha/a2-edges/green", "done", "10:00"),
+              _step("alpha/a2-edges/approve-commit", "doing", "10:01"))
+    _, (render,) = _pane(root)
+    assert render == [
+        WAIT_APPROVE_COMMIT,
+        WHERE_APPROVE_COMMIT,
+        "1 more: 1 to do",                            # beta
+        "alpha [waiting on a seat]",
+        "  1 more: 1 to do",                          # alpha/a1-core
+        "  a2-edges [waiting on a seat]",
+        "    9 more: 8 to do, 1 done",                # the other tasks and the checks
+        "    approve-commit [waiting on a seat]",
+    ]
+    assert starts.nodes == ["alpha/a2-edges/approve-commit"]
+    assert capsys.readouterr().err == ""
+
+
+WHOLE_TREE = [
+    pytest.param(["status"], id="a-valid-parts"),
+    pytest.param(["status", "colour"], id="a-bad-parts"),
+]
+
+
+@pytest.mark.parametrize("parts", WHOLE_TREE)
+def test_sc2_2_taskcontract_tree_prints_the_same_stdout_and_stderr_with_parts_set(
+        tmp_path, capsys, parts):
+    root = _doc_repo(tmp_path)
+    (root / ".sdlc" / "progress" / "beta.yaml").write_text("records: [unclosed\n",
+                                                           encoding="utf-8")
+    _parts(root, parts)
+    _, (render,) = _pane(root)
+    pane_err = capsys.readouterr().err.splitlines()
+    # the pane reads the key: only the --follow mode does
+    if parts == ["status"]:
+        assert render == STATUS_ONLY
+        assert len(pane_err) == 1 and UNREADABLE_BETA.match(pane_err[0]), pane_err
+    else:
+        assert render == FULL
+        assert pane_err[1:] == [PARTS_IGNORED.format("colour")], pane_err
+    code = main(["tree", "--root", str(root)])
+    with_key = capsys.readouterr()
+    assert code == 0
+    _config(root, [])
+    code = main(["tree", "--root", str(root)])
+    without_key = capsys.readouterr()
+    assert code == 0
+    assert with_key.out == without_key.out
+    assert with_key.err == without_key.err
+    assert "pane parts ignored" not in with_key.err
+    assert UNREADABLE_BETA.match(with_key.err.splitlines()[0])
+
+
+# --- SC2.3 a bad parts setting ----------------------------------------------------------------
+
+BAD = [
+    pytest.param("status", "status", id="text"),
+    pytest.param(3, "3", id="a-number"),
+    pytest.param({"a": "b"}, "{'a': 'b'}", id="a-mapping"),
+    pytest.param(None, "None", id="null"),
+    pytest.param(["status", "colour"], "colour", id="an-unknown-entry-after-a-known-one"),
+    pytest.param(["status", "colour", "shade"], "colour", id="the-first-unknown-entry"),
+    pytest.param(["Status"], "Status", id="a-name-in-another-case"),
+    pytest.param(["status", 3], "3", id="an-entry-that-is-not-text"),
+]
+
+
+@pytest.mark.parametrize("value, named", BAD)
+def test_sc2_3_a_bad_parts_is_ignored_as_a_whole_and_named_on_stderr(
+        tmp_path, capsys, value, named):
+    root = _doc_repo(tmp_path)
+    _parts(root, value)
+    _, renders = _pane(root)
+    assert renders == [FULL]                          # every field, as if unset
+    message = PARTS_IGNORED.format(named)
+    assert capsys.readouterr().err == message + "\n"
+    assert message.isascii()
+
+
+def test_sc2_3_the_message_prints_once_at_each_render_and_the_pane_writes_no_file(
+        tmp_path, capsys):
+    root = _doc_repo(tmp_path)
+    _parts(root, ["status", "colour"])
+    before = _snapshot(root)
+    errs, steps = _err_at_each_tick(
+        capsys,
+        lambda: _append(root / ".sdlc" / "progress" / "alpha.yaml"),   # a redraw
+        None,                                                          # no change, no render
+        None)
+    _, renders = _pane(root, *steps)
+    message = PARTS_IGNORED.format("colour") + "\n"
+    assert renders == [FULL, FULL]
+    assert errs == [message, message, ""]
+    after = _snapshot(root)
+    before.pop(str(Path(".sdlc") / "progress" / "alpha.yaml"))
+    after.pop(str(Path(".sdlc") / "progress" / "alpha.yaml"))
+    assert after == before
+
+
+def test_sc2_3_a_change_to_parts_shows_at_the_next_render_and_the_message_follows_the_value(
+        tmp_path, capsys):
+    root = _doc_repo(tmp_path)
+    _parts(root, "status")
+    errs, steps = _err_at_each_tick(
+        capsys,
+        lambda: _parts(root, []),                     # valid: the id alone, no message
+        lambda: _parts(root, ["summary", "shade"]),   # bad again, another value
+        lambda: _config(root, []),                    # unset: no message
+        None)
+    _, renders = _pane(root, *steps)
+    assert renders == [FULL, BARE, FULL, FULL]
+    assert errs == [PARTS_IGNORED.format("status") + "\n", "",
+                    PARTS_IGNORED.format("shade") + "\n", ""]
+
+
+def test_sc2_3_the_message_follows_the_renders_unreadable_source_lines(tmp_path, capsys):
+    root = _doc_repo(tmp_path)
+    (root / ".sdlc" / "progress" / "beta.yaml").write_text("records: [unclosed\n",
+                                                           encoding="utf-8")
+    _parts(root, 3)
+    errs, steps = _err_at_each_tick(
+        capsys, lambda: _append(root / ".sdlc" / "progress" / "alpha.yaml"), None)
+    _, renders = _pane(root, *steps)
+    assert len(renders) == 2
+    for err in errs:
+        lines = err.splitlines()
+        assert len(lines) == 2, lines
+        assert UNREADABLE_BETA.match(lines[0]), lines
+        assert lines[1] == PARTS_IGNORED.format("3")
