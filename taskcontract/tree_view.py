@@ -5,7 +5,9 @@ item's full id, the node path ADR 0031 gives it, so the print states every
 id whole. Then the status in brackets, or a finding's kind in its place,
 then the item's marks (`inactive` on a gate a finding names that is not
 active, `current` on the current task), then its evidence (on a `G0`
-verdict, the validator command and the `HEAD` it read). Then its links
+verdict, the validator command and the `HEAD` it read; on a check whose last
+run was green as expected, that run's command and `HEAD`; either with
+`dirty` when it applies). Then its links
 (`depends_on: <contract>/<unit>` on a unit, `gate: <value>` on a finding),
 then a contract's feature doc reference (`doc: docs/features/<id>.md`), and
 last its summary after ` | `. Each part but the id and status prints only

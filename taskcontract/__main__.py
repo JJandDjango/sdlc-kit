@@ -10,6 +10,7 @@ from pathlib import Path
 from .checker import PROFILES, load_schema, validate_path
 from .graph import main_graph
 from .lang import main_lang_check, main_lang_extract
+from .progress import RUNS, main_progress
 from .scaffold import scaffold
 from .scope_check import main_scope_check
 from .suppression_audit import main_audit
@@ -78,6 +79,20 @@ def main(argv=None) -> int:
         help="print the work as one tree, derived from the repo's files at each run (ADR 0031)")
     tree.add_argument("--root", type=Path, default=Path("."),
                       help="repo root that holds specs/ and .sdlc/ (default: cwd)")
+    progress = sub.add_parser(
+        "progress",
+        help="record the work's progress under .sdlc/progress/ (ADR 0031)")
+    actions = progress.add_subparsers(dest="action", required=True)
+    run = actions.add_parser(
+        "run",
+        help="run a check's command and record red or green beside what it expected")
+    run.add_argument("check", help="the check's id, as the tree prints it")
+    run.add_argument("--expect", choices=RUNS, default="green",
+                     help="the result the run should give (default: green)")
+    run.add_argument("--root", type=Path, default=Path("."),
+                     help="repo root that holds specs/ and .sdlc/ (default: cwd)")
+    run.add_argument("argv", nargs="+", metavar="COMMAND",
+                     help="the command and its arguments, after --")
     audit = sub.add_parser(
         "suppression-audit",
         help="G4.10 four-vector diff check: no new weakening of gating constraints")
@@ -108,6 +123,9 @@ def main(argv=None) -> int:
 
     if args.command == "tree":
         return main_tree(args)
+
+    if args.command == "progress":
+        return main_progress(args)
 
     if args.command == "suppression-audit":
         return main_audit(args)
