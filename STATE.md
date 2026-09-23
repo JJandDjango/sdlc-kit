@@ -14,10 +14,11 @@
   kept the waiting line first, the where-am-I line under it, and the hook
   flagged the pane `sdlc`, `blocked`.
 - The user's tree pane (`w9:p8`) runs the pre-p1 code until restarted.
-- PR #54 (session 44) merged at `22c4982`.
+- PR #55 carries the branch, merged on the user's word (2026-09-23) once
+  CI read green; PR #54 (session 44) merged at `22c4982`.
 
 ## Blockers
-- None. The push and the PR wait on the user's word.
+- None.
 
 ## Next actions
 1. Session 46: pane-view p3 (`tree: pane: parts:`; the `tree: pane:`
