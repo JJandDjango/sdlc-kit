@@ -42,7 +42,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from conftest import write_seat_roster
+from conftest import ROW, cut_lines, short_line, write_seat_roster
 from taskcontract.__main__ import main
 
 tree_module = importlib.import_module("taskcontract.tree")
@@ -55,7 +55,6 @@ TASK_KEYS = ["approve-tests", "write-tests", "prove-red", "green",
              "approve-commit", "commit", "two-key"]
 INTENT = ("A fixture contract for the pane suite; its units carry the "
           "sketch shapes that check ids come from.")
-ROW = re.compile(r"^(?P<indent> *)(?P<id>\S+) \[(?P<tag>[^\]]*)\](?P<rest>.*)$")
 UNREADABLE = re.compile(
     r"^taskcontract tree: unreadable progress: \.sdlc/progress/beta\.yaml \(.+\)$")
 
@@ -235,20 +234,6 @@ def _whole(root, capsys):
     return lines
 
 
-def _cut(lines, width):
-    return [line if len(line) <= width else line[:width - 3] + "..." for line in lines]
-
-
-def _short(line):
-    """The whole tree's line for an item under another item, as the pane
-    prints it since pane-view's p2-short-ids: the leading full id cut to its
-    last segment, the indent and the rest of the line kept byte for byte."""
-    match = ROW.match(line)
-    assert match, f"not an item line: {line!r}"
-    indent, full = match["indent"], match["id"]
-    return indent + full.rsplit("/", 1)[-1] + line[len(indent) + len(full):]
-
-
 # --- the SC2.1 fixture ----------------------------------------------------------
 
 def _path_repo(tmp_path):
@@ -280,9 +265,9 @@ def test_sc2_1_the_pane_shows_the_path_and_folds_each_levels_other_items_into_on
         "3 more: 2 to do, 1 done",                    # gates/G0, gates/none, beta
         whole["alpha"],
         "  2 more: 1 done, 1 blocked",                # alpha/G0, alpha/a1-core
-        _short(whole["alpha/a2-edges"]),
+        short_line(whole["alpha/a2-edges"]),
         "    9 more: 6 to do, 2 done, 1 failed",      # the other tasks and the checks
-        _short(whole["alpha/a2-edges/prove-red"]),
+        short_line(whole["alpha/a2-edges/prove-red"]),
     ]]
     assert whole["alpha/a2-edges/prove-red"].split()[1:4] == ["[doing]", "current", "|"]
 
@@ -299,9 +284,9 @@ def test_sc2_1_a_level_with_no_other_item_prints_no_fold_line(tmp_path, capsys):
         "waiting on a seat: approve-tests for lone/l1-lone",  # the current task is an approval
         "specs/lone/contract.yaml > lone > l1-lone > approve-tests",  # the where-am-I line
         whole["lone"],
-        _short(whole["lone/l1-lone"]),
+        short_line(whole["lone/l1-lone"]),
         "    7 more: 7 to do",  # six tasks and one check
-        _short(whole["lone/l1-lone/approve-tests"]),
+        short_line(whole["lone/l1-lone/approve-tests"]),
     ]]
     assert "waiting on a seat" in whole["lone/l1-lone/approve-tests"]
 
@@ -342,8 +327,8 @@ def test_sc2_2_five_contracts_of_seven_units_print_at_most_fifteen_lines(tmp_pat
     assert len(lines) <= 15, lines
     assert whole["work-5"] in lines
     for rid in ("work-5/u7", "work-5/u7/write-tests"):
-        assert _short(whole[rid]) in lines, rid
-    assert lines[-1] == _short(whole["work-5/u7/write-tests"])
+        assert short_line(whole[rid]) in lines, rid
+    assert lines[-1] == short_line(whole["work-5/u7/write-tests"])
     assert "current" in lines[-1].split()
 
 
@@ -365,7 +350,7 @@ def test_sc2_3_the_first_scan_after_a_change_renders_and_scans_are_at_most_a_sec
     assert sleeper.renders == [1, 2, 2, 2]
     assert len(renders) == 2
     assert renders[0][-1].split()[0] == "write-tests"
-    assert renders[1][-1] == _short(whole["alpha/a2-edges/prove-red"])
+    assert renders[1][-1] == short_line(whole["alpha/a2-edges/prove-red"])
 
 
 def test_sc2_3_while_no_source_changes_the_pane_renders_nothing_new_and_writes_no_file(
@@ -582,9 +567,9 @@ def test_in_follow_a_line_longer_than_the_width_is_cut_to_the_width_ending_in_do
         _append(root / ".sdlc" / "config.yaml")  # a change that moves no line
 
     _, renders = _pane(root, narrower)
-    assert renders[0] == _cut(full, exact)
+    assert renders[0] == cut_lines(full, exact)
     assert renders[0][2] == full[2]            # a line exactly the width stays whole
-    assert renders[1] == _cut(full, 40)        # the width is read at each render
+    assert renders[1] == cut_lines(full, 40)    # the width is read at each render
     assert any(line.endswith("...") and len(line) == 40 for line in renders[1])
     assert all(len(line) <= 40 for line in renders[1])
     # the whole tree, without --follow, prints every line whole at any width
@@ -598,7 +583,7 @@ def test_in_follow_a_width_below_ten_columns_cuts_as_ten(tmp_path, monkeypatch):
     _, (full,) = _pane(root)
     monkeypatch.setenv("COLUMNS", "4")
     _, (narrow,) = _pane(root)
-    assert narrow == _cut(full, 10)
+    assert narrow == cut_lines(full, 10)
     assert all(len(line) == 10 for line in narrow)
 
 
@@ -902,12 +887,12 @@ def test_sc8_1_on_approve_tests_the_first_line_is_the_waiting_line_cut_like_the_
     whole = _whole(root, capsys)
     assert full[0] == WAIT_LONE
     assert full == [WAIT_LONE, "specs/lone/contract.yaml > lone > l1-lone > approve-tests",
-                    whole["lone"], _short(whole["lone/l1-lone"]), "    7 more: 7 to do",
-                    _short(whole["lone/l1-lone/approve-tests"])]
+                    whole["lone"], short_line(whole["lone/l1-lone"]), "    7 more: 7 to do",
+                    short_line(whole["lone/l1-lone/approve-tests"])]
     monkeypatch.setenv("COLUMNS", "40")
     out = _Writes()
     _, (narrow,) = _pane(root, out=out)
-    assert narrow == _cut(full, 40)
+    assert narrow == cut_lines(full, 40)
     assert narrow[0] == WAIT_LONE[:37] + "..."
     writes = [text for text in out.writes if text]
     assert len(writes) == 1 and writes[0].startswith(CLEAR + narrow[0] + "\n"), writes
@@ -927,9 +912,9 @@ def test_sc8_1_on_approve_commit_the_waiting_line_names_the_approval_and_its_uni
         "1 more: 1 to do",                   # beta
         whole["alpha"],
         "  1 more: 1 to do",                 # alpha/a1-core
-        _short(whole["alpha/a2-edges"]),
+        short_line(whole["alpha/a2-edges"]),
         "    9 more: 8 to do, 1 done",       # the other tasks and the checks
-        _short(whole["alpha/a2-edges/approve-commit"]),
+        short_line(whole["alpha/a2-edges/approve-commit"]),
     ]]
 
 
@@ -944,7 +929,7 @@ def test_sc8_1_the_waiting_line_leaves_when_the_current_task_moves_off_the_appro
     assert [render[0] for render in renders] == [
         "waiting on a seat: approve-commit for alpha/a2-edges",
         "specs/alpha/contract.yaml > alpha > a2-edges > commit"]
-    assert renders[1][-1] == _short(whole["alpha/a2-edges/commit"])
+    assert renders[1][-1] == short_line(whole["alpha/a2-edges/commit"])
     assert not any(line.startswith("waiting on a seat") for line in renders[1])
 
 

@@ -29,6 +29,24 @@ is `approve-tests` or `approve-commit`, the first line reads `waiting on a
 seat: <approval> for <contract>/<unit>`, above the where-am-I line. With no
 current task the pane reads `no current task`, then `<n> items: <counts>`
 for the top level.
+
+`tree: pane: parts:` in .sdlc/config.yaml, read afresh at each render,
+lists the fields each item line shows, from id, status, marks, evidence,
+links, doc and summary. The line still opens on its id, then shows only the
+listed fields, in the order above whatever order the list gives; `id`
+changes nothing, and `[]` shows the id alone. Unset, a line shows every
+field. Any other value, or a list naming anything else, is ignored as a
+whole, and each render then prints `pane parts ignored: <value> - give a
+list from id, status, marks, evidence, links, doc, summary` on stderr,
+after the unreadable sources. The key changes no other line.
+
+`tree: pane: fold:`, read the same way, set to `names` makes each fold
+line, and the `<n> items` line, name the items it folds in place of the
+counts: `<id> [<status>]` per item, the id as its own line would open,
+joined by `, ` in the tree's order; `parts:` changes none of it. `counts`,
+or unset, keeps the counts. Any other value keeps them too, and each
+render then prints `pane fold ignored: <value> - give names or counts` on
+stderr, after the parts line. The key changes no item line.
 Each line longer than the pane's width is cut to it and ends in `...`. The
 pane lists its sources' files once a second and redraws, clearing the
 screen with ANSI escapes, only when a file was added, removed or changed;
@@ -78,26 +96,34 @@ def render(items: list[Item]) -> str:
     return "".join(text + "\n" for text in lines)
 
 
-def line(item: Item) -> str:
-    """One item's line without its indent."""
+def line(item: Item, parts: list[str] | None = None) -> str:
+    """One item's line without its indent: the id, then every field it has,
+    or with `parts` only the fields it names, in the same order."""
     tag = f"kind: {item.kind}" if item.level == "finding" else item.status
-    marks = "".join(f" {mark}" for mark in item.marks)
-    evidence = f" {item.evidence}" if item.evidence else ""
-    links = "".join(f" {link}" for link in item.links)
-    doc = f" doc: {item.doc}" if item.doc else ""
-    summary = f" | {item.summary}" if item.summary else ""
-    return f"{item.id} [{tag}]{marks}{evidence}{links}{doc}{summary}"
+    fields = {
+        "status": f" [{tag}]",
+        "marks": "".join(f" {mark}" for mark in item.marks),
+        "evidence": f" {item.evidence}" if item.evidence else "",
+        "links": "".join(f" {link}" for link in item.links),
+        "doc": f" doc: {item.doc}" if item.doc else "",
+        "summary": f" | {item.summary}" if item.summary else "",
+    }
+    return item.id + "".join(text for name, text in fields.items()
+                             if parts is None or name in parts)
 
 
-def pane(items: list[Item]) -> list[str]:
+def pane(items: list[Item], parts: list[str] | None = None,
+         fold: str | None = None) -> list[str]:
     """The `--follow` lines, uncut: the where-am-I line, then the path to
     the current task, each level's other items folded above the item on
     the path, the unit and the task by the last segment of their ids; the
-    waiting line first when the current task is an approval."""
+    waiting line first when the current task is an approval. `parts`, when
+    given, picks the fields of each item line; `fold` set to `names` names
+    the folded items in place of their counts."""
     path = _path(items)
     if path is None:
-        counts = _counts(items)
-        return ["no current task", f"{len(items)} items" + (f": {counts}" if counts else "")]
+        folded = _fold(items, 0, fold)
+        return ["no current task", f"{len(items)} items" + (f": {folded}" if folded else "")]
     lines: list[str] = []
     unit, _, key = path[-1].id.rpartition("/")
     if key in APPROVALS:
@@ -109,8 +135,8 @@ def pane(items: list[Item]) -> list[str]:
     for depth, chosen in enumerate(path):
         others = [item for item in siblings if item is not chosen]
         if others:
-            lines.append(f"{INDENT * depth}{len(others)} more: {_counts(others)}")
-        text = line(chosen)
+            lines.append(f"{INDENT * depth}{len(others)} more: {_fold(others, depth, fold)}")
+        text = line(chosen, parts)
         if depth:  # under another item: the id's last segment, the rest whole
             text = chosen.id.rpartition("/")[2] + text[len(chosen.id):]
         lines.append(INDENT * depth + text)
@@ -126,6 +152,16 @@ def _path(items: list[Item]) -> list[Item] | None:
                 if CURRENT in task.marks:
                     return [top, unit, task]
     return None
+
+
+def _fold(items: list[Item], depth: int, fold: str | None) -> str:
+    """A fold line's text after its opening: with `fold` set to `names`,
+    `<id> [<status>]` per item in the tree's order, the id whole at the top
+    level and by its last segment under another item; else the counts."""
+    if fold != "names":
+        return _counts(items)
+    return ", ".join(f"{item.id.rpartition('/')[2] if depth else item.id} [{item.status}]"
+                     for item in items)
 
 
 def _counts(items: list[Item]) -> str:
@@ -196,11 +232,14 @@ def follow(root: Path, out, sleep=None) -> int:
 
 
 def _draw(root: Path, out, cache: dict[str, str]) -> str | None:
-    """One render in one write, then each unreadable source on stderr;
-    returns the current task's id, or None."""
+    """One render in one write, then each unreadable source on stderr, then
+    a bad `tree: pane:` key; returns the current task's id, or None."""
     items, problems = build(root, cache)
+    settings = tree.pane_settings(root, problems)
     width = max(shutil.get_terminal_size().columns, MIN_WIDTH)
-    out.write(CLEAR + "".join(cut(text, width) + "\n" for text in pane(items)))
+    out.write(CLEAR + "".join(cut(text, width) + "\n"
+                              for text in pane(items, settings.get("parts"),
+                                               settings.get("fold"))))
     out.flush()
     for problem in problems:
         print(f"taskcontract tree: {problem}", file=sys.stderr)
