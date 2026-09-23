@@ -1,37 +1,64 @@
-# Plan - Session 40 (2026-09-22) - tree-view t3 and t2
+# Plan - Session 41 (2026-09-22) - tree-view t4 and t5
 
 **Deliverable:** two units of `tree-view` (the request for one derived tree
 of the work) on one PR, each with a Two-Key PASS (one agent re-runs every
 check, a second grades the commit against the contract, and a script
-computes the verdict), t3 first because t4, t5 and t7 wait on it alone:
+computes the verdict). They are the progress writers: nothing in the herdr
+pane moves until they land.
 
-- t3 `t3-status-and-cursor`: every item shows one of the six statuses, a
-  parent reads `done` only when every item under it does, each `G0`
-  verdict reads from the validator and names its command and `HEAD` id,
-  and the current task derives from the progress files, whose format
-  lands here.
-- t2 `t2-summaries-and-links`: each item shows its source field unchanged,
-  links name their kind and come only from `depends_on` or a finding's
-  `gate`, and a feature doc shows only as a file reference.
+- t4 `t4-check-runs`: `taskcontract progress run <check> [--expect red] --
+  <command>` runs a check's command and records red or green beside its
+  expectation, with the command, the `HEAD` id, a `dirty` mark and the
+  time. It exits 0 when the result met the expectation, else 1. The folder
+  `.sdlc/progress/` holds a `.gitignore` of `*`, and a `done` check shows
+  its command and commit in the tree.
+- t5 `t5-task-writers`: `taskcontract progress start|done|block <id>`
+  records task states, each with the time and the `HEAD` id. `done` on
+  `approve-tests` or `approve-commit` needs `--by <seat>`, `block` needs
+  `--reason`, and `done` on a unit or a contract closes everything under
+  it (the backfill). A `done` task shows its commit, an approval its seat.
 
-**Closed.** The deliverable is met: t3 at `ff3fbfb` and t2 at `5bd596a`,
-each a Two-Key PASS at round 1. The PR carrying them opens and merges on
-the user's word.
+t4 goes first: it owns the folder's `.gitignore`, so the first file any
+writer creates is already ignored, and t5 adds three verbs to the command
+t4 builds.
 
-Where things stand: suite 375 green (317 before; t3 added 39 cases, t2
-19), the 14 contracts ready-green, the vocabulary, language and scope
-checks clean. The kit's own tree prints 1052 lines, each ending in its
-item's summary; every task reads `to do` until t4 and t5 ship the
-progress writers.
+Where things stand: PR #50 (t3 and t2) is open with both CI jobs green,
+waiting on your merge. This branch starts from its tip, so its PR shows
+only this session's commits once #50 merges. Suite 375 green, the 14
+contracts ready-green, the vocabulary, language and scope checks clean.
 
-**Who did what.** The user delegated this session's in-work approvals to
-Claude, on review. Subagents did each unit's work through the Workflow
-tool: a spec-channel agent drafted the test list and its interface,
-proved it red from the scratchpad and built a scratch prototype to show
-the interface could be met; a developer agent made the tests green
-without opening `tests/`. Claude reviewed and approved each list and
-each commit, placed the approved tests, and ran the receipts before each
-verifier round.
+**Who does what.** Recommended, as in session 40, where both units passed
+at round 1: you delegate the four in-work approvals (two test lists, two
+commits) to Claude on review, and rule the open details below now, so the
+lists only encode your rulings. Subagents do each unit's work through the
+Workflow tool: a spec-channel agent drafts the test list, proves it red
+from the scratchpad and prototypes the interface; a developer agent makes
+the tests green without opening `tests/`. Claude places the approved
+tests, reviews each commit, and runs the receipts before each verifier
+round.
+
+## Rulings for the test lists
+
+Details the request leaves open, with the recommended ruling for each:
+
+1. A command that cannot start (not found) is an error: exit 2, one line,
+   nothing written. It never counts as red, so a missing test binary
+   cannot prove red.
+2. Each writer checks its id against the tree first: `run` takes a check,
+   `start` and `block` a task, `done` a task, a unit or a contract. An
+   unknown id exits 2 with t6's line, `no node '{id}' - print the tree to
+   list every node id`; a wrong kind exits 2 with one line of its own.
+   Nothing is written either way, since the reader drops a misplaced
+   record without a word.
+3. A malformed progress file stops every writer with one line naming it,
+   and nothing is written: a writer never rewrites records it cannot read.
+4. `--by` takes the seat's name as written. The `intake-seat` term says a
+   seat is never delegated to an agent, but the progress file is display
+   evidence no gate reads, so the tree shows who approved rather than the
+   writer refusing an honest record. TC016 stays the roster check.
+5. Evidence reads like t3's `G0` verdict: a check `via <command> at
+   <head>`, a task `at <head>`, an approval `by <seat> at <head>`, each
+   followed by `dirty` when a tracked file differed from `HEAD`.
 
 ## Diagram
 
@@ -47,66 +74,47 @@ The HTML is generated, never committed.
 
 ## Steps
 
-1. ~~Open.~~ Done at `48a96ae`: branch `session-40-tree-view-t3-t2` from
-   main (carrying `50b691b`), and this plan.
-2. ~~t3, draft and approve the test list.~~ 25 tests (39 cases), approved
-   as drafted. Its one question, answered: a close never covers a
-   verdict, since SC7.3 lets `G0` read done only at ready-green.
-3. ~~t3, write the tests and prove red.~~ 39 failed, 317 passed, each on
-   an assertion.
-4. ~~t3, green.~~ `taskcontract/progress.py` (new), `tree.py`,
-   `tree_view.py`; 356 passed.
-5. ~~t3, approve the commit and commit.~~ Done at `ff3fbfb`.
-6. ~~t3 Two-Key.~~ PASS at round 1, about 193K tokens. Three advisories,
-   one fixed in t2, two deferred to t4.
-7. ~~t2, draft and approve the test list.~~ 19 tests, approved with one
-   change: the two imports moved to the file's top block. Its one
-   question, answered: the line's new words go into USAGE at t9.
-8. ~~t2, write the tests and prove red.~~ 19 failed, 356 passed.
-9. ~~t2, green.~~ `tree.py` and `tree_view.py`; 375 passed.
-10. ~~t2, approve the commit and commit.~~ Done at `5bd596a`.
-11. ~~t2 Two-Key.~~ PASS at round 1, about 182K tokens. Three advisories,
-    deferred to t6 and t9.
-12. ~~Close.~~ STATE.md regenerated and this plan struck through; push
-    and PR on the user's word; merge on the user's word.
+1. Open: branch `session-41-tree-view-t4-t5` from #50's tip, and this plan.
+2. t4, draft and approve the test list. The drafter also takes t3's two
+   advisories: name the evidence keys (`head`, `by`, `reason`, `command`,
+   `dirty`) in `progress.py`'s docstring, and mark a `G0` verdict `dirty`
+   when its contract file differs from `HEAD`, since the validator reads
+   the working tree.
+3. t4, write the tests in `tests/test_progress.py` and prove red.
+4. t4, green: `progress.py`, `__main__.py`, and the tree's evidence.
+5. t4, approve the commit and commit.
+6. t4 Two-Key.
+7. t5, draft and approve the test list.
+8. t5, write the tests and prove red, each red run recorded with t4's
+   `progress run --expect red`.
+9. t5, green, each green run recorded with `progress run`.
+10. t5, approve the commit and commit.
+11. t5 Two-Key.
+12. Close: `progress done` on t0 to t5, so the kit's tree reads tree-view's
+    real state; STATE.md regenerated and this plan struck through; the
+    push and the PR on your word.
 
-Decisions this session: seven. Claude's on review: (1) this plan: yes;
-(2) t3's test list: yes; (3) t3's commit: yes; (4) t2's test list: yes,
-with the import change; (5) t2's commit: yes. The user's: (6) the push
-and the PR: pending; (7) the merge: pending.
-
-Details the request left open, fixed with the test lists: a verdict
-counts toward failed, blocked and done but never starts its contract, so
-a ready-green contract with no progress reads `to do`; a close never
-covers a verdict; a gate item reads `to do`; a record counts only in its
-own contract's file and where its kind fits; a tie on its time goes to
-the later record, then the later contract; with no `to do` task in the
-latest contract, no task is current; a verdict's summary is its gate's
-name; `gates/none` has no summary; a field's ends are stripped and each
-line break prints as one space; a blank field has no summary; a dangling
-`depends_on` entry still prints its link.
+Decisions this session: eight. Yours now: (1) this plan, its five rulings
+and the delegation; (2) PR #50's merge. Claude's on review, if delegated:
+(3) t4's test list; (4) t4's commit; (5) t5's test list; (6) t5's commit.
+Yours at the close: (7) the push and the PR; (8) the merge.
 
 Deferred, not this session:
-- `tree-view` t4, t5, t6 and t7 (all unblocked now), t8 after t7, t9 last,
-  releasing 0.15.0; the herdr plugin outside the kit.
-- For t4: name the evidence keys (`head`, `by`, `reason`, `command`,
-  `dirty`) in `progress.py`'s docstring as their first writer lands; mark
-  a `G0` verdict's evidence dirty when its contract file differs from
-  `HEAD`, since the validator reads the working tree.
+- `tree-view` t6 and t7 (both unblocked), t8 after t7, t9 last, releasing
+  0.15.0; then the herdr hook on t8's notify, outside the kit.
 - For t6: t1's id collision (a sketch naming `(commit)`, or a unit named
-  like an active gate); a `depends_on` list that repeats an entry prints
-  the link twice; `tree_view.py`'s docstring says each part follows one
-  space, but the summary follows ` | `.
-- For t9: t0's two wording notes (the line after the `progress run` block
-  lacks its red mark; "about fifteen lines" against t7's "at most 15");
-  t1's note that a `.yml` finding is not read; USAGE's backfill sentence
-  holds only for a ready-green contract with no other active gate; USAGE
-  documents the line's words (marks, evidence, links, the doc reference,
-  ` | ` and the summary) and the text rule behind "unchanged".
+  like an active gate); a repeated `depends_on` entry prints the link
+  twice; `tree_view.py`'s docstring says each part follows one space, but
+  the summary follows ` | `.
+- For t9: t0's two wording notes; t1's note that a `.yml` finding is not
+  read; USAGE's backfill sentence holds only for a ready-green contract
+  with no other active gate; USAGE documents the line's words and the text
+  rule behind "unchanged".
+- The backfill of the 13 earlier contracts, once each is checked finished.
 - Later: a summary holding a character the console's encoding lacks could
   fail a print piped on Windows; every current contract and finding is
   ASCII.
-- G1: the pilot's M0 code waits on its criteria review.
+- Parked until the pane can follow them: G1, then the pilot's M0 code.
 - `no-check-reads-the-source-document`: which request carries it.
 - `derived-language`, `feature-document`, `spec-doc-type`; the demo intake
   in a sandbox consumer; wave B (`playbook-loop`, V1-V6); 5b; the G4.6
