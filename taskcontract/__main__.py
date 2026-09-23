@@ -83,8 +83,9 @@ def main(argv=None) -> int:
                       help="repo root that holds specs/ and .sdlc/ (default: cwd)")
     tree.add_argument("--follow", action="store_true",
                       help="keep a pane on the current task, redrawn when a source changes, "
-                           "running the config's tree.notify once at each arrival at an "
-                           "approval, never on a redraw; Ctrl-C exits")
+                           "running the config's tree.notify once each time the current "
+                           "task arrives at an approval, never again on a redraw at the "
+                           "same task; Ctrl-C exits")
     progress = sub.add_parser(
         "progress",
         help="record the work's progress under .sdlc/progress/ (ADR 0031)")

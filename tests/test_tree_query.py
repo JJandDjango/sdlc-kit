@@ -6,7 +6,7 @@ line is the item's line as the whole tree prints it, cut after its status,
 marks and evidence. Then one labeled field per line, each only when the item
 has it, in this order: `summary: <text>`; one line per link kind, its
 targets joined by ", " (`depends_on: <id>, <id>`, `gate: <value>`);
-`doc: docs/features/<id>.md`; `file: <path>:<line>` per file reference;
+`doc: docs/features/<id>.md:1`; `file: <path>:<line>` per file reference;
 `page: <kit page>`. One line per field kind keeps an item within 20 lines by
 the format, never by cutting.
 
@@ -14,7 +14,8 @@ Every id the tree prints answers, and an id that names two items prints
 both, in tree order, one blank line between them; an unknown id prints one
 line on stderr and exits 2 (SC6.2). A file reference is a repo path with the
 line its item starts at: a contract and a finding at line 1 of their file, a
-unit and a check at the line their entry starts in the contract file. A gate
+unit and a check at the line their entry starts in the contract file, and a
+contract's feature doc, a file reference too (SC4.2), at its line 1. A gate
 and a task point to the kit page that defines them, and a verdict to both
 its contract file and its gate's page (SC6.3).
 
@@ -268,7 +269,7 @@ def test_sc6_1_an_item_prints_its_summary_links_doc_and_file_reference(tmp_path,
     assert _query(root, capsys, "alpha") == (0, (
         _first(_rows_of(rows, "alpha")[0]) + "\n"
         f"summary: {INTENT}\n"
-        "doc: docs/features/alpha.md\n"
+        "doc: docs/features/alpha.md:1\n"
         "file: specs/alpha/contract.yaml:1\n"), "")
 
 
@@ -442,6 +443,11 @@ def test_sc6_3_each_file_reference_is_a_repo_path_at_the_line_its_item_starts(
         path, _, line = reference.rpartition(":")
         assert (root / path).is_file(), reference
         assert 1 <= int(line) <= len((root / path).read_text(encoding="utf-8").splitlines())
+    # a contract's feature doc is a file reference too (SC4.2): its path at line 1
+    code, out, err = _query(root, capsys, "alpha")
+    assert (code, err) == (0, "")
+    assert _fields(out, "doc") == ["docs/features/alpha.md:1"]
+    assert (root / "docs" / "features" / "alpha.md").is_file()
 
 
 def test_sc6_3_a_gate_a_task_and_a_verdict_point_to_their_kit_page(tmp_path, capsys):

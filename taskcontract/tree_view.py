@@ -20,12 +20,13 @@ with it printed as one block, in the tree's order, with one empty line
 between blocks. A block opens on the item's line cut after the evidence,
 then gives one labeled field per line, each only when the item has it:
 `summary:` whole, one line per link kind with its targets joined by `, `,
-`doc:`, `file: <path>:<line>` (a contract or verdict at line 1, a unit or
-check at its entry's first line, a finding's file at line 1), and `page:`,
-the kit page that defines a gate, a verdict's gate or a task. So a block
-never passes seven lines. The unreadable sources follow on stderr. An
-unknown id prints `no node '<id>' - print the tree to list every node id`
-on stderr alone and exits 2; an id with `--follow` exits 2 too.
+`doc:` with the feature doc's path at line 1, `file: <path>:<line>` (a
+contract or verdict at line 1, a unit or check at its entry's first line, a
+finding's file at line 1), and `page:`, the kit page that defines a gate, a
+verdict's gate or a task. So a block never passes seven lines. The
+unreadable sources follow on stderr. An unknown id prints `no node '<id>' -
+print the tree to list every node id` on stderr alone and exits 2; an id
+with `--follow` exits 2 too.
 
 `--follow` keeps a pane on the current task. It prints the where-am-I line,
 `specs/<contract>/contract.yaml > <contract> > <unit> > <task>`, the unit
@@ -33,14 +34,13 @@ and the task by the last segment of their ids. Under it the path to the
 task, a top-level item, its unit and the task, each line as the whole tree
 prints it, save that the unit's and the task's lines open on the last
 segment of their ids; links, the waiting line and `SDLC_NODE` keep full
-ids. Above each, when the level holds other items, one line folds
-them as `<n> more: <counts>`, the count per status in the six statuses'
-order, zeros left out; `tree: pane: fold: names` names them instead (see
-below). So the task is always the last line. When the task
-is `approve-tests` or `approve-commit`, the first line reads `waiting on a
-seat: <approval> for <contract>/<unit>`, above the where-am-I line. With no
-current task the pane reads `no current task`, then `<n> items: <counts>`
-for the top level.
+ids. Above each, when the level holds other items, one line folds them as
+`<n> more: <counts>`, the count per status in the six statuses' order,
+zeros left out; `tree: pane: fold: names` names them instead (see below).
+So the task is always the last line. When the task is `approve-tests` or
+`approve-commit`, the first line reads `waiting on a seat: <approval> for
+<contract>/<unit>`, above the where-am-I line. With no current task the
+pane reads `no current task`, then `<n> items: <counts>` for the top level.
 
 `tree: pane: parts:` in .sdlc/config.yaml, read afresh at each render,
 lists the fields each item line shows, from id, status, marks, evidence,
@@ -138,7 +138,7 @@ def block(root: Path, item: Item) -> str:
         kinds.setdefault(kind, []).append(target)
     lines += [f"{kind}: {', '.join(targets)}" for kind, targets in kinds.items()]
     if item.doc:
-        lines.append(f"doc: {item.doc}")
+        lines.append(f"doc: {item.doc}:1")
     reference = tree.reference(root, item)
     if reference:
         lines.append(f"file: {reference}")
