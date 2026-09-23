@@ -16,14 +16,19 @@ then a contract's feature doc reference (`doc: docs/features/<id>.md`), and
 last its summary after ` | `. Each part but the id and status prints only
 when the item has it, after exactly one space.
 
-`--follow` keeps a pane on the current task. It prints the path to it, a
-top-level item, its unit and the task, each line as the whole tree prints
-it; above each, when the level holds other items, one line folds them as
-`<n> more: <counts>`, the count per status in the six statuses' order, zeros
-left out. So the task is always the last line. When the task is
-`approve-tests` or `approve-commit`, the first line reads `waiting on a
-seat: <approval> for <contract>/<unit>`. With no current task the pane
-reads `no current task`, then `<n> items: <counts>` for the top level.
+`--follow` keeps a pane on the current task. It prints the where-am-I line,
+`specs/<contract>/contract.yaml > <contract> > <unit> > <task>`, the unit
+and the task by the last segment of their ids. Under it the path to the
+task, a top-level item, its unit and the task, each line as the whole tree
+prints it, save that the unit's and the task's lines open on the last
+segment of their ids; links, the waiting line and `SDLC_NODE` keep full
+ids. Above each, when the level holds other items, one line folds
+them as `<n> more: <counts>`, the count per status in the six statuses'
+order, zeros left out. So the task is always the last line. When the task
+is `approve-tests` or `approve-commit`, the first line reads `waiting on a
+seat: <approval> for <contract>/<unit>`, above the where-am-I line. With no
+current task the pane reads `no current task`, then `<n> items: <counts>`
+for the top level.
 Each line longer than the pane's width is cut to it and ends in `...`. The
 pane lists its sources' files once a second and redraws, clearing the
 screen with ANSI escapes, only when a file was added, removed or changed;
@@ -85,9 +90,10 @@ def line(item: Item) -> str:
 
 
 def pane(items: list[Item]) -> list[str]:
-    """The `--follow` lines, uncut: the path to the current task, each
-    level's other items folded above the item on the path; the waiting
-    line first when the current task is an approval."""
+    """The `--follow` lines, uncut: the where-am-I line, then the path to
+    the current task, each level's other items folded above the item on
+    the path, the unit and the task by the last segment of their ids; the
+    waiting line first when the current task is an approval."""
     path = _path(items)
     if path is None:
         counts = _counts(items)
@@ -96,12 +102,18 @@ def pane(items: list[Item]) -> list[str]:
     unit, _, key = path[-1].id.rpartition("/")
     if key in APPROVALS:
         lines.append(f"waiting on a seat: {key} for {unit}")
+    contract = path[0].id
+    lines.append(f"specs/{contract}/contract.yaml > {contract} > "
+                 f"{unit.rpartition('/')[2]} > {key}")
     siblings = items
     for depth, chosen in enumerate(path):
         others = [item for item in siblings if item is not chosen]
         if others:
             lines.append(f"{INDENT * depth}{len(others)} more: {_counts(others)}")
-        lines.append(INDENT * depth + line(chosen))
+        text = line(chosen)
+        if depth:  # under another item: the id's last segment, the rest whole
+            text = chosen.id.rpartition("/")[2] + text[len(chosen.id):]
+        lines.append(INDENT * depth + text)
         siblings = chosen.children
     return lines
 

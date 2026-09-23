@@ -2,34 +2,29 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-23 (session 44 close)._
+> _Generated 2026-09-23 (session 45 close)._
 
 ## Now
-- **`pane-view` is ready at intake**: `specs/pane-view/contract.yaml` at
-  `6fd9c17`, on branch `session-44-pane-view`. Ready-green on the first
-  pass, language door zero after one rewrite, five units p0 to p4, each
-  `confirmed_by: [user]`; all fifteen kit contracts ready-green, pytest 486
-  passed, scope-check green. The REQUEST (untracked) stands at r4: nine
-  checks, two verbatim messages, eight decisions, no ADR; the intake
-  commit's message carries the rulings' reasons.
-- **Archify plans are retired** (the user, 2026-09-23): `plan.workflow.json`
-  and plan.md's Diagram section went at `cf200b0`. A plan is a numbered
-  list, shown in chat at the gate.
-- The tree pane (`w9:p8`) still runs, flagged `sdlc`, `blocked` on t6's
-  `approve-tests`. It shows pane-view once its units record progress.
-- PR #53 (the herdr hook's config line) merged at `199802e`.
+- **pane-view p0 to p2 are built** on branch `session-45-pane-view-p0-p2`,
+  each Two-Key PASS at round 1: p0 `7d31d4a` (USAGE "The pane's lines",
+  marks red), p1 `b80aed3` (the where-am-I line), p2 `3802a8c` (short ids
+  under a parent). Suite 505 passed, all fifteen contracts ready-green,
+  scope-check green. p3 and p4 remain.
+- The live check after p1 passed: a probe pane at p2's `approve-tests`
+  kept the waiting line first, the where-am-I line under it, and the hook
+  flagged the pane `sdlc`, `blocked`.
+- The user's tree pane (`w9:p8`) runs the pre-p1 code until restarted.
+- PR #55 carries the branch, merged on the user's word (2026-09-23) once
+  CI read green; PR #54 (session 44) merged at `22c4982`.
 
 ## Blockers
-- None. The push and the PR wait on the user's word.
+- None.
 
 ## Next actions
-1. Session 45: pane-view's units by the delegated method, in order: p0
-   (USAGE pass zero, marks red), p1 (the where-am-I line) and p2 (short
-   ids) in either order, then p3 (`tree: pane: parts:`), then p4 (`fold:
-   names`). p1 and p2 amend t7's and t8's pane tests, which expect each
-   pane line to equal the whole tree's; each drafter names them in its
-   pins. After p1, one live check in herdr that the hook still flags the
-   seat. Record each task with `taskcontract progress`.
+1. Session 46: pane-view p3 (`tree: pane: parts:`; the `tree: pane:`
+   reader lands in `tree.py`), then p4 (`fold: names`), by the delegated
+   method. Unset, both keep today's lines, so no earlier test should need
+   an amendment; each drafter still writes `tests/test_pane_view.py` whole.
 2. Then tree-view's t6 (the query face) and t9 (the release, 0.15.0); t9's
    USAGE pass also turns p0's marks green.
 3. G1 after t9: its criteria review comes before the pilot's M0 code.
@@ -38,7 +33,10 @@
    rule shadowing herdr's remote one, or a herdr change); the hook's key
    action; the hook's four known edges, in its README; `.sdlc/config.yaml`
    still lists `plan.workflow.json` as a free path.
-6. Carried advisories. t6: `tree.py`'s docstring says a close reads
+6. Carried advisories. p3: the pane test helpers `_cut` and `_short` are
+   copied in both pane modules (p2's Two-Key); one copy in
+   `tests/conftest.py` would keep them from drifting. t6: `tree.py`'s
+   docstring says a close reads
    everything under it done (tasks and checks only); t1's id collision; a
    repeated `depends_on` entry prints twice; `tree_view.py`'s docstring on
    spacing. t9, USAGE: the `progress` rows (`--expect green`, the exit-2
@@ -48,10 +46,11 @@
    text (the width cut, `no current task`, the watched files, the verdict
    cache, a vocabulary change showing in up to about 2.4 s, the waiting
    line, notify at the pane's start, exit 127, the failure line whole on
-   stderr). t9, code wording: `follow()`'s docstring on Ctrl-C (on POSIX
-   the notify child gets the same SIGINT); `--follow`'s help, "at each
-   arrival at an approval". Noted: a cached `G0` reading goes stale across
-   a deprecated term's sunset date; `cut()` counts characters, not
+   stderr); "The pane's lines" example reads `14 more`, now `15 more`
+   (p0's Two-Key). t9, code wording: `follow()`'s docstring on Ctrl-C (on
+   POSIX the notify child gets the same SIGINT); `--follow`'s help, "at
+   each arrival at an approval". Noted: a cached `G0` reading goes stale
+   across a deprecated term's sunset date; `cut()` counts characters, not
    display columns.
 7. Carried: the backfill of the 13 earlier contracts, once each is checked
    finished; `derived-language`, `feature-document`, `spec-doc-type`; the
@@ -69,13 +68,16 @@
 - Record each task as it finishes: `progress start|done <task>`, `--by
   <seat>` on an approval, and each check's run through `progress run
   <check> [--expect red] -- <test command>`, selecting its tests with `-k`
-  (test names carry the check id). Close each unit with `progress done`.
+  (test names carry the check id). Run a check's green after its commit,
+  so the evidence names a clean commit. Close each unit with `progress
+  done` once its Two-Key passes. A unit with no test (a USAGE pass) starts
+  `green` while its page is written and `approve-commit` while it waits.
 - A REQUEST is untracked, so git cannot restore it: copy it to the
   scratchpad before a revision edits it.
 - The language door checks every sentence of a sketch for an approved
   opening verb; open each one on "verify". Filter its output to one
-  contract (a ten-line script over `lang-check --json`); the rest is
-  other contracts' findings.
+  contract (a ten-line script over `lang-check`); the rest is the exempt
+  findings of six pre-arc contracts.
 - A delegated session: one Workflow per step, launched by `scriptPath`.
   `.claude/workflows/` holds the drafter (`spec-channel-drafter.js`), the
   developer (`unit-developer.js`) and Two-Key. The drafter proves red from
@@ -83,10 +85,12 @@
   and proves red; the developer greens from the interface note without
   opening `tests/`; Claude reviews, runs the receipts, commits and runs
   Two-Key, leaving tracked files alone while it runs. A drafter may run
-  beside the previous unit's Two-Key, since neither touches tracked files.
-  Session 42's subagents: drafters about 182K and 161K tokens, developers
-  98K and 72K, Two-Key 200K and 177K; session 43's: drafter 78K,
-  developer 52K, Two-Key 133K.
+  beside the previous unit's Two-Key. When a unit's tests extend a module
+  an earlier unit placed, its drafter writes that module whole, with the
+  earlier tests amended where needed. The developer may return before its
+  own suite run ends; Claude's receipts run is then the suite's receipt.
+  Session 45's subagents: drafters 149K and 180K tokens, developers 60K
+  and 63K, Two-Key 152K, 171K and 164K.
 - Before placing a drafted list: strip session labels (`ruling_2`) from its
   names, then check the module for a repeated test name, since a later
   `def` silently replaces an earlier one. A later unit may amend an
@@ -102,16 +106,19 @@
   change. `gh pr checks --watch` can exit 1 on "no checks reported"; start
   it again.
 - herdr probes run in panes Claude splits with `--no-focus` and closes
-  after; never report state on another session's pane. A manual
-  `release-agent` for the hook's flag needs a `--seq` above the hook's
-  (the time in milliseconds).
+  after; never report state on another session's pane. The recipe: `herdr
+  pane split --pane <own> --direction down --cwd <root> --no-focus`, then
+  `pane run <new> "<command>"`, `pane wait-output <new> --match <text>`,
+  `pane get <new>` (its `agent` and `agent_status`), `pane close <new>`. A
+  manual `release-agent` for the hook's flag needs a `--seq` above the
+  hook's (the time in milliseconds).
 - A settings file with unrelated uncommitted edits is staged by blob
   (`hash-object`, then `update-index`), so the commit holds one change.
 
 ## Open questions
 - The `intake-seat` term says a seat is never delegated to an agent, while
-  a delegated session's approvals record `--by claude` (sessions 40 to 42).
-  Does the term need a word for a delegated approval?
+  a delegated session's approvals record `--by claude` (sessions 40 to 42
+  and 45). Does the term need a word for a delegated approval?
 - Push `E:\herdr-sdlc` to GitHub, so herdr can install it as a plugin
   later? It has no remote.
 - Which request carries `no-check-reads-the-source-document`:
