@@ -337,7 +337,8 @@ def head_id(root: Path) -> str:
 def dirty_mark(root: Path) -> bool | None:
     """Whether a tracked file differs from `HEAD`, staged or not; untracked
     files never count. None outside git."""
-    result = run_git(root, "status", "--porcelain", "--untracked-files=no")
+    result = run_git(root, "--no-optional-locks", "status", "--porcelain",
+                     "--untracked-files=no")
     if result is None or result.returncode != 0:
         return None
     return bool(result.stdout.strip())

@@ -7,8 +7,11 @@ specs/, `active_gates` from .sdlc/config.yaml, the findings under
 the two name lists the package ships (data/gates.yaml, data/tasks.yaml).
 When a `G0` verdict shows, it also runs the validator on that contract and
 runs git twice: once for `HEAD`, once for the contract files that differ
-from it. It asks only whether docs/features/<id>.md exists,
-never opens it, reads no other document and writes no file.
+from it. A caller that passes a verdict cache (the `--follow` pane) keeps
+the validator's reading per contract between prints, and the validator runs
+only for a contract the cache lacks; git still runs at every print. It asks
+only whether docs/features/<id>.md exists, never opens it, reads no other
+document and writes no file.
 
 The gates stand first, at the repository level. A finding names a gate and
 never a contract (ADR 0023's form bans identifiers), so each finding stands
@@ -130,8 +133,12 @@ def task_list() -> list[dict]:
     return yaml.safe_load(TASKS_PATH.read_text(encoding="utf-8"))["tasks"]
 
 
-def build(root: Path) -> tuple[list[Item], list[str]]:
-    """The tree in print order, and one line per source that could not be read."""
+def build(root: Path, cache: dict[str, str] | None = None) -> tuple[list[Item], list[str]]:
+    """The tree in print order, and one line per source that could not be read.
+
+    `cache` maps a contract id to its `G0` reading, kept by the caller
+    between prints; without one, every verdict is read afresh.
+    """
     problems: list[str] = []
     gates = {gate["id"]: text(gate.get("name")) for gate in gate_list()}
     tasks = {task["id"]: text(task.get("name")) for task in task_list()}
@@ -142,7 +149,7 @@ def build(root: Path) -> tuple[list[Item], list[str]]:
     contracts = [_contract_item(root, cid, instance, active, gates, tasks)
                  for cid, instance in read_contracts(root, problems)]
     items += contracts
-    derive(root, contracts, read_progress(root, problems))
+    derive(root, contracts, read_progress(root, problems), cache)
     return items, problems
 
 
@@ -154,7 +161,8 @@ def text(value) -> str | None:
     return " ".join(value.strip().splitlines()) or None
 
 
-def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]]) -> None:
+def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]],
+           cache: dict[str, str] | None = None) -> None:
     """Set every status under the contracts, the verdicts' evidence and the
     current mark; the gate items keep `to do`."""
     readings: dict[str, _Reading] = {}
@@ -184,7 +192,7 @@ def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]])
         if current.id.rsplit("/", 1)[-1] in APPROVALS:
             current.status = WAITING
         current.marks.append(CURRENT)
-    _verdicts(root, contracts)
+    _verdicts(root, contracts, {} if cache is None else cache)
     for contract in contracts:
         _roll_up(contract)
         for item in _walk(contract):
@@ -247,21 +255,26 @@ def _current(contracts: list[Item], readings: dict[str, _Reading],
                  if item.level == "task" and item.status == TO_DO), None)
 
 
-def _verdicts(root: Path, contracts: list[Item]) -> None:
+def _verdicts(root: Path, contracts: list[Item], cache: dict[str, str]) -> None:
     """Each `G0` verdict from the validator, with its command and `HEAD`, and
-    `dirty` when its contract file differs from `HEAD`; the schema loads and
-    git runs twice per print, and only when a `G0` shows."""
+    `dirty` when its contract file differs from `HEAD`; git runs twice per
+    print, and only when a `G0` shows. A reading in `cache` stands in for
+    the validator, and each new reading joins it; the schema loads only
+    when the validator runs."""
     verdicts = [(contract.id, item) for contract in contracts
                 for item in contract.children
                 if item.level == "verdict" and item.id == f"{contract.id}/G0"]
     if not verdicts:
         return
-    schema = checker.load_schema()
+    schema = None
     head = head_id(root)
     dirty = dirty_contracts(root)
     for cid, verdict in verdicts:
         path = f"specs/{cid}/contract.yaml"
-        verdict.status = g0_status(root / path, schema)
+        if cid not in cache:
+            schema = checker.load_schema() if schema is None else schema
+            cache[cid] = g0_status(root / path, schema)
+        verdict.status = cache[cid]
         verdict.evidence = (f"via python -m taskcontract validate {path} "
                             f"--profile ready at {head}"
                             + (f" {DIRTY}" if cid in dirty else ""))
@@ -313,7 +326,8 @@ def dirty_contracts(root: Path) -> set[str]:
     """The ids whose specs/<id>/contract.yaml differs from `HEAD`: modified,
     staged or not, or not in `HEAD` at all. One git call for every contract;
     none outside git."""
-    result = run_git(root, "status", "--porcelain", "-z", "--untracked-files=all",
+    result = run_git(root, "--no-optional-locks", "status", "--porcelain", "-z",
+                     "--untracked-files=all",
                      "--", ":(glob)specs/*/contract.yaml")
     if result is None or result.returncode != 0:
         return set()
