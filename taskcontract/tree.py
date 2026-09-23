@@ -22,8 +22,12 @@ none, so it shows its kind. A task step reads its last record in the
 contract's progress file, a check its last run judged by what the run
 expected, and a close of a unit or contract reads everything under it
 done. A check whose last run was green as expected names that run's
-command and `HEAD`, and `dirty` when the run recorded it; a close neither
-adds that evidence nor hides it. A `G0` verdict reads the validator at the
+command and `HEAD`, and `dirty` when the run recorded it. A task that reads
+done by its own done record names that record's `HEAD`, the seat it gives
+an approval, and `dirty`; a task that reads blocked by its own record names
+its reason. A unit or contract that reads done names its latest close's
+`HEAD` and `dirty`. A close neither adds evidence to the items under it nor
+hides theirs. A `G0` verdict reads the validator at the
 draft and ready profiles and names the command and the `HEAD` it read, and
 `dirty` when its contract file differs from `HEAD`; a verdict at any other gate,
 and every gate item, reads `to do`. A unit or contract rolls up its
@@ -154,19 +158,27 @@ def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]])
     """Set every status under the contracts, the verdicts' evidence and the
     current mark; the gate items keep `to do`."""
     readings: dict[str, _Reading] = {}
-    runs: dict[str, Record] = {}  # each check's last run, whatever closed it after
+    # Each check's last run and each task's own last record, whatever closed
+    # it after, and each unit's and contract's latest close.
+    own: dict[str, Record] = {}
     latest: tuple[tuple, Item] | None = None  # the greatest counted key, its contract
     for position, contract in enumerate(contracts):
-        key = _apply(contract, position, progress.get(contract.id, []), readings, runs)
+        key = _apply(contract, position, progress.get(contract.id, []), readings, own)
         if key is not None and (latest is None or key > latest[0]):
             latest = (key, contract)
     for contract in contracts:
         for item in _walk(contract):
             if item.level in ("task", "check") and item.id in readings:
                 item.status = readings[item.id].status
-            run = runs.get(item.id) if item.level == "check" else None
-            if run is not None and run.run == run.expect == "green":
-                item.evidence = run_evidence(run)
+            record = own.get(item.id)
+            if record is None:
+                continue
+            if item.level == "check" and record.run == record.expect == "green":
+                item.evidence = run_evidence(record)
+            elif item.level == "task" and record.state == item.status == DONE:
+                item.evidence = state_evidence(record)
+            elif item.level == "task" and record.state == item.status == BLOCKED:
+                item.evidence = f"because {record.reason}" if record.reason else None
     current = _current(contracts, readings, latest[1] if latest else None)
     if current is not None:
         if current.id.rsplit("/", 1)[-1] in APPROVALS:
@@ -175,12 +187,15 @@ def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]])
     _verdicts(root, contracts)
     for contract in contracts:
         _roll_up(contract)
+        for item in _walk(contract):
+            if item.level in ("unit", "contract") and item.status == DONE and item.id in own:
+                item.evidence = state_evidence(own[item.id])
 
 
 def _apply(contract: Item, position: int, records: list[Record],
-           readings: dict[str, _Reading], runs: dict[str, Record]) -> tuple | None:
-    """Apply one contract's records in file order, noting each check's last
-    run; the greatest key counted."""
+           readings: dict[str, _Reading], own: dict[str, Record]) -> tuple | None:
+    """Apply one contract's records in file order, noting each item's own
+    last record that fits it; the greatest key counted."""
     index = {item.id: item for item in _walk(contract)}
     latest = None
     for n, record in enumerate(records):
@@ -188,8 +203,7 @@ def _apply(contract: Item, position: int, records: list[Record],
         placed = _place(record, index.get(record.item))
         if placed is None:
             continue
-        if record.run is not None:
-            runs[record.item] = record
+        own[record.item] = record
         for item, status in placed:
             readings[item.id] = _Reading(status, key)
         latest = key if latest is None or key > latest else latest
@@ -259,6 +273,20 @@ def run_evidence(record: Record) -> str | None:
     parts = []
     if record.command is not None:
         parts.append(f"via {record.command}")
+    if record.head is not None:
+        parts.append(f"at {record.head}")
+    if record.dirty:
+        parts.append(DIRTY)
+    return " ".join(parts) or None
+
+
+def state_evidence(record: Record) -> str | None:
+    """A done record's evidence: the seat it names, the `HEAD` it was
+    written at, and `dirty` when a tracked file differed; each part only when
+    the record has it."""
+    parts = []
+    if record.by is not None:
+        parts.append(f"by {record.by}")
     if record.head is not None:
         parts.append(f"at {record.head}")
     if record.dirty:

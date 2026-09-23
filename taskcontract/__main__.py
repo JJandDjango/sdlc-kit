@@ -93,6 +93,20 @@ def main(argv=None) -> int:
                      help="repo root that holds specs/ and .sdlc/ (default: cwd)")
     run.add_argument("argv", nargs="+", metavar="COMMAND",
                      help="the command and its arguments, after --")
+    start = actions.add_parser("start", help="record a task step doing")
+    start.add_argument("item", help="the task's id, as the tree prints it")
+    done = actions.add_parser(
+        "done", help="record a task step done, or close a unit or a contract")
+    done.add_argument("item", help="the task's, unit's or contract's id, as the tree prints it")
+    done.add_argument("--by", default=None, metavar="SEAT",
+                      help="the seat that approved; approve-tests and approve-commit need it")
+    block = actions.add_parser("block", help="record a task step blocked, with its reason")
+    block.add_argument("item", help="the task's id, as the tree prints it")
+    block.add_argument("--reason", default=None, metavar="TEXT",
+                       help="why the step is blocked; needed")
+    for action in (start, done, block):
+        action.add_argument("--root", type=Path, default=Path("."),
+                            help="repo root that holds specs/ and .sdlc/ (default: cwd)")
     audit = sub.add_parser(
         "suppression-audit",
         help="G4.10 four-vector diff check: no new weakening of gating constraints")

@@ -1,4 +1,5 @@
-"""The check-run suite for ADR 0031 (contract tree-view, unit t4-check-runs).
+"""The progress suite for ADR 0031 (contract tree-view, unit t4-check-runs,
+then unit t5-task-writers after its banner below).
 
 `taskcontract progress run CHECK [--expect red|green] -- COMMAND` runs a
 check's command in the repo root and records red or green beside the result
@@ -519,3 +520,429 @@ def test_a_g0_verdict_reads_dirty_when_its_contract_file_differs_from_head(
         assert tokens[:len(expected)] == expected, cid
         after[cid] = tokens[len(expected)]
     assert after == {"alpha": "dirty", "beta": "|", "gamma": "dirty"}
+
+
+# ==================================================================================
+# Unit t5-task-writers: `progress start`, `done` and `block` (ADR 0031)
+#
+# `taskcontract progress start|done|block ID` appends one task-step record to
+# the contract's progress file, with its time, the HEAD id and a `dirty` mark.
+# `done` on approve-tests or approve-commit needs `--by SEAT`, and `block`
+# needs `--reason TEXT`. `done` on a unit or a contract closes every task and
+# check under it, which backfills history. Each writer checks its id against
+# the tree first and never rewrites a file it cannot read. The tree shows a
+# done task `at <head>`, a done approval `by <seat> at <head>`, each with
+# `dirty` when a tracked file differed from HEAD, and a blocked task
+# `because <reason>`.
+# ==================================================================================
+
+UNIT = "alpha/a1-core"
+TASK = f"{UNIT}/write-tests"
+APPROVALS = ("approve-tests", "approve-commit")
+REASON = "the runner is down"
+NEEDS_BY = "taskcontract progress: '{id}' is an approval - done needs --by <seat>\n"
+NO_BY = ("taskcontract progress: '{id}' is not an approval - "
+         "only approve-tests and approve-commit take --by\n")
+NEEDS_REASON = ("taskcontract progress: block needs --reason <text> - "
+                "say why '{id}' is blocked\n")
+NOT_A_TASK = ("taskcontract progress: '{id}' is a {kind}, not a task - "
+              "{action} takes a task id\n")
+NOT_CLOSABLE = ("taskcontract progress: '{id}' is a {kind}, not a task, unit or contract - "
+                "done takes a task, unit or contract id\n")
+UNREADABLE_ALPHA = (r"taskcontract progress: unreadable progress: "
+                    r"\.sdlc/progress/alpha\.yaml \(.+\)\n")
+
+
+def _mark(root, capsys, action, rid, *options):
+    """(exit code, stdout, stderr) of one `progress start|done|block`."""
+    try:
+        code = main(["progress", action, rid, "--root", str(root), *options])
+    except SystemExit as exc:  # argparse's own exit
+        code = exc.code
+    captured = capsys.readouterr()
+    return code, captured.out, captured.err
+
+
+def _shown(rows, rid):
+    """What an item's line shows between its status and its summary (marks,
+    evidence, links), with its leading space; '' when it shows none."""
+    return _rest(rows, rid).split(" | ", 1)[0]
+
+
+def _recommit(root, name):
+    """Commit one new file at the root; return the new short HEAD id."""
+    (root / name).write_text(name + "\n", encoding="utf-8")
+    _git(root, "add", "-A")
+    _git(root, "-c", "user.email=t@example.com", "-c", "user.name=t",
+         "-c", "commit.gpgsign=false", "-c", "core.hooksPath=no-hooks",
+         "commit", "-q", "-m", name)
+    return _git(root, "rev-parse", "--short", "HEAD").strip()
+
+
+def _hand(root, *records):
+    """Seed alpha's progress file by hand."""
+    _dump(root / ".sdlc" / "progress" / "alpha.yaml", {"records": list(records)})
+
+
+# --- the three writers, their lines and their records ---------------------------
+
+def test_each_writer_prints_one_line_on_stdout_and_exits_0(tmp_path, capsys):
+    root = _repo(tmp_path)
+    approval = f"{UNIT}/approve-tests"
+    assert _mark(root, capsys, "start", TASK) == (0, f"{TASK}: doing\n", "")
+    assert _mark(root, capsys, "block", TASK, "--reason", REASON) == (
+        0, f"{TASK}: blocked\n", "")
+    assert _mark(root, capsys, "done", TASK) == (0, f"{TASK}: done\n", "")
+    assert _mark(root, capsys, "done", approval, "--by", "user") == (
+        0, f"{approval}: done by user\n", "")
+    assert _mark(root, capsys, "done", UNIT) == (0, f"{UNIT}: done\n", "")
+    assert _mark(root, capsys, "done", "alpha") == (0, "alpha: done\n", "")
+
+
+@needs_git
+def test_each_record_holds_item_state_head_dirty_and_at_plus_by_or_reason(tmp_path, capsys):
+    root = _repo(tmp_path)
+    head = _commit_all(root)
+    approval, prove = f"{UNIT}/approve-tests", f"{UNIT}/prove-red"
+    before = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
+    for call in (("start", TASK), ("done", TASK), ("done", approval, "--by", "user"),
+                 ("block", prove, "--reason", REASON), ("done", UNIT)):
+        assert _mark(root, capsys, *call)[0] == 0, call
+    after = datetime.datetime.now(datetime.timezone.utc)
+    records = _records(root)
+    base = {"item", "state", "head", "dirty", "at"}
+    assert [set(r) for r in records] == [base, base, base | {"by"}, base | {"reason"}, base]
+    assert [(r["item"], r["state"]) for r in records] == [
+        (TASK, "doing"), (TASK, "done"), (approval, "done"), (prove, "blocked"),
+        (UNIT, "done")]
+    assert (records[2]["by"], records[3]["reason"]) == ("user", REASON)
+    for record in records:
+        assert (record["head"], record["dirty"]) == (head, False)
+        assert isinstance(record["at"], str) and STAMP.match(record["at"]), record["at"]
+        at = datetime.datetime.strptime(record["at"], "%Y-%m-%dT%H:%M:%SZ").replace(
+            tzinfo=datetime.timezone.utc)
+        assert before <= at <= after
+
+
+def test_start_reads_doing_and_holds_the_current_task(tmp_path, capsys):
+    root = _repo(tmp_path)
+    assert _mark(root, capsys, "start", TASK)[0] == 0
+    rows = _print(root, capsys)
+    assert (_tag(rows, TASK), _shown(rows, TASK)) == ("doing", " current")
+    assert (_tag(rows, UNIT), _tag(rows, "alpha")) == ("doing", "doing")
+
+
+def test_block_reads_blocked_and_shows_its_reason_while_blocked(tmp_path, capsys):
+    root = _repo(tmp_path)
+    task = "alpha/a2-edges/write-tests"
+    assert _mark(root, capsys, "block", task, "--reason", REASON)[0] == 0
+    assert _records(root)[0]["reason"] == REASON
+    rows = _print(root, capsys)
+    assert (_tag(rows, task), _shown(rows, task)) == ("blocked", f" because {REASON}")
+    assert _tag(rows, "alpha/a2-edges") == "blocked"
+    assert _mark(root, capsys, "start", task)[0] == 0
+    rows = _print(root, capsys)
+    assert (_tag(rows, task), _shown(rows, task)) == ("doing", " current")
+
+
+def test_block_without_a_reason_exits_2_and_writes_nothing(tmp_path, capsys):
+    root = _repo(tmp_path)
+    _hand(root, {"item": TASK, "state": "doing", "at": "2026-09-22T09:00:00Z",
+                 "head": "1a2b3c4"})
+    before = _snapshot(root)
+    for options in ((), ("--reason", ""), ("--reason", "   ")):  # missing, empty, blank
+        assert _mark(root, capsys, "block", TASK, *options) == (
+            2, "", NEEDS_REASON.format(id=TASK)), options
+    assert _snapshot(root) == before
+
+
+def test_start_and_block_take_an_approval_and_every_call_appends_a_record(tmp_path, capsys):
+    root = _repo(tmp_path)
+    hand = {"item": "alpha/a2-edges/write-tests", "state": "done",
+            "at": "2026-09-22T09:00:00Z", "head": "1a2b3c4", "note": "kept as written"}
+    _hand(root, hand)
+    approval = f"{UNIT}/approve-commit"
+    assert _mark(root, capsys, "start", approval)[0] == 0
+    rows = _print(root, capsys)
+    assert (_tag(rows, approval), _shown(rows, approval)) == ("waiting on a seat", " current")
+    assert _mark(root, capsys, "block", approval, "--reason", "the seat is away")[0] == 0
+    assert _mark(root, capsys, "done", TASK)[0] == 0
+    assert _mark(root, capsys, "done", TASK)[0] == 0
+    records = _records(root)
+    assert records[0] == hand
+    assert [(r["item"], r["state"]) for r in records[1:]] == [
+        (approval, "doing"), (approval, "blocked"), (TASK, "done"), (TASK, "done")]
+    rows = _print(root, capsys)
+    assert (_tag(rows, approval), _shown(rows, approval)) == (
+        "blocked", " because the seat is away")
+
+
+# --- SC7.2 a done task's evidence -----------------------------------------------
+
+@needs_git
+def test_sc7_2_a_done_task_shows_the_head_id_of_its_done_call_and_an_approval_its_seat(
+        tmp_path, capsys):
+    root = _repo(tmp_path)
+    head = _commit_all(root)
+    assert _mark(root, capsys, "done", TASK)[0] == 0
+    for approval in APPROVALS:
+        assert _mark(root, capsys, "done", f"{UNIT}/{approval}", "--by", "user")[0] == 0
+    assert _recommit(root, "later.txt") != head  # HEAD moves on after the calls
+    rows = _print(root, capsys)
+    assert (_tag(rows, TASK), _shown(rows, TASK)) == ("done", f" at {head}")
+    assert _rest(rows, TASK) == f" at {head} | Write the tests"
+    for approval in APPROVALS:
+        rid = f"{UNIT}/{approval}"
+        assert (_tag(rows, rid), _shown(rows, rid)) == ("done", f" by user at {head}"), rid
+    assert _rest(rows, f"{UNIT}/approve-tests") == (
+        f" by user at {head} | Approve the test list")
+
+
+@needs_git
+def test_sc7_2_a_tracked_change_marks_the_done_call_dirty_and_an_untracked_file_never(
+        tmp_path, capsys):
+    root = _repo(tmp_path)
+    head = _commit_all(root)
+    approval = f"{UNIT}/approve-tests"
+    (root / "notes.txt").write_text("untracked\n", encoding="utf-8")
+    assert _mark(root, capsys, "done", TASK)[0] == 0
+    (root / "README.md").write_text("an edit\n", encoding="utf-8")
+    assert _mark(root, capsys, "done", approval, "--by", "user")[0] == 0
+    assert [r["dirty"] for r in _records(root)] == [False, True]
+    rows = _print(root, capsys)
+    assert _shown(rows, TASK) == f" at {head}"
+    assert _shown(rows, approval) == f" by user at {head} dirty"
+
+
+def test_sc7_2_outside_git_a_done_task_shows_no_commit_and_records_no_dirty(tmp_path, capsys):
+    root = _repo(tmp_path)
+    approval = f"{UNIT}/approve-commit"
+    assert _mark(root, capsys, "done", TASK)[0] == 0
+    assert _mark(root, capsys, "done", approval, "--by", "user")[0] == 0
+    records = _records(root)
+    assert [r["head"] for r in records] == ["no commit", "no commit"]
+    assert not any("dirty" in r for r in records)
+    rows = _print(root, capsys)
+    assert (_shown(rows, TASK), _shown(rows, approval)) == (
+        " at no commit", " by user at no commit")
+
+
+def test_sc7_2_only_a_task_whose_last_record_is_done_shows_evidence(tmp_path, capsys):
+    root = _repo(tmp_path)
+    prove = f"{UNIT}/prove-red"
+    assert _mark(root, capsys, "done", TASK)[0] == 0
+    assert _mark(root, capsys, "start", TASK)[0] == 0  # reopened: doing, the current task
+    assert _mark(root, capsys, "done", prove)[0] == 0
+    rows = _print(root, capsys)
+    assert (_tag(rows, TASK), _shown(rows, TASK)) == ("doing", " current")
+    assert (_tag(rows, prove), _shown(rows, prove)) == ("done", " at no commit")
+    assert (_tag(rows, f"{UNIT}/green"), _shown(rows, f"{UNIT}/green")) == ("to do", "")
+
+
+# --- sketch 2: done on an approval needs --by ---------------------------------------
+
+NO_SEAT = ((), ("--by", ""), ("--by", "   "))  # missing, empty, blank
+
+
+@pytest.mark.parametrize("approval", APPROVALS)
+def test_sketch_2_done_on_an_approval_without_by_exits_2_and_writes_nothing(
+        tmp_path, capsys, approval):
+    root = _repo(tmp_path)
+    rid = f"{UNIT}/{approval}"
+    _hand(root, {"item": rid, "state": "doing", "at": "2026-09-22T09:00:00Z",
+                 "head": "1a2b3c4"})
+    before = _snapshot(root)
+    for options in NO_SEAT:
+        assert _mark(root, capsys, "done", rid, *options) == (
+            2, "", NEEDS_BY.format(id=rid)), options
+    assert _snapshot(root) == before
+
+
+def test_sketch_2_with_no_progress_file_a_refused_approval_makes_no_folder(tmp_path, capsys):
+    root = _repo(tmp_path)
+    before = _snapshot(root)
+    for approval in APPROVALS:
+        rid = f"{UNIT}/{approval}"
+        assert _mark(root, capsys, "done", rid) == (2, "", NEEDS_BY.format(id=rid))
+    assert _snapshot(root) == before
+    assert not (root / ".sdlc" / "progress").exists()
+
+
+def test_by_on_a_done_that_is_not_an_approval_exits_2_and_writes_nothing(tmp_path, capsys):
+    root = _repo(tmp_path)
+    before = _snapshot(root)
+    for rid in (TASK, UNIT, "alpha"):  # a task, a unit, a contract
+        assert _mark(root, capsys, "done", rid, "--by", "user") == (
+            2, "", NO_BY.format(id=rid)), rid
+    assert _snapshot(root) == before
+
+
+def test_by_takes_the_seat_as_written_even_off_the_roster(tmp_path, capsys):
+    root = _repo(tmp_path)  # the roster lists `user` only
+    for approval, seat in (("approve-tests", "claude"), ("approve-commit", "PO seat")):
+        rid = f"{UNIT}/{approval}"
+        assert _mark(root, capsys, "done", rid, "--by", seat) == (
+            0, f"{rid}: done by {seat}\n", "")
+    assert [r["by"] for r in _records(root)] == ["claude", "PO seat"]
+    rows = _print(root, capsys)
+    assert _shown(rows, f"{UNIT}/approve-tests") == " by claude at no commit"
+    assert _shown(rows, f"{UNIT}/approve-commit") == " by PO seat at no commit"
+
+
+# --- sketch 3: done on a contract closes everything under it ------------------------
+
+def test_sketch_3_done_on_a_contract_closes_every_step_and_check_and_reads_it_done(
+        tmp_path, capsys):
+    root = _repo(tmp_path, gates=["G0"])  # alpha reads ready-green, so its G0 reads done
+    assert _mark(root, capsys, "done", "alpha") == (0, "alpha: done\n", "")
+    assert [(r["item"], r["state"]) for r in _records(root)] == [("alpha", "done")]
+    rows = _print(root, capsys)
+    under = [row for row in rows if row[1] == "alpha" or row[1].startswith("alpha/")]
+    assert len(under) == 23  # the contract, its verdict, two units, their tasks and checks
+    assert {tag for _, _, tag, _ in under} == {"done"}
+    assert _tag(rows, "beta") == "to do"
+
+
+def test_sketch_3_a_close_reads_done_over_earlier_failed_blocked_and_doing(tmp_path, capsys):
+    root = _repo(tmp_path)  # no gate active: nothing under alpha but its units
+    prove = f"{UNIT}/prove-red"
+    assert _run(root, capsys, CHECK, RED)[0] == 1                                # failed
+    assert _mark(root, capsys, "block", prove, "--reason", REASON)[0] == 0       # blocked
+    assert _mark(root, capsys, "start", "alpha/a2-edges/green")[0] == 0          # doing
+    assert _tag(_print(root, capsys), "alpha") == "failed"
+    assert _mark(root, capsys, "done", "alpha")[0] == 0
+    rows = _print(root, capsys)
+    under = [row for row in rows if row[1] == "alpha" or row[1].startswith("alpha/")]
+    assert {tag for _, _, tag, _ in under} == {"done"}
+    assert _shown(rows, prove) == ""  # closed: neither its reason nor evidence of its own
+
+
+def test_sketch_3_done_on_a_unit_closes_its_steps_and_checks_and_no_other(tmp_path, capsys):
+    root = _repo(tmp_path)
+    assert _mark(root, capsys, "done", UNIT)[0] == 0
+    rows = _print(root, capsys)
+    under = [rid for _, rid, _, _ in rows if rid.startswith(UNIT + "/")]
+    assert len(under) == 9  # seven tasks and two checks
+    assert {_tag(rows, rid) for rid in under + [UNIT]} == {"done"}
+    assert [_tag(rows, f"alpha/a2-edges/{key}")
+            for key in ("write-tests", "sketch-1", "SC2.1", "sketch-3")] == ["to do"] * 4
+
+
+@needs_git
+def test_sketch_3_a_close_shows_its_head_on_its_own_item_and_keeps_each_tasks_own(
+        tmp_path, capsys):
+    root = _repo(tmp_path)
+    first = _commit_all(root)
+    approval = f"{UNIT}/approve-tests"
+    assert _mark(root, capsys, "done", TASK)[0] == 0
+    assert _mark(root, capsys, "done", approval, "--by", "user")[0] == 0
+    second = _recommit(root, "second.txt")
+    assert _mark(root, capsys, "done", UNIT)[0] == 0
+    third = _recommit(root, "third.txt")
+    assert _mark(root, capsys, "done", "alpha")[0] == 0
+    rows = _print(root, capsys)
+    assert _shown(rows, TASK) == f" at {first}"
+    assert _shown(rows, approval) == f" by user at {first}"
+    assert _shown(rows, f"{UNIT}/prove-red") == ""       # done by a close alone
+    assert _shown(rows, "alpha/a2-edges/green") == ""
+    assert _shown(rows, UNIT) == f" at {second}"
+    assert _shown(rows, "alpha") == f" at {third}"
+
+
+def test_sketch_3_a_close_never_covers_the_verdict(tmp_path, capsys):
+    root = _repo(tmp_path, gates=["G0"])
+    beta = _contract("beta", BETA)
+    del beta["entities"]  # draft-green, TC017 at ready: the verdict reads to do
+    _dump(root / "specs" / "beta" / "contract.yaml", beta)
+    assert _mark(root, capsys, "done", "beta")[0] == 0
+    rows = _print(root, capsys)
+    assert _tag(rows, "beta/b1-solo") == "done"
+    assert (_tag(rows, "beta/G0"), _tag(rows, "beta")) == ("to do", "doing")
+    assert _shown(rows, "beta") == ""  # evidence shows only on an item that reads done
+
+
+def test_sketch_3_a_backfill_with_no_progress_file_makes_the_file_and_its_gitignore(
+        tmp_path, capsys):
+    root = _repo(tmp_path)
+    folder = root / ".sdlc" / "progress"
+    assert not folder.exists()
+    assert _mark(root, capsys, "done", "beta")[0] == 0
+    assert sorted(p.name for p in folder.iterdir()) == [".gitignore", "beta.yaml"]
+    assert (folder / ".gitignore").read_bytes() == b"*\n"
+    assert _tag(_print(root, capsys), "beta") == "done"
+
+
+# --- each writer checks its id against the tree first ---------------------------------
+
+# Each call is (action, options); an unknown id wins over a missing --by or --reason.
+UNKNOWN_CALLS = (("start", ()), ("done", ()), ("done", ("--by", "user")),
+                 ("block", ("--reason", REASON)), ("block", ()))
+
+
+def test_a_task_writer_with_an_unknown_id_exits_2_and_writes_nothing(tmp_path, capsys):
+    root = _repo(tmp_path)
+    before = _snapshot(root)
+    for action, options in UNKNOWN_CALLS:
+        for rid in ("alpha/a1-core/review", "alpha/a9-none/approve-tests", "nowhere"):
+            assert _mark(root, capsys, action, rid, *options) == (
+                2, "", UNKNOWN.format(id=rid)), (action, options, rid)
+    assert _snapshot(root) == before
+
+
+# G4 is active so a verdict prints; the kit computes no G4 verdict, so no
+# print runs the validator or git.
+NOT_TASKS = (("alpha/a1-core/SC1.1", "check"), ("alpha/a1-core", "unit"),
+             ("alpha", "contract"), ("alpha/G4", "verdict"), ("gates/G4", "gate"),
+             ("gates/G0", "gate"), ("gates/G0/slow-gate", "finding"))
+
+
+def test_start_and_block_take_only_a_task(tmp_path, capsys):
+    root = _repo(tmp_path, gates=["G4"])
+    before = _snapshot(root)
+    for rid, kind in NOT_TASKS:
+        for action, options in (("start", ()), ("block", ("--reason", REASON))):
+            assert _mark(root, capsys, action, rid, *options) == (
+                2, "", NOT_A_TASK.format(id=rid, kind=kind, action=action)), (action, rid)
+    assert _snapshot(root) == before
+
+
+def test_done_takes_only_a_task_a_unit_or_a_contract(tmp_path, capsys):
+    root = _repo(tmp_path, gates=["G4"])
+    before = _snapshot(root)
+    for rid, kind in NOT_TASKS:
+        if kind in ("unit", "contract"):
+            continue
+        for options in ((), ("--by", "user")):
+            assert _mark(root, capsys, "done", rid, *options) == (
+                2, "", NOT_CLOSABLE.format(id=rid, kind=kind)), (rid, options)
+    assert _snapshot(root) == before
+
+
+# --- a task writer never rewrites records it cannot read ------------------------------
+
+WRITES = (("start", TASK), ("done", TASK), ("done", f"{UNIT}/approve-tests", "--by", "user"),
+          ("block", TASK, "--reason", REASON), ("done", UNIT), ("done", "alpha"))
+
+
+@pytest.mark.parametrize("text", MALFORMED)
+def test_a_malformed_progress_file_stops_every_task_writer_with_one_line(
+        tmp_path, capsys, text):
+    root = _repo(tmp_path)
+    (root / ".sdlc" / "progress").mkdir(parents=True)
+    (root / ".sdlc" / "progress" / "alpha.yaml").write_text(text, encoding="utf-8")
+    before = _snapshot(root)
+    for call in WRITES:
+        code, out, err = _mark(root, capsys, *call)
+        assert re.fullmatch(UNREADABLE_ALPHA, err), (call, err)
+        assert (code, out) == (2, ""), call
+    assert _snapshot(root) == before
+
+
+def test_another_contracts_malformed_file_never_stops_a_task_writer(tmp_path, capsys):
+    root = _repo(tmp_path)
+    folder = root / ".sdlc" / "progress"
+    folder.mkdir(parents=True)
+    (folder / "beta.yaml").write_text("records: [unclosed\n", encoding="utf-8")
+    assert _mark(root, capsys, "done", TASK) == (0, f"{TASK}: done\n", "")
+    assert (folder / "beta.yaml").read_text(encoding="utf-8") == "records: [unclosed\n"
+    assert [(r["item"], r["state"]) for r in _records(root)] == [(TASK, "done")]
