@@ -18,28 +18,28 @@ pane moves until they land.
   `--reason`, and `done` on a unit or a contract closes everything under
   it (the backfill). A `done` task shows its commit, an approval its seat.
 
-t4 goes first: it owns the folder's `.gitignore`, so the first file any
-writer creates is already ignored, and t5 adds three verbs to the command
-t4 builds.
+**Closed.** The deliverable is met: t4 at `0b650bd` and t5 at `a11eab0`,
+each a Two-Key PASS at round 1. The PR carrying them opens and merges on
+the user's word.
 
-Where things stand: PR #50 (t3 and t2) is open with both CI jobs green,
-waiting on your merge. This branch starts from its tip, so its PR shows
-only this session's commits once #50 merges. Suite 375 green, the 14
-contracts ready-green, the vocabulary, language and scope checks clean.
+Where things stand: PR #50 (t3 and t2) merged at `a1109df`. Suite 432
+green (405 before t5; t4 added 30 cases, t5 27), the 14 contracts
+ready-green, the vocabulary, language and scope checks clean. The kit now
+records its own progress: t4's and t5's checks carry their runs, t0 to t5
+are closed, and the tree reads them done, with the current mark derived to
+t6's `approve-tests`.
 
-**Who does what.** Recommended, as in session 40, where both units passed
-at round 1: you delegate the four in-work approvals (two test lists, two
-commits) to Claude on review, and rule the open details below now, so the
-lists only encode your rulings. Subagents do each unit's work through the
-Workflow tool: a spec-channel agent drafts the test list, proves it red
-from the scratchpad and prototypes the interface; a developer agent makes
-the tests green without opening `tests/`. Claude places the approved
-tests, reviews each commit, and runs the receipts before each verifier
-round.
+**Who did what.** The user approved this plan, its five rulings and the
+delegation, and merged PR #50. Subagents did each unit's work through the
+Workflow tool: a spec-channel agent drafted the test list, proved it red
+from the scratchpad and prototyped the interface; a developer agent made
+the tests green without opening `tests/`. Claude reviewed and approved each
+list and each commit, placed the approved tests, and ran the receipts
+before each verifier round.
 
 ## Rulings for the test lists
 
-Details the request leaves open, with the recommended ruling for each:
+Details the request left open, ruled by the user at plan review:
 
 1. A command that cannot start (not found) is an error: exit 2, one line,
    nothing written. It never counts as red, so a missing test binary
@@ -74,46 +74,72 @@ The HTML is generated, never committed.
 
 ## Steps
 
-1. Open: branch `session-41-tree-view-t4-t5` from #50's tip, and this plan.
-2. t4, draft and approve the test list. The drafter also takes t3's two
-   advisories: name the evidence keys (`head`, `by`, `reason`, `command`,
-   `dirty`) in `progress.py`'s docstring, and mark a `G0` verdict `dirty`
-   when its contract file differs from `HEAD`, since the validator reads
-   the working tree.
-3. t4, write the tests in `tests/test_progress.py` and prove red.
-4. t4, green: `progress.py`, `__main__.py`, and the tree's evidence.
-5. t4, approve the commit and commit.
-6. t4 Two-Key.
-7. t5, draft and approve the test list.
-8. t5, write the tests and prove red, each red run recorded with t4's
-   `progress run --expect red`.
-9. t5, green, each green run recorded with `progress run`.
-10. t5, approve the commit and commit.
-11. t5 Two-Key.
-12. Close: `progress done` on t0 to t5, so the kit's tree reads tree-view's
-    real state; STATE.md regenerated and this plan struck through; the
-    push and the PR on your word.
+1. ~~Open.~~ Done at `8f6db7d`: branch `session-41-tree-view-t4-t5` from
+   #50's tip, and this plan; PR #50 merged at `a1109df`.
+2. ~~t4, draft and approve the test list.~~ 24 tests (30 cases), approved
+   with three changes: a check keeps its last green run's evidence after a
+   close (one assertion added), durable test names, and two hints in the
+   interface note. Its one question, answered: `gates/none` reads `gate`,
+   unpinned.
+3. ~~t4, write the tests and prove red.~~ 30 failed, 375 passed, each on
+   an assertion.
+4. ~~t4, green.~~ `progress.py`, `tree.py`, `tree_view.py`, `__main__.py`;
+   405 passed.
+5. ~~t4, approve the commit and commit.~~ Done at `0b650bd`; its three
+   checks then recorded green through `progress run`.
+6. ~~t4 Two-Key.~~ PASS at round 1, about 192K tokens. Three advisories,
+   all to t9.
+7. ~~t5, draft and approve the test list.~~ 25 tests (27 cases), approved
+   with durable names (one would have repeated a t4 test's name) and a
+   docstring line. Its two questions, answered: about 7 seconds is
+   acceptable; neither check order needs pinning.
+8. ~~t5, write the tests and prove red.~~ 27 failed, 405 passed; each
+   check's red recorded with `progress run --expect red`.
+9. ~~t5, green.~~ The same four files; 432 passed; each check's green
+   recorded with `progress run` at `a11eab0`.
+10. ~~t5, approve the commit and commit.~~ Done at `a11eab0`.
+11. ~~t5 Two-Key.~~ PASS at round 1, about 193K tokens. Three advisories:
+    one to t6, one to t9, one noted.
+12. ~~Close.~~ t0 to t5 closed with `progress done`, so the kit's tree
+    reads them done; STATE.md regenerated and this plan struck through;
+    the push and the PR on the user's word.
 
-Decisions this session: eight. Yours now: (1) this plan, its five rulings
-and the delegation; (2) PR #50's merge. Claude's on review, if delegated:
-(3) t4's test list; (4) t4's commit; (5) t5's test list; (6) t5's commit.
-Yours at the close: (7) the push and the PR; (8) the merge.
+Decisions this session: eight. The user's: (1) this plan, its five rulings
+and the delegation: yes; (2) PR #50's merge: yes. Claude's on review: (3)
+t4's test list: yes, with three changes; (4) t4's commit: yes; (5) t5's
+test list: yes, with the names and a docstring line; (6) t5's commit: yes.
+The user's at the close: (7) the push and the PR: pending; (8) the merge:
+pending.
+
+Details the rulings left open, fixed with the test lists: `--expect` takes
+red or green, default green, always recorded; the command runs at the root
+from its argv, with no shell and its output passed through, then one line,
+`<id>: <result>, expected <expect>`; `HEAD` and dirty are read before the
+command starts; outside git the head reads `no commit` and no dirty key is
+written; a `G0` verdict reads dirty when its own contract file differs from
+`HEAD` or is not in it; a check keeps its last run's evidence when that run
+was green as expected. `--by` on anything but an approval, and a blank
+`--by` or `--reason`, exit 2; start and block take an approval too; every
+call appends; a close is one record; a close neither adds evidence to the
+items under it nor hides theirs; a closed unit or contract shows its close's
+`at <head>`; a blocked task shows `because <reason>` while blocked.
 
 Deferred, not this session:
-- `tree-view` t6 and t7 (both unblocked), t8 after t7, t9 last, releasing
-  0.15.0; then the herdr hook on t8's notify, outside the kit.
-- For t6: t1's id collision (a sketch naming `(commit)`, or a unit named
-  like an active gate); a repeated `depends_on` entry prints the link
-  twice; `tree_view.py`'s docstring says each part follows one space, but
-  the summary follows ` | `.
-- For t9: t0's two wording notes; t1's note that a `.yml` finding is not
-  read; USAGE's backfill sentence holds only for a ready-green contract
-  with no other active gate; USAGE documents the line's words and the text
-  rule behind "unchanged".
+- `tree-view` t7 (unblocked), t8 after t7, then the herdr hook on t8's
+  notify, outside the kit; t6; t9 last, releasing 0.15.0.
+- For t7: `git status` with `--no-optional-locks`, since the pane redraws
+  while the user runs git.
+- For t6: `tree.py`'s docstring says a close reads everything under it
+  done, where it reads every task and check; t1's id collision; a repeated
+  `depends_on` entry prints the link twice; `tree_view.py`'s docstring on
+  spacing.
+- For t9: USAGE's `progress` rows (`--expect green`, the exit-2 refusals,
+  a malformed file stopping a writer, the task writers' options and
+  evidence), the `G0` verdict's dirty rule, no `dirty` key outside git,
+  "done all the way down" (a close never covers a verdict); t0's two
+  wording notes; t1's `.yml` note; the backfill qualifier; the line's words
+  and the text rule behind "unchanged".
 - The backfill of the 13 earlier contracts, once each is checked finished.
-- Later: a summary holding a character the console's encoding lacks could
-  fail a print piped on Windows; every current contract and finding is
-  ASCII.
 - Parked until the pane can follow them: G1, then the pilot's M0 code.
 - `no-check-reads-the-source-document`: which request carries it.
 - `derived-language`, `feature-document`, `spec-doc-type`; the demo intake

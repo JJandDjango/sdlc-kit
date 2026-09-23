@@ -6,11 +6,11 @@
     "quality_profile": "showcase",
     "locale": "en",
     "views": [
-      { "id": "now", "label": "Where we are", "focus": ["open", "t4_red"], "note": "Step 1: the plan, its five rulings and the delegation wait on your review; PR #50's merge is yours too." },
-      { "id": "decide", "label": "Who decides", "focus": ["t4_tests_ok", "t4_commit_ok", "t5_tests_ok", "t5_commit_ok", "merge_ok"], "note": "Yours: the plan, PR #50's merge, the push, the PR and the merge. Claude's on review, if delegated: both lists and both commits." },
-      { "id": "runs", "label": "t4: check runs", "focus": ["t4_red", "t4_green"], "note": "progress run records red or green beside --expect, with the command, HEAD, dirty and the time; the folder ignores itself." },
-      { "id": "writers", "label": "t5: task writers", "focus": ["t5_red", "t5_green"], "note": "progress start, done and block; --by on an approval, --reason on a block; done on a unit or contract closes everything under it." },
-      { "id": "exceptions", "label": "If a round fails", "focus": ["t4_green", "fail", "open_q"], "note": "A Two-Key FAIL is fixed and rerun, at most 3 rounds; a fact the contract cannot keep is an OPEN and a re-intake." }
+      { "id": "now", "label": "Where we are", "focus": ["close", "merge_ok"], "note": "Closed: t4 and t5 each passed Two-Key at round 1. The push, the PR and the merge wait on your word." },
+      { "id": "decide", "label": "Who decided", "focus": ["t4_tests_ok", "t4_commit_ok", "t5_tests_ok", "t5_commit_ok", "merge_ok"], "note": "You: the plan, its rulings, the delegation, PR #50's merge. Claude on review: both lists and both commits." },
+      { "id": "runs", "label": "t4: check runs", "focus": ["t4_red", "t4_green"], "note": "30 cases red first, then 405 green at 0b650bd; progress run records each check's run, the folder ignores itself." },
+      { "id": "writers", "label": "t5: task writers", "focus": ["t5_red", "t5_green"], "note": "27 cases red first, then 432 green at a11eab0; its red and green runs recorded through progress run." },
+      { "id": "exceptions", "label": "If a round fails", "focus": ["t4_green", "fail", "open_q"], "note": "No round failed and no OPEN was needed: both units passed at round 1." }
     ]
   },
   "lanes": [
@@ -27,19 +27,19 @@
   "groups": [],
   "mainPath": ["open", "t4_red", "t4_green", "t5_red", "t5_green", "close"],
   "nodes": [
-    { "id": "t4_tests_ok", "lane": "gates", "col": 1, "type": "security", "label": "Approval", "sublabel": "t4 list" },
-    { "id": "t4_commit_ok", "lane": "gates", "col": 2, "type": "security", "label": "Approval", "sublabel": "t4 commit" },
-    { "id": "t5_tests_ok", "lane": "gates", "col": 3, "type": "security", "label": "Approval", "sublabel": "t5 list" },
-    { "id": "t5_commit_ok", "lane": "gates", "col": 4, "type": "security", "label": "Approval", "sublabel": "t5 commit" },
+    { "id": "t4_tests_ok", "lane": "gates", "col": 1, "type": "security", "label": "Claude", "sublabel": "t4 list: yes" },
+    { "id": "t4_commit_ok", "lane": "gates", "col": 2, "type": "security", "label": "Claude", "sublabel": "t4 commit: yes" },
+    { "id": "t5_tests_ok", "lane": "gates", "col": 3, "type": "security", "label": "Claude", "sublabel": "t5 list: yes" },
+    { "id": "t5_commit_ok", "lane": "gates", "col": 4, "type": "security", "label": "Claude", "sublabel": "t5 commit: yes" },
     { "id": "merge_ok", "lane": "gates", "col": 5, "type": "security", "label": "Your word", "sublabel": "push, PR, merge" },
-    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "Branch + plan", "sublabel": "HERE: your review", "tag": "step 1" },
-    { "id": "t4_red", "lane": "steps", "col": 1, "type": "backend", "label": "t4 tests red", "sublabel": "list, then red", "tag": "steps 2-3" },
-    { "id": "t4_green", "lane": "steps", "col": 2, "type": "backend", "label": "t4 green", "sublabel": "commit, Two-Key", "tag": "steps 4-6" },
-    { "id": "t5_red", "lane": "steps", "col": 3, "type": "backend", "label": "t5 tests red", "sublabel": "red via progress run", "tag": "steps 7-8" },
-    { "id": "t5_green", "lane": "steps", "col": 4, "type": "backend", "label": "t5 green", "sublabel": "commit, Two-Key", "tag": "steps 9-11" },
-    { "id": "close", "lane": "steps", "col": 5, "type": "cloud", "label": "Close + PR", "sublabel": "t0-t5 recorded done", "tag": "step 12" },
-    { "id": "fail", "lane": "waits", "col": 2, "type": "security", "label": "FAIL", "sublabel": "fix, rerun, max 3", "tag": "if a round fails" },
-    { "id": "open_q", "lane": "waits", "col": 4, "type": "security", "label": "OPEN", "sublabel": "re-intake", "tag": "if the contract breaks" }
+    { "id": "open", "lane": "steps", "col": 0, "type": "cloud", "label": "Branch + plan", "sublabel": "done: 8f6db7d", "tag": "step 1, done" },
+    { "id": "t4_red", "lane": "steps", "col": 1, "type": "backend", "label": "t4 tests red", "sublabel": "30 red, proven", "tag": "steps 2-3, done" },
+    { "id": "t4_green", "lane": "steps", "col": 2, "type": "backend", "label": "t4 green", "sublabel": "done: 0b650bd", "tag": "steps 4-6, PASS" },
+    { "id": "t5_red", "lane": "steps", "col": 3, "type": "backend", "label": "t5 tests red", "sublabel": "27 red, recorded", "tag": "steps 7-8, done" },
+    { "id": "t5_green", "lane": "steps", "col": 4, "type": "backend", "label": "t5 green", "sublabel": "done: a11eab0", "tag": "steps 9-11, PASS" },
+    { "id": "close", "lane": "steps", "col": 5, "type": "cloud", "label": "Close + PR", "sublabel": "HERE: your word", "tag": "step 12" },
+    { "id": "fail", "lane": "waits", "col": 2, "type": "security", "label": "FAIL", "sublabel": "fix, rerun, max 3", "tag": "not taken" },
+    { "id": "open_q", "lane": "waits", "col": 4, "type": "security", "label": "OPEN", "sublabel": "re-intake", "tag": "not taken" }
   ],
   "edges": [
     { "from": "open", "to": "t4_red", "label": "plan approved", "variant": "emphasis", "route": "straight" },
@@ -56,10 +56,10 @@
     { "from": "t5_green", "to": "open_q", "variant": "security", "route": "straight" }
   ],
   "cards": [
-    { "dot": "amber", "title": "Where we are (2026-09-22, session 41 open)", "items": ["HERE: step 1, the plan waits on your review", "PR #50 (t3, t2) is open, both CI jobs green; its merge is yours", "This branch starts from #50's tip: suite 375 green, the 14 contracts ready-green, the doors and the scope check clean", "Deliverable: t4 (progress run) and t5 (progress start, done, block), each a Two-Key PASS"] },
-    { "dot": "violet", "title": "Who decides (eight decisions)", "items": ["1. This plan, its five rulings and the delegation: you, now", "2. PR #50's merge: you, now", "3-6. t4's and t5's test lists and commits: Claude on review, if you delegate them as in session 40", "7. This branch's push and PR: you, at the close", "8. Its merge: you"] },
-    { "dot": "cyan", "title": "Rulings for the test lists (recommended)", "items": ["1. A command that cannot start is an error (exit 2, nothing written), never red", "2. Each writer checks its id and its kind against the tree; unknown or wrong kind exits 2, nothing written", "3. A malformed progress file stops every writer; nothing is written", "4. --by takes the seat's name as written; the tree shows who approved, and TC016 stays the roster check", "5. Evidence reads like t3's G0 verdict: via <command> at <head>, by <seat>, then dirty"] },
-    { "dot": "slate", "title": "Deferred, not this session", "items": ["tree-view t6 and t7, t8 after t7, t9 and the release (0.15.0); then the herdr hook on t8's notify", "For t6 and t9: the advisories carried from t1, t2 and t3", "The backfill of the 13 earlier contracts, once each is checked finished", "Parked until the pane follows them: G1, then the pilot's M0 code", "derived-language, feature-document, spec-doc-type; the demo intake; wave B; 5b; the G4.6 finding"] },
+    { "dot": "amber", "title": "Where we are (2026-09-22, session 41 closed)", "items": ["The deliverable is met: t4 (check runs) at 0b650bd and t5 (task writers) at a11eab0, each a Two-Key PASS at round 1", "Suite 432 green (57 new cases); the 14 contracts ready-green; the vocabulary, language and scope checks clean", "The kit records its own progress: t0 to t5 read done, and the current mark derives to t6's approve-tests", "The PR carries the plan, t4, t5 and the close; it opens and merges on your word"] },
+    { "dot": "violet", "title": "Who decided (eight decisions)", "items": ["1. This plan, its five rulings and the delegation: you, yes", "2. PR #50's merge: you, yes (a1109df)", "3. t4's test list, 24 tests: Claude, yes, with three changes", "4. t4's commit: Claude, yes", "5. t5's test list, 25 tests: Claude, yes, names made durable", "6. t5's commit: Claude, yes", "7. The push and the PR: you, pending", "8. The merge: you, pending"] },
+    { "dot": "cyan", "title": "Rulings, now pinned by tests", "items": ["1. A command that cannot start is an error (exit 2, nothing written), never red", "2. Each writer checks its id and its kind against the tree; unknown or wrong kind exits 2, nothing written", "3. A malformed progress file stops every writer; nothing is written", "4. --by takes the seat's name as written; the tree shows who approved, and TC016 stays the roster check", "5. Evidence reads like t3's G0 verdict: via <command> at <head>, by <seat> at <head>, then dirty"] },
+    { "dot": "slate", "title": "Deferred, not this session", "items": ["t7, then t8, then the herdr hook on t8's notify; t6; t9 and the release (0.15.0)", "For t7: git status with --no-optional-locks; for t6 and t9: the advisories carried from t1 to t5", "The backfill of the 13 earlier contracts, once each is checked finished", "Parked until the pane follows them: G1, then the pilot's M0 code", "derived-language, feature-document, spec-doc-type; the demo intake; wave B; 5b; the G4.6 finding"] },
     { "dot": "slate", "title": "Glossary", "items": ["t4, t5: units of tree-view; both follow t3 alone, and t9 waits on both", "The seven tasks: approve the test list, write the tests, prove red, green, approve the commit, commit, Two-Key PASS", "Spec channel: the agent that drafts the tests and proves red; the developer agent makes them green without opening tests/", "Two-Key: a receipts agent re-runs every check, a zero-trust grader reads the commit against its sketches; the script computes the verdict", "OPEN: a fact the contract cannot keep goes back to the REQUEST as a question and a re-intake, never a silent edit"] }
   ]
 }
