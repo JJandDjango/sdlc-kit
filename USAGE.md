@@ -546,13 +546,12 @@ a test the implementer cannot edit.
 
 ---
 
-## 9. Following the work 🔴
+## 9. Following the work 🟢
 
-> 🔴 **Ratified, not shipped** ([ADR 0031](decisions/0031-the-work-is-one-derived-tree.md),
-> contracts `specs/tree-view/` and `specs/pane-view/`, kit 0.15.0). Marks flip
-> green as the units land.
+> 🟢 **Shipped** (kit 0.15.0, [ADR 0031](decisions/0031-the-work-is-one-derived-tree.md),
+> contracts `specs/tree-view/` and `specs/pane-view/`).
 
-🔴 `taskcontract tree` prints the repo's work as one tree, computed from
+🟢 `taskcontract tree` prints the repo's work as one tree, computed from
 the kit's files at every run and never stored. It reads the contracts,
 `.sdlc/config.yaml`, the findings, the progress files, git, and two name
 lists the kit ships (`taskcontract/data/gates.yaml` and
@@ -561,17 +560,18 @@ lists the kit ships (`taskcontract/data/gates.yaml` and
 file; `taskcontract progress` is the only writer, and only under
 `.sdlc/progress/`.
 
-### What the tree holds 🔴
+### What the tree holds 🟢
 
-🔴 The gates come first, at the repository level: each gate in
+🟢 The gates come first, at the repository level: each gate in
 `active_gates`, and any other gate a finding names, marked `inactive`.
 Each finding under `.sdlc/findings/` prints once, under the gate its
 `gate:` field names; `gate: none` prints under a `none` item, and the
-form's `TEMPLATE.yaml` prints nothing. Then each contract, with its
-verdict at every gate in `active_gates`, its units, each unit's seven
-tasks, and its checks, one per `acceptance_sketch` line.
+form's `TEMPLATE.yaml` prints nothing. A finding is read only from a
+`.yaml` file, so a `.yml` file there never shows. Then each contract,
+with its verdict at every gate in `active_gates`, its units, each unit's
+seven tasks, and its checks, one per `acceptance_sketch` line.
 
-🔴 Every item has an id, a path you pass to the commands below:
+🟢 Every item has an id, a path you pass to the commands below:
 
 | Item | Id |
 |---|---|
@@ -581,64 +581,118 @@ tasks, and its checks, one per `acceptance_sketch` line.
 | a task | `<contract>/<unit>/<task>`, with the keys in "The seven tasks" |
 | a check | `<contract>/<unit>/<check>`: the ids in the sketch's trailing parentheses, joined with `+` (`SC5.1+SC5.2`), else `sketch-<n>`, counted from 1 |
 
-🔴 Each item's summary is its source's own text: a contract's `intent`,
-a unit's `done_means`, a check's sketch line, a finding's `statement`,
-and a gate's or a task's one-line name from the kit's lists. Links come
-only from source fields: a unit's `depends_on`, a finding's `gate`. A
-feature document shows only as a file reference, found by the contract's
-id at `docs/features/<id>.md`.
+🟢 Each item's summary is its source's own text, with its ends stripped
+and each line break read as one space: a contract's `intent`, a unit's
+`done_means`, a check's sketch line, a finding's `statement`, and a
+gate's or a task's one-line name from the kit's lists. Links come only
+from source fields: a unit's `depends_on`, each entry once in the order it
+first appears, and a finding's `gate`. A feature document shows only as a
+file reference, found by the contract's id at `docs/features/<id>.md`.
 
-### Six statuses 🔴
+🟢 Each item prints on one line, indented two spaces per level: its full
+id, then its status in brackets (a finding shows `[kind: <kind>]` in its
+place), its marks (`inactive` on a gate that is not active, `current` on
+the current task), its evidence, its links (`depends_on: <contract>/<unit>`,
+`gate: <value>`), a contract's `doc: docs/features/<id>.md`, and last
+` | ` and its summary. Each part after the status prints only when the
+item has it, and a line break inside a part, such as in a multi-line
+`--reason`, reads as one space, so an item keeps one line.
 
-🔴 Every item but a finding shows one of six statuses: `to do`, `doing`,
+### Six statuses 🟢
+
+🟢 Every item but a finding shows one of six statuses: `to do`, `doing`,
 `done`, `failed`, `blocked`, `waiting on a seat`. A finding records no
 status, so it shows its `kind`.
 
-- 🔴 A task reads the state `taskcontract progress` recorded for it; an
+- 🟢 A task reads the state `taskcontract progress` recorded for it; an
   approval that holds the current task reads `waiting on a seat`.
-- 🔴 A check reads its last run, judged by what that run expected: never
+- 🟢 A check reads its last run, judged by what that run expected: never
   run, `to do`; red under `--expect red`, `doing`; green under the
-  default, `done`; a run that missed its expectation, `failed`. A test
-  that passes before its code exists shows `failed`.
-- 🔴 A contract's `G0` verdict comes from the validator: `done` at
+  default, `--expect green`, `done`; a run that missed its expectation,
+  `failed`. A test that passes before its code exists shows `failed`.
+- 🟢 A contract's `G0` verdict comes from the validator: `done` at
   ready-green, `blocked` when draft-green with `TC003`, `to do` when
   draft-green otherwise, `failed` when draft-red. An active gate the kit
   cannot compute yet reads `to do`.
-- 🔴 A parent takes the first of `failed`, `waiting on a seat`, `blocked`
+- 🟢 A parent takes the first of `failed`, `waiting on a seat`, `blocked`
   and `doing` that any child has. It reads `done` only when every child
   reads `done`, and `to do` when nothing under it has started.
 
-🔴 A `done` item names its evidence. A check names the command of the run
-that proved it and the commit it ran on, marked `dirty` when a tracked
-file differed from `HEAD` (untracked files do not count). A task names
-the commit it was marked done at, and an approval the seat that gave it.
-A `G0` verdict names the validator command and the commit it read.
+🟢 An item names its evidence on its line. A done check names the run
+that proved it, `via <command> at <commit>`. A done task names the commit
+its own done record was written at, `at <commit>`, and a done approval
+names its seat too, `by <seat> at <commit>`. A unit or contract closed
+with `progress done` names its close, `at <commit>`. A blocked task names
+its reason, `because <reason>`. A `G0` verdict, whatever it reads, names
+the validator run behind it: `via python -m taskcontract validate
+specs/<contract>/contract.yaml --profile ready at <commit>`.
 
-### The three modes 🔴
+🟢 Evidence ends in `dirty` in two cases. A run, a task's record or a
+close reads `dirty` when a tracked file differed from `HEAD` as it was
+recorded; untracked files do not count, so the untracked REQUESTs in a
+repo's root never mark it. A `G0` verdict reads `dirty` when its own
+contract file differs from `HEAD`: changed, staged or not, or not yet
+committed. Outside a git repository the commit reads `no commit`, and
+nothing reads `dirty`.
 
-- 🔴 **`taskcontract tree`** prints the whole tree and exits 0.
-- 🔴 **`taskcontract tree <id>`** prints one item in at most 20 lines: its
-  summary, status, links and file references, for an agent that needs one
-  fact without reading a document. A file reference is a repo path with
-  the line the item starts at; a gate or a task points to the kit page
-  that defines it. Every id the tree prints works here; an unknown id
-  exits 2 with `no node '{id}' - print the tree to list every node id`.
-- 🔴 **`taskcontract tree --follow`** keeps a terminal pane on the current
+### The three modes 🟢
+
+- 🟢 **`taskcontract tree`** prints the whole tree and exits 0. Each
+  source it cannot read prints one line on stderr, and the rest of the
+  tree still prints.
+- 🟢 **`taskcontract tree <id>`** prints one item, for an agent that needs
+  one fact without reading a document: its line as the whole tree prints
+  it, cut after the evidence, then one labeled line per field it has:
+  `summary:` whole, one line per link kind with its targets joined by
+  `, `, `doc:`, `file:` and `page:`. A file reference is a repo path with
+  the line the item starts at: line 1 for a contract, its verdicts and a
+  finding, and the line its entry starts for a unit or a check; a
+  contract's feature doc shows on its `doc:` line at line 1. A gate, a
+  verdict and a task name the kit page that defines the gate or the task,
+  a path in the kit's repository. So an item never takes more than seven
+  lines, whatever its fields hold. Every id the tree prints works here,
+  matched whole. An id that names two items (a check whose sketch names a
+  task key, such as `(commit)`, or a unit named like an active gate)
+  prints both, in the tree's order, with an empty line between them. An
+  unknown id exits 2 with `no node '{id}' - print the tree to list every
+  node id`, and an id with `--follow` exits 2 with `taskcontract tree:
+  --follow takes no id - give the id or --follow, not both`.
+- 🟢 **`taskcontract tree --follow`** keeps a terminal pane on the current
   task: every item on the path from the root to it shows, and the other
-  items at each level fold to one line with their counts by status, in
-  about fifteen lines. It renders again within two seconds of a change to
-  a source file, and never while nothing changes. Ctrl-C exits 0. It
-  needs no `curses`, so it runs on Windows: it reads modification times
-  once a second and redraws with ANSI escape codes.
+  items at each level fold to one line with their counts by status. For
+  five contracts of seven units each, with the current task in the last
+  unit, that is at most 15 lines. It renders again within two seconds of
+  a change to a source file, and never while nothing changes. Ctrl-C
+  exits 0. It needs no `curses`, so it runs on Windows: it reads
+  modification times once a second and redraws with ANSI escape codes.
 
-🔴 The current task is derived, never stored: the task marked `doing`
+🟢 One check of this kit's own tree, queried:
+
+```
+$ taskcontract tree tree-view/t6-query-face/SC6.1
+tree-view/t6-query-face/SC6.1 [done] via python -m pytest tests/test_tree_query.py -q --tb=no -p no:cacheprovider -k sc6_1 at c1380d5
+summary: verify an item id prints its source field, status, links and each file reference in at most 20 lines (SC6.1)
+file: specs/tree-view/contract.yaml:186
+```
+
+🟢 The pane lists its sources once a second: every file under `specs/`,
+`.sdlc/findings/`, `.sdlc/progress/` and `docs/features/`, plus
+`.sdlc/config.yaml` and the kit's two lists. It redraws only when a file
+was added, removed or changed, so a terminal resize alone does not
+redraw, and a line cut at the old width wraps until the next change. It
+keeps each contract's `G0` reading in memory until that contract's file
+changes. A change under `specs/vocabulary/` drops every reading, so that
+render runs the validator on every contract and can take a little over
+two seconds (about 2.4, measured on this kit).
+
+🟢 The current task is derived, never stored: the task marked `doing`
 most recently; with none `doing`, the first `to do` task in the contract
 that changed most recently; with no progress at all, none, and the pane
 shows the root folded. Marking the current task done moves it on.
 
-### The seven tasks 🔴
+### The seven tasks 🟢
 
-🔴 Every unit follows one task list, shown and never enforced: nothing
+🟢 Every unit follows one task list, shown and never enforced: nothing
 stops a unit that skips a task. Writing the tests and proving red belong
 to the spec channel (G2.5), green to the developer (G3), and each
 approval is a seat's answer. With `U` for the unit's id
@@ -654,43 +708,65 @@ approval is a seat's answer. With `U` for the unit's id
 | 6 | Commit | `commit` | `taskcontract progress done U/commit` |
 | 7 | Two-Key PASS | `two-key` | `taskcontract progress done U/two-key` |
 
-🔴 The checks carry their own runs. During prove red, run each check's
+🟢 The checks carry their own runs. During prove red, run each check's
 test through the kit with the red it expects:
 
 ```bash
 taskcontract progress run U/<check> --expect red -- <test command>
 ```
 
-and during green, the same without `--expect`, so a check reads `done`
-only on a green that was meant to be green.
+🟢 During green, run the same without `--expect`, which means `--expect
+green`, so a check reads `done` only on a green that was meant to be
+green.
 
-### Recording progress 🔴
+### Recording progress 🟢
 
-🔴 `taskcontract progress` writes `.sdlc/progress/<contract>.yaml`, one
+🟢 `taskcontract progress` writes `.sdlc/progress/<contract>.yaml`, one
 local file per contract. The folder holds a `.gitignore` of `*`, so none
 of it is committed; the file is disposable, and no gate, check, audit or
-hook reads it. Every record carries its time and the `HEAD` commit.
+hook reads it. Every record carries its time and the `HEAD` commit, and
+inside a git repository a `dirty` mark.
 
 | Command | What it records |
 |---|---|
 | `taskcontract progress start <id>` | the task `doing` |
-| `taskcontract progress done <id>` | the task `done`; on `approve-tests` or `approve-commit` it needs `--by <seat>`, and without it exits with an error and writes nothing |
-| `taskcontract progress block <id> --reason <text>` | the task `blocked`, with its reason |
-| `taskcontract progress run <check> [--expect red] -- <command>` | runs the command, then records red or green, the expectation, the command, the commit, a `dirty` mark and the time; exits 0 when the result met the expectation, 1 when it missed |
+| `taskcontract progress done <id>` | the task `done`; on a unit or a contract, a close. An approval (`approve-tests` or `approve-commit`) needs `--by <seat>`, and no other item takes it |
+| `taskcontract progress block <id> --reason <text>` | the task `blocked`, with its reason, which it needs |
+| `taskcontract progress run <check> [--expect red\|green] -- <command>` | runs the command, then records red or green, the expectation (`green` unless given), the command, the commit, a `dirty` mark and the time; exits 0 when the result met the expectation, 1 when it missed |
 
-🔴 A malformed progress file prints one line naming it, and its contract
-reads as having no progress.
+🟢 A call the kit refuses writes nothing, exits 2 and prints one line on
+stderr, and `run` refuses before it starts the command. `{action}` is
+`start` or `block`:
 
-🔴 **History, backfilled.** `taskcontract progress done` on a unit or a
-contract closes every task and check under it, and the tree reads it
-`done` all the way down. A contract finished before the tree existed
-reads `to do` until then, so one command per contract backfills its
-history; a fresh clone, which starts with no progress file, rebuilds it
-the same way.
+```
+no node '{id}' - print the tree to list every node id
+taskcontract progress: '{id}' is a {kind}, not a check - run takes a check id
+taskcontract progress: '{id}' is a {kind}, not a task - {action} takes a task id
+taskcontract progress: '{id}' is a {kind}, not a task, unit or contract - done takes a task, unit or contract id
+taskcontract progress: '{id}' is an approval - done needs --by <seat>
+taskcontract progress: '{id}' is not an approval - only approve-tests and approve-commit take --by
+taskcontract progress: block needs --reason <text> - say why '{id}' is blocked
+taskcontract progress: unreadable progress: {path} ({reason})
+taskcontract progress: cannot start {command} ({reason})
+```
 
-### The notify command 🔴
+🟢 A malformed progress file prints one line naming it, and its contract
+reads as having no progress. No writer touches it: each call on that
+contract is refused with the `unreadable progress` line above, so fix or
+remove the file first.
 
-🔴 When the current task is `approve-tests` or `approve-commit`, the
+🟢 **History, backfilled.** `taskcontract progress done` on a unit or a
+contract closes every task and check under it; a close never covers a
+verdict, which the validator reads. A closed unit reads `done`. A closed
+contract reads `done` when its `G0` verdict does and no other gate is
+active, since a verdict at any other gate reads `to do`. A contract
+finished before the tree existed reads `to do` until it is closed, so one
+command per contract backfills its history; a fresh clone, which starts
+with no progress file, rebuilds it the same way.
+
+### The notify command 🟢
+
+🟢 When the current task is `approve-tests` or `approve-commit`, the
 pane's first line reads `waiting on a seat: {approval} for {unit}`, and
 the command set in `.sdlc/config.yaml` runs:
 
@@ -699,17 +775,23 @@ tree:
   notify: <command>
 ```
 
-🔴 It runs through the shell once each time the current task arrives at
-an approval, never on a redraw, with the item's id in `SDLC_NODE`. A
-failure prints `notify failed, exit {code}: {command}`, and the pane
-keeps running; with no `notify` set, it runs the same. The key is
-optional, and the config template does not carry it. The command is the
-kit's edge: a terminal multiplexer's plugin (herdr's, for one) wraps it
-outside the kit.
+🟢 It runs through the shell at the repo root, once each time the current
+task arrives at an approval, never on a redraw, with the item's id in
+`SDLC_NODE` and its own output discarded. A pane that starts on an
+approval has arrived there, so it runs the command at once. The pane
+never waits on the command. One that ends nonzero prints `notify failed,
+exit {code}: {command}` on stderr, whole, never cut to the pane's width,
+and one that cannot start at all prints the same line with code 127. The
+pane keeps running either way, and with no `notify` set it runs the
+same. Ctrl-C ends the pane without stopping the commands it started,
+though on POSIX the same Ctrl-C reaches them. The key is optional, and
+the config template does not carry it. The command is the kit's edge: a
+terminal multiplexer's plugin (herdr's, for one) wraps it outside the
+kit.
 
-### The pane's lines 🔴
+### The pane's lines 🟢
 
-🔴 The pane prints one **where-am-I line**: the current task's contract
+🟢 The pane prints one **where-am-I line**: the current task's contract
 file, then its contract, unit and task, joined by ` > `, the unit and the
 task by the last segment of their ids:
 
@@ -717,20 +799,23 @@ task by the last segment of their ids:
 specs/tree-view/contract.yaml > tree-view > t6-query-face > approve-tests
 ```
 
-🔴 It stands directly under the waiting line (`waiting on a seat: ...`,
+🟢 It stands directly under the waiting line (`waiting on a seat: ...`,
 above) when the current task is an approval, and first otherwise; the
 waiting line stays first, word for word, since a multiplexer's plugin may
-read it. A where-am-I line wider than the pane is cut to the pane's width
-and ends in `...`, as every pane line is. With no current task the pane
-prints none.
+read it. With no current task the pane prints none: it reads `no current
+task`, then `<n> items: <counts>` for the top level.
 
-🔴 Each item line under another item opens on the **last segment of its
+🟢 Every pane line wider than the pane is cut to the pane's width and ends
+in `...`. The cut counts characters, not display columns, so a line that
+holds wide characters can still wrap.
+
+🟢 Each item line under another item opens on the **last segment of its
 id** (`t6-query-face`, `approve-tests`), since the lines above give the
 rest; a top-level item's line opens on its full id. Everything else keeps
 full ids: `taskcontract tree` with or without an id, the waiting line,
 every link and `SDLC_NODE`.
 
-🔴 Two optional keys under `tree: pane:` in `.sdlc/config.yaml` choose
+🟢 Two optional keys under `tree: pane:` in `.sdlc/config.yaml` choose
 what the lines hold. The pane reads them at each render, so a change
 shows within two seconds; the config template does not carry them.
 
@@ -741,42 +826,42 @@ tree:
     fold: names
 ```
 
-- 🔴 **`parts:`** lists what each item line shows after its id, from
+- 🟢 **`parts:`** lists what each item line shows after its id, from
   `status`, `marks`, `evidence`, `links`, `doc` and `summary`. The id
   always shows, and listing `id` changes nothing. The parts print in that
   fixed order whatever order the list gives, and `[]` shows the id alone.
   Unset, each item line shows every part it has. The key leaves the
   waiting line, the where-am-I line, the fold lines and `taskcontract
   tree` unchanged.
-- 🔴 **`fold: names`** makes each fold line name the items it folds in
+- 🟢 **`fold: names`** makes each fold line name the items it folds in
   place of the counts: `<n> more: `, then each item as `<id> [<status>]`,
   the id as its own line would show it, joined by `, ` in the tree's
   order. With no current task, the `<n> items:` line names the top-level
   items the same way. `fold: counts`, or no `fold:`, keeps the counts by
   status.
 
-🔴 A bad key never stops the pane. A `parts:` that is not a list, or that
+🟢 A bad key never stops the pane. A `parts:` that is not a list, or that
 names anything but the seven parts, is ignored as a whole, so each item
 line shows every part it has. A `fold:` other than `names` or `counts`
 keeps the counts. Either prints one line on stderr at each render, as an
-unreadable source does; `{value}` is the first entry that names no part,
-or the whole value when it is not a list, and for `fold:` the value as
-written:
+unreadable source does. `{value}` is the first entry that names no part,
+or the whole value when it is not a list, and for `fold:` the value, each
+as YAML reads it, so `fold: yes` prints `True`:
 
 ```
 taskcontract tree: pane parts ignored: {value} - give a list from id, status, marks, evidence, links, doc, summary
 taskcontract tree: pane fold ignored: {value} - give names or counts
 ```
 
-🔴 A `tree:` or `pane:` that is not a mapping reads as unset, as it does
+🟢 A `tree:` or `pane:` that is not a mapping reads as unset, as it does
 for `notify:`.
 
-🔴 A pane at t6's first approval, with the keys above, 80 columns wide:
+🟢 A pane at t6's first approval, with the keys above, 80 columns wide:
 
 ```
 waiting on a seat: approve-tests for tree-view/t6-query-face
 specs/tree-view/contract.yaml > tree-view > t6-query-face > approve-tests
-14 more: gates/G0 [to do], controlled-language [to do], distribution-reconcil...
+15 more: gates/G0 [to do], controlled-language [to do], distribution-reconcil...
 tree-view [waiting on a seat]
   10 more: G0 [done], t0-usage-pass-zero [done], t1-tree-shape [done], t2-sum...
   t6-query-face [waiting on a seat]
