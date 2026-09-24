@@ -9,6 +9,62 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.15.0 - 2026-09-23 (tag `v0.15.0`)
+
+- **`taskcontract tree` prints the work as one tree** (`tree-view`,
+  ADR 0031, units `t1-tree-shape`, `t2-summaries-and-links` and
+  `t3-status-and-cursor`). The tree is derived from the repo's files at
+  every run and never stored: the gates first, each with the findings
+  that name it, then each contract with its verdict at every active gate,
+  its units, each unit's seven tasks and its checks. Every item but a
+  finding reads one of six statuses (`to do`, `doing`, `done`, `failed`,
+  `blocked`, `waiting on a seat`), and a finding shows its kind. Each item
+  carries its source's own text as its summary, its links from
+  `depends_on` and a finding's `gate:`, and a contract's feature doc as a
+  file reference; the tree reads no document and writes no file. A `G0`
+  verdict reads the validator and names the command and the commit it
+  read. Delta note: none; the command is new, and no gate reads what it
+  prints.
+- **`taskcontract progress` records task steps and check runs**
+  (`tree-view`, units `t4-check-runs` and `t5-task-writers`). `progress
+  run <check> [--expect red|green] -- <command>` runs a check's command
+  and records red or green beside what it expected, with the command, the
+  commit and a `dirty` mark. `progress start`, `done` and `block` record a
+  task step: an approval's `done` names its seat with `--by`, a `block`
+  its reason with `--reason`, and `done` on a unit or a contract closes
+  every task and check under it. The records live in
+  `.sdlc/progress/<contract>.yaml`, local files that no gate, check, audit
+  or hook reads, in a folder that ignores itself. Delta note: none; a repo
+  that never runs the command has no folder, and every task reads `to do`.
+- **`taskcontract tree <id>` prints one item for an agent** (`tree-view`,
+  unit `t6-query-face`). One block of at most seven lines: the item's
+  line cut after its evidence, then its summary, its links, its feature
+  doc, its file reference at the line the item starts, and the kit page
+  that defines a gate or a task. An id that names two items prints both;
+  an unknown id exits 2. A unit whose `depends_on` repeats an entry now
+  links it once, and a line break inside a field reads as one space, on
+  every face. Delta note: none.
+- **`taskcontract tree --follow` keeps a pane on the current task**
+  (`tree-view`, units `t7-pane-face` and `t8-approval-notify`;
+  `pane-view`, units `p1-where-line` to `p4-fold-names`). The pane shows
+  the path to the current task under a where-am-I line, with each item
+  under another by the last segment of its id, folds the other items at
+  each level into one line of counts, and redraws within two seconds of a
+  change to a source file, a vocabulary change taking longer on a repo
+  with many contracts. At an approval its first line reads `waiting
+  on a seat: <approval> for <unit>`, and the optional `tree: notify:`
+  command runs once per arrival with the item's id in `SDLC_NODE`. Two
+  optional keys, `tree: pane: parts:` and `tree: pane: fold:`, choose
+  what the lines hold. Delta note: none; every key is optional, and the
+  config template carries none of them.
+- **The release is written down** (`tree-view`, unit `t9-release`).
+  `USAGE.md` section 9, "Following the work", reads green: the tree and
+  its ids, the six statuses and their evidence, the three modes, the
+  seven tasks, the progress commands and every refusal they print, the
+  notify command, and the pane's lines. Kit `0.14.0` -> `0.15.0`; the
+  contract schema stays at `1.4.0`. Delta note: none beyond the notes
+  above; pin the install ref to the tag.
+
 ## 0.14.0 - 2026-09-21 (tag `v0.14.0`)
 
 - **`entities:` is required at the ready profile** (`g0-declaration`,
