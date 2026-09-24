@@ -15,27 +15,28 @@ build. The kit's interview skill still asks ADR 0026's questions (the
 `feature-document` request moves it), so the interview runs by hand in
 the ratified format's order. r1 stays untracked, as material.
 
+**Stopped at the user's word, 2026-09-24,** at Q11 (terms). The
+deliverable is not reached: session 50 resumes the interview at the
+drafted terms, marked OPEN in the document's appendix, then readiness.
+
 ## Steps
 
-1. Replan: this plan; rename the branch `session-49-pane-spec`; commit
-   this plan.
-2. Opening: the feature's id and title, then the document's path. Seats:
-   PO user, engineer user. Materials: the sketch (engine transcript
-   `83087a60`), r1's trace table and measurements, the tree-view and
-   pane-view REQUESTs, USAGE section 9 (the pane as shipped in 0.15.0),
-   ADR 0031.
-3. The request half, one question at a time in the format's order:
-   statement; description; background and existing behavior touched;
+1. ~~Replan: this plan; rename the branch `session-49-pane-spec`; commit
+   this plan.~~ At `979f2f0`.
+2. ~~Opening: the feature's id and title, then the document's path.~~ Id
+   `project-tree` (`pane-view` is the closed 0.15.0 contract); the
+   document at `docs/features/project-tree.md`, tracked.
+3. The request half, one question at a time in the format's order.
+   ~~Statement; description; background and existing behavior touched;
    success criteria; non-goals; prerequisites; acceptance criteria, with
-   their checks and verbatim error messages; terms. Each section goes
-   into the document once answered, summarized before the next. The
-   bug-fix-only sections are left out.
+   their checks and verbatim error messages.~~ Terms: drafted, OPEN,
+   session 50.
 4. Readiness: the format's checks 1 to 8, read back; OPEN marks on the
-   user's word; the PO seat signs the request half.
-5. Close: STATE.md regenerated, this plan struck, memory updated; the
-   interview's friction recorded.
+   user's word; the PO seat signs the request half. Session 50.
+5. ~~Close: STATE.md regenerated, this plan struck, memory updated; the
+   interview's friction recorded.~~
 6. Push, open the PR, and merge it by merge commit once CI reads green, on
-   the user's word.
+   the user's word. Waits for that word.
 
 The document is the resume point: if the session ends first, session 50
 resumes at its first unwritten section. Every step sits outside a

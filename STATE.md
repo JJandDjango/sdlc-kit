@@ -2,23 +2,35 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-23 (session 48, at the 0.15.0 release)._
+> _Generated 2026-09-24 (session 49, the pane's feature document mid-interview)._
 
 ## Now
-- **Kit 0.15.0 is released.** `tree-view` (ADR 0031) merged as PR #57 at
-  `fdd6fe2` and is tagged `v0.15.0` there; the self-pin (`7a453e7`) and
-  this wrap ride PR #58 (`session-48-release`), merged by merge commit
-  once CI reads green, on the user's word given at open. No contract is in
-  flight.
-- 0.15.0 adds `taskcontract tree` (the work as one derived tree, six
-  statuses), `taskcontract progress` (task steps and check runs, in local
-  files no gate reads), `tree <id>` (one item for an agent) and `tree
-  --follow` (a pane on the current task). The schema stays at 1.4.0.
-- Receipts at the release: CI green on #57 at `96579dc`, whose tree the
-  merge keeps unchanged, and on main at `fdd6fe2`; USAGE's `uv` line, run
-  as written, installs `v0.15.0` (resolved to `fdd6fe2`) and reads
-  tree-view ready-green; scope-green from `fdd6fe2`. Session 47's suite:
-  592 passed, fifteen contracts ready-green.
+- **The pane work went back to the beginning.** Kit 0.15.0's tree and pane
+  were built from requests typed from the user's 2026-09-21 sketch, never
+  interviewed. tree-view's r1 dropped the sketch's gate conditions (g0.1
+  to g0.3, each with a status and findings) with no ruling, and with no
+  task in flight the pane reads two lines: `no current task`, `16 items:
+  14 to do, 2 done`. The user ruled on 2026-09-24: a fleshed-out feature
+  document before any build, the drift the kit exists to close.
+- **`docs/features/project-tree.md`**, the feature document for
+  `project-tree`, is mid-interview at r1, the request half. The interview
+  runs by hand in the format ADR 0029 ratified
+  (`NOTES_feature-document_2026-09-18.md`), since the kit's interview
+  skill still asks ADR 0026's questions. Written: statement, description,
+  background (the sketch verbatim, a 13-row trace against 0.15.0, the
+  measured tree), seven existing behaviors each tagged with its
+  regression check, five success criteria (SC4 makes the pane an outline
+  moved through with the arrow keys and the mouse), eight non-goals, eight
+  prerequisites (four missing, each with its owner), 14 checks, no new
+  error message, nine decisions. Two OPENs stand: the terms (Q11, drafted
+  in the appendix) and, for the engineer seat, where a feature's title
+  comes from, since ADR 0029 keeps tooling off headings.
+- `REQUEST_gate-outline_2026-09-23.md` (r1, untracked), the first plan's
+  request from the sketch, is superseded by the document and stays as
+  material.
+- Branch `session-49-pane-spec` holds `2311a17` (open), `979f2f0`
+  (replan) and this wrap, unpushed. main is at `7c79ba3` (PR #58, session
+  48's wrap); `v0.15.0` tags `fdd6fe2`.
 - The user's tree pane (`w9:p8`) runs the code it started with; restart it
   to run 0.15.0's.
 
@@ -26,32 +38,30 @@
 - None.
 
 ## Next actions
-1. Session 49: G1. Its criteria review comes before the pilot's M0 code,
-   and it gives intake's exit the successor venue the engine's
-   `intake-exit-names-no-successor-venue` asks for.
-2. The pilot's config line, in the engine's session; the engine's install
+1. Session 50: resume the interview at Q11, the terms drafted in the
+   document's appendix. Then readiness: the format's checks 1 to 8 read
+   back, OPEN marks on the user's word, and the PO seat's signature as a
+   revision row.
+2. Then the solution half (proposed solution, risks and cost), signed by
+   the engineer seat, which answers the title OPEN. SC4 makes the pane an
+   interactive program (keys and mouse, on Windows and POSIX), so risks
+   and cost weigh a new dependency against the kit's own input handling.
+   Then `/sdlc intake docs/features/project-tree.md`.
+3. Push `session-49-pane-spec` and open its PR, on the user's word; merge
+   by merge commit once CI reads green.
+4. G1, after project-tree is built, so the pane shows G1's conditions.
+   The pilot's config line, in the engine's session; the engine's install
    ref moves to `v0.15.0` there (pull, not push).
-3. Deferred: flag the Claude pane itself (a local `claude.toml` detection
-   rule shadowing herdr's remote one, or a herdr change); the hook's key
-   action; the hook's four known edges, in its README; `.sdlc/config.yaml`
-   still lists `plan.workflow.json` as a free path.
-4. Carried advisories, wording unless noted. `tree_view.py`: the module
-   docstring's 127 means the shell itself cannot start; `follow()`'s
-   Ctrl-C note names only POSIX; `_flat()`'s docstring understates (it
-   keeps trailing space too); the private `_no_node` import. USAGE: `run`
-   refuses before it starts the command, save its `cannot start` line,
-   and an argparse error prints two lines; a closed unit reads `done`
-   only while the close is its latest record; the width cut never goes
-   below 10 columns. CHANGELOG: drop "now" from the repeated-link note.
-   Behavior, not t6's: the pane's waiting, where-am-I and fold-name
-   lines pass a line break held inside an id; a task and a check that
-   share an id also share their progress readings (`_apply` and `derive`
-   key by id); `page:` prints a kit-repo path that does not open in a
-   consumer. Noted: a cached `G0` reading goes stale across a deprecated
-   term's sunset date; `cut()` counts characters, not display columns.
-5. Carried: the backfill of the 13 earlier contracts, once each is checked
-   finished; `derived-language`, `feature-document`, `spec-doc-type`; the
-   demo intake; wave B (`playbook-loop`, V1-V6); 5b; the G4.6 finding;
+5. Deferred: the backfill of the 13 earlier contracts (project-tree's
+   prerequisite 8); the kit's feature documents where the tree finds them
+   (prerequisite 7); `derived-language` (prerequisite 5); flag the Claude
+   pane itself; the hook's key action and its four known edges, in its
+   README; `.sdlc/config.yaml` still lists `plan.workflow.json` as a free
+   path.
+6. Carried advisories on `tree_view.py`, USAGE and CHANGELOG, wording and
+   behavior notes: listed in full at `a800c34:STATE.md`, Next actions 4.
+7. Carried: `feature-document`, `spec-doc-type`; the demo intake; wave B
+   (`playbook-loop`, V1-V6); 5b; the G4.6 finding;
    `no-check-reads-the-source-document`; from r3, a status field on the
    finding form and the agent personas writing progress.
 
@@ -59,6 +69,14 @@
 - At resume, read the pilot's `E:\ImSimProject\engine\STATE.md` beside
   this file: the engine hands work to the kit there, and its REQUESTs land
   untracked in this root.
+- A new feature starts as a feature document written through an
+  interview, in the format ADR 0029 ratified, tracked at
+  `docs/features/<id>.md`; never a request typed from a sketch (user,
+  2026-09-24). Until `feature-document` lands, the interview runs by hand
+  from `NOTES_feature-document_2026-09-18.md`: one question at a time, a
+  vague answer probed once, each section summarized and written into the
+  document before the next, candidates drafted only from the user's own
+  words, each citing its source.
 - A plan is plan.md's numbered steps, shown in chat for the user's
   overview; nothing renders it. Work outside a contract unit does not show
   in the pane; the plan says so.
@@ -113,6 +131,12 @@
   (`hash-object`, then `update-index`), so the commit holds one change.
 
 ## Open questions
+- A feature document's title is a heading, which ADR 0029 keeps tooling
+  from reading, yet project-tree shows it as each feature's plain name:
+  where does the title come from (the document's engineer-seat OPEN)?
+- Move the kit's feature documents from untracked root REQUESTs to
+  `docs/features/<id>.md`, so the tree finds them (project-tree's
+  prerequisite 7)?
 - The `intake-seat` term says a seat is never delegated to an agent, while
   a delegated session's approvals record `--by claude` (sessions 40 to 42,
   45 to 47). Does the term need a word for a delegated approval?
@@ -126,10 +150,13 @@
   `confirmed_by` "optional in the schema", and the G0.2 hook test does not
   assert that its replace changed the text.
 - `taskcontract/__init__.py` says `__version__ = "0.3.0"`; nothing reads it.
-- To `feature-document`: a check can carry a false premise about today's
-  behavior; a closing release unit has no check to deliver; checks and
-  sketches are not one to one under the three-sketch cap; a pasted appendix
-  copy ages at once; a derived `done_means` can read broader than its line.
+- To `feature-document`: the interview skill asks ADR 0026's questions,
+  and the ratified format lives only in the session 32 notes (session 49
+  ran the interview by hand); a check can carry a false premise about
+  today's behavior; a closing release unit has no check to deliver;
+  checks and sketches are not one to one under the three-sketch cap; a
+  pasted appendix copy ages at once; a derived `done_means` can read
+  broader than its line.
 - Its own request: `/sdlc audit` drops a `W001` warning beside an error.
 - Should TC016 ride the parked line? The d7 note in `CHANGELOG.md` records
   the case.

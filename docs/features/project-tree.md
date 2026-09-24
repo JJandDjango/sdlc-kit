@@ -1,0 +1,323 @@
+| Revision Date | Revised By | Changes Made |
+| :-: | :-: | :-- |
+| 2026-09-24 | user | r1: Created in kit session 49 through an interview with the user, one question at a time, in the format ADR 0029 ratified (`NOTES_feature-document_2026-09-18.md`); typed by Claude on the user's word. The request half, in progress. PO seat: user; engineer seat: user |
+
+# project-tree - The exact state of every feature's work, in one tree
+
+`sdlc_development_kit` · seats: PO user, engineer user · contract:
+`project-tree`, draft · PR: none · merge SHA: none
+
+## Statement
+
+As a developer, I want to easily keep track of the exact state of work on
+every feature being worked on (which gates and conditions it has passed,
+which units and tasks are done, what is in flight, what is blocked or
+waiting on me, and what its checks found), so I know at any moment
+whether the work still matches its feature document.
+
+## Description
+
+The session plans I get as Archify documents are confusing to follow and
+do not hold up well between sessions: they use abbreviations and
+references I do not know off the top of my head. I always have to ask the
+LLM where things are, and that concerns me: I might be committing code I
+do not understand. On 2026-09-23 the tree pane (kit 0.15.0) replaced the
+Archify plans, and it is not proving to be a useful source of information
+for me right now: with no task in flight it shows `no current task`, then
+`16 items: 14 to do, 2 done`.
+
+This feature clears up the ambiguity with a tree I can easily read. At
+each step it shows notes (which gates and conditions a feature has
+passed, which units and tasks are done, what is in flight, what is
+blocked or waiting on me, and what its checks found), its status (done,
+in flight, or not started), and references to its documentation. Where
+an id shows, its plain name stands beside it: `G0.2 vocabulary
+coverage`, never `G0.2` alone.
+
+## Background
+
+The tree started as the user's sketch in engine session 10 (2026-09-21,
+transcript `83087a60`, 15:57Z), verbatim:
+
+> I want a way to follow along easier, potentially in a herdr pane, and
+> thought that the entire flow of work throughout my entire project could
+> be done via a tree. Each node has a name, a paragraph in brief summary,
+> file references if needed, and connections to other nodes.
+>
+> ```
+> spec
+> - m0
+> -- g0
+> --- g0.1
+> ---- Status: Completed
+> ---- Findings: x, y, z
+> --- g0.2
+> ---- Status: Incomplete/Failed
+> --- g0.3
+> --- ...
+> -- g1
+> -- ...
+> - m1
+> - ...
+> ```
+>
+> This would all be in either one large file (presumably JSON) that gets
+> parsed by a utility script to only access what it needs to prevent
+> filling up the context window unnecessarily, or a folder structure that
+> contains small files in it as each node. A node like m0 or spec contains
+> a reference to their respective documents on system, but smaller ones
+> like gates that don't have a file do not. Gates could potentially get a
+> file made for them but that may be unnecessary given their structure.
+
+Kit 0.15.0 built the tree from `REQUEST_tree-view_2026-09-21.md`, typed
+from this sketch, and the pane from `REQUEST_pane-view_2026-09-23.md`.
+Neither was written through an interview. tree-view's r1 mapped each gate
+to one verdict per contract and took the tree's depth to units, tasks and
+checks; no candidate offered the gate conditions, so no strike kept or
+removed them. A first request written from the sketch in session 49
+(`REQUEST_gate-outline_2026-09-23.md`, r1, untracked) traced each element
+against 0.15.0; this document replaces it. The trace:
+
+| Sketch | Kit 0.15.0 |
+| :-- | :-- |
+| `spec` at the root | Not built: struck at tree-view r2; waits on `spec-doc-type` (ADR 0031) |
+| `m0`, `m1` | Built as contracts, top-level in their own repository's tree; a milestone level was struck at pane-view r2 |
+| `g0`, `g1` under each | Active gates only, one verdict each (`<contract>/G0`); G1 to G10 are inactive in the kit and the pilot |
+| `g0.1` to `g0.3` | Not built, and never offered |
+| `Status:` on a condition | Six statuses on every item but a finding, in brackets on its line; no condition item |
+| `Findings:` on a condition | Findings stand once at the repository level under their gate (ADR 0031); one that names a condition files under its gate |
+| Name, summary, file references, connections | Built: the id, the source's own text, `file:`, `doc:` and `page:`, typed links |
+| One JSON file or a folder of small files | Ruled out: computed at each print, never stored (ADR 0031) |
+| A utility that reads only what it needs | Built: `taskcontract tree <id>`, one item in at most seven lines |
+| m0 and spec name their documents; gates have none | Built: a contract's `doc:`, a gate's kit page |
+| Following along in a herdr pane | Built: `tree --follow` and the herdr hook |
+| The whole outline at once | Not built: the pane folds all but the current path (tree-view SC2, kept at r2) |
+| Not in the sketch: units, tasks, checks | Built: units and checks from the contract; the seven tasks per the pilot's finding `plan-granularity-one-node-one-task` |
+
+Measured on the kit at `7c79ba3`, 2026-09-23: the whole tree holds 16
+items at its first level (`gates/G0` and 15 contracts), 118 at its second
+(15 G0 verdicts and 103 units) and 971 at its third (tasks and checks).
+13 of the 15 contracts read `to do`: they predate the tree and carry no
+progress records (ADR 0031). The kit holds no finding; the pilot's 16
+name G0 (9), G0.2 (1), G3 (1), G4.6 (1) and none (4).
+
+### Existing behavior touched
+
+Each entry gets a regression check under Acceptance criteria.
+
+1. `taskcontract tree` prints every item and exits 0; an unreadable
+   source prints one line on stderr, and the rest of the tree still
+   prints (SC1.3).
+2. `taskcontract tree <id>` answers every id the tree prints, in at most
+   seven lines (SC1.3).
+3. The pane's waiting line, `waiting on a seat: {approval} for {unit}`,
+   stays its first line, word for word: the herdr hook reads it (SC4.3).
+4. The notify command runs once each time the current task arrives at an
+   approval, never on a redraw, with the item's id in `SDLC_NODE`
+   (SC3.3).
+5. The pane redraws within two seconds of a change to a source file
+   (SC4.3).
+6. `taskcontract progress` stays the only writer, and every state it
+   recorded reads as before (SC3.3).
+7. Each contract's G0 verdict reads as the validator says: `done` at
+   ready-green, `blocked` when draft-green with `TC003`, `to do` when
+   draft-green otherwise, `failed` when draft-red (SC2.3).
+
+The pane's `tree: pane: parts:` and `fold:` settings are touched too;
+whether they hold is decided under Success criteria.
+
+## Success criteria
+
+1. SC1: Every feature being worked on stands in one tree, and each item
+   shows its plain name beside its id and a reference to the document it
+   comes from.
+2. SC2: Each feature shows its gates and their conditions, each with its
+   status and what its checks found.
+3. SC3: Each feature shows its units and tasks as done, in flight or not
+   started, and marks what is blocked or waiting on me.
+4. SC4: The pane shows the whole tree as an outline, each feature opened
+   down to its units, whether or not a task is in flight; I scroll it,
+   move through it and open or close any node with the arrow keys or the
+   mouse.
+5. SC5: The tree shows when a feature's work no longer matches its
+   feature document.
+
+## Non-goals
+
+- No new authorizations are added, and no new gate condition: the tree
+  shows the conditions the kit defines and adds none (the standing line).
+- No change to what any gate checks: a condition shows what its check
+  already reports.
+- No stored copy: the tree is computed from the kit's files at every
+  print, so the sketch's JSON file stays ruled out.
+- No edits through the tree: it only reads.
+- No spec doc level, a list of features above the features, before
+  `spec-doc-type` is built: the sketch's `spec` root.
+- No tree across repositories: the pilot's features, M0 among them, show
+  in the pilot's own tree.
+- No herdr plugin inside the kit: herdr wraps the pane from outside.
+- Not a replacement for STATE.md, which keeps the narrative.
+
+## Prerequisites
+
+1. The tree, its query face and its pane (exist: tree-view and pane-view,
+   kit 0.15.0).
+2. herdr passes keys and mouse clicks to a pane's program and keeps pane
+   scrollback (exists: this session runs in herdr, and its default config
+   says pane apps "can still receive mouse when they request it").
+3. Each gate's conditions, named on its kit page (exist: `docs/gates/`);
+   the rules behind G0's three conditions (exist, in prose on the G0
+   page).
+4. A structured list of each gate's conditions and the rules each owns
+   (missing: the kit's gate list names gates only, and ADR 0029 keeps
+   tooling off document headings; owner: this feature).
+5. A contract names its feature document (missing: `derived-language`
+   SC4 asks for it; until it lands, the tree finds a document by its id at
+   `docs/features/<id>.md`; owner: `derived-language`).
+6. The revision a contract was derived from (exists in the format: intake
+   writes a "Ready:" row naming the signed revision, ADR 0029).
+7. The kit's own features have documents where the tree finds them
+   (missing: the kit keeps its requests untracked in its root, and this
+   document is the first under `docs/features/`; owner: the kit session).
+8. Progress records for the 13 contracts older than the tree, so SC3
+   reads true for them (missing: one `progress done` each, carried in
+   STATE.md; owner: the kit session).
+
+## Acceptance criteria
+
+### Checks
+
+Two or three checks under each success criterion. SC1.3, SC2.3, SC3.3 and
+SC4.3 carry the regression checks for Existing behavior touched.
+
+SC1 One tree, plain names, document references
+
+- SC1.1: verify every contract in the repository stands in the tree as a
+  feature, and each item line opens on its id and its plain name, before
+  the parts `tree: pane: parts:` selects
+- SC1.2: verify each item's plain name and document reference come from
+  its source (a gate's, a condition's and a task's from the kit's lists;
+  a feature's title and its document; a unit's done-means and a check's
+  sketch line with their contract file and line), shown for the item
+  under the pane's cursor and by `taskcontract tree <id>`
+- SC1.3: verify `taskcontract tree` still prints every item and exits 0,
+  an unreadable source still costs one line on stderr, and `taskcontract
+  tree <id>` still answers every id it prints in at most seven lines
+
+SC2 Gates, conditions, what they found
+
+- SC2.1: verify each feature shows its active gates and then the next
+  gate in the kit's order, marked inactive, and each gate opens into its
+  conditions in the kit's order, each with its own status from the rules
+  that condition owns
+- SC2.2: verify a condition that is not done lists what its check found,
+  one line per diagnostic in plain words, and a finding that names a
+  condition stands under that condition at the repository level
+- SC2.3: verify each contract's G0 verdict still reads as the validator
+  says: done at ready-green, blocked when draft-green with TC003, to do
+  when draft-green otherwise, failed when draft-red
+
+SC3 Units, tasks, blocked and waiting
+
+- SC3.1: verify each unit and each of its tasks shows done, doing or to
+  do from the progress records, and a closed unit or contract reads done
+- SC3.2: verify a blocked item names its reason and an approval waiting
+  on me names its seat, both on the item's own line
+- SC3.3: verify `taskcontract progress` stays the only writer, every
+  state it recorded reads as before, and the notify command still runs
+  once per arrival at an approval, never on a redraw
+
+SC4 The interactive outline
+
+- SC4.1: verify the pane opens on the whole tree as an outline, each
+  feature opened down to its units, whether or not a task is in flight,
+  with the current task marked and in view
+- SC4.2: verify Up and Down move the cursor, Right opens and Left closes
+  the item under it, a click opens or closes the item it lands on, and
+  the wheel scrolls; a closed item's line counts what it holds, or names
+  it under `fold: names`
+- SC4.3: verify the waiting line stays the pane's first line, word for
+  word, and a redraw within two seconds of a source change keeps the
+  cursor and every open and closed item as they were
+
+SC5 Drift from the feature document
+
+- SC5.1: verify a feature whose document holds a revision newer than the
+  one its contract was derived from reads stale, naming both revisions
+- SC5.2: verify a feature whose document the tree cannot find says so,
+  rather than reading as matching
+
+### Error messages, verbatim
+
+None new: every message the kit prints today stays word for word.
+
+## Decisions and open questions
+
+- Q: The feature's id? A: `project-tree`. `pane-view` is the closed
+  0.15.0 contract, and reusing its id would re-derive that contract
+  (decided 2026-09-24).
+- Q: Where does the document live? A: `docs/features/project-tree.md`,
+  tracked: the tree finds a feature document there, git keeps every
+  revision, and `docs/` is a free path (decided 2026-09-24).
+- Q: What are "notes" and "status updates"? A: The notes are the state
+  facts at each step, as listed in the statement; a status update is
+  knowing which parts are done, in flight or not started (decided
+  2026-09-24).
+- Q: Do ids show? A: Each id is paired with its plain name (decided
+  2026-09-24).
+- Q: How much of the tree does the pane show? A: All of it: each feature
+  opened down to its units, scrolled and navigated with the arrow keys
+  and the mouse, whose nodes open and close (SC4, decided 2026-09-24).
+- Q: Which gates does a feature show? A: Its active gates, then the next
+  one in the kit's order: the sketch's `-- g1` (SC2.1, decided
+  2026-09-24).
+- Q: Which keys? A: Up and Down move, Right opens, Left closes, a click
+  toggles, the wheel scrolls (SC4.2, decided 2026-09-24).
+- Q: Do `tree: pane: parts:` and `fold:` keep working? A: Yes (SC1.1,
+  SC4.2, decided 2026-09-24).
+- OPEN (engineer seat, for the solution half): where a feature's title
+  comes from, since ADR 0029 keeps tooling off document headings: a
+  contract field that intake fills, or another source.
+
+## Appendix
+
+### Terms
+
+OPEN (PO seat, the interview's Q11): drafted by Claude in session 49 from
+this document's nouns, not yet answered; keep, strike, add or reword
+each. At intake each maps to a ratified vocabulary term or becomes one to
+ratify.
+
+- Feature: a piece of work with its own feature document and contract; a
+  top-level item of the tree.
+- Tree: the repository's work as one outline, computed from the kit's
+  files at every print.
+- Pane: the terminal pane that shows the tree (`taskcontract tree
+  --follow`), in herdr or any terminal.
+- Outline: the tree drawn one item per line, each item indented under its
+  parent.
+- Item: one line of the tree: a feature, gate, verdict, condition,
+  finding, unit, task or check.
+- Gate: a stage the work passes, defined by the kit (G0 planning and
+  intake, G1 requirements and spec, and on).
+- Condition: one check a gate runs (G0.1 definition of ready, G0.2
+  vocabulary coverage, G0.3 unit confirmation).
+- Verdict: a feature's result at one gate.
+- Finding: a recorded observation about the kit, filed under the gate or
+  condition it names.
+- Unit: one separately gated slice of a feature's work, from its
+  contract.
+- Task: one of the seven steps every unit follows, from approving its
+  test list to its Two-Key pass.
+- Check: one testable line under a success criterion, with an id such as
+  SC1.1.
+- Status: done, doing or to do, or failed, blocked or waiting on a seat.
+- Plain name: the words beside an id that say what it is, without the id
+  scheme.
+- Document reference: the file and line an item comes from.
+- Cursor: the item the arrow keys and the mouse act on.
+- Stale: a feature whose document changed after its contract was
+  derived.
+- Seat: the person a step waits on for an answer: PO or engineer.
+- Waiting line: the pane's first line while a task waits on a seat; the
+  herdr hook reads it.
