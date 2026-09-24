@@ -666,7 +666,8 @@ nothing reads `dirty`.
   exits 0. It needs no `curses`, so it runs on Windows: it reads
   modification times once a second and redraws with ANSI escape codes.
 
-🟢 One check of this kit's own tree, queried:
+🟢 One check of this kit's own tree, queried when its first green run
+was recorded at `c1380d5` (a later run names its own commit):
 
 ```
 $ taskcontract tree tree-view/t6-query-face/SC6.1
