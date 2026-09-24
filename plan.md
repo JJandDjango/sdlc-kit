@@ -1,43 +1,57 @@
-# Plan - Session 49 (2026-09-23) - the request from the tree sketch
+# Plan - Session 49 (2026-09-23) - the pane's feature document, from the beginning
 
-**Deliverable:** a request written from the user's tree sketch (engine
-session 10, 2026-09-21), not from tree-view's r1: each contract's gates
-open into their conditions, each with its status and findings, and the
-pane shows the whole outline instead of folding it. Done when the user's
-strike is recorded as r2.
+**Deliverable:** the request half of the pane's feature document
+(sections 1 to 12 of the format ADR 0029 ratified, written out in
+`NOTES_feature-document_2026-09-18.md`), written with the user from the
+beginning, one question at a time, in the user's words. Done when the PO
+seat signs it, the format's checks 1 to 8 passing or marked OPEN on the
+user's word.
+
+**Replanned at the user's word.** The first plan (`2311a17`) wrote a
+request from the user's 2026-09-21 sketch; its r1,
+`REQUEST_gate-outline_2026-09-23.md`, showed the drift a sketch invites.
+The pane work goes back to the beginning: a feature document before any
+build. The kit's interview skill still asks ADR 0026's questions (the
+`feature-document` request moves it), so the interview runs by hand in
+the ratified format's order. r1 stays untracked, as material.
 
 ## Steps
 
-1. Open: this plan, shown in chat for the user's overview.
-2. Fast-forward local `main` to `7c79ba3` (PR #58's merge), cut
-   `session-49-gate-outline` from it, and commit this plan.
-3. Map the sketch onto the kit's sources, reading only what r1 needs: G0.1
-   to G0.3 and the checks behind each (`docs/gates/G0-planning-intake.md`,
-   the validator); G1's conditions (`docs/gates/G1-requirements-spec.md`);
-   what a finding's `gate:` field can name; the ADR 0031 rulings the
-   request keeps or amends; the fold in `taskcontract/tree_view.py`.
-4. Write r1 in ADR 0029's format as `REQUEST_gate-outline_2026-09-23.md`
-   (untracked, in the kit root; the id is a proposal). The request half
-   only: features as candidates to strike, OPENs for what the sources
-   cannot settle. Its Background opens with a trace table: each element of
-   the sketch, and whether r1 offers it, 0.15.0 built it, or an earlier
-   ruling removed it (named, and the user's to reopen).
-5. Show r1 in chat. The user strikes features and answers the OPENs in one
-   message.
-6. Record r2: the strike in the revision table, signed by the PO seat.
-7. Close: STATE.md regenerated, this plan struck, memory updated.
-8. Push, open the PR, and merge it by merge commit once CI reads green, on
+1. Replan: this plan; rename the branch `session-49-pane-spec`; commit
+   this plan.
+2. Opening: the feature's id and title, then the document's path. Seats:
+   PO user, engineer user. Materials: the sketch (engine transcript
+   `83087a60`), r1's trace table and measurements, the tree-view and
+   pane-view REQUESTs, USAGE section 9 (the pane as shipped in 0.15.0),
+   ADR 0031.
+3. The request half, one question at a time in the format's order:
+   statement; description; background and existing behavior touched;
+   success criteria; non-goals; prerequisites; acceptance criteria, with
+   their checks and verbatim error messages; terms. Each section goes
+   into the document once answered, summarized before the next. The
+   bug-fix-only sections are left out.
+4. Readiness: the format's checks 1 to 8, read back; OPEN marks on the
+   user's word; the PO seat signs the request half.
+5. Close: STATE.md regenerated, this plan struck, memory updated; the
+   interview's friction recorded.
+6. Push, open the PR, and merge it by merge commit once CI reads green, on
    the user's word.
 
-Every step sits outside a contract unit, so the pane shows none of them.
+The document is the resume point: if the session ends first, session 50
+resumes at its first unwritten section. Every step sits outside a
+contract unit, so the pane shows none of them.
 
-Decisions this session: three, all the user's: (1) this plan; (2) the
-strike, at step 5; (3) the push, the PR and its merge.
+Decisions this session: three, all the user's: (1) this plan; (2) the PO
+seat's signature on the request half, with any OPEN marks; (3) the push,
+the PR and its merge. The interview's answers are the document's content,
+not counted here.
 
 Deferred, not this session:
-- r3 (the checks and the solution half) and intake: session 50.
-- G1: after this request is built, so the pane shows G1's conditions as
-  they land.
+- The solution half (proposed solution, risks and cost), signed by the
+  engineer seat, then intake: session 50.
+- G1: after the pane is built, so the pane shows G1's conditions.
+- The interview skill writes ADR 0026's template (the carried
+  `feature-document` request).
 - The backfill of the 13 earlier contracts, so the pane's statuses read
   true.
 - `.sdlc/config.yaml` still lists `plan.workflow.json` as a free path.
