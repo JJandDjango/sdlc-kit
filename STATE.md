@@ -2,43 +2,40 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-23 (session 47 close)._
+> _Generated 2026-09-23 (session 48, at the 0.15.0 release)._
 
 ## Now
-- **tree-view is built; 0.15.0 waits on its release.** Branch
-  `session-47-tree-view-t6-t9` holds t6 (`c1380d5`, fixed at `ba4c117`
-  and `7945f13`, Two-Key PASS at round 3) and t9 (`497418a`, fixed at
-  `bf18594` and `c48ae8c`, PASS at round 2 with the release sweep). All
-  ten units and the contract are closed in progress. Suite 592 passed,
-  fifteen contracts ready-green, scope-check green from `84ebc5e`.
-- t6 is `taskcontract tree <id>`: one block of at most seven lines per
-  item. Its round 1 failed on the `doc:` line (SC4.2 calls a feature doc
-  a file reference, so it carries `:1`); round 2 on line breaks in free
-  text (a `--reason`, seat, command or finding kind) passing the cap,
-  fixed at the root: `line()` reads every field by the text rule on every
-  face. Claude added three tests as the list's approver, each red first.
-  t9's round 1 failed on one sentence naming a close's evidence without
-  its condition. The user approved t9's commit.
-- PR #57 carries the branch, opened at this close on the user's word
-  ("stop at PR"); the release is session 48's.
+- **Kit 0.15.0 is released.** `tree-view` (ADR 0031) merged as PR #57 at
+  `fdd6fe2` and is tagged `v0.15.0` there; the self-pin (`7a453e7`) and
+  this wrap ride PR #58 (`session-48-release`), merged by merge commit
+  once CI reads green, on the user's word given at open. No contract is in
+  flight.
+- 0.15.0 adds `taskcontract tree` (the work as one derived tree, six
+  statuses), `taskcontract progress` (task steps and check runs, in local
+  files no gate reads), `tree <id>` (one item for an agent) and `tree
+  --follow` (a pane on the current task). The schema stays at 1.4.0.
+- Receipts at the release: CI green on #57 at `96579dc`, whose tree the
+  merge keeps unchanged, and on main at `fdd6fe2`; USAGE's `uv` line, run
+  as written, installs `v0.15.0` (resolved to `fdd6fe2`) and reads
+  tree-view ready-green; scope-green from `fdd6fe2`. Session 47's suite:
+  592 passed, fifteen contracts ready-green.
+- The user's tree pane (`w9:p8`) runs the code it started with; restart it
+  to run 0.15.0's.
 
 ## Blockers
-- None. The merge, the tag and the self-pin wait on the user's word.
+- None.
 
 ## Next actions
-1. Session 48, the release: merge PR #57 by merge commit on the user's
-   word once CI reads green, tag `v0.15.0` (annotated) at the merge, then the
-   self-pin through its own PR: `.github/workflows/sdlc.yml` and USAGE
-   section 7's `uv run` line move to `@v0.15.0`, as `af9e587` did for
-   0.14.0. Then restart the user's tree pane (`w9:p8`).
-2. G1 after the release: its criteria review comes before the pilot's M0
-   code.
-3. The pilot's config line, in the engine's session.
-4. Deferred: flag the Claude pane itself (a local `claude.toml` detection
+1. Session 49: G1. Its criteria review comes before the pilot's M0 code,
+   and it gives intake's exit the successor venue the engine's
+   `intake-exit-names-no-successor-venue` asks for.
+2. The pilot's config line, in the engine's session; the engine's install
+   ref moves to `v0.15.0` there (pull, not push).
+3. Deferred: flag the Claude pane itself (a local `claude.toml` detection
    rule shadowing herdr's remote one, or a herdr change); the hook's key
    action; the hook's four known edges, in its README; `.sdlc/config.yaml`
    still lists `plan.workflow.json` as a free path.
-5. Carried advisories, wording unless noted. `tree_view.py`: the module
+4. Carried advisories, wording unless noted. `tree_view.py`: the module
    docstring's 127 means the shell itself cannot start; `follow()`'s
    Ctrl-C note names only POSIX; `_flat()`'s docstring understates (it
    keeps trailing space too); the private `_no_node` import. USAGE: `run`
@@ -52,7 +49,7 @@
    key by id); `page:` prints a kit-repo path that does not open in a
    consumer. Noted: a cached `G0` reading goes stale across a deprecated
    term's sunset date; `cut()` counts characters, not display columns.
-6. Carried: the backfill of the 13 earlier contracts, once each is checked
+5. Carried: the backfill of the 13 earlier contracts, once each is checked
    finished; `derived-language`, `feature-document`, `spec-doc-type`; the
    demo intake; wave B (`playbook-loop`, V1-V6); 5b; the G4.6 finding;
    `no-check-reads-the-source-document`; from r3, a status field on the
@@ -104,9 +101,11 @@
 - Attribution is off: a commit's final paragraph is `Contract:` alone, and
   a PR body ends at its last sentence.
 - Release shape: PR, merge commit, annotated tag at the merge, then the
-  self-pin through its own PR; main's ruleset requires a PR for every
-  change. `gh pr checks --watch` can exit 1 on "no checks reported"; start
-  it again.
+  self-pin through its own PR, which the wrap rides; open that PR before
+  writing the wrap, so STATE names its number. Run USAGE's `uv` line as
+  written against the new tag: CI covers only the `pip` install. main's
+  ruleset requires a PR for every change. `gh pr checks --watch` can exit
+  1 on "no checks reported"; start it again.
 - herdr probes run in panes Claude splits with `--no-focus` and closes
   after; never report state on another session's pane (the recipe is in
   session 46's STATE, `205bbd5:STATE.md`).

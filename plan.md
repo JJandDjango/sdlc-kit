@@ -4,32 +4,35 @@
 annotated tag `v0.15.0` at the merge, and the self-pin through its own PR,
 merged once CI reads green.
 
+**Closed at PR #58.** PR #57 merged at `fdd6fe2`, tagged `v0.15.0` there;
+the self-pin at `7a453e7`. PR #58 carries the plan, the self-pin and this
+wrap, and merges once CI reads green, on the user's word given at open.
+
 ## Steps
 
-1. Open: this plan, shown in chat for the user's overview.
-2. Merge PR #57 by merge commit. CI reads green at `96579dc` (`test` and
-   `contracts`), and GitHub reports the merge clean.
-3. Tag `v0.15.0` (annotated) at the merge commit; push the tag.
-4. Cut `session-48-release` from main's new tip; commit this plan.
-5. The self-pin: `.github/workflows/sdlc.yml` line 20 and `USAGE.md` line
-   377 move from `@v0.14.0` to `@v0.15.0`, as `af9e587` did for 0.14.0.
-   `CHANGELOG.md`'s heading already carries the date and the tag; a tag
-   made after midnight moves its date too. Both paths sit in tree-view's
-   scope, so the commit carries `Contract: tree-view`. `scope-check`
-   against main's tip before the push.
+1. ~~Open: this plan, shown in chat for the user's overview.~~ At
+   `f1c6fa3`.
+2. ~~Merge PR #57 by merge commit.~~ At `fdd6fe2`; CI green on main there.
+3. ~~Tag `v0.15.0` (annotated) at the merge commit; push the tag.~~
+4. ~~Cut `session-48-release` from main's new tip; commit this plan.~~
+5. ~~The self-pin.~~ At `7a453e7`: `.github/workflows/sdlc.yml` and
+   `USAGE.md` read `@v0.15.0`; scope-green from `fdd6fe2`. USAGE's `uv`
+   line, run as written, installs `v0.15.0` and reads tree-view
+   ready-green.
 6. The user restarts the tree pane (`w9:p8`), so it runs the released code.
-7. Close: STATE.md regenerated, this plan struck, memory updated.
-8. Push, open the PR, merge it by merge commit once CI reads green. CI's
-   `contracts` job installs the kit from the new tag, so its green run
-   proves the tag installs.
+   STATE.md carries it.
+7. ~~Close: STATE.md regenerated, this plan struck, memory updated.~~
+8. Push, open the PR, merge it by merge commit once CI reads green. Pushed
+   and opened as #58 before the close, so STATE names its number; the
+   merge follows CI's green run on the wrap.
 
 Every step sits outside a contract unit, so the pane shows none of them.
 No Two-Key round: the self-pin changes two install refs and no code, and
 CI's green run is its receipt.
 
-Decisions this session: six, all the user's. (1) The deliverable; (2) this
-plan; (3) the merge of PR #57; (4) the tag and its message; (5) the
-self-pin commit; (6) the push, the PR and its merge.
+Decisions this session: six, all the user's, all yes in one word: (1) the
+deliverable; (2) this plan; (3) the merge of PR #57; (4) the tag and its
+message; (5) the self-pin commit; (6) the push, the PR and its merge.
 
 Deferred, not this session:
 - G1: its criteria review, before the pilot's M0 code. Session 49's
