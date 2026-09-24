@@ -19,15 +19,15 @@
   face. Claude added three tests as the list's approver, each red first.
   t9's round 1 failed on one sentence naming a close's evidence without
   its condition. The user approved t9's commit.
-- The push and the PR happen at this close, on the user's word ("stop at
-  PR"); the release is session 48's.
+- PR #57 carries the branch, opened at this close on the user's word
+  ("stop at PR"); the release is session 48's.
 
 ## Blockers
 - None. The merge, the tag and the self-pin wait on the user's word.
 
 ## Next actions
-1. Session 48, the release: merge this branch's PR by merge commit on
-   the user's word, tag `v0.15.0` (annotated) at the merge, then the
+1. Session 48, the release: merge PR #57 by merge commit on the user's
+   word once CI reads green, tag `v0.15.0` (annotated) at the merge, then the
    self-pin through its own PR: `.github/workflows/sdlc.yml` and USAGE
    section 7's `uv run` line move to `@v0.15.0`, as `af9e587` did for
    0.14.0. Then restart the user's tree pane (`w9:p8`).
