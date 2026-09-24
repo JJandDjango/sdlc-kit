@@ -2,60 +2,56 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-23 (session 46 close)._
+> _Generated 2026-09-23 (session 47 close)._
 
 ## Now
-- **pane-view is built**: p3 and p4 on branch `session-46-pane-view-p3-p4`,
-  each Two-Key PASS at round 1: p3 `4e298af` (`tree: pane: parts:`, and the
-  pane test helpers moved to `tests/conftest.py` as `ROW`, `cut_lines`,
-  `short_line`), p4 `3be9db2` (`tree: pane: fold: names`). All five units
-  and the contract are closed in progress. Suite 577 passed, all fifteen
-  contracts ready-green, scope-check green from `ee05d24`.
-- The live check after p4 passed: a probe pane on a scratch copy at t6's
-  first approval, with `parts: [status, marks]` and `fold: names`, drew the
-  request's example line for line (`15 more` for its `14 more`), and the
-  hook flagged it `sdlc`, `blocked`; `fold: Names` brought the counts back
-  with its message at the next render.
-- The user's tree pane (`w9:p8`) runs the code it started with; restart it
-  after the merge to see p1 to p4. The kit's own config sets neither key.
-- PR #56 carries the branch, merged on the user's word (2026-09-23) once
-  CI read green; PR #55 (session 45) merged at `ee05d24`.
+- **tree-view is built; 0.15.0 waits on its release.** Branch
+  `session-47-tree-view-t6-t9` holds t6 (`c1380d5`, fixed at `ba4c117`
+  and `7945f13`, Two-Key PASS at round 3) and t9 (`497418a`, fixed at
+  `bf18594` and `c48ae8c`, PASS at round 2 with the release sweep). All
+  ten units and the contract are closed in progress. Suite 592 passed,
+  fifteen contracts ready-green, scope-check green from `84ebc5e`.
+- t6 is `taskcontract tree <id>`: one block of at most seven lines per
+  item. Its round 1 failed on the `doc:` line (SC4.2 calls a feature doc
+  a file reference, so it carries `:1`); round 2 on line breaks in free
+  text (a `--reason`, seat, command or finding kind) passing the cap,
+  fixed at the root: `line()` reads every field by the text rule on every
+  face. Claude added three tests as the list's approver, each red first.
+  t9's round 1 failed on one sentence naming a close's evidence without
+  its condition. The user approved t9's commit.
+- The push and the PR happen at this close, on the user's word ("stop at
+  PR"); the release is session 48's.
 
 ## Blockers
-- None.
+- None. The merge, the tag and the self-pin wait on the user's word.
 
 ## Next actions
-1. Session 47: tree-view's t6 (the query face), then t9 (the release,
-   0.15.0), by the delegated method; t9's USAGE pass turns p0's marks green.
-2. G1 after t9: its criteria review comes before the pilot's M0 code.
+1. Session 48, the release: merge this branch's PR by merge commit on
+   the user's word, tag `v0.15.0` (annotated) at the merge, then the
+   self-pin through its own PR: `.github/workflows/sdlc.yml` and USAGE
+   section 7's `uv run` line move to `@v0.15.0`, as `af9e587` did for
+   0.14.0. Then restart the user's tree pane (`w9:p8`).
+2. G1 after the release: its criteria review comes before the pilot's M0
+   code.
 3. The pilot's config line, in the engine's session.
 4. Deferred: flag the Claude pane itself (a local `claude.toml` detection
    rule shadowing herdr's remote one, or a herdr change); the hook's key
    action; the hook's four known edges, in its README; `.sdlc/config.yaml`
    still lists `plan.workflow.json` as a free path.
-5. Carried advisories. t6: `tree.py`'s docstring says a close reads
-   everything under it done (tasks and checks only); t1's id collision; a
-   repeated `depends_on` entry prints twice; `tree_view.py`'s docstring on
-   spacing. t9, USAGE: the `progress` rows (`--expect green`, the exit-2
-   refusals, a malformed file stopping a writer, the task writers' options
-   and evidence), the `G0` verdict's dirty rule, no `dirty` key outside
-   git, "done all the way down", the notes from t0, t1 and t3; the pane's
-   text (the width cut, `no current task`, the watched files, the verdict
-   cache, a vocabulary change showing in up to about 2.4 s, the waiting
-   line, notify at the pane's start, exit 127, the failure line whole on
-   stderr); "The pane's lines" example reads `14 more`, now `15 more`
-   (p0's Two-Key); the fold message names `{value}` as YAML reads it, not
-   "as written" (`fold: yes` prints `True`; p3's parts message does the
-   same), so the page's words change (p4's Two-Key); a resize alone does
-   not redraw the pane, so a line cut at the old width wraps until the
-   next change (the live check). t9, code wording: `follow()`'s docstring
-   on Ctrl-C (on POSIX the notify child gets the same SIGINT); `--follow`'s
-   help, "at each arrival at an approval"; `tree_view.py`'s module
-   docstring runs its parts: and fold: paragraphs into the cut sentence
-   with no blank line, and its first paragraph names only counts on the
-   fold lines (p4's Two-Key). Noted: a cached `G0` reading goes stale
-   across a deprecated term's sunset date; `cut()` counts characters, not
-   display columns.
+5. Carried advisories, wording unless noted. `tree_view.py`: the module
+   docstring's 127 means the shell itself cannot start; `follow()`'s
+   Ctrl-C note names only POSIX; `_flat()`'s docstring understates (it
+   keeps trailing space too); the private `_no_node` import. USAGE: `run`
+   refuses before it starts the command, save its `cannot start` line,
+   and an argparse error prints two lines; a closed unit reads `done`
+   only while the close is its latest record; the width cut never goes
+   below 10 columns. CHANGELOG: drop "now" from the repeated-link note.
+   Behavior, not t6's: the pane's waiting, where-am-I and fold-name
+   lines pass a line break held inside an id; a task and a check that
+   share an id also share their progress readings (`_apply` and `derive`
+   key by id); `page:` prints a kit-repo path that does not open in a
+   consumer. Noted: a cached `G0` reading goes stale across a deprecated
+   term's sunset date; `cut()` counts characters, not display columns.
 6. Carried: the backfill of the 13 earlier contracts, once each is checked
    finished; `derived-language`, `feature-document`, `spec-doc-type`; the
    demo intake; wave B (`playbook-loop`, V1-V6); 5b; the G4.6 finding;
@@ -73,11 +69,12 @@
   <seat>` on an approval, and each check's run through `progress run
   <check> [--expect red] -- <test command>`, selecting its tests with `-k`
   (test names carry the check id). Run a check's green after its commit,
-  so the evidence names a clean commit. Close each unit with `progress
-  done` once its Two-Key passes, and the contract once its last unit
-  closes. A unit with no test (a USAGE pass) starts `green` while its page
-  is written and `approve-commit` while it waits. Progress files are
-  git-ignored, so records never dirty the tree.
+  so the evidence names a clean commit. Record a failed Two-Key round as
+  `progress block <unit>/two-key --reason`, and start it again for the
+  next round. Close each unit with `progress done` once its Two-Key
+  passes, and the contract once its last unit closes. A unit with no test
+  (a USAGE pass) starts `green` while its page is written and
+  `approve-commit` while it waits. Progress files are git-ignored.
 - A REQUEST is untracked, so git cannot restore it: copy it to the
   scratchpad before a revision edits it.
 - The language door checks every sentence of a sketch for an approved
@@ -90,23 +87,20 @@
   the scratchpad and builds a prototype; Claude approves, places the tests
   and proves red; the developer greens from the interface note without
   opening `tests/`; Claude reviews, runs the receipts, commits and runs
-  Two-Key, leaving tracked files alone while it runs. A drafter may run
-  beside the previous unit's Two-Key. When a unit's tests extend a module
-  an earlier unit placed, its drafter writes that module whole, with the
-  earlier tests amended where needed. The developer may return before its
-  own suite run ends; Claude's receipts run is then the suite's receipt.
-  Session 46's subagents: drafters 191K and 179K tokens, developers 74K
-  and 66K, Two-Key 177K and 174K.
-- Before placing a drafted list: strip session labels (`ruling_2`) from its
-  names, check the module for a repeated test name, since a later `def`
-  silently replaces an earlier one, and diff the earlier tests against the
-  repo: a drafter's rename can glue a helper's new name into a test name
-  (session 46: `..._is_cut` became `..._iscut_lines`). A later unit may
-  amend an earlier unit's test when its contract changes that test's
-  expected output; the drafter's pins name such a test, never forbid it.
+  Two-Key, leaving tracked files alone while it runs. A fix round: Claude
+  amends or adds tests as the list's approver, red first; the developer
+  fixes from a delta note; the fix is its own commit, and the next round
+  grades every commit of the unit. Session 47's subagents: drafter 165K;
+  developers 105K, 65K, 67K and 52K; Two-Key 190K to 242K a round.
+- Before approving a drafted list: check each fixed detail against every
+  use of its terms in the contract and the REQUEST, and pin any output
+  cap against free text holding line breaks (session 47 lost two t6
+  rounds to these); strip session labels (`ruling_2`) from test names;
+  check the module for a repeated test name; diff earlier tests.
 - `scope-check` outside Actions needs `--base <sha>`: main's tip.
 - Run the release unit's sweep patterns before its verifier round; a hit
-  outside scope goes to an OPEN and a re-intake first.
+  outside scope goes to an OPEN and a re-intake first. Date any example of
+  live output to its moment.
 - Attribution is off: a commit's final paragraph is `Contract:` alone, and
   a PR body ends at its last sentence.
 - Release shape: PR, merge commit, annotated tag at the merge, then the
@@ -114,22 +108,17 @@
   change. `gh pr checks --watch` can exit 1 on "no checks reported"; start
   it again.
 - herdr probes run in panes Claude splits with `--no-focus` and closes
-  after; never report state on another session's pane. The recipe: `herdr
-  pane split --pane <own> --direction down --cwd <root> --no-focus`, then
-  `pane run <new> "<command>"`, `pane wait-output <new> --match <text>`
-  (plain text, not a regex), `pane read <new> --source visible`, `pane
-  get <new>` (its `agent` and `agent_status`), `pane close <new>`. A new
-  split may narrow after the pane's first render: touch a watched file to
-  redraw before judging a cut. A pane run on a scratch copy (`--root`)
-  leaves the kit's progress alone. A manual `release-agent` for the hook's
-  flag needs a `--seq` above the hook's (the time in milliseconds).
+  after; never report state on another session's pane (the recipe is in
+  session 46's STATE, `205bbd5:STATE.md`).
 - A settings file with unrelated uncommitted edits is staged by blob
   (`hash-object`, then `update-index`), so the commit holds one change.
 
 ## Open questions
 - The `intake-seat` term says a seat is never delegated to an agent, while
   a delegated session's approvals record `--by claude` (sessions 40 to 42,
-  45 and 46). Does the term need a word for a delegated approval?
+  45 to 47). Does the term need a word for a delegated approval?
+- Should `page:` print a URL (the kit's repo at the pinned tag), so a
+  consumer's agent can open a kit page?
 - Push `E:\herdr-sdlc` to GitHub, so herdr can install it as a plugin
   later? It has no remote.
 - Which request carries `no-check-reads-the-source-document`:

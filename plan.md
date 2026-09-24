@@ -25,39 +25,51 @@ its own PR.
    t9's commit, shown in chat. The push, the PR, the merge, the tag and the
    self-pin stay on the user's word.
 
+**Closed at the PR, on the user's word.** Both units are built and pass
+Two-Key: t6 at round 3 (`c1380d5`, `ba4c117`, `7945f13`), t9 at round 2
+(`497418a`, `bf18594`, `c48ae8c`). The contract is closed in progress.
+Suite 592 passed, fifteen contracts ready-green, scope-check green. The
+release, step 11, opens session 48.
+
 ## Steps
 
-1. Open: branch `session-47-tree-view-t6-t9` cut from `84ebc5e`; this plan
-   committed.
-2. t6, draft and approve the test list. The drafter also takes STATE's t6
-   advisories: a repeated `depends_on` entry prints twice, `tree.py`'s
-   docstring on a close, `tree_view.py`'s docstring on spacing.
-3. t6, write the tests and prove red.
-4. t6, green.
-5. t6, approve the commit and commit; the checks green; the query run on
-   the kit's own tree.
-6. t6 Two-Key.
-7. t9, the USAGE pass (STATE's carried wording with it), the version, the
-   CHANGELOG entry and the MAP row.
-8. t9, the user approves the commit; commit.
-9. t9, the release sweep, then Two-Key; t9 and the contract closed.
-10. Close: STATE.md regenerated; this plan struck; the push and the PR go
-    to the user.
+1. ~~Open.~~ Branch cut from `84ebc5e`; the plan at `719a309`.
+2. ~~t6, draft and approve the test list.~~ Twelve tests, red 12 of 12,
+   green on the drafter's prototype; approved by Claude.
+3. ~~t6, write the tests and prove red.~~ SC6.1 to SC6.3 red as expected;
+   the suite 12 failed, 577 passed.
+4. ~~t6, green.~~ Suite 589 passed.
+5. ~~t6, approve the commit and commit.~~ At `c1380d5`; the three checks
+   green; the query answered on the kit's own tree.
+6. ~~t6 Two-Key.~~ Round 1 FAIL: the `doc:` line carried no line. Round 2
+   FAIL: line breaks in free text passed the 20-line cap. Round 3 PASS.
+   Claude amended two tests and added three, each red first.
+7. ~~t9, the USAGE pass, the version, the CHANGELOG entry and the MAP
+   row.~~ Four code-wording notes carried to t9 rode t6 instead, since t6
+   edited the same text.
+8. ~~t9, the user approves the commit; commit.~~ At `497418a`; the query
+   example dated at `bf18594`.
+9. ~~t9, the release sweep, then Two-Key.~~ The sweep clean; round 1 FAIL
+   on one sentence about a close's evidence, fixed at `c48ae8c`; round 2
+   PASS. t9 and the contract closed.
+10. ~~Close.~~ STATE.md regenerated; this plan struck; the push and the PR
+    on the user's word ("stop at PR").
 11. Release: merge on the user's word, the annotated tag `v0.15.0` at the
-    merge, then the self-pin (`.github/workflows/sdlc.yml` to `@v0.15.0`)
-    through its own PR.
+    merge, then the self-pin (`.github/workflows/sdlc.yml` and USAGE
+    section 7 to `@v0.15.0`) through its own PR. Deferred to session 48.
 
 Steps 1, 10 and 11 sit outside a contract unit, so the pane does not show
-them. If t6 runs long, the session ends after step 6 and t9 opens session
-48.
+them.
 
 Decisions this session: ten. The user's at plan review: (1) the
 deliverable: yes; (2) the delegation: yes; (3) the id ruling: yes; (4) this
-plan: yes. Claude's, on review: (5) t6's test list; (6) t6's commit. The
-user's: (7) t9's commit; (8) the push and the PR; (9) the merge and the
-tag; (10) the self-pin.
+plan: yes. Claude's, on review: (5) t6's test list; (6) t6's commit, and
+each fix round's tests and commits. The user's: (7) t9's commit: yes; (8)
+the boundary: stop at the PR; (9) the push and the PR: yes, with (8).
+Session 48's: (10) the merge, the tag and the self-pin.
 
 Deferred, not this session:
+- The release of 0.15.0 (step 11).
 - G1: its criteria review, before the pilot's M0 code.
 - The pilot's config line, in the engine's session.
 - `.sdlc/config.yaml` still lists `plan.workflow.json` as a free path.
