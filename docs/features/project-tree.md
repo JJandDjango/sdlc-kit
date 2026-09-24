@@ -1,6 +1,7 @@
 | Revision Date | Revised By | Changes Made |
 | :-: | :-: | :-- |
 | 2026-09-24 | user | r1: Created in kit session 49 through an interview with the user, one question at a time, in the format ADR 0029 ratified (`NOTES_feature-document_2026-09-18.md`); typed by Claude on the user's word. The request half, in progress. PO seat: user; engineer seat: user |
+| 2026-09-24 | user | r2: The request half finished in kit session 50: the terms (Q11), the format's checks 1 to 8 read back, six fixes, the section tags; typed by Claude on the user's word. Signed by the PO seat (user). The title question stays open for the engineer seat |
 
 # project-tree - The exact state of every feature's work, in one tree
 
@@ -9,13 +10,17 @@
 
 ## Statement
 
+`[PO seat · authored]`
+
 As a developer, I want to easily keep track of the exact state of work on
 every feature being worked on (which gates and conditions it has passed,
 which units and tasks are done, what is in flight, what is blocked or
-waiting on me, and what its checks found), so I know at any moment
+waiting on me, and what its gates found), so I know at any moment
 whether the work still matches its feature document.
 
 ## Description
+
+`[PO seat · authored]`
 
 The session plans I get as Archify documents are confusing to follow and
 do not hold up well between sessions: they use abbreviations and
@@ -29,12 +34,14 @@ for me right now: with no task in flight it shows `no current task`, then
 This feature clears up the ambiguity with a tree I can easily read. At
 each step it shows notes (which gates and conditions a feature has
 passed, which units and tasks are done, what is in flight, what is
-blocked or waiting on me, and what its checks found), its status (done,
-in flight, or not started), and references to its documentation. Where
-an id shows, its plain name stands beside it: `G0.2 vocabulary
-coverage`, never `G0.2` alone.
+blocked or waiting on me, and what its gates found), its status (done,
+doing or to do), and references to its documentation. Where an id
+shows, its plain name stands beside it: `G0.2 vocabulary coverage`,
+never `G0.2` alone.
 
 ## Background
+
+`[PO seat · authored]`
 
 The tree started as the user's sketch in engine session 10 (2026-09-21,
 transcript `83087a60`, 15:57Z), verbatim:
@@ -122,32 +129,37 @@ Each entry gets a regression check under Acceptance criteria.
 7. Each contract's G0 verdict reads as the validator says: `done` at
    ready-green, `blocked` when draft-green with `TC003`, `to do` when
    draft-green otherwise, `failed` when draft-red (SC2.3).
-
-The pane's `tree: pane: parts:` and `fold:` settings are touched too;
-whether they hold is decided under Success criteria.
+8. `tree: pane: parts:` selects the parts an item's line prints after
+   its id and plain name (SC1.1).
+9. `tree: pane: fold:` sets whether a closed item's line names or counts
+   what it holds (SC4.2).
 
 ## Success criteria
+
+`[PO seat · authored]`
 
 1. SC1: Every feature being worked on stands in one tree, and each item
    shows its plain name beside its id and a reference to the document it
    comes from.
 2. SC2: Each feature shows its gates and their conditions, each with its
-   status and what its checks found.
-3. SC3: Each feature shows its units and tasks as done, in flight or not
-   started, and marks what is blocked or waiting on me.
+   status and what its rules found.
+3. SC3: Each feature shows its units and tasks as done, doing or to do,
+   and marks what is blocked or waiting on me.
 4. SC4: The pane shows the whole tree as an outline, each feature opened
    down to its units, whether or not a task is in flight; I scroll it,
-   move through it and open or close any node with the arrow keys or the
+   move through it and open or close any item with the arrow keys or the
    mouse.
 5. SC5: The tree shows when a feature's work no longer matches its
    feature document.
 
 ## Non-goals
 
+`[PO seat · authored]`
+
 - No new authorizations are added, and no new gate condition: the tree
   shows the conditions the kit defines and adds none (the standing line).
-- No change to what any gate checks: a condition shows what its check
-  already reports.
+- No change to what any gate checks: a condition shows what its rules
+  already report.
 - No stored copy: the tree is computed from the kit's files at every
   print, so the sketch's JSON file stays ruled out.
 - No edits through the tree: it only reads.
@@ -159,6 +171,8 @@ whether they hold is decided under Success criteria.
 - Not a replacement for STATE.md, which keeps the narrative.
 
 ## Prerequisites
+
+`[PO seat · authored]`
 
 1. The tree, its query face and its pane (exist: tree-view and pane-view,
    kit 0.15.0).
@@ -185,10 +199,13 @@ whether they hold is decided under Success criteria.
 
 ## Acceptance criteria
 
+`[PO seat · authored]`
+
 ### Checks
 
 Two or three checks under each success criterion. SC1.3, SC2.3, SC3.3 and
-SC4.3 carry the regression checks for Existing behavior touched.
+SC4.3 carry the regression checks for Existing behavior touched, and
+SC1.1 and SC4.2 those for its entries 8 and 9.
 
 SC1 One tree, plain names, document references
 
@@ -210,7 +227,7 @@ SC2 Gates, conditions, what they found
   gate in the kit's order, marked inactive, and each gate opens into its
   conditions in the kit's order, each with its own status from the rules
   that condition owns
-- SC2.2: verify a condition that is not done lists what its check found,
+- SC2.2: verify a condition that is not done lists what its rules found,
   one line per diagnostic in plain words, and a finding that names a
   condition stands under that condition at the repository level
 - SC2.3: verify each contract's G0 verdict still reads as the validator
@@ -225,7 +242,8 @@ SC3 Units, tasks, blocked and waiting
   on me names its seat, both on the item's own line
 - SC3.3: verify `taskcontract progress` stays the only writer, every
   state it recorded reads as before, and the notify command still runs
-  once per arrival at an approval, never on a redraw
+  once per arrival at an approval, with the item's id in `SDLC_NODE`,
+  never on a redraw
 
 SC4 The interactive outline
 
@@ -235,7 +253,7 @@ SC4 The interactive outline
 - SC4.2: verify Up and Down move the cursor, Right opens and Left closes
   the item under it, a click opens or closes the item it lands on, and
   the wheel scrolls; a closed item's line counts what it holds, or names
-  it under `fold: names`
+  what it holds under `fold: names`
 - SC4.3: verify the waiting line stays the pane's first line, word for
   word, and a redraw within two seconds of a source change keeps the
   cursor and every open and closed item as they were
@@ -243,7 +261,8 @@ SC4 The interactive outline
 SC5 Drift from the feature document
 
 - SC5.1: verify a feature whose document holds a revision newer than the
-  one its contract was derived from reads stale, naming both revisions
+  one its contract was derived from, other than intake's "Ready:" row or
+  a "Measured:" row, reads stale, naming both revisions
 - SC5.2: verify a feature whose document the tree cannot find says so,
   rather than reading as matching
 
@@ -253,6 +272,8 @@ None new: every message the kit prints today stays word for word.
 
 ## Decisions and open questions
 
+`[Both seats · authored]`
+
 - Q: The feature's id? A: `project-tree`. `pane-view` is the closed
   0.15.0 contract, and reusing its id would re-derive that contract
   (decided 2026-09-24).
@@ -261,13 +282,12 @@ None new: every message the kit prints today stays word for word.
   revision, and `docs/` is a free path (decided 2026-09-24).
 - Q: What are "notes" and "status updates"? A: The notes are the state
   facts at each step, as listed in the statement; a status update is
-  knowing which parts are done, in flight or not started (decided
-  2026-09-24).
+  knowing which parts are done, doing or to do (decided 2026-09-24).
 - Q: Do ids show? A: Each id is paired with its plain name (decided
   2026-09-24).
 - Q: How much of the tree does the pane show? A: All of it: each feature
   opened down to its units, scrolled and navigated with the arrow keys
-  and the mouse, whose nodes open and close (SC4, decided 2026-09-24).
+  and the mouse, whose items open and close (SC4, decided 2026-09-24).
 - Q: Which gates does a feature show? A: Its active gates, then the next
   one in the kit's order: the sketch's `-- g1` (SC2.1, decided
   2026-09-24).
@@ -275,6 +295,18 @@ None new: every message the kit prints today stays word for word.
   toggles, the wheel scrolls (SC4.2, decided 2026-09-24).
 - Q: Do `tree: pane: parts:` and `fold:` keep working? A: Yes (SC1.1,
   SC4.2, decided 2026-09-24).
+- Q: What does "check" mean? A: An acceptance check only, a line such as
+  SC1.1. What a condition runs is a rule, and what a rule reports is a
+  diagnostic; the statement, the description, SC2, SC2.2 and a non-goal
+  say so (Q11, decided 2026-09-24).
+- Q: Which status words? A: The six the tree prints: to do, doing,
+  done, failed, blocked, waiting on a seat. "In flight" stays the plain
+  phrase for a task at doing; "not started" gives way to "to do", since
+  a draft-green contract has started G0 without passing it (SC3, Q11,
+  decided 2026-09-24).
+- Q: Is a verdict its own line? A: No: it shows as its gate's status,
+  and the gate under a feature opens into its conditions (SC2.1, Q11,
+  decided 2026-09-24).
 - OPEN (engineer seat, for the solution half): where a feature's title
   comes from, since ADR 0029 keeps tooling off document headings: a
   contract field that intake fills, or another source.
@@ -283,41 +315,68 @@ None new: every message the kit prints today stays word for word.
 
 ### Terms
 
-OPEN (PO seat, the interview's Q11): drafted by Claude in session 49 from
-this document's nouns, not yet answered; keep, strike, add or reword
-each. At intake each maps to a ratified vocabulary term or becomes one to
-ratify.
+`[PO seat · authored]`
+
+Decided at the interview's Q11 (2026-09-24): session 49's 19 drafts,
+reworked in four decisions, and seven added. Five map to the kit's
+ratified terms: Gate (`gate`), Verdict (`verdict`), Unit
+(`decomposition-unit`), Check (`acceptance-sketch`) and Seat
+(`intake-seat`, by its alias). The rest become terms to ratify at
+intake. The ratified `verdict` calls the coded records a rule reports
+"findings"; this document calls them diagnostics, so ratifying
+Diagnostic aligns that sentence.
 
 - Feature: a piece of work with its own feature document and contract; a
   top-level item of the tree.
+- Feature document: the document a feature's contract is derived from,
+  at `docs/features/<id>.md`.
 - Tree: the repository's work as one outline, computed from the kit's
   files at every print.
 - Pane: the terminal pane that shows the tree (`taskcontract tree
   --follow`), in herdr or any terminal.
 - Outline: the tree drawn one item per line, each item indented under its
   parent.
-- Item: one line of the tree: a feature, gate, verdict, condition,
+- Item: one line of the tree with its own id: a feature, gate, condition,
   finding, unit, task or check.
-- Gate: a stage the work passes, defined by the kit (G0 planning and
-  intake, G1 requirements and spec, and on).
-- Condition: one check a gate runs (G0.1 definition of ready, G0.2
-  vocabulary coverage, G0.3 unit confirmation).
-- Verdict: a feature's result at one gate.
+- Gate: a pass/fail checkpoint between phases of the work, defined by the
+  kit (G0 planning and intake, G1 requirements and spec, and on).
+- Active gate: a gate the repository has turned on in
+  `.sdlc/config.yaml`. The tree marks the next gate after the active ones
+  as inactive (SC2.1).
+- Condition: one named part of a gate, whose status comes from the rules
+  it owns (G0.1 definition of ready, G0.2 vocabulary coverage, G0.3 unit
+  confirmation).
+- Rule: one test the kit's validator applies to a contract, with a code
+  such as `TC003`. Each rule belongs to one condition.
+- Diagnostic: one thing a rule reported, shown in plain words under its
+  condition.
+- Verdict: a feature's result at one gate, as the kit's validator reports
+  it, shown as that gate's status: done, blocked, to do or failed
+  (existing behavior 7).
 - Finding: a recorded observation about the kit, filed under the gate or
   condition it names.
-- Unit: one separately gated slice of a feature's work, from its
+- Unit: one separately verified slice of a feature's work, from its
   contract.
 - Task: one of the seven steps every unit follows, from approving its
   test list to its Two-Key pass.
+- Approval: a task that waits on a seat's answer, such as approving a
+  unit's test list or its commit.
 - Check: one testable line under a success criterion, with an id such as
   SC1.1.
-- Status: done, doing or to do, or failed, blocked or waiting on a seat.
+- Status: to do, doing or done, or failed, blocked or waiting on a seat.
+  These are the six words the tree prints. A task at doing is in flight.
+- Progress record: what `taskcontract progress` writes as a task starts,
+  finishes or is blocked; unit and task statuses come from it.
 - Plain name: the words beside an id that say what it is, without the id
   scheme.
-- Document reference: the file and line an item comes from.
+- Document reference: the file an item comes from, and the line where it
+  has one.
 - Cursor: the item the arrow keys and the mouse act on.
-- Stale: a feature whose document changed after its contract was
-  derived.
-- Seat: the person a step waits on for an answer: PO or engineer.
+- Stale: a feature whose document holds a revision newer than the one its
+  contract was derived from, other than intake's "Ready:" row or a
+  "Measured:" row.
+- Seat: the human position a step waits on for an answer: PO or engineer.
 - Waiting line: the pane's first line while a task waits on a seat; the
   herdr hook reads it.
+- Notify command: the command the pane runs once each time the current
+  task reaches an approval.
