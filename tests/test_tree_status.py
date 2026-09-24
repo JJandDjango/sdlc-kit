@@ -7,9 +7,9 @@ profiles, and names the validator command and the HEAD id (SC7.3). The
 current task derives from the records in `.sdlc/progress/<contract>.yaml`,
 never from a stored marker (the cursor sketch).
 
-Nothing writes a progress file yet: units t4 and t5 add the writers. So
-each test writes its records by hand, in the format this unit fixes, and
-drives the command as a user would.
+The writers came later, in units t4 and t5, so each test here writes its
+records by hand, in the format this unit fixes, and drives the command as
+a user would.
 """
 
 from __future__ import annotations

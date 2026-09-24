@@ -50,7 +50,8 @@ Two house rules, enforced in review:
   the path to the current task under a where-am-I line, with each item
   under another by the last segment of its id, folds the other items at
   each level into one line of counts, and redraws within two seconds of a
-  change to a source file. At an approval its first line reads `waiting
+  change to a source file, a vocabulary change taking longer on a repo
+  with many contracts. At an approval its first line reads `waiting
   on a seat: <approval> for <unit>`, and the optional `tree: notify:`
   command runs once per arrival with the item's id in `SDLC_NODE`. Two
   optional keys, `tree: pane: parts:` and `tree: pane: fold:`, choose

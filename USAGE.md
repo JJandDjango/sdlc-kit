@@ -621,9 +621,11 @@ status, so it shows its `kind`.
 🟢 An item names its evidence on its line. A done check names the run
 that proved it, `via <command> at <commit>`. A done task names the commit
 its own done record was written at, `at <commit>`, and a done approval
-names its seat too, `by <seat> at <commit>`. A unit or contract closed
-with `progress done` names its close, `at <commit>`. A blocked task names
-its reason, `because <reason>`. A `G0` verdict, whatever it reads, names
+names its seat too, `by <seat> at <commit>`. A unit or contract that
+reads `done` after a close with `progress done` names that close, `at
+<commit>`; one that does not read `done`, such as a closed contract with
+another active gate ("History, backfilled", below), names none. A blocked
+task names its reason, `because <reason>`. A `G0` verdict, whatever it reads, names
 the validator run behind it: `via python -m taskcontract validate
 specs/<contract>/contract.yaml --profile ready at <commit>`.
 
@@ -662,8 +664,9 @@ nothing reads `dirty`.
   items at each level fold to one line with their counts by status. For
   five contracts of seven units each, with the current task in the last
   unit, that is at most 15 lines. It renders again within two seconds of
-  a change to a source file, and never while nothing changes. Ctrl-C
-  exits 0. It needs no `curses`, so it runs on Windows: it reads
+  a change to a source file (a vocabulary change can take longer, below),
+  and never while nothing changes. Ctrl-C exits 0. It needs no `curses`,
+  so it runs on Windows: it reads
   modification times once a second and redraws with ANSI escape codes.
 
 🟢 One check of this kit's own tree, queried when its first green run
@@ -683,8 +686,8 @@ was added, removed or changed, so a terminal resize alone does not
 redraw, and a line cut at the old width wraps until the next change. It
 keeps each contract's `G0` reading in memory until that contract's file
 changes. A change under `specs/vocabulary/` drops every reading, so that
-render runs the validator on every contract and can take a little over
-two seconds (about 2.4, measured on this kit).
+render runs the validator on every contract and can take longer than two
+seconds on a repo with many contracts.
 
 🟢 The current task is derived, never stored: the task marked `doing`
 most recently; with none `doing`, the first `to do` task in the contract
@@ -752,9 +755,9 @@ taskcontract progress: cannot start {command} ({reason})
 ```
 
 🟢 A malformed progress file prints one line naming it, and its contract
-reads as having no progress. No writer touches it: each call on that
-contract is refused with the `unreadable progress` line above, so fix or
-remove the file first.
+reads as having no progress. No writer touches it: a call on that
+contract that passes its other checks is refused with the `unreadable
+progress` line above, so fix or remove the file first.
 
 🟢 **History, backfilled.** `taskcontract progress done` on a unit or a
 contract closes every task and check under it; a close never covers a
@@ -782,10 +785,11 @@ task arrives at an approval, never on a redraw, with the item's id in
 approval has arrived there, so it runs the command at once. The pane
 never waits on the command. One that ends nonzero prints `notify failed,
 exit {code}: {command}` on stderr, whole, never cut to the pane's width,
-and one that cannot start at all prints the same line with code 127. The
+and when the shell itself cannot start, the same line reads code 127. The
 pane keeps running either way, and with no `notify` set it runs the
 same. Ctrl-C ends the pane without stopping the commands it started,
-though on POSIX the same Ctrl-C reaches them. The key is optional, and
+though the same Ctrl-C can reach them, since they run in the pane's
+terminal. The key is optional, and
 the config template does not carry it. The command is the kit's edge: a
 terminal multiplexer's plugin (herdr's, for one) wraps it outside the
 kit.
