@@ -910,9 +910,11 @@ draft profile, `done` when none fails the ready profile, `blocked` when
 warning (`W001`) never changes a status and never shows. The `G0` verdict
 still reads from the validator, as above, so it agrees with its
 conditions: `failed` when one reads `failed`, else `blocked` when one reads
-`blocked`, `done` when all three read `done`, and `to do` otherwise. The
-conditions of every other gate read `to do`: the kit computes none of them
-yet.
+`blocked`, `done` when all three read `done`, and `to do` otherwise. A
+contract the tree cannot read as a mapping, one it names on stderr as an
+`unreadable contract`, reads `failed` at G0.1 and `to do` at G0.2 and
+G0.3, since their joins never ran. The conditions of every other gate read
+`to do`: the kit computes none of them yet.
 
 🔴 A condition that is not `done` lists what its rules report, one line
 under it per diagnostic: `- `, then the validator's message without its

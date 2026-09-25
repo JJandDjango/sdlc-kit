@@ -331,7 +331,7 @@ def test_sc1_1_at_a_task_that_is_not_an_approval_the_where_line_is_the_panes_fir
         WHERE_PROVE_RED,                              # first, above the top-level fold line
         "2 more: 1 to do, 1 done",                    # gates/G0, beta
         whole["alpha"],
-        "  2 more: 1 done, 1 blocked",                # alpha/G0, alpha/a1-core
+        "  3 more: 1 to do, 1 done, 1 blocked",       # alpha/G0, alpha/G1 inactive, alpha/a1-core
         short_line(whole["alpha/a2-edges"]),
         "    9 more: 6 to do, 2 done, 1 failed",      # the other tasks and the checks
         short_line(whole["alpha/a2-edges/prove-red"]),
@@ -349,7 +349,7 @@ def test_sc1_1_at_approve_tests_the_where_line_stands_directly_under_the_waiting
         WHERE_QUERY_FACE,
         "1 more: 1 to do",                            # pane-view
         whole["tree-view"],
-        "  1 more: 1 to do",                          # tree-view/t5-pane-face
+        "  2 more: 2 to do",                          # tree-view/G0 inactive, tree-view/t5-pane-face
         short_line(whole["tree-view/t6-query-face"]),
         "    7 more: 7 to do",                        # six tasks and one check
         short_line(whole["tree-view/t6-query-face/approve-tests"]),
@@ -369,7 +369,7 @@ def test_sc1_1_at_approve_commit_the_where_line_stands_directly_under_the_waitin
         WHERE_APPROVE_COMMIT,
         "1 more: 1 to do",                            # beta
         whole["alpha"],
-        "  1 more: 1 to do",                          # alpha/a1-core
+        "  2 more: 2 to do",                          # alpha/G0 inactive, alpha/a1-core
         short_line(whole["alpha/a2-edges"]),
         "    9 more: 8 to do, 1 done",                # the other tasks and the checks
         short_line(whole["alpha/a2-edges/approve-commit"]),
@@ -385,7 +385,7 @@ def test_sc1_1_the_where_line_names_a_contract_and_a_unit_whose_ids_carry_hyphen
     assert renders == [[
         where,
         whole["pane-view-2"],
-        "  1 more: 1 to do",                          # pane-view-2/p9-short-ids-2
+        "  2 more: 2 to do",                          # pane-view-2/G0 inactive, pane-view-2/p9-short-ids-2
         short_line(whole["pane-view-2/p10-where-line-3"]),
         "    7 more: 7 to do",                        # six tasks and one check
         short_line(whole["pane-view-2/p10-where-line-3/two-key"]),
@@ -510,7 +510,7 @@ def test_sc3_1_a_unit_line_and_a_task_line_open_on_the_last_segment_of_their_ids
         WHERE_PROVE_RED,
         "2 more: 1 to do, 1 done",
         f"alpha [failed] | {INTENT}",
-        "  2 more: 1 done, 1 blocked",
+        "  3 more: 1 to do, 1 done, 1 blocked",
         PROVE_RED_UNIT,                               # not `  alpha/a2-edges [failed] ...`
         "    9 more: 6 to do, 2 done, 1 failed",
         PROVE_RED_TASK,                               # not `    alpha/a2-edges/prove-red ...`
@@ -574,7 +574,7 @@ def test_sc3_1_the_cut_to_the_panes_width_applies_to_the_shortened_line(
     assert render[-3] == PROVE_RED_UNIT[:width - 3] + "..."
     assert render == cut_lines([
         WHERE_PROVE_RED, "2 more: 1 to do, 1 done", f"alpha [failed] | {INTENT}",
-        "  2 more: 1 done, 1 blocked", PROVE_RED_UNIT,
+        "  3 more: 1 to do, 1 done, 1 blocked", PROVE_RED_UNIT,
         "    9 more: 6 to do, 2 done, 1 failed", PROVE_RED_TASK], width)
 
 
@@ -604,6 +604,10 @@ def test_sc3_1_the_short_ids_follow_the_current_task_to_another_unit_and_another
 
 SOLO_TREE = f"""\
 solo-2 [waiting on a seat] | {INTENT}
+  solo-2/G0 [to do] inactive | Planning / Intake
+    solo-2/G0/G0.1 [to do] | Definition-of-ready
+    solo-2/G0/G0.2 [to do] | Vocabulary coverage
+    solo-2/G0/G0.3 [to do] | Unit confirmation
   solo-2/s1-base [done] at {HEAD} | the work for s1-base is done
     solo-2/s1-base/approve-tests [done] | Approve the test list
     solo-2/s1-base/write-tests [done] | Write the tests
@@ -743,7 +747,7 @@ def _doc_render(contract, unit, task):
         WHERE_PROVE_RED,
         "1 more: 1 to do",                            # beta
         contract,
-        "  1 more: 1 doing",                          # alpha/a1-core
+        "  2 more: 1 to do, 1 doing",                 # alpha/G0 inactive, alpha/a1-core
         unit,
         "    9 more: 9 to do",                        # the other tasks and the checks
         task,
@@ -906,7 +910,7 @@ def test_sc2_1_each_depends_on_link_of_a_unit_line_prints_after_one_space(tmp_pa
     assert render == [
         "specs/gamma-7/contract.yaml > gamma-7 > g3-third > prove-red",
         "gamma-7",
-        "  2 more: 2 to do",                          # g1-first, g2-second
+        "  3 more: 3 to do",                          # gamma-7/G0 inactive, g1-first, g2-second
         "  g3-third depends_on: gamma-7/g1-first depends_on: gamma-7/g2-second",
         "    7 more: 7 to do",                        # six tasks and one check
         "    prove-red",
@@ -935,7 +939,8 @@ def test_sc2_2_with_parts_unset_each_item_line_shows_every_field_it_has(
     assert renders == [FULL, BARE, FULL]
     # the where-am-I line and the fold lines read the same set or unset
     assert [[render[i] for i in (0, 1, 3, 5)] for render in renders] == [
-        [WHERE_PROVE_RED, "1 more: 1 to do", "  1 more: 1 doing", "    9 more: 9 to do"]] * 3
+        [WHERE_PROVE_RED, "1 more: 1 to do", "  2 more: 1 to do, 1 doing",
+         "    9 more: 9 to do"]] * 3
     assert capsys.readouterr().err == ""
 
 
@@ -977,7 +982,7 @@ def test_sc2_2_at_an_approval_the_parts_leave_the_waiting_line_and_the_where_lin
         WHERE_QUERY_FACE,
         "1 more: 1 to do",                            # pane-view
         "tree-view [waiting on a seat]",
-        "  1 more: 1 to do",                          # tree-view/t5-pane-face
+        "  2 more: 2 to do",                          # tree-view/G0 inactive, tree-view/t5-pane-face
         "  t6-query-face [waiting on a seat]",
         "    7 more: 7 to do",                        # six tasks and one check
         "    approve-tests [waiting on a seat] current",
@@ -996,7 +1001,7 @@ def test_sc2_2_with_no_current_task_the_parts_leave_the_render_unchanged(tmp_pat
     assert len(renders) == 3
     assert renders[0] == ["no current task", "2 items: 2 to do"]
     assert renders[1] == [WHERE_WRITE_TESTS, "1 more: 1 to do", "alpha [doing]",
-                          "  1 more: 1 to do", "  a1-core [doing]", "    8 more: 8 to do",
+                          "  2 more: 2 to do", "  a1-core [doing]", "    8 more: 8 to do",
                           "    write-tests [doing]"]
     assert renders[2] == ["no current task", "2 items: 1 to do, 1 done"]
     assert capsys.readouterr().err == ""
@@ -1032,7 +1037,7 @@ def test_sc2_2_the_notify_command_keeps_working_beside_the_pane_key(
         WHERE_APPROVE_COMMIT,
         "1 more: 1 to do",                            # beta
         "alpha [waiting on a seat]",
-        "  1 more: 1 to do",                          # alpha/a1-core
+        "  2 more: 2 to do",                          # alpha/G0 inactive, alpha/a1-core
         "  a2-edges [waiting on a seat]",
         "    9 more: 8 to do, 1 done",                # the other tasks and the checks
         "    approve-commit [waiting on a seat]",
@@ -1190,7 +1195,7 @@ def _named_repo(tmp_path):
 
 # the ruling's own example: a gate item and the no-gate item by their full ids
 NAMED_TOP = "3 more: gates/G0 [to do], gates/none [to do], beta [done]"
-NAMED_UNITS = "  2 more: G0 [done], a1-core [blocked]"      # alpha/G0, alpha/a1-core
+NAMED_UNITS = "  3 more: G0 [done], G1 [to do], a1-core [blocked]"  # alpha/G1 inactive
 NAMED_TASKS = ("    9 more: approve-tests [done], write-tests [done], green [to do], "
                "approve-commit [to do], commit [to do], two-key [to do], sketch-1 [failed], "
                "SC2.1 [to do], sketch-3 [to do]")
@@ -1209,7 +1214,7 @@ DOC_NAMED_TASKS = ("    9 more: approve-tests [to do], write-tests [to do], gree
                    "approve-commit [to do], commit [to do], two-key [to do], "
                    "sketch-1 [to do], SC2.1 [to do], sketch-3 [to do]")
 DOC_NAMED = [WHERE_PROVE_RED, "1 more: beta [to do]", FULL_CONTRACT,
-             "  1 more: a1-core [doing]", FULL_UNIT, DOC_NAMED_TASKS, FULL_TASK]
+             "  2 more: G0 [to do], a1-core [doing]", FULL_UNIT, DOC_NAMED_TASKS, FULL_TASK]
 
 
 # --- SC4.1 fold names -------------------------------------------------------------------------
@@ -1233,7 +1238,7 @@ def test_sc4_1_fold_names_names_each_folded_item_by_id_and_status_at_all_three_d
     # level, else its last segment) and the status tag, in the whole tree's order
     for depth, fold, ids in (
             (0, NAMED_TOP, ["gates/G0", "gates/none", "beta"]),
-            (1, NAMED_UNITS, ["alpha/G0", "alpha/a1-core"]),
+            (1, NAMED_UNITS, ["alpha/G0", "alpha/G1", "alpha/a1-core"]),
             (2, NAMED_TASKS, [i for i in whole if i.startswith("alpha/a2-edges/")
                               and i != "alpha/a2-edges/prove-red"])):
         named = [(i if depth == 0 else i.rsplit("/", 1)[-1]) + f" [{ROW.match(whole[i])['tag']}]"
@@ -1252,7 +1257,7 @@ def test_sc4_1_a_check_whose_id_joins_check_ids_folds_by_its_whole_last_segment(
         WHERE_WRITE_TESTS,
         "1 more: beta [to do]",
         f"alpha [doing] | {INTENT}",
-        "  1 more: a2-edges [to do]",
+        "  2 more: G0 [to do], a2-edges [to do]",
         "  a1-core [doing] | the work for a1-core is done",
         ("    8 more: approve-tests [to do], prove-red [to do], green [to do], "
          "approve-commit [to do], commit [to do], two-key [to do], SC1.1 [to do], "
@@ -1276,7 +1281,7 @@ def test_sc4_1_at_an_approval_fold_names_leaves_the_waiting_line_the_where_line_
         WHERE_QUERY_FACE,
         "1 more: pane-view [to do]",
         whole["tree-view"],
-        "  1 more: t5-pane-face [to do]",
+        "  2 more: G0 [to do], t5-pane-face [to do]",
         short_line(whole["tree-view/t6-query-face"]),
         ("    7 more: write-tests [to do], prove-red [to do], green [to do], "
          "approve-commit [to do], commit [to do], two-key [to do], SC6.1 [to do]"),
@@ -1296,7 +1301,7 @@ def test_sc4_1_the_requests_own_example_at_80_columns_cuts_the_long_fold_line(
         WHERE_QUERY_FACE,
         "1 more: pane-view [to do]",
         "tree-view [waiting on a seat]",
-        "  1 more: t5-pane-face [to do]",
+        "  2 more: G0 [to do], t5-pane-face [to do]",
         "  t6-query-face [waiting on a seat]",
         "    7 more: write-tests [to do], prove-red [to do], green [to do], approve-co...",
         "    approve-tests [waiting on a seat] current",
@@ -1340,7 +1345,7 @@ def test_sc4_1_a_parts_that_leaves_status_out_never_changes_a_fold_line(
     contract, unit, task = lines
     # the item lines as parts leaves them; each folded item still shows its status
     assert renders == [[WHERE_PROVE_RED, "1 more: beta [to do]", contract,
-                        "  1 more: a1-core [doing]", unit, DOC_NAMED_TASKS, task]]
+                        "  2 more: G0 [to do], a1-core [doing]", unit, DOC_NAMED_TASKS, task]]
     assert capsys.readouterr().err == ""
 
 
@@ -1361,7 +1366,7 @@ def test_sc4_1_with_no_current_task_the_items_line_names_the_top_level_items(tmp
         WHERE_WRITE_TESTS,
         "3 more: gates/G0 [to do], gates/none [to do], beta [to do]",
         f"alpha [doing] | {INTENT}",
-        "  2 more: G0 [done], a2-edges [to do]"]
+        "  3 more: G0 [done], G1 [to do], a2-edges [to do]"]
     assert renders[2] == [
         "no current task",
         "4 items: gates/G0 [to do], gates/none [to do], alpha [done], beta [to do]"]

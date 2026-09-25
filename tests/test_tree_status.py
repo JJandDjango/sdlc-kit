@@ -313,8 +313,10 @@ def test_a_contract_close_reads_the_contract_done_all_the_way_down(tmp_path, cap
     root = _repo(tmp_path)
     _progress(root, "alpha", _step("alpha", "done", "10:00"))
     rows, _ = _print(root, capsys)
-    under = [row for row in rows if row[1] == "alpha" or row[1].startswith("alpha/")]
-    assert len(under) == 23  # the contract, its verdict, two units, their tasks and checks
+    # the inactive next gate, alpha/G1, and its conditions read to do and never count
+    under = [row for row in rows if (row[1] == "alpha" or row[1].startswith("alpha/"))
+             and not row[1].startswith("alpha/G1")]
+    assert len(under) == 26  # the contract, its verdict and its conditions, two units, ...
     assert {tag for _, _, tag, _ in under} == {"done"}
 
 

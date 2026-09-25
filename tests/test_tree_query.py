@@ -198,6 +198,8 @@ def _whole(root, capsys):
     assert code == 0
     rows = []
     for text in out.splitlines():
+        if text.lstrip().startswith("- "):
+            continue  # a condition's diagnostic line, no item (project-tree o1)
         match = ROW.match(text)
         assert match, f"not an item line: {text!r}"
         rows.append((len(match["indent"]) // 2, match["id"], match["tag"], match["rest"]))
@@ -261,8 +263,8 @@ def test_sc6_1_an_item_prints_its_summary_links_doc_and_file_reference(tmp_path,
         "summary: the work for a2-edges is done\n"
         "depends_on: alpha/a1-core\n"
         f"file: specs/alpha/contract.yaml:{A2_LINE}\n"), "")
-    assert _query(root, capsys, "gates/G3/slow-loop") == (0, (
-        "gates/G3/slow-loop [kind: friction]\n"
+    assert _query(root, capsys, "gates/G3/G3.1/slow-loop") == (0, (
+        "gates/G3/G3.1/slow-loop [kind: friction]\n"
         f"summary: {STATEMENT}\n"
         "gate: G3.1\n"
         "file: .sdlc/findings/slow-loop.yaml:1\n"), "")
@@ -333,7 +335,7 @@ def test_sc6_2_every_id_the_tree_prints_answers(tmp_path, capsys):
     rows, _ = _whole(root, capsys)
     ids = [row[1] for row in rows]
     assert len(ids) == len(set(ids))  # one item per id in this fixture
-    for kind in ("gates/G0", "gates/G0/stale-pin", "gates/G3", "gates/G3/slow-loop",
+    for kind in ("gates/G0", "gates/G0/stale-pin", "gates/G3", "gates/G3/G3.1/slow-loop",
                  "gates/none", "gates/none/idea", "alpha", "alpha/G0",
                  "alpha/a1-core", "alpha/a2-edges", "beta/b1-solo",
                  *(f"alpha/a1-core/{task}" for task in TASK_KEYS),

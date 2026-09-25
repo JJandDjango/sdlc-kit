@@ -2,43 +2,126 @@
 # that defines the gate, in registry order. The names are the Overview table
 # of docs/gates.md, which stays the human index. `taskcontract tree` reads
 # this list; no gate reads it.
+#
+# Each gate lists its conditions in its page's order: the id and the name of
+# each "###" heading under the page's "## Conditions", the name without its
+# date note and without a last word "check" or "join". G0's three also list
+# the validator codes each owns (`rules:`); every code the validator emits
+# sits in exactly one of them.
 gates:
   - id: G0
     name: Planning / Intake
     page: docs/gates/G0-planning-intake.md
+    conditions:
+      - id: G0.1
+        name: Definition-of-ready
+        rules: [TC000, TC001, TC002, TC003, TC004, TC005, TC006, TC007, TC008,
+                TC009, TC013, TC014, TC015]
+      - id: G0.2
+        name: Vocabulary coverage
+        rules: [TC010, TC011, TC012, TC017, W001]
+      - id: G0.3
+        name: Unit confirmation
+        rules: [TC016, TC018]
   - id: G1
     name: Requirements / Spec
     page: docs/gates/G1-requirements-spec.md
+    conditions:
+      - {id: G1.1, name: Spec/schema linting}
+      - {id: G1.2, name: Model checking}
+      - {id: G1.3, name: Criteria completeness + ambiguity review}
   - id: G2
     name: Design / Architecture
     page: docs/gates/G2-design-architecture.md
+    conditions:
+      - {id: G2.1, name: Design-level model checking}
+      - {id: G2.2, name: Breaking-change baseline lock}
+      - {id: G2.3, name: ADR review}
+      - {id: G2.4, name: Threat-model existence}
+      - {id: G2.5, name: Spec-suite red run}
   - id: G3
     name: Implementation
     page: docs/gates/G3-implementation.md
+    conditions:
+      - {id: G3.1, name: Formatter}
+      - {id: G3.2, name: Analyzer battery}
+      - {id: G3.3, name: Strict compile}
   - id: G4
     name: Pre-merge CI
     page: docs/gates/G4-pre-merge-ci.md
+    conditions:
+      - {id: G4.1, name: Inner-loop echo}
+      - {id: G4.2, name: Architecture tests}
+      - {id: G4.3, name: Acceptance suite + REQ-ID traceability}
+      - {id: G4.4, name: Property tests}
+      - {id: G4.5, name: API surface diff}
+      - {id: G4.6, name: Write-surface immutability}
+      - {id: G4.7, name: Taint/security scan}
+      - {id: G4.8, name: Duplication + complexity ratchets}
+      - {id: G4.9, name: Secret/dependency audit}
+      - {id: G4.10, name: Suppression audit}
+      - {id: G4.11, name: Full test execution}
+      - {id: G4.12, name: Scope}
   - id: G5
     name: Integration / System
     page: docs/gates/G5-integration-system.md
+    conditions:
+      - {id: G5.1, name: Consumer-driven contract verification}
+      - {id: G5.2, name: Differential + deep property campaign}
+      - {id: G5.3, name: Fuzzing}
+      - {id: G5.4, name: Systematic concurrency testing}
+      - {id: G5.5, name: Mutation threshold}
+      - {id: G5.6, name: Model trace-conformance}
+      - {id: G5.7, name: Soak / resource-trend}
   - id: G6
     name: UAT / Staging
     page: docs/gates/G6-uat-staging.md
+    conditions:
+      - {id: G6.1, name: Human validation against REQ-IDs}
+      - {id: G6.2, name: Exploratory testing}
+      - {id: G6.3, name: Venue certification}
   - id: G7
     name: Release / Deploy
     page: docs/gates/G7-release-deploy.md
+    conditions:
+      - {id: G7.1, name: Benchmark budgets}
+      - {id: G7.2, name: ApiCompat binary compatibility}
+      - {id: G7.3, name: IaC scanning}
+      - {id: G7.4, name: Canary with SLO-based rollback}
+      - {id: G7.5, name: SBOM + provenance attestation}
   - id: G8
     name: Operations
     page: docs/gates/G8-operations.md
+    conditions:
+      - {id: G8.1, name: Runtime contract assertions}
+      - {id: G8.2, name: SLO / error-budget license}
+      - {id: G8.3, name: Escape triage + conversion}
   - id: G9
     name: Maintenance / Evolution
     page: docs/gates/G9-maintenance.md
+    conditions:
+      - {id: G9.1, name: Dependency PRs gated by full suite}
+      - {id: G9.2, name: Vulnerability-fix SLAs}
+      - {id: G9.3, name: License audit}
+      - {id: G9.4, name: Tightening & baseline freshness}
   - id: G10
     name: Deprecation / Retirement
     page: docs/gates/G10-retirement.md
+    conditions:
+      - {id: G10.1, name: Obsolete-sunset escalation}
+      - {id: G10.2, name: Dead-code ratchet}
+      - {id: G10.3, name: Data-migration verification}
   - id: PL-DOC
     name: Documentation lifecycle
     page: docs/gates/PL-DOC-documentation.md
+    conditions:
+      - {id: PL-DOC.1, name: Doc samples compile/execute}
+      - {id: PL-DOC.2, name: Doc coverage}
+      - {id: PL-DOC.3, name: Staleness dating}
   - id: PL-PIPE
     name: Pipeline integrity
     page: docs/gates/PL-PIPE-pipeline-integrity.md
+    conditions:
+      - {id: PL-PIPE.1, name: Enforcement-layer change control}
+      - {id: PL-PIPE.2, name: Gate-config golden tests}
+      - {id: PL-PIPE.3, name: Agent-behavior evals}

@@ -4,17 +4,21 @@ One item per line, two spaces of indent per level. The line opens on the
 item's full id, the node path ADR 0031 gives it, so the print states every
 id whole. Then the status in brackets, or a finding's kind in its place,
 then the item's marks (`inactive` on a gate a finding names that is not
-active, `current` on the current task), then its evidence (on a `G0`
-verdict, the validator command and the `HEAD` it read; on a check whose last
-run was green as expected, that run's command and `HEAD`; on a task done by
-its own record, `by <seat>` on an approval and the record's `HEAD`; on a
-unit or contract done by its close, the close's `HEAD`; each with `dirty`
-when it applies; on a task blocked by its own record, `because <reason>`).
+active and on a contract's next gate, `current` on the current task), then
+its evidence (on a `G0` verdict, the validator command and the `HEAD` it
+read; on a check whose last run was green as expected, that run's command
+and `HEAD`; on a task done by its own record, `by <seat>` on an approval
+and the record's `HEAD`; on a unit or contract done by its close, the
+close's `HEAD`; each with `dirty` when it applies; on a task blocked by its
+own record, `because <reason>`).
 Then its links (`depends_on: <contract>/<unit>` on a unit, `gate: <value>`
 on a finding), then a contract's feature doc reference (`doc:
 docs/features/<id>.md`), and last its summary after ` | `. Each part but the
 id and status prints only when the item has it, after exactly one space. A
 line break inside a part reads as one space, so an item keeps one line.
+Under a condition that is not done, each of its diagnostics prints on a
+line of its own, one level deeper, as `- ` and the validator's message
+without its code; such a line is not an item and has no id.
 
 `taskcontract tree <id>` queries one item: the id matched whole, as the model
 holds it or as the tree prints it, every item with it printed as one block,
@@ -24,11 +28,11 @@ line, each only when the item has it: `summary:` whole, one line per link
 kind with its targets joined by `, `, `doc:` with the feature doc's path at
 line 1, `file: <path>:<line>` (a contract or verdict at line 1, a unit or
 check at its entry's first line, a finding's file at line 1), and `page:`,
-the kit page that defines a gate, a verdict's gate or a task. So a block
-never passes seven lines, whatever a field holds. The unreadable sources
-follow on stderr. An unknown id prints `no node '<id>' - print the tree to
-list every node id` on stderr alone and exits 2; an id with `--follow`
-exits 2 too.
+the kit page that defines a gate, a verdict's or a condition's gate, or a
+task. A condition's diagnostics never print here. So a block never passes
+seven lines, whatever a field holds. The unreadable sources follow on
+stderr. An unknown id prints `no node '<id>' - print the tree to list every
+node id` on stderr alone and exits 2; an id with `--follow` exits 2 too.
 
 `--follow` keeps a pane on the current task. It prints the where-am-I line,
 `specs/<contract>/contract.yaml > <contract> > <unit> > <task>`, the unit
@@ -65,8 +69,9 @@ stderr, after the parts line. The key changes no item line.
 Each line longer than the pane's width is cut to it and ends in `...`. The
 pane lists its sources' files once a second and redraws, clearing the
 screen with ANSI escapes, only when a file was added, removed or changed;
-it keeps each `G0` reading in memory until its contract or the vocabulary
-changes, and writes no file. Ctrl-C ends it.
+it keeps each `G0` reading, the verdict's and its conditions', in memory
+until its contract or the vocabulary changes, and writes no file. It shows
+items only, never a diagnostic line. Ctrl-C ends it.
 
 Each time a render arrives at an approval, the pane starts the command set
 as `tree: notify:` in .sdlc/config.yaml through the shell, once, with the
@@ -87,7 +92,7 @@ from pathlib import Path
 
 from . import tree
 from .progress import _no_node
-from .tree import APPROVALS, CURRENT, STATUSES, Item, build
+from .tree import APPROVALS, CURRENT, STATUSES, G0Reading, Item, build
 
 INDENT = "  "
 CLEAR = "\x1b[H\x1b[2J"  # cursor home, then erase the screen
@@ -99,11 +104,13 @@ VOCABULARY = "specs/vocabulary/"
 
 
 def render(items: list[Item]) -> str:
-    """The tree as text, one line per item, byte-identical across runs."""
+    """The tree as text, one line per item, each condition's diagnostics
+    right under it one level deeper, byte-identical across runs."""
     lines: list[str] = []
 
     def walk(item: Item, depth: int) -> None:
         lines.append(INDENT * depth + line(item))
+        lines.extend(f"{INDENT * (depth + 1)}- {message}" for message in item.diagnostics)
         for child in item.children:
             walk(child, depth + 1)
 
@@ -250,7 +257,7 @@ def scan(root: Path) -> dict[str, tuple[int, int]]:
     return seen
 
 
-def forget(cache: dict[str, str], before: dict, after: dict) -> None:
+def forget(cache: dict[str, G0Reading], before: dict, after: dict) -> None:
     """Drop the `G0` readings a change may alter: all of them when the
     vocabulary changed, else each contract whose file changed."""
     changed = {key for key in before.keys() | after.keys() if before.get(key) != after.get(key)}
@@ -269,7 +276,7 @@ def follow(root: Path, out, sleep=None) -> int:
     neither stops nor waits on the commands it started, though on POSIX the
     same Ctrl-C reaches them too, since they share the terminal's process
     group."""
-    cache: dict[str, str] = {}
+    cache: dict[str, G0Reading] = {}
     running: list[tuple[subprocess.Popen, str]] = []
     try:
         seen = scan(root)
@@ -288,7 +295,7 @@ def follow(root: Path, out, sleep=None) -> int:
         return 0
 
 
-def _draw(root: Path, out, cache: dict[str, str]) -> str | None:
+def _draw(root: Path, out, cache: dict[str, G0Reading]) -> str | None:
     """One render in one write, then each unreadable source on stderr, then
     a bad `tree: pane:` key; returns the current task's id, or None."""
     items, problems = build(root, cache)
