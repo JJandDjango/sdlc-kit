@@ -1,0 +1,22 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Born draft at project-tree's intake (session 51) from the Terms of
+# docs/features/project-tree.md, decided at its Q11 (2026-09-24);
+# ratified by the user 2026-09-25 (class-S flip; the PR merge is the
+# outer record, ADR 0025).
+
+term: stale
+
+name: Stale
+
+definition: >-
+  A feature whose document holds a revision newer than the one its
+  contract was derived from, other than intake's "Ready:" row or a
+  "Measured:" row.
+
+kind: attribute
+
+status: ratified
+since: 2026-09-25
+
+sources:
+  - docs/features/project-tree.md

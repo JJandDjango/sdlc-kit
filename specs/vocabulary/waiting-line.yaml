@@ -1,0 +1,21 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Born draft at project-tree's intake (session 51) from the Terms of
+# docs/features/project-tree.md, decided at its Q11 (2026-09-24);
+# ratified by the user 2026-09-25 (class-S flip; the PR merge is the
+# outer record, ADR 0025).
+
+term: waiting-line
+
+name: Waiting line
+
+definition: >-
+  The pane's first line while a task waits on a seat; the herdr hook
+  reads it.
+
+kind: entity
+
+status: ratified
+since: 2026-09-25
+
+sources:
+  - docs/features/project-tree.md
