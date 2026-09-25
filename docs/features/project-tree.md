@@ -3,11 +3,12 @@
 | 2026-09-24 | user | r1: Created in kit session 49 through an interview with the user, one question at a time, in the format ADR 0029 ratified (`NOTES_feature-document_2026-09-18.md`); typed by Claude on the user's word. The request half, in progress. PO seat: user; engineer seat: user |
 | 2026-09-24 | user | r2: The request half finished in kit session 50: the terms (Q11), the format's checks 1 to 8 read back, six fixes, the section tags; typed by Claude on the user's word. Signed by the PO seat (user). The title question stays open for the engineer seat |
 | 2026-09-24 | user | r3: The solution half written in kit session 50 through the interview's eight decisions, after a Textual spike in a herdr pane; the request half gains the missing-extra message (SC4.1), Ctrl-C as existing behavior 10 (SC4.3), prerequisite 9 (titles), a wider SC5.2 and the term Pane extra; typed by Claude on the user's word. Signed by the PO seat (user) for the request half and the engineer seat (user) for the solution half |
+| 2026-09-25 | intake | r4: Ready: contract `project-tree` validates ready-green, derived from r3 in kit session 51; both seats (user) signed r3; seven units, o1 to o7, each confirmed by seat user; the 22 new terms ratified at `ac19ee4`; scope adds `skills/sdlc/init.py` and `.github/workflows/sdlc.yml` for o7's release, on the engineer seat's word. Prerequisite 9 counts 15 contracts; this contract is a 16th without a title, and the backfill covers it |
 
 # project-tree - The exact state of every feature's work, in one tree
 
 `sdlc_development_kit` · seats: PO user, engineer user · contract:
-`project-tree`, draft · PR: none · merge SHA: none
+`project-tree`, ready · PR: none · merge SHA: none
 
 ## Statement
 

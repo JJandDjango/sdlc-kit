@@ -2,56 +2,55 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-24 (session 50 close, project-tree ready for intake)._
+> _Generated 2026-09-25 (session 51 close, project-tree at intake)._
 
 ## Now
-- **`docs/features/project-tree.md` is ready for intake**, signed at r3
-  by both seats (`a18ea25`), written by hand in ADR 0029's format.
-  Session 50 set the terms (Q11: 26, with "check" meaning an acceptance
-  check only, "rule" and "diagnostic" for what a condition runs and
-  reports, and the tree's six status words), read readiness checks 1 to
-  8 back with six fixes (r2, `ee13149`), and wrote the solution half in
-  eight decisions: the pane becomes a Textual outline shipped as the
-  optional `pane` extra; the contract gains an optional one-line
-  `title`, copied by intake; `taskcontract/data/gates.yaml` gains every
-  gate's conditions (57) with G0's rules per condition; the stale mark
-  reads the document's revision table. Seven units, o1 to o7, deliver
-  its 14 checks; about three build sessions.
-- A spike ran a Textual Tree in a herdr pane on Windows before the
-  choice: the keys, clicks and the wheel arrived, and the waiting line
-  held the first row.
-- PR #59 carries sessions 49 and 50 (branch `session-49-pane-spec`),
+- **Contract `project-tree` is ready-green** at `1618daa`, derived at
+  intake from `docs/features/project-tree.md` r3. The document's r4 is
+  intake's "Ready:" row, written by hand this once in the fixed shape o3
+  will parse, and its status line reads ready. Seven units, o1 to o7, each
+  `confirmed_by: [user]`; 14 sketches, one per check; 29 entities. The
+  engineer seat added `skills/sdlc/init.py` and
+  `.github/workflows/sdlc.yml` to scope, for o7's version bump and
+  self-pin. No `title` field until o2 adds it to the schema.
+- The glossary gained the document's 22 terms at `ac19ee4`: 40 terms, all
+  ratified. `dictionary.yaml` ceded diagnostic, feature, finding, item,
+  rule, status, task and tree (CL003), and `verdict` now calls a rule's
+  coded records diagnostics.
+- The language door's rewrites, for the drafter to read beside the
+  document: a click reads "a touch of the pointer", "opens" reads "makes
+  ... open", the revision table reads "the table of changes", and the
+  first non-goal dropped "no new authorizations" (the dictionary has no
+  word for it). The document stays the reference for each.
+- PR #60 carries session 51 (branch `session-51-project-tree-intake`),
   merged by merge commit once CI reads green, on the user's word. main
-  was at `7c79ba3`; `v0.15.0` tags `fdd6fe2`.
-- A Google Doc render of r3 sits in the user's Drive: "SDLC kit
-  project-tree (r3, ready for intake)",
-  `1M3rk7yJPXB2yVs--0Mayt6XvQyHq4YQf7wjtnQvSEq0`; the r2 draft is trashed.
-- `REQUEST_gate-outline_2026-09-23.md` (untracked) stays as material.
-  The user's tree pane (`w9:p8`) runs the code it started with; restart
-  it to run 0.15.0's.
+  was at `7f2b5c1`; `v0.15.0` tags `fdd6fe2`.
+- The Google Doc render of r3 predates r4, which changed only the Ready
+  row and the status line. `REQUEST_gate-outline_2026-09-23.md`
+  (untracked) stays as material. The user's tree pane (`w9:p8`) runs the
+  code it started with; restart it to run 0.15.0's.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. Session 51: `/sdlc intake docs/features/project-tree.md`, from r3.
-   The flow does three things by hand this once: it writes the "Ready:"
-   row in its fixed shape, `rN: Ready: ... derived from rM ...` (the
-   flow learns it at o3); it leaves `title` out of the contract, since
-   the schema gains the field only at o2 (TC005 otherwise); and the
-   Terms' 22 new terms enter as drafts for the user to ratify (G0.2).
-   The language door checks each sketch and done-means.
-2. The build, o1 to o7, by the delegated method. o5 and o6 need Textual
-   in the test env (it joins the `test` extra at o5).
+1. Session 52: build `o1-conditions` by the delegated method. Then o2,
+   o3 and o4 in any order, o5 after all three, o6, and o7, which ships
+   0.16.0. o5 and o6 need Textual in the test env (it joins the `test`
+   extra at o5). About three build sessions.
+2. o3 teaches intake to write the "Ready:" row; until it lands, write the
+   row by hand in its fixed shape, `rN: Ready: ... derived from rM ...`.
 3. G1 after project-tree ships, so the pane follows G1's conditions. The
    pilot's config line, in the engine's session; the engine's install
    ref moves to the new tag there (pull, not push).
 4. Deferred: prerequisites 7 to 9 (the kit's feature documents under
-   `docs/features/`; progress for the 13 older contracts; a title in
-   each existing contract); `derived-language` (prerequisite 5); flag
-   the Claude pane itself; the hook's key action and its four known
-   edges, in its README; `.sdlc/config.yaml` still lists
-   `plan.workflow.json` as a free path.
+   `docs/features/`; progress for the 13 older contracts; a title in each
+   contract, now 16 with project-tree's own); `derived-language`
+   (prerequisite 5); ADR 0029's appendix copy and Gherkin for
+   project-tree, with `feature-document`'s open question; flag the Claude
+   pane itself; the hook's key action and its four known edges, in its
+   README; `.sdlc/config.yaml` still lists `plan.workflow.json` as a free
+   path.
 5. Carried advisories on `tree_view.py`, USAGE and CHANGELOG, wording and
    behavior notes: listed in full at `a800c34:STATE.md`, Next actions 4.
 6. Carried: `feature-document`, `spec-doc-type`; the demo intake; wave B
@@ -77,6 +76,13 @@
   The solution half runs the same way: one decision a message, the
   mechanical ones batched, each with its consequence for the request
   half, which collects into one re-signed revision.
+- Intake from a feature document: ratify its new terms first, in their
+  own commit, since `entities` resolves ratified terms only. A term whose
+  single-word name or slug equals a dictionary word trips CL003, drafts
+  included; the dictionary cedes the word in the same commit (removal is
+  its auto lane). Check the document's Scope against the release unit's
+  needs: `skills/sdlc/init.py` (`KIT_VERSION`) and
+  `.github/workflows/sdlc.yml` (the self-pin).
 - A plan is plan.md's numbered steps, shown in chat for the user's
   overview; nothing renders it. Work outside a contract unit does not show
   in the pane; the plan says so.
@@ -93,8 +99,9 @@
   scratchpad before a revision edits it.
 - The language door checks every sentence of a sketch for an approved
   opening verb; open each one on "verify". Filter its output to one
-  contract (a ten-line script over `lang-check`); the rest is the exempt
-  findings of six pre-arc contracts.
+  contract (a ten-line script over `lang-check --json`); the rest is the
+  exempt findings of six pre-arc contracts. Probe words against the real
+  lexicon (`taskcontract.lang._Lexicon`) before drafting.
 - A delegated session: one Workflow per step, launched by `scriptPath`.
   `.claude/workflows/` holds the drafter (`spec-channel-drafter.js`), the
   developer (`unit-developer.js`) and Two-Key. The drafter proves red from
@@ -110,7 +117,9 @@
   output cap against free text holding line breaks; strip session labels
   (`ruling_2`) from test names; check the module for a repeated test
   name; diff earlier tests.
-- `scope-check` outside Actions needs `--base <sha>`: main's tip.
+- `scope-check` outside Actions needs `--base <sha>`: main's tip. A commit
+  that touches only `specs/` needs no `Contract:` trailer, and one naming
+  a contract that does not exist yet reads SC003.
 - Run the release unit's sweep patterns before its verifier round; a hit
   outside scope goes to an OPEN and a re-intake first. Date any example of
   live output to its moment.
@@ -131,9 +140,6 @@
   (`hash-object`, then `update-index`), so the commit holds one change.
 
 ## Open questions
-- Prerequisite 9 counts 15 contracts, but project-tree's own contract,
-  derived before o2 adds the field, also lacks a title: amend the count
-  at intake, or let the backfill cover it?
 - The `intake-seat` term says a seat is never delegated to an agent, while
   a delegated session's approvals record `--by claude` (sessions 40 to 42,
   45 to 47). Does the term need a word for a delegated approval?
@@ -151,10 +157,10 @@
   and the ratified format lives only in the session 32 notes (sessions 49
   and 50 ran the interview by hand); a check can carry a false premise
   about today's behavior; checks and sketches are not one to one under
-  the three-sketch cap; a pasted appendix copy ages at once; a derived
-  `done_means` can read broader than its line; a unit must deliver a
-  check (check 9), so a USAGE pass zero folds into the first unit and a
-  release unit takes a regression check.
+  the three-sketch cap; a pasted appendix copy ages at once (session 51
+  skipped project-tree's); a derived `done_means` can read broader than
+  its line; a unit must deliver a check (check 9), so a USAGE pass zero
+  folds into the first unit and a release unit takes a regression check.
 - Its own request: `/sdlc audit` drops a `W001` warning beside an error.
 - Should TC016 ride the parked line? The d7 note in `CHANGELOG.md` records
   the case.

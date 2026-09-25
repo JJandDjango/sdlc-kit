@@ -229,7 +229,6 @@ words:
   - {word: design, pos: noun}
   - {word: determinism, pos: noun}
   - {word: developer, pos: noun}
-  - {word: diagnostic, pos: noun}
   - {word: diagnostics, pos: noun}
   - {word: dictionary, pos: noun}
   - {word: dictionary-schema, pos: noun}
@@ -331,14 +330,12 @@ words:
   - {word: fallback, pos: noun}
   - {word: 'false', pos: noun}
   - {word: family, pos: noun}
-  - {word: feature, pos: noun}
   - {word: fetches, pos: verb}
   - {word: field, pos: noun}
   - {word: field-registry, pos: noun}
   - {word: fields, pos: noun}
   - {word: file, pos: noun}
   - {word: files, pos: noun}
-  - {word: finding, pos: noun}
   - {word: findings, pos: noun}
   - {word: fired, pos: noun}
   - {word: fit, pos: noun}
@@ -442,7 +439,6 @@ words:
   - {word: interpretation, pos: noun}
   - {word: interview, pos: noun}
   - {word: invocation, pos: noun}
-  - {word: item, pos: noun}
   - {word: items, pos: noun}
   - {word: iteration, pos: noun}
   - {word: itself, pos: noun}
@@ -755,7 +751,6 @@ words:
   - {word: routing, pos: noun}
   - {word: row, pos: noun}
   - {word: rows, pos: noun}
-  - {word: rule, pos: noun}
   - {word: ruled, pos: noun}
   - {word: rules, pos: noun}
   - {word: ruling, pos: noun}
@@ -851,7 +846,6 @@ words:
   - {word: stated, pos: verb}
   - {word: states, pos: verb}
   - {word: stating, pos: noun}
-  - {word: status, pos: noun}
   - {word: staying, pos: verb}
   - {word: stays, pos: verb}
   - {word: step, pos: noun}
@@ -896,7 +890,6 @@ words:
   - {word: target, pos: noun}
   - {word: targeting, pos: noun}
   - {word: targets, pos: noun}
-  - {word: task, pos: noun}
   - {word: taskcontract, pos: noun}
   - {word: taxonomy, pos: noun}
   - {word: template, pos: noun}
@@ -925,7 +918,6 @@ words:
   - {word: traceability, pos: noun}
   - {word: tracking, pos: noun}
   - {word: tranche, pos: noun}
-  - {word: tree, pos: noun}
   - {word: trigger, pos: noun}
   - {word: triggers, pos: noun}
   - {word: tripping, pos: noun}
