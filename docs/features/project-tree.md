@@ -2,6 +2,7 @@
 | :-: | :-: | :-- |
 | 2026-09-24 | user | r1: Created in kit session 49 through an interview with the user, one question at a time, in the format ADR 0029 ratified (`NOTES_feature-document_2026-09-18.md`); typed by Claude on the user's word. The request half, in progress. PO seat: user; engineer seat: user |
 | 2026-09-24 | user | r2: The request half finished in kit session 50: the terms (Q11), the format's checks 1 to 8 read back, six fixes, the section tags; typed by Claude on the user's word. Signed by the PO seat (user). The title question stays open for the engineer seat |
+| 2026-09-24 | user | r3: The solution half written in kit session 50 through the interview's eight decisions, after a Textual spike in a herdr pane; the request half gains the missing-extra message (SC4.1), Ctrl-C as existing behavior 10 (SC4.3), prerequisite 9 (titles), a wider SC5.2 and the term Pane extra; typed by Claude on the user's word. Signed by the PO seat (user) for the request half and the engineer seat (user) for the solution half |
 
 # project-tree - The exact state of every feature's work, in one tree
 
@@ -133,6 +134,7 @@ Each entry gets a regression check under Acceptance criteria.
    its id and plain name (SC1.1).
 9. `tree: pane: fold:` sets whether a closed item's line names or counts
    what it holds (SC4.2).
+10. Ctrl-C ends the pane and exits 0 (SC4.3).
 
 ## Success criteria
 
@@ -196,6 +198,8 @@ Each entry gets a regression check under Acceptance criteria.
 8. Progress records for the 13 contracts older than the tree, so SC3
    reads true for them (missing: one `progress done` each, carried in
    STATE.md; owner: the kit session).
+9. A title in each of the 15 existing contracts, so SC1.1 reads true for
+   them (missing: one `title` line each; owner: the kit session).
 
 ## Acceptance criteria
 
@@ -249,26 +253,233 @@ SC4 The interactive outline
 
 - SC4.1: verify the pane opens on the whole tree as an outline, each
   feature opened down to its units, whether or not a task is in flight,
-  with the current task marked and in view
+  with the current task marked and in view, and that without the `pane`
+  extra `--follow` prints the message under Error messages and exits 2
 - SC4.2: verify Up and Down move the cursor, Right opens and Left closes
   the item under it, a click opens or closes the item it lands on, and
   the wheel scrolls; a closed item's line counts what it holds, or names
   what it holds under `fold: names`
 - SC4.3: verify the waiting line stays the pane's first line, word for
-  word, and a redraw within two seconds of a source change keeps the
-  cursor and every open and closed item as they were
+  word, a redraw within two seconds of a source change keeps the cursor
+  and every open and closed item as they were, and Ctrl-C still ends the
+  pane with exit 0
 
 SC5 Drift from the feature document
 
 - SC5.1: verify a feature whose document holds a revision newer than the
   one its contract was derived from, other than intake's "Ready:" row or
   a "Measured:" row, reads stale, naming both revisions
-- SC5.2: verify a feature whose document the tree cannot find says so,
+- SC5.2: verify a feature whose document the tree cannot find, or whose
+  document names no revision its contract was derived from, says so,
   rather than reading as matching
 
 ### Error messages, verbatim
 
-None new: every message the kit prints today stays word for word.
+One new message, from `taskcontract tree --follow` without the `pane`
+extra, on stderr with exit 2 (SC4.1):
+
+`taskcontract tree: --follow needs the pane extra - pip install 'sdlc-taskcontract[pane]'`
+
+Every message the kit prints today stays word for word.
+
+---
+
+## Proposed solution
+
+`[Engineer seat · authored]`
+
+The print, the query face and the pane read one tree, so each change
+below shows in all three. Four changes carry the success criteria.
+
+1. The pane becomes an interactive outline (SC4). `taskcontract tree
+   --follow` runs a Textual app (a Python terminal-UI library) whose Tree
+   widget opens and closes items with the arrow keys and the mouse and
+   scrolls with the wheel. A line under the tree shows the item under
+   the cursor: its plain name and document reference (SC1.2). Textual
+   ships as the optional `pane` extra, `pip install
+   'sdlc-taskcontract[pane]'`, so the validator's own dependencies stay
+   jsonschema and PyYAML and a consumer's CI installs nothing new.
+   Without the extra, `--follow` prints one line naming the install
+   command. The waiting line stays the pane's first line, the notify
+   command runs as today, and a redraw keeps the cursor and every open
+   and closed item (SC4.3). A spike on 2026-09-24 ran a Textual Tree in a
+   herdr pane on Windows: the arrow keys, clicks and the wheel all
+   arrived, and the waiting line held the first row.
+2. Each feature shows its title (SC1). The contract gains an optional
+   one-line `title` field, which intake copies from the document's title
+   line; the tree reads the title from the contract, never from the
+   document's heading (ADR 0029). A contract without one shows its id and
+   `(no title)`.
+3. Gates open into their conditions (SC2). `taskcontract/data/gates.yaml`
+   lists each gate's conditions in page order, 57 in all, each an id and
+   a plain name taken from its page's heading without "check" or "join".
+   G0's conditions list the rules each owns: G0.1 TC000 to TC009 and
+   TC013 to TC015, G0.2 TC010 to TC012 and TC017, G0.3 TC016 and TC018. A
+   condition's status comes from its own rules, read as G0's verdict is
+   read today, so the verdict is the roll-up of its conditions (existing
+   behavior 7). A condition that is not done lists the validator's
+   messages, one line each, without their codes; warnings stay out, as
+   today. A test holds every code the validator emits to exactly one
+   condition.
+4. The tree reads each feature's revision table (SC5). The document at
+   `docs/features/<id>.md` is opened for its revision table only. Its
+   newest revision is the highest rN other than intake's "Ready:" row
+   and "Measured:" rows; the revision its contract was derived from is
+   the rM that the newest "Ready:" row names, in the shape `rN: Ready:
+   ... derived from rM ...`. A newer revision reads stale, naming both; a
+   missing document or a missing "Ready:" row says so. The contract
+   records nothing new for this.
+
+### Scope
+
+- `taskcontract/tree.py`: conditions, rules, titles and the stale
+  reading
+- `taskcontract/tree_view.py`: the print and query lines, and the
+  `--follow` entry with its missing-extra line
+- `taskcontract/pane.py` (new): the Textual app, imported only when
+  `--follow` runs
+- `taskcontract/data/gates.yaml`: the 57 conditions and G0's rules
+- `taskcontract/schemas/task-contract.schema.json`: the optional `title`
+  field
+- `pyproject.toml`: the `pane` extra; Textual joins the `test` extra
+  too, so CI's install line stays as it is
+- `skills/sdlc/flows/intake.md`: intake copies `title` and writes the
+  "Ready:" row in its fixed shape
+- `tests/` and `USAGE.md`
+
+Free paths need no entry: the G0 page's field table, a new ADR and the
+changelog sit under `docs/`, `decisions/` and `CHANGELOG.md`.
+
+### Out of scope
+
+- `taskcontract/checker.py` and `taskcontract/graph.py`: the rules
+  themselves (no change to what any gate checks)
+- `taskcontract/vocabulary.py`: the G0.2 and G0.3 joins
+- `taskcontract/progress.py`: the only writer (existing behavior 6)
+- `specs/`: no contract changes; the title and progress backfills
+  (prerequisites 8 and 9) are the kit session's own work
+
+### Interfaces
+
+| Interface | Shape |
+| :-- | :-- |
+| `title` in the contract | Optional string, one line, not blank; schema 1.4.0 becomes 1.5.0 |
+| `taskcontract/data/gates.yaml` | Each gate gains `conditions:`, a list of `id`, `name` and `rules`; `rules` is a list of codes, only on G0's three conditions |
+| The "Ready:" row | Its changes cell reads `rN: Ready: ... derived from rM ...` |
+| The `pane` extra | `pip install 'sdlc-taskcontract[pane]'`, Textual `>=8.2,<9` (the spike ran 8.2.8) |
+| `--follow` without the extra | On stderr `taskcontract tree: --follow needs the pane extra - pip install 'sdlc-taskcontract[pane]'`, exit 2 |
+| The pane's keys | Up and Down move, Right opens, Left closes, a click opens or closes, the wheel scrolls; Ctrl-C ends the pane with exit 0 |
+| New marks on a feature's line | `stale: document rN, contract from rM`; `no feature document`; `no "Ready:" row` |
+| A condition's diagnostics | The validator's messages, one line each, under the condition |
+| A feature with no title | Its id and `(no title)` |
+
+### Constraints
+
+- Only `taskcontract/pane.py` imports Textual, and only when `--follow`
+  runs; every other command needs jsonschema and PyYAML alone.
+- Labels reach Textual as plain text, never markup, so a status like
+  `[to do]` is not read as a style tag (the spike's finding).
+- Each line the pane sends to stderr today (an unreadable source, a bad
+  `tree: pane:` key, a failed notify command) shows word for word inside
+  the pane, under the tree, since Textual owns the screen.
+- The pane holds open and closed items in memory only and writes
+  nothing.
+- CI runs on Linux only, so each unit's local receipts run on Windows.
+
+### Units
+
+- `o1-conditions` delivers SC2.1, SC2.2 and SC2.3; files
+  `taskcontract/data/gates.yaml`, `taskcontract/tree.py`, `USAGE.md`;
+  tests in `tests/test_tree_conditions.py`. Done means: USAGE's
+  project-tree page stands first, with every feature marked red; every
+  gate lists its conditions in page order; each of G0's conditions takes
+  its status and its diagnostics from its own rules; and a test holds
+  every validator code to exactly one condition.
+- `o2-titles` delivers SC1.1; files the contract schema,
+  `taskcontract/tree.py`, `taskcontract/tree_view.py`,
+  `skills/sdlc/flows/intake.md`; tests in `tests/test_tree_titles.py`.
+  Done means: the contract takes an optional one-line `title`, intake
+  copies it from the document's title line, and every item line opens on
+  its id and its plain name, a feature without a title showing `(no
+  title)`.
+- `o3-stale` delivers SC5.1 and SC5.2; files `taskcontract/tree.py`,
+  `skills/sdlc/flows/intake.md`; tests in `tests/test_tree_stale.py`.
+  Done means: the tree reads each feature document's revision table,
+  marks a feature stale when a revision is newer than the one its
+  contract was derived from, naming both, says so when the document or
+  its "Ready:" row is missing, and intake writes the "Ready:" row in its
+  fixed shape.
+- `o4-statuses` delivers SC3.1 and SC3.2; files `taskcontract/tree.py`,
+  `taskcontract/tree_view.py`; tests amend the tree's existing tests.
+  Done means: each unit and task shows done, doing or to do from the
+  progress records, a closed unit or contract reads done, and a blocked
+  item names its reason and an approval waiting on a seat names that
+  seat, each on the item's own line.
+- `o5-pane-outline` delivers SC4.1 and SC1.2; files
+  `taskcontract/pane.py` (new), `taskcontract/tree_view.py`,
+  `pyproject.toml`; tests in `tests/test_pane.py`, driven by Textual's
+  headless test driver. Done means: with the `pane` extra, `taskcontract
+  tree --follow` opens an outline of the whole tree, each feature opened
+  down to its units and the current task marked and in view, with a line
+  under the tree showing the plain name and document reference of the
+  item under the cursor; without the extra it prints the install line
+  and exits 2.
+- `o6-pane-keys` delivers SC4.2, SC4.3 and SC3.3; files
+  `taskcontract/pane.py`; tests in `tests/test_pane.py`. Done means: Up
+  and Down move the cursor, Right opens and Left closes, a click opens or
+  closes, the wheel scrolls, a redraw keeps the cursor and every open and
+  closed item, the waiting line stays the first row, the notify command
+  runs once per arrival at an approval, and Ctrl-C ends the pane with
+  exit 0.
+- `o7-release` delivers SC1.3; files `pyproject.toml`, `USAGE.md`,
+  `CHANGELOG.md`, ADR 0032; tests amend `tests/test_tree_view.py`. Done
+  means: kit 0.16.0 ships with USAGE's marks all green, its changelog
+  entry and ADR 0032, and `taskcontract tree` still prints every item and
+  exits 0, its query answering every id in at most seven lines.
+
+### Sequencing
+
+- `o1-conditions` first.
+- `o2-titles`, `o3-stale` and `o4-statuses` after o1, in any order.
+- `o5-pane-outline` after o2, o3 and o4.
+- `o6-pane-keys` after o5.
+- `o7-release` after o6.
+
+## Risks and cost
+
+`[Both seats · authored]`
+
+Risks:
+
+- Textual inside a herdr pane on Windows: retired by the 2026-09-24
+  spike; the keys, clicks and the wheel arrived, and the waiting line
+  held the first row.
+- Textual's releases: it moves fast and has broken its API across major
+  versions; the extra pins `>=8.2,<9`, so a major bump is a deliberate
+  change.
+- The redraw keeps state by item, and the tree has one known id
+  collision (tree-view t1's carried advisory); o6 keys state by each
+  item's path from the root, so a collision cannot merge two items.
+- Hand-written revision tables: a row the tree cannot read is skipped,
+  and a document with no readable "Ready:" row says so (SC5.2) rather
+  than reading as matching.
+- Partial truth until the backfills: the 15 existing features read `(no
+  title)`, `no feature document` and `to do` until prerequisites 7 to 9
+  land; the feature shows its worth first on project-tree itself.
+
+Cost:
+
+- Seven units: about three build sessions at sessions 45 to 47's pace,
+  plus the intake session.
+- About 3M subagent tokens (session 47, per unit: a drafter about 165K,
+  a developer 50K to 105K, a Two-Key round 190K to 240K).
+- About 22 new terms to ratify at intake (G0.2).
+- Nine more packages, in the `pane` extra only.
+- The 57 conditions in `gates.yaml` follow the gate pages by hand.
+
+Worth: G1 and the pilot's M0 wait for a pane that follows their
+conditions, so the gate program resumes only once this ships; the build
+is worth its cost (decided 2026-09-24).
 
 ## Decisions and open questions
 
@@ -307,9 +518,20 @@ None new: every message the kit prints today stays word for word.
 - Q: Is a verdict its own line? A: No: it shows as its gate's status,
   and the gate under a feature opens into its conditions (SC2.1, Q11,
   decided 2026-09-24).
-- OPEN (engineer seat, for the solution half): where a feature's title
-  comes from, since ADR 0029 keeps tooling off document headings: a
-  contract field that intake fills, or another source.
+- Q: How does the pane read keys and the mouse? A: Textual's Tree
+  widget, shipped as the optional `pane` extra; a spike in a herdr pane on
+  Windows passed the keys, clicks and the wheel (solution, decided
+  2026-09-24).
+- Q: Where does a feature's title come from? A: An optional one-line
+  `title` field in the contract, which intake copies from the document's
+  title line; the tree reads the contract, never the heading (solution,
+  decided 2026-09-24).
+- Q: Where do the conditions and their rules live? A: In
+  `taskcontract/data/gates.yaml`: every gate's conditions, and G0's rules
+  per condition (solution, decided 2026-09-24).
+- Q: Where do the stale revisions come from? A: The document's revision
+  table: its newest revision, and the rM that its newest "Ready:" row
+  names (solution, decided 2026-09-24).
 
 ## Appendix
 
@@ -318,7 +540,8 @@ None new: every message the kit prints today stays word for word.
 `[PO seat · authored]`
 
 Decided at the interview's Q11 (2026-09-24): session 49's 19 drafts,
-reworked in four decisions, and seven added. Five map to the kit's
+reworked in four decisions, and seven added; Pane extra joined at r3,
+from the solution half. Five map to the kit's
 ratified terms: Gate (`gate`), Verdict (`verdict`), Unit
 (`decomposition-unit`), Check (`acceptance-sketch`) and Seat
 (`intake-seat`, by its alias). The rest become terms to ratify at
@@ -334,6 +557,8 @@ Diagnostic aligns that sentence.
   files at every print.
 - Pane: the terminal pane that shows the tree (`taskcontract tree
   --follow`), in herdr or any terminal.
+- Pane extra: the optional install the interactive pane needs, `pip
+  install 'sdlc-taskcontract[pane]'`.
 - Outline: the tree drawn one item per line, each item indented under its
   parent.
 - Item: one line of the tree with its own id: a feature, gate, condition,
