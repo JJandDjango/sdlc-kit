@@ -2,48 +2,56 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-25 (session 51 close, project-tree at intake)._
+> _Generated 2026-09-25 (session 52 close, project-tree o1 built)._
 
 ## Now
-- **Contract `project-tree` is ready-green** at `1618daa`, derived at
-  intake from `docs/features/project-tree.md` r3. The document's r4 is
-  intake's "Ready:" row, written by hand this once in the fixed shape o3
-  will parse, and its status line reads ready. Seven units, o1 to o7, each
-  `confirmed_by: [user]`; 14 sketches, one per check; 29 entities. The
-  engineer seat added `skills/sdlc/init.py` and
-  `.github/workflows/sdlc.yml` to scope, for o7's version bump and
-  self-pin. No `title` field until o2 adds it to the schema.
-- The glossary gained the document's 22 terms at `ac19ee4`: 40 terms, all
-  ratified. `dictionary.yaml` ceded diagnostic, feature, finding, item,
-  rule, status, task and tree (CL003), and `verdict` now calls a rule's
-  coded records diagnostics.
-- The language door's rewrites, for the drafter to read beside the
-  document: a click reads "a touch of the pointer", "opens" reads "makes
-  ... open", the revision table reads "the table of changes", and the
-  first non-goal dropped "no new authorizations" (the dictionary has no
-  word for it). The document stays the reference for each.
-- PR #60 carries session 51 (branch `session-51-project-tree-intake`),
-  merged by merge commit once CI reads green, on the user's word. main
-  was at `7f2b5c1`; `v0.15.0` tags `fdd6fe2`.
-- The Google Doc render of r3 predates r4, which changed only the Ready
-  row and the status line. `REQUEST_gate-outline_2026-09-23.md`
-  (untracked) stays as material. The user's tree pane (`w9:p8`) runs the
-  code it started with; restart it to run 0.15.0's.
+- **`o1-conditions` is built and closed** at `d277595`, Two-Key PASS at
+  round 1. Each gate opens into its conditions (57 in `gates.yaml`, G0's
+  with the codes each owns); each contract shows its active gates, then
+  the next gate marked `inactive`, which never counts toward its status;
+  a G0 condition reads its own rules and lists the validator's messages
+  as `- ` lines; a finding that names a condition stands under it. A
+  contract the tree cannot read as a mapping reads `to do` at G0.2 and
+  G0.3, never `done` (Claude's change at test-list approval). Suite 618
+  passed.
+- USAGE section 9 carries project-tree's five subsections at `5864783`,
+  every mark red, approved by the user; the "Gates and their conditions"
+  one is o1's full spec, the other four hold the contract's words until
+  their units refine them. o7 flips the marks, and
+  `test_usage_marks_its_project_tree_subsections_red_and_its_example_is_the_tree`
+  flips with them.
+- The 0.15.0 `--follow` pane still runs, now counting each contract's
+  inactive G1 in its fold lines; o5 replaces it.
+- PR #61 carries session 52 (branch `session-52-project-tree-o1`); the
+  merge, by merge commit once CI reads green, waits on the user's word.
+  main is at `df7cbb6`; `v0.15.0` tags `fdd6fe2`.
+- `REQUEST_gate-outline_2026-09-23.md` (untracked) stays as material. The
+  user's tree pane (`w9:p8`) runs the code it started with; restart it to
+  run the new code.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. Session 52: build `o1-conditions` by the delegated method. Then o2,
-   o3 and o4 in any order, o5 after all three, o6, and o7, which ships
-   0.16.0. o5 and o6 need Textual in the test env (it joins the `test`
-   extra at o5). About three build sessions.
-2. o3 teaches intake to write the "Ready:" row; until it lands, write the
+1. Session 53: o2, o3 and o4, in any order (each needs only o1); then o5
+   after all three, o6, and o7, which ships 0.16.0. o5 and o6 need
+   Textual in the test env (it joins the `test` extra at o5). About two
+   more build sessions.
+2. o1's Two-Key advisories, for o2's placement: USAGE's diagnostics
+   paragraph should say a message repeated word for word prints once;
+   "since their joins never ran" reads "read nothing" (for a non-mapping
+   the joins run and return nothing); the `Item.page` comment in
+   `tree.py` names only gates and tasks; the code-map test reads codes
+   from the validator's source text, so a code built at runtime would slip
+   past it.
+3. o4 must settle where the seat an approval waits on comes from: nothing
+   records it before the approval's answer.
+4. o3 teaches intake to write the "Ready:" row; until it lands, write the
    row by hand in its fixed shape, `rN: Ready: ... derived from rM ...`.
-3. G1 after project-tree ships, so the pane follows G1's conditions. The
+5. G1 after project-tree ships, so the pane follows G1's conditions. The
    pilot's config line, in the engine's session; the engine's install
    ref moves to the new tag there (pull, not push).
-4. Deferred: prerequisites 7 to 9 (the kit's feature documents under
+6. Deferred: prerequisites 7 to 9 (the kit's feature documents under
    `docs/features/`; progress for the 13 older contracts; a title in each
    contract, now 16 with project-tree's own); `derived-language`
    (prerequisite 5); ADR 0029's appendix copy and Gherkin for
@@ -51,9 +59,9 @@
    pane itself; the hook's key action and its four known edges, in its
    README; `.sdlc/config.yaml` still lists `plan.workflow.json` as a free
    path.
-5. Carried advisories on `tree_view.py`, USAGE and CHANGELOG, wording and
+7. Carried advisories on `tree_view.py`, USAGE and CHANGELOG, wording and
    behavior notes: listed in full at `a800c34:STATE.md`, Next actions 4.
-6. Carried: `feature-document`, `spec-doc-type`; the demo intake; wave B
+8. Carried: `feature-document`, `spec-doc-type`; the demo intake; wave B
    (`playbook-loop`, V1-V6); 5b; the G4.6 finding;
    `no-check-reads-the-source-document`; from tree-view r3, a status
    field on the finding form and the agent personas writing progress;
@@ -111,12 +119,17 @@
   Two-Key, leaving tracked files alone while it runs. A fix round: Claude
   amends or adds tests as the list's approver, red first; the developer
   fixes from a delta note; the fix is its own commit, and the next round
-  grades every commit of the unit.
+  grades every commit of the unit. The drafter writes each existing module
+  its unit breaks, amended in full, beside the new one; diff each against
+  `tests/` and place them with it. The whole suite runs about 110 seconds,
+  so a receipts agent runs it in the background.
 - Before approving a drafted list: check each fixed detail against every
   use of its terms in the contract and the feature document, and pin any
   output cap against free text holding line breaks; strip session labels
   (`ruling_2`) from test names; check the module for a repeated test
-  name; diff earlier tests.
+  name; diff earlier tests. Check that every `done` the list pins rests on
+  a rule that ran: session 52 caught a `done` on joins that never read the
+  file.
 - `scope-check` outside Actions needs `--base <sha>`: main's tip. A commit
   that touches only `specs/` needs no `Contract:` trailer, and one naming
   a contract that does not exist yet reads SC003.

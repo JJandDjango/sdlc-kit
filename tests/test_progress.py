@@ -797,14 +797,16 @@ def test_sketch_3_done_on_a_contract_closes_every_step_and_check_and_reads_it_do
     assert _mark(root, capsys, "done", "alpha") == (0, "alpha: done\n", "")
     assert [(r["item"], r["state"]) for r in _records(root)] == [("alpha", "done")]
     rows = _print(root, capsys)
-    under = [row for row in rows if row[1] == "alpha" or row[1].startswith("alpha/")]
-    assert len(under) == 23  # the contract, its verdict, two units, their tasks and checks
+    # the inactive next gate, alpha/G1, and its conditions read to do and never count
+    under = [row for row in rows if (row[1] == "alpha" or row[1].startswith("alpha/"))
+             and not row[1].startswith("alpha/G1")]
+    assert len(under) == 26  # the contract, its verdict and its conditions, two units, ...
     assert {tag for _, _, tag, _ in under} == {"done"}
     assert _tag(rows, "beta") == "to do"
 
 
 def test_sketch_3_a_close_reads_done_over_earlier_failed_blocked_and_doing(tmp_path, capsys):
-    root = _repo(tmp_path)  # no gate active: nothing under alpha but its units
+    root = _repo(tmp_path)  # no gate active: G0 inactive, which never counts, and the units
     prove = f"{UNIT}/prove-red"
     assert _run(root, capsys, CHECK, RED)[0] == 1                                # failed
     assert _mark(root, capsys, "block", prove, "--reason", REASON)[0] == 0       # blocked
@@ -812,7 +814,8 @@ def test_sketch_3_a_close_reads_done_over_earlier_failed_blocked_and_doing(tmp_p
     assert _tag(_print(root, capsys), "alpha") == "failed"
     assert _mark(root, capsys, "done", "alpha")[0] == 0
     rows = _print(root, capsys)
-    under = [row for row in rows if row[1] == "alpha" or row[1].startswith("alpha/")]
+    under = [row for row in rows if (row[1] == "alpha" or row[1].startswith("alpha/"))
+             and not row[1].startswith("alpha/G0")]
     assert {tag for _, _, tag, _ in under} == {"done"}
     assert _shown(rows, prove) == ""  # closed: neither its reason nor evidence of its own
 

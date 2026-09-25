@@ -186,11 +186,12 @@ def test_gates_print_first_then_each_contract_in_folder_order(tmp_path, capsys):
 
 def test_a_contract_prints_a_verdict_per_active_gate_before_its_units(tmp_path, capsys):
     root = _repo(tmp_path)
+    # after the active gates, the next gate in the kit's order, inactive (project-tree o1)
     assert _children(_tree(root, capsys), "alpha") == [
-        "alpha/G0", "alpha/a1-core", "alpha/a2-edges"]
+        "alpha/G0", "alpha/G1", "alpha/a1-core", "alpha/a2-edges"]
     _config(root, ["G0", "G4"])
     assert _children(_tree(root, capsys), "alpha") == [
-        "alpha/G0", "alpha/G4", "alpha/a1-core", "alpha/a2-edges"]
+        "alpha/G0", "alpha/G4", "alpha/G5", "alpha/a1-core", "alpha/a2-edges"]
 
 
 def test_a_unit_prints_its_seven_tasks_then_its_checks(tmp_path, capsys):
@@ -212,9 +213,12 @@ def test_check_ids_come_from_the_trailing_parentheses(tmp_path, capsys):
 
 def test_every_item_but_a_finding_shows_one_of_six_statuses(tmp_path, capsys):
     rows = _tree(_repo(tmp_path), capsys)
-    assert len(rows) == 41  # 7 gate items, 23 under alpha, 11 under beta
+    # 13 gate items (each gate with its conditions), 30 under alpha, 18 under
+    # beta: each contract's G0 and its next gate, G1, open into their conditions
+    assert len(rows) == 61
+    slugs = {"stale-pin", "slow-loop", "idea", "loose-end"}
     findings = [row for row in rows
-                if row[1].startswith("gates/") and row[1].count("/") == 2]
+                if row[1].startswith("gates/") and row[1].rsplit("/", 1)[1] in slugs]
     others = [row for row in rows if row not in findings]
     assert len(findings) == 4
     assert all(tag in STATUSES for _, _, tag, _ in others)
@@ -223,7 +227,7 @@ def test_every_item_but_a_finding_shows_one_of_six_statuses(tmp_path, capsys):
 def test_a_finding_shows_its_kind_in_place_of_a_status(tmp_path, capsys):
     rows = _tree(_repo(tmp_path), capsys)
     assert _row(rows, "gates/G0/stale-pin")[2] == "kind: gap"
-    assert _row(rows, "gates/G3/slow-loop")[2] == "kind: friction"
+    assert _row(rows, "gates/G3/G3.1/slow-loop")[2] == "kind: friction"
     assert _row(rows, "gates/none/idea")[2] == "kind: proposal"
     assert _row(rows, "gates/none/loose-end")[2] == "kind: escape"
 
@@ -232,8 +236,11 @@ def test_a_finding_shows_its_kind_in_place_of_a_status(tmp_path, capsys):
 
 def test_each_finding_prints_once_under_the_gate_it_names(tmp_path, capsys):
     rows = _tree(_repo(tmp_path), capsys)
-    assert _children(rows, "gates/G0") == ["gates/G0/stale-pin"]
-    assert _children(rows, "gates/G3") == ["gates/G3/slow-loop"]  # G3.1, a condition of G3
+    # a gate opens into its conditions; a finding naming a condition stands under it
+    assert _children(rows, "gates/G0") == [
+        "gates/G0/G0.1", "gates/G0/G0.2", "gates/G0/G0.3", "gates/G0/stale-pin"]
+    assert _children(rows, "gates/G3") == ["gates/G3/G3.1", "gates/G3/G3.2", "gates/G3/G3.3"]
+    assert _children(rows, "gates/G3/G3.1") == ["gates/G3/G3.1/slow-loop"]
     for slug in ("stale-pin", "slow-loop", "idea", "loose-end"):
         assert sum(rid.endswith("/" + slug) for rid in _ids(rows)) == 1, slug
 
@@ -288,7 +295,8 @@ def test_a_removed_finding_is_gone_at_the_next_run(tmp_path, capsys):
     (root / ".sdlc" / "findings" / "stale-pin.yaml").unlink()
     rows = _tree(root, capsys)
     assert "gates/G0/stale-pin" not in _ids(rows)
-    assert _children(rows, "gates/G0") == []  # an active gate prints with no findings
+    assert _children(rows, "gates/G0") == [  # an active gate prints with no findings
+        "gates/G0/G0.1", "gates/G0/G0.2", "gates/G0/G0.3"]
 
 
 def test_a_gate_added_to_active_gates_shows_at_the_next_run(tmp_path, capsys):
@@ -452,7 +460,7 @@ def test_a_check_shows_its_sketch_line(tmp_path, capsys):
 
 def test_a_finding_shows_its_statement(tmp_path, capsys):
     root = _repo(tmp_path)
-    findings = ["gates/G0/stale-pin", "gates/G3/slow-loop", "gates/none/idea",
+    findings = ["gates/G0/stale-pin", "gates/G3/G3.1/slow-loop", "gates/none/idea",
                 "gates/none/loose-end"]
     for rid in findings:
         slug = rid.rsplit("/", 1)[1]
@@ -551,7 +559,7 @@ def test_a_summary_drops_the_whitespace_around_its_text(tmp_path, capsys):
     _dump(_contract_path(root, "beta"), _contract("beta", [
         {**BETA[0], "done_means": " \tthe work for b1-solo is done  \n"}]))
     rows, out = _printed(root, capsys)
-    assert _summary(rows, "gates/G3/slow-loop") == (
+    assert _summary(rows, "gates/G3/G3.1/slow-loop") == (
         "The loop runs slow on each save. It costs a minute each run.")
     assert _summary(rows, "beta/b1-solo") == "the work for b1-solo is done"
     assert _one_line_each(out)
@@ -605,7 +613,7 @@ def test_the_summary_comes_last_after_one_bar(tmp_path, capsys):
     statement = "A fixture finding for the tree suite."
     rows = _tree(root, capsys)
     assert _row(rows, "gates/G3")[3] == f" inactive | {names['G3']}"
-    assert _row(rows, "gates/G3/slow-loop")[3] == f" gate: G3.1 | {statement}"
+    assert _row(rows, "gates/G3/G3.1/slow-loop")[3] == f" gate: G3.1 | {statement}"
     assert _row(rows, "alpha")[3] == f" doc: docs/features/alpha.md | {INTENT}"
     assert _row(rows, "alpha/a1-core")[3] == " | the work for a1-core is done"
     assert _row(rows, "alpha/a2-edges")[3] == (
@@ -629,7 +637,7 @@ def test_a_unit_shows_one_depends_on_link_per_entry_in_its_order(tmp_path, capsy
 def test_a_finding_links_to_the_gate_its_field_names_as_written(tmp_path, capsys):
     rows = _tree(_repo(tmp_path), capsys)
     assert _head(rows, "gates/G0/stale-pin") == " gate: G0"
-    assert _head(rows, "gates/G3/slow-loop") == " gate: G3.1"  # the condition, kept, under G3
+    assert _head(rows, "gates/G3/G3.1/slow-loop") == " gate: G3.1"  # the condition, kept, under it
 
 
 def test_a_link_prints_only_from_depends_on_or_a_finding_gate(tmp_path, capsys):
@@ -648,7 +656,7 @@ def test_a_link_prints_only_from_depends_on_or_a_finding_gate(tmp_path, capsys):
     )] == [""] * 4
     linked = [rid for _, rid, _, rest in rows
               if {"depends_on:", "gate:"} & set(rest.partition(BAR)[0].split())]
-    assert linked == ["gates/G0/stale-pin", "gates/G3/slow-loop", "alpha/a2-edges"]
+    assert linked == ["gates/G0/stale-pin", "gates/G3/G3.1/slow-loop", "alpha/a2-edges"]
 
 
 # --- SC4.2 no document read: a feature document is a file reference only ------

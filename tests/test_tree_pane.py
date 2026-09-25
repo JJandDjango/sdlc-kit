@@ -264,7 +264,7 @@ def test_sc2_1_the_pane_shows_the_path_and_folds_each_levels_other_items_into_on
         "specs/alpha/contract.yaml > alpha > a2-edges > prove-red",  # the where-am-I line
         "3 more: 2 to do, 1 done",                    # gates/G0, gates/none, beta
         whole["alpha"],
-        "  2 more: 1 done, 1 blocked",                # alpha/G0, alpha/a1-core
+        "  3 more: 1 to do, 1 done, 1 blocked",       # alpha/G0, alpha/G1 inactive, alpha/a1-core
         short_line(whole["alpha/a2-edges"]),
         "    9 more: 6 to do, 2 done, 1 failed",      # the other tasks and the checks
         short_line(whole["alpha/a2-edges/prove-red"]),
@@ -274,7 +274,7 @@ def test_sc2_1_the_pane_shows_the_path_and_folds_each_levels_other_items_into_on
 
 def test_sc2_1_a_level_with_no_other_item_prints_no_fold_line(tmp_path, capsys):
     root = tmp_path / "repo"
-    _config(root, [])  # no gate item, no verdict
+    _config(root, [])  # no gate item; the contract shows G0, inactive
     _dump(root / "specs" / "lone" / "contract.yaml", _contract("lone", LONE))
     write_seat_roster(root)
     _progress(root, "lone", _step("lone/l1-lone/approve-tests", "doing", "10:00"))
@@ -284,6 +284,7 @@ def test_sc2_1_a_level_with_no_other_item_prints_no_fold_line(tmp_path, capsys):
         "waiting on a seat: approve-tests for lone/l1-lone",  # the current task is an approval
         "specs/lone/contract.yaml > lone > l1-lone > approve-tests",  # the where-am-I line
         whole["lone"],
+        "  1 more: 1 to do",  # lone/G0, inactive
         short_line(whole["lone/l1-lone"]),
         "    7 more: 7 to do",  # six tasks and one check
         short_line(whole["lone/l1-lone/approve-tests"]),
@@ -887,7 +888,8 @@ def test_sc8_1_on_approve_tests_the_first_line_is_the_waiting_line_cut_like_the_
     whole = _whole(root, capsys)
     assert full[0] == WAIT_LONE
     assert full == [WAIT_LONE, "specs/lone/contract.yaml > lone > l1-lone > approve-tests",
-                    whole["lone"], short_line(whole["lone/l1-lone"]), "    7 more: 7 to do",
+                    whole["lone"], "  1 more: 1 to do",  # lone/G0, inactive
+                    short_line(whole["lone/l1-lone"]), "    7 more: 7 to do",
                     short_line(whole["lone/l1-lone/approve-tests"])]
     monkeypatch.setenv("COLUMNS", "40")
     out = _Writes()
@@ -911,7 +913,7 @@ def test_sc8_1_on_approve_commit_the_waiting_line_names_the_approval_and_its_uni
         "specs/alpha/contract.yaml > alpha > a2-edges > approve-commit",  # the where-am-I line
         "1 more: 1 to do",                   # beta
         whole["alpha"],
-        "  1 more: 1 to do",                 # alpha/a1-core
+        "  2 more: 2 to do",                 # alpha/G0 inactive, alpha/a1-core
         short_line(whole["alpha/a2-edges"]),
         "    9 more: 8 to do, 1 done",       # the other tasks and the checks
         short_line(whole["alpha/a2-edges/approve-commit"]),

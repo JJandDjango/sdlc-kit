@@ -5,37 +5,49 @@ the unit graph, carried to the whole work. `build` reads the contracts under
 specs/, `active_gates` from .sdlc/config.yaml, the findings under
 .sdlc/findings/, each contract's progress file under .sdlc/progress/, and
 the two name lists the package ships (data/gates.yaml, data/tasks.yaml).
-When a `G0` verdict shows, it also runs the validator on that contract and
-runs git twice: once for `HEAD`, once for the contract files that differ
-from it. A caller that passes a verdict cache (the `--follow` pane) keeps
-the validator's reading per contract between prints, and the validator runs
-only for a contract the cache lacks; git still runs at every print. It asks
-only whether docs/features/<id>.md exists, never opens it, reads no other
-document and writes no file.
+When an active `G0` verdict shows, it also runs the validator on that
+contract and runs git twice: once for `HEAD`, once for the contract files
+that differ from it. A caller that passes a verdict cache (the `--follow`
+pane) keeps the validator's reading per contract, the verdict's and its
+conditions', between prints, and the validator runs only for a contract
+the cache lacks; git still runs at every print. It asks only whether
+docs/features/<id>.md exists, never opens it, reads no other document and
+writes no file.
 
-The gates stand first, at the repository level. A finding names a gate and
-never a contract (ADR 0023's form bans identifiers), so each finding stands
-once, under the gate its `gate:` field names: a condition such as G3.1 files
-under its gate, and a gate a finding names shows even when it is not active.
-Then each contract, with its verdict at every active gate, its units, each
-unit's seven tasks and its checks.
+The gates stand first, at the repository level, each opening first into
+its conditions, the named parts gates.yaml lists in its page's order. A
+finding names a gate and never a contract (ADR 0023's form bans
+identifiers), so each finding stands once: under the condition its `gate:`
+field names when its gate lists that condition, such as G3.1, else under
+the gate, after its conditions. A gate a finding names shows even when it
+is not active. Then each contract, with its verdict at every active gate,
+then its inactive next gate (the first gate in the kit's order after the
+last active one, `G0` when none is active, none after the last), each
+verdict opening into its gate's conditions; then its units, each unit's
+seven tasks and its checks.
 
 Every item but a finding carries one of six statuses; a finding records
 none, so it shows its kind. A task step reads its last record in the
 contract's progress file, a check its last run judged by what the run
 expected, and a close of a unit or contract reads every task and check
-under it done, never a verdict. A check whose last run was green as
-expected names that run's command and `HEAD`, and `dirty` when the run
-recorded it. A task that reads done by its own done record names that
+under it done, never a verdict or a condition. A check whose last run was
+green as expected names that run's command and `HEAD`, and `dirty` when the
+run recorded it. A task that reads done by its own done record names that
 record's `HEAD`, the seat it gives an approval, and `dirty`; a task that
 reads blocked by its own record names its reason. A unit or contract that
 reads done names its latest close's `HEAD` and `dirty`. A close neither
-adds evidence to the items under it nor hides theirs. A `G0` verdict reads
-the validator at the draft and ready profiles and names the command and
-the `HEAD` it read, and `dirty` when its contract file differs from
-`HEAD`; a verdict at any other gate, and every gate item, reads `to do`.
-A unit or contract rolls up its children, so it reads `done` only when
-every child does.
+adds evidence to the items under it nor hides theirs. An active `G0`
+verdict reads the validator at the draft and ready profiles and names the
+command and the `HEAD` it read, and `dirty` when its contract file differs
+from `HEAD`; each of its conditions reads the same rule over the codes it
+owns, and one that is not done carries its rules' messages as its
+diagnostics, the draft profile's when it failed, else the ready profile's.
+A contract the tree cannot read as a mapping reads only its `G0.1` so,
+since the joins behind the other two never ran on it. Warnings never count.
+A verdict at any other gate, the inactive verdict, their conditions and
+every gate item and its conditions read `to do`. A unit or contract rolls
+up its children but the inactive verdict, so it reads `done` only when
+every other child does.
 
 The current task is derived from the task states, never stored: the task
 whose `doing` record is latest, else the first `to do` task in the contract
@@ -44,19 +56,20 @@ with the latest record. An approval that holds it reads `waiting on a seat`.
 Each item carries its summary from one source field, unchanged but for its
 whitespace: a contract's `intent`, a unit's `done_means`, a check's sketch
 line, a finding's `statement`, and the name gates.yaml or tasks.yaml gives a
-gate, a verdict's gate or a task. The field's ends are stripped and each line
-break reads as one space; a field that is absent, not text or blank gives no
-summary. Links come from two fields only: a unit's `depends_on` entries, as
+gate, a verdict's gate, a condition or a task. The field's ends are
+stripped and each line break reads as one space; a field that is absent,
+not text or blank gives no summary. Links come from two fields only: a unit's `depends_on` entries, as
 the unit graph reads them, each linked once in the order of its first
 appearance, and a finding's `gate:` value as written. A contract with a
 file at docs/features/<id>.md carries that path as its feature doc
 reference. A line prints its links, then the reference, then the summary,
 after the marks and evidence.
 
-Each item but a gate, a task and the no-gate item names the file it is read
-from, and a unit or check the keys to its entry there; `reference` turns
-that into the entry's line, parsing the file afresh, so only the query calls
-it. A gate, a verdict and a task carry the kit page their list gives.
+Each item but a gate, a condition, a task and the no-gate item names the
+file it is read from, and a unit or check the keys to its entry there;
+`reference` turns that into the entry's line, parsing the file afresh, so
+only the query calls it. A gate, a verdict, a condition and a task carry
+the kit page their list gives, a condition its gate's.
 """
 
 from __future__ import annotations
@@ -82,6 +95,9 @@ ROLL_UP = (FAILED, WAITING, BLOCKED, DOING)
 NO_GATE = "none"
 FORM = "TEMPLATE.yaml"  # the findings form, never a finding
 INACTIVE = "inactive"
+# The one G0 condition an unreadable contract still reads: the schema's; the
+# joins behind the others never run on a file that is not a mapping.
+SCHEMA_CONDITION = "G0.1"
 CURRENT = "current"
 APPROVALS = ("approve-tests", "approve-commit")
 DIRTY = "dirty"
@@ -98,8 +114,8 @@ _CHECK_ID = re.compile(r"^[A-Za-z][A-Za-z0-9._-]*$")
 
 @dataclass
 class Item:
-    """One entry of the tree; `level` is gate, none, finding, contract,
-    verdict, unit, task or check."""
+    """One entry of the tree; `level` is gate, condition, none, finding,
+    contract, verdict, unit, task or check."""
 
     id: str
     level: str
@@ -114,6 +130,20 @@ class Item:
     source: str | None = None  # the repo path of the file the item is read from
     place: tuple = ()  # the keys from that file's top to the item's entry
     page: str | None = None  # the kit page that defines a gate or a task
+    # A condition's messages from its rules, each on one line; never an item.
+    diagnostics: list[str] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class G0Reading:
+    """The validator's reading of one contract: the verdict's status, the
+    errors at the draft and ready profiles as (rule, message) pairs in the
+    validator's order, and whether the tree reads the file as a mapping."""
+
+    status: str
+    draft: tuple[tuple[str, str], ...]
+    ready: tuple[tuple[str, str], ...]
+    mapping: bool
 
 
 @dataclass(frozen=True)
@@ -138,7 +168,8 @@ class _Reading:
 
 
 def gate_list() -> list[dict]:
-    """The kit's gates in registry order, each an id, a name and a page."""
+    """The kit's gates in registry order, each an id, a name, a page and its
+    conditions in the page's order, each an id and a name (G0's with rules)."""
     return yaml.safe_load(GATES_PATH.read_text(encoding="utf-8"))["gates"]
 
 
@@ -147,24 +178,38 @@ def task_list() -> list[dict]:
     return yaml.safe_load(TASKS_PATH.read_text(encoding="utf-8"))["tasks"]
 
 
-def build(root: Path, cache: dict[str, str] | None = None) -> tuple[list[Item], list[str]]:
+def build(root: Path, cache: dict[str, G0Reading] | None = None
+          ) -> tuple[list[Item], list[str]]:
     """The tree in print order, and one line per source that could not be read.
 
-    `cache` maps a contract id to its `G0` reading, kept by the caller
-    between prints; without one, every verdict is read afresh.
+    `cache` maps a contract id to its `G0` reading, the verdict's and its
+    conditions', kept by the caller between prints; without one, every
+    verdict is read afresh.
     """
     problems: list[str] = []
     gates = {gate["id"]: gate for gate in gate_list()}
     tasks = {task["id"]: task for task in task_list()}
     order = list(gates)
     active = _in_order(active_gates(root, problems), order)
+    upcoming = next_gate(active, order)
     findings = read_findings(root, problems)
     items = _gate_items(order, active, findings, gates)
-    contracts = [_contract_item(root, cid, instance, active, gates, tasks)
+    contracts = [_contract_item(root, cid, instance, active, upcoming, gates, tasks)
                  for cid, instance in read_contracts(root, problems)]
     items += contracts
     derive(root, contracts, read_progress(root, problems), cache)
     return items, problems
+
+
+def next_gate(active: list[str], order: list[str]) -> str | None:
+    """The gate a contract's work reaches next: the first in the kit's order
+    after the last active gate the kit lists; the first gate when none is
+    active; None after the last."""
+    known = [gate for gate in active if gate in order]
+    if not known:
+        return order[0] if order else None
+    after = order.index(known[-1]) + 1
+    return order[after] if after < len(order) else None
 
 
 def text(value) -> str | None:
@@ -176,9 +221,10 @@ def text(value) -> str | None:
 
 
 def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]],
-           cache: dict[str, str] | None = None) -> None:
-    """Set every status under the contracts, the verdicts' evidence and the
-    current mark; the gate items keep `to do`."""
+           cache: dict[str, G0Reading] | None = None) -> None:
+    """Set every status under the contracts, the verdicts' evidence, the G0
+    conditions' diagnostics and the current mark; the gate items and their
+    conditions keep `to do`."""
     readings: dict[str, _Reading] = {}
     # Each check's last run and each task's own last record, whatever closed
     # it after, and each unit's and contract's latest close.
@@ -269,17 +315,22 @@ def _current(contracts: list[Item], readings: dict[str, _Reading],
                  if item.level == "task" and item.status == TO_DO), None)
 
 
-def _verdicts(root: Path, contracts: list[Item], cache: dict[str, str]) -> None:
-    """Each `G0` verdict from the validator, with its command and `HEAD`, and
-    `dirty` when its contract file differs from `HEAD`; git runs twice per
-    print, and only when a `G0` shows. A reading in `cache` stands in for
-    the validator, and each new reading joins it; the schema loads only
-    when the validator runs."""
+def _verdicts(root: Path, contracts: list[Item], cache: dict[str, G0Reading]) -> None:
+    """Each active `G0` verdict from the validator, with its command and
+    `HEAD`, and `dirty` when its contract file differs from `HEAD`, and each
+    of its conditions from the same reading over its own rules; git runs
+    twice per print, and only when an active `G0` shows. A reading in
+    `cache` stands in for the validator, and each new reading joins it; the
+    schema loads only when the validator runs. A contract the tree cannot
+    read as a mapping reads only its schema condition; the others keep `to
+    do` and list nothing."""
     verdicts = [(contract.id, item) for contract in contracts
                 for item in contract.children
-                if item.level == "verdict" and item.id == f"{contract.id}/G0"]
+                if item.level == "verdict" and item.id == f"{contract.id}/G0"
+                and INACTIVE not in item.marks]
     if not verdicts:
         return
+    rules = condition_rules()
     schema = None
     head = head_id(root)
     dirty = dirty_contracts(root)
@@ -288,10 +339,16 @@ def _verdicts(root: Path, contracts: list[Item], cache: dict[str, str]) -> None:
         if cid not in cache:
             schema = checker.load_schema() if schema is None else schema
             cache[cid] = g0_status(root / path, schema)
-        verdict.status = cache[cid]
+        reading = cache[cid]
+        verdict.status = reading.status
         verdict.evidence = (f"via python -m taskcontract validate {path} "
                             f"--profile ready at {head}"
                             + (f" {DIRTY}" if cid in dirty else ""))
+        for condition in verdict.children:
+            key = condition.id.rsplit("/", 1)[-1]
+            if reading.mapping or key == SCHEMA_CONDITION:
+                condition.status, condition.diagnostics = condition_reading(
+                    reading, rules.get(key, []))
 
 
 def run_evidence(record: Record) -> str | None:
@@ -321,19 +378,51 @@ def state_evidence(record: Record) -> str | None:
     return " ".join(parts) or None
 
 
-def g0_status(path: Path, schema: dict) -> str:
-    """The validator's reading: draft-red `failed`, ready-green `done`,
-    `TC003` at ready `blocked`, else `to do`. Warnings never count."""
-    def errors(profile: str) -> list:
-        return [v for v in checker.validate_path(path, profile=profile, schema_doc=schema)
-                if v.severity == "error"]
+def g0_status(path: Path, schema: dict) -> G0Reading:
+    """The validator's reading: the errors at both profiles, the verdict
+    they give (draft-red `failed`, ready-green `done`, `TC003` at ready
+    `blocked`, else `to do`), and whether the file reads as a mapping, which
+    decides whether the joins' conditions can read it. Warnings never count."""
+    def errors(profile: str) -> tuple[tuple[str, str], ...]:
+        return tuple((v.rule, v.message)
+                     for v in checker.validate_path(path, profile=profile, schema_doc=schema)
+                     if v.severity == "error")
 
-    if errors("draft"):
+    draft, ready = errors("draft"), errors("ready")
+    return G0Reading(_g0(draft, ready), draft, ready,
+                     _load(path, path.parent, [], "contract") is not None)
+
+
+def condition_reading(reading: G0Reading, rules: list[str]) -> tuple[str, list[str]]:
+    """A G0 condition's status by the verdict's rule over its own rules'
+    errors, and its diagnostics: none when done, else the messages of the
+    profile that decided it (draft when failed, ready otherwise), in the
+    validator's order, each on one line and each text once."""
+    draft = tuple(pair for pair in reading.draft if pair[0] in rules)
+    ready = tuple(pair for pair in reading.ready if pair[0] in rules)
+    status = _g0(draft, ready)
+    if status == DONE:
+        return status, []
+    messages = draft if status == FAILED else ready
+    return status, list(dict.fromkeys(" ".join(message.splitlines())
+                                      for _, message in messages))
+
+
+def _g0(draft: tuple, ready: tuple) -> str:
+    """The rule over (rule, message) errors: draft-red `failed`, ready-green
+    `done`, `TC003` at ready `blocked`, else `to do`."""
+    if draft:
         return FAILED
-    ready = errors("ready")
     if not ready:
         return DONE
-    return BLOCKED if any(v.rule == "TC003" for v in ready) else TO_DO
+    return BLOCKED if any(rule == "TC003" for rule, _ in ready) else TO_DO
+
+
+def condition_rules() -> dict[str, list[str]]:
+    """The validator codes each G0 condition owns, by the condition's id."""
+    g0 = next((gate for gate in gate_list() if gate.get("id") == "G0"), None)
+    return {condition["id"]: list(condition.get("rules") or [])
+            for condition in _conditions(g0)}
 
 
 def dirty_contracts(root: Path) -> set[str]:
@@ -360,18 +449,19 @@ def dirty_contracts(root: Path) -> set[str]:
 
 
 def _roll_up(item: Item) -> None:
-    """A unit's or contract's status from its children's; a verdict done
-    alone never starts its contract."""
+    """A unit's or contract's status from its children's but the inactive
+    verdict's; a verdict done alone never starts its contract."""
     for child in item.children:
         if child.level == "unit":
             _roll_up(child)
-    statuses = [child.status for child in item.children]
+    children = [child for child in item.children if INACTIVE not in child.marks]
+    statuses = [child.status for child in children]
     first = next((status for status in ROLL_UP if status in statuses), None)
     if first is not None:
         item.status = first
     elif statuses and all(status == DONE for status in statuses):
         item.status = DONE
-    elif any(child.status == DONE for child in item.children if child.level != "verdict"):
+    elif any(child.status == DONE for child in children if child.level != "verdict"):
         item.status = DOING
     else:
         item.status = TO_DO
@@ -461,7 +551,8 @@ def read_findings(root: Path, problems: list[str]) -> list[Finding]:
 
 
 def gate_of(value) -> str:
-    """The gate a finding's `gate:` field names; a condition files under its gate."""
+    """The gate a finding's `gate:` field names; a condition names its gate
+    by the part before its dot."""
     text = value.strip() if isinstance(value, str) else ""
     if not text or text == NO_GATE:
         return NO_GATE
@@ -497,37 +588,78 @@ def _named(sketch) -> str | None:
 
 def _gate_items(order: list[str], active: list[str], findings: list[Finding],
                 gates: dict[str, dict]) -> list[Item]:
-    """Each active gate and each gate a finding names, then the no-gate item."""
+    """Each active gate and each gate a finding names, then the no-gate item.
+    A gate opens into its conditions, each holding the findings that name
+    it, then the gate's other findings."""
     named = [finding.gate for finding in findings]
-    items = [Item(f"gates/{gate}", "gate",
-                  marks=[] if gate in active else [INACTIVE],
-                  children=_finding_items(gate, findings),
-                  summary=_name(gates.get(gate)), page=_page(gates.get(gate)))
-             for gate in _in_order(active + named, order)]
+    items = []
+    for gate in _in_order(active + named, order):
+        base = f"gates/{gate}"
+        conditions = _condition_items(base, gates.get(gate))
+        for condition in conditions:
+            condition.children = _finding_items(
+                condition.id, gate, condition.id.rsplit("/", 1)[-1], findings, gates)
+        items.append(Item(base, "gate", marks=[] if gate in active else [INACTIVE],
+                          children=conditions + _finding_items(base, gate, None,
+                                                               findings, gates),
+                          summary=_name(gates.get(gate)), page=_page(gates.get(gate))))
     if NO_GATE in named:
         items.append(Item(f"gates/{NO_GATE}", "none",
-                          children=_finding_items(NO_GATE, findings)))
+                          children=_finding_items(f"gates/{NO_GATE}", NO_GATE, None,
+                                                  findings, gates)))
     return items
 
 
-def _finding_items(gate: str, findings: list[Finding]) -> list[Item]:
-    return [Item(f"gates/{gate}/{finding.slug}", "finding", status=None,
+def _finding_items(base: str, gate: str, condition: str | None,
+                   findings: list[Finding], gates: dict[str, dict]) -> list[Item]:
+    """The findings under `base`: those of `gate` whose `gate:` value is
+    `condition` when its gate lists it, or with `condition` None, the rest."""
+    return [Item(f"{base}/{finding.slug}", "finding", status=None,
                  kind=finding.kind, summary=finding.statement,
                  links=[f"gate: {finding.link}"] if finding.link else [],
                  source=f".sdlc/findings/{finding.slug}.yaml")
-            for finding in findings if finding.gate == gate]
+            for finding in findings
+            if finding.gate == gate and _condition_of(finding, gates) == condition]
+
+
+def _condition_of(finding: Finding, gates: dict[str, dict]) -> str | None:
+    """The condition a finding stands under: its `gate:` value when its gate
+    lists that condition, else None."""
+    listed = [condition.get("id") for condition in _conditions(gates.get(finding.gate))]
+    return finding.link if finding.link in listed else None
+
+
+def _condition_items(base: str, entry: dict | None) -> list[Item]:
+    """A gate's conditions under `base`, in its page's order, each reading
+    `to do`, with its name and its gate's page."""
+    return [Item(f"{base}/{condition.get('id')}", "condition",
+                 summary=text(condition.get("name")), page=_page(entry))
+            for condition in _conditions(entry)]
+
+
+def _conditions(entry: dict | None) -> list[dict]:
+    """The conditions a gate's entry in the kit's list gives, in order."""
+    conditions = entry.get("conditions") if entry is not None else None
+    return [c for c in conditions if isinstance(c, dict)] if isinstance(conditions, list) else []
 
 
 def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str],
-                   gates: dict[str, dict], tasks: dict[str, dict]) -> Item:
-    """A contract: its verdict at each active gate, then its units. An
-    unreadable contract keeps its verdicts and shows no unit."""
+                   upcoming: str | None, gates: dict[str, dict],
+                   tasks: dict[str, dict]) -> Item:
+    """A contract: its verdict at each active gate, then the upcoming gate's
+    verdict marked `inactive`, each opening into its gate's conditions; then
+    its units. An unreadable contract keeps its verdicts and shows no unit."""
     doc = f"docs/features/{cid}.md"
     source = f"specs/{cid}/contract.yaml"
+    verdicts = [(gate, []) for gate in active]
+    if upcoming is not None:
+        verdicts.append((upcoming, [INACTIVE]))
     item = Item(cid, "contract",
-                children=[Item(f"{cid}/{gate}", "verdict", summary=_name(gates.get(gate)),
+                children=[Item(f"{cid}/{gate}", "verdict", marks=marks,
+                               children=_condition_items(f"{cid}/{gate}", gates.get(gate)),
+                               summary=_name(gates.get(gate)),
                                source=source, page=_page(gates.get(gate)))
-                          for gate in active],
+                          for gate, marks in verdicts],
                 doc=doc if (root / doc).is_file() else None,
                 summary=text(instance.get("intent")) if instance is not None else None,
                 source=source)
