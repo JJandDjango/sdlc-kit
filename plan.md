@@ -1,62 +1,71 @@
-# Plan - Session 52 (2026-09-25) - project-tree o1
+# Plan - Session 53 (2026-09-25) - project-tree o2, o3, o4
 
-**Deliverable:** unit `o1-conditions` of `project-tree` on one PR, with a
-Two-Key PASS (one agent re-runs every check, a second grades the commit
-against the contract, and a script computes the verdict):
+**Deliverable:** units `o2-titles`, `o3-stale` and `o4-statuses` of
+`project-tree` on one PR, each with its own Two-Key PASS (one agent
+re-runs every check, a second grades the commits against the contract, and
+a script computes the verdict):
 
-- `USAGE.md` gains the project-tree section first, every status mark red.
-- `taskcontract/data/gates.yaml`: each gate gains `conditions:` in page
-  order, 57 in all, each an `id` and a `name`; G0's three conditions also
-  carry `rules`: G0.1 TC000 to TC009 and TC013 to TC015, G0.2 TC010 to
-  TC012 and TC017, G0.3 TC016 and TC018.
-- `taskcontract/tree.py`: each gate opens into its conditions; a G0
-  condition takes its status from its own rules, and one that is not done
-  lists its diagnostics, one line each, with no code; warnings (W001) stay
-  out; each contract's G0 verdict reads as before.
-- `tests/test_tree_conditions.py` carries SC2.1 to SC2.3, and one test
-  holds each code the validator emits to exactly one condition.
+- o2: the contract schema gains an optional one-line `title` (1.4.0 to
+  1.5.0); intake copies it from the feature document's title line; every
+  item line opens on its id and its plain name, a feature without a title
+  showing `(no title)`. o1's four Two-Key advisories ride here.
+- o3: the tree reads each feature document's revision table; a feature
+  line reads `stale: document rN, contract from rM`, `no feature
+  document` or `no "Ready:" row`; intake writes the `Ready:` row in its
+  fixed shape.
+- o4: a blocked task names its reason and the approval that holds the
+  current task names the seat it waits on, each on the item's own line.
 
 **Rulings at plan review** (the user's):
 
-1. The user approves the USAGE section, shown in chat in full. Claude
-   approves o1's test list and commit on review, as in sessions 45 to 47.
-   The push, the PR and the merge stay on the user's word.
-
-**Closed.** The deliverable is met: o1 at `5864783` (USAGE) and `d277595`
-(code and tests), Two-Key PASS at round 1 with four advisories, carried to
-o2. Suite 618 passed, scope-check green. PR #61 carries the session; the
-merge waits on the user's word.
+1. Order o2, o3, o4: o2 changes every line's opening, so the later units'
+   tests pin the new shape once.
+2. Delegation as in session 52. The user approves the three units' USAGE
+   subsections in one batch, shown in chat in full before any drafting;
+   Claude approves each test list and commit on review. The push, the PR
+   and the merge stay on the user's word.
+3. o2's plain names: an item's name where its source gives one (a gate, a
+   verdict, a condition and a task from the kit's lists; a feature from
+   its `title`, else `(no title)`), and its source text where none does (a
+   unit's `done_means`, a check's sketch line, a finding's statement).
+   That text moves from the line's end to right after the id, so the
+   `summary` part keeps only a feature's intent.
+4. o4's seat: the unit's `confirmed_by`, the seats that answered for it
+   at intake. Nothing else records a seat before the approval's answer,
+   and a new contract field would need a re-intake.
 
 ## Steps
 
-1. ~~Open.~~ Branch cut from `df7cbb6`; the plan at `75cb76b`.
-2. ~~o1, pass zero.~~ Five red subsections in section 9, shown in chat in
-   full, at `5864783` on the user's word.
-3. ~~o1, draft and approve the test list.~~ 26 tests and six amended
-   modules; the 57 conditions match the gate pages. Approved by Claude
-   with one change: a contract the tree cannot read as a mapping reads
-   `to do` at G0.2 and G0.3, never a false `done`.
-4. ~~o1, write the tests and prove red.~~ SC2.1 to SC2.3 red as expected;
-   all 26 fail on assertions.
-5. ~~o1, green.~~ Suite 618 passed; two deviations, both accepted (the
-   cache's type, and the ready profile read on a draft-red contract).
-6. ~~o1, approve the commit and commit.~~ At `d277595`; the three checks
-   green at the clean commit.
-7. ~~o1 Two-Key; o1 closed.~~ PASS at round 1.
-8. ~~Close.~~ PR #61; STATE.md regenerated; this plan struck.
+1. Open. Branch `session-53-project-tree-o2-o4` from `7567591`; commit
+   this plan.
+2. USAGE, one batch: "Plain names and titles" (o2, with o1's two USAGE
+   advisories), "Drift from the feature document" (o3), "Blocked and
+   waiting, named" (o4), each refined, shown in chat in full, committed on
+   the user's word.
+3. o2: test list drafted and approved; tests placed, red; green; commit;
+   Two-Key; o2 closed.
+4. o3: the same six tasks; o3 closed. Its drafter may run beside o2's
+   Two-Key, since it writes only the scratchpad.
+5. o4: the same six tasks; o4 closed.
+6. Close. PR; STATE.md regenerated; this plan struck.
 
-Steps 1 and 8 sit outside a contract unit, so the pane does not show them.
+Steps 1 and 6 sit outside a contract unit, so the pane does not show them.
 
-Decisions this session: eight. The user's at plan review: (1) the
-deliverable: yes; (2) the delegation: yes; (3) this plan: yes. The user's:
-(4) the USAGE section: yes. Claude's, on review: (5) o1's test list, with
-the unreadable-contract change; (6) o1's commit. The user's at the close:
-(7) the push and the PR: yes; (8) the merge: open.
+Three units is three times session 52's load. If context runs high, the
+session wraps after whichever unit closed last, and the rest moves to
+session 54.
+
+Known cost: once o2 lands, a unit's or check's line carries its text
+before its status, so the 0.15.0 `--follow` pane, which cuts lines to its
+width, can hide a unit's status until o5 replaces it.
+
+Decisions this session so far: five. The user's at plan review: rulings 1
+to 4, and the USAGE batch in ruling 2.
 
 Deferred, not this session:
-- o2 to o7: o2, o3 and o4 next, then o5, o6 and o7 (0.16.0).
+- o5 to o7 (o7 ships 0.16.0).
 - G1, after project-tree ships.
-- The rest of STATE.md's carried list.
+- The rest of STATE.md's carried list, prerequisites 7 to 9 among it.
 
 House rules in force: no pipes or chains in any authored command string;
 commit messages via Write + `git commit -F`; Workflows launched by
