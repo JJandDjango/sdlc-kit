@@ -2,63 +2,81 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-23 (session 48, at the 0.15.0 release)._
+> _Generated 2026-09-24 (session 50 close, project-tree ready for intake)._
 
 ## Now
-- **Kit 0.15.0 is released.** `tree-view` (ADR 0031) merged as PR #57 at
-  `fdd6fe2` and is tagged `v0.15.0` there; the self-pin (`7a453e7`) and
-  this wrap ride PR #58 (`session-48-release`), merged by merge commit
-  once CI reads green, on the user's word given at open. No contract is in
-  flight.
-- 0.15.0 adds `taskcontract tree` (the work as one derived tree, six
-  statuses), `taskcontract progress` (task steps and check runs, in local
-  files no gate reads), `tree <id>` (one item for an agent) and `tree
-  --follow` (a pane on the current task). The schema stays at 1.4.0.
-- Receipts at the release: CI green on #57 at `96579dc`, whose tree the
-  merge keeps unchanged, and on main at `fdd6fe2`; USAGE's `uv` line, run
-  as written, installs `v0.15.0` (resolved to `fdd6fe2`) and reads
-  tree-view ready-green; scope-green from `fdd6fe2`. Session 47's suite:
-  592 passed, fifteen contracts ready-green.
-- The user's tree pane (`w9:p8`) runs the code it started with; restart it
-  to run 0.15.0's.
+- **`docs/features/project-tree.md` is ready for intake**, signed at r3
+  by both seats (`a18ea25`), written by hand in ADR 0029's format.
+  Session 50 set the terms (Q11: 26, with "check" meaning an acceptance
+  check only, "rule" and "diagnostic" for what a condition runs and
+  reports, and the tree's six status words), read readiness checks 1 to
+  8 back with six fixes (r2, `ee13149`), and wrote the solution half in
+  eight decisions: the pane becomes a Textual outline shipped as the
+  optional `pane` extra; the contract gains an optional one-line
+  `title`, copied by intake; `taskcontract/data/gates.yaml` gains every
+  gate's conditions (57) with G0's rules per condition; the stale mark
+  reads the document's revision table. Seven units, o1 to o7, deliver
+  its 14 checks; about three build sessions.
+- A spike ran a Textual Tree in a herdr pane on Windows before the
+  choice: the keys, clicks and the wheel arrived, and the waiting line
+  held the first row.
+- PR #59 carries sessions 49 and 50 (branch `session-49-pane-spec`),
+  merged by merge commit once CI reads green, on the user's word. main
+  was at `7c79ba3`; `v0.15.0` tags `fdd6fe2`.
+- A Google Doc render of r3 sits in the user's Drive: "SDLC kit
+  project-tree (r3, ready for intake)",
+  `1M3rk7yJPXB2yVs--0Mayt6XvQyHq4YQf7wjtnQvSEq0`; the r2 draft is trashed.
+- `REQUEST_gate-outline_2026-09-23.md` (untracked) stays as material.
+  The user's tree pane (`w9:p8`) runs the code it started with; restart
+  it to run 0.15.0's.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. Session 49: G1. Its criteria review comes before the pilot's M0 code,
-   and it gives intake's exit the successor venue the engine's
-   `intake-exit-names-no-successor-venue` asks for.
-2. The pilot's config line, in the engine's session; the engine's install
-   ref moves to `v0.15.0` there (pull, not push).
-3. Deferred: flag the Claude pane itself (a local `claude.toml` detection
-   rule shadowing herdr's remote one, or a herdr change); the hook's key
-   action; the hook's four known edges, in its README; `.sdlc/config.yaml`
-   still lists `plan.workflow.json` as a free path.
-4. Carried advisories, wording unless noted. `tree_view.py`: the module
-   docstring's 127 means the shell itself cannot start; `follow()`'s
-   Ctrl-C note names only POSIX; `_flat()`'s docstring understates (it
-   keeps trailing space too); the private `_no_node` import. USAGE: `run`
-   refuses before it starts the command, save its `cannot start` line,
-   and an argparse error prints two lines; a closed unit reads `done`
-   only while the close is its latest record; the width cut never goes
-   below 10 columns. CHANGELOG: drop "now" from the repeated-link note.
-   Behavior, not t6's: the pane's waiting, where-am-I and fold-name
-   lines pass a line break held inside an id; a task and a check that
-   share an id also share their progress readings (`_apply` and `derive`
-   key by id); `page:` prints a kit-repo path that does not open in a
-   consumer. Noted: a cached `G0` reading goes stale across a deprecated
-   term's sunset date; `cut()` counts characters, not display columns.
-5. Carried: the backfill of the 13 earlier contracts, once each is checked
-   finished; `derived-language`, `feature-document`, `spec-doc-type`; the
-   demo intake; wave B (`playbook-loop`, V1-V6); 5b; the G4.6 finding;
-   `no-check-reads-the-source-document`; from r3, a status field on the
-   finding form and the agent personas writing progress.
+1. Session 51: `/sdlc intake docs/features/project-tree.md`, from r3.
+   The flow does three things by hand this once: it writes the "Ready:"
+   row in its fixed shape, `rN: Ready: ... derived from rM ...` (the
+   flow learns it at o3); it leaves `title` out of the contract, since
+   the schema gains the field only at o2 (TC005 otherwise); and the
+   Terms' 22 new terms enter as drafts for the user to ratify (G0.2).
+   The language door checks each sketch and done-means.
+2. The build, o1 to o7, by the delegated method. o5 and o6 need Textual
+   in the test env (it joins the `test` extra at o5).
+3. G1 after project-tree ships, so the pane follows G1's conditions. The
+   pilot's config line, in the engine's session; the engine's install
+   ref moves to the new tag there (pull, not push).
+4. Deferred: prerequisites 7 to 9 (the kit's feature documents under
+   `docs/features/`; progress for the 13 older contracts; a title in
+   each existing contract); `derived-language` (prerequisite 5); flag
+   the Claude pane itself; the hook's key action and its four known
+   edges, in its README; `.sdlc/config.yaml` still lists
+   `plan.workflow.json` as a free path.
+5. Carried advisories on `tree_view.py`, USAGE and CHANGELOG, wording and
+   behavior notes: listed in full at `a800c34:STATE.md`, Next actions 4.
+6. Carried: `feature-document`, `spec-doc-type`; the demo intake; wave B
+   (`playbook-loop`, V1-V6); 5b; the G4.6 finding;
+   `no-check-reads-the-source-document`; from tree-view r3, a status
+   field on the finding form and the agent personas writing progress;
+   on `styled-rendering`, the prototype renderer's two gaps (it drops
+   blockquotes into one paragraph, and its numbered lists count on from
+   each other), fixed in session 50's scratchpad copy by an indented
+   `quote` block and literal list numbers.
 
 ## Standing practice
 - At resume, read the pilot's `E:\ImSimProject\engine\STATE.md` beside
   this file: the engine hands work to the kit there, and its REQUESTs land
   untracked in this root.
+- A new feature starts as a feature document written through an
+  interview, in the format ADR 0029 ratified, tracked at
+  `docs/features/<id>.md`; never a request typed from a sketch (user,
+  2026-09-24). Until `feature-document` lands, the interview runs by hand
+  from `NOTES_feature-document_2026-09-18.md`: one question at a time, a
+  vague answer probed once, each section written into the document
+  before the next, candidates drafted only from the user's own words.
+  The solution half runs the same way: one decision a message, the
+  mechanical ones batched, each with its consequence for the request
+  half, which collects into one re-signed revision.
 - A plan is plan.md's numbered steps, shown in chat for the user's
   overview; nothing renders it. Work outside a contract unit does not show
   in the pane; the plan says so.
@@ -69,9 +87,8 @@
   so the evidence names a clean commit. Record a failed Two-Key round as
   `progress block <unit>/two-key --reason`, and start it again for the
   next round. Close each unit with `progress done` once its Two-Key
-  passes, and the contract once its last unit closes. A unit with no test
-  (a USAGE pass) starts `green` while its page is written and
-  `approve-commit` while it waits. Progress files are git-ignored.
+  passes, and the contract once its last unit closes. Progress files are
+  git-ignored.
 - A REQUEST is untracked, so git cannot restore it: copy it to the
   scratchpad before a revision edits it.
 - The language door checks every sentence of a sketch for an approved
@@ -87,13 +104,12 @@
   Two-Key, leaving tracked files alone while it runs. A fix round: Claude
   amends or adds tests as the list's approver, red first; the developer
   fixes from a delta note; the fix is its own commit, and the next round
-  grades every commit of the unit. Session 47's subagents: drafter 165K;
-  developers 105K, 65K, 67K and 52K; Two-Key 190K to 242K a round.
+  grades every commit of the unit.
 - Before approving a drafted list: check each fixed detail against every
-  use of its terms in the contract and the REQUEST, and pin any output
-  cap against free text holding line breaks (session 47 lost two t6
-  rounds to these); strip session labels (`ruling_2`) from test names;
-  check the module for a repeated test name; diff earlier tests.
+  use of its terms in the contract and the feature document, and pin any
+  output cap against free text holding line breaks; strip session labels
+  (`ruling_2`) from test names; check the module for a repeated test
+  name; diff earlier tests.
 - `scope-check` outside Actions needs `--base <sha>`: main's tip.
 - Run the release unit's sweep patterns before its verifier round; a hit
   outside scope goes to an OPEN and a re-intake first. Date any example of
@@ -108,11 +124,16 @@
   1 on "no checks reported"; start it again.
 - herdr probes run in panes Claude splits with `--no-focus` and closes
   after; never report state on another session's pane (the recipe is in
-  session 46's STATE, `205bbd5:STATE.md`).
+  session 46's STATE, `205bbd5:STATE.md`). `herdr pane send-keys <pane>
+  down right ...` drives a probe's keys; clicks and the wheel need the
+  user.
 - A settings file with unrelated uncommitted edits is staged by blob
   (`hash-object`, then `update-index`), so the commit holds one change.
 
 ## Open questions
+- Prerequisite 9 counts 15 contracts, but project-tree's own contract,
+  derived before o2 adds the field, also lacks a title: amend the count
+  at intake, or let the backfill cover it?
 - The `intake-seat` term says a seat is never delegated to an agent, while
   a delegated session's approvals record `--by claude` (sessions 40 to 42,
   45 to 47). Does the term need a word for a delegated approval?
@@ -126,10 +147,14 @@
   `confirmed_by` "optional in the schema", and the G0.2 hook test does not
   assert that its replace changed the text.
 - `taskcontract/__init__.py` says `__version__ = "0.3.0"`; nothing reads it.
-- To `feature-document`: a check can carry a false premise about today's
-  behavior; a closing release unit has no check to deliver; checks and
-  sketches are not one to one under the three-sketch cap; a pasted appendix
-  copy ages at once; a derived `done_means` can read broader than its line.
+- To `feature-document`: the interview skill asks ADR 0026's questions,
+  and the ratified format lives only in the session 32 notes (sessions 49
+  and 50 ran the interview by hand); a check can carry a false premise
+  about today's behavior; checks and sketches are not one to one under
+  the three-sketch cap; a pasted appendix copy ages at once; a derived
+  `done_means` can read broader than its line; a unit must deliver a
+  check (check 9), so a USAGE pass zero folds into the first unit and a
+  release unit takes a regression check.
 - Its own request: `/sdlc audit` drops a `W001` warning beside an error.
 - Should TC016 ride the parked line? The d7 note in `CHANGELOG.md` records
   the case.

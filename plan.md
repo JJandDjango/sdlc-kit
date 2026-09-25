@@ -1,47 +1,42 @@
-# Plan - Session 48 (2026-09-23) - release 0.15.0
+# Plan - Session 50 (2026-09-24) - project-tree's feature document, ready for intake
 
-**Deliverable:** kit 0.15.0 released: PR #57 merged by merge commit, the
-annotated tag `v0.15.0` at the merge, and the self-pin through its own PR,
-merged once CI reads green.
-
-**Closed at PR #58.** PR #57 merged at `fdd6fe2`, tagged `v0.15.0` there;
-the self-pin at `7a453e7`. PR #58 carries the plan, the self-pin and this
-wrap, and merges once CI reads green, on the user's word given at open.
+**Deliverable:** `docs/features/project-tree.md` ready for `/sdlc intake`:
+the request half signed by the PO seat, the solution half by the
+engineer seat. **Reached at r3 (`a18ea25`).**
 
 ## Steps
 
-1. ~~Open: this plan, shown in chat for the user's overview.~~ At
-   `f1c6fa3`.
-2. ~~Merge PR #57 by merge commit.~~ At `fdd6fe2`; CI green on main there.
-3. ~~Tag `v0.15.0` (annotated) at the merge commit; push the tag.~~
-4. ~~Cut `session-48-release` from main's new tip; commit this plan.~~
-5. ~~The self-pin.~~ At `7a453e7`: `.github/workflows/sdlc.yml` and
-   `USAGE.md` read `@v0.15.0`; scope-green from `fdd6fe2`. USAGE's `uv`
-   line, run as written, installs `v0.15.0` and reads tree-view
-   ready-green.
-6. The user restarts the tree pane (`w9:p8`), so it runs the released code.
-   STATE.md carries it.
-7. ~~Close: STATE.md regenerated, this plan struck, memory updated.~~
-8. Push, open the PR, merge it by merge commit once CI reads green. Pushed
-   and opened as #58 before the close, so STATE names its number; the
-   merge follows CI's green run on the wrap.
+1. ~~Open: this plan, committed on `session-49-pane-spec`.~~ At `1b986f3`.
+2. ~~Q11, the terms: each drafted term read back one at a time, kept,
+   reworded or struck on the user's word.~~ 26 terms, in four decisions.
+3. ~~Readiness: the format's checks 1 to 8 read back; OPEN marks on the
+   user's word; the PO seat signs the request half as a revision row.~~
+   Six fixes; r2 at `ee13149`.
+4. ~~The solution half, one question at a time: proposed solution (it
+   answers the title OPEN), risks and cost.~~ Eight decisions, after a
+   Textual spike in a herdr pane.
+5. ~~The engineer seat signs the solution half.~~ r3 at `a18ea25`, the
+   PO seat re-signing the request half's r3 changes.
+6. ~~Close: STATE.md regenerated, this plan struck, memory updated.~~
+7. One push and one PR carrying sessions 49 and 50: PR #59, merged by
+   merge commit once CI reads green (the user's word, 2026-09-24).
 
-Every step sits outside a contract unit, so the pane shows none of them.
-No Two-Key round: the self-pin changes two install refs and no code, and
-CI's green run is its receipt.
+Every step sat outside a contract unit, so the pane showed none of them.
 
-Decisions this session: six, all the user's, all yes in one word: (1) the
-deliverable; (2) this plan; (3) the merge of PR #57; (4) the tag and its
-message; (5) the self-pin commit; (6) the push, the PR and its merge.
+Decisions this session: four, all the user's: (1) this plan; (2) the PO
+seat's signature on the request half; (3) the engineer seat's signature
+on the solution half; (4) the push, the PR and its merge. The
+interview's answers are the document's content, not counted here.
 
 Deferred, not this session:
-- G1: its criteria review, before the pilot's M0 code. Session 49's
-  deliverable, on a fresh context.
-- The pilot's config line, in the engine's session.
-- `.sdlc/config.yaml` still lists `plan.workflow.json` as a free path.
+- Intake (`/sdlc intake docs/features/project-tree.md`): session 51's
+  opener.
+- G1: after project-tree is built, so the pane shows G1's conditions.
+- The interview skill writes ADR 0026's template (the carried
+  `feature-document` request).
 - The rest of STATE.md's carried list.
 
 House rules in force: no pipes or chains in any authored command string;
 commit messages via Write + `git commit -F`; a `Contract:` trailer, alone
 in the final paragraph, on every commit that touches a non-free path; the
-merge, the tag, the push and the PR on the user's word.
+push, the PR and the merge on the user's word.
