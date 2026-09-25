@@ -1,0 +1,242 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: project-tree
+
+intent: >-
+  Kit `0.15.0` shows one verdict per gate, with no gate conditions and no
+  plain name beside an id. Its pane shows only the path to the current
+  task. After this task every contract stands in one tree as a feature,
+  and each item line shows its id beside its plain name and its document
+  reference. Each feature shows the gates in `active_gates`, then the next
+  gate as `inactive`, and each gate lists its conditions with their status
+  and diagnostics. Each unit and each task shows its status from the
+  progress record, and a `blocked` item or an approval names its
+  `--reason` or its seat. With the pane extra, `taskcontract tree
+  --follow` shows all of the tree as an outline, each feature open down to
+  its units. A feature reads stale when its feature document holds a row
+  after the one its contract derives from. The contract schema gains an
+  optional `title` field, and the kit version reads `0.16.0`.
+
+scope:
+  - taskcontract/tree.py
+  - taskcontract/tree_view.py
+  - taskcontract/pane.py
+  - taskcontract/data/gates.yaml
+  - taskcontract/schemas/task-contract.schema.json
+  - pyproject.toml
+  - skills/sdlc/flows/intake.md
+  - skills/sdlc/init.py
+  - .github/workflows/sdlc.yml
+  - tests/
+  - USAGE.md
+
+non_goals:
+  - No new gate condition; the tree shows the conditions of the kit and
+    adds none.
+  - No change to what any gate checks; a condition shows what its rules
+    already report.
+  - No stored state; the tree derives from the kit files at each run, and
+    the tree writes no file.
+  - No edit through the tree; the tree only reads.
+  - No layer above the contracts before `spec-doc-type` lands; the `spec`
+    root waits for that contract.
+  - No tree across repos; each feature of the pilot stands in the pilot's
+    own tree.
+  - No `herdr` plugin in the kit; `herdr` runs the pane from outside.
+  - No replacement for `STATE.md`.
+  - No change to the rules in `taskcontract/checker.py` and
+    `taskcontract/graph.py`, or to the joins in `taskcontract/vocabulary.py`.
+  - No other command writes a progress record; `taskcontract progress`
+    stays the only one.
+  - No contract edit under `specs/`; the kit session adds each missing
+    `title` and progress record as its own work.
+
+decomposition:
+  - unit: o1-conditions
+    id: o1-conditions
+    confirmed_by: [user]
+    done_means: >-
+      `USAGE.md` gains its `project-tree` section first. The status marks in
+      the section read red. Every gate lists its conditions in page order.
+      Each condition of G0 reads its status and its diagnostics from its own
+      rules. A test holds each code the validator emits to exactly one
+      condition.
+    acceptance_sketch:
+      - >-
+        verify each feature shows the gates in `active_gates`, then the next
+        gate in the kit order as `inactive`. Verify each gate lists its
+        conditions in the kit order, each with its status from its own rules
+        (SC2.1)
+      - >-
+        verify a condition that is not `done` lists what its rules report,
+        one line per diagnostic with no code. Verify a finding that names a
+        condition stands under that condition once for the repo, never under
+        a feature (SC2.2)
+      - >-
+        verify the G0 verdict of each contract still reads from the
+        validator: `done` at `ready-green`, `blocked` at `draft-green` with
+        TC003, `to do` at `draft-green` otherwise, and `failed` at
+        `draft-red` (SC2.3)
+  - unit: o2-titles
+    id: o2-titles
+    depends_on: [o1-conditions]
+    confirmed_by: [user]
+    done_means: >-
+      The contract schema gains an optional `title` field of one line.
+      Intake writes the `title` from the header line of the feature document.
+      Every item line shows its id and its plain name first. A feature
+      without a `title` shows `(no title)`.
+    acceptance_sketch:
+      - >-
+        verify every contract stands in the tree as a feature. Verify each
+        item line shows its id and its plain name first, before the fields
+        that the `tree: pane: parts:` setting names (SC1.1)
+  - unit: o3-stale
+    id: o3-stale
+    depends_on: [o1-conditions]
+    confirmed_by: [user]
+    done_means: >-
+      The tree reads the table of changes in each feature document. A
+      feature reads stale when its feature document holds a row `rN` after
+      the `rM` its contract derives from. The feature line names both. The
+      feature line also names a missing feature document or `Ready:` row.
+      Intake writes the `Ready:` row in its fixed shape.
+    acceptance_sketch:
+      - >-
+        verify a feature reads stale when its feature document holds a row
+        `rN` after the `rM` its contract derives from. Verify `Ready:` and
+        `Measured:` rows never count, and the feature line reads `stale:
+        document rN, contract from rM` (SC5.1)
+      - >-
+        verify a feature with no feature document reads `no feature
+        document`. Verify a feature whose feature document holds no `Ready:`
+        row the tree can read shows `no "Ready:" row`. Verify neither reads
+        as a match (SC5.2)
+  - unit: o4-statuses
+    id: o4-statuses
+    depends_on: [o1-conditions]
+    confirmed_by: [user]
+    done_means: >-
+      Each unit and each task shows `done`, `doing` or `to do` from the
+      progress record. A closed unit or contract reads `done`. A `blocked`
+      item names its `--reason` on its own line. An approval that waits on a
+      seat names that seat on its own line.
+    acceptance_sketch:
+      - >-
+        verify each unit and each task under it shows `done`, `doing` or `to
+        do` from the progress record. Verify a closed unit or contract reads
+        `done` (SC3.1)
+      - >-
+        verify a `blocked` item names its `--reason` on its own line. Verify
+        an approval that waits on a seat names that seat on its own line
+        (SC3.2)
+  - unit: o5-pane-outline
+    id: o5-pane-outline
+    depends_on: [o2-titles, o3-stale, o4-statuses]
+    confirmed_by: [user]
+    done_means: >-
+      With the pane extra, `taskcontract tree --follow` shows all of the
+      tree as an outline, each feature open down to its units. The current
+      task gets a marker and stays in the window. A line below the tree shows
+      the plain name and document reference of the item at the cursor.
+      Without the pane extra, `--follow` prints the install line and exits
+      `2`.
+    acceptance_sketch:
+      - >-
+        verify `--follow` shows all of the tree as an outline, each feature
+        open down to its units. Verify the outline stays the same with or
+        without a current task. Verify the current task gets a marker and
+        stays in the window. Verify `--follow` without the pane extra prints
+        `taskcontract tree: --follow needs the pane extra - pip install
+        'sdlc-taskcontract[pane]'` and exits `2` (SC4.1)
+      - >-
+        verify the tree reads each plain name and document reference from
+        the source of its item, for the cursor item and in `taskcontract tree
+        <id>`. Verify a gate, a condition and a task read from the kit
+        lists, and a feature from its `title` and feature document. Verify a
+        unit reads its `done_means` and a check its acceptance sketch line,
+        each with its contract file and line (SC1.2)
+  - unit: o6-pane-keys
+    id: o6-pane-keys
+    depends_on: [o5-pane-outline]
+    confirmed_by: [user]
+    done_means: >-
+      `Up` and `Down` step the cursor. `Right` makes the item at the cursor
+      open, and `Left` closes that item. A touch of the pointer flips an
+      item open or closed, and the wheel steps the window through the
+      outline. A new render leaves the cursor and each open or closed item
+      as before. The waiting line stays the first line. The notify command
+      runs once each time the current task arrives at an approval.
+      `Ctrl-C` stops the pane with exit `0`.
+    acceptance_sketch:
+      - >-
+        verify `Up` and `Down` step the cursor, `Right` makes the item at
+        the cursor open, and `Left` closes that item. Verify a touch of the
+        pointer flips an item open or closed. Verify the wheel steps the
+        window through the outline. Verify a closed item line counts the
+        items it holds, or names them under `fold: names` (SC4.2)
+      - >-
+        verify the waiting line stays the first line of the pane, word for
+        word. Verify a new render within a 2-second window of a source
+        change. Verify the render leaves the cursor and each open or closed
+        item as before. Verify `Ctrl-C` still stops the pane with exit `0`
+        (SC4.3)
+      - >-
+        verify `taskcontract progress` stays the only command that writes a
+        progress record, and each state it recorded reads as before. Verify
+        the notify command still runs once each time the current task
+        arrives at an approval, never on a new render. Verify the command
+        gets the item id in `SDLC_NODE` (SC3.3)
+  - unit: o7-release
+    id: o7-release
+    depends_on: [o6-pane-keys]
+    confirmed_by: [user]
+    done_means: >-
+      Kit `0.16.0` ships with the `USAGE.md` marks all green, its
+      `CHANGELOG.md` entry and ADR 0032. `taskcontract tree` still prints
+      every item and exits `0`. `taskcontract tree <id>` still accepts every
+      id the tree prints, and prints its item in at most seven lines.
+    acceptance_sketch:
+      - >-
+        verify `taskcontract tree` still prints every item and exits `0`,
+        and a source the tree cannot read still prints one line on
+        `stderr`. Verify `taskcontract tree <id>` still accepts every id the
+        tree prints, and prints its item in at most seven lines (SC1.3)
+
+dependencies: []
+
+entities:
+  - task-contract
+  - feature
+  - feature-document
+  - tree
+  - pane
+  - pane-extra
+  - outline
+  - item
+  - gate
+  - active-gate
+  - condition
+  - rule
+  - diagnostic
+  - verdict
+  - finding
+  - decomposition-unit
+  - task
+  - approval
+  - acceptance-sketch
+  - status
+  - progress-record
+  - plain-name
+  - document-reference
+  - cursor
+  - stale
+  - intake-seat
+  - waiting-line
+  - notify-command
+  - contract-profile
+
+provenance:
+  origin: human-request
+  ref: docs/features/project-tree.md
