@@ -22,30 +22,36 @@ against the contract, and a script computes the verdict):
    approves o1's test list and commit on review, as in sessions 45 to 47.
    The push, the PR and the merge stay on the user's word.
 
+**Closed.** The deliverable is met: o1 at `5864783` (USAGE) and `d277595`
+(code and tests), Two-Key PASS at round 1 with four advisories, carried to
+o2. Suite 618 passed, scope-check green. PR #61 carries the session; the
+merge waits on the user's word.
+
 ## Steps
 
-1. Open: branch `session-52-project-tree-o1` cut from `df7cbb6`; this plan
-   committed.
-2. o1, pass zero: the USAGE section, marks red, shown in chat; commit on
-   the user's word.
-3. o1, draft and approve the test list. Before approving: the 57
-   conditions against `docs/gates/`; each fixed detail against every use
-   of its terms in the contract and the feature document; session labels
-   stripped; no repeated test name.
-4. o1, write the tests and prove red.
-5. o1, green: the developer works from the interface note, without
-   opening `tests/`.
-6. o1, approve the commit and commit; the checks green.
-7. o1 Two-Key; o1 closed.
-8. Close: STATE.md regenerated; this plan struck; the push and the PR go
-   to the user.
+1. ~~Open.~~ Branch cut from `df7cbb6`; the plan at `75cb76b`.
+2. ~~o1, pass zero.~~ Five red subsections in section 9, shown in chat in
+   full, at `5864783` on the user's word.
+3. ~~o1, draft and approve the test list.~~ 26 tests and six amended
+   modules; the 57 conditions match the gate pages. Approved by Claude
+   with one change: a contract the tree cannot read as a mapping reads
+   `to do` at G0.2 and G0.3, never a false `done`.
+4. ~~o1, write the tests and prove red.~~ SC2.1 to SC2.3 red as expected;
+   all 26 fail on assertions.
+5. ~~o1, green.~~ Suite 618 passed; two deviations, both accepted (the
+   cache's type, and the ready profile read on a draft-red contract).
+6. ~~o1, approve the commit and commit.~~ At `d277595`; the three checks
+   green at the clean commit.
+7. ~~o1 Two-Key; o1 closed.~~ PASS at round 1.
+8. ~~Close.~~ PR #61; STATE.md regenerated; this plan struck.
 
 Steps 1 and 8 sit outside a contract unit, so the pane does not show them.
 
 Decisions this session: eight. The user's at plan review: (1) the
-deliverable; (2) the delegation; (3) this plan. The user's: (4) the USAGE
-section. Claude's, on review: (5) o1's test list; (6) o1's commit. The
-user's at the close: (7) the push and the PR; (8) the merge.
+deliverable: yes; (2) the delegation: yes; (3) this plan: yes. The user's:
+(4) the USAGE section: yes. Claude's, on review: (5) o1's test list, with
+the unreadable-contract change; (6) o1's commit. The user's at the close:
+(7) the push and the PR: yes; (8) the merge: open.
 
 Deferred, not this session:
 - o2 to o7: o2, o3 and o4 next, then o5, o6 and o7 (0.16.0).
