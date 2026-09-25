@@ -1,39 +1,51 @@
-# Plan - Session 50 (2026-09-24) - project-tree's feature document, ready for intake
+# Plan - Session 51 (2026-09-25) - project-tree to intake
 
-**Deliverable:** `docs/features/project-tree.md` ready for `/sdlc intake`:
-the request half signed by the PO seat, the solution half by the
-engineer seat. **Reached at r3 (`a18ea25`).**
+**Deliverable:** contract `project-tree` at
+`specs/project-tree/contract.yaml`, derived from the feature document's
+r3: ready-green, zero at the language door, units o1 to o7 each answered
+by seat `user`; the document stamped r4 with its Ready row.
+
+Where things stand: `docs/features/project-tree.md` r3 is signed by both
+seats (`a18ea25`); PR #59 merged at `7f2b5c1`; main is clean. Nothing
+before o1 is a contract unit, so the pane shows none of this session's
+work.
 
 ## Steps
 
-1. ~~Open: this plan, committed on `session-49-pane-spec`.~~ At `1b986f3`.
-2. ~~Q11, the terms: each drafted term read back one at a time, kept,
-   reworded or struck on the user's word.~~ 26 terms, in four decisions.
-3. ~~Readiness: the format's checks 1 to 8 read back; OPEN marks on the
-   user's word; the PO seat signs the request half as a revision row.~~
-   Six fixes; r2 at `ee13149`.
-4. ~~The solution half, one question at a time: proposed solution (it
-   answers the title OPEN), risks and cost.~~ Eight decisions, after a
-   Textual spike in a herdr pane.
-5. ~~The engineer seat signs the solution half.~~ r3 at `a18ea25`, the
-   PO seat re-signing the request half's r3 changes.
-6. ~~Close: STATE.md regenerated, this plan struck, memory updated.~~
-7. One push and one PR carrying sessions 49 and 50: PR #59, merged by
-   merge commit once CI reads green (the user's word, 2026-09-24).
+1. Open: this plan, committed on branch `session-51-project-tree-intake`.
+2. Terms: the document's 22 new terms enter `specs/vocabulary/` as
+   drafts; the user ratifies them (G0.2), so intake can declare them in
+   `entities`. Their own commit.
+3. Intake, I1 to I6 (`/sdlc intake docs/features/project-tree.md`): the
+   seat roster, id `project-tree`, the scaffold, the contract from r3
+   with no `title` (o2 adds the field; TC005 otherwise); the unit graph
+   shown and each unit answered; the three plan answers read from the
+   solution half (Scope, Sequencing, Units) for the engineer seat to keep
+   or change.
+4. Validate: `--profile ready` looped to green (cap 5); the language
+   door, filtered to `project-tree`, looped to zero.
+5. r4: the revision table gains `r4: Ready: ... derived from r3 ...`, by
+   hand this once (o3 teaches intake to write it).
+6. Commit the contract and r4, once all 16 contracts read ready-green and
+   pytest and scope-check pass.
+7. Close: STATE.md regenerated, this plan struck, memory updated; the
+   push, the PR and its merge on the user's word.
 
-Every step sat outside a contract unit, so the pane showed none of them.
+Decisions this session, six, all the user's: (1) this plan; (2) ratify
+the 22 terms; (3) keep, change or strike each of o1 to o7, in two asks;
+(4) keep or change the three plan answers; (5) prerequisite 9's count;
+(6) the push, the PR and the merge.
 
-Decisions this session: four, all the user's: (1) this plan; (2) the PO
-seat's signature on the request half; (3) the engineer seat's signature
-on the solution half; (4) the push, the PR and its merge. The
-interview's answers are the document's content, not counted here.
+Prerequisite 9 names "the 15 existing contracts"; project-tree's own
+contract becomes a 16th with no title. Recommendation: leave r3's count,
+note it in the Ready row, and let the backfill title every contract that
+lacks one. An edit after derivation marks the contract stale against its
+own document; an edit before it costs a re-sign for one number.
 
 Deferred, not this session:
-- Intake (`/sdlc intake docs/features/project-tree.md`): session 51's
-  opener.
-- G1: after project-tree is built, so the pane shows G1's conditions.
-- The interview skill writes ADR 0026's template (the carried
-  `feature-document` request).
+- The build, o1 to o7: about three sessions; o5 and o6 need Textual in
+  the test env.
+- G1, after project-tree ships.
 - The rest of STATE.md's carried list.
 
 House rules in force: no pipes or chains in any authored command string;
