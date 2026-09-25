@@ -550,6 +550,11 @@ a test the implementer cannot edit.
 
 > 🟢 **Shipped** (kit 0.15.0, [ADR 0031](decisions/0031-the-work-is-one-derived-tree.md),
 > contracts `specs/tree-view/` and `specs/pane-view/`).
+>
+> 🔴 **Ratified, not shipped:** the five subsections marked 🔴 at the end of
+> this section (contract `specs/project-tree/`, kit 0.16.0). Their marks flip
+> green at the release; until then, each 🟢 paragraph they change holds for
+> 0.15.0.
 
 🟢 `taskcontract tree` prints the repo's work as one tree, computed from
 the kit's files at every run and never stored. It reads the contracts,
@@ -872,6 +877,146 @@ tree-view [waiting on a seat]
   t6-query-face [waiting on a seat]
     9 more: write-tests [to do], prove-red [to do], green [to do], approve-co...
     approve-tests [waiting on a seat] current
+```
+
+### Gates and their conditions 🔴
+
+🔴 Each gate opens into its **conditions**, the named parts its kit page
+lists, in the page's order. `taskcontract/data/gates.yaml` lists every
+gate's conditions, 57 in all, each an id and a plain name: the page's
+heading without its date note and without a last word "check" or "join"
+(`G0.1 Definition-of-ready`, `G0.2 Vocabulary coverage`, `G0.3 Unit
+confirmation`).
+
+🔴 Each feature shows its gates first: each gate in `active_gates`, then
+the first gate after them in the kit's order, marked `inactive`, the gate
+its work reaches next. With `active_gates: [G0]`, every contract shows `G0`,
+then `G1` marked `inactive`. An inactive gate and its conditions read `to
+do`, and never count toward the contract's status, so a closed contract
+still reads `done`.
+
+🔴 Each of G0's conditions takes its status from the rules it owns, read
+as the `G0` verdict is read: `failed` when one of its rules fails the
+draft profile, `done` when none fails the ready profile, `blocked` when
+`TC003` fails it, and `to do` otherwise.
+
+| Condition | Its rules |
+|---|---|
+| G0.1 Definition-of-ready | TC000 to TC009, TC013 to TC015 |
+| G0.2 Vocabulary coverage | TC010 to TC012, TC017, W001 |
+| G0.3 Unit confirmation | TC016, TC018 |
+
+🔴 Every code the validator emits belongs to exactly one condition. A
+warning (`W001`) never changes a status and never shows. The `G0` verdict
+still reads from the validator, as above, so it agrees with its
+conditions: `failed` when one reads `failed`, else `blocked` when one reads
+`blocked`, `done` when all three read `done`, and `to do` otherwise. The
+conditions of every other gate read `to do`: the kit computes none of them
+yet.
+
+🔴 A condition that is not `done` lists what its rules report, one line
+under it per diagnostic: `- `, then the validator's message without its
+code. A `failed` condition lists the draft profile's messages, any other
+the ready profile's. A contract at draft-green with one draft term:
+
+```
+apply-discount [to do] | Checkout applies one discount code per order.
+  apply-discount/G0 [to do] via python -m taskcontract validate specs/apply-discount/contract.yaml --profile ready at 1a2b3c4 | Planning / Intake
+    apply-discount/G0/G0.1 [done] | Definition-of-ready
+    apply-discount/G0/G0.2 [to do] | Vocabulary coverage
+      - entity 'discount-code' is not ratified (status: draft) - draft does not resolve; ratify the term or fork the vocabulary task
+    apply-discount/G0/G0.3 [done] | Unit confirmation
+  apply-discount/G1 [to do] inactive | Requirements / Spec
+    apply-discount/G1/G1.1 [to do] | Spec/schema linting
+    apply-discount/G1/G1.2 [to do] | Model checking
+    apply-discount/G1/G1.3 [to do] | Criteria completeness + ambiguity review
+```
+
+🔴 At the repository level each gate opens into its conditions too, and a
+finding whose `gate:` names a condition stands once under that condition,
+never under a feature. A finding that names the gate itself, or a
+condition its gate does not list, stands under the gate, after its
+conditions.
+
+| Item | Id |
+|---|---|
+| a condition | `gates/<gate>/<condition>`, `<contract>/<gate>/<condition>` |
+| a finding that names a condition | `gates/<gate>/<condition>/<finding>` |
+
+🔴 `taskcontract tree <id>` prints a condition as it prints a gate: its
+line, `summary:` and the gate's `page:`. Its diagnostics print with the
+whole tree.
+
+### Plain names and titles 🔴
+
+🔴 Each item line opens on its id and its **plain name**, the words that
+say what it is, before the parts `tree: pane: parts:` selects: `G0.2
+Vocabulary coverage`, never `G0.2` alone. A gate's, a condition's and a
+task's plain names come from the kit's lists. A feature's is its
+contract's `title`, an optional one-line field that intake copies from
+the feature document's title line; the tree never reads the document's
+heading. A contract without a `title` shows `(no title)`. The contract
+schema moves from 1.4.0 to 1.5.0 for the field.
+
+🔴 The pane's cursor line and `taskcontract tree <id>` show each item's
+plain name and document reference from its source: a feature's title and
+its feature document; a unit's `done_means` and a check's sketch line,
+each with its contract file and line; a gate's, a condition's and a
+task's name and kit page.
+
+### Drift from the feature document 🔴
+
+🔴 The tree opens each feature's document at `docs/features/<id>.md` for
+its revision table only, and the feature's line names what it finds:
+
+- 🔴 `stale: document rN, contract from rM` when the table holds a row
+  `rN` after the `rM` its contract derives from. Intake's `Ready:` rows
+  and `Measured:` rows never count.
+- 🔴 `no feature document` when the file is missing.
+- 🔴 `no "Ready:" row` when the table holds no `Ready:` row the tree can
+  read.
+
+🔴 The `rM` is the revision the newest `Ready:` row names. Intake writes
+that row's changes cell in a fixed shape, `rN: Ready: ... derived from rM
+...`; a row the tree cannot read is skipped. The contract records nothing
+new for this.
+
+### Blocked and waiting, named 🔴
+
+🔴 Each unit and each task shows `done`, `doing` or `to do` from the
+progress record, and a closed unit or contract reads `done`. A `blocked`
+item names its `--reason`, and an approval that waits on a seat names that
+seat, each on the item's own line.
+
+### The interactive pane 🔴
+
+🔴 With the `pane` extra, `taskcontract tree --follow` runs an interactive
+outline of the whole tree. The extra installs Textual, a terminal-UI
+library; every other command still needs only jsonschema and PyYAML.
+
+```bash
+pip install 'sdlc-taskcontract[pane]'
+```
+
+🔴 The outline opens with each feature open down to its units, whether or
+not a task is in flight, and the current task carries its mark and stays
+in view. A line under the outline shows the plain name and document
+reference of the item at the cursor. Up and Down move the cursor, Right
+opens the item at the cursor and Left closes it; a click opens or closes
+the item it lands on, and the wheel scrolls. A closed item's line counts
+what it holds, or names it under `fold: names`.
+
+🔴 The waiting line stays the pane's first line, word for word. A redraw
+within two seconds of a source change keeps the cursor and every open and
+closed item as they were. The notify command runs as it does today, once
+per arrival at an approval, and Ctrl-C ends the pane with exit 0. Each
+line the pane prints on stderr today shows word for word inside the pane,
+under the outline.
+
+🔴 Without the extra, `--follow` prints one line on stderr and exits 2:
+
+```
+taskcontract tree: --follow needs the pane extra - pip install 'sdlc-taskcontract[pane]'
 ```
 
 ---
