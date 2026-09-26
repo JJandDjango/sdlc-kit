@@ -1074,29 +1074,86 @@ without `evidence` leaves them out.
 ### The interactive pane 🔴
 
 🔴 With the `pane` extra, `taskcontract tree --follow` runs an interactive
-outline of the whole tree. The extra installs Textual, a terminal-UI
-library; every other command still needs only jsonschema and PyYAML.
+outline of the whole tree. The extra installs Textual (`>=8.2,<9`), a
+terminal-UI library; every other command still needs only jsonschema and
+PyYAML.
 
 ```bash
 pip install 'sdlc-taskcontract[pane]'
 ```
 
-🔴 The outline opens with each feature open down to its units, whether or
-not a task is in flight, and the current task carries its mark and stays
-in view. A line under the outline shows the plain name and document
-reference of the item at the cursor. Up and Down move the cursor, Right
-opens the item at the cursor and Left closes it; a click opens or closes
-the item it lands on, and the wheel scrolls. A closed item's line counts
-what it holds, or names it under `fold: names`.
+🔴 The pane holds, top to bottom: the waiting line, when the current task
+is an approval; the outline; the lines the pane reports (below); and the
+cursor line. The where-am-I line, the fold lines and `no current task`
+give way to the outline.
 
-🔴 The waiting line stays the pane's first line, word for word. A redraw
-within two seconds of a source change keeps the cursor and every open and
-closed item as they were. The notify command runs as it does today, once
-per arrival at an approval, and Ctrl-C ends the pane with exit 0. Each
-line the pane prints on stderr today shows word for word inside the pane,
-under the outline.
+🔴 The outline holds every line `taskcontract tree` prints, in its order:
+each item, and each diagnostic under its condition. An item's line opens
+as in 0.15.0's pane, a top-level item on its full id and any other on the
+last segment of its id, then its plain name and the parts `tree: pane:
+parts:` selects. Each line shows its text as written, so `[to do]` reads as
+brackets, never as a style.
 
-🔴 Without the extra, `--follow` prints one line on stderr and exits 2:
+🔴 The pane opens with each feature open down to its units, and every
+other item closed, whether or not a task is in flight. A task in flight
+also opens its own unit, so the current task shows. Its line carries
+`current` whatever `parts:` selects, the cursor starts on it, and the
+window scrolls to it. With no current task the cursor starts on the first
+line.
+
+🔴 A closed item's line shows what it holds, in parentheses after its
+status: `(<n> items: <counts>)`, the counts by status as 0.15.0's fold
+lines give them, or under `fold: names` each item as `<id> [<status>]`,
+joined by `, `. A closed condition counts its diagnostics, `(<n>
+diagnostics)`.
+
+🔴 A plain name that would push the status, those parentheses and the
+current task's `current` past the pane's right edge is cut where they
+still fit, ending in `...`; the other parts after them are cut at the
+edge. The cursor line shows the name whole.
+
+🔴 The **cursor line** shows the item at the cursor: its document
+reference, then ` | ` and its plain name, whole, wrapping onto as many
+rows as it needs. The reference is the one `taskcontract tree <id>`
+prints: a feature's `doc:`, or its `file:` when it has no feature
+document; a unit's, a check's and a finding's `file:`; a gate's, a
+verdict's, a condition's and a task's `page:`. An item with no plain name
+shows its reference alone, and one with neither shows its id. On a
+diagnostic, the cursor line shows the diagnostic whole.
+
+```
+specs/project-tree/contract.yaml:134 | With the pane extra, `taskcontract tree --follow` shows all of the tree as an outline, each feature open down to its units. ...
+```
+
+🔴 Up and Down move the cursor one line. Right opens the item at the
+cursor and Left closes it; on an item that holds nothing, or is already
+open or closed, they change nothing. A click opens or closes the item it
+lands on and puts the cursor there. The wheel scrolls the window and
+leaves the cursor where it is.
+
+🔴 The pane lists its sources and renders again as 0.15.0's pane does:
+within two seconds of a change, never while nothing changes. A render
+keeps the cursor on the same item and every item open or closed as it
+was, each item known by its path from the root, so two items that share
+an id never trade places. An item new to the tree opens as at the start.
+When the item at the cursor is gone, the cursor moves to its nearest
+parent that remains. When a render moves the current task to another
+task, the pane opens the items above the new one and scrolls it into
+view, as at the start; the cursor stays where it was.
+
+🔴 The waiting line stays the pane's first line, word for word. The
+notify command runs as it does today, once per arrival at an approval,
+never on a render, with the item's id in `SDLC_NODE`. Ctrl-C ends the
+pane with exit 0.
+
+🔴 Each line the pane printed on stderr in 0.15.0 (an unreadable source,
+a bad `tree: pane:` key, a failed notify command) shows word for word
+inside the pane, under the outline, each whole. A render replaces the
+lines the one before it reported, and a notify failure stays until the
+next render. The pane writes nothing to stderr while it runs.
+
+🔴 Without the extra, `--follow` prints one line on stderr and exits 2;
+an id with `--follow` still gets its own line first:
 
 ```
 taskcontract tree: --follow needs the pane extra - pip install 'sdlc-taskcontract[pane]'

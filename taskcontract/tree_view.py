@@ -41,72 +41,27 @@ seven lines, whatever a field holds. The unreadable sources follow on
 stderr. An unknown id prints `no node '<id>' - print the tree to list every
 node id` on stderr alone and exits 2; an id with `--follow` exits 2 too.
 
-`--follow` keeps a pane on the current task. It prints the where-am-I line,
-`specs/<contract>/contract.yaml > <contract> > <unit> > <task>`, the unit
-and the task by the last segment of their ids. Under it the path to the
-task, a top-level item, its unit and the task, each line as the whole tree
-prints it, save that the unit's and the task's lines open on the last
-segment of their ids, then the plain name; links, the waiting line and
-`SDLC_NODE` keep full ids, and the waiting, where-am-I and fold lines
-name no plain name. Above each, when the level holds other items, one
-line folds them as `<n> more: <counts>`, the count per status in the six
-statuses' order, zeros left out; `tree: pane: fold: names` names them
-instead (see below).
-So the task is always the last line. When the task is `approve-tests` or
-`approve-commit`, the first line reads `waiting on a seat: <approval> for
-<contract>/<unit>`, above the where-am-I line. With no current task the
-pane reads `no current task`, then `<n> items: <counts>` for the top level.
-
-`tree: pane: parts:` in .sdlc/config.yaml, read afresh at each render,
-lists the fields each item line shows, from id, status, marks, evidence,
-links, doc and summary. The line still opens on its id and plain name,
-then shows only the listed fields, in the order above whatever order the
-list gives; `id` changes nothing, and `[]` shows the id and plain name
-alone. Unset, a line shows every field. Any other value, or a list naming
-anything else, is ignored as a whole, and each render then prints `pane
-parts ignored: <value> - give a list from id, status, marks, evidence,
-links, doc, summary` on stderr, after the unreadable sources. The key
-changes no other line.
-
-`tree: pane: fold:`, read the same way, set to `names` makes each fold
-line, and the `<n> items` line, name the items it folds in place of the
-counts: `<id> [<status>]` per item, the id as its own line would open,
-joined by `, ` in the tree's order; `parts:` changes none of it. `counts`,
-or unset, keeps the counts. Any other value keeps them too, and each
-render then prints `pane fold ignored: <value> - give names or counts` on
-stderr, after the parts line. The key changes no item line.
-
-Each line longer than the pane's width is cut to it and ends in `...`. The
-pane lists its sources' files once a second and redraws, clearing the
-screen with ANSI escapes, only when a file was added, removed or changed;
-it keeps each `G0` reading, the verdict's and its conditions', in memory
-until its contract or the vocabulary changes, and writes no file. It shows
-items only, never a diagnostic line. Ctrl-C ends it.
-
-Each time a render arrives at an approval, the pane starts the command set
-as `tree: notify:` in .sdlc/config.yaml through the shell, once, with the
-task's id in `SDLC_NODE`; with none set, it starts nothing. It never waits
-on the command: at each second it checks the commands it started, and one
-that ended nonzero prints `notify failed, exit <code>: <command>` on
-stderr, as does one that cannot start, with code 127.
+`--follow` runs the interactive pane, taskcontract/pane.py, imported only
+then; without the `pane` extra it prints `taskcontract tree: --follow
+needs the pane extra - pip install 'sdlc-taskcontract[pane]'` on stderr
+and exits 2. The pane is described there. What it needs from here needs
+no Textual and stays here: the line an item prints, the path to the
+current task, a closed item's group (the counts by status, a finding by
+its kind, or under `tree: pane: fold: names` each item's name and status
+or kind), the listing of the
+pane's sources, and the `G0` readings a change to them drops.
 """
 
 from __future__ import annotations
 
-import os
-import shutil
-import subprocess
 import sys
-import time
 from pathlib import Path
 
 from . import tree
 from .progress import _no_node
-from .tree import APPROVALS, CURRENT, STATUSES, G0Reading, Item, build
+from .tree import CURRENT, STATUSES, G0Reading, Item, build
 
 INDENT = "  "
-CLEAR = "\x1b[H\x1b[2J"  # cursor home, then erase the screen
-MIN_WIDTH = 10
 # The folders the pane lists afresh at every scan, every file under each.
 WATCHED = ("specs", ".sdlc/findings", ".sdlc/progress", "docs/features")
 CONFIG = ".sdlc/config.yaml"
@@ -133,9 +88,8 @@ def line(item: Item, parts: list[str] | None = None) -> str:
     """One item's line without its indent: the id and the plain name, then
     every field it has, or with `parts` only the fields it names, in the
     same order."""
-    tag = f"kind: {item.kind}" if item.level == "finding" else item.status
     fields = {
-        "status": f" [{tag}]",
+        "status": f" [{_tag(item)}]",
         "marks": "".join(f" {mark}" for mark in item.marks),
         "evidence": f" {item.evidence}" if item.evidence else "",
         "links": "".join(f" {link}" for link in item.links),
@@ -145,6 +99,11 @@ def line(item: Item, parts: list[str] | None = None) -> str:
     return (_flat(item.id) + (_flat(f" {item.name}") if item.name else "")
             + "".join(_flat(text) for name, text in fields.items()
                       if parts is None or name in parts))
+
+
+def _tag(item: Item) -> str:
+    """What a line shows in brackets: the status, or a finding's kind."""
+    return f"kind: {item.kind}" if item.level == "finding" else item.status
 
 
 def _flat(text: str) -> str:
@@ -186,38 +145,6 @@ def _matches(items: list[Item], item_id: str) -> list[Item]:
     return found
 
 
-def pane(items: list[Item], parts: list[str] | None = None,
-         fold: str | None = None) -> list[str]:
-    """The `--follow` lines, uncut: the where-am-I line, then the path to
-    the current task, each level's other items folded above the item on
-    the path, the unit and the task by the last segment of their ids; the
-    waiting line first when the current task is an approval. `parts`, when
-    given, picks the fields of each item line; `fold` set to `names` names
-    the folded items in place of their counts."""
-    path = _path(items)
-    if path is None:
-        folded = _fold(items, 0, fold)
-        return ["no current task", f"{len(items)} items" + (f": {folded}" if folded else "")]
-    lines: list[str] = []
-    unit, _, key = path[-1].id.rpartition("/")
-    if key in APPROVALS:
-        lines.append(f"waiting on a seat: {key} for {unit}")
-    contract = path[0].id
-    lines.append(f"specs/{contract}/contract.yaml > {contract} > "
-                 f"{unit.rpartition('/')[2]} > {key}")
-    siblings = items
-    for depth, chosen in enumerate(path):
-        others = [item for item in siblings if item is not chosen]
-        if others:
-            lines.append(f"{INDENT * depth}{len(others)} more: {_fold(others, depth, fold)}")
-        text = line(chosen, parts)
-        if depth:  # under another item: the id's last segment, the rest whole
-            text = _flat(chosen.id.rpartition("/")[2]) + text[len(_flat(chosen.id)):]
-        lines.append(INDENT * depth + text)
-        siblings = chosen.children
-    return lines
-
-
 def _path(items: list[Item]) -> list[Item] | None:
     """[top-level item, unit, task] down to the current task, or None."""
     for top in items:
@@ -229,25 +156,23 @@ def _path(items: list[Item]) -> list[Item] | None:
 
 
 def _fold(items: list[Item], depth: int, fold: str | None) -> str:
-    """A fold line's text after its opening: with `fold` set to `names`,
-    `<id> [<status>]` per item in the tree's order, the id whole at the top
-    level and by its last segment under another item; else the counts."""
+    """What a closed item's group says of the items it holds: with `fold`
+    set to `names`, `<id> [<status>]` per item in the tree's order, the id
+    whole at the top level and by its last segment under another item, a
+    finding's kind in its status's place; else the counts."""
     if fold != "names":
         return _counts(items)
-    return ", ".join(f"{item.id.rpartition('/')[2] if depth else item.id} [{item.status}]"
+    return ", ".join(f"{item.id.rpartition('/')[2] if depth else item.id} [{_tag(item)}]"
                      for item in items)
 
 
 def _counts(items: list[Item]) -> str:
-    """`<n> <status>` per status in order, zeros left out."""
-    statuses = [item.status for item in items]
-    return ", ".join(f"{statuses.count(status)} {status}"
-                     for status in STATUSES if status in statuses)
-
-
-def cut(text: str, width: int) -> str:
-    """The line whole when it fits, else its prefix ending in `...`."""
-    return text if len(text) <= width else text[:width - 3] + "..."
+    """`<n> <status>` per status in order, then `<n> kind: <kind>` per
+    finding kind in the order it first shows, zeros left out."""
+    tags = [_tag(item) for item in items]
+    kinds = [tag for tag in dict.fromkeys(tags) if tag not in STATUSES]
+    return ", ".join(f"{tags.count(tag)} {tag}"
+                     for tag in [*STATUSES, *kinds] if tag in tags)
 
 
 def scan(root: Path) -> dict[str, tuple[int, int]]:
@@ -282,77 +207,6 @@ def forget(cache: dict[str, G0Reading], before: dict, after: dict) -> None:
             cache.pop(parts[1], None)
 
 
-def follow(root: Path, out, sleep=None) -> int:
-    """The pane: render, then each second check the notify commands still
-    running and render again when a source changed; Ctrl-C exits 0 and
-    neither stops nor waits on the commands it started, though on POSIX the
-    same Ctrl-C reaches them too, since they share the terminal's process
-    group."""
-    cache: dict[str, G0Reading] = {}
-    running: list[tuple[subprocess.Popen, str]] = []
-    try:
-        seen = scan(root)
-        current = _draw(root, out, cache)
-        _arrive(root, current, None, running)
-        while True:
-            (sleep or time.sleep)(1)
-            running[:] = [run for run in running if not _ended(*run)]
-            now = scan(root)
-            if now != seen:
-                forget(cache, seen, now)
-                seen = now
-                current, before = _draw(root, out, cache), current
-                _arrive(root, current, before, running)
-    except KeyboardInterrupt:
-        return 0
-
-
-def _draw(root: Path, out, cache: dict[str, G0Reading]) -> str | None:
-    """One render in one write, then each unreadable source on stderr, then
-    a bad `tree: pane:` key; returns the current task's id, or None."""
-    items, problems = build(root, cache)
-    settings = tree.pane_settings(root, problems)
-    width = max(shutil.get_terminal_size().columns, MIN_WIDTH)
-    out.write(CLEAR + "".join(cut(text, width) + "\n"
-                              for text in pane(items, settings.get("parts"),
-                                               settings.get("fold"))))
-    out.flush()
-    for problem in problems:
-        print(f"taskcontract tree: {problem}", file=sys.stderr)
-    path = _path(items)
-    return path[-1].id if path else None
-
-
-def _arrive(root: Path, current: str | None, before: str | None,
-            running: list[tuple[subprocess.Popen, str]]) -> None:
-    """Start the notify command when the render arrived at an approval: the
-    current task is one, and the previous render's was another task or none."""
-    if current is None or current == before or current.rsplit("/", 1)[-1] not in APPROVALS:
-        return
-    command = tree.notify_command(root)
-    if command is None:
-        return
-    try:
-        run = subprocess.Popen(command, shell=True, cwd=root,
-                               env={**os.environ, "SDLC_NODE": current},
-                               stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                               stderr=subprocess.DEVNULL)
-    except OSError:
-        print(f"notify failed, exit 127: {command}", file=sys.stderr)
-        return
-    running.append((run, command))
-
-
-def _ended(run: subprocess.Popen, command: str) -> bool:
-    """Whether the command has ended; a nonzero exit prints one line."""
-    code = run.poll()
-    if code is None:
-        return False
-    if code != 0:
-        print(f"notify failed, exit {code}: {command}", file=sys.stderr)
-    return True
-
-
 def _key(path: Path, root: Path) -> str:
     try:
         return path.relative_to(root).as_posix()
@@ -360,30 +214,15 @@ def _key(path: Path, root: Path) -> str:
         return path.as_posix()
 
 
-def _ansi_on() -> None:
-    """Let a Windows console act on the escapes; any failure leaves it as is."""
-    try:
-        if os.name != "nt" or not sys.stdout.isatty():
-            return
-        import ctypes
-
-        kernel32 = ctypes.windll.kernel32
-        handle = kernel32.GetStdHandle(-11)  # the console's output
-        mode = ctypes.c_uint32()
-        if kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
-            kernel32.SetConsoleMode(handle, mode.value | 0x0004)  # virtual terminal
-    except Exception:
-        pass
-
-
 def main_tree(args) -> int:
     """The whole tree on stdout; each unreadable source as one line on stderr.
 
     An unreadable file never stops the print: the rest of the tree is still
     the product, so the command exits 0 and names the file it skipped.
-    With `--follow`, the pane instead, until Ctrl-C. With an id, the query:
-    one block per item with that id, then the unreadable sources, exit 0;
-    an unknown id prints one line and exits 2, as does an id with `--follow`.
+    With `--follow`, the interactive pane instead, or without the pane
+    extra one install line and exit 2. With an id, the query: one block
+    per item with that id, then the unreadable sources, exit 0; an unknown
+    id prints one line and exits 2, as does an id with `--follow`.
     """
     node = getattr(args, "node", None)
     if node is not None and getattr(args, "follow", False):
@@ -391,8 +230,13 @@ def main_tree(args) -> int:
               file=sys.stderr)
         return 2
     if getattr(args, "follow", False):
-        _ansi_on()
-        return follow(Path(args.root), sys.stdout)
+        try:
+            from . import pane as interactive  # Textual, the pane extra
+        except ImportError:
+            print("taskcontract tree: --follow needs the pane extra"
+                  " - pip install 'sdlc-taskcontract[pane]'", file=sys.stderr)
+            return 2
+        return interactive.run(Path(args.root))
     items, problems = build(Path(args.root))
     if node is None:
         sys.stdout.write(render(items))

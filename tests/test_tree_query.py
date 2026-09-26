@@ -38,7 +38,6 @@ import yaml
 
 import taskcontract
 from conftest import ROW, write_seat_roster
-from taskcontract import tree_view
 from taskcontract.__main__ import main
 
 # The kit whose package runs: its lists and the pages they name.
@@ -579,6 +578,6 @@ def test_an_id_with_follow_is_refused_in_one_line(tmp_path, capsys, monkeypatch)
     def pane(*args, **kwargs):
         raise AssertionError("the pane started")
 
-    monkeypatch.setattr(tree_view, "follow", pane)
+    monkeypatch.setattr("taskcontract.pane.run", pane)
     root = _repo(tmp_path)
     assert _query(root, capsys, "alpha", "--follow") == (2, "", FOLLOW)

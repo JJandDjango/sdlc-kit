@@ -33,7 +33,6 @@ git repository, so a verdict's evidence reads `at no commit`.
 from __future__ import annotations
 
 import ast
-import io
 import re
 from collections import Counter
 from pathlib import Path
@@ -43,7 +42,7 @@ import yaml
 
 import taskcontract
 from conftest import write_seat_roster
-from taskcontract import checker, graph, tree_view, vocabulary
+from taskcontract import checker, graph, vocabulary
 from taskcontract.__main__ import main
 
 # The kit whose package runs: its gate list and the gate pages it names.
@@ -52,7 +51,6 @@ GATES = KIT / "taskcontract" / "data" / "gates.yaml"
 USAGE = KIT / "USAGE.md"
 
 RED = "\U0001F534"
-CLEAR = "\x1b[H\x1b[2J"
 TASK_KEYS = ["approve-tests", "write-tests", "prove-red", "green",
              "approve-commit", "commit", "two-key"]
 G0_CONDITIONS = ["G0.1", "G0.2", "G0.3"]
@@ -861,44 +859,3 @@ def test_every_id_the_tree_prints_answers_as_a_query_in_at_most_seven_lines(tmp_
         assert lines[0] == _first(row), row["id"]
         assert len(lines) <= 7, out
         assert not any(DIAGNOSTIC.match(text) for text in lines), out
-
-
-class _Interrupt:
-    """The pane's injected sleep: it ends the loop at its first call."""
-
-    def __call__(self, seconds):
-        raise KeyboardInterrupt
-
-
-def _pane(root):
-    out = io.StringIO()
-    assert tree_view.follow(root, out, sleep=_Interrupt()) == 0
-    text = out.getvalue()
-    assert text.startswith(CLEAR)
-    return text[len(CLEAR):].splitlines()
-
-
-def test_the_follow_pane_folds_the_new_items_and_shows_no_diagnostic(tmp_path, capsys):
-    root = _repo(tmp_path)
-    _term(root, "discount-code", "draft")
-    _put(root, "drafted", _contract("drafted", entities=["discount-code"]))
-    _dump(root / ".sdlc" / "progress" / "ready.yaml", {"records": [
-        {"item": "ready/u1-work/write-tests", "state": "doing",
-         "at": "2026-09-25T10:00:00Z", "head": "1a2b3c4"}]})
-    rows = _tree(root, capsys)
-    whole = {row["id"]: row["line"] for row in rows}
-    task = whole["ready/u1-work/write-tests"]
-    assert _pane(root) == [
-        "specs/ready/contract.yaml > ready > u1-work > write-tests",
-        "2 more: 2 to do",                   # gates/G0, drafted
-        whole["ready"],
-        "  2 more: 1 to do, 1 done",         # ready/G0 done, ready/G1 inactive
-        "  u1-work" + whole["ready/u1-work"][len("  ready/u1-work"):],
-        "    7 more: 7 to do",               # the other six tasks and the check
-        "    write-tests" + task[len("    ready/u1-work/write-tests"):],
-    ]
-    _config(root, ["G0"], tree={"pane": {"fold": "names"}})
-    lines = _pane(root)
-    assert lines[1] == "2 more: gates/G0 [to do], drafted [to do]"
-    assert lines[3] == "  2 more: G0 [done], G1 [to do]"
-    assert not any(DIAGNOSTIC.match(text) for text in lines)

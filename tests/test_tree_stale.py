@@ -27,7 +27,6 @@ fixtures never read the kit's own feature documents.
 
 from __future__ import annotations
 
-import io
 import re
 from pathlib import Path
 
@@ -35,7 +34,6 @@ import pytest
 import yaml
 
 import taskcontract
-from taskcontract import tree_view
 from taskcontract.__main__ import main
 
 # The kit whose package runs: its intake flow.
@@ -43,7 +41,6 @@ KIT = Path(taskcontract.__file__).resolve().parent.parent
 FLOW = KIT / "skills" / "sdlc" / "flows" / "intake.md"
 CHAR_CEILING = 12_000  # the flow's PromptLang budget, as tests/test_intake_flow.py holds it
 
-CLEAR = "\x1b[H\x1b[2J"
 CID = "apply-discount"
 TITLE = "Apply one discount code per order"
 INTENT = "Checkout applies one discount code per order."
@@ -194,25 +191,6 @@ def _query(root, capsys, cid=CID):
     return out.splitlines()
 
 
-class _Interrupt:
-    """The pane's injected sleep: it ends the loop at its first call."""
-
-    def __call__(self, seconds):
-        raise KeyboardInterrupt
-
-
-def _pane_line(root, capsys, cid=CID):
-    """The feature's line in one render of the 0.15.0 pane (`--follow`)."""
-    out = io.StringIO()
-    assert tree_view.follow(Path(root), out, sleep=_Interrupt()) == 0
-    text = out.getvalue()
-    assert text.startswith(CLEAR)
-    assert capsys.readouterr().err == ""
-    found = [line for line in text[len(CLEAR):].splitlines() if line.startswith(f"{cid} ")]
-    assert len(found) == 1, found
-    return found[0]
-
-
 def _mark(root, capsys):
     """The text between the feature's status and its `doc:` part."""
     line = _feature(root, capsys)
@@ -237,7 +215,6 @@ def test_sc5_1_a_stale_feature_names_both_revisions_on_the_query_and_the_pane(
         f"summary: {INTENT}",
         f"doc: docs/features/{CID}.md:1",
         f"file: specs/{CID}/contract.yaml:1"]
-    assert _pane_line(root, capsys) == EXAMPLE
 
 
 def test_sc5_1_a_matching_feature_carries_no_mark_until_a_newer_revision_lands(
@@ -246,11 +223,9 @@ def test_sc5_1_a_matching_feature_carries_no_mark_until_a_newer_revision_lands(
     bare = f"{HEAD} [doing]{TAIL}"
     assert _feature(root, capsys) == bare
     assert _query(root, capsys)[0] == f"{HEAD} [doing]"
-    assert _pane_line(root, capsys) == bare
     _append_after_table(root, "r4: The solution half")
     assert _feature(root, capsys) == EXAMPLE
     assert _query(root, capsys)[0] == f"{HEAD} [doing] {_stale(4, 2)}"
-    assert _pane_line(root, capsys) == EXAMPLE
 
 
 def test_sc5_1_a_measured_row_never_counts_as_the_documents_revision(tmp_path, capsys):
@@ -353,16 +328,15 @@ def test_sc5_1_a_ready_row_names_its_revision_by_derived_from(tmp_path, capsys, 
 # --- SC5.2 a missing document or Ready row says so, never a match ------------------------
 
 def _surfaces(root, capsys):
-    return _feature(root, capsys), _query(root, capsys), _pane_line(root, capsys)
+    return _feature(root, capsys), _query(root, capsys)
 
 
 def test_sc5_2_a_feature_with_no_feature_document_reads_no_feature_document(tmp_path, capsys):
     root = _repo(tmp_path)
-    line, query, pane = _surfaces(root, capsys)
+    line, query = _surfaces(root, capsys)
     assert line == f"{HEAD} [doing] {NO_DOCUMENT} | {INTENT}"
     assert query == [f"{HEAD} [doing] {NO_DOCUMENT}", f"summary: {INTENT}",
                      f"file: specs/{CID}/contract.yaml:1"]
-    assert pane == line
 
 
 def test_sc5_2_a_folder_at_the_documents_path_reads_no_feature_document(tmp_path, capsys):
@@ -390,11 +364,10 @@ def test_sc5_2_a_folder_at_the_documents_path_reads_no_feature_document(tmp_path
 def test_sc5_2_a_document_with_no_readable_ready_row_reads_no_ready_row(
         tmp_path, capsys, document):
     root = _repo(tmp_path, document)
-    line, query, pane = _surfaces(root, capsys)
+    line, query = _surfaces(root, capsys)
     assert line == f"{HEAD} [doing] {NO_READY}{TAIL}"  # the doc: part still shows
     assert query == [f"{HEAD} [doing] {NO_READY}", f"summary: {INTENT}",
                      f"doc: docs/features/{CID}.md:1", f"file: specs/{CID}/contract.yaml:1"]
-    assert pane == line
 
 
 def test_sc5_2_a_document_that_is_not_valid_utf8_reads_no_ready_row_and_prints_nothing_on_stderr(
@@ -453,7 +426,6 @@ def test_the_tree_reads_each_feature_document_and_writes_no_file(tmp_path, capsy
     before = _snapshot(root)
     assert _feature(root, capsys) == EXAMPLE
     assert _query(root, capsys)[0] == f"{HEAD} [doing] {_stale(4, 2)}"
-    assert _pane_line(root, capsys) == EXAMPLE
     assert _snapshot(root) == before  # no file written, the contract untouched
 
 

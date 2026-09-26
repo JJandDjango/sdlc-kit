@@ -29,7 +29,6 @@ the kit test prints the kit's own tree.
 
 from __future__ import annotations
 
-import io
 import re
 from pathlib import Path
 
@@ -38,7 +37,7 @@ import yaml
 
 import taskcontract
 from conftest import write_seat_roster
-from taskcontract import checker, tree_view
+from taskcontract import checker
 from taskcontract.__main__ import main
 
 # The kit whose package runs: its specs, its lists, its flows.
@@ -46,7 +45,6 @@ KIT = Path(taskcontract.__file__).resolve().parent.parent
 DATA = KIT / "taskcontract" / "data"
 FLOW = KIT / "skills" / "sdlc" / "flows" / "intake.md"
 
-CLEAR = "\x1b[H\x1b[2J"
 NO_TITLE = "(no title)"
 TITLE = "Apply one discount code per order"
 INTENT = ("A fixture contract for the titles suite; each of its items opens on "
@@ -61,8 +59,6 @@ TASK_NAMES = ["Approve the test list", "Write the tests", "Prove red", "Green",
               "Approve the commit", "Commit", "Two-Key PASS"]
 EVIDENCE = ("via python -m taskcontract validate specs/alpha/contract.yaml "
             "--profile ready at no commit")
-PARTS_IGNORED = ("taskcontract tree: pane parts ignored: shade - give a list from "
-                 "id, status, marks, evidence, links, doc, summary")
 
 # The schema's `title` pattern, as the TC002 message quotes it: one line
 # (no CR, no LF, anywhere, a trailing one too) holding a non-blank character.
@@ -169,14 +165,6 @@ def _repo(tmp_path, alpha=ALPHA):
     return root
 
 
-def _progress(root, cid, *records):
-    _dump(root / ".sdlc" / "progress" / f"{cid}.yaml", {"records": list(records)})
-
-
-def _doing(item):
-    return {"item": item, "state": "doing", "at": "2026-09-25T10:00:00Z", "head": "1a2b3c4"}
-
-
 def _line_of(text, entry):
     """The 1-based line of `text` that is exactly `entry`, found once."""
     lines = text.splitlines()
@@ -224,27 +212,6 @@ def _starting(lines, opening):
     found = [text for text in lines if text.startswith(opening)]
     assert len(found) == 1, (opening, found)
     return found[0]
-
-
-class _Interrupt:
-    """The pane's injected sleep: it ends the loop at its first call."""
-
-    def __call__(self, seconds):
-        raise KeyboardInterrupt
-
-
-def _pane(root, capsys):
-    """(lines, stderr) of one pane render."""
-    out = io.StringIO()
-    assert tree_view.follow(Path(root), out, sleep=_Interrupt()) == 0
-    text = out.getvalue()
-    assert text.startswith(CLEAR)
-    return text[len(CLEAR):].splitlines(), capsys.readouterr().err
-
-
-def _prove_red(root):
-    """The current task alpha/a2-edges/prove-red, doing, not an approval."""
-    _progress(root, "alpha", _doing("alpha/a2-edges/prove-red"))
 
 
 # --- SC1.1 on the kit's own print: every contract a feature, every line id first -----
@@ -464,101 +431,6 @@ def test_sc1_1_the_query_prints_summary_only_for_a_feature_its_intent(tmp_path, 
     lines = out.splitlines()
     assert lines[0].startswith(f"beta {NO_TITLE} [to do]"), lines[0]
     assert lines[1:] == [f"summary: {BETA_INTENT}", "file: specs/beta/contract.yaml:1"]
-
-
-# --- SC1.1 the pane: its item lines open on the short id and the plain name --------------
-
-def test_sc1_1_the_panes_item_lines_open_on_the_short_id_then_the_plain_name(tmp_path, capsys):
-    root = _repo(tmp_path)
-    _prove_red(root)
-    lines, err = _pane(root, capsys)
-    assert err == ""
-    assert lines[0] == "specs/alpha/contract.yaml > alpha > a2-edges > prove-red"
-    assert lines[1] == "4 more: 4 to do"         # gates/G0, gates/G3, gates/none, beta
-    assert lines[2].startswith(f"alpha {TITLE} [doing]"), lines[2]  # the top level: its full id
-    assert lines[2].endswith(f" doc: docs/features/alpha.md | {INTENT}"), lines[2]
-    assert lines[3:] == [
-        "  3 more: 2 to do, 1 done",              # alpha/G0 done, alpha/G1, a1-core
-        "  a2-edges the work for a2-edges is done [doing] depends_on: alpha/a1-core",
-        "    7 more: 7 to do",
-        "    prove-red Prove red [doing] current"]
-
-
-def test_sc1_1_the_panes_fold_names_keep_ids_alone(tmp_path, capsys):
-    root = _repo(tmp_path)
-    _prove_red(root)
-    _config(root, tree={"pane": {"fold": "names"}})
-    lines, err = _pane(root, capsys)
-    assert err == ""
-    assert lines[1] == "4 more: gates/G0 [to do], gates/G3 [to do], gates/none [to do], beta [to do]"
-    assert lines[3] == "  3 more: G0 [done], G1 [to do], a1-core [to do]"
-    assert lines[5] == ("    7 more: approve-tests [to do], write-tests [to do], green [to do], "
-                        "approve-commit [to do], commit [to do], two-key [to do], sketch-1 [to do]")
-    assert lines[6] == "    prove-red Prove red [doing] current"
-
-
-def test_sc1_1_at_an_approval_the_waiting_and_where_lines_keep_ids_alone(tmp_path, capsys):
-    root = _repo(tmp_path)
-    _progress(root, "alpha", _doing("alpha/a1-core/approve-tests"))
-    lines, _ = _pane(root, capsys)
-    assert lines[:2] == ["waiting on a seat: approve-tests for alpha/a1-core",
-                         "specs/alpha/contract.yaml > alpha > a1-core > approve-tests"]
-    assert lines[5] == "  a1-core the work for a1-core is done [waiting on a seat]"
-    assert lines[-1].startswith(
-        "    approve-tests Approve the test list [waiting on a seat] current"), lines[-1]
-
-
-# --- SC1.1 `parts:` selects after the id and the plain name (existing behavior 8) --------
-
-def test_sc1_1_parts_empty_shows_the_id_and_the_plain_name(tmp_path, capsys):
-    root = _repo(tmp_path)
-    _prove_red(root)
-    _config(root, tree={"pane": {"parts": []}})
-    lines, err = _pane(root, capsys)
-    assert err == ""
-    assert [lines[2], lines[4], lines[6]] == [
-        f"alpha {TITLE}",
-        "  a2-edges the work for a2-edges is done",
-        "    prove-red Prove red"]
-    assert lines[1] == "4 more: 4 to do"  # a fold line keeps its counts
-
-
-@pytest.mark.parametrize("parts, render", [
-    pytest.param(["summary", "status"],
-                 (f"alpha {TITLE} [doing] | {INTENT}",
-                  "  a2-edges the work for a2-edges is done [doing]",
-                  "    prove-red Prove red [doing]"), id="summary-status"),
-    pytest.param(["links", "id", "marks"],
-                 # alpha's feature doc holds no revision table: its drift mark (project-tree o3)
-                 (f'alpha {TITLE} no "Ready:" row',
-                  "  a2-edges the work for a2-edges is done depends_on: alpha/a1-core",
-                  "    prove-red Prove red current"), id="links-id-marks"),
-    pytest.param(["doc", "evidence", "status"],
-                 (f"alpha {TITLE} [doing] doc: docs/features/alpha.md",
-                  "  a2-edges the work for a2-edges is done [doing]",
-                  "    prove-red Prove red [doing]"), id="doc-evidence-status"),
-])
-def test_sc1_1_a_parts_list_selects_the_parts_after_the_plain_name_in_the_fixed_order(
-        tmp_path, capsys, parts, render):
-    root = _repo(tmp_path)
-    _prove_red(root)
-    _config(root, tree={"pane": {"parts": parts}})
-    lines, err = _pane(root, capsys)
-    assert err == ""
-    assert (lines[2], lines[4], lines[6]) == render
-
-
-def test_sc1_1_a_bad_parts_prints_its_line_on_stderr_and_each_line_opens_on_id_and_plain_name(
-        tmp_path, capsys):
-    root = _repo(tmp_path)
-    _prove_red(root)
-    _config(root, tree={"pane": {"parts": ["status", "shade"]}})
-    lines, err = _pane(root, capsys)
-    assert err.splitlines() == [PARTS_IGNORED]
-    assert lines[4:] == [  # ignored as a whole: every part shows
-        "  a2-edges the work for a2-edges is done [doing] depends_on: alpha/a1-core",
-        "    7 more: 7 to do",
-        "    prove-red Prove red [doing] current"]
 
 
 # --- the contract schema: an optional one-line title, version 1.5.0 ----------------------

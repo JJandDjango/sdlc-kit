@@ -26,18 +26,13 @@ file's format, save in the writer's test, which records through
 
 from __future__ import annotations
 
-import io
-import subprocess
-from pathlib import Path
-
 import pytest
 import yaml
 
 from conftest import write_seat_roster
-from taskcontract import tree, tree_view
+from taskcontract import tree
 from taskcontract.__main__ import main
 
-CLEAR = "\x1b[H\x1b[2J"
 HEAD = "1a2b3c4"  # what a hand-written record carries
 SEATS = ("user", "po")  # the fixture's ratified intake seats
 INTENT = ("A fixture contract for the waiting suite; its units wait on the "
@@ -154,45 +149,6 @@ def _task(unit, key, rest, depth=2):
 def _seated(lines):
     """The ids of the lines that name a seat."""
     return [text.lstrip(" ").split(" ", 1)[0] for text in lines if " seat: " in text]
-
-
-class _Interrupt:
-    """The pane's injected sleep: it ends the loop at its first call."""
-
-    def __call__(self, seconds):
-        raise KeyboardInterrupt
-
-
-def _pane(root, capsys):
-    """(lines, stderr) of one pane render."""
-    out = io.StringIO()
-    assert tree_view.follow(Path(root), out, sleep=_Interrupt()) == 0
-    text = out.getvalue()
-    assert text.startswith(CLEAR)
-    return text[len(CLEAR):].splitlines(), capsys.readouterr().err
-
-
-class _Started:
-    """A notify start the spy stands in for: it has ended, with exit 0."""
-
-    def poll(self):
-        return 0
-
-
-@pytest.fixture
-def shell_starts(monkeypatch):
-    """Each start through the shell as (command, keyword arguments); every
-    other subprocess.Popen call passes through."""
-    real, starts = subprocess.Popen, []
-
-    def spy(args, *more, **kwargs):
-        if not kwargs.get("shell"):
-            return real(args, *more, **kwargs)
-        starts.append((args, kwargs))
-        return _Started()
-
-    monkeypatch.setattr(subprocess, "Popen", spy)
-    return starts
 
 
 # --- SC3.1 done, doing and to do from the records ------------------------------------------
@@ -441,40 +397,6 @@ def test_sc3_2_the_querys_first_line_names_the_seat_and_a_blocked_tasks_reason(t
         "alpha/a2-edges the work for a2-edges is done [waiting on a seat]")
 
 
-def test_sc3_2_the_panes_approval_line_names_the_seat_while_the_waiting_line_and_sdlc_node_keep_their_words(
-        tmp_path, capsys, shell_starts):
-    root = _repo(tmp_path, tree={"notify": "notify-the-seat"})
-    _progress(root, "alpha", _step("alpha/a2-edges/approve-commit", "doing", "10:00"))
-    lines, err = _pane(root, capsys)
-    assert err == ""
-    assert lines[:2] == ["waiting on a seat: approve-commit for alpha/a2-edges",
-                         "specs/alpha/contract.yaml > alpha > a2-edges > approve-commit"]
-    assert lines[-1] == ("    approve-commit Approve the commit [waiting on a seat] current "
-                         "seat: user, po")
-    assert [(command, kwargs["env"]["SDLC_NODE"]) for command, kwargs in shell_starts] == [
-        ("notify-the-seat", "alpha/a2-edges/approve-commit")]
-
-
-def test_sc3_2_a_parts_list_without_evidence_leaves_the_seat_out_and_one_with_it_shows_it(
-        tmp_path, capsys):
-    root = _repo(tmp_path)
-    _progress(root, "alpha", _step("alpha/a1-core/approve-tests", "doing", "10:00"))
-    for parts, last in (
-            (None, "[waiting on a seat] current seat: user"),
-            (["status", "marks"], "[waiting on a seat] current"),
-            (["evidence"], "seat: user"),
-            (["status", "evidence"], "[waiting on a seat] seat: user"),
-            (["evidence", "marks"], "current seat: user"),
-            ([], None)):
-        pane = {} if parts is None else {"pane": {"parts": parts}}
-        _config(root, **({"tree": pane} if pane else {}))
-        lines, err = _pane(root, capsys)
-        assert err == "", parts
-        assert lines[0] == "waiting on a seat: approve-tests for alpha/a1-core", parts
-        assert lines[-1] == "    approve-tests Approve the test list" + (
-            f" {last}" if last else ""), parts
-
-
 # --- existing behavior 6: taskcontract progress stays the only writer --------------------------
 
 def _snapshot(root):
@@ -494,9 +416,8 @@ def test_taskcontract_progress_stays_the_only_writer_and_every_state_it_records_
         assert _call(["progress", *argv, "--root", str(root)], capsys)[0] == 0, argv
     before = _snapshot(root)
     lines = _lines(root, capsys)
-    _pane(root, capsys)
     _call(["tree", "alpha/a2-edges/approve-tests", "--root", str(root)], capsys)
-    assert _snapshot(root) == before  # the print, the pane and the query write nothing
+    assert _snapshot(root) == before  # the print and the query write nothing
     assert [_line(lines, f"alpha/a1-core/{key}") for key in TASK_KEYS[:4]] == [
         _task("alpha/a1-core", "approve-tests", "[done] by user at no commit"),
         _task("alpha/a1-core", "write-tests", "[done] at no commit"),
