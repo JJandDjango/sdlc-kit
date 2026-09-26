@@ -544,7 +544,9 @@ def test_sc3_1_the_top_level_line_opens_on_its_full_id_and_every_line_under_it_o
         f"tree-view (no title) [waiting on a seat]{NO_DOCUMENT} | {INTENT}")
     assert render[5] == ("  t6-query-face the work for t6-query-face is done [waiting on a seat] "
                          "depends_on: tree-view/t5-pane-face")
-    assert render[7] == "    approve-tests Approve the test list [waiting on a seat] current"
+    # the approval names its seat as its evidence (project-tree o4)
+    assert render[7] == ("    approve-tests Approve the test list [waiting on a seat] current"
+                         " seat: user")
 
 
 def test_sc3_1_ids_whose_segments_carry_hyphens_and_digits_open_on_their_whole_last_segment(
@@ -630,7 +632,7 @@ solo-2 (no title) [waiting on a seat]{NO_DOCUMENT} | {INTENT}
     solo-2/s1-base/two-key Two-Key PASS [done]
     solo-2/s1-base/SC3.1 verify it holds (SC3.1) [done]
   solo-2/s2-top the work for s2-top is done [waiting on a seat] depends_on: solo-2/s1-base
-    solo-2/s2-top/approve-tests Approve the test list [waiting on a seat] current
+    solo-2/s2-top/approve-tests Approve the test list [waiting on a seat] current seat: user
     solo-2/s2-top/write-tests Write the tests [to do]
     solo-2/s2-top/prove-red Prove red [to do]
     solo-2/s2-top/green Green [to do]
@@ -668,7 +670,7 @@ def test_sc3_2_taskcontract_tree_prints_the_same_bytes_with_every_id_full(tmp_pa
     assert render[-3:] == [
         "  s2-top the work for s2-top is done [waiting on a seat] depends_on: solo-2/s1-base",
         "    7 more: 7 to do",                        # six tasks and one check
-        "    approve-tests Approve the test list [waiting on a seat] current",
+        "    approve-tests Approve the test list [waiting on a seat] current seat: user",
     ]
 
 
@@ -712,7 +714,8 @@ def test_sc3_2_at_an_approval_the_waiting_line_and_sdlc_node_keep_the_full_ids(
     assert capsys.readouterr().err == ""
     assert render[-3] == ("  a2-edges the work for a2-edges is done [waiting on a seat]"
                           " depends_on: alpha/a1-core")
-    assert render[-1] == "    approve-commit Approve the commit [waiting on a seat] current"
+    assert render[-1] == ("    approve-commit Approve the commit [waiting on a seat] current"
+                          " seat: user")  # its unit's seat (project-tree o4)
 
 
 def test_sc3_2_every_depends_on_link_on_a_short_unit_line_keeps_its_full_id(tmp_path):

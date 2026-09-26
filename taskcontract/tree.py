@@ -51,7 +51,10 @@ every other child does.
 
 The current task is derived from the task states, never stored: the task
 whose `doing` record is latest, else the first `to do` task in the contract
-with the latest record. An approval that holds it reads `waiting on a seat`.
+with the latest record. An approval that holds it reads `waiting on a seat`
+and names its unit's `confirmed_by` seats as its evidence, `seat: <seats>`:
+in order, each once, by the text rule, joined by `, `; none when the field
+is not a list or gives no seat. No other item names a seat.
 
 Each item carries its plain name from one source field, unchanged but for
 its whitespace: a contract's `title`, a unit's `done_means`, a check's
@@ -162,6 +165,8 @@ class Item:
     page: str | None = None
     # A condition's messages from its rules, each on one line; never an item.
     diagnostics: list[str] = field(default_factory=list)
+    # An approval's seats, its unit's `confirmed_by`; named only while it waits.
+    seats: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -330,6 +335,8 @@ def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]],
     if current is not None:
         if current.id.rsplit("/", 1)[-1] in APPROVALS:
             current.status = WAITING
+            # Never blocked or done, so it has no evidence of its own.
+            current.evidence = f"seat: {', '.join(current.seats)}" if current.seats else None
         current.marks.append(CURRENT)
     _verdicts(root, contracts, {} if cache is None else cache)
     for contract in contracts:
@@ -750,9 +757,11 @@ def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str
         place = ("decomposition", index)
         sketches = unit.get("acceptance_sketch")
         sketches = sketches if isinstance(sketches, list) else []
+        seats = _seats(unit.get("confirmed_by"))
         unit_item = Item(base, "unit",
                          children=[Item(f"{base}/{task}", "task", name=_name(entry),
-                                        page=_page(entry))
+                                        page=_page(entry),
+                                        seats=seats if task in APPROVALS else [])
                                    for task, entry in tasks.items()],
                          links=[f"depends_on: {cid}/{dep}" for dep in dict.fromkeys(deps)],
                          name=text(unit.get("done_means")), source=source, place=place)
@@ -762,6 +771,14 @@ def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str
             for n, (check, sketch) in enumerate(zip(check_ids(sketches), sketches))]
         item.children.append(unit_item)
     return item
+
+
+def _seats(value) -> list[str]:
+    """A unit's `confirmed_by` seats in order, each once, by the text rule;
+    none when it is not a list, and no entry that gives no text."""
+    if not isinstance(value, list):
+        return []
+    return list(dict.fromkeys(seat for seat in map(text, value) if seat))
 
 
 def _name(entry: dict | None) -> str | None:

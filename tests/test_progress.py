@@ -677,7 +677,9 @@ def test_start_and_block_take_an_approval_and_every_call_appends_a_record(tmp_pa
     approval = f"{UNIT}/approve-commit"
     assert _mark(root, capsys, "start", approval)[0] == 0
     rows = _print(root, capsys)
-    assert (_tag(rows, approval), _shown(rows, approval)) == ("waiting on a seat", " current")
+    # holding the current task, it names its unit's seat (project-tree o4)
+    assert (_tag(rows, approval), _shown(rows, approval)) == (
+        "waiting on a seat", " current seat: user")
     assert _mark(root, capsys, "block", approval, "--reason", "the seat is away")[0] == 0
     assert _mark(root, capsys, "done", TASK)[0] == 0
     assert _mark(root, capsys, "done", TASK)[0] == 0

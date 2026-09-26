@@ -15,7 +15,8 @@ read; on a check whose last run was green as expected, that run's command
 and `HEAD`; on a task done by its own record, `by <seat>` on an approval
 and the record's `HEAD`; on a unit or contract done by its close, the
 close's `HEAD`; each with `dirty` when it applies; on a task blocked by its
-own record, `because <reason>`).
+own record, `because <reason>`; on the approval that holds the current
+task, `seat: <seats>`, its unit's `confirmed_by` joined by `, `).
 Then its links (`depends_on: <contract>/<unit>` on a unit, `gate: <value>`
 on a finding), then a contract's feature doc reference (`doc:
 docs/features/<id>.md`), and last a contract's summary, its intent, after

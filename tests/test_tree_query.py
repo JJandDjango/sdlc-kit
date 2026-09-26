@@ -289,7 +289,7 @@ def test_sc6_1_the_first_line_carries_the_status_marks_and_evidence(tmp_path, ca
         f"file: specs/alpha/contract.yaml:{sketch}\n"), "")
     assert _query(root, capsys, "alpha/a1-core/approve-tests") == (0, (
         f"alpha/a1-core/approve-tests {_names('tasks')['approve-tests']}"
-        " [waiting on a seat] current\n"
+        " [waiting on a seat] current seat: user\n"  # its unit's seat (project-tree o4)
         f"page: {_pages('tasks')['approve-tests']}\n"), "")
     assert _query(root, capsys, "gates/G3") == (0, (
         f"gates/G3 {_names('gates')['G3']} [to do] inactive\n"
