@@ -34,20 +34,40 @@ a script computes the verdict):
    at intake. Nothing else records a seat before the approval's answer,
    and a new contract field would need a re-intake.
 
+**Closed.** The deliverable is met: o2 at `899b853`, o3 at `34c154d`, o4
+at `83032bc` and its fix `155a76e`; Two-Key PASS for each (o4 at round 2).
+Suite 710 passed, scope-check green. PR #62 carries the session; the
+merge waits on the user's word.
+
 ## Steps
 
-1. Open. Branch `session-53-project-tree-o2-o4` from `7567591`; commit
-   this plan.
-2. USAGE, one batch: "Plain names and titles" (o2, with o1's two USAGE
-   advisories), "Drift from the feature document" (o3), "Blocked and
-   waiting, named" (o4), each refined, shown in chat in full, committed on
-   the user's word.
-3. o2: test list drafted and approved; tests placed, red; green; commit;
-   Two-Key; o2 closed.
-4. o3: the same six tasks; o3 closed. Its drafter may run beside o2's
-   Two-Key, since it writes only the scratchpad.
-5. o4: the same six tasks; o4 closed.
-6. Close. PR; STATE.md regenerated; this plan struck.
+1. ~~Open.~~ Branch cut from `7567591`; the plan at `ba1504f`.
+2. ~~USAGE, one batch.~~ Three subsections refined and o1's two USAGE
+   advisories, shown in chat in full, at `a94c021` on the user's word.
+3. ~~o2.~~ 21 tests and nine amended modules; Claude added
+   `test_progress.py` at approval, after a full run on the prototype
+   caught it. At `899b853`; suite 647 passed; Two-Key PASS at round 1
+   with five advisories: the G0 page's `title` row needs "reads its
+   words", and USAGE's condition query sentence still names `summary:`
+   (both carried to o3); the test row pattern splits a plain name at its
+   first ` [`; two notes need no action.
+4. ~~o3.~~ 21 tests (39 cases) and five amended modules, drafted beside
+   o2's Two-Key. At `34c154d`, with o2's two carried advisories; suite 686
+   passed; Two-Key PASS at round 1 with three advisories, all for o7's
+   sweep: USAGE's green "reads no document" paragraph and ADR 0031 line 43
+   are stale, and USAGE does not state the tie-break or that an `rM`
+   above the document's revision is a match.
+5. ~~o4.~~ 13 tests (21 cases) and five amended tests, drafted beside
+   o3's Two-Key. At `83032bc`; Two-Key FAIL at round 1: a closed contract
+   read `doing`, `blocked` or `failed` through its verdicts, against
+   done_means, which the USAGE text Claude wrote had narrowed. The user
+   chose the contract's reading and approved the new USAGE sentence;
+   Claude amended five tests red first and added one more for a closed
+   contract the tree cannot read. The fix at `155a76e`; suite 710
+   passed; Two-Key PASS at round 2 with three advisories for o7's sweep
+   (three green 0.15.0 paragraphs in section 9; USAGE does not say a task
+   reopened after a close shows through).
+6. ~~Close.~~ PR #62; STATE.md regenerated; this plan struck.
 
 Steps 1 and 6 sit outside a contract unit, so the pane does not show them.
 
@@ -59,8 +79,13 @@ Known cost: once o2 lands, a unit's or check's line carries its text
 before its status, so the 0.15.0 `--follow` pane, which cuts lines to its
 width, can hide a unit's status until o5 replaces it.
 
-Decisions this session so far: five. The user's at plan review: rulings 1
-to 4, and the USAGE batch in ruling 2.
+Decisions this session: sixteen. The user's at plan review: rulings 1 to
+4, and the USAGE batch in ruling 2 (5); the three USAGE subsections: yes
+(6); o4's closed contract, the contract's reading and its USAGE sentence:
+yes (7). Claude's, on review: the three test lists (8 to 10), with
+`test_progress.py` added to o2's and the unreadable contract added to
+o4's fix round; the four commits (11 to 14). The user's at the close:
+(15) the push and the PR: yes; (16) the merge: open.
 
 Deferred, not this session:
 - o5 to o7 (o7 ships 0.16.0).
