@@ -381,7 +381,9 @@ def test_sc2_3_the_command_takes_follow_and_ctrl_c_exits_0_with_no_traceback(
     watchdog.start()
     exited = None
     try:
-        code = main(["tree", "--follow", "--root", str(root)])
+        # `--follow` runs the Textual app since project-tree o5; the 0.15.0
+        # loop stays callable in process until o6 retires it
+        code = tree_view.follow(Path(root), sys.stdout)
     except SystemExit as exc:  # argparse refuses an unknown option
         exited, code = exc.code, None
     finally:

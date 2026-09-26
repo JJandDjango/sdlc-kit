@@ -41,14 +41,17 @@ seven lines, whatever a field holds. The unreadable sources follow on
 stderr. An unknown id prints `no node '<id>' - print the tree to list every
 node id` on stderr alone and exits 2; an id with `--follow` exits 2 too.
 
-`--follow` keeps a pane on the current task. It prints the where-am-I line,
-`specs/<contract>/contract.yaml > <contract> > <unit> > <task>`, the unit
-and the task by the last segment of their ids. Under it the path to the
-task, a top-level item, its unit and the task, each line as the whole tree
-prints it, save that the unit's and the task's lines open on the last
-segment of their ids, then the plain name; links, the waiting line and
-`SDLC_NODE` keep full ids, and the waiting, where-am-I and fold lines
-name no plain name. Above each, when the level holds other items, one
+`--follow` runs the interactive pane, taskcontract/pane.py, imported only
+then; without the `pane` extra it prints the install line on stderr and
+exits 2. 0.15.0's pane stays callable as `follow`, though `--follow` no
+longer runs it. It keeps to the current task and prints the where-am-I
+line, `specs/<contract>/contract.yaml > <contract> > <unit> > <task>`,
+the unit and the task by the last segment of their ids. Under it the path
+to the task, a top-level item, its unit and the task, each line as the
+whole tree prints it, save that the unit's and the task's lines open on
+the last segment of their ids, then the plain name; links, the waiting
+line and `SDLC_NODE` keep full ids, and the waiting, where-am-I and fold
+lines name no plain name. Above each, when the level holds other items, one
 line folds them as `<n> more: <counts>`, the count per status in the six
 statuses' order, zeros left out; `tree: pane: fold: names` names them
 instead (see below).
@@ -381,9 +384,10 @@ def main_tree(args) -> int:
 
     An unreadable file never stops the print: the rest of the tree is still
     the product, so the command exits 0 and names the file it skipped.
-    With `--follow`, the pane instead, until Ctrl-C. With an id, the query:
-    one block per item with that id, then the unreadable sources, exit 0;
-    an unknown id prints one line and exits 2, as does an id with `--follow`.
+    With `--follow`, the interactive pane instead, or without the pane
+    extra one install line and exit 2. With an id, the query: one block
+    per item with that id, then the unreadable sources, exit 0; an unknown
+    id prints one line and exits 2, as does an id with `--follow`.
     """
     node = getattr(args, "node", None)
     if node is not None and getattr(args, "follow", False):
@@ -391,8 +395,13 @@ def main_tree(args) -> int:
               file=sys.stderr)
         return 2
     if getattr(args, "follow", False):
-        _ansi_on()
-        return follow(Path(args.root), sys.stdout)
+        try:
+            from . import pane as interactive  # Textual, the pane extra
+        except ImportError:
+            print("taskcontract tree: --follow needs the pane extra"
+                  " - pip install 'sdlc-taskcontract[pane]'", file=sys.stderr)
+            return 2
+        return interactive.run(Path(args.root))
     items, problems = build(Path(args.root))
     if node is None:
         sys.stdout.write(render(items))
