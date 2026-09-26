@@ -19,6 +19,10 @@ contract's feature doc, a file reference too (SC4.2), at its line 1. A gate
 and a task point to the kit page that defines them, and a verdict to both
 its contract file and its gate's page (SC6.3).
 
+Since project-tree's o2-titles the first line carries the item's plain name
+after its id, and `summary:` prints only for a contract, its intent: every
+other item's source text is its plain name.
+
 Each test drives the CLI in process against a fixture repo under tmp_path.
 The contract files are written by hand, so each unit and sketch starts on a
 line the test can name.
@@ -193,7 +197,7 @@ def _query(root, capsys, node, *options):
 
 def _whole(root, capsys):
     """(rows, stderr) of the whole tree, which exits 0; each row is
-    (depth, id, tag, rest)."""
+    (depth, id, tag, rest, plain name or None)."""
     code, out, err = _call(["tree", "--root", str(root)], capsys)
     assert code == 0
     rows = []
@@ -202,7 +206,8 @@ def _whole(root, capsys):
             continue  # a condition's diagnostic line, no item (project-tree o1)
         match = ROW.match(text)
         assert match, f"not an item line: {text!r}"
-        rows.append((len(match["indent"]) // 2, match["id"], match["tag"], match["rest"]))
+        rows.append((len(match["indent"]) // 2, match["id"], match["tag"], match["rest"],
+                     match["name"]))
     return rows, err
 
 
@@ -214,10 +219,12 @@ _LINKED = re.compile(r" (?:depends_on|gate|doc): \S+")
 
 
 def _first(row):
-    """The query's first line for a row of the whole tree: its id, its tag,
-    its marks and its evidence, without its links, doc and summary."""
-    _, rid, tag, rest = row
-    return f"{rid} [{tag}]" + _LINKED.sub("", rest.partition(" | ")[0])
+    """The query's first line for a row of the whole tree: its id, its plain
+    name, its tag, its marks and its evidence, without its links, doc and
+    summary."""
+    _, rid, tag, rest, name = row
+    return (rid + (f" {name}" if name else "") + f" [{tag}]"
+            + _LINKED.sub("", rest.partition(" | ")[0]))
 
 
 def _blocks(out):
@@ -258,14 +265,13 @@ A2_LINE = _line_of(ALPHA, "  - unit: work for a2-edges")
 def test_sc6_1_an_item_prints_its_summary_links_doc_and_file_reference(tmp_path, capsys):
     root = _repo(tmp_path)
     rows, _ = _whole(root, capsys)
+    # a unit's and a finding's source text is its plain name, on the first line
     assert _query(root, capsys, "alpha/a2-edges") == (0, (
-        "alpha/a2-edges [to do]\n"
-        "summary: the work for a2-edges is done\n"
+        "alpha/a2-edges the work for a2-edges is done [to do]\n"
         "depends_on: alpha/a1-core\n"
         f"file: specs/alpha/contract.yaml:{A2_LINE}\n"), "")
     assert _query(root, capsys, "gates/G3/G3.1/slow-loop") == (0, (
-        "gates/G3/G3.1/slow-loop [kind: friction]\n"
-        f"summary: {STATEMENT}\n"
+        f"gates/G3/G3.1/slow-loop {STATEMENT} [kind: friction]\n"
         "gate: G3.1\n"
         "file: .sdlc/findings/slow-loop.yaml:1\n"), "")
     assert _query(root, capsys, "alpha") == (0, (
@@ -279,16 +285,14 @@ def test_sc6_1_the_first_line_carries_the_status_marks_and_evidence(tmp_path, ca
     root = _repo(tmp_path)
     sketch = _line_of(ALPHA, "      - verify the core prints (SC1.1)")
     assert _query(root, capsys, "alpha/a1-core/SC1.1") == (0, (
-        f"alpha/a1-core/SC1.1 [done] via {RUN} at abc1234\n"
-        "summary: verify the core prints (SC1.1)\n"
+        f"alpha/a1-core/SC1.1 verify the core prints (SC1.1) [done] via {RUN} at abc1234\n"
         f"file: specs/alpha/contract.yaml:{sketch}\n"), "")
     assert _query(root, capsys, "alpha/a1-core/approve-tests") == (0, (
-        "alpha/a1-core/approve-tests [waiting on a seat] current\n"
-        f"summary: {_names('tasks')['approve-tests']}\n"
+        f"alpha/a1-core/approve-tests {_names('tasks')['approve-tests']}"
+        " [waiting on a seat] current seat: user\n"  # its unit's seat (project-tree o4)
         f"page: {_pages('tasks')['approve-tests']}\n"), "")
     assert _query(root, capsys, "gates/G3") == (0, (
-        "gates/G3 [to do] inactive\n"
-        f"summary: {_names('gates')['G3']}\n"
+        f"gates/G3 {_names('gates')['G3']} [to do] inactive\n"
         f"page: {_pages('gates')['G3']}\n"), "")
 
 
@@ -318,12 +322,13 @@ def test_sc6_1_the_largest_item_prints_whole_in_at_most_twenty_lines(tmp_path, c
     code, out, err = _query(root, capsys, "wide/w-last")
     assert (code, err) == (0, "")
     lines = out.splitlines()
-    assert lines[0] == "wide/w-last [to do]"
+    # the whole done_means prints as the plain name on the first line
+    assert lines[0] == "wide/w-last " + " ".join(
+        f"line {n} of a done_means that runs long on purpose" for n in range(40)) + " [to do]"
     assert len(lines) <= LIMIT, out
-    # every link and the whole summary print: the cap holds by the format
+    # every link and the whole plain name print: the cap holds by the format
     assert _fields(out, "depends_on") == [", ".join(f"wide/w{n:02}" for n in range(25))]
-    assert _fields(out, "summary") == [" ".join(
-        f"line {n} of a done_means that runs long on purpose" for n in range(40))]
+    assert _fields(out, "summary") == []
     assert _fields(out, "file") == [
         f"specs/wide/contract.yaml:{_line_of(text, '  - unit: the last unit')}"]
 
@@ -370,18 +375,16 @@ def test_sc6_2_a_sketch_naming_a_task_key_prints_the_task_then_the_check(tmp_pat
     root = _repo(tmp_path, beta=beta)
     rows, _ = _whole(root, capsys)
     assert [row[2:] for row in _rows_of(rows, "beta/b1-solo/commit")] == [
-        ("to do", f" | {_names('tasks')['commit']}"),
-        ("to do", " | verify the commit lands (commit)")]
+        ("to do", "", _names('tasks')['commit']),
+        ("to do", "", "verify the commit lands (commit)")]
     sketch = _line_of(beta, "      - verify the commit lands (commit)")
     code, out, err = _query(root, capsys, "beta/b1-solo/commit")
     assert (code, err) == (0, "")
     assert out == (
-        "beta/b1-solo/commit [to do]\n"
-        f"summary: {_names('tasks')['commit']}\n"
+        f"beta/b1-solo/commit {_names('tasks')['commit']} [to do]\n"
         f"page: {_pages('tasks')['commit']}\n"
         "\n"
-        "beta/b1-solo/commit [to do]\n"
-        "summary: verify the commit lands (commit)\n"
+        "beta/b1-solo/commit verify the commit lands (commit) [to do]\n"
         f"file: specs/beta/contract.yaml:{sketch}\n")
     assert all(len(block) <= LIMIT for block in _blocks(out))
 
@@ -400,16 +403,15 @@ def test_sc6_2_a_unit_named_like_an_active_gate_prints_the_verdict_then_the_unit
     verdict, unit = _rows_of(rows, "beta/G0")  # the verdict first, then the unit
     code, out, err = _query(root, capsys, "beta/G0")
     assert (code, err) == (0, "")
+    assert _first(verdict).startswith(f"beta/G0 {_names('gates')['G0']} [")
     assert out == (
         _first(verdict) + "\n"
-        f"summary: {_names('gates')['G0']}\n"
         "file: specs/beta/contract.yaml:1\n"
         f"page: {_pages('gates')['G0']}\n"
         "\n"
-        "beta/G0 [to do]\n"
-        "summary: the work named like a gate is done\n"
+        "beta/G0 the work named like a gate is done [to do]\n"
         f"file: specs/beta/contract.yaml:{_line_of(beta, '  - unit: work named like a gate')}\n")
-    assert _first(unit) == "beta/G0 [to do]"
+    assert _first(unit) == "beta/G0 the work named like a gate is done [to do]"
     assert all(len(block) <= LIMIT for block in _blocks(out))
 
 
@@ -496,11 +498,14 @@ def test_sc6_1_a_field_holding_line_breaks_prints_on_one_line(tmp_path, capsys):
           _finding("odd-kind", "G0", "friction\nand more"))
     rows, _ = _whole(root, capsys)  # every line of the whole tree is one item's line
     expected = {
-        "alpha/a1-core/SC1.1": "alpha/a1-core/SC1.1 [done] via python -m pytest -k sc1_1 at abc1234",
-        "alpha/a1-core/approve-tests": "alpha/a1-core/approve-tests [done] by the user at abc1234",
+        "alpha/a1-core/SC1.1": ("alpha/a1-core/SC1.1 verify the core prints (SC1.1) [done]"
+                                " via python -m pytest -k sc1_1 at abc1234"),
+        "alpha/a1-core/approve-tests":
+            "alpha/a1-core/approve-tests Approve the test list [done] by the user at abc1234",
         "alpha/a1-core/write-tests":
-            "alpha/a1-core/write-tests [blocked] because " + REASON.replace("\n", " "),
-        "gates/G0/odd-kind": "gates/G0/odd-kind [kind: friction and more]",
+            "alpha/a1-core/write-tests Write the tests [blocked] because "
+            + REASON.replace("\n", " "),
+        "gates/G0/odd-kind": f"gates/G0/odd-kind {STATEMENT} [kind: friction and more]",
     }
     for node, first in expected.items():
         assert _first(_rows_of(rows, node)[0]) == first, node
@@ -528,10 +533,9 @@ def test_sc6_2_an_id_holding_a_line_break_answers_as_the_tree_prints_it(tmp_path
     root = _repo(tmp_path, alpha=alpha)
     code, out, _ = _call(["tree", "--root", str(root)], capsys)
     assert code == 0
-    assert "  alpha/two lines [to do] | the work on two lines is done" in out.splitlines()
+    assert "  alpha/two lines the work on two lines is done [to do]" in out.splitlines()
     unit = (
-        "alpha/two lines [to do]\n"
-        "summary: the work on two lines is done\n"
+        "alpha/two lines the work on two lines is done [to do]\n"
         f"file: specs/alpha/contract.yaml:{_line_of(alpha, '  - unit: work named on two lines')}\n")
     assert _query(root, capsys, "alpha/two lines") == (0, unit, "")  # as the tree prints it
     assert _query(root, capsys, "alpha/two\nlines") == (0, unit, "")  # as the contract holds it
@@ -550,9 +554,9 @@ def test_a_repeated_depends_on_entry_links_once_in_its_first_order(tmp_path, cap
         "      - verify the join holds\n")
     root = _repo(tmp_path, alpha=alpha)
     rows, _ = _whole(root, capsys)
-    assert _rows_of(rows, "alpha/a3-join")[0][3] == (
-        " depends_on: alpha/a2-edges depends_on: alpha/a1-core"
-        " | the work for a3-join is done")
+    assert _rows_of(rows, "alpha/a3-join")[0][3:] == (
+        " depends_on: alpha/a2-edges depends_on: alpha/a1-core",
+        "the work for a3-join is done")
     code, out, err = _query(root, capsys, "alpha/a3-join")
     assert (code, err) == (0, "")
     assert _fields(out, "depends_on") == ["alpha/a2-edges, alpha/a1-core"]

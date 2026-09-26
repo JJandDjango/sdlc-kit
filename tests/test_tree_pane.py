@@ -269,7 +269,8 @@ def test_sc2_1_the_pane_shows_the_path_and_folds_each_levels_other_items_into_on
         "    9 more: 6 to do, 2 done, 1 failed",      # the other tasks and the checks
         short_line(whole["alpha/a2-edges/prove-red"]),
     ]]
-    assert whole["alpha/a2-edges/prove-red"].split()[1:4] == ["[doing]", "current", "|"]
+    # its plain name after its id (project-tree o2), then its status and mark, no bar
+    assert whole["alpha/a2-edges/prove-red"].split()[1:] == ["Prove", "red", "[doing]", "current"]
 
 
 def test_sc2_1_a_level_with_no_other_item_prints_no_fold_line(tmp_path, capsys):
@@ -392,7 +393,7 @@ def test_sc2_3_the_command_takes_follow_and_ctrl_c_exits_0_with_no_traceback(
     assert captured.err == ""
     renders = _renders(captured.out)
     assert len(renders) == 1
-    assert renders[0][-1].split()[:3] == ["prove-red", "[doing]", "current"]
+    assert renders[0][-1].split()[:5] == ["prove-red", "Prove", "red", "[doing]", "current"]
 
 
 class _InterruptedOut(io.StringIO):
@@ -637,10 +638,10 @@ def test_the_pane_recomputes_a_verdict_only_when_its_contract_or_the_vocabulary_
     assert sleeper.renders == [1, 1, 2, 3, 4, 5, 6, 6]
     assert all(render[0] == "specs/alpha/contract.yaml > alpha > a1-core > write-tests"
                for render in renders)
-    # the recomputed verdict reads: alpha is draft-red from the fourth render on
-    assert [render[2].split()[:2] for render in renders] == [
-        ["alpha", "[doing]"], ["alpha", "[doing]"], ["alpha", "[doing]"],
-        ["alpha", "[failed]"], ["alpha", "[failed]"], ["alpha", "[failed]"]]
+    # the recomputed verdict reads: alpha is draft-red from the fourth render on;
+    # alpha has no title, so its line opens on its id and `(no title)` (project-tree o2)
+    assert [render[2].split()[:4] for render in renders] == (
+        [["alpha", "(no", "title)", "[doing]"]] * 3 + [["alpha", "(no", "title)", "[failed]"]] * 3)
 
 
 # --- unreadable sources ---------------------------------------------------------------------------
@@ -655,7 +656,7 @@ def test_the_pane_prints_each_unreadable_source_on_stderr_at_each_render(tmp_pat
     assert len(err) == 2 and all(UNREADABLE.match(line) for line in err), err
     assert not any(line.startswith("taskcontract tree:") for render in renders
                    for line in render)
-    assert renders[0][-1].split()[:3] == ["prove-red", "[doing]", "current"]
+    assert renders[0][-1].split()[:5] == ["prove-red", "Prove", "red", "[doing]", "current"]
 
 
 # --- git status takes no optional lock --------------------------------------------------------------

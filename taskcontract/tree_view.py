@@ -2,20 +2,27 @@
 
 One item per line, two spaces of indent per level. The line opens on the
 item's full id, the node path ADR 0031 gives it, so the print states every
-id whole. Then the status in brackets, or a finding's kind in its place,
+id whole, then its plain name (the name the kit's lists give a gate, a
+verdict's gate, a condition or a task; a unit's `done_means`; a check's
+sketch line; a finding's statement; a contract's `title`, else `(no
+title)`). Then the status in brackets, or a finding's kind in its place,
 then the item's marks (`inactive` on a gate a finding names that is not
-active and on a contract's next gate, `current` on the current task), then
+active and on a contract's next gate, `current` on the current task, and
+on a contract its drift mark: `no feature document`, `no "Ready:" row` or
+`stale: document rD, contract from rM`), then
 its evidence (on a `G0` verdict, the validator command and the `HEAD` it
 read; on a check whose last run was green as expected, that run's command
 and `HEAD`; on a task done by its own record, `by <seat>` on an approval
 and the record's `HEAD`; on a unit or contract done by its close, the
 close's `HEAD`; each with `dirty` when it applies; on a task blocked by its
-own record, `because <reason>`).
+own record, `because <reason>`; on the approval that holds the current
+task, `seat: <seats>`, its unit's `confirmed_by` joined by `, `).
 Then its links (`depends_on: <contract>/<unit>` on a unit, `gate: <value>`
 on a finding), then a contract's feature doc reference (`doc:
-docs/features/<id>.md`), and last its summary after ` | `. Each part but the
-id and status prints only when the item has it, after exactly one space. A
-line break inside a part reads as one space, so an item keeps one line.
+docs/features/<id>.md`), and last a contract's summary, its intent, after
+` | `. Each part but the id and status prints only when the item has it,
+after exactly one space. A line break inside a part reads as one space, so
+an item keeps one line.
 Under a condition that is not done, each of its diagnostics prints on a
 line of its own, one level deeper, as `- ` and the validator's message
 without its code; such a line is not an item and has no id.
@@ -24,9 +31,9 @@ without its code; such a line is not an item and has no id.
 holds it or as the tree prints it, every item with it printed as one block,
 in the tree's order, with one empty line between blocks. A block opens on
 the item's line cut after the evidence, then gives one labeled field per
-line, each only when the item has it: `summary:` whole, one line per link
-kind with its targets joined by `, `, `doc:` with the feature doc's path at
-line 1, `file: <path>:<line>` (a contract or verdict at line 1, a unit or
+line, each only when the item has it: `summary:` whole, on a contract
+with an intent, one line per link kind with its targets joined by `, `,
+`doc:` with the feature doc's path at line 1, `file: <path>:<line>` (a contract or verdict at line 1, a unit or
 check at its entry's first line, a finding's file at line 1), and `page:`,
 the kit page that defines a gate, a verdict's or a condition's gate, or a
 task. A condition's diagnostics never print here. So a block never passes
@@ -39,10 +46,12 @@ node id` on stderr alone and exits 2; an id with `--follow` exits 2 too.
 and the task by the last segment of their ids. Under it the path to the
 task, a top-level item, its unit and the task, each line as the whole tree
 prints it, save that the unit's and the task's lines open on the last
-segment of their ids; links, the waiting line and `SDLC_NODE` keep full
-ids. Above each, when the level holds other items, one line folds them as
-`<n> more: <counts>`, the count per status in the six statuses' order,
-zeros left out; `tree: pane: fold: names` names them instead (see below).
+segment of their ids, then the plain name; links, the waiting line and
+`SDLC_NODE` keep full ids, and the waiting, where-am-I and fold lines
+name no plain name. Above each, when the level holds other items, one
+line folds them as `<n> more: <counts>`, the count per status in the six
+statuses' order, zeros left out; `tree: pane: fold: names` names them
+instead (see below).
 So the task is always the last line. When the task is `approve-tests` or
 `approve-commit`, the first line reads `waiting on a seat: <approval> for
 <contract>/<unit>`, above the where-am-I line. With no current task the
@@ -50,13 +59,14 @@ pane reads `no current task`, then `<n> items: <counts>` for the top level.
 
 `tree: pane: parts:` in .sdlc/config.yaml, read afresh at each render,
 lists the fields each item line shows, from id, status, marks, evidence,
-links, doc and summary. The line still opens on its id, then shows only the
-listed fields, in the order above whatever order the list gives; `id`
-changes nothing, and `[]` shows the id alone. Unset, a line shows every
-field. Any other value, or a list naming anything else, is ignored as a
-whole, and each render then prints `pane parts ignored: <value> - give a
-list from id, status, marks, evidence, links, doc, summary` on stderr,
-after the unreadable sources. The key changes no other line.
+links, doc and summary. The line still opens on its id and plain name,
+then shows only the listed fields, in the order above whatever order the
+list gives; `id` changes nothing, and `[]` shows the id and plain name
+alone. Unset, a line shows every field. Any other value, or a list naming
+anything else, is ignored as a whole, and each render then prints `pane
+parts ignored: <value> - give a list from id, status, marks, evidence,
+links, doc, summary` on stderr, after the unreadable sources. The key
+changes no other line.
 
 `tree: pane: fold:`, read the same way, set to `names` makes each fold
 line, and the `<n> items` line, name the items it folds in place of the
@@ -120,8 +130,9 @@ def render(items: list[Item]) -> str:
 
 
 def line(item: Item, parts: list[str] | None = None) -> str:
-    """One item's line without its indent: the id, then every field it has,
-    or with `parts` only the fields it names, in the same order."""
+    """One item's line without its indent: the id and the plain name, then
+    every field it has, or with `parts` only the fields it names, in the
+    same order."""
     tag = f"kind: {item.kind}" if item.level == "finding" else item.status
     fields = {
         "status": f" [{tag}]",
@@ -131,8 +142,9 @@ def line(item: Item, parts: list[str] | None = None) -> str:
         "doc": f" doc: {item.doc}" if item.doc else "",
         "summary": f" | {item.summary}" if item.summary else "",
     }
-    return _flat(item.id) + "".join(_flat(text) for name, text in fields.items()
-                                    if parts is None or name in parts)
+    return (_flat(item.id) + (_flat(f" {item.name}") if item.name else "")
+            + "".join(_flat(text) for name, text in fields.items()
+                      if parts is None or name in parts))
 
 
 def _flat(text: str) -> str:

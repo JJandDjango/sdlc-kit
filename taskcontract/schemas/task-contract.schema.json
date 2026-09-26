@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:sdlc-kit:task-contract:v1",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "title": "Task contract (G0 definition-of-ready)",
   "description": "Phase-0 task contract. Field set: ADR 0005, amended by ADR 0017 V2 (entities), ADR 0024 (required unit id, optional depends_on), ADR 0025 (optional unit confirmed_by), and ADR 0030 (entities required at ready, the empty list valid: a positive statement that the contract operates on no glossary term - TC017 on a miss). Root schema = draft profile (blocked dependencies representable, entities optional); validate #/$defs/ready for the G0.1 gate. The entities coverage join (ratified-only resolution) is a Python-side ready check - not expressible here. Unit-graph validity (duplicate id, depends_on resolution, acyclicity) is the same category - TC013-TC015, checked Python-side in both profiles. Unit confirmation (every unit's confirmed_by present and resolving to a value of the ratified intake-seat term) is a Python-side ready check - TC016; values are value-set members, not term slugs, so one character suffices. ADR 0030 makes that term required rather than the switch that arms the check: a repo with no term, or one still at draft, gets TC018 once per contract, also Python-side because no schema can see a repository.",
   "type": "object",
@@ -19,6 +19,10 @@
     "id": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9-]{2,63}$"
+    },
+    "title": {
+      "type": "string",
+      "pattern": "^[^\\r\\n]*\\S[^\\r\\n]*(?![\\s\\S])"
     },
     "intent": {
       "type": "string",

@@ -10,9 +10,9 @@ contract and runs git twice: once for `HEAD`, once for the contract files
 that differ from it. A caller that passes a verdict cache (the `--follow`
 pane) keeps the validator's reading per contract, the verdict's and its
 conditions', between prints, and the validator runs only for a contract
-the cache lacks; git still runs at every print. It asks only whether
-docs/features/<id>.md exists, never opens it, reads no other document and
-writes no file.
+the cache lacks; git still runs at every print. It opens each contract's
+docs/features/<id>.md for its revision table only, prints none of its
+words, reads no other document and writes no file.
 
 The gates stand first, at the repository level, each opening first into
 its conditions, the named parts gates.yaml lists in its page's order. A
@@ -47,23 +47,44 @@ since the joins behind the other two never ran on it. Warnings never count.
 A verdict at any other gate, the inactive verdict, their conditions and
 every gate item and its conditions read `to do`. A unit or contract rolls
 up its children but the inactive verdict, so it reads `done` only when
-every other child does.
+every other child does; a closed contract's verdicts never count either,
+so it reads `done` once its units do, or at once when it shows none, while
+each verdict keeps its reading.
 
 The current task is derived from the task states, never stored: the task
 whose `doing` record is latest, else the first `to do` task in the contract
-with the latest record. An approval that holds it reads `waiting on a seat`.
+with the latest record. An approval that holds it reads `waiting on a seat`
+and names its unit's `confirmed_by` seats as its evidence, `seat: <seats>`:
+in order, each once, by the text rule, joined by `, `; none when the field
+is not a list or gives no seat. No other item names a seat.
 
-Each item carries its summary from one source field, unchanged but for its
-whitespace: a contract's `intent`, a unit's `done_means`, a check's sketch
-line, a finding's `statement`, and the name gates.yaml or tasks.yaml gives a
-gate, a verdict's gate, a condition or a task. The field's ends are
+Each item carries its plain name from one source field, unchanged but for
+its whitespace: a contract's `title`, a unit's `done_means`, a check's
+sketch line, a finding's `statement`, and the name gates.yaml or tasks.yaml
+gives a gate, a verdict's gate, a condition or a task. The field's ends are
 stripped and each line break reads as one space; a field that is absent,
-not text or blank gives no summary. Links come from two fields only: a unit's `depends_on` entries, as
-the unit graph reads them, each linked once in the order of its first
-appearance, and a finding's `gate:` value as written. A contract with a
-file at docs/features/<id>.md carries that path as its feature doc
-reference. A line prints its links, then the reference, then the summary,
-after the marks and evidence.
+not text or blank gives no plain name, save that a contract then reads
+`(no title)`, as does one the tree cannot read as a mapping. The tree reads
+the title from the contract, never from its feature doc. A contract alone
+carries a summary, its `intent` by the same rule. Links come from two
+fields only: a unit's `depends_on` entries, as the unit graph reads them,
+each linked once in the order of its first appearance, and a finding's
+`gate:` value as written. A contract with a file at docs/features/<id>.md
+carries that path as its feature doc reference. A line prints its plain
+name after its id, then its links, the reference and the summary after the
+marks and evidence.
+
+A contract carries at most one drift mark, read afresh at every print from
+its feature doc's revision table, the first table in the file. A row counts
+when its last cell opens on `r<N>:`; the document's revision is the highest
+N of a counted row that is neither a `Ready:` nor a `Measured:` row, and
+the contract's is the `rM` that the first `derived from rM` in the newest
+`Ready:` row naming one gives, the lower row winning a tie. The mark reads
+`no feature document` when no file is at docs/features/<id>.md, `no
+"Ready:" row` when no `Ready:` row names an `rM` or the file cannot be read
+as text, and `stale: document rD, contract from rM` when the document's
+revision is higher; else there is none, and the contract matches its
+document. A contract the tree cannot read as a mapping carries it too.
 
 Each item but a gate, a condition, a task and the no-gate item names the
 file it is read from, and a unit or check the keys to its entry there;
@@ -95,6 +116,7 @@ ROLL_UP = (FAILED, WAITING, BLOCKED, DOING)
 NO_GATE = "none"
 FORM = "TEMPLATE.yaml"  # the findings form, never a finding
 INACTIVE = "inactive"
+NO_TITLE = "(no title)"  # a contract's plain name when it gives no title
 # The one G0 condition an unreadable contract still reads: the schema's; the
 # joins behind the others never run on a file that is not a mapping.
 SCHEMA_CONDITION = "G0.1"
@@ -111,6 +133,16 @@ FOLDS = ("names", "counts")
 _TRAILING = re.compile(r"\(([^()]*)\)\s*$")
 _CHECK_ID = re.compile(r"^[A-Za-z][A-Za-z0-9._-]*$")
 
+# A contract's drift marks when it has no stale one.
+NO_DOCUMENT = "no feature document"
+NO_READY = 'no "Ready:" row'
+# A feature doc's revision table: a pipe after a backslash never splits a
+# cell; a counted row's last cell opens on `r<N>:`, and a `Ready:` row names
+# its `rM` by the first `derived from rM`, the digits ending at a non-word.
+_PIPE = re.compile(r"(?<!\\)\|")
+_REVISION = re.compile(r"r([0-9]+):\s*")
+_DERIVED = re.compile(r"derived from r([0-9]+)(?!\w)")
+
 
 @dataclass
 class Item:
@@ -125,13 +157,18 @@ class Item:
     children: list[Item] = field(default_factory=list)
     evidence: str | None = None  # what the status was read from
     links: list[str] = field(default_factory=list)  # each `<kind>: <target>`
-    doc: str | None = None  # a contract's feature doc path, never opened
-    summary: str | None = None  # the source field, by the text rule
+    doc: str | None = None  # a contract's feature doc path
+    name: str | None = None  # the plain name, by the text rule
+    summary: str | None = None  # a contract's intent, by the text rule
     source: str | None = None  # the repo path of the file the item is read from
     place: tuple = ()  # the keys from that file's top to the item's entry
-    page: str | None = None  # the kit page that defines a gate or a task
+    # The kit page that defines a gate or a task; a verdict's or a condition's
+    # is its gate's.
+    page: str | None = None
     # A condition's messages from its rules, each on one line; never an item.
     diagnostics: list[str] = field(default_factory=list)
+    # An approval's seats, its unit's `confirmed_by`; named only while it waits.
+    seats: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -213,11 +250,60 @@ def next_gate(active: list[str], order: list[str]) -> str | None:
 
 
 def text(value) -> str | None:
-    """A source field as a summary: ends stripped, each line break one space;
-    None when the field is not text or is blank."""
+    """A source field as a plain name or a summary: ends stripped, each line
+    break one space; None when the field is not text or is blank."""
     if not isinstance(value, str):
         return None
     return " ".join(value.strip().splitlines()) or None
+
+
+def drift(path: Path) -> str | None:
+    """A contract's drift mark from the feature doc at `path`: `no feature
+    document` when no file is there, `no "Ready:" row` when no `Ready:` row
+    names an `rM` or the file cannot be read as text, `stale: document rD,
+    contract from rM` when the document's revision passed the contract's,
+    else None. Only the first table is read, and none of its words print."""
+    if not path.is_file():
+        return NO_DOCUMENT
+    try:
+        lines = path.read_bytes().decode("utf-8-sig").splitlines()
+    except (OSError, UnicodeDecodeError):
+        return NO_READY
+    document = contract = None
+    newest = -1  # the N of the `Ready:` row that gave `contract`
+    for cell in _last_cells(lines):
+        match = _REVISION.match(cell)
+        if match is None:
+            continue
+        n, rest = int(match.group(1)), cell[match.end():]
+        if rest.startswith("Ready:"):
+            derived = _DERIVED.search(rest)
+            if derived is not None and n >= newest:  # a tie: the lower row wins
+                newest, contract = n, int(derived.group(1))
+        elif not rest.startswith("Measured:"):
+            document = n if document is None else max(document, n)
+    if contract is None:
+        return NO_READY
+    if document is not None and document > contract:
+        return f"stale: document r{document}, contract from r{contract}"
+    return None
+
+
+def _last_cells(lines: list[str]):
+    """The last cell of each row of the first table, the first run of lines
+    that open on `|`, blanks stripped; a row's one closing pipe is dropped
+    first, and a row without it still counts."""
+    started = False
+    for line in lines:
+        row = line.strip()
+        if not row.startswith("|"):
+            if started:
+                return
+            continue
+        started = True
+        if row.endswith("|") and not row.endswith("\\|"):
+            row = row[:-1]
+        yield _PIPE.split(row)[-1].strip()
 
 
 def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]],
@@ -251,10 +337,12 @@ def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]],
     if current is not None:
         if current.id.rsplit("/", 1)[-1] in APPROVALS:
             current.status = WAITING
+            # Never blocked or done, so it has no evidence of its own.
+            current.evidence = f"seat: {', '.join(current.seats)}" if current.seats else None
         current.marks.append(CURRENT)
     _verdicts(root, contracts, {} if cache is None else cache)
     for contract in contracts:
-        _roll_up(contract)
+        _roll_up(contract, contract.id in own)
         for item in _walk(contract):
             if item.level in ("unit", "contract") and item.status == DONE and item.id in own:
                 item.evidence = state_evidence(own[item.id])
@@ -448,18 +536,20 @@ def dirty_contracts(root: Path) -> set[str]:
     return dirty
 
 
-def _roll_up(item: Item) -> None:
+def _roll_up(item: Item, closed: bool = False) -> None:
     """A unit's or contract's status from its children's but the inactive
-    verdict's; a verdict done alone never starts its contract."""
+    verdict's, and a closed contract's from its units' alone, `done` when it
+    has none; a verdict done alone never starts its contract."""
     for child in item.children:
         if child.level == "unit":
             _roll_up(child)
-    children = [child for child in item.children if INACTIVE not in child.marks]
+    children = [child for child in item.children if INACTIVE not in child.marks
+                and not (closed and child.level == "verdict")]
     statuses = [child.status for child in children]
     first = next((status for status in ROLL_UP if status in statuses), None)
     if first is not None:
         item.status = first
-    elif statuses and all(status == DONE for status in statuses):
+    elif (statuses or closed) and all(status == DONE for status in statuses):
         item.status = DONE
     elif any(child.status == DONE for child in children if child.level != "verdict"):
         item.status = DOING
@@ -602,7 +692,7 @@ def _gate_items(order: list[str], active: list[str], findings: list[Finding],
         items.append(Item(base, "gate", marks=[] if gate in active else [INACTIVE],
                           children=conditions + _finding_items(base, gate, None,
                                                                findings, gates),
-                          summary=_name(gates.get(gate)), page=_page(gates.get(gate))))
+                          name=_name(gates.get(gate)), page=_page(gates.get(gate))))
     if NO_GATE in named:
         items.append(Item(f"gates/{NO_GATE}", "none",
                           children=_finding_items(f"gates/{NO_GATE}", NO_GATE, None,
@@ -615,7 +705,7 @@ def _finding_items(base: str, gate: str, condition: str | None,
     """The findings under `base`: those of `gate` whose `gate:` value is
     `condition` when its gate lists it, or with `condition` None, the rest."""
     return [Item(f"{base}/{finding.slug}", "finding", status=None,
-                 kind=finding.kind, summary=finding.statement,
+                 kind=finding.kind, name=finding.statement,
                  links=[f"gate: {finding.link}"] if finding.link else [],
                  source=f".sdlc/findings/{finding.slug}.yaml")
             for finding in findings
@@ -631,9 +721,9 @@ def _condition_of(finding: Finding, gates: dict[str, dict]) -> str | None:
 
 def _condition_items(base: str, entry: dict | None) -> list[Item]:
     """A gate's conditions under `base`, in its page's order, each reading
-    `to do`, with its name and its gate's page."""
+    `to do`, with its name as its plain name and its gate's page."""
     return [Item(f"{base}/{condition.get('id')}", "condition",
-                 summary=text(condition.get("name")), page=_page(entry))
+                 name=text(condition.get("name")), page=_page(entry))
             for condition in _conditions(entry)]
 
 
@@ -646,21 +736,24 @@ def _conditions(entry: dict | None) -> list[dict]:
 def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str],
                    upcoming: str | None, gates: dict[str, dict],
                    tasks: dict[str, dict]) -> Item:
-    """A contract: its verdict at each active gate, then the upcoming gate's
-    verdict marked `inactive`, each opening into its gate's conditions; then
-    its units. An unreadable contract keeps its verdicts and shows no unit."""
+    """A contract with its drift mark: its verdict at each active gate, then
+    the upcoming gate's verdict marked `inactive`, each opening into its
+    gate's conditions; then its units. An unreadable contract keeps its
+    verdicts and its mark, and shows no unit."""
     doc = f"docs/features/{cid}.md"
     source = f"specs/{cid}/contract.yaml"
     verdicts = [(gate, []) for gate in active]
     if upcoming is not None:
         verdicts.append((upcoming, [INACTIVE]))
-    item = Item(cid, "contract",
+    mark = drift(root / doc)
+    item = Item(cid, "contract", marks=[mark] if mark else [],
                 children=[Item(f"{cid}/{gate}", "verdict", marks=marks,
                                children=_condition_items(f"{cid}/{gate}", gates.get(gate)),
-                               summary=_name(gates.get(gate)),
+                               name=_name(gates.get(gate)),
                                source=source, page=_page(gates.get(gate)))
                           for gate, marks in verdicts],
                 doc=doc if (root / doc).is_file() else None,
+                name=(text(instance.get("title")) if instance is not None else None) or NO_TITLE,
                 summary=text(instance.get("intent")) if instance is not None else None,
                 source=source)
     for index, uid, unit, deps in _units(instance):
@@ -668,18 +761,28 @@ def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str
         place = ("decomposition", index)
         sketches = unit.get("acceptance_sketch")
         sketches = sketches if isinstance(sketches, list) else []
+        seats = _seats(unit.get("confirmed_by"))
         unit_item = Item(base, "unit",
-                         children=[Item(f"{base}/{task}", "task", summary=_name(entry),
-                                        page=_page(entry))
+                         children=[Item(f"{base}/{task}", "task", name=_name(entry),
+                                        page=_page(entry),
+                                        seats=seats if task in APPROVALS else [])
                                    for task, entry in tasks.items()],
                          links=[f"depends_on: {cid}/{dep}" for dep in dict.fromkeys(deps)],
-                         summary=text(unit.get("done_means")), source=source, place=place)
+                         name=text(unit.get("done_means")), source=source, place=place)
         unit_item.children += [
-            Item(f"{base}/{check}", "check", summary=text(sketch),
+            Item(f"{base}/{check}", "check", name=text(sketch),
                  source=source, place=place + ("acceptance_sketch", n))
             for n, (check, sketch) in enumerate(zip(check_ids(sketches), sketches))]
         item.children.append(unit_item)
     return item
+
+
+def _seats(value) -> list[str]:
+    """A unit's `confirmed_by` seats in order, each once, by the text rule;
+    none when it is not a list, and no entry that gives no text."""
+    if not isinstance(value, list):
+        return []
+    return list(dict.fromkeys(seat for seat in map(text, value) if seat))
 
 
 def _name(entry: dict | None) -> str | None:

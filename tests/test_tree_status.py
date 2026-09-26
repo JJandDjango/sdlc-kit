@@ -33,9 +33,11 @@ HEAD = "1a2b3c4"  # what a hand-written record carries; no t3 status reads it
 INTENT = ("A fixture contract for the status suite; its units carry the "
           "sketch shapes that check ids come from.")
 
-# One item per line: its full id, then its status (a finding: its kind) in
-# brackets, then its marks, then its evidence, then what later units add.
-ROW = re.compile(r"^(?P<indent> *)(?P<id>\S+) \[(?P<tag>[^\]]*)\](?P<rest>.*)$")
+# One item per line: its full id, then its plain name when it has one
+# (project-tree o2), then its status (a finding: its kind) in brackets, then
+# its marks, then its evidence, then what later units add.
+ROW = re.compile(r"^(?P<indent> *)(?P<id>\S+)(?: (?P<name>.*?))? \[(?P<tag>[^\]]*)\]"
+                 r"(?P<rest>.*)$")
 UNREADABLE = re.compile(
     r"^taskcontract tree: unreadable progress: \.sdlc/progress/alpha\.yaml \(.+\)$")
 
@@ -328,7 +330,8 @@ def test_a_close_leaves_the_verdict_to_the_validator(tmp_path, capsys):
     rows, _ = _print(root, capsys)
     assert _tag(rows, "beta/b1-solo") == "done"
     assert _tag(rows, "beta/G0") == "to do"
-    assert _tag(rows, "beta") == "doing"
+    # a closed contract reads done whatever its verdicts read (project-tree o4)
+    assert _tag(rows, "beta") == "done"
 
 
 # --- SC3.1 the rollup -----------------------------------------------------------

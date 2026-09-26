@@ -913,25 +913,27 @@ conditions: `failed` when one reads `failed`, else `blocked` when one reads
 `blocked`, `done` when all three read `done`, and `to do` otherwise. A
 contract the tree cannot read as a mapping, one it names on stderr as an
 `unreadable contract`, reads `failed` at G0.1 and `to do` at G0.2 and
-G0.3, since their joins never ran. The conditions of every other gate read
-`to do`: the kit computes none of them yet.
+G0.3, since their joins read nothing from it. The conditions of every
+other gate read `to do`: the kit computes none of them yet.
 
 🔴 A condition that is not `done` lists what its rules report, one line
 under it per diagnostic: `- `, then the validator's message without its
-code. A `failed` condition lists the draft profile's messages, any other
-the ready profile's. A contract at draft-green with one draft term:
+code. A message repeated word for word prints once. A `failed` condition
+lists the draft profile's messages, any other the ready profile's. A
+contract at draft-green with one draft term, before intake has written
+its `Ready:` row:
 
 ```
-apply-discount [to do] | Checkout applies one discount code per order.
-  apply-discount/G0 [to do] via python -m taskcontract validate specs/apply-discount/contract.yaml --profile ready at 1a2b3c4 | Planning / Intake
-    apply-discount/G0/G0.1 [done] | Definition-of-ready
-    apply-discount/G0/G0.2 [to do] | Vocabulary coverage
+apply-discount Apply one discount code per order [to do] no "Ready:" row doc: docs/features/apply-discount.md | Checkout applies one discount code per order.
+  apply-discount/G0 Planning / Intake [to do] via python -m taskcontract validate specs/apply-discount/contract.yaml --profile ready at 1a2b3c4
+    apply-discount/G0/G0.1 Definition-of-ready [done]
+    apply-discount/G0/G0.2 Vocabulary coverage [to do]
       - entity 'discount-code' is not ratified (status: draft) - draft does not resolve; ratify the term or fork the vocabulary task
-    apply-discount/G0/G0.3 [done] | Unit confirmation
-  apply-discount/G1 [to do] inactive | Requirements / Spec
-    apply-discount/G1/G1.1 [to do] | Spec/schema linting
-    apply-discount/G1/G1.2 [to do] | Model checking
-    apply-discount/G1/G1.3 [to do] | Criteria completeness + ambiguity review
+    apply-discount/G0/G0.3 Unit confirmation [done]
+  apply-discount/G1 Requirements / Spec [to do] inactive
+    apply-discount/G1/G1.1 Spec/schema linting [to do]
+    apply-discount/G1/G1.2 Model checking [to do]
+    apply-discount/G1/G1.3 Criteria completeness + ambiguity review [to do]
 ```
 
 🔴 At the repository level each gate opens into its conditions too, and a
@@ -946,19 +948,55 @@ conditions.
 | a finding that names a condition | `gates/<gate>/<condition>/<finding>` |
 
 🔴 `taskcontract tree <id>` prints a condition as it prints a gate: its
-line, `summary:` and the gate's `page:`. Its diagnostics print with the
-whole tree.
+line, which carries its plain name, and the gate's `page:`. Its
+diagnostics print with the whole tree.
 
 ### Plain names and titles 🔴
 
 🔴 Each item line opens on its id and its **plain name**, the words that
-say what it is, before the parts `tree: pane: parts:` selects: `G0.2
-Vocabulary coverage`, never `G0.2` alone. A gate's, a condition's and a
-task's plain names come from the kit's lists. A feature's is its
-contract's `title`, an optional one-line field that intake copies from
-the feature document's title line; the tree never reads the document's
-heading. A contract without a `title` shows `(no title)`. The contract
-schema moves from 1.4.0 to 1.5.0 for the field.
+say what it is, then the parts `tree: pane: parts:` selects: `G0.2
+Vocabulary coverage`, never `G0.2` alone. `parts:` never leaves out the
+plain name, as it never leaves out the id, so `[]` shows both.
+
+| Item | Its plain name |
+|---|---|
+| a gate, a verdict | the gate's name in `taskcontract/data/gates.yaml` |
+| a condition | its name in `taskcontract/data/gates.yaml` |
+| a task | its name in `taskcontract/data/tasks.yaml` |
+| a feature | its contract's `title`, else `(no title)` |
+| a unit | its `done_means` |
+| a check | its sketch line |
+| a finding | its `statement` |
+
+🔴 A plain name follows the summary rule above: its ends stripped, each
+line break read as one space. An item whose source gives no text, such as
+`gates/none` or a unit without `done_means`, shows no plain name; only a
+feature shows `(no title)` in its place. A unit's, a check's and a
+finding's plain name is the text that closed their line in 0.15.0, now
+after the id, so the `summary` part holds only a feature's `intent`, and
+`taskcontract tree <id>` prints its `summary:` line only for a feature.
+An excerpt:
+
+```
+apply-discount Apply one discount code per order [doing] doc: docs/features/apply-discount.md | Checkout applies one discount code per order.
+  apply-discount/u1-code-field The checkout form validates a discount code before it applies it. [doing]
+    apply-discount/u1-code-field/approve-tests Approve the test list [done] by user at 1a2b3c4
+    apply-discount/u1-code-field/write-tests Write the tests [doing] current
+```
+
+🔴 A feature's plain name is its contract's `title`, an optional field of
+one line that holds more than blanks. The contract schema moves from 1.4.0
+to 1.5.0 for it, and a `title` that is blank or holds a line break fails
+the draft profile with `TC002`, under G0.1. The tree reads the `title`
+from the contract, never from the document. Intake copies it from the
+feature document's title line, `# <id> - <title>`: the words after
+`<id> - `, or the whole heading when it opens on anything else. A
+contract without a `title`, as every contract written before 0.16.0 is
+until one is added, shows `(no title)`.
+
+🔴 The pane's item lines open the same way, on the last segment of the id
+and then the plain name. The waiting line, the where-am-I line and the
+fold lines keep ids alone.
 
 🔴 The pane's cursor line and `taskcontract tree <id>` show each item's
 plain name and document reference from its source: a feature's title and
@@ -969,26 +1007,69 @@ task's name and kit page.
 ### Drift from the feature document 🔴
 
 🔴 The tree opens each feature's document at `docs/features/<id>.md` for
-its revision table only, and the feature's line names what it finds:
+its revision table only: the first table in the file. A row counts when
+its last cell, the changes made, opens on `r<N>:`; the tree skips every
+other row. Two revisions come from the rows that count:
 
-- 🔴 `stale: document rN, contract from rM` when the table holds a row
-  `rN` after the `rM` its contract derives from. Intake's `Ready:` rows
-  and `Measured:` rows never count.
-- 🔴 `no feature document` when the file is missing.
-- 🔴 `no "Ready:" row` when the table holds no `Ready:` row the tree can
-  read.
+- 🔴 The **document's revision** is the highest `rN` of a row that is
+  neither a `Ready:` row (its cell opens `rN: Ready:`) nor a `Measured:`
+  row (`rN: Measured:`).
+- 🔴 The **contract's revision** is the `rM` that the newest `Ready:` row
+  names, the one with the highest `rN` among those whose cell holds
+  `derived from rM`. Intake writes the row in that fixed shape, `rN:
+  Ready: ... derived from rM ...`.
 
-🔴 The `rM` is the revision the newest `Ready:` row names. Intake writes
-that row's changes cell in a fixed shape, `rN: Ready: ... derived from rM
-...`; a row the tree cannot read is skipped. The contract records nothing
-new for this.
+🔴 The feature's line names what the tree finds, as a mark after its
+status:
+
+- 🔴 `stale: document rN, contract from rM` when the document's revision
+  is higher than the contract's.
+- 🔴 `no feature document` when there is no file at
+  `docs/features/<id>.md`.
+- 🔴 `no "Ready:" row` when the file holds no `Ready:` row that names its
+  `rM`, or cannot be read as text.
+
+🔴 With none of the three marks, the contract matches its document. A
+document whose table runs `r1`, `r2`, `r3: Ready: ... derived from r2`,
+`r4`:
+
+```
+apply-discount Apply one discount code per order [doing] stale: document r4, contract from r2 doc: docs/features/apply-discount.md | Checkout applies one discount code per order.
+```
+
+🔴 The pane already lists `docs/features/`, so an edit to a document
+shows within two seconds. The contract records nothing new for this.
+
+🔴 When the request is a feature document at `docs/features/<id>.md`,
+intake adds one row to its revision table once the contract validates
+ready-green: the date, `intake`, and a changes cell that opens
+``rN: Ready: contract `<id>` validates ready-green, derived from rM``,
+with `rN` the next revision and `rM` the signed revision intake read.
 
 ### Blocked and waiting, named 🔴
 
 🔴 Each unit and each task shows `done`, `doing` or `to do` from the
-progress record, and a closed unit or contract reads `done`. A `blocked`
-item names its `--reason`, and an approval that waits on a seat names that
-seat, each on the item's own line.
+progress record, as "Six statuses" reads them. A closed unit reads `done`.
+A closed contract reads `done`, whatever its verdicts read; each verdict
+still shows the validator's reading on its own line.
+
+🔴 A task blocked by its own record names its reason on its own line,
+`because <reason>`, the `--reason` that `taskcontract progress block` took.
+Only a task takes a `--reason`, so a unit or contract that reads `blocked`
+through one of its tasks names none; the task does.
+
+🔴 The approval that holds the current task reads `waiting on a seat` and
+names the seats it waits on, `seat: <seats>`: its unit's `confirmed_by`,
+the seats that answered for the unit at intake, joined by `, `. Nothing
+else records a seat before the approval's answer. A unit without
+`confirmed_by` names none. The waiting line keeps its words.
+
+```
+    apply-discount/u1-code-field/approve-commit Approve the commit [waiting on a seat] current seat: user
+```
+
+🔴 Both print as the line's evidence, so a `tree: pane: parts:` list
+without `evidence` leaves them out.
 
 ### The interactive pane 🔴
 
