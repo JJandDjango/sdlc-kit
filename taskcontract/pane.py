@@ -17,9 +17,10 @@ contract open down to its units and every other item closed; a current task
 opens its unit too, and the cursor starts on it with the window scrolled to
 it, else on the first line.
 
-A plain name that would push the status past the outline's right edge is
-cut where the status still fits, ending in `...`; the parts after the
-status are then left off, since they would lie past the edge. The cursor
+A plain name that would push the status, and on the current task `current`,
+past the outline's right edge is cut where they still fit, ending in `...`;
+a cut keeps `current` right after the status, and the other parts after
+the status are then left off, since they would lie past the edge. The cursor
 line shows the item at the cursor: its reference, the one `taskcontract tree
 <id>` prints, then ` | ` and its plain name whole; the reference alone when
 it has no plain name, its id when it has neither, and on a diagnostic the
@@ -58,8 +59,8 @@ def label(item: Item, depth: int, parts: list[str] | None = None,
     """An item's outline label: its line with the id's last segment below
     the top level, `current` kept on the current task whatever `parts`
     picks. With `room`, the cells the label may take, a plain name that
-    would push the status past them is cut to end in `...` with the status
-    last."""
+    would push the status and `current` past them is cut to end in `...`
+    with the status, then `current`, last."""
     picked = parts if parts is None or CURRENT not in item.marks else [*parts, "marks"]
     short = _flat(item.id.rpartition("/")[2] if depth else item.id)
     text = short + line(item, picked)[len(_flat(item.id)):]
@@ -68,10 +69,11 @@ def label(item: Item, depth: int, parts: list[str] | None = None,
     name = _flat(item.name)
     tag = f"kind: {item.kind}" if item.level == "finding" else item.status
     status = f" [{tag}]" if parts is None or "status" in parts else ""
-    if len(short) + 1 + len(name) + len(status) <= room:
+    kept = status + (f" {CURRENT}" if CURRENT in item.marks else "")
+    if len(short) + 1 + len(name) + len(kept) <= room:
         return text
-    keep = max(room - len(short) - 1 - len(status) - 3, 0)
-    return f"{short} {name[:keep]}...{status}"
+    keep = max(room - len(short) - 1 - len(kept) - 3, 0)
+    return f"{short} {name[:keep]}...{kept}"
 
 
 def cursor_text(root: Path, row: Row) -> str:

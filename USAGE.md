@@ -1107,9 +1107,10 @@ lines give them, or under `fold: names` each item as `<id> [<status>]`,
 joined by `, `. A closed condition counts its diagnostics, `(<n>
 diagnostics)`.
 
-🔴 A plain name that would push the status and those parentheses past the
-pane's right edge is cut where they still fit, ending in `...`; the parts
-after them are cut at the edge. The cursor line shows the name whole.
+🔴 A plain name that would push the status, those parentheses and the
+current task's `current` past the pane's right edge is cut where they
+still fit, ending in `...`; the other parts after them are cut at the
+edge. The cursor line shows the name whole.
 
 🔴 The **cursor line** shows the item at the cursor: its document
 reference, then ` | ` and its plain name, whole, wrapping onto as many

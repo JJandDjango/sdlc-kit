@@ -523,6 +523,19 @@ def test_sc4_1_a_plain_name_too_long_for_the_pane_is_cut_where_the_status_still_
     assert "a1-core the work for a1-core is done [to do]" in shot["lines"]
 
 
+@pytest.mark.parametrize("width", [60, 68])
+def test_sc4_1_in_a_narrow_pane_the_current_task_keeps_its_mark_in_the_window(tmp_path, width):
+    root = _current(_repo(tmp_path), "alpha/a1-core/approve-tests")
+    tasks = _pages("tasks")
+    shot = _open(root, (width, 24))
+    label = shot["cursor_label"]
+    # at 60 the name is cut; at 68 it fits but the line runs past the edge
+    assert label.startswith("approve-tests ") and " [waiting on a seat] current" in label, label
+    row = shot["rows"][shot["cursor"] - shot["top"]]
+    assert " [waiting on a seat] current" in row, (row, shot["width"])
+    assert shot["cursor_text"] == f"{tasks['approve-tests'][1]} | Approve the test list"
+
+
 # --- SC4.1 the pane's parts, top to bottom ----------------------------------------------------
 
 def test_sc4_1_the_pane_holds_the_waiting_line_the_outline_the_reported_lines_and_the_cursor_line(
