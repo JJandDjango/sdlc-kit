@@ -2,8 +2,8 @@
 
 Each unit and each task shows `done`, `doing` or `to do` from the progress
 record, as the six statuses read them; a closed unit reads `done`, and a
-closed contract reads `done` once each active gate's verdict does, its
-inactive next gate never counting (SC3.1). A task blocked by its own record
+closed contract reads `done` whatever its verdicts read, each verdict still
+showing the validator's reading on its own line (SC3.1). A task blocked by its own record
 names its reason on its own line, `because <reason>`; a unit or contract
 that reads `blocked` through one of its tasks names none. The approval that
 holds the current task reads `waiting on a seat` and names the seats it
@@ -248,8 +248,7 @@ def test_sc3_1_a_closed_unit_reads_done_and_the_next_approval_waits_on_its_units
     assert _seated(lines) == ["alpha/a2-edges/approve-tests"]
 
 
-def test_sc3_1_a_closed_contract_reads_done_once_each_active_verdict_does_and_its_inactive_gate_never_counts(
-        tmp_path, capsys):
+def test_sc3_1_a_closed_contract_reads_done_whatever_its_verdicts_read(tmp_path, capsys):
     root = _repo(tmp_path, gates=["G0"])
     _progress(root, "alpha", _step("alpha", "done", "10:00"))
     _progress(root, "beta", _step("beta/b1-solo/approve-tests", "doing", "10:05"))
@@ -265,17 +264,63 @@ def test_sc3_1_a_closed_contract_reads_done_once_each_active_verdict_does_and_it
         "  alpha/a3-rest the work for a3-rest is done [done]"]
     assert _line(lines, "beta/b1-solo/approve-tests") == _task(
         "beta/b1-solo", "approve-tests", f"{WAITING} seat: po")
-    # with G1 active too, its verdict reads to do, so the closed contract reads doing
-    # and names no close; its units still read done
+    # with G1 active too, its verdict reads to do on its own line, and the closed
+    # contract still reads done and names its close; its units still read done
     _config(root, ["G0", "G1"])
     lines = _lines(root, capsys)
     alpha = _line(lines, "alpha")
-    assert alpha.startswith("alpha (no title) [doing] no feature document | "), alpha
+    assert alpha.startswith("alpha (no title) [done] no feature document at 1a2b3c4 | "), alpha
     assert _line(lines, "alpha/G1") == "  alpha/G1 Requirements / Spec [to do]"
     assert _line(lines, "alpha/G2").startswith("  alpha/G2 ")
     assert _line(lines, "alpha/G2").endswith(" [to do] inactive")
     assert _line(lines, "alpha/a1-core") == "  alpha/a1-core the work for a1-core is done [done]"
     assert _seated(lines) == ["beta/b1-solo/approve-tests"]
+
+
+@pytest.mark.parametrize("breaks, verdict", [
+    ({"non_goals": None}, "failed"),  # draft-red: a required field is gone
+    ({"dependencies": [{"ref": "gamma", "status": "blocked", "blocked_by": "gamma"}]},
+     "blocked"),  # draft-green with TC003 at ready
+], ids=["g0-failed", "g0-blocked"])
+def test_sc3_1_a_closed_contract_reads_done_while_its_g0_verdict_keeps_its_own_reading(
+        tmp_path, capsys, breaks, verdict):
+    root = _repo(tmp_path, gates=["G0"])
+    doc = _contract("alpha", ALPHA)
+    for key, value in breaks.items():
+        if value is None:
+            del doc[key]
+        else:
+            doc[key] = value
+    _dump(root / "specs" / "alpha" / "contract.yaml", doc)
+    _progress(root, "alpha", _step("alpha", "done", "10:00"))
+    lines = _lines(root, capsys)
+    alpha = _line(lines, "alpha")
+    assert alpha.startswith("alpha (no title) [done] no feature document at 1a2b3c4 | "), alpha
+    assert _line(lines, "alpha/G0").startswith(f"  alpha/G0 Planning / Intake [{verdict}] via ")
+    assert _line(lines, "alpha/a1-core") == "  alpha/a1-core the work for a1-core is done [done]"
+    # a task reopened after the close shows through, as it does under a closed unit
+    # (the contract has units: see the next test for one that has none)
+    _progress(root, "alpha", _step("alpha", "done", "10:00"),
+              _step("alpha/a3-rest/green", "doing", "10:30"))
+    lines = _lines(root, capsys)
+    assert _line(lines, "alpha").startswith("alpha (no title) [doing] no feature document | ")
+    assert _line(lines, "alpha/a3-rest").startswith("  alpha/a3-rest the work for a3-rest is done [doing]")
+
+
+def test_sc3_1_a_closed_contract_the_tree_cannot_read_reads_done(tmp_path, capsys):
+    # the one contract with no units: the tree cannot read it as a mapping
+    root = _repo(tmp_path, gates=["G0"])
+    path = root / "specs" / "broken" / "contract.yaml"
+    path.parent.mkdir(parents=True)
+    path.write_text("id: [\n", encoding="utf-8")
+    _progress(root, "broken", _step("broken", "done", "10:00"))
+    code, out, err = _call(["tree", "--root", str(root)], capsys)
+    assert code == 0
+    assert err == ("taskcontract tree: unreadable contract: specs/broken/contract.yaml "
+                   "(YAML error at line 2)\n")
+    lines = out.splitlines()
+    assert _line(lines, "broken") == "broken (no title) [done] no feature document at 1a2b3c4"
+    assert _line(lines, "broken/G0").startswith("  broken/G0 Planning / Intake [failed] via ")
 
 
 # --- SC3.2 a blocked task names its reason ---------------------------------------------------

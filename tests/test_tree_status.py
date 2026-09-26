@@ -330,7 +330,8 @@ def test_a_close_leaves_the_verdict_to_the_validator(tmp_path, capsys):
     rows, _ = _print(root, capsys)
     assert _tag(rows, "beta/b1-solo") == "done"
     assert _tag(rows, "beta/G0") == "to do"
-    assert _tag(rows, "beta") == "doing"
+    # a closed contract reads done whatever its verdicts read (project-tree o4)
+    assert _tag(rows, "beta") == "done"
 
 
 # --- SC3.1 the rollup -----------------------------------------------------------

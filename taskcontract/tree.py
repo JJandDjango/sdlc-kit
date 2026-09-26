@@ -47,7 +47,9 @@ since the joins behind the other two never ran on it. Warnings never count.
 A verdict at any other gate, the inactive verdict, their conditions and
 every gate item and its conditions read `to do`. A unit or contract rolls
 up its children but the inactive verdict, so it reads `done` only when
-every other child does.
+every other child does; a closed contract's verdicts never count either,
+so it reads `done` once its units do, or at once when it shows none, while
+each verdict keeps its reading.
 
 The current task is derived from the task states, never stored: the task
 whose `doing` record is latest, else the first `to do` task in the contract
@@ -340,7 +342,7 @@ def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]],
         current.marks.append(CURRENT)
     _verdicts(root, contracts, {} if cache is None else cache)
     for contract in contracts:
-        _roll_up(contract)
+        _roll_up(contract, contract.id in own)
         for item in _walk(contract):
             if item.level in ("unit", "contract") and item.status == DONE and item.id in own:
                 item.evidence = state_evidence(own[item.id])
@@ -534,18 +536,20 @@ def dirty_contracts(root: Path) -> set[str]:
     return dirty
 
 
-def _roll_up(item: Item) -> None:
+def _roll_up(item: Item, closed: bool = False) -> None:
     """A unit's or contract's status from its children's but the inactive
-    verdict's; a verdict done alone never starts its contract."""
+    verdict's, and a closed contract's from its units' alone, `done` when it
+    has none; a verdict done alone never starts its contract."""
     for child in item.children:
         if child.level == "unit":
             _roll_up(child)
-    children = [child for child in item.children if INACTIVE not in child.marks]
+    children = [child for child in item.children if INACTIVE not in child.marks
+                and not (closed and child.level == "verdict")]
     statuses = [child.status for child in children]
     first = next((status for status in ROLL_UP if status in statuses), None)
     if first is not None:
         item.status = first
-    elif statuses and all(status == DONE for status in statuses):
+    elif (statuses or closed) and all(status == DONE for status in statuses):
         item.status = DONE
     elif any(child.status == DONE for child in children if child.level != "verdict"):
         item.status = DOING

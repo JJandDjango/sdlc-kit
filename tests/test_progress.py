@@ -876,9 +876,10 @@ def test_sketch_3_a_close_never_covers_the_verdict(tmp_path, capsys):
     assert _mark(root, capsys, "done", "beta")[0] == 0
     rows = _print(root, capsys)
     assert _tag(rows, "beta/b1-solo") == "done"
-    assert (_tag(rows, "beta/G0"), _tag(rows, "beta")) == ("to do", "doing")
-    # evidence shows only on an item that reads done; the drift mark (project-tree o3) stays
-    assert _shown(rows, "beta") == " no feature document"
+    # the verdict keeps its own reading; the closed contract reads done whatever its
+    # verdicts read (project-tree o4) and names its close after the drift mark (o3)
+    assert (_tag(rows, "beta/G0"), _tag(rows, "beta")) == ("to do", "done")
+    assert _shown(rows, "beta").startswith(" no feature document at ")
 
 
 def test_sketch_3_a_backfill_with_no_progress_file_makes_the_file_and_its_gitignore(

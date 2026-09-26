@@ -1050,8 +1050,8 @@ with `rN` the next revision and `rM` the signed revision intake read.
 
 🔴 Each unit and each task shows `done`, `doing` or `to do` from the
 progress record, as "Six statuses" reads them. A closed unit reads `done`.
-A closed contract reads `done` once each active gate's verdict does; its
-next gate, `inactive`, never counts.
+A closed contract reads `done`, whatever its verdicts read; each verdict
+still shows the validator's reading on its own line.
 
 🔴 A task blocked by its own record names its reason on its own line,
 `because <reason>`, the `--reason` that `taskcontract progress block` took.
