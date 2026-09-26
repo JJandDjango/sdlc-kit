@@ -15,7 +15,9 @@ its source field's own text (SC4.1, SC4.2, SC5.1, SC5.2).
 Since project-tree's o2-titles, the source text of every item but a
 contract is its plain name, right after its id, before its status; the
 summary after ` | ` holds only a contract's intent. The tests below read
-the plain name as the row's `name`.
+the plain name as the row's `name`. Since project-tree's o3-stale the tree
+opens a feature document for its revision table alone, and a contract's
+marks hold its drift mark (`no feature document`, `no "Ready:" row`).
 """
 
 from __future__ import annotations
@@ -640,7 +642,8 @@ def test_the_summary_comes_last_after_one_bar(tmp_path, capsys):
     assert (_name(rows, "gates/G3"), _row(rows, "gates/G3")[3]) == (names["G3"], " inactive")
     assert (_name(rows, "gates/G3/G3.1/slow-loop"),
             _row(rows, "gates/G3/G3.1/slow-loop")[3]) == (statement, " gate: G3.1")
-    assert _row(rows, "alpha")[3] == f" doc: docs/features/alpha.md | {INTENT}"
+    # the feature doc holds no revision table: its mark (project-tree o3), then the reference
+    assert _row(rows, "alpha")[3] == f' no "Ready:" row doc: docs/features/alpha.md | {INTENT}'
     assert _row(rows, "alpha/a1-core")[3] == ""
     assert _row(rows, "alpha/a2-edges")[3] == " depends_on: alpha/a1-core"
     head, summary = _parts(rows, "alpha/G0")
@@ -685,7 +688,7 @@ def test_a_link_prints_only_from_depends_on_or_a_finding_gate(tmp_path, capsys):
     assert linked == ["gates/G0/stale-pin", "gates/G3/G3.1/slow-loop", "alpha/a2-edges"]
 
 
-# --- SC4.2 no document read: a feature document is a file reference only ------
+# --- SC4.2 no document read but a feature doc's revision table (project-tree o3)
 
 _WATCHES: list[list[str]] = []  # while a list is here, it collects each path opened
 _HOOKED: list = []
@@ -719,7 +722,8 @@ def _under(path, place):
     return path == place or path.startswith(place.rstrip(os.sep) + os.sep)
 
 
-def test_a_feature_doc_shows_only_as_a_file_reference(tmp_path, capsys):
+def test_a_feature_doc_is_opened_for_its_revision_table_alone_and_no_other_document(
+        tmp_path, capsys):
     root = _repo(tmp_path)
     _feature_doc(root, "alpha")
     (root / "docs" / "gates").mkdir()
@@ -730,22 +734,29 @@ def test_a_feature_doc_shows_only_as_a_file_reference(tmp_path, capsys):
     opened, (code, out, _) = _opened_while(lambda: _run(root, capsys))
     assert code == 0
     rows = _rows(out)
-    assert _head(rows, "alpha") == " doc: docs/features/alpha.md"
-    assert _head(rows, "beta") == ""  # no feature doc, no reference
+    # project-tree o3: the feature doc is read for its revision table only, which
+    # this one lacks; its words never print
+    assert _head(rows, "alpha") == ' no "Ready:" row doc: docs/features/alpha.md'
+    assert _head(rows, "beta") == " no feature document"  # no feature doc, no reference
     assert "FEATURE-DOC-ONLY" not in out
     assert any(_under(path, _contract_path(root, "alpha")) for path in opened)  # the watch works
-    assert [path for path in opened if _under(path, root / "docs")
-            or any(_under(path, doc) for doc in documents)] == []
+    read = {os.path.normcase(os.path.realpath(path)) for path in opened
+            if _under(path, root / "docs") or any(_under(path, doc) for doc in documents)}
+    assert read == {os.path.normcase(os.path.realpath(root / "docs" / "features" / "alpha.md"))}
 
 
-def test_with_docs_gone_every_line_prints_the_same_but_its_reference(tmp_path, capsys):
+def test_with_docs_gone_every_line_prints_the_same_but_its_reference_and_its_mark(
+        tmp_path, capsys):
     root = _repo(tmp_path)
     _feature_doc(root, "alpha")
     _feature_doc(root, "beta")
     rows, first = _printed(root, capsys)
-    references = [" doc: docs/features/alpha.md", " doc: docs/features/beta.md"]
+    references = [' no "Ready:" row doc: docs/features/alpha.md',
+                  ' no "Ready:" row doc: docs/features/beta.md']
     assert [_head(rows, "alpha"), _head(rows, "beta")] == references
     assert _summary(rows, "alpha") == INTENT  # the print holds summaries to compare
     (root / "docs").rename(tmp_path / "docs-aside")
     _, second = _printed(root, capsys)
-    assert second == first.replace(references[0], "").replace(references[1], "")
+    # the reference goes, and the mark reads the missing file (project-tree o3)
+    assert second == first.replace(references[0], " no feature document").replace(
+        references[1], " no feature document")

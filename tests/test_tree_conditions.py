@@ -530,7 +530,9 @@ def test_sc2_1_an_inactive_gate_never_counts_toward_its_contracts_status(tmp_pat
     assert _tag(rows, "ready/G0") == "done"
     assert _row(rows, "ready/G1")["line"] == "  ready/G1 Requirements / Spec [to do] inactive"
     assert [_tag(rows, f"ready/G1/{c}") for c, _ in G1_LINES] == ["to do"] * 3
-    assert _row(rows, "ready")["line"].startswith("ready (no title) [done] at 1a2b3c4 | ")  # a closed contract
+    # a closed contract; its drift mark (project-tree o3) before its evidence
+    assert _row(rows, "ready")["line"].startswith(
+        "ready (no title) [done] no feature document at 1a2b3c4 | ")
 
 
 def test_sc2_1_the_conditions_of_every_gate_but_g0_read_to_do(tmp_path, capsys):
@@ -741,23 +743,32 @@ def test_usage_marks_its_project_tree_subsections_red_and_its_example_is_the_tre
     part = section[section.index(f"### Gates and their conditions {RED}"):]
     example = part.split("```\n", 2)[1].splitlines()
     # the contract line opens on its id and its title, then its status (project-tree
-    # o2); the marks after it wait for o3, so the line is pinned through its status
-    head = "apply-discount Apply one discount code per order [to do]"
-    assert example[0].startswith(head)
+    # o2), then its drift mark before intake writes the Ready row (project-tree o3)
+    assert example[0] == (
+        'apply-discount Apply one discount code per order [to do] no "Ready:" row '
+        "doc: docs/features/apply-discount.md | Checkout applies one discount code per order.")
     root = _repo(tmp_path)
     _term(root, "discount-code", "draft")
     _put(root, "apply-discount", _contract(
         "apply-discount", title="Apply one discount code per order",
         intent="Checkout applies one discount code per order.",
         entities=["discount-code"]))
+    # the feature document, its revision table signed but not yet read by intake
+    document = root / "docs" / "features" / "apply-discount.md"
+    document.parent.mkdir(parents=True)
+    document.write_text(
+        "| Revision Date | Revised By | Changes Made |\n| :-: | :-: | :-- |\n"
+        "| 2026-09-24 | user | r1: Created through an interview |\n"
+        "| 2026-09-24 | user | r2: The request half finished; signed by the PO seat |\n"
+        "\n# apply-discount - Apply one discount code per order\n", encoding="utf-8")
     _, out, _ = _print(root, capsys)
     lines = out.splitlines()
     tops = [text for text in lines if text.startswith("apply-discount ")]
-    assert len(tops) == 1 and tops[0].startswith(head), tops
+    assert len(tops) == 1, tops
     at = lines.index(tops[0])
-    # every line under it, whole: the example, line for line
-    wanted = [re.sub(r" at 1a2b3c4$", " at no commit", text) for text in example[1:]]
-    assert lines[at + 1:at + len(example)] == wanted
+    # the whole example, the contract line included, line for line
+    wanted = [re.sub(r" at 1a2b3c4$", " at no commit", text) for text in example]
+    assert lines[at:at + len(example)] == wanted
 
 
 # --- ruling: progress refuses a condition ----------------------------------------------

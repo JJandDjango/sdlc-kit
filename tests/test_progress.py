@@ -862,7 +862,8 @@ def test_sketch_3_a_close_shows_its_head_on_its_own_item_and_keeps_each_tasks_ow
     assert _shown(rows, f"{UNIT}/prove-red") == ""       # done by a close alone
     assert _shown(rows, "alpha/a2-edges/green") == ""
     assert _shown(rows, UNIT) == f" at {second}"
-    assert _shown(rows, "alpha") == f" at {third}"
+    # the contract's drift mark (project-tree o3) stands before its evidence
+    assert _shown(rows, "alpha") == f" no feature document at {third}"
 
 
 def test_sketch_3_a_close_never_covers_the_verdict(tmp_path, capsys):
@@ -874,7 +875,8 @@ def test_sketch_3_a_close_never_covers_the_verdict(tmp_path, capsys):
     rows = _print(root, capsys)
     assert _tag(rows, "beta/b1-solo") == "done"
     assert (_tag(rows, "beta/G0"), _tag(rows, "beta")) == ("to do", "doing")
-    assert _shown(rows, "beta") == ""  # evidence shows only on an item that reads done
+    # evidence shows only on an item that reads done; the drift mark (project-tree o3) stays
+    assert _shown(rows, "beta") == " no feature document"
 
 
 def test_sketch_3_a_backfill_with_no_progress_file_makes_the_file_and_its_gitignore(

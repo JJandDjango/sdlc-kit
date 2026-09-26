@@ -35,7 +35,10 @@ list gives; listing `id` changes nothing, a repeated name shows its field
 once, and `[]` shows the id and its plain name alone (SC2.1). Since
 project-tree's o2-titles each item line opens on its id, then its plain
 name (a contract's `title`, else `(no title)`; a unit's `done_means`; a
-task's name), then the fields; the summary holds only a contract's intent. With `parts:` unset (no config,
+task's name), then the fields; the summary holds only a contract's intent.
+Since project-tree's o3-stale a contract's marks hold its drift mark: `no
+feature document` with no file at docs/features/<id>.md, and `no "Ready:"
+row` for alpha's feature doc, which holds no revision table. With `parts:` unset (no config,
 no `tree:`, no `pane:`, a `pane:` without `parts:`, or a `tree:` or `pane:`
 that is not a mapping) each item line shows every field it has. Set, valid
 or not, it leaves the waiting line, the where-am-I line, the fold lines and
@@ -102,6 +105,10 @@ CLEAR = "\x1b[H\x1b[2J"  # cursor home, then clear the screen: every render open
 HEAD = "1a2b3c4"
 INTENT = ("A fixture contract for the pane-view suite; its units carry the "
           "sketch shapes that check ids come from.")
+# A feature's mark after its status (project-tree o3): a contract with no file
+# at docs/features/<id>.md, and one whose document holds no Ready row.
+NO_DOCUMENT = " no feature document"
+NO_READY = ' no "Ready:" row'
 
 WHERE_PROVE_RED = "specs/alpha/contract.yaml > alpha > a2-edges > prove-red"
 WHERE_WRITE_TESTS = "specs/alpha/contract.yaml > alpha > a1-core > write-tests"
@@ -512,7 +519,7 @@ def test_sc3_1_a_unit_line_and_a_task_line_open_on_the_last_segment_of_their_ids
     assert renders == [[
         WHERE_PROVE_RED,
         "2 more: 1 to do, 1 done",
-        f"alpha (no title) [failed] | {INTENT}",
+        f"alpha (no title) [failed]{NO_DOCUMENT} | {INTENT}",
         "  3 more: 1 to do, 1 done, 1 blocked",
         PROVE_RED_UNIT,                               # not `  alpha/a2-edges [failed] ...`
         "    9 more: 6 to do, 2 done, 1 failed",
@@ -533,7 +540,8 @@ def test_sc3_1_the_top_level_line_opens_on_its_full_id_and_every_line_under_it_o
     # the request's own example: `t6-query-face`, `approve-tests`
     assert _item_lines(render) == [
         (0, "tree-view"), (2, "t6-query-face"), (4, "approve-tests")]
-    assert render[3] == whole["tree-view"] == f"tree-view (no title) [waiting on a seat] | {INTENT}"
+    assert render[3] == whole["tree-view"] == (
+        f"tree-view (no title) [waiting on a seat]{NO_DOCUMENT} | {INTENT}")
     assert render[5] == ("  t6-query-face the work for t6-query-face is done [waiting on a seat] "
                          "depends_on: tree-view/t5-pane-face")
     assert render[7] == "    approve-tests Approve the test list [waiting on a seat] current"
@@ -545,7 +553,7 @@ def test_sc3_1_ids_whose_segments_carry_hyphens_and_digits_open_on_their_whole_l
     _, (render,) = _pane(root)
     assert _item_lines(render) == [
         (0, "pane-view-2"), (2, "p10-where-line-3"), (4, "two-key")]
-    assert render[1] == f"pane-view-2 (no title) [doing] | {INTENT}"
+    assert render[1] == f"pane-view-2 (no title) [doing]{NO_DOCUMENT} | {INTENT}"
     assert render[3] == ("  p10-where-line-3 the work for p10-where-line-3 is done [doing]"
                          " depends_on: pane-view-2/p9-short-ids-2")
     assert render[5] == "    two-key Two-Key PASS [doing] current"
@@ -576,7 +584,8 @@ def test_sc3_1_the_cut_to_the_panes_width_applies_to_the_shortened_line(
     assert render[-1] == PROVE_RED_TASK
     assert render[-3] == PROVE_RED_UNIT[:width - 3] + "..."
     assert render == cut_lines([
-        WHERE_PROVE_RED, "2 more: 1 to do, 1 done", f"alpha (no title) [failed] | {INTENT}",
+        WHERE_PROVE_RED, "2 more: 1 to do, 1 done",
+        f"alpha (no title) [failed]{NO_DOCUMENT} | {INTENT}",
         "  3 more: 1 to do, 1 done, 1 blocked", PROVE_RED_UNIT,
         "    9 more: 6 to do, 2 done, 1 failed", PROVE_RED_TASK], width)
 
@@ -606,7 +615,7 @@ def test_sc3_1_the_short_ids_follow_the_current_task_to_another_unit_and_another
 # --- SC3.2 full ids everywhere else -------------------------------------------------------
 
 SOLO_TREE = f"""\
-solo-2 (no title) [waiting on a seat] | {INTENT}
+solo-2 (no title) [waiting on a seat]{NO_DOCUMENT} | {INTENT}
   solo-2/G0 Planning / Intake [to do] inactive
     solo-2/G0/G0.1 Definition-of-ready [to do]
     solo-2/G0/G0.2 Vocabulary coverage [to do]
@@ -742,7 +751,8 @@ UNREADABLE_BETA = re.compile(
 ALPHA_NAMED = "alpha (no title)"
 UNIT_NAMED = "  a2-edges the work for a2-edges is done"
 TASK_NAMED = "    prove-red Prove red"
-FULL_CONTRACT = f"{ALPHA_NAMED} [doing] doc: docs/features/alpha.md | {INTENT}"
+# alpha's feature doc holds no revision table, so its line carries the mark
+FULL_CONTRACT = f"{ALPHA_NAMED} [doing]{NO_READY} doc: docs/features/alpha.md | {INTENT}"
 FULL_UNIT = f"{UNIT_NAMED} [doing] depends_on: alpha/a1-core"
 FULL_TASK = f"{TASK_NAMED} [doing] current"
 
@@ -804,7 +814,8 @@ def _err_at_each_tick(capsys, *steps):
 ALONE = [
     pytest.param("status", (f"{ALPHA_NAMED} [doing]", f"{UNIT_NAMED} [doing]",
                             f"{TASK_NAMED} [doing]"), id="status"),
-    pytest.param("marks", (ALPHA_NAMED, UNIT_NAMED, f"{TASK_NAMED} current"), id="marks"),
+    pytest.param("marks", (f"{ALPHA_NAMED}{NO_READY}", UNIT_NAMED, f"{TASK_NAMED} current"),
+                 id="marks"),
     pytest.param("evidence", (ALPHA_NAMED, UNIT_NAMED, TASK_NAMED), id="evidence"),
     pytest.param("links", (ALPHA_NAMED, f"{UNIT_NAMED} depends_on: alpha/a1-core", TASK_NAMED),
                  id="links"),
@@ -836,7 +847,7 @@ def test_sc2_1_each_field_shown_reads_exactly_as_on_the_whole_trees_line(tmp_pat
     assert render[2] == whole["alpha"].split(" | ")[0]
     assert render[4] == short_line(whole["alpha/a2-edges"]).split(" | ")[0]
     assert render[6] == short_line(whole["alpha/a2-edges/prove-red"]).split(" | ")[0]
-    assert render == _doc_render(f"{ALPHA_NAMED} [doing] doc: docs/features/alpha.md",
+    assert render == _doc_render(f"{ALPHA_NAMED} [doing]{NO_READY} doc: docs/features/alpha.md",
                                  f"{UNIT_NAMED} [doing] depends_on: alpha/a1-core",
                                  f"{TASK_NAMED} [doing] current")
 
@@ -847,12 +858,13 @@ ORDERS = [
                   f"{UNIT_NAMED} [doing] depends_on: alpha/a1-core", f"{TASK_NAMED} [doing]"),
                  id="summary-links-status"),
     pytest.param(["summary", "marks", "doc"],
-                 (f"{ALPHA_NAMED} doc: docs/features/alpha.md | {INTENT}",
+                 (f"{ALPHA_NAMED}{NO_READY} doc: docs/features/alpha.md | {INTENT}",
                   UNIT_NAMED,
                   f"{TASK_NAMED} current"),
                  id="summary-marks-doc"),
     pytest.param(["links", "marks", "status"],
-                 (f"{ALPHA_NAMED} [doing]", f"{UNIT_NAMED} [doing] depends_on: alpha/a1-core",
+                 (f"{ALPHA_NAMED} [doing]{NO_READY}",
+                  f"{UNIT_NAMED} [doing] depends_on: alpha/a1-core",
                   f"{TASK_NAMED} [doing] current"),
                  id="links-marks-status"),
 ]
@@ -901,7 +913,7 @@ def test_sc2_1_a_repeated_name_shows_its_field_once(tmp_path, capsys):
     root = _doc_repo(tmp_path)
     _parts(root, ["marks", "status", "marks", "status"])
     _, renders = _pane(root)
-    assert renders == [_doc_render(f"{ALPHA_NAMED} [doing]", f"{UNIT_NAMED} [doing]",
+    assert renders == [_doc_render(f"{ALPHA_NAMED} [doing]{NO_READY}", f"{UNIT_NAMED} [doing]",
                                    f"{TASK_NAMED} [doing] current")]
     assert capsys.readouterr().err == ""
 
@@ -992,7 +1004,7 @@ def test_sc2_2_at_an_approval_the_parts_leave_the_waiting_line_and_the_where_lin
         WAIT_QUERY_FACE,
         WHERE_QUERY_FACE,
         "1 more: 1 to do",                            # pane-view
-        "tree-view (no title) [waiting on a seat]",
+        f"tree-view (no title) [waiting on a seat]{NO_DOCUMENT}",
         "  2 more: 2 to do",                          # tree-view/G0 inactive, tree-view/t5-pane-face
         "  t6-query-face the work for t6-query-face is done [waiting on a seat]",
         "    7 more: 7 to do",                        # six tasks and one check
@@ -1214,8 +1226,8 @@ NAMED_TASKS = ("    9 more: approve-tests [done], write-tests [done], green [to 
 
 def _path_render(top, units, tasks):
     """The path fixture's pane with the given fold lines."""
-    return [WHERE_PROVE_RED, top, f"alpha (no title) [failed] | {INTENT}", units, PROVE_RED_UNIT,
-            tasks, PROVE_RED_TASK]
+    return [WHERE_PROVE_RED, top, f"alpha (no title) [failed]{NO_DOCUMENT} | {INTENT}", units,
+            PROVE_RED_UNIT, tasks, PROVE_RED_TASK]
 
 
 NAMED = _path_render(NAMED_TOP, NAMED_UNITS, NAMED_TASKS)
@@ -1267,7 +1279,7 @@ def test_sc4_1_a_check_whose_id_joins_check_ids_folds_by_its_whole_last_segment(
     assert renders == [[
         WHERE_WRITE_TESTS,
         "1 more: beta [to do]",
-        f"alpha (no title) [doing] | {INTENT}",
+        f"alpha (no title) [doing]{NO_DOCUMENT} | {INTENT}",
         "  2 more: G0 [to do], a2-edges [to do]",
         "  a1-core the work for a1-core is done [doing]",
         ("    8 more: approve-tests [to do], prove-red [to do], green [to do], "
@@ -1311,7 +1323,7 @@ def test_sc4_1_the_requests_own_example_at_80_columns_cuts_the_long_fold_line(
         WAIT_QUERY_FACE,
         WHERE_QUERY_FACE,
         "1 more: pane-view [to do]",
-        "tree-view (no title) [waiting on a seat]",
+        f"tree-view (no title) [waiting on a seat]{NO_DOCUMENT}",
         "  2 more: G0 [to do], t5-pane-face [to do]",
         "  t6-query-face the work for t6-query-face is done [waiting on a seat]",
         "    7 more: write-tests [to do], prove-red [to do], green [to do], approve-co...",
@@ -1342,7 +1354,7 @@ def test_sc4_1_a_fold_line_under_names_is_cut_to_the_panes_width_like_every_othe
 LEAVE_STATUS_OUT = [
     pytest.param([], (ALPHA_NAMED, UNIT_NAMED, TASK_NAMED), id="the-empty-list"),
     pytest.param(["marks", "summary"],
-                 (f"{ALPHA_NAMED} | {INTENT}", UNIT_NAMED, f"{TASK_NAMED} current"),
+                 (f"{ALPHA_NAMED}{NO_READY} | {INTENT}", UNIT_NAMED, f"{TASK_NAMED} current"),
                  id="marks-and-summary"),
 ]
 
@@ -1376,7 +1388,7 @@ def test_sc4_1_with_no_current_task_the_items_line_names_the_top_level_items(tmp
     assert renders[1][:4] == [
         WHERE_WRITE_TESTS,
         "3 more: gates/G0 [to do], gates/none [to do], beta [to do]",
-        f"alpha (no title) [doing] | {INTENT}",
+        f"alpha (no title) [doing]{NO_DOCUMENT} | {INTENT}",
         "  3 more: G0 [done], G1 [to do], a2-edges [to do]"]
     assert renders[2] == [
         "no current task",

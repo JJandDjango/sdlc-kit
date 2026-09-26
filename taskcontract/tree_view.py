@@ -7,7 +7,9 @@ verdict's gate, a condition or a task; a unit's `done_means`; a check's
 sketch line; a finding's statement; a contract's `title`, else `(no
 title)`). Then the status in brackets, or a finding's kind in its place,
 then the item's marks (`inactive` on a gate a finding names that is not
-active and on a contract's next gate, `current` on the current task), then
+active and on a contract's next gate, `current` on the current task, and
+on a contract its drift mark: `no feature document`, `no "Ready:" row` or
+`stale: document rD, contract from rM`), then
 its evidence (on a `G0` verdict, the validator command and the `HEAD` it
 read; on a check whose last run was green as expected, that run's command
 and `HEAD`; on a task done by its own record, `by <seat>` on an approval

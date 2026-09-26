@@ -529,7 +529,8 @@ def test_sc1_1_parts_empty_shows_the_id_and_the_plain_name(tmp_path, capsys):
                   "  a2-edges the work for a2-edges is done [doing]",
                   "    prove-red Prove red [doing]"), id="summary-status"),
     pytest.param(["links", "id", "marks"],
-                 (f"alpha {TITLE}",
+                 # alpha's feature doc holds no revision table: its drift mark (project-tree o3)
+                 (f'alpha {TITLE} no "Ready:" row',
                   "  a2-edges the work for a2-edges is done depends_on: alpha/a1-core",
                   "    prove-red Prove red current"), id="links-id-marks"),
     pytest.param(["doc", "evidence", "status"],

@@ -10,9 +10,9 @@ contract and runs git twice: once for `HEAD`, once for the contract files
 that differ from it. A caller that passes a verdict cache (the `--follow`
 pane) keeps the validator's reading per contract, the verdict's and its
 conditions', between prints, and the validator runs only for a contract
-the cache lacks; git still runs at every print. It asks only whether
-docs/features/<id>.md exists, never opens it, reads no other document and
-writes no file.
+the cache lacks; git still runs at every print. It opens each contract's
+docs/features/<id>.md for its revision table only, prints none of its
+words, reads no other document and writes no file.
 
 The gates stand first, at the repository level, each opening first into
 its conditions, the named parts gates.yaml lists in its page's order. A
@@ -69,6 +69,18 @@ carries that path as its feature doc reference. A line prints its plain
 name after its id, then its links, the reference and the summary after the
 marks and evidence.
 
+A contract carries at most one drift mark, read afresh at every print from
+its feature doc's revision table, the first table in the file. A row counts
+when its last cell opens on `r<N>:`; the document's revision is the highest
+N of a counted row that is neither a `Ready:` nor a `Measured:` row, and
+the contract's is the `rM` that the first `derived from rM` in the newest
+`Ready:` row naming one gives, the lower row winning a tie. The mark reads
+`no feature document` when no file is at docs/features/<id>.md, `no
+"Ready:" row` when no `Ready:` row names an `rM` or the file cannot be read
+as text, and `stale: document rD, contract from rM` when the document's
+revision is higher; else there is none, and the contract matches its
+document. A contract the tree cannot read as a mapping carries it too.
+
 Each item but a gate, a condition, a task and the no-gate item names the
 file it is read from, and a unit or check the keys to its entry there;
 `reference` turns that into the entry's line, parsing the file afresh, so
@@ -116,6 +128,16 @@ FOLDS = ("names", "counts")
 _TRAILING = re.compile(r"\(([^()]*)\)\s*$")
 _CHECK_ID = re.compile(r"^[A-Za-z][A-Za-z0-9._-]*$")
 
+# A contract's drift marks when it has no stale one.
+NO_DOCUMENT = "no feature document"
+NO_READY = 'no "Ready:" row'
+# A feature doc's revision table: a pipe after a backslash never splits a
+# cell; a counted row's last cell opens on `r<N>:`, and a `Ready:` row names
+# its `rM` by the first `derived from rM`, the digits ending at a non-word.
+_PIPE = re.compile(r"(?<!\\)\|")
+_REVISION = re.compile(r"r([0-9]+):\s*")
+_DERIVED = re.compile(r"derived from r([0-9]+)(?!\w)")
+
 
 @dataclass
 class Item:
@@ -130,7 +152,7 @@ class Item:
     children: list[Item] = field(default_factory=list)
     evidence: str | None = None  # what the status was read from
     links: list[str] = field(default_factory=list)  # each `<kind>: <target>`
-    doc: str | None = None  # a contract's feature doc path, never opened
+    doc: str | None = None  # a contract's feature doc path
     name: str | None = None  # the plain name, by the text rule
     summary: str | None = None  # a contract's intent, by the text rule
     source: str | None = None  # the repo path of the file the item is read from
@@ -226,6 +248,55 @@ def text(value) -> str | None:
     if not isinstance(value, str):
         return None
     return " ".join(value.strip().splitlines()) or None
+
+
+def drift(path: Path) -> str | None:
+    """A contract's drift mark from the feature doc at `path`: `no feature
+    document` when no file is there, `no "Ready:" row` when no `Ready:` row
+    names an `rM` or the file cannot be read as text, `stale: document rD,
+    contract from rM` when the document's revision passed the contract's,
+    else None. Only the first table is read, and none of its words print."""
+    if not path.is_file():
+        return NO_DOCUMENT
+    try:
+        lines = path.read_bytes().decode("utf-8-sig").splitlines()
+    except (OSError, UnicodeDecodeError):
+        return NO_READY
+    document = contract = None
+    newest = -1  # the N of the `Ready:` row that gave `contract`
+    for cell in _last_cells(lines):
+        match = _REVISION.match(cell)
+        if match is None:
+            continue
+        n, rest = int(match.group(1)), cell[match.end():]
+        if rest.startswith("Ready:"):
+            derived = _DERIVED.search(rest)
+            if derived is not None and n >= newest:  # a tie: the lower row wins
+                newest, contract = n, int(derived.group(1))
+        elif not rest.startswith("Measured:"):
+            document = n if document is None else max(document, n)
+    if contract is None:
+        return NO_READY
+    if document is not None and document > contract:
+        return f"stale: document r{document}, contract from r{contract}"
+    return None
+
+
+def _last_cells(lines: list[str]):
+    """The last cell of each row of the first table, the first run of lines
+    that open on `|`, blanks stripped; a row's one closing pipe is dropped
+    first, and a row without it still counts."""
+    started = False
+    for line in lines:
+        row = line.strip()
+        if not row.startswith("|"):
+            if started:
+                return
+            continue
+        started = True
+        if row.endswith("|") and not row.endswith("\\|"):
+            row = row[:-1]
+        yield _PIPE.split(row)[-1].strip()
 
 
 def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]],
@@ -654,15 +725,17 @@ def _conditions(entry: dict | None) -> list[dict]:
 def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str],
                    upcoming: str | None, gates: dict[str, dict],
                    tasks: dict[str, dict]) -> Item:
-    """A contract: its verdict at each active gate, then the upcoming gate's
-    verdict marked `inactive`, each opening into its gate's conditions; then
-    its units. An unreadable contract keeps its verdicts and shows no unit."""
+    """A contract with its drift mark: its verdict at each active gate, then
+    the upcoming gate's verdict marked `inactive`, each opening into its
+    gate's conditions; then its units. An unreadable contract keeps its
+    verdicts and its mark, and shows no unit."""
     doc = f"docs/features/{cid}.md"
     source = f"specs/{cid}/contract.yaml"
     verdicts = [(gate, []) for gate in active]
     if upcoming is not None:
         verdicts.append((upcoming, [INACTIVE]))
-    item = Item(cid, "contract",
+    mark = drift(root / doc)
+    item = Item(cid, "contract", marks=[mark] if mark else [],
                 children=[Item(f"{cid}/{gate}", "verdict", marks=marks,
                                children=_condition_items(f"{cid}/{gate}", gates.get(gate)),
                                name=_name(gates.get(gate)),

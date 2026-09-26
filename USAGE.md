@@ -948,8 +948,8 @@ conditions.
 | a finding that names a condition | `gates/<gate>/<condition>/<finding>` |
 
 🔴 `taskcontract tree <id>` prints a condition as it prints a gate: its
-line, `summary:` and the gate's `page:`. Its diagnostics print with the
-whole tree.
+line, which carries its plain name, and the gate's `page:`. Its
+diagnostics print with the whole tree.
 
 ### Plain names and titles 🔴
 
