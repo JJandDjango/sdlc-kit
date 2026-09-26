@@ -1,85 +1,81 @@
-# Plan - Session 54 (2026-09-26) - project-tree o5, o6
+# Plan - Session 55 (2026-09-26) - project-tree o7, release 0.16.0
 
-**Deliverable:** units `o5-pane-outline` and `o6-pane-keys` of
-`project-tree` on one PR, each with its own Two-Key PASS:
-
-- o5: with the `pane` extra (Textual `>=8.2,<9`), `taskcontract tree
-  --follow` runs a Textual app in the new `taskcontract/pane.py`: the whole
-  tree as an outline, each feature open down to its units, the current
-  task marked and in view, and a line under the outline with the plain
-  name and document reference of the item at the cursor. Without the
-  extra, the install line on stderr and exit 2. Checks SC4.1 and SC1.2.
-- o6: Up, Down, Right, Left, a click and the wheel; a redraw within two
-  seconds of a source change keeps the cursor and every open and closed
-  item; the waiting line stays first; notify runs once per arrival at an
-  approval; Ctrl-C exits 0. Checks SC4.2, SC4.3 and SC3.3.
+**Deliverable:** unit `o7-release` of `project-tree` with its Two-Key
+PASS, then the release: the merge, the annotated tag `v0.16.0` at the
+merge, and the self-pin through its own PR. o7's done_means: kit 0.16.0
+ships with the `USAGE.md` marks all green, its `CHANGELOG.md` entry and
+ADR 0032; `taskcontract tree` still prints every item and exits 0, and
+`taskcontract tree <id>` answers every id in at most seven lines (SC1.3).
 
 **Rulings at plan review** (the user's; Claude's recommendation first):
 
-1. Delegation as in session 53. The user approves the USAGE batch (step
-   2) in chat before any drafting; Claude approves each test list and
-   commit on review. The push, the PR and the merge stay on the user's
-   word.
-2. The 0.15.0 loop: o5 points `--follow` at the app and leaves
-   `tree_view.follow()` callable in-process, so its notify and redraw
-   tests hold while the app has neither. o6 moves the watch, notify and
-   Ctrl-C into the app, retires `follow()`, and moves its tests to
-   `tests/test_pane.py`. Retiring it at o5 would drop tested behavior for
-   one unit.
-3. Tests drive the app through Textual's headless `App.run_test()` inside
-   `asyncio.run`, so the `test` extra gains Textual alone, no
-   pytest-asyncio.
-
-**Closed.** The deliverable is met: o5 at `b9a2cb1` and its fix
-`afad4b0`, o6 at `202f01d` and its fix `39811d7`; Two-Key PASS for each at
-round 2. Suite 638 passed, scope-check green. The push and the PR wait on
-the user's word.
+1. Merge PR #63 by merge commit once CI reads green, then cut
+   `session-55-project-tree-o7` from main's new tip. Cutting from session
+   54's tip would stack two unmerged PRs.
+2. The live run comes first, before any release text: the pane runs in a
+   herdr pane on Windows, and the user drives its keys. A defect it finds
+   is an OPEN and a re-intake, never a silent fix inside o7, whose
+   done_means covers no pane behavior.
+3. No test list for o7. o1's tests already pin SC1.3
+   (`tests/test_tree_conditions.py:801` and `:842`), so o7 records
+   SC1.3's run green on them, as t9 did for tree-view. The feature
+   document names `tests/test_tree_view.py`, which no longer exists; the
+   contract names no test file, and Two-Key grades the contract.
+4. Claude writes the release text: the USAGE sweep, the CHANGELOG entry,
+   ADR 0032 and MAP's work-tree row. The user approves all of it in one
+   batch, shown in chat as before and after, and then approves the commit
+   (o7's seat is `user`). Two-Key runs through the verifier Workflow.
 
 ## Steps
 
-1. ~~Open.~~ Branch cut from `9d0e897`; Textual 8.2.8 installed; the plan
-   at `c87808d`.
-2. ~~USAGE, one batch.~~ "The interactive pane" refined with four
-   readings (the current task's unit opens at the start and on a move, the
-   plain-name cut, the 0.15.0 lines retired), approved in chat, at
-   `c9e05e6`.
-3. ~~o5.~~ 20 tests (31 cases); Claude added a line-break plain name at
-   approval. At `b9a2cb1`; Two-Key FAIL at round 1: the cut dropped
-   `current`, so a pane under 72 columns lost the marker (Claude had
-   accepted that deviation). Fix at `afad4b0` with a test at 60 and 68
-   columns and USAGE's cut sentence aligned; PASS at round 2.
-4. ~~o6.~~ The first drafter passed 400K tokens and was stopped on the
-   user's word; three narrow agents replaced it: keys (11 tests), renders
-   and notify (21), and the 0.15.0 loop's retirement (150 cases retired,
-   eleven tests amended). Claude ruled that a finding counts by its kind,
-   added an unset-notify test, and, reviewing the code, pinned red a
-   notify failure a render dropped unseen, which the developer fixed. The
-   tests went to `tests/test_pane_keys.py` and `tests/test_pane_renders.py`,
-   not `tests/test_pane.py`. At `202f01d`; Two-Key FAIL at round 1 on a
-   test docstring stating the old tick order; fix at `39811d7`; PASS at
-   round 2.
-5. Close. PR; STATE.md regenerated; this plan struck.
+1. Open: PR #63 merged; the branch cut; this plan committed.
+2. The live run: Claude splits a herdr pane with `--no-focus` and runs
+   `python -m taskcontract tree --follow` in the kit's root; the user
+   drives the keys, the clicks and the wheel, and watches a render and
+   Ctrl-C; Claude closes the pane after.
+3. The release text, one batch for approval:
+   - `USAGE.md`: every project-tree mark green; the sweep from STATE.md
+     (the top of section 9, the green paragraphs at 622-624, 630-632 and
+     767-771, "The pane's lines", the `--follow` bullet of "The three
+     modes", "Plain names and titles", a finding counted by its kind, o3's
+     tie-break, an `rM` above the document's revision).
+   - ADR 0031 line 43; ADR 0032 (new); `CHANGELOG.md`'s 0.16.0 entry;
+     MAP's work-tree row names the Textual outline and ADR 0032.
+   - Code-side wording: the schema's top-level `description` names
+     `title`; `tree_view.py`'s docstring says "id" where `_fold` prints
+     one; `tests/test_pane.py` drops its unused `tree_view` import and its
+     cut sentence names the group.
+4. The version: `pyproject.toml` and `KIT_VERSION` read `0.16.0`.
+5. o7's commit, approved by the user; SC1.3 run green after it with no
+   tracked file modified; the suite run whole.
+6. Two-Key; o7 and the contract closed through `taskcontract progress`.
+7. Close: STATE.md regenerated, this plan struck; the push and the PR on
+   the user's word.
+8. Release: the merge on the user's word, the annotated tag `v0.16.0` at
+   the merge, then the self-pin (`.github/workflows/sdlc.yml` line 20 and
+   `USAGE.md` line 377 to `@v0.16.0`) through its own PR, with USAGE's
+   `uv` line run against the new tag.
 
-Steps 1, 2 and 5 sit outside a contract unit, so the tree does not show
+Steps 1, 2, 7 and 8 sit outside a contract unit, so the tree does not show
 them.
 
-Decisions this session: fourteen. The user's: rulings 1 to 3 and the plan
-(1 to 4); the USAGE batch and its four readings (5); the drafter split
-(6). Claude's, on review: the two test lists (7, 8), with the finding
-ruling in o6's; the four commits (9 to 12). The user's at the close: (13)
-the push and the PR; (14) the merge.
+Decisions this session: nine, all the user's. (1) This plan and rulings 1
+to 4; (2) the merge of PR #63; (3) the live run's verdict; (4) the release
+text batch; (5) o7's commit; (6) the push and the PR; (7) the merge; (8)
+the tag and its message; (9) the self-pin PR.
 
 Deferred, not this session:
-- o7 (ships 0.16.0) with its sweep: STATE.md Next actions 2, plus this
-  session's Two-Key advisories.
-- A live run of the pane in a herdr pane on Windows; the receipts are
-  headless.
-- Prerequisites 7 to 9, G1, and the rest of STATE.md's carried list.
+- Test gaps: no pane test checks that a `parts:` list without `evidence`
+  hides an approval's seat; the row pattern in `tests/conftest.py` splits
+  a plain name at its first ` [`.
+- Prerequisites 7 to 9 on the kit's own tree (titles, feature documents,
+  progress records).
+- G1, the pilot's config line, and the rest of STATE.md's carried list.
 
 House rules in force: no pipes or chains in any authored command string;
 commit messages via Write + `git commit -F`; Workflows launched by
 `scriptPath`; a `Contract:` trailer, alone in the final paragraph, on every
 commit that touches a non-free path; each task recorded through
 `taskcontract progress`, each check's run through `progress run`; no
-tracked file touched while a verifier runs; a surprise mid-build is an OPEN
-and a re-intake, never a silent edit.
+tracked file touched while a verifier runs; every herdr probe closes the
+panes it opens; the merge, the tag, the push and the PR on the user's word.
