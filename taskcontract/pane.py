@@ -58,9 +58,9 @@ command set as `tree: notify:` through the shell at the root, with the
 task's id in `SDLC_NODE`, and never waits on it; one that cannot start
 reports `notify failed, exit 127: <command>` at once, and one found ended
 nonzero at a later tick reports `notify failed, exit <code>: <command>`
-after that tick's render, kept until the next render. Ctrl-C ends the pane with exit 0 and leaves
-the commands it started running. The pane writes no file and nothing on
-stderr.
+after that tick's render, kept until the next render. Ctrl-C ends the
+pane with exit 0 and leaves the commands it started running. The pane
+writes no file and nothing on stderr.
 """
 
 from __future__ import annotations

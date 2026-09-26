@@ -5,9 +5,10 @@ o6-pane-keys: SC4.3 and SC3.3).
 pane did (every file under specs/, .sdlc/findings/, .sdlc/progress/ and
 docs/features/, plus .sdlc/config.yaml and the kit's two lists) every
 `interval` seconds, and renders again when the listing changed, never while
-nothing changes. `app.check()` is one such tick, called by hand: it first
-collects each notify command that has ended (a nonzero end adds its line to
-`#reported`), then lists the sources and renders once when they changed.
+nothing changes. `app.check()` is one such tick, called by hand: it lists
+the sources and renders once when they changed, then collects each notify
+command that has ended, a nonzero end adding its line to `#reported` after
+that render's lines, so no render drops a failure unseen.
 Each contract keeps its G0 reading until its file changes; a change under
 specs/vocabulary/ drops every reading.
 

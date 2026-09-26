@@ -46,8 +46,9 @@ then; without the `pane` extra it prints `taskcontract tree: --follow
 needs the pane extra - pip install 'sdlc-taskcontract[pane]'` on stderr
 and exits 2. The pane is described there. What it needs from here needs
 no Textual and stays here: the line an item prints, the path to the
-current task, a closed item's group (the counts by status, or under `tree:
-pane: fold: names` each item's name and status), the listing of the
+current task, a closed item's group (the counts by status, a finding by
+its kind, or under `tree: pane: fold: names` each item's name and status
+or kind), the listing of the
 pane's sources, and the `G0` readings a change to them drops.
 """
 
