@@ -30,33 +30,50 @@
    `asyncio.run`, so the `test` extra gains Textual alone, no
    pytest-asyncio.
 
+**Closed.** The deliverable is met: o5 at `b9a2cb1` and its fix
+`afad4b0`, o6 at `202f01d` and its fix `39811d7`; Two-Key PASS for each at
+round 2. Suite 638 passed, scope-check green. The push and the PR wait on
+the user's word.
+
 ## Steps
 
-1. Open. Branch `session-54-project-tree-o5-o6` from `9d0e897`; install
-   Textual `>=8.2,<9` locally; commit this plan.
-2. USAGE, one batch. Refine "The interactive pane" for o5 and o6, shown
-   in chat in full. It settles what the contract leaves open: the cursor
-   line's shape; the current task's mark (`current`, as today); whether
-   the where-am-I line stays under the waiting line; Right and Left on an
-   item with nothing under it; where the stderr lines sit; and how the
-   outline cuts a line whose plain name (a unit's `done_means`) pushes
-   its status past the pane's edge. Any narrowing of a contract sentence
-   is flagged before approval.
-3. o5. Drafter, then a full-suite run on its prototype in a scratch
-   worktree, approval, prove red, developer, commit, Two-Key.
-4. o6, the same way; its drafter may run beside o5's Two-Key.
+1. ~~Open.~~ Branch cut from `9d0e897`; Textual 8.2.8 installed; the plan
+   at `c87808d`.
+2. ~~USAGE, one batch.~~ "The interactive pane" refined with four
+   readings (the current task's unit opens at the start and on a move, the
+   plain-name cut, the 0.15.0 lines retired), approved in chat, at
+   `c9e05e6`.
+3. ~~o5.~~ 20 tests (31 cases); Claude added a line-break plain name at
+   approval. At `b9a2cb1`; Two-Key FAIL at round 1: the cut dropped
+   `current`, so a pane under 72 columns lost the marker (Claude had
+   accepted that deviation). Fix at `afad4b0` with a test at 60 and 68
+   columns and USAGE's cut sentence aligned; PASS at round 2.
+4. ~~o6.~~ The first drafter passed 400K tokens and was stopped on the
+   user's word; three narrow agents replaced it: keys (11 tests), renders
+   and notify (21), and the 0.15.0 loop's retirement (150 cases retired,
+   eleven tests amended). Claude ruled that a finding counts by its kind,
+   added an unset-notify test, and, reviewing the code, pinned red a
+   notify failure a render dropped unseen, which the developer fixed. The
+   tests went to `tests/test_pane_keys.py` and `tests/test_pane_renders.py`,
+   not `tests/test_pane.py`. At `202f01d`; Two-Key FAIL at round 1 on a
+   test docstring stating the old tick order; fix at `39811d7`; PASS at
+   round 2.
 5. Close. PR; STATE.md regenerated; this plan struck.
 
 Steps 1, 2 and 5 sit outside a contract unit, so the tree does not show
 them.
 
-Decisions now: four. Rulings 1 to 3, and this plan. Later: the USAGE
-batch (the user's), two test lists and two or more commits (Claude's on
-review), then the push, the PR and the merge (the user's).
+Decisions this session: fourteen. The user's: rulings 1 to 3 and the plan
+(1 to 4); the USAGE batch and its four readings (5); the drafter split
+(6). Claude's, on review: the two test lists (7, 8), with the finding
+ruling in o6's; the four commits (9 to 12). The user's at the close: (13)
+the push and the PR; (14) the merge.
 
 Deferred, not this session:
-- o7 (ships 0.16.0) with its sweep, STATE.md Next actions 2.
-- The test row pattern's ` [` split (Next actions 3).
+- o7 (ships 0.16.0) with its sweep: STATE.md Next actions 2, plus this
+  session's Two-Key advisories.
+- A live run of the pane in a herdr pane on Windows; the receipts are
+  headless.
 - Prerequisites 7 to 9, G1, and the rest of STATE.md's carried list.
 
 House rules in force: no pipes or chains in any authored command string;
