@@ -44,6 +44,7 @@ import importlib
 import importlib.util
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -397,7 +398,11 @@ def test_sc4_1_the_outline_holds_every_line_the_tree_prints_in_its_order(tmp_pat
     printed = _printed(root, capsys)
     assert any(line.lstrip().startswith("- ") for line in printed)  # a diagnostic, under beta's G0.2
     shot = _open(root, WIDE)
-    assert [(depth, label) for depth, label, _ in shot["nodes"]] == _expected_outline(printed)
+    # a closed item's line adds what it holds in parentheses (o6-pane-keys); without them,
+    # each line reads as the tree prints it
+    held = re.compile(r" \(\d+ (?:items: .*?|diagnostics)\)")
+    assert [(depth, held.sub("", label, count=1) if not opened else label)
+            for depth, label, opened in shot["nodes"]] == _expected_outline(printed)
 
 
 def test_sc4_1_the_outline_shows_its_text_as_written_never_as_markup(tmp_path, capsys):
@@ -468,10 +473,11 @@ def test_sc4_1_the_current_task_carries_current_and_the_cursor_starts_on_it(tmp_
 
 
 @pytest.mark.parametrize("parts, current, unit", [
-    pytest.param([], "prove-red Prove red current", "a1-core the work for a1-core is done",
-                 id="parts-empty"),
+    pytest.param([], "prove-red Prove red current",
+                 "a1-core the work for a1-core is done (9 items: 9 to do)", id="parts-empty"),
     pytest.param(["status"], "prove-red Prove red [doing] current",
-                 "a1-core the work for a1-core is done [to do]", id="parts-status"),
+                 "a1-core the work for a1-core is done [to do] (9 items: 9 to do)",
+                 id="parts-status"),
 ])
 def test_sc4_1_the_current_task_carries_current_whatever_parts_selects(
         tmp_path, parts, current, unit):
@@ -492,7 +498,9 @@ def test_sc4_1_the_window_scrolls_to_the_current_task_in_a_tree_taller_than_the_
 def test_sc4_1_with_no_current_task_the_cursor_starts_on_the_first_line(tmp_path):
     shot = _open(_repo(tmp_path))
     assert shot["cursor"] == 0 and shot["top"] == 0
-    assert shot["cursor_label"] == shot["lines"][0] == "gates/G0 Planning / Intake [to do]"
+    assert shot["cursor_label"] == shot["lines"][0]
+    # closed, the gate's line adds what it holds (o6-pane-keys)
+    assert shot["lines"][0].startswith("gates/G0 Planning / Intake [to do] (4 items: ")
     name, page = _pages("gates")["G0"]
     assert shot["cursor_text"] == f"{page} | {name}"
 
@@ -509,9 +517,10 @@ def test_sc4_1_a_plain_name_too_long_for_the_pane_is_cut_where_the_status_still_
         return _label(node), cursor, _shot(app)
 
     label, cursor, shot = _drive(root, script)
-    assert len(f"a3-long {LONG} [to do]") > shot["width"]
-    assert label.startswith("a3-long ") and label.endswith("... [to do]"), label
-    cut = label[len("a3-long "):-len("... [to do]")]
+    kept = " [to do] (8 items: 8 to do)"  # closed: the status, then what it holds (o6-pane-keys)
+    assert len(f"a3-long {LONG}{kept}") > shot["width"]
+    assert label.startswith("a3-long ") and label.endswith("..." + kept), label
+    cut = label[len("a3-long "):-len("..." + kept)]
     assert cut and LONG.startswith(cut), label
     row = shot["rows"][shot["cursor"] - shot["top"]]
     # the status ends on the outline's last column: the name gave up no more than it had to
@@ -520,7 +529,7 @@ def test_sc4_1_a_plain_name_too_long_for_the_pane_is_cut_where_the_status_still_
     assert cursor == f"specs/alpha/contract.yaml:{unit} | {LONG}"
     assert shot["regions"]["cursor"].height >= -(-len(cursor) // SIZE[0])
     # a line that fits keeps its name whole
-    assert "a1-core the work for a1-core is done [to do]" in shot["lines"]
+    assert "a1-core the work for a1-core is done [to do] (9 items: 9 to do)" in shot["lines"]
 
 
 @pytest.mark.parametrize("width", [60, 68])
@@ -600,7 +609,6 @@ def test_sc4_1_follow_runs_the_textual_app_in_taskcontract_pane(tmp_path, capsys
     monkeypatch.setattr(pane, "run", lambda where: calls.append(where) or 0)
     assert _call(["tree", "--follow", "--root", str(root)], capsys) == (0, "", "")
     assert calls == [root]
-    assert callable(tree_view.follow)  # the 0.15.0 loop stays callable until o6
 
 
 def test_sc4_1_without_the_pane_extra_follow_prints_the_install_line_and_exits_2(
