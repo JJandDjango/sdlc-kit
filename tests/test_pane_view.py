@@ -20,7 +20,7 @@ its id, the part after the id's last `/`: a unit's line on `a2-edges`, not
 `alpha/a2-edges/prove-red`. A top-level item's line opens on its full id.
 After the id each item line reads exactly as the whole tree's line for that
 item, at the same indent, and only the id that opens the line shortens: a
-summary that names a full id keeps it (SC3.1). `taskcontract tree` prints
+plain name that names a full id keeps it (SC3.1). `taskcontract tree` prints
 the same bytes as before; the waiting line, every link (`depends_on:
 <contract>/<unit>` on a unit's line) and the notify command's `SDLC_NODE`
 keep full ids (SC3.2).
@@ -32,7 +32,10 @@ line (` [<status>]`, each mark after one space, ` <evidence>`, each link
 after one space, ` doc: <path>`, ` | <summary>`), and a field the item lacks
 prints nothing. The fields print in that fixed order whatever order the
 list gives; listing `id` changes nothing, a repeated name shows its field
-once, and `[]` shows the id alone (SC2.1). With `parts:` unset (no config,
+once, and `[]` shows the id and its plain name alone (SC2.1). Since
+project-tree's o2-titles each item line opens on its id, then its plain
+name (a contract's `title`, else `(no title)`; a unit's `done_means`; a
+task's name), then the fields; the summary holds only a contract's intent. With `parts:` unset (no config,
 no `tree:`, no `pane:`, a `pane:` without `parts:`, or a `tree:` or `pane:`
 that is not a mapping) each item line shows every field it has. Set, valid
 or not, it leaves the waiting line, the where-am-I line, the fold lines and
@@ -486,13 +489,13 @@ def test_sc1_2_with_no_current_task_the_pane_prints_no_where_line(tmp_path):
 # --- SC3.1 short ids under a parent ------------------------------------------------------
 #
 # The pane's item lines are the lines that open, after their indent, on an id
-# then ` [`; the where-am-I line, the waiting line and the fold lines are not
+# and its plain name, then ` [`; the where-am-I line, the waiting line and the fold lines are not
 # item lines. On the path to the current task the top-level item is a
 # contract, whose id has no `/`, the unit's id is `<contract>/<unit>` and the
 # task's `<contract>/<unit>/<task>`.
 
-PROVE_RED_UNIT = "  a2-edges [failed] depends_on: alpha/a1-core | the work for a2-edges is done"
-PROVE_RED_TASK = "    prove-red [doing] current | Prove red"
+PROVE_RED_UNIT = "  a2-edges the work for a2-edges is done [failed] depends_on: alpha/a1-core"
+PROVE_RED_TASK = "    prove-red Prove red [doing] current"
 
 
 def _item_lines(render):
@@ -509,7 +512,7 @@ def test_sc3_1_a_unit_line_and_a_task_line_open_on_the_last_segment_of_their_ids
     assert renders == [[
         WHERE_PROVE_RED,
         "2 more: 1 to do, 1 done",
-        f"alpha [failed] | {INTENT}",
+        f"alpha (no title) [failed] | {INTENT}",
         "  3 more: 1 to do, 1 done, 1 blocked",
         PROVE_RED_UNIT,                               # not `  alpha/a2-edges [failed] ...`
         "    9 more: 6 to do, 2 done, 1 failed",
@@ -517,9 +520,9 @@ def test_sc3_1_a_unit_line_and_a_task_line_open_on_the_last_segment_of_their_ids
     ]]
     # after the short id, each line reads as the whole tree's line for its item
     assert whole["alpha/a2-edges"] == (
-        "  alpha/a2-edges [failed] depends_on: alpha/a1-core | the work for a2-edges is done")
+        "  alpha/a2-edges the work for a2-edges is done [failed] depends_on: alpha/a1-core")
     assert whole["alpha/a2-edges/prove-red"] == (
-        "    alpha/a2-edges/prove-red [doing] current | Prove red")
+        "    alpha/a2-edges/prove-red Prove red [doing] current")
 
 
 def test_sc3_1_the_top_level_line_opens_on_its_full_id_and_every_line_under_it_on_a_last_segment(
@@ -530,10 +533,10 @@ def test_sc3_1_the_top_level_line_opens_on_its_full_id_and_every_line_under_it_o
     # the request's own example: `t6-query-face`, `approve-tests`
     assert _item_lines(render) == [
         (0, "tree-view"), (2, "t6-query-face"), (4, "approve-tests")]
-    assert render[3] == whole["tree-view"] == f"tree-view [waiting on a seat] | {INTENT}"
-    assert render[5] == ("  t6-query-face [waiting on a seat] depends_on: "
-                         "tree-view/t5-pane-face | the work for t6-query-face is done")
-    assert render[7] == "    approve-tests [waiting on a seat] current | Approve the test list"
+    assert render[3] == whole["tree-view"] == f"tree-view (no title) [waiting on a seat] | {INTENT}"
+    assert render[5] == ("  t6-query-face the work for t6-query-face is done [waiting on a seat] "
+                         "depends_on: tree-view/t5-pane-face")
+    assert render[7] == "    approve-tests Approve the test list [waiting on a seat] current"
 
 
 def test_sc3_1_ids_whose_segments_carry_hyphens_and_digits_open_on_their_whole_last_segment(
@@ -542,13 +545,13 @@ def test_sc3_1_ids_whose_segments_carry_hyphens_and_digits_open_on_their_whole_l
     _, (render,) = _pane(root)
     assert _item_lines(render) == [
         (0, "pane-view-2"), (2, "p10-where-line-3"), (4, "two-key")]
-    assert render[1] == f"pane-view-2 [doing] | {INTENT}"
-    assert render[3] == ("  p10-where-line-3 [doing] depends_on: pane-view-2/p9-short-ids-2"
-                         " | the work for p10-where-line-3 is done")
-    assert render[5] == "    two-key [doing] current | Two-Key PASS"
+    assert render[1] == f"pane-view-2 (no title) [doing] | {INTENT}"
+    assert render[3] == ("  p10-where-line-3 the work for p10-where-line-3 is done [doing]"
+                         " depends_on: pane-view-2/p9-short-ids-2")
+    assert render[5] == "    two-key Two-Key PASS [doing] current"
 
 
-def test_sc3_1_only_the_opening_id_shortens_and_a_summary_that_names_a_full_id_keeps_it(
+def test_sc3_1_only_the_opening_id_shortens_and_a_plain_name_that_names_a_full_id_keeps_it(
         tmp_path, capsys):
     root = _repo(tmp_path, gates=())
     edges = _unit("a2-edges", ["verify an edge holds"], depends_on=["a1-core"])
@@ -558,9 +561,9 @@ def test_sc3_1_only_the_opening_id_shortens_and_a_summary_that_names_a_full_id_k
     _progress(root, "alpha", _step("alpha/a2-edges/write-tests", "doing", "10:00"))
     _, (render,) = _pane(root)
     whole = _whole(root, capsys)
-    assert render[-3] == ("  a2-edges [doing] depends_on: alpha/a1-core"
-                          " | alpha/a2-edges is done when alpha/a1-core is")
-    assert render[-1] == "    write-tests [doing] current | Write the tests"
+    assert render[-3] == ("  a2-edges alpha/a2-edges is done when alpha/a1-core is [doing]"
+                          " depends_on: alpha/a1-core")
+    assert render[-1] == "    write-tests Write the tests [doing] current"
     assert render[-3] == short_line(whole["alpha/a2-edges"])
 
 
@@ -573,7 +576,7 @@ def test_sc3_1_the_cut_to_the_panes_width_applies_to_the_shortened_line(
     assert render[-1] == PROVE_RED_TASK
     assert render[-3] == PROVE_RED_UNIT[:width - 3] + "..."
     assert render == cut_lines([
-        WHERE_PROVE_RED, "2 more: 1 to do, 1 done", f"alpha [failed] | {INTENT}",
+        WHERE_PROVE_RED, "2 more: 1 to do, 1 done", f"alpha (no title) [failed] | {INTENT}",
         "  3 more: 1 to do, 1 done, 1 blocked", PROVE_RED_UNIT,
         "    9 more: 6 to do, 2 done, 1 failed", PROVE_RED_TASK], width)
 
@@ -594,38 +597,38 @@ def test_sc3_1_the_short_ids_follow_the_current_task_to_another_unit_and_another
         [(0, "beta"), (2, "b1-solo"), (4, "commit")],
     ]
     assert renders[2][-3:] == [
-        "  b1-solo [doing] | the work for b1-solo is done",
+        "  b1-solo the work for b1-solo is done [doing]",
         "    7 more: 7 to do",                        # six tasks and one check
-        "    commit [doing] current | Commit",
+        "    commit Commit [doing] current",
     ]
 
 
 # --- SC3.2 full ids everywhere else -------------------------------------------------------
 
 SOLO_TREE = f"""\
-solo-2 [waiting on a seat] | {INTENT}
-  solo-2/G0 [to do] inactive | Planning / Intake
-    solo-2/G0/G0.1 [to do] | Definition-of-ready
-    solo-2/G0/G0.2 [to do] | Vocabulary coverage
-    solo-2/G0/G0.3 [to do] | Unit confirmation
-  solo-2/s1-base [done] at {HEAD} | the work for s1-base is done
-    solo-2/s1-base/approve-tests [done] | Approve the test list
-    solo-2/s1-base/write-tests [done] | Write the tests
-    solo-2/s1-base/prove-red [done] | Prove red
-    solo-2/s1-base/green [done] | Green
-    solo-2/s1-base/approve-commit [done] | Approve the commit
-    solo-2/s1-base/commit [done] | Commit
-    solo-2/s1-base/two-key [done] | Two-Key PASS
-    solo-2/s1-base/SC3.1 [done] | verify it holds (SC3.1)
-  solo-2/s2-top [waiting on a seat] depends_on: solo-2/s1-base | the work for s2-top is done
-    solo-2/s2-top/approve-tests [waiting on a seat] current | Approve the test list
-    solo-2/s2-top/write-tests [to do] | Write the tests
-    solo-2/s2-top/prove-red [to do] | Prove red
-    solo-2/s2-top/green [to do] | Green
-    solo-2/s2-top/approve-commit [to do] | Approve the commit
-    solo-2/s2-top/commit [to do] | Commit
-    solo-2/s2-top/two-key [to do] | Two-Key PASS
-    solo-2/s2-top/SC3.2 [to do] | verify it stays (SC3.2)
+solo-2 (no title) [waiting on a seat] | {INTENT}
+  solo-2/G0 Planning / Intake [to do] inactive
+    solo-2/G0/G0.1 Definition-of-ready [to do]
+    solo-2/G0/G0.2 Vocabulary coverage [to do]
+    solo-2/G0/G0.3 Unit confirmation [to do]
+  solo-2/s1-base the work for s1-base is done [done] at {HEAD}
+    solo-2/s1-base/approve-tests Approve the test list [done]
+    solo-2/s1-base/write-tests Write the tests [done]
+    solo-2/s1-base/prove-red Prove red [done]
+    solo-2/s1-base/green Green [done]
+    solo-2/s1-base/approve-commit Approve the commit [done]
+    solo-2/s1-base/commit Commit [done]
+    solo-2/s1-base/two-key Two-Key PASS [done]
+    solo-2/s1-base/SC3.1 verify it holds (SC3.1) [done]
+  solo-2/s2-top the work for s2-top is done [waiting on a seat] depends_on: solo-2/s1-base
+    solo-2/s2-top/approve-tests Approve the test list [waiting on a seat] current
+    solo-2/s2-top/write-tests Write the tests [to do]
+    solo-2/s2-top/prove-red Prove red [to do]
+    solo-2/s2-top/green Green [to do]
+    solo-2/s2-top/approve-commit Approve the commit [to do]
+    solo-2/s2-top/commit Commit [to do]
+    solo-2/s2-top/two-key Two-Key PASS [to do]
+    solo-2/s2-top/SC3.2 verify it stays (SC3.2) [to do]
 """
 
 
@@ -654,9 +657,9 @@ def test_sc3_2_taskcontract_tree_prints_the_same_bytes_with_every_id_full(tmp_pa
     assert printed.err == ""
     # the pane beside it shortens the same two items the tree prints whole
     assert render[-3:] == [
-        "  s2-top [waiting on a seat] depends_on: solo-2/s1-base | the work for s2-top is done",
+        "  s2-top the work for s2-top is done [waiting on a seat] depends_on: solo-2/s1-base",
         "    7 more: 7 to do",                        # six tasks and one check
-        "    approve-tests [waiting on a seat] current | Approve the test list",
+        "    approve-tests Approve the test list [waiting on a seat] current",
     ]
 
 
@@ -698,9 +701,9 @@ def test_sc3_2_at_an_approval_the_waiting_line_and_sdlc_node_keep_the_full_ids(
     assert render[0] == WAIT_APPROVE_COMMIT          # `for alpha/a2-edges`, whole
     assert starts.nodes == ["alpha/a2-edges/approve-commit"]
     assert capsys.readouterr().err == ""
-    assert render[-3] == ("  a2-edges [waiting on a seat] depends_on: alpha/a1-core"
-                          " | the work for a2-edges is done")
-    assert render[-1] == "    approve-commit [waiting on a seat] current | Approve the commit"
+    assert render[-3] == ("  a2-edges the work for a2-edges is done [waiting on a seat]"
+                          " depends_on: alpha/a1-core")
+    assert render[-1] == "    approve-commit Approve the commit [waiting on a seat] current"
 
 
 def test_sc3_2_every_depends_on_link_on_a_short_unit_line_keeps_its_full_id(tmp_path):
@@ -714,8 +717,8 @@ def test_sc3_2_every_depends_on_link_on_a_short_unit_line_keeps_its_full_id(tmp_
     write_seat_roster(root)
     _progress(root, "gamma-7", _step("gamma-7/g3-third/prove-red", "doing", "10:00"))
     _, (render,) = _pane(root)
-    assert render[-3] == ("  g3-third [doing] depends_on: gamma-7/g1-first"
-                          " depends_on: gamma-7/g2-second | the work for g3-third is done")
+    assert render[-3] == ("  g3-third the work for g3-third is done [doing] depends_on: gamma-7/g1-first"
+                          " depends_on: gamma-7/g2-second")
     assert render[0] == "specs/gamma-7/contract.yaml > gamma-7 > g3-third > prove-red"
 
 
@@ -735,9 +738,13 @@ PARTS_IGNORED = ("taskcontract tree: pane parts ignored: {} - give a list from i
 UNREADABLE_BETA = re.compile(
     r"^taskcontract tree: unreadable progress: \.sdlc/progress/beta\.yaml \(.+\)$")
 
-FULL_CONTRACT = f"alpha [doing] doc: docs/features/alpha.md | {INTENT}"
-FULL_UNIT = "  a2-edges [doing] depends_on: alpha/a1-core | the work for a2-edges is done"
-FULL_TASK = "    prove-red [doing] current | Prove red"
+# each item line opens on its id and its plain name (project-tree o2)
+ALPHA_NAMED = "alpha (no title)"
+UNIT_NAMED = "  a2-edges the work for a2-edges is done"
+TASK_NAMED = "    prove-red Prove red"
+FULL_CONTRACT = f"{ALPHA_NAMED} [doing] doc: docs/features/alpha.md | {INTENT}"
+FULL_UNIT = f"{UNIT_NAMED} [doing] depends_on: alpha/a1-core"
+FULL_TASK = f"{TASK_NAMED} [doing] current"
 
 
 def _doc_render(contract, unit, task):
@@ -755,8 +762,9 @@ def _doc_render(contract, unit, task):
 
 
 FULL = _doc_render(FULL_CONTRACT, FULL_UNIT, FULL_TASK)
-BARE = _doc_render("alpha", "  a2-edges", "    prove-red")
-STATUS_ONLY = _doc_render("alpha [doing]", "  a2-edges [doing]", "    prove-red [doing]")
+BARE = _doc_render(ALPHA_NAMED, UNIT_NAMED, TASK_NAMED)
+STATUS_ONLY = _doc_render(f"{ALPHA_NAMED} [doing]", f"{UNIT_NAMED} [doing]",
+                          f"{TASK_NAMED} [doing]")
 
 
 def _doc_repo(tmp_path):
@@ -794,16 +802,17 @@ def _err_at_each_tick(capsys, *steps):
 # --- SC2.1 the listed fields, in the fixed order ----------------------------------------
 
 ALONE = [
-    pytest.param("status", ("alpha [doing]", "  a2-edges [doing]", "    prove-red [doing]"),
-                 id="status"),
-    pytest.param("marks", ("alpha", "  a2-edges", "    prove-red current"), id="marks"),
-    pytest.param("evidence", ("alpha", "  a2-edges", "    prove-red"), id="evidence"),
-    pytest.param("links", ("alpha", "  a2-edges depends_on: alpha/a1-core", "    prove-red"),
+    pytest.param("status", (f"{ALPHA_NAMED} [doing]", f"{UNIT_NAMED} [doing]",
+                            f"{TASK_NAMED} [doing]"), id="status"),
+    pytest.param("marks", (ALPHA_NAMED, UNIT_NAMED, f"{TASK_NAMED} current"), id="marks"),
+    pytest.param("evidence", (ALPHA_NAMED, UNIT_NAMED, TASK_NAMED), id="evidence"),
+    pytest.param("links", (ALPHA_NAMED, f"{UNIT_NAMED} depends_on: alpha/a1-core", TASK_NAMED),
                  id="links"),
-    pytest.param("doc", ("alpha doc: docs/features/alpha.md", "  a2-edges", "    prove-red"),
+    pytest.param("doc", (f"{ALPHA_NAMED} doc: docs/features/alpha.md", UNIT_NAMED, TASK_NAMED),
                  id="doc"),
-    pytest.param("summary", (f"alpha | {INTENT}", "  a2-edges | the work for a2-edges is done",
-                             "    prove-red | Prove red"), id="summary"),
+    # only a contract has a summary: every other item's source text is its plain name
+    pytest.param("summary", (f"{ALPHA_NAMED} | {INTENT}", UNIT_NAMED, TASK_NAMED),
+                 id="summary"),
 ]
 
 
@@ -827,24 +836,24 @@ def test_sc2_1_each_field_shown_reads_exactly_as_on_the_whole_trees_line(tmp_pat
     assert render[2] == whole["alpha"].split(" | ")[0]
     assert render[4] == short_line(whole["alpha/a2-edges"]).split(" | ")[0]
     assert render[6] == short_line(whole["alpha/a2-edges/prove-red"]).split(" | ")[0]
-    assert render == _doc_render("alpha [doing] doc: docs/features/alpha.md",
-                                 "  a2-edges [doing] depends_on: alpha/a1-core",
-                                 "    prove-red [doing] current")
+    assert render == _doc_render(f"{ALPHA_NAMED} [doing] doc: docs/features/alpha.md",
+                                 f"{UNIT_NAMED} [doing] depends_on: alpha/a1-core",
+                                 f"{TASK_NAMED} [doing] current")
 
 
 ORDERS = [
     pytest.param(["summary", "links", "status"],
-                 (f"alpha [doing] | {INTENT}", "  a2-edges [doing] depends_on: alpha/a1-core"
-                  " | the work for a2-edges is done", "    prove-red [doing] | Prove red"),
+                 (f"{ALPHA_NAMED} [doing] | {INTENT}",
+                  f"{UNIT_NAMED} [doing] depends_on: alpha/a1-core", f"{TASK_NAMED} [doing]"),
                  id="summary-links-status"),
     pytest.param(["summary", "marks", "doc"],
-                 (f"alpha doc: docs/features/alpha.md | {INTENT}",
-                  "  a2-edges | the work for a2-edges is done",
-                  "    prove-red current | Prove red"),
+                 (f"{ALPHA_NAMED} doc: docs/features/alpha.md | {INTENT}",
+                  UNIT_NAMED,
+                  f"{TASK_NAMED} current"),
                  id="summary-marks-doc"),
     pytest.param(["links", "marks", "status"],
-                 ("alpha [doing]", "  a2-edges [doing] depends_on: alpha/a1-core",
-                  "    prove-red [doing] current"),
+                 (f"{ALPHA_NAMED} [doing]", f"{UNIT_NAMED} [doing] depends_on: alpha/a1-core",
+                  f"{TASK_NAMED} [doing] current"),
                  id="links-marks-status"),
 ]
 
@@ -875,15 +884,16 @@ def test_sc2_1_listing_id_changes_nothing(tmp_path, capsys, parts, render):
     assert capsys.readouterr().err == ""
 
 
-def test_sc2_1_an_empty_list_shows_the_id_alone_on_the_top_level_the_unit_and_the_task_lines(
+def test_sc2_1_an_empty_list_shows_the_id_and_the_plain_name_on_the_top_level_the_unit_and_the_task_lines(
         tmp_path, capsys):
     root = _doc_repo(tmp_path)
     _parts(root, [])
     _, renders = _pane(root)
     assert renders == [BARE]
-    # the top-level line keeps its full id; the unit and the task their last segments
+    # the top-level line keeps its full id; the unit and the task their last
+    # segments; each then its plain name, which parts never leaves out
     assert [renders[0][2], renders[0][4], renders[0][6]] == [
-        "alpha", "  a2-edges", "    prove-red"]
+        "alpha (no title)", "  a2-edges the work for a2-edges is done", "    prove-red Prove red"]
     assert capsys.readouterr().err == ""
 
 
@@ -891,8 +901,8 @@ def test_sc2_1_a_repeated_name_shows_its_field_once(tmp_path, capsys):
     root = _doc_repo(tmp_path)
     _parts(root, ["marks", "status", "marks", "status"])
     _, renders = _pane(root)
-    assert renders == [_doc_render("alpha [doing]", "  a2-edges [doing]",
-                                   "    prove-red [doing] current")]
+    assert renders == [_doc_render(f"{ALPHA_NAMED} [doing]", f"{UNIT_NAMED} [doing]",
+                                   f"{TASK_NAMED} [doing] current")]
     assert capsys.readouterr().err == ""
 
 
@@ -909,11 +919,12 @@ def test_sc2_1_each_depends_on_link_of_a_unit_line_prints_after_one_space(tmp_pa
     _, (render,) = _pane(root)
     assert render == [
         "specs/gamma-7/contract.yaml > gamma-7 > g3-third > prove-red",
-        "gamma-7",
+        "gamma-7 (no title)",
         "  3 more: 3 to do",                          # gamma-7/G0 inactive, g1-first, g2-second
-        "  g3-third depends_on: gamma-7/g1-first depends_on: gamma-7/g2-second",
+        ("  g3-third the work for g3-third is done depends_on: gamma-7/g1-first"
+         " depends_on: gamma-7/g2-second"),
         "    7 more: 7 to do",                        # six tasks and one check
-        "    prove-red",
+        "    prove-red Prove red",
     ]
     assert capsys.readouterr().err == ""
 
@@ -981,11 +992,11 @@ def test_sc2_2_at_an_approval_the_parts_leave_the_waiting_line_and_the_where_lin
         WAIT_QUERY_FACE,
         WHERE_QUERY_FACE,
         "1 more: 1 to do",                            # pane-view
-        "tree-view [waiting on a seat]",
+        "tree-view (no title) [waiting on a seat]",
         "  2 more: 2 to do",                          # tree-view/G0 inactive, tree-view/t5-pane-face
-        "  t6-query-face [waiting on a seat]",
+        "  t6-query-face the work for t6-query-face is done [waiting on a seat]",
         "    7 more: 7 to do",                        # six tasks and one check
-        "    approve-tests [waiting on a seat] current",
+        "    approve-tests Approve the test list [waiting on a seat] current",
     ]]
     assert capsys.readouterr().err == ""
 
@@ -1000,9 +1011,9 @@ def test_sc2_2_with_no_current_task_the_parts_leave_the_render_unchanged(tmp_pat
         lambda: _progress(root, "alpha", doing, _step("alpha", "done", "10:05")))  # closed
     assert len(renders) == 3
     assert renders[0] == ["no current task", "2 items: 2 to do"]
-    assert renders[1] == [WHERE_WRITE_TESTS, "1 more: 1 to do", "alpha [doing]",
-                          "  2 more: 2 to do", "  a1-core [doing]", "    8 more: 8 to do",
-                          "    write-tests [doing]"]
+    assert renders[1] == [WHERE_WRITE_TESTS, "1 more: 1 to do", "alpha (no title) [doing]",
+                          "  2 more: 2 to do", "  a1-core the work for a1-core is done [doing]",
+                          "    8 more: 8 to do", "    write-tests Write the tests [doing]"]
     assert renders[2] == ["no current task", "2 items: 1 to do, 1 done"]
     assert capsys.readouterr().err == ""
 
@@ -1011,15 +1022,15 @@ def test_sc2_2_the_cut_to_the_panes_width_applies_to_the_line_as_parts_leaves_it
         tmp_path, capsys, monkeypatch):
     root = _doc_repo(tmp_path)
     _parts(root, ["summary", "status"])
-    unit = "  a2-edges [doing] | the work for a2-edges is done"
+    unit = f"{UNIT_NAMED} [doing]"
     width = len(unit)          # the unit's line as parts leaves it fits exactly; its full line would not
     assert len(FULL_UNIT) > width
     monkeypatch.setenv("COLUMNS", str(width))
     _, (render,) = _pane(root)
     assert render[4] == unit
-    assert render == cut_lines(_doc_render(f"alpha [doing] | {INTENT}", unit,
-                                           "    prove-red [doing] | Prove red"), width)
-    assert render[2] == f"alpha [doing] | {INTENT}"[:width - 3] + "..."
+    assert render == cut_lines(_doc_render(f"{ALPHA_NAMED} [doing] | {INTENT}", unit,
+                                           f"{TASK_NAMED} [doing]"), width)
+    assert render[2] == f"{ALPHA_NAMED} [doing] | {INTENT}"[:width - 3] + "..."
     assert capsys.readouterr().err == ""
 
 
@@ -1036,11 +1047,11 @@ def test_sc2_2_the_notify_command_keeps_working_beside_the_pane_key(
         WAIT_APPROVE_COMMIT,
         WHERE_APPROVE_COMMIT,
         "1 more: 1 to do",                            # beta
-        "alpha [waiting on a seat]",
+        "alpha (no title) [waiting on a seat]",
         "  2 more: 2 to do",                          # alpha/G0 inactive, alpha/a1-core
-        "  a2-edges [waiting on a seat]",
+        "  a2-edges the work for a2-edges is done [waiting on a seat]",
         "    9 more: 8 to do, 1 done",                # the other tasks and the checks
-        "    approve-commit [waiting on a seat]",
+        "    approve-commit Approve the commit [waiting on a seat]",
     ]
     assert starts.nodes == ["alpha/a2-edges/approve-commit"]
     assert capsys.readouterr().err == ""
@@ -1203,7 +1214,7 @@ NAMED_TASKS = ("    9 more: approve-tests [done], write-tests [done], green [to 
 
 def _path_render(top, units, tasks):
     """The path fixture's pane with the given fold lines."""
-    return [WHERE_PROVE_RED, top, f"alpha [failed] | {INTENT}", units, PROVE_RED_UNIT,
+    return [WHERE_PROVE_RED, top, f"alpha (no title) [failed] | {INTENT}", units, PROVE_RED_UNIT,
             tasks, PROVE_RED_TASK]
 
 
@@ -1256,13 +1267,13 @@ def test_sc4_1_a_check_whose_id_joins_check_ids_folds_by_its_whole_last_segment(
     assert renders == [[
         WHERE_WRITE_TESTS,
         "1 more: beta [to do]",
-        f"alpha [doing] | {INTENT}",
+        f"alpha (no title) [doing] | {INTENT}",
         "  2 more: G0 [to do], a2-edges [to do]",
-        "  a1-core [doing] | the work for a1-core is done",
+        "  a1-core the work for a1-core is done [doing]",
         ("    8 more: approve-tests [to do], prove-red [to do], green [to do], "
          "approve-commit [to do], commit [to do], two-key [to do], SC1.1 [to do], "
          "SC5.1+SC5.2 [to do]"),
-        "    write-tests [doing] current | Write the tests",
+        "    write-tests Write the tests [doing] current",
     ]]
     assert capsys.readouterr().err == ""
 
@@ -1300,11 +1311,11 @@ def test_sc4_1_the_requests_own_example_at_80_columns_cuts_the_long_fold_line(
         WAIT_QUERY_FACE,
         WHERE_QUERY_FACE,
         "1 more: pane-view [to do]",
-        "tree-view [waiting on a seat]",
+        "tree-view (no title) [waiting on a seat]",
         "  2 more: G0 [to do], t5-pane-face [to do]",
-        "  t6-query-face [waiting on a seat]",
+        "  t6-query-face the work for t6-query-face is done [waiting on a seat]",
         "    7 more: write-tests [to do], prove-red [to do], green [to do], approve-co...",
-        "    approve-tests [waiting on a seat] current",
+        "    approve-tests Approve the test list [waiting on a seat] current",
     ]]
     assert len(renders[0][6]) == 80
     assert capsys.readouterr().err == ""
@@ -1329,10 +1340,10 @@ def test_sc4_1_a_fold_line_under_names_is_cut_to_the_panes_width_like_every_othe
 
 
 LEAVE_STATUS_OUT = [
-    pytest.param([], ("alpha", "  a2-edges", "    prove-red"), id="the-empty-list"),
+    pytest.param([], (ALPHA_NAMED, UNIT_NAMED, TASK_NAMED), id="the-empty-list"),
     pytest.param(["marks", "summary"],
-                 (f"alpha | {INTENT}", "  a2-edges | the work for a2-edges is done",
-                  "    prove-red current | Prove red"), id="marks-and-summary"),
+                 (f"{ALPHA_NAMED} | {INTENT}", UNIT_NAMED, f"{TASK_NAMED} current"),
+                 id="marks-and-summary"),
 ]
 
 
@@ -1365,7 +1376,7 @@ def test_sc4_1_with_no_current_task_the_items_line_names_the_top_level_items(tmp
     assert renders[1][:4] == [
         WHERE_WRITE_TESTS,
         "3 more: gates/G0 [to do], gates/none [to do], beta [to do]",
-        f"alpha [doing] | {INTENT}",
+        f"alpha (no title) [doing] | {INTENT}",
         "  3 more: G0 [done], G1 [to do], a2-edges [to do]"]
     assert renders[2] == [
         "no current task",

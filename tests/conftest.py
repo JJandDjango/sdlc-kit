@@ -21,9 +21,11 @@ import yaml
 
 SKILL_DIR = Path(__file__).parent.parent / "skills" / "sdlc"
 
-# An item line of `taskcontract tree`: its indent, its id, then its status
-# (or a finding's kind) in brackets, then the rest of the line.
-ROW = re.compile(r"^(?P<indent> *)(?P<id>\S+) \[(?P<tag>[^\]]*)\](?P<rest>.*)$")
+# An item line of `taskcontract tree`: its indent, its id, then its plain
+# name when it has one (project-tree o2), then its status (or a finding's
+# kind) in brackets, then the rest of the line.
+ROW = re.compile(r"^(?P<indent> *)(?P<id>\S+)(?: (?P<name>.*?))? \[(?P<tag>[^\]]*)\]"
+                 r"(?P<rest>.*)$")
 
 
 def write_seat_roster(root, status="ratified", values=("user",)):

@@ -37,7 +37,10 @@ needs_git = pytest.mark.skipif(shutil.which("git") is None, reason="git not on P
 INTENT = ("A fixture contract for the check-run suite; its units carry the "
           "sketch shapes that check ids come from.")
 
-ROW = re.compile(r"^(?P<indent> *)(?P<id>\S+) \[(?P<tag>[^\]]*)\](?P<rest>.*)$")
+# An item line: its indent, its id, then its plain name when it has one
+# (project-tree o2), then its status in brackets, then the rest of the line.
+ROW = re.compile(r"^(?P<indent> *)(?P<id>\S+)(?: (?P<name>.*?))? \[(?P<tag>[^\]]*)\]"
+                 r"(?P<rest>.*)$")
 STAMP = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 UNKNOWN = "no node '{id}' - print the tree to list every node id\n"
 KIND = "taskcontract progress: '{id}' is a {kind}, not a check - run takes a check id\n"
@@ -156,7 +159,7 @@ def _run(root, capsys, check, command, *options):
 
 
 def _print(root, capsys):
-    """[(depth, id, tag, rest)] for every item line of one tree print."""
+    """[(depth, id, tag, rest, name)] for every item line of one tree print."""
     code = main(["tree", "--root", str(root)])
     out = capsys.readouterr().out
     assert code == 0
@@ -164,7 +167,8 @@ def _print(root, capsys):
     for line in out.splitlines():
         match = ROW.match(line)
         if match:
-            rows.append((len(match["indent"]) // 2, match["id"], match["tag"], match["rest"]))
+            rows.append((len(match["indent"]) // 2, match["id"], match["tag"], match["rest"],
+                         match["name"]))
     return rows
 
 
@@ -181,6 +185,11 @@ def _tag(rows, rid):
 
 def _rest(rows, rid):
     return _row(rows, rid)[3]
+
+
+def _name(rows, rid):
+    """The plain name between an item's id and its status, or None."""
+    return _row(rows, rid)[4]
 
 
 def _records(root, cid="alpha"):
@@ -281,7 +290,8 @@ def test_sc7_1_a_done_check_names_the_command_of_its_run_and_the_head_id(tmp_pat
     root = _repo(tmp_path)
     head = _commit_all(root)
     assert _run(root, capsys, CHECK, GREEN)[0] == 0
-    assert _rest(_print(root, capsys), CHECK) == _evidence(GREEN, head) + f" | {SKETCH}"
+    rows = _print(root, capsys)
+    assert (_name(rows, CHECK), _rest(rows, CHECK)) == (SKETCH, _evidence(GREEN, head))
 
 
 @needs_git
@@ -291,8 +301,9 @@ def test_sc7_1_a_tracked_change_marks_the_run_dirty(tmp_path, capsys):
     (root / "README.md").write_text("an edit\n", encoding="utf-8")
     assert _run(root, capsys, CHECK, GREEN)[0] == 0
     assert _records(root)[0]["dirty"] is True
-    assert _rest(_print(root, capsys), CHECK) == (
-        _evidence(GREEN, head, dirty=True) + f" | {SKETCH}")
+    rows = _print(root, capsys)
+    assert (_name(rows, CHECK), _rest(rows, CHECK)) == (
+        SKETCH, _evidence(GREEN, head, dirty=True))
 
 
 @needs_git
@@ -302,7 +313,8 @@ def test_sc7_1_an_untracked_file_never_marks_a_run_dirty(tmp_path, capsys):
     (root / "notes.txt").write_text("untracked\n", encoding="utf-8")
     assert _run(root, capsys, CHECK, GREEN)[0] == 0
     assert _records(root)[0]["dirty"] is False
-    assert _rest(_print(root, capsys), CHECK) == _evidence(GREEN, head) + f" | {SKETCH}"
+    rows = _print(root, capsys)
+    assert (_name(rows, CHECK), _rest(rows, CHECK)) == (SKETCH, _evidence(GREEN, head))
 
 
 @needs_git
@@ -323,7 +335,7 @@ def test_sc7_1_only_a_check_whose_last_run_proved_it_names_that_run(tmp_path, ca
     assert _run(root, capsys, "alpha/a2-edges/SC2.1", RED)[0] == 1                 # failed
     assert _run(root, capsys, "alpha/a1-core/SC5.1+SC5.2", GREEN)[0] == 0         # done
     rows = _print(root, capsys)
-    assert _rest(rows, "alpha/a1-core/SC5.1+SC5.2").startswith(_evidence(GREEN, head) + " |")
+    assert _rest(rows, "alpha/a1-core/SC5.1+SC5.2") == _evidence(GREEN, head)
     assert "via" not in _rest(rows, CHECK)
     assert "via" not in _rest(rows, "alpha/a2-edges/SC2.1")
     # a close reads the red check done, but no run proved it green
@@ -334,7 +346,7 @@ def test_sc7_1_only_a_check_whose_last_run_proved_it_names_that_run(tmp_path, ca
     assert _tag(rows, CHECK) == "done"
     assert "via" not in _rest(rows, CHECK)
     # the same close neither adds nor hides a run: the green check keeps its own
-    assert _rest(rows, "alpha/a1-core/SC5.1+SC5.2").startswith(_evidence(GREEN, head) + " |")
+    assert _rest(rows, "alpha/a1-core/SC5.1+SC5.2") == _evidence(GREEN, head)
 
 
 def test_sc7_1_outside_git_the_head_reads_no_commit_and_no_dirty_is_set(tmp_path, capsys):
@@ -343,7 +355,8 @@ def test_sc7_1_outside_git_the_head_reads_no_commit_and_no_dirty_is_set(tmp_path
     record = _records(root)[0]
     assert record["head"] == "no commit"
     assert "dirty" not in record
-    assert _rest(_print(root, capsys), CHECK) == _evidence(GREEN, "no commit") + f" | {SKETCH}"
+    rows = _print(root, capsys)
+    assert (_name(rows, CHECK), _rest(rows, CHECK)) == (SKETCH, _evidence(GREEN, "no commit"))
 
 
 # --- the record -------------------------------------------------------------------
@@ -518,8 +531,8 @@ def test_a_g0_verdict_reads_dirty_when_its_contract_file_differs_from_head(
         tokens = _rest(rows, f"{cid}/G0").split()
         expected = _verdict_evidence(cid, head)
         assert tokens[:len(expected)] == expected, cid
-        after[cid] = tokens[len(expected)]
-    assert after == {"alpha": "dirty", "beta": "|", "gamma": "dirty"}
+        after[cid] = tokens[len(expected):]
+    assert after == {"alpha": ["dirty"], "beta": [], "gamma": ["dirty"]}
 
 
 # ==================================================================================
@@ -690,12 +703,12 @@ def test_sc7_2_a_done_task_shows_the_head_id_of_its_done_call_and_an_approval_it
     assert _recommit(root, "later.txt") != head  # HEAD moves on after the calls
     rows = _print(root, capsys)
     assert (_tag(rows, TASK), _shown(rows, TASK)) == ("done", f" at {head}")
-    assert _rest(rows, TASK) == f" at {head} | Write the tests"
+    assert (_name(rows, TASK), _rest(rows, TASK)) == ("Write the tests", f" at {head}")
     for approval in APPROVALS:
         rid = f"{UNIT}/{approval}"
         assert (_tag(rows, rid), _shown(rows, rid)) == ("done", f" by user at {head}"), rid
-    assert _rest(rows, f"{UNIT}/approve-tests") == (
-        f" by user at {head} | Approve the test list")
+    assert (_name(rows, f"{UNIT}/approve-tests"), _rest(rows, f"{UNIT}/approve-tests")) == (
+        "Approve the test list", f" by user at {head}")
 
 
 @needs_git
@@ -801,7 +814,7 @@ def test_sketch_3_done_on_a_contract_closes_every_step_and_check_and_reads_it_do
     under = [row for row in rows if (row[1] == "alpha" or row[1].startswith("alpha/"))
              and not row[1].startswith("alpha/G1")]
     assert len(under) == 26  # the contract, its verdict and its conditions, two units, ...
-    assert {tag for _, _, tag, _ in under} == {"done"}
+    assert {tag for _, _, tag, _, _ in under} == {"done"}
     assert _tag(rows, "beta") == "to do"
 
 
@@ -816,7 +829,7 @@ def test_sketch_3_a_close_reads_done_over_earlier_failed_blocked_and_doing(tmp_p
     rows = _print(root, capsys)
     under = [row for row in rows if (row[1] == "alpha" or row[1].startswith("alpha/"))
              and not row[1].startswith("alpha/G0")]
-    assert {tag for _, _, tag, _ in under} == {"done"}
+    assert {tag for _, _, tag, _, _ in under} == {"done"}
     assert _shown(rows, prove) == ""  # closed: neither its reason nor evidence of its own
 
 
@@ -824,7 +837,7 @@ def test_sketch_3_done_on_a_unit_closes_its_steps_and_checks_and_no_other(tmp_pa
     root = _repo(tmp_path)
     assert _mark(root, capsys, "done", UNIT)[0] == 0
     rows = _print(root, capsys)
-    under = [rid for _, rid, _, _ in rows if rid.startswith(UNIT + "/")]
+    under = [rid for _, rid, _, _, _ in rows if rid.startswith(UNIT + "/")]
     assert len(under) == 9  # seven tasks and two checks
     assert {_tag(rows, rid) for rid in under + [UNIT]} == {"done"}
     assert [_tag(rows, f"alpha/a2-edges/{key}")

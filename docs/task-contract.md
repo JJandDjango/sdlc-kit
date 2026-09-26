@@ -19,11 +19,12 @@ draft and required at ready since
 [0030](../decisions/0030-a-doors-input-is-a-declaration.md), where the empty
 list is a declaration that the contract operates on no term;
 [0024](../decisions/0024-unit-dependency-graph.md) amends the unit shape
-with a required `id` and an optional `depends_on`; and
+with a required `id` and an optional `depends_on`;
 [0025](../decisions/0025-intake-seats.md) adds an optional
-`confirmed_by`, the seats that answered for the unit at intake. Schema
-`version: 1.4.0`. Every pass-condition clause maps to vanilla JSON Schema
-Draft 2020-12:
+`confirmed_by`, the seats that answered for the unit at intake; and the
+optional top-level `title`, the feature's plain name, is one line that
+holds more than blanks. Schema `version: 1.5.0`. Every pass-condition
+clause maps to vanilla JSON Schema Draft 2020-12:
 
 | G0.1 clause | Schema encoding |
 |---|---|
@@ -40,6 +41,7 @@ Draft 2020-12:
 | dependency `resolved` / `blocked-by: <ref>` | item object + `if/then` (E2) |
 | all dependencies resolved to pass | `ready` profile: `status: const resolved` (E2) |
 | `provenance` origin fixed | enum; `ref` required on escape (E3) |
+| a `title`, when given, is one line that holds more than blanks | optional `title`: string, `pattern` with no CR or LF and one non-blank character - TC002 at both profiles |
 | no stray fields | `additionalProperties: false` (E4) |
 
 **The boundary:** the schema checks that the *witness exists* - a sketch is

@@ -53,17 +53,21 @@ The current task is derived from the task states, never stored: the task
 whose `doing` record is latest, else the first `to do` task in the contract
 with the latest record. An approval that holds it reads `waiting on a seat`.
 
-Each item carries its summary from one source field, unchanged but for its
-whitespace: a contract's `intent`, a unit's `done_means`, a check's sketch
-line, a finding's `statement`, and the name gates.yaml or tasks.yaml gives a
-gate, a verdict's gate, a condition or a task. The field's ends are
+Each item carries its plain name from one source field, unchanged but for
+its whitespace: a contract's `title`, a unit's `done_means`, a check's
+sketch line, a finding's `statement`, and the name gates.yaml or tasks.yaml
+gives a gate, a verdict's gate, a condition or a task. The field's ends are
 stripped and each line break reads as one space; a field that is absent,
-not text or blank gives no summary. Links come from two fields only: a unit's `depends_on` entries, as
-the unit graph reads them, each linked once in the order of its first
-appearance, and a finding's `gate:` value as written. A contract with a
-file at docs/features/<id>.md carries that path as its feature doc
-reference. A line prints its links, then the reference, then the summary,
-after the marks and evidence.
+not text or blank gives no plain name, save that a contract then reads
+`(no title)`, as does one the tree cannot read as a mapping. The tree reads
+the title from the contract, never from its feature doc. A contract alone
+carries a summary, its `intent` by the same rule. Links come from two
+fields only: a unit's `depends_on` entries, as the unit graph reads them,
+each linked once in the order of its first appearance, and a finding's
+`gate:` value as written. A contract with a file at docs/features/<id>.md
+carries that path as its feature doc reference. A line prints its plain
+name after its id, then its links, the reference and the summary after the
+marks and evidence.
 
 Each item but a gate, a condition, a task and the no-gate item names the
 file it is read from, and a unit or check the keys to its entry there;
@@ -95,6 +99,7 @@ ROLL_UP = (FAILED, WAITING, BLOCKED, DOING)
 NO_GATE = "none"
 FORM = "TEMPLATE.yaml"  # the findings form, never a finding
 INACTIVE = "inactive"
+NO_TITLE = "(no title)"  # a contract's plain name when it gives no title
 # The one G0 condition an unreadable contract still reads: the schema's; the
 # joins behind the others never run on a file that is not a mapping.
 SCHEMA_CONDITION = "G0.1"
@@ -126,10 +131,13 @@ class Item:
     evidence: str | None = None  # what the status was read from
     links: list[str] = field(default_factory=list)  # each `<kind>: <target>`
     doc: str | None = None  # a contract's feature doc path, never opened
-    summary: str | None = None  # the source field, by the text rule
+    name: str | None = None  # the plain name, by the text rule
+    summary: str | None = None  # a contract's intent, by the text rule
     source: str | None = None  # the repo path of the file the item is read from
     place: tuple = ()  # the keys from that file's top to the item's entry
-    page: str | None = None  # the kit page that defines a gate or a task
+    # The kit page that defines a gate or a task; a verdict's or a condition's
+    # is its gate's.
+    page: str | None = None
     # A condition's messages from its rules, each on one line; never an item.
     diagnostics: list[str] = field(default_factory=list)
 
@@ -213,8 +221,8 @@ def next_gate(active: list[str], order: list[str]) -> str | None:
 
 
 def text(value) -> str | None:
-    """A source field as a summary: ends stripped, each line break one space;
-    None when the field is not text or is blank."""
+    """A source field as a plain name or a summary: ends stripped, each line
+    break one space; None when the field is not text or is blank."""
     if not isinstance(value, str):
         return None
     return " ".join(value.strip().splitlines()) or None
@@ -602,7 +610,7 @@ def _gate_items(order: list[str], active: list[str], findings: list[Finding],
         items.append(Item(base, "gate", marks=[] if gate in active else [INACTIVE],
                           children=conditions + _finding_items(base, gate, None,
                                                                findings, gates),
-                          summary=_name(gates.get(gate)), page=_page(gates.get(gate))))
+                          name=_name(gates.get(gate)), page=_page(gates.get(gate))))
     if NO_GATE in named:
         items.append(Item(f"gates/{NO_GATE}", "none",
                           children=_finding_items(f"gates/{NO_GATE}", NO_GATE, None,
@@ -615,7 +623,7 @@ def _finding_items(base: str, gate: str, condition: str | None,
     """The findings under `base`: those of `gate` whose `gate:` value is
     `condition` when its gate lists it, or with `condition` None, the rest."""
     return [Item(f"{base}/{finding.slug}", "finding", status=None,
-                 kind=finding.kind, summary=finding.statement,
+                 kind=finding.kind, name=finding.statement,
                  links=[f"gate: {finding.link}"] if finding.link else [],
                  source=f".sdlc/findings/{finding.slug}.yaml")
             for finding in findings
@@ -631,9 +639,9 @@ def _condition_of(finding: Finding, gates: dict[str, dict]) -> str | None:
 
 def _condition_items(base: str, entry: dict | None) -> list[Item]:
     """A gate's conditions under `base`, in its page's order, each reading
-    `to do`, with its name and its gate's page."""
+    `to do`, with its name as its plain name and its gate's page."""
     return [Item(f"{base}/{condition.get('id')}", "condition",
-                 summary=text(condition.get("name")), page=_page(entry))
+                 name=text(condition.get("name")), page=_page(entry))
             for condition in _conditions(entry)]
 
 
@@ -657,10 +665,11 @@ def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str
     item = Item(cid, "contract",
                 children=[Item(f"{cid}/{gate}", "verdict", marks=marks,
                                children=_condition_items(f"{cid}/{gate}", gates.get(gate)),
-                               summary=_name(gates.get(gate)),
+                               name=_name(gates.get(gate)),
                                source=source, page=_page(gates.get(gate)))
                           for gate, marks in verdicts],
                 doc=doc if (root / doc).is_file() else None,
+                name=(text(instance.get("title")) if instance is not None else None) or NO_TITLE,
                 summary=text(instance.get("intent")) if instance is not None else None,
                 source=source)
     for index, uid, unit, deps in _units(instance):
@@ -669,13 +678,13 @@ def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str
         sketches = unit.get("acceptance_sketch")
         sketches = sketches if isinstance(sketches, list) else []
         unit_item = Item(base, "unit",
-                         children=[Item(f"{base}/{task}", "task", summary=_name(entry),
+                         children=[Item(f"{base}/{task}", "task", name=_name(entry),
                                         page=_page(entry))
                                    for task, entry in tasks.items()],
                          links=[f"depends_on: {cid}/{dep}" for dep in dict.fromkeys(deps)],
-                         summary=text(unit.get("done_means")), source=source, place=place)
+                         name=text(unit.get("done_means")), source=source, place=place)
         unit_item.children += [
-            Item(f"{base}/{check}", "check", summary=text(sketch),
+            Item(f"{base}/{check}", "check", name=text(sketch),
                  source=source, place=place + ("acceptance_sketch", n))
             for n, (check, sketch) in enumerate(zip(check_ids(sketches), sketches))]
         item.children.append(unit_item)

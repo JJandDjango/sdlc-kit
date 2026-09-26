@@ -55,10 +55,11 @@ def _rules(tmp_path, units, profile="ready"):
 
 
 # --- schema surface (unit schema-1-2-0; pin moved by schema-1-3-0, then by
-# d1-schema-entities to 1.4.0: entities required at ready, ADR 0030) --------
+# d1-schema-entities to 1.4.0: entities required at ready, ADR 0030, then by
+# project-tree o2-titles to 1.5.0: an optional one-line `title`) ------------
 
-def test_schema_version_is_1_4_0():
-    assert load_schema()["version"] == "1.4.0"
+def test_schema_version_is_1_5_0():
+    assert load_schema()["version"] == "1.5.0"
 
 
 def test_unit_without_id_is_red(tmp_path):

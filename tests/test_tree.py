@@ -11,6 +11,11 @@ Unit t2-summaries-and-links ends each line with what its sources say: a
 unit's `depends_on` links, a finding's `gate` link, a contract's feature
 document as a file reference only, then, after ` | `, the item's summary,
 its source field's own text (SC4.1, SC4.2, SC5.1, SC5.2).
+
+Since project-tree's o2-titles, the source text of every item but a
+contract is its plain name, right after its id, before its status; the
+summary after ` | ` holds only a contract's intent. The tests below read
+the plain name as the row's `name`.
 """
 
 from __future__ import annotations
@@ -36,9 +41,18 @@ TASK_NAMES = ["Approve the test list", "Write the tests", "Prove red", "Green",
 INTENT = ("A fixture contract for the tree suite; its units carry the sketch "
           "shapes that check ids come from.")
 
-# One item per line: its full id, then its status (a finding: its kind) in
-# brackets, then anything later units add.
-ROW = re.compile(r"^(?P<indent> *)(?P<id>\S+) \[(?P<tag>[^\]]*)\](?P<rest>.*)$")
+# One item per line: its full id, then its plain name when it has one
+# (project-tree o2), then its status (a finding: its kind) in brackets, then
+# anything later units add.
+ROW = re.compile(r"^(?P<indent> *)(?P<id>\S+)(?: (?P<name>.*?))? \[(?P<tag>[^\]]*)\]"
+                 r"(?P<rest>.*)$")
+
+
+class _Row(tuple):
+    """(depth, id, tag, rest), carrying the plain name as `name` (None
+    when the line shows none)."""
+
+    name = None
 
 
 def _unit(uid, sketches, depends_on=None):
@@ -129,13 +143,16 @@ def _run(root, capsys):
 
 
 def _rows(out):
-    """[(depth, id, tag, rest)] for every item line, in print order."""
+    """[(depth, id, tag, rest)] for every item line, in print order, each
+    with its plain name as `name`."""
     rows = []
     for line in out.splitlines():
         match = ROW.match(line)
         if match:
-            rows.append((len(match["indent"]) // 2, match["id"], match["tag"],
-                         match["rest"]))
+            row = _Row((len(match["indent"]) // 2, match["id"], match["tag"],
+                        match["rest"]))
+            row.name = match["name"]
+            rows.append(row)
     return rows
 
 
@@ -408,6 +425,11 @@ def _summary(rows, rid):
     return _parts(rows, rid)[1]
 
 
+def _name(rows, rid):
+    """An item's plain name, between its id and its tag; None when it shows none."""
+    return _row(rows, rid).name
+
+
 def _one_line_each(out):
     """Whether every line printed is one item's line."""
     return len(out.splitlines()) == len(_rows(out))
@@ -445,7 +467,8 @@ def test_a_contract_shows_its_intent(tmp_path, capsys):
 def test_a_unit_shows_its_done_means(tmp_path, capsys):
     rows = _tree(_repo(tmp_path), capsys)
     for rid in ("alpha/a1-core", "alpha/a2-edges", "beta/b1-solo"):
-        assert _summary(rows, rid) == f"the work for {rid.split('/')[1]} is done", rid
+        assert _name(rows, rid) == f"the work for {rid.split('/')[1]} is done", rid
+        assert _summary(rows, rid) is None, rid  # its plain name now, never after a bar
 
 
 def test_a_check_shows_its_sketch_line(tmp_path, capsys):
@@ -454,7 +477,7 @@ def test_a_check_shows_its_sketch_line(tmp_path, capsys):
         for unit in units:
             base = f"{cid}/{unit['id']}"
             # a check whose id falls back to its position still shows its own line
-            shown = [_summary(rows, f"{base}/{check}") for check in _checks(rows, base)]
+            shown = [_name(rows, f"{base}/{check}") for check in _checks(rows, base)]
             assert shown == unit["acceptance_sketch"], base
 
 
@@ -467,21 +490,21 @@ def test_a_finding_shows_its_statement(tmp_path, capsys):
         _edit(_finding_path(root, slug), statement=f"The {slug} finding, in its own words.")
     rows = _tree(root, capsys)
     for rid in findings:
-        assert _summary(rows, rid) == f"The {rid.rsplit('/', 1)[1]} finding, in its own words."
+        assert _name(rows, rid) == f"The {rid.rsplit('/', 1)[1]} finding, in its own words."
 
 
 def test_a_gate_shows_its_name_from_the_gate_list(tmp_path, capsys):
     names = _gate_names()
     rows = _tree(_repo(tmp_path), capsys)
-    assert _summary(rows, "gates/G0") == names["G0"]  # active
-    assert _summary(rows, "gates/G3") == names["G3"]  # inactive, named by a finding's G3.1
+    assert _name(rows, "gates/G0") == names["G0"]  # active
+    assert _name(rows, "gates/G3") == names["G3"]  # inactive, named by a finding's G3.1
 
 
 def test_a_task_step_shows_its_name_from_the_task_list(tmp_path, capsys):
     names = _task_names()
     rows = _tree(_repo(tmp_path), capsys)
     for unit in ("alpha/a1-core", "alpha/a2-edges", "beta/b1-solo"):
-        assert [_summary(rows, f"{unit}/{task}") for task in TASK_KEYS] == names, unit
+        assert [_name(rows, f"{unit}/{task}") for task in TASK_KEYS] == names, unit
 
 
 def test_a_verdict_shows_the_name_of_its_gate(tmp_path, capsys):
@@ -490,14 +513,14 @@ def test_a_verdict_shows_the_name_of_its_gate(tmp_path, capsys):
     names = _gate_names()
     rows = _tree(root, capsys)
     for cid in ("alpha", "beta"):
-        assert _summary(rows, f"{cid}/G0") == names["G0"], cid  # after its evidence
-        assert _summary(rows, f"{cid}/G4") == names["G4"], cid
+        assert _name(rows, f"{cid}/G0") == names["G0"], cid  # before its status and evidence
+        assert _name(rows, f"{cid}/G4") == names["G4"], cid
 
 
 def test_the_no_gate_item_shows_no_summary(tmp_path, capsys):
     rows = _tree(_repo(tmp_path), capsys)
-    assert _summary(rows, "gates/G0") == _gate_names()["G0"]  # the gate beside it shows its name
-    assert _row(rows, "gates/none")[3] == ""  # no source field names it: nothing after the tag
+    assert _name(rows, "gates/G0") == _gate_names()["G0"]  # the gate beside it shows its name
+    assert (_name(rows, "gates/none"), _row(rows, "gates/none")[3]) == (None, "")  # nothing
 
 
 def test_a_gate_the_gate_list_lacks_shows_no_summary(tmp_path, capsys):
@@ -506,8 +529,9 @@ def test_a_gate_the_gate_list_lacks_shows_no_summary(tmp_path, capsys):
     names = _gate_names()
     assert "X1" not in names
     rows = _tree(root, capsys)
-    assert [_summary(rows, rid) for rid in ("gates/G0", "alpha/G0")] == [names["G0"]] * 2
-    assert [_row(rows, rid)[3] for rid in ("gates/X1", "alpha/X1")] == ["", ""]
+    assert [_name(rows, rid) for rid in ("gates/G0", "alpha/G0")] == [names["G0"]] * 2
+    assert [(_name(rows, rid), _row(rows, rid)[3]) for rid in ("gates/X1", "alpha/X1")] == [
+        (None, ""), (None, "")]
 
 
 def test_a_field_absent_blank_or_not_a_string_gives_no_summary(tmp_path, capsys):
@@ -522,14 +546,14 @@ def test_a_field_absent_blank_or_not_a_string_gives_no_summary(tmp_path, capsys)
     _dump(_contract_path(root, "alpha"), alpha)
     _edit(_finding_path(root, "stale-pin"), statement=None)
     rows = _tree(root, capsys)
-    assert _summary(rows, "alpha/a3-plain") == "the work for a3-plain is done"  # a string shows
-    assert _summary(rows, "alpha/a1-core/SC1.1") == "verify the core prints (SC1.1)"
-    for rid in ("alpha",                   # no intent
-                "alpha/a1-core",           # done_means a number
+    assert _name(rows, "alpha/a3-plain") == "the work for a3-plain is done"  # a string shows
+    assert _name(rows, "alpha/a1-core/SC1.1") == "verify the core prints (SC1.1)"
+    assert _summary(rows, "alpha") is None  # no intent
+    for rid in ("alpha/a1-core",           # done_means a number
                 "alpha/a2-edges",          # done_means blank
                 "alpha/a1-core/sketch-2",  # a sketch line that is a mapping
                 "gates/G0/stale-pin"):     # no statement
-        assert _summary(rows, rid) is None, rid
+        assert (_name(rows, rid), _summary(rows, rid)) == (None, None), rid
 
 
 # --- SC4.1 the text unchanged: stripped, on one line, whole -------------------
@@ -559,9 +583,9 @@ def test_a_summary_drops_the_whitespace_around_its_text(tmp_path, capsys):
     _dump(_contract_path(root, "beta"), _contract("beta", [
         {**BETA[0], "done_means": " \tthe work for b1-solo is done  \n"}]))
     rows, out = _printed(root, capsys)
-    assert _summary(rows, "gates/G3/G3.1/slow-loop") == (
+    assert _name(rows, "gates/G3/G3.1/slow-loop") == (
         "The loop runs slow on each save. It costs a minute each run.")
-    assert _summary(rows, "beta/b1-solo") == "the work for b1-solo is done"
+    assert _name(rows, "beta/b1-solo") == "the work for b1-solo is done"
     assert _one_line_each(out)
 
 
@@ -572,7 +596,7 @@ def test_each_line_break_inside_a_summary_prints_as_one_space(tmp_path, capsys):
          "done_means": "first line\nsecond line\r\nthird line\n\nafter a blank line\n"}]))
     rows, out = _printed(root, capsys)
     # \r\n is one line break; a blank line is two, so two spaces
-    assert _summary(rows, "beta/b1-solo") == (
+    assert _name(rows, "beta/b1-solo") == (
         "first line second line third line  after a blank line")
     assert _one_line_each(out)
 
@@ -612,14 +636,16 @@ def test_the_summary_comes_last_after_one_bar(tmp_path, capsys):
     names = _gate_names()
     statement = "A fixture finding for the tree suite."
     rows = _tree(root, capsys)
-    assert _row(rows, "gates/G3")[3] == f" inactive | {names['G3']}"
-    assert _row(rows, "gates/G3/G3.1/slow-loop")[3] == f" gate: G3.1 | {statement}"
+    # only a contract keeps a bar: every other item's source text is its plain name
+    assert (_name(rows, "gates/G3"), _row(rows, "gates/G3")[3]) == (names["G3"], " inactive")
+    assert (_name(rows, "gates/G3/G3.1/slow-loop"),
+            _row(rows, "gates/G3/G3.1/slow-loop")[3]) == (statement, " gate: G3.1")
     assert _row(rows, "alpha")[3] == f" doc: docs/features/alpha.md | {INTENT}"
-    assert _row(rows, "alpha/a1-core")[3] == " | the work for a1-core is done"
-    assert _row(rows, "alpha/a2-edges")[3] == (
-        " depends_on: alpha/a1-core | the work for a2-edges is done")
+    assert _row(rows, "alpha/a1-core")[3] == ""
+    assert _row(rows, "alpha/a2-edges")[3] == " depends_on: alpha/a1-core"
     head, summary = _parts(rows, "alpha/G0")
-    assert (head.split()[:1], summary) == (["via"], names["G0"])  # t3's evidence, then the name
+    assert (head.split()[:1], summary) == (["via"], None)  # t3's evidence, no bar
+    assert _name(rows, "alpha/G0") == names["G0"]
 
 
 # --- SC5.1, SC5.2 links, typed and read from source fields --------------------

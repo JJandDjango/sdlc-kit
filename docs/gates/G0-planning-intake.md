@@ -84,6 +84,7 @@ wrong everything downstream.
 | `provenance` | origin: human request / G8 escape / G9 maintenance | (derived - principle 8) the convergence loop needs escapes distinguishable at intake |
 | `entities` | required at ready, optional at draft ([0017](../../decisions/0017-vocabulary-layer.md) amendment, tightened by [0030](../../decisions/0030-a-doors-input-is-a-declaration.md)) - the ratified vocabulary terms the task operates on; `entities: []` declares that it operates on none | the G0.2 coverage join; absent at ready = `TC017`, so the join can no longer be skipped by silence |
 | `confirmed_by` (per unit) | optional in the schema ([0025](../../decisions/0025-intake-seats.md) amendment) - the seats whose answer for the unit was taken at intake | the G0.3 join; demanded on every unit, because [0030](../../decisions/0030-a-doors-input-is-a-declaration.md) makes the repo's ratified `intake-seat` term required at ready (`TC018`) rather than the switch that arms the join |
+| `title` | optional - one line that holds more than blanks (schema 1.5.0); a blank title or one with a line break fails the draft profile with `TC002` | the feature's plain name, which intake copies from the feature document's title line; the tree's feature line reads it, and no gate condition reads it |
 
 ### G0.2 Vocabulary coverage join - added 2026-07-28, [0017](../../decisions/0017-vocabulary-layer.md)
 

@@ -33,9 +33,11 @@ HEAD = "1a2b3c4"  # what a hand-written record carries; no t3 status reads it
 INTENT = ("A fixture contract for the status suite; its units carry the "
           "sketch shapes that check ids come from.")
 
-# One item per line: its full id, then its status (a finding: its kind) in
-# brackets, then its marks, then its evidence, then what later units add.
-ROW = re.compile(r"^(?P<indent> *)(?P<id>\S+) \[(?P<tag>[^\]]*)\](?P<rest>.*)$")
+# One item per line: its full id, then its plain name when it has one
+# (project-tree o2), then its status (a finding: its kind) in brackets, then
+# its marks, then its evidence, then what later units add.
+ROW = re.compile(r"^(?P<indent> *)(?P<id>\S+)(?: (?P<name>.*?))? \[(?P<tag>[^\]]*)\]"
+                 r"(?P<rest>.*)$")
 UNREADABLE = re.compile(
     r"^taskcontract tree: unreadable progress: \.sdlc/progress/alpha\.yaml \(.+\)$")
 
