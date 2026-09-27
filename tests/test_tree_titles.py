@@ -13,8 +13,7 @@ place. The `summary` part, after ` | `, holds only a feature's intent, and
 `taskcontract tree <id>` prints its `summary:` line only for a feature.
 `parts:` never leaves out the plain name, as it never leaves out the id.
 The pane's item lines open the same way, the last segment of the id under
-another item; its waiting line, where-am-I line and fold lines keep ids
-alone.
+another item; its waiting line keeps ids alone.
 
 The contract schema (1.5.0) takes an optional top-level `title`: a string
 of one line that holds more than blanks. A blank title or one holding a

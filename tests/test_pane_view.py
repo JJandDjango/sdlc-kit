@@ -176,14 +176,10 @@ def test_sc3_2_taskcontract_tree_prints_the_same_bytes_with_every_id_full(tmp_pa
 
 # --- SC2 the parts of an item line ----------------------------------------------------
 #
-# `tree: pane: parts:` in .sdlc/config.yaml lists the fields each item line
-# of the pane shows after its id. On the fixture's path every field but
-# evidence shows on some line: the contract's status, doc reference and
-# summary, the unit's status, depends_on link and summary, the task's status,
-# `current` mark and summary. The path never carries evidence: the current
-# task is doing, to do or waiting on a seat, never done or blocked by its own
-# record, and its unit and contract read done only when every child does. So
-# evidence's place in the order shows only as nothing where it stands.
+# `tree: pane: parts:` in .sdlc/config.yaml lists the parts each item line
+# of the interactive pane shows after its id and plain name; the pane's own
+# tests are in tests/test_pane.py. The helpers below set it on a fixture with
+# alpha's feature doc on disk, for the whole-print test that follows.
 
 UNREADABLE_BETA = re.compile(
     r"^taskcontract tree: unreadable progress: \.sdlc/progress/beta\.yaml \(.+\)$")
@@ -234,12 +230,11 @@ def test_sc2_2_taskcontract_tree_prints_the_same_stdout_and_stderr_with_parts_se
     assert UNREADABLE_BETA.match(with_key.err.splitlines()[0])
 
 
-# --- SC4 the fold lines ------------------------------------------------------------------
+# --- SC4 the fold setting ----------------------------------------------------------------
 #
-# `tree: pane: fold:` in .sdlc/config.yaml chooses what each fold line holds:
-# the counts by status (`counts`, or no key), or each folded item by its id and
-# status (`names`). Each fold line keeps its place and its indent; only the
-# text after `<n> more: ` (or `<n> items`) changes.
+# `tree: pane: fold:` in .sdlc/config.yaml chooses what a closed item's group
+# holds in the interactive pane: the counts by status (`counts`, or no key), or
+# each item by its id and status (`names`).
 
 
 def _fold(root, fold, gates=(), **pane):

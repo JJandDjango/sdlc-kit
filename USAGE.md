@@ -632,8 +632,10 @@ status, so it shows its `kind`.
 🟢 An item names its evidence on its line. A done check names the run
 that proved it, `via <command> at <commit>`. A done task names the commit
 its own done record was written at, `at <commit>`, and a done approval
-names its seat too, `by <seat> at <commit>`. A unit or contract closed
-with `progress done` reads `done` and names that close, `at <commit>`. A
+names its seat too, `by <seat> at <commit>`. A unit or contract that
+reads `done` after a close with `progress done` names that close, `at
+<commit>`; one that a later record changed, such as a task started again
+or a check's red run, reads as that record says and names none. A
 blocked
 task names its reason, `because <reason>`. A `G0` verdict, whatever it reads, names
 the validator run behind it: `via python -m taskcontract validate
@@ -768,7 +770,9 @@ progress` line above, so fix or remove the file first.
 contract closes every task and check under it; a close never covers a
 verdict, which the validator reads. A closed unit reads `done`. A closed
 contract reads `done` whatever its verdicts read, and each verdict keeps
-the validator's reading on its own line. A contract
+the validator's reading on its own line. A record written after a close
+still counts, so a task started again or a check's red run changes what
+the closed item reads. A contract
 finished before the tree existed reads `to do` until it is closed, so one
 command per contract backfills its history; a fresh clone, which starts
 with no progress file, rebuilds it the same way.
