@@ -3,6 +3,8 @@
 
 id: pane-view
 
+title: The pane shows where the task sits, and what each line holds
+
 intent: >-
   The `--follow` mode renders the path to the current task, but no single
   line names the contract file and the path. Each item line shows every
