@@ -3,6 +3,8 @@
 
 id: glossary-alias-disjointness
 
+title: No two glossary terms share a name, slug or alias
+
 intent: >-
   The vocab-check door validates each term file against the schema,
   never the set of terms. The task adds a glossary join. VT010 goes
