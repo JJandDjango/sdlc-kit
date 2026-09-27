@@ -2,36 +2,47 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-27 (session 57 close, the format amendment)._
+> _Generated 2026-09-27 (session 58 close, G1's request half)._
 
 ## Now
-- **ADR 0033 amends the feature document format** (0029): the solution
-  half gains Sources (13.4), Examples (under 13.3 Interfaces) and
-  Retirements (per unit); tests by check id and kind; each ordering with
-  its reason; the checks run before a seat signs; ready checks 11 to 14.
-  From a post-mortem of project-tree's 43 approvals (sessions 51 to 56):
-  12 of the 17 about content were answerable at r3. Evidence and the six
-  ratified calls: `NOTES_feature-document-amendment_2026-09-27.md`.
-- **The tree's order is dropped** (user): the backfill marked finished
-  features done, and id order stands.
-- On branch `session-57-format-amendment`; the commit, push and PR on the
-  user's word.
-- Carried from session 56: 15 features read `[done]`;
-  `glossary-alias-disjointness` is parked by the user, `[to do]`.
+- **G1's feature document: the request half is signed** by the PO seat at
+  r3 (`docs/features/g1-requirements-spec.md`), the first document written
+  to ADR 0033. Five criteria: the G1.3 review, schema linting, model
+  checking, G1 before development (intake names G1 next, and no unit's
+  task starts before G1 passes), and the tree. Seven non-goals, among them
+  no agent attests G1.3 and no G1 review for the 15 features done.
+- Three terms settled at Q9: an unchecked review item is a diagnostic
+  (Finding keeps its meaning, about the kit); G1's rules are validator
+  tests that read the recorded results (the ratified Rule); Ready check is
+  its own term.
+- The checks before signing (r2): `component` and `venue` trip CL003, and
+  the dictionary cedes both at intake; 86 language findings are left to
+  intake's rewrite of the contract's wording.
+- On branch `session-58-g1-feature-document`; the commit, push and PR on
+  the user's word. Session 57's PR #68 merged at `af8c261`.
+- Carried: 15 features read `[done]`; `glossary-alias-disjointness` is
+  parked by the user, `[to do]`.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. G1, starting with its feature document through an interview: the
-   first written to ADR 0033. The pilot's config line, in the engine's
-   session; the engine's install ref moves to `v0.16.0` there (pull, not
-   push).
+1. G1's solution half, through the interview at the engineer seat, to
+   ADR 0033: Sources, Examples, Retirements, tests by check id and kind,
+   order with its reason, and the checks before signing (Scope against the
+   release unit's paths). Open for it: where the component declaration
+   record and the review record live, G1's rules and their codes, the
+   venue, and how the 15 features done read G1 inactive once G1 is active.
+   Then intake. The pilot's config line, in the engine's session; the
+   engine's install ref moves to `v0.16.0` there (pull, not push).
 2. Prerequisite 7: feature documents for the 15 contracts without one,
    each through its own interview.
 3. `feature-document` absorbs ADR 0033 into the template, the interview's
    flow and the readiness check, when it is built.
-4. Small, parked: `taskcontract/__main__.py:85`'s `--follow` help still
+4. The tree's `gates/G0` item reads `to do` with no finding filed,
+   whatever each feature's G0 verdict reads (found session 58; a gap in
+   project-tree's requirements): decide what its status means.
+5. Small, parked: `taskcontract/__main__.py:85`'s `--follow` help still
    describes the 0.15.0 pane; Two-Key's wording advisories (CHANGELOG's
    and ADR 0032's "a closed contract reads done whatever its verdicts
    read" omit the later-record limit; USAGE's evidence paragraph reads
@@ -39,7 +50,7 @@
    only); two test gaps (no pane test for a `parts:` list without
    `evidence` hiding a seat; `tests/conftest.py`'s row pattern splits a
    plain name at its first ` [`).
-5. Deferred, carried: `glossary-alias-disjointness` (parked by the user,
+6. Deferred, carried: `glossary-alias-disjointness` (parked by the user,
    2026-09-26); `derived-language` (prerequisite 5); ADR 0029's
    appendix copy and Gherkin for project-tree, with `feature-document`'s
    open question; flag the Claude pane itself; the hook's key action and
@@ -59,7 +70,11 @@
   `docs/features/<id>.md`; never a request typed from a sketch. Until
   `feature-document` lands, the interview runs by hand from
   `NOTES_feature-document_2026-09-18.md` and
-  `NOTES_feature-document-amendment_2026-09-27.md`.
+  `NOTES_feature-document-amendment_2026-09-27.md`. The checks before
+  signing run from a scratch script: add the document's new terms as
+  drafts to `load_terms`, report CL003 through
+  `lang.validate_dictionary_doc`, and run `lang.check_contract` on a draft
+  contract holding the statement, the non-goals and the checks.
 - A deferred item that waits on a prerequisite is measured again once the
   prerequisite lands, before it becomes work (the tree's order, session
   57).
