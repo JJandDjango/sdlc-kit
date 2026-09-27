@@ -2,9 +2,14 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-26 (session 55 close, project-tree o7 built, before the release)._
+> _Generated 2026-09-26 (session 55 close, kit 0.16.0 released)._
 
 ## Now
+- **Kit 0.16.0 is released.** PR #64 merged at `17da7fd`, the annotated
+  tag `v0.16.0` there, and the self-pin at `72e9b9e` on
+  `session-55-release`, whose PR this wrap rides. USAGE's `uv` line, run
+  with `python -P` against the tag, installs 0.16.0 and reads
+  `specs/project-tree` ready-green.
 - **`o7-release` is built and closed, and `project-tree` with it.** o7 at
   `3040fa7` and its fix `1bab527`, each approved by the user; Two-Key
   PASS at round 2 (round 1: USAGE said a closed unit or contract always
@@ -17,19 +22,15 @@
 - The pane ran live in a herdr pane on Windows before the release text:
   the keys, a render that kept the cursor and the open items, the user's
   clicks and wheel, and Ctrl-C.
-- Branch `session-55-project-tree-o7` holds the session, cut from
-  `ea3c83c` (PR #63 merged). The push, the PR, the merge, the tag and the
-  self-pin wait on the user's word; the install pins at
-  `.github/workflows/sdlc.yml:20` and `USAGE.md:377` still read `v0.15.0`.
+- The session's work reached main through PR #63 (`ea3c83c`, session
+  54) and PR #64 (`17da7fd`); `session-55-release` holds the self-pin.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. The release, plan.md step 8: the PR, a merge commit, the annotated tag
-   `v0.16.0` at the merge, then the self-pin through its own PR, which
-   the release's wrap rides, and USAGE's `uv` line run against the new
-   tag. A tag made after midnight moves the CHANGELOG heading's date.
+1. Merge the self-pin PR once CI reads green under the new pin; its green
+   `contracts` job proves the tag installs.
 2. Session 56 opens on the history backfill: one `taskcontract progress
    done <contract>` per contract that shipped, each checked against
    CHANGELOG first. 13 contracts read `to do` today, most of them shipped,
