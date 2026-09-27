@@ -3,6 +3,8 @@
 
 id: g0-declaration
 
+title: A door's input is a declaration, not an option
+
 intent: >-
   Two G0 conditions read an optional field, so a contract that lacks the
   field passes both and nothing is checked. After this task the ready
