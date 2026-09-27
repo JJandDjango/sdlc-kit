@@ -2,36 +2,35 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-26 (session 56 close, history backfill done)._
+> _Generated 2026-09-27 (session 57 close, the format amendment)._
 
 ## Now
-- **The history backfill is done**: prerequisites 8 and 9 of
-  `docs/features/project-tree.md` (session 55's STATE numbered them 7
-  and 8; 7 is the feature documents). 12 contracts closed through
-  `progress done`, each checked against CHANGELOG unit by unit; the
-  records sit in `.sdlc/progress/` (gitignored, this machine only) and
-  name `HEAD` `4986614`, not the release commit. 16 titles, one commit
-  per contract (`a55fb7e` to `0d392ad`), all ready-green.
-- The tree now prints every feature by its title; 15 read `[done]`.
-- **`glossary-alias-disjointness` never shipped**: ready, three units,
-  and VT010 appears only in its own contract. The user parked it at
-  session close: no build planned. The contract is unchanged, since no
-  dependency blocks it, so the tree still reads it `[to do]`.
-- PR #66 merged at `6ea51f0` (the plan, the titles and the wrap).
+- **ADR 0033 amends the feature document format** (0029): the solution
+  half gains Sources (13.4), Examples (under 13.3 Interfaces) and
+  Retirements (per unit); tests by check id and kind; each ordering with
+  its reason; the checks run before a seat signs; ready checks 11 to 14.
+  From a post-mortem of project-tree's 43 approvals (sessions 51 to 56):
+  12 of the 17 about content were answerable at r3. Evidence and the six
+  ratified calls: `NOTES_feature-document-amendment_2026-09-27.md`.
+- **The tree's order is dropped** (user): the backfill marked finished
+  features done, and id order stands.
+- On branch `session-57-format-amendment`; the commit, push and PR on the
+  user's word.
+- Carried from session 56: 15 features read `[done]`;
+  `glossary-alias-disjointness` is parked by the user, `[to do]`.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. The tree's order, a feature document candidate, written through an
-   interview: 15 of 16 features now read done, so finished work fills
-   the tree above live work. The user's likely want: finished features
-   closed to one line.
-2. G1 after that, so the pane follows G1's conditions. The pilot's config
-   line, in the engine's session; the engine's install ref moves to
-   `v0.16.0` there (pull, not push).
-3. Prerequisite 7: feature documents for the 15 contracts without one,
+1. G1, starting with its feature document through an interview: the
+   first written to ADR 0033. The pilot's config line, in the engine's
+   session; the engine's install ref moves to `v0.16.0` there (pull, not
+   push).
+2. Prerequisite 7: feature documents for the 15 contracts without one,
    each through its own interview.
+3. `feature-document` absorbs ADR 0033 into the template, the interview's
+   flow and the readiness check, when it is built.
 4. Small, parked: `taskcontract/__main__.py:85`'s `--follow` help still
    describes the 0.15.0 pane; Two-Key's wording advisories (CHANGELOG's
    and ADR 0032's "a closed contract reads done whatever its verdicts
@@ -56,10 +55,14 @@
   this file: the engine hands work to the kit there, and its REQUESTs land
   untracked in this root.
 - A new feature starts as a feature document written through an
-  interview, in the format ADR 0029 ratified, tracked at
+  interview, in the format ADR 0029 ratified and 0033 amended, tracked at
   `docs/features/<id>.md`; never a request typed from a sketch. Until
   `feature-document` lands, the interview runs by hand from
-  `NOTES_feature-document_2026-09-18.md`.
+  `NOTES_feature-document_2026-09-18.md` and
+  `NOTES_feature-document-amendment_2026-09-27.md`.
+- A deferred item that waits on a prerequisite is measured again once the
+  prerequisite lands, before it becomes work (the tree's order, session
+  57).
 - Intake from a feature document: ratify its new terms first, in their
   own commit. A term whose single-word name or slug equals a dictionary
   word trips CL003; the dictionary cedes the word in the same commit.
@@ -117,6 +120,8 @@
 - The `intake-seat` term says a seat is never delegated to an agent, while
   a delegated session's approvals record `--by claude` (sessions 40 to 42,
   45 to 47, 52 to 54). Does the term need a word for a delegated approval?
+  Beside it: G0.3's unit confirmation repeated the engineer seat's
+  signature on project-tree (ADR 0033's recorded non-goal).
 - Should `page:` print a URL (the kit's repo at the pinned tag)?
 - Push `E:\herdr-sdlc` to GitHub, so herdr can install it as a plugin?
 - Which request carries `no-check-reads-the-source-document`?
