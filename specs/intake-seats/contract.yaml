@@ -3,6 +3,8 @@
 
 id: intake-seats
 
+title: Intake records which seat answered for each unit
+
 intent: >-
   Intake needs a human answer for every unit today, and no artifact
   holds the answer. The task records the answer in the contract. A seat
