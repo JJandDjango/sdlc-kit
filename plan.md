@@ -26,9 +26,10 @@ ADR 0032; `taskcontract tree` still prints every item and exits 0, and
    batch, shown in chat as before and after, and then approves the commit
    (o7's seat is `user`). Two-Key runs through the verifier Workflow.
 
-**o7 closed.** At `3040fa7` and its fix `1bab527`; Two-Key PASS at round
-2; `project-tree` closed at `1bab527`. Suite 638 passed. Step 8 waits on
-the user's word.
+**Closed.** The deliverable is met: o7 at `3040fa7` and its fix
+`1bab527`, Two-Key PASS at round 2, `project-tree` closed at `1bab527`;
+PR #64 merged at `17da7fd`, tagged `v0.16.0`; the self-pin at `72e9b9e`.
+Suite 638 passed.
 
 ## Steps
 
@@ -52,10 +53,11 @@ the user's word.
    approved by the user; PASS at round 2; o7 and the contract closed.
 7. ~~Close.~~ STATE.md regenerated, this plan struck; the push and the PR
    on the user's word.
-8. Release: the merge on the user's word, the annotated tag `v0.16.0` at
-   the merge, then the self-pin (`.github/workflows/sdlc.yml` line 20 and
-   `USAGE.md` line 377 to `@v0.16.0`) through its own PR, with USAGE's
-   `uv` line run against the new tag.
+8. ~~Release.~~ PR #64 merged at `17da7fd` once CI read green; the
+   annotated tag `v0.16.0` there; the self-pin at `72e9b9e` on
+   `session-55-release`, its PR merged once CI reads green. USAGE's `uv`
+   line, run with `python -P` against the tag, installed 0.16.0 and read
+   `specs/project-tree` ready-green.
 
 Steps 1, 2, 7 and 8 sit outside a contract unit, so the tree does not show
 them.
