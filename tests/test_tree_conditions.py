@@ -50,7 +50,7 @@ KIT = Path(taskcontract.__file__).resolve().parent.parent
 GATES = KIT / "taskcontract" / "data" / "gates.yaml"
 USAGE = KIT / "USAGE.md"
 
-RED = "\U0001F534"
+GREEN = "\U0001F7E2"
 TASK_KEYS = ["approve-tests", "write-tests", "prove-red", "green",
              "approve-commit", "commit", "two-key"]
 G0_CONDITIONS = ["G0.1", "G0.2", "G0.3"]
@@ -729,16 +729,17 @@ def _section_nine():
     return text[start:text.index("\n## 10. ", start)]
 
 
-def test_usage_marks_its_project_tree_subsections_red_and_its_example_is_the_tree(
+def test_usage_marks_its_project_tree_subsections_green_and_its_example_is_the_tree(
         tmp_path, capsys):
     section = _section_nine()
     headings = [text for text in section.splitlines() if text.startswith("### ")]
     assert headings[-5:] == [
-        f"### {name} {RED}" for name in (
+        f"### {name} {GREEN}" for name in (
             "Gates and their conditions", "Plain names and titles",
             "Drift from the feature document", "Blocked and waiting, named",
             "The interactive pane")]
-    part = section[section.index(f"### Gates and their conditions {RED}"):]
+    assert "\U0001F534" not in section  # every mark green at the release (project-tree o7)
+    part = section[section.index(f"### Gates and their conditions {GREEN}"):]
     example = part.split("```\n", 2)[1].splitlines()
     # the contract line opens on its id and its title, then its status (project-tree
     # o2), then its drift mark before intake writes the Ready row (project-tree o3)

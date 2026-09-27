@@ -9,6 +9,56 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.16.0 - 2026-09-26 (tag `v0.16.0`)
+
+- **Each item shows its plain name, and a contract its `title`**
+  (`project-tree`, ADR 0032, unit `o2-titles`). Each item line opens on
+  its id and its plain name: a gate's, a condition's or a task's name from
+  the kit's lists, a unit's `done_means`, a check's sketch line, a
+  finding's `statement`, a contract's `title` or `(no title)`. Only a
+  contract keeps a summary, its `intent`, and `taskcontract tree <id>`
+  prints `summary:` for a contract alone. Schema `1.4.0` -> `1.5.0`: an
+  optional top-level `title`, one line that holds more than blanks; a blank
+  title or one with a line break fails the draft profile with `TC002`.
+  Intake copies it from the feature document's title line. Delta note:
+  additive; a contract without `title` validates as before and reads `(no
+  title)` until one line names it.
+- **Gates open into their conditions** (`project-tree`, unit
+  `o1-conditions`). `taskcontract/data/gates.yaml` lists every gate's
+  conditions, 57 in all; each of G0's three reads the validator rules it
+  owns, and one that is not done lists its diagnostics. Each contract shows
+  its active gates, then the next gate marked `inactive`, which never counts
+  toward its status. A finding whose `gate:` names a condition stands under
+  that condition. Delta note: none; no gate checks anything new.
+- **A feature reads stale against its document** (`project-tree`, unit
+  `o3-stale`). The tree opens `docs/features/<id>.md` for its revision
+  table only and marks the feature `stale: document rN, contract from rM`,
+  `no feature document` or `no "Ready:" row`. Intake writes its `Ready:`
+  row as `rN: Ready: ... derived from rM`. Delta note: none; a repo with no
+  feature documents reads `no feature document` on each contract.
+- **Blocked and waiting items name why** (`project-tree`, unit
+  `o4-statuses`). A blocked task names its `--reason`, and the approval
+  that holds the current task names its unit's `confirmed_by` seats,
+  `seat: <seats>`. A closed contract reads `done` whatever its verdicts
+  read. Delta note: none.
+- **`taskcontract tree --follow` is an interactive outline**
+  (`project-tree`, units `o5-pane-outline` and `o6-pane-keys`). With the
+  new `pane` extra (Textual `>=8.2,<9`), the pane shows the whole tree,
+  each feature open down to its units, moved through with the arrow keys,
+  clicks and the wheel, and a cursor line holds the item's reference and
+  whole plain name. A closed item shows its group, `(<n> items:
+  <counts>)`. A render keeps the cursor and every open item; the waiting
+  line, the notify command and Ctrl-C's exit 0 carry over, and the lines
+  0.15.0 wrote to stderr show inside the pane. The where-am-I line and the
+  fold lines retire; `tree: pane: parts:` and `fold:` keep working. Delta
+  note: `--follow` needs the extra, and without it prints the install line
+  and exits 2. Install it at the tag: `pip install "sdlc-taskcontract[pane]
+  @ git+https://github.com/JJandDjango/sdlc-kit.git@v0.16.0"`.
+- **The release is written down** (`project-tree`, unit `o7-release`).
+  `USAGE.md` section 9, "Following the work", reads green throughout. Kit
+  `0.15.0` -> `0.16.0`; the contract schema goes to `1.5.0`. Delta note:
+  none beyond the notes above; pin the install ref to the tag.
+
 ## 0.15.0 - 2026-09-23 (tag `v0.15.0`)
 
 - **`taskcontract tree` prints the work as one tree** (`tree-view`,

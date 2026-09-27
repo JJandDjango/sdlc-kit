@@ -1,4 +1,4 @@
-"""`taskcontract tree --follow` - the interactive pane (ADR 0031).
+"""`taskcontract tree --follow` - the interactive pane (ADRs 0031 and 0032).
 
 The only module that imports Textual, the `pane` extra; `taskcontract tree
 --follow` imports it only when it runs. The pane holds, top to bottom: the

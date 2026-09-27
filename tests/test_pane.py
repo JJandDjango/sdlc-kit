@@ -16,9 +16,9 @@ current task's line carries `current` whatever `parts:` selects. Labels are
 plain text, never markup. The pane opens each feature (every contract) down
 to its units and every other item closed; a current task also opens its own
 unit. The cursor starts on the current task, with the window scrolled to
-it, else on the first line. A plain name that would push the status past
-the outline's right edge is cut where the status still fits, ending in
-`...` (SC4.1).
+it, else on the first line. A plain name that would push the status, a
+closed item's group (`(<n> items: <counts>)`) and `current` past the
+outline's right edge is cut where they still fit, ending in `...` (SC4.1).
 
 The cursor line shows the item at the cursor: `<reference> | <plain name>`,
 the name whole, the reference the one `taskcontract tree <id>` prints (a
@@ -56,7 +56,6 @@ import yaml
 
 import taskcontract
 from conftest import write_seat_roster
-from taskcontract import tree_view
 from taskcontract.__main__ import main
 
 KIT = Path(taskcontract.__file__).resolve().parent.parent
