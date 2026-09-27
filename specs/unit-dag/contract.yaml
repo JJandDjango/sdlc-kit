@@ -3,6 +3,8 @@
 
 id: unit-dag
 
+title: Unit order in the task contract, rendered as Mermaid
+
 intent: >-
   Unit order stays outside the contract today, in prose no door reads.
   The task adds order to the task contract. Every unit carries an `id`,
