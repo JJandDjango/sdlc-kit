@@ -3,6 +3,8 @@
 
 id: vocabulary-layer
 
+title: The glossary as executable vocabulary, joined at G0
+
 intent: >-
   The kit carries an executable vocabulary layer per ADR 0017: glossary
   terms live as per-term YAML files under specs/vocabulary/, validated
