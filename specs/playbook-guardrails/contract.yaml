@@ -3,6 +3,8 @@
 
 id: playbook-guardrails
 
+title: Session hooks, the scope check, the review pass
+
 intent: >-
   A session can edit a ready contract or a ratified term today. A merge
   with a path outside its contract's scope passes with no check. After
