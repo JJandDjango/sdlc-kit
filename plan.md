@@ -1,97 +1,66 @@
-# Plan - Session 55 (2026-09-26) - project-tree o7, release 0.16.0
+# Plan - Session 56 (2026-09-26) - history backfill and titles
 
-**Deliverable:** unit `o7-release` of `project-tree` with its Two-Key
-PASS, then the release: the merge, the annotated tag `v0.16.0` at the
-merge, and the self-pin through its own PR. o7's done_means: kit 0.16.0
-ships with the `USAGE.md` marks all green, its `CHANGELOG.md` entry and
-ADR 0032; `taskcontract tree` still prints every item and exits 0, and
-`taskcontract tree <id>` answers every id in at most seven lines (SC1.3).
+**Deliverable:** prerequisites 8 and 9 of `docs/features/project-tree.md`:
+a close record for each shipped contract that reads `to do`, and a
+one-line `title` in all 16 contracts. The tree then shows finished work as
+done and every feature by its plain name.
 
 **Rulings at plan review** (the user's; Claude's recommendation first):
 
-1. Merge PR #63 by merge commit once CI reads green, then cut
-   `session-55-project-tree-o7` from main's new tip. Cutting from session
-   54's tip would stack two unmerged PRs.
-2. The live run comes first, before any release text: the pane runs in a
-   herdr pane on Windows, and the user drives its keys. A defect it finds
-   is an OPEN and a re-intake, never a silent fix inside o7, whose
-   done_means covers no pane behavior.
-3. No test list for o7. o1's tests already pin SC1.3
-   (`tests/test_tree_conditions.py:801` and `:842`), so o7 records
-   SC1.3's run green on them, as t9 did for tree-view. The feature
-   document names `tests/test_tree_view.py`, which no longer exists; the
-   contract names no test file, and Two-Key grades the contract.
-4. Claude writes the release text: the USAGE sweep, the CHANGELOG entry,
-   ADR 0032 and MAP's work-tree row. The user approves all of it in one
-   batch, shown in chat as before and after, and then approves the commit
-   (o7's seat is `user`). Two-Key runs through the verifier Workflow.
+1. Scope is prerequisites 8 and 9. Prerequisite 7 (feature documents for
+   the older contracts) parks: each document needs its own interview.
+   `STATE.md` numbered these 7 and 8; the feature document's numbers
+   stand.
+2. Close 12 of the 13, each matched unit by unit to a CHANGELOG release
+   (the map below). `glossary-alias-disjointness` stays `to do`: VT010
+   appears only in its own contract, so it never shipped.
+3. A close record names today's `HEAD`, not the release commit: the
+   writer takes no other, and CHANGELOG carries the release. The records
+   stay local (`.sdlc/progress/` is gitignored, ADR 0031).
+4. Claude drafts the 16 titles from each contract's intent;
+   `project-tree`'s comes from its document's title line, as intake would
+   copy it. The user approves them in one batch shown in chat, then the
+   commits: one per contract, each with its `Contract:` trailer.
+5. No Two-Key: no code changes. The receipts are each contract's ready
+   validation, the tree, and CI's `contracts` job on the PR.
 
-**Closed.** The deliverable is met: o7 at `3040fa7` and its fix
-`1bab527`, Two-Key PASS at round 2, `project-tree` closed at `1bab527`;
-PR #64 merged at `17da7fd`, tagged `v0.16.0`; the self-pin at `72e9b9e`.
-Suite 638 passed.
+**The map** (contract, release):
+
+| Contract | Release |
+|---|---|
+| `vocabulary-layer` | 0.3.0 |
+| `distribution-reconciliation` | 0.4.0 |
+| `dotnet-profile-g0` | 0.5.0 |
+| `dotnet-profile-g3` | 0.6.0 |
+| `dotnet-profile-g4` | 0.7.0 |
+| `operator-layer` | 0.8.0 |
+| `controlled-language` | 0.9.0 |
+| `unit-dag` | 0.11.0; its intake review with 0.12.0's I5 |
+| `intake-seats` | 0.12.0 |
+| `playbook-guardrails` | 0.13.0 |
+| `spec-interview` | 0.13.0 |
+| `g0-declaration` | 0.14.0 |
+| `glossary-alias-disjointness` | not shipped |
 
 ## Steps
 
-1. ~~Open.~~ PR #63 merged at `ea3c83c`; the branch cut from it; the plan
-   at `d465cd4`.
-2. ~~The live run.~~ Pane `w9:pE`: the keys by `send-keys`, a render on
-   o7's `approve-tests` record that kept the cursor and the open items,
-   then the user's clicks, wheel and Ctrl-C. The pane closed itself on
-   exit.
-3. ~~The release text.~~ Approved in one batch. ADR 0031 stays as written
-   (ADRs are append-only, `DOCS-SYSTEM.md:45`); ADR 0032 amends it. The
-   first suite run failed on the o1 test that pinned the marks red; it
-   now pins them green and no red mark in section 9, approved with the
-   batch.
-4. ~~The version.~~ `0.16.0` in both.
-5. ~~o7's commit.~~ At `3040fa7`, approved by the user; SC1.3 green after
-   it.
-6. ~~Two-Key.~~ Round 1 FAIL: the evidence paragraph said a closed unit or
-   contract always reads done, while a later record wins; the sweep found
-   three test comments stating retired pane lines. Fix at `1bab527`,
-   approved by the user; PASS at round 2; o7 and the contract closed.
-7. ~~Close.~~ STATE.md regenerated, this plan struck; the push and the PR
-   on the user's word.
-8. ~~Release.~~ PR #64 merged at `17da7fd` once CI read green; the
-   annotated tag `v0.16.0` there; the self-pin at `72e9b9e` on
-   `session-55-release`, its PR merged once CI reads green. USAGE's `uv`
-   line, run with `python -P` against the tag, installed 0.16.0 and read
-   `specs/project-tree` ready-green.
-
-Steps 1, 2, 7 and 8 sit outside a contract unit, so the tree does not show
-them.
-
-Decisions this session: ten, all the user's. (1) This plan and rulings 1
-to 4; (2) the merge of PR #63; (3) the live run's verdict; (4) the release
-text batch, with the test amendment; (5) o7's commit; (6) the fix commit;
-(7) the push and the PR; (8) the merge; (9) the tag and its message; (10)
-the self-pin PR.
+1. Branch `session-56-backfill` from main at `7767767`; this plan
+   committed there.
+2. The closes: `taskcontract progress done <id>` for the 12; the tree reads
+   each `[done]` and `glossary-alias-disjointness` `[to do]`.
+3. The titles: 16 drafts shown in one batch; on approval, one commit each;
+   `validate --profile ready` green for each; the tree prints no
+   `(no title)`.
+4. Close: `STATE.md` regenerated, this plan struck; the push and the PR on
+   the user's word; the merge once CI reads green.
 
 Deferred, not this session:
-- The history backfill first next session: one `progress done` per
-  contract that shipped, checked against CHANGELOG first, so finished
-  work stops reading `to do` above live work. With it, prerequisites 7 and
-  8 (titles, feature documents).
-- The tree's order: contracts sort by folder name and each opens down to
-  its units, so finished features stand above live ones. A feature
-  document candidate (finished features closed to one line, or live ones
-  first), decided after the backfill.
-- `taskcontract/__main__.py:85`: the `--follow` help still describes the
-  0.15.0 pane; the file sits outside project-tree's scope.
-- Two-Key advisories, wording: CHANGELOG's and ADR 0032's "a closed
-  contract reads done whatever its verdicts read" omit the later-record
-  limit; USAGE's evidence paragraph reads best as "after its own close";
-  the no-red test covers section 9 only.
-- Test gaps: no pane test checks that a `parts:` list without `evidence`
-  hides an approval's seat; the row pattern in `tests/conftest.py` splits
-  a plain name at its first ` [`.
-- G1, the pilot's config line, and the rest of STATE.md's carried list.
+- Prerequisite 7: feature documents for the 13 older contracts.
+- The tree's order (finished features closed to one line), a feature
+  document candidate.
+- G1, and `STATE.md` Next actions 5 and 6, carried unchanged.
 
 House rules in force: no pipes or chains in any authored command string;
-commit messages via Write + `git commit -F`; Workflows launched by
-`scriptPath`; a `Contract:` trailer, alone in the final paragraph, on every
-commit that touches a non-free path; each task recorded through
-`taskcontract progress`, each check's run through `progress run`; no
-tracked file touched while a verifier runs; every herdr probe closes the
-panes it opens; the merge, the tag, the push and the PR on the user's word.
+commit messages via Write + `git commit -F`; a `Contract:` trailer, alone
+in the final paragraph, on every contract commit; the push, the PR and the
+merge on the user's word.
