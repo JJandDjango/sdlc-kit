@@ -3,6 +3,8 @@
 
 id: tree-view
 
+title: The work as one derived tree, followed from a terminal pane
+
 intent: >-
   A repo holds its work in contracts, gates, findings and units, and no
   command joins them. After this task `taskcontract tree` prints the work

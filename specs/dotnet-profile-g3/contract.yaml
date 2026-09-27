@@ -3,6 +3,8 @@
 
 id: dotnet-profile-g3
 
+title: The dotnet inner loop at G3, strict build and format
+
 intent: >-
   The dotnet overlay stops being empty: a dotnet consumer scaffolds
   G3's inner loop - Directory.Build.props carrying the five ratified

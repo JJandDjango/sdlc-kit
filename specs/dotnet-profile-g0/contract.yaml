@@ -3,6 +3,8 @@
 
 id: dotnet-profile-g0
 
+title: The recorded stack selects a tooling profile, dotnet first
+
 intent: >-
   The stack answer recorded at init becomes a live parameter: /sdlc init
   resolves the payload as the stack-neutral base plus a per-stack

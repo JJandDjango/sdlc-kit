@@ -2,56 +2,48 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-26 (session 55 close, kit 0.16.0 released)._
+> _Generated 2026-09-26 (session 56 close, history backfill done)._
 
 ## Now
-- **Kit 0.16.0 is released.** PR #64 merged at `17da7fd`, the annotated
-  tag `v0.16.0` there, and the self-pin at `72e9b9e` on
-  `session-55-release`, whose PR this wrap rides. USAGE's `uv` line, run
-  with `python -P` against the tag, installs 0.16.0 and reads
-  `specs/project-tree` ready-green.
-- **`o7-release` is built and closed, and `project-tree` with it.** o7 at
-  `3040fa7` and its fix `1bab527`, each approved by the user; Two-Key
-  PASS at round 2 (round 1: USAGE said a closed unit or contract always
-  reads done, while a later record wins; three test comments still
-  stated retired pane lines). The kit reads 0.16.0 in `pyproject.toml`
-  and `KIT_VERSION`; USAGE section 9 reads green throughout; ADR 0032
-  records the decision and amends 0031 (ADRs are append-only);
-  CHANGELOG carries the 0.16.0 entry with the schema's 1.5.0 delta note.
-  Suite 638 passed.
-- The pane ran live in a herdr pane on Windows before the release text:
-  the keys, a render that kept the cursor and the open items, the user's
-  clicks and wheel, and Ctrl-C.
-- The session's work reached main through PR #63 (`ea3c83c`, session
-  54) and PR #64 (`17da7fd`); `session-55-release` holds the self-pin.
+- **The history backfill is done**: prerequisites 8 and 9 of
+  `docs/features/project-tree.md` (session 55's STATE numbered them 7
+  and 8; 7 is the feature documents). 12 contracts closed through
+  `progress done`, each checked against CHANGELOG unit by unit; the
+  records sit in `.sdlc/progress/` (gitignored, this machine only) and
+  name `HEAD` `4986614`, not the release commit. 16 titles, one commit
+  per contract (`a55fb7e` to `0d392ad`), all ready-green.
+- The tree now prints every feature by its title; 15 read `[done]`.
+- **`glossary-alias-disjointness` never shipped**: ready, three units,
+  and VT010 appears only in its own contract. It stays `[to do]`.
+- PR #65 (the 0.16.0 self-pin) merged at `7767767` before this session.
+- `session-56-backfill` holds the plan, the titles and this wrap; the
+  push and the PR wait on the user's word.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. Merge the self-pin PR once CI reads green under the new pin; its green
-   `contracts` job proves the tag installs.
-2. Session 56 opens on the history backfill: one `taskcontract progress
-   done <contract>` per contract that shipped, each checked against
-   CHANGELOG first. 13 contracts read `to do` today, most of them shipped,
-   so finished work stands above live work in the pane. With it,
-   prerequisites 7 and 8: a `title` per contract (a contract commit each)
-   and the missing feature documents.
-3. The tree's order, a feature document candidate, decided after the
-   backfill: contracts sort by folder name and each opens down to its
-   units. The user's likely want: finished features closed to one line.
-4. G1 after that, so the pane follows G1's conditions. The pilot's config
-   line, in the engine's session; the engine's install ref moves to the
-   new tag there (pull, not push).
-5. Small, parked: `taskcontract/__main__.py:85`'s `--follow` help still
-   describes the 0.15.0 pane (outside project-tree's scope); Two-Key's
-   wording advisories (CHANGELOG's and ADR 0032's "a closed contract
-   reads done whatever its verdicts read" omit the later-record limit;
-   USAGE's evidence paragraph reads best as "after its own close"; the
-   no-red test covers section 9 only); two test gaps (no pane test for a
-   `parts:` list without `evidence` hiding a seat; `tests/conftest.py`'s
-   row pattern splits a plain name at its first ` [`).
-6. Deferred, carried: `derived-language` (prerequisite 5); ADR 0029's
+1. Merge the session-56 PR once CI reads green (its `contracts` job
+   validates the 16 titled contracts).
+2. The tree's order, a feature document candidate, written through an
+   interview: 15 of 16 features now read done, so finished work fills
+   the tree above live work. The user's likely want: finished features
+   closed to one line.
+3. G1 after that, so the pane follows G1's conditions. The pilot's config
+   line, in the engine's session; the engine's install ref moves to
+   `v0.16.0` there (pull, not push).
+4. `glossary-alias-disjointness`: build it or park it, the user's call.
+5. Prerequisite 7: feature documents for the 15 contracts without one,
+   each through its own interview.
+6. Small, parked: `taskcontract/__main__.py:85`'s `--follow` help still
+   describes the 0.15.0 pane; Two-Key's wording advisories (CHANGELOG's
+   and ADR 0032's "a closed contract reads done whatever its verdicts
+   read" omit the later-record limit; USAGE's evidence paragraph reads
+   best as "after its own close"; the no-red test covers section 9
+   only); two test gaps (no pane test for a `parts:` list without
+   `evidence` hiding a seat; `tests/conftest.py`'s row pattern splits a
+   plain name at its first ` [`).
+7. Deferred, carried: `derived-language` (prerequisite 5); ADR 0029's
    appendix copy and Gherkin for project-tree, with `feature-document`'s
    open question; flag the Claude pane itself; the hook's key action and
    its four known edges, in its README; `.sdlc/config.yaml` still lists
@@ -75,6 +67,7 @@
   word trips CL003; the dictionary cedes the word in the same commit.
   Check the document's Scope against the release unit's needs:
   `skills/sdlc/init.py` (`KIT_VERSION`) and `.github/workflows/sdlc.yml`.
+  Intake copies the document's title line into the contract's `title`.
 - A plan is plan.md's numbered steps, shown in chat for the user's
   overview. Several units' USAGE text can be approved in one batch before
   any drafting. A USAGE refinement never narrows a contract sentence
@@ -87,8 +80,9 @@
   each check's run through `progress run <check> [--expect red] --
   <test command>` with `-k`. Run a check's green after its commit with no
   tracked file modified. Close each unit with `progress done` once its
-  Two-Key passes. A release unit that writes no tests skips write-tests
-  and prove-red, as t9 and o7 did.
+  Two-Key passes; a contract close marks every task and check under it
+  done. A release unit that writes no tests skips write-tests and
+  prove-red, as t9 and o7 did.
 - A REQUEST is untracked, so git cannot restore it: copy it to the
   scratchpad before a revision edits it.
 - A delegated session: one Workflow per step, launched by `scriptPath`

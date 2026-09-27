@@ -4,6 +4,8 @@
 
 id: controlled-language
 
+title: Contract prose checked against a controlled dictionary, form not meaning
+
 intent: The kit ships a controlled-language door beside vocab-check. A set-ratified dictionary artifact at specs/vocabulary/dictionary.yaml carries the closed general-word class and the field registry. Entries carry word, pos, and gloss. Bans carry use_instead replacements. The registry binds the six contract prose fields with text-types. A zero-dependency lang-check subcommand speaks the verdict contract and enforces tier-1 rules and integrity checks on registry-bound fields only. Exit 0 is green, 1 is red; absence of the dictionary is green. A report-only lang-extract subcommand seeds the dictionary from the repo's own ratified corpus and emits the legacy-red census. The door joins intake, CI, audit, and the /sdlc skill. The kit self-hosts as the proof instance. The claim is bounded interpretation, never determinism - form checked, meaning not checked.
 
 scope:

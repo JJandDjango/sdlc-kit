@@ -3,6 +3,8 @@
 
 id: distribution-reconciliation
 
+title: Kit updates reconciled on purpose, with a pinned tag, a changelog and /sdlc update
+
 intent: >-
   Consumers reconcile kit updates deliberately instead of absorbing
   them silently: the scaffolded CI installs a pinned release tag

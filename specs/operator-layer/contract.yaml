@@ -3,6 +3,8 @@
 
 id: operator-layer
 
+title: The operator layer, with the verdict contract, the loop protocol and the Two-Key agents
+
 intent: >-
   The kit ships the operator layer's first slice: docs/operators.md
   makes the verdict contract (exit 0/1/2 + --json findings) and the
