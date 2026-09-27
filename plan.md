@@ -1,33 +1,40 @@
-# Plan - Session 57 (2026-09-27) - the feature document's solution half
+# Plan - Session 58 (2026-09-27) - G1's feature document
 
-**Deliverable:** an amendment to the feature document format ADR 0029
-ratified, from a post-mortem of project-tree's approvals (sessions 51 to
-56): the proposal in `NOTES_feature-document-amendment_2026-09-27.md`,
-ratified call by call, then ADR 0033 amending 0029.
+**Deliverable:** G1's feature document at `docs/features/<id>.md`, its
+request half written through an interview and signed by the PO seat: the
+first document written to ADR 0033. The solution half is the next
+session's.
 
-**Dropped at the user's word:** the tree-order feature document. The
-backfill marked finished features done, and id order stands.
-
-**Closed.** The deliverable is met: six calls and four ready checks
-ratified as written; ADR 0033 approved.
+**Closed.** The deliverable is met: `docs/features/g1-requirements-spec.md`,
+request half signed by the PO seat at r3.
 
 ## Steps
 
-1. ~~Open.~~ Branch `session-57-format-amendment` from `b272973`.
-2. ~~The proposal.~~ Six calls and four ready checks, ratified as written.
-3. ~~ADR 0033.~~ Drafted from the ratified calls, approved.
-4. ~~Close.~~ `STATE.md` regenerated, with the re-measure rule in its
-   standing practice; this plan struck; the commit, push and PR on the
-   user's word.
+1. ~~Open.~~ Branch `session-58-g1-feature-document` from `af8c261`.
+2. ~~The interview.~~ Nine questions, each section written before the
+   next: the id and title; the statement; the description; the
+   background, with four entries of existing behavior touched; five
+   success criteria; seven non-goals; ten prerequisites; fifteen checks
+   and four messages; fifteen new terms, with Finding, Rule and Ready
+   check settled.
+3. ~~The checks before signing.~~ No term clash; `component` and `venue`
+   trip CL003, ceded at intake; 86 language findings, left to intake's
+   rewrite (r2). Ready checks 1 to 8 read back: a fifth message (SC1.2),
+   and SC1.1's review tied to the contract's revision.
+4. ~~The PO seat signs.~~ r3.
+5. ~~Close.~~ `STATE.md` regenerated; this plan struck; the commit, push
+   and PR on the user's word.
 
-Decisions this session: five, all the user's. (1) Drop the tree-order
-document; (2) the post-mortem's proposal, drafted; (3) the plan and the
-six calls; (4) ADR 0033; (5) the commit, push and PR.
+Decisions this session: thirteen, all the user's. (1) The plan; Q1 to
+Q9 (2 to 10); (11) the checks' three findings; (12) the signature;
+(13) the commit, push and PR.
 
 Deferred, not this session:
-- `feature-document`: the template, the interview's flow and the
-  readiness check absorb ADR 0033.
-- G1; prerequisite 7; `STATE.md` Next actions 4 and 5, carried unchanged.
+- G1's solution half, then intake.
+- The tree's `gates/G0` item reads `to do` with no finding filed,
+  whatever each feature's G0 verdict reads: decide what its status means.
+- `feature-document`, prerequisite 7, and `STATE.md` Next actions 4 and
+  5, carried unchanged.
 
 House rules in force: no pipes or chains in any authored command string;
 commit messages via Write + `git commit -F`; the push, the PR and the
