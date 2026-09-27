@@ -3,6 +3,8 @@
 
 id: project-tree
 
+title: The exact state of every feature's work, in one tree
+
 intent: >-
   Kit `0.15.0` shows one verdict per gate, with no gate conditions and no
   plain name beside an id. Its pane shows only the path to the current
