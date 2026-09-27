@@ -26,31 +26,32 @@ ADR 0032; `taskcontract tree` still prints every item and exits 0, and
    batch, shown in chat as before and after, and then approves the commit
    (o7's seat is `user`). Two-Key runs through the verifier Workflow.
 
+**o7 closed.** At `3040fa7` and its fix `1bab527`; Two-Key PASS at round
+2; `project-tree` closed at `1bab527`. Suite 638 passed. Step 8 waits on
+the user's word.
+
 ## Steps
 
-1. Open: PR #63 merged; the branch cut; this plan committed.
-2. The live run: Claude splits a herdr pane with `--no-focus` and runs
-   `python -m taskcontract tree --follow` in the kit's root; the user
-   drives the keys, the clicks and the wheel, and watches a render and
-   Ctrl-C; Claude closes the pane after.
-3. The release text, one batch for approval:
-   - `USAGE.md`: every project-tree mark green; the sweep from STATE.md
-     (the top of section 9, the green paragraphs at 622-624, 630-632 and
-     767-771, "The pane's lines", the `--follow` bullet of "The three
-     modes", "Plain names and titles", a finding counted by its kind, o3's
-     tie-break, an `rM` above the document's revision).
-   - ADR 0031 line 43; ADR 0032 (new); `CHANGELOG.md`'s 0.16.0 entry;
-     MAP's work-tree row names the Textual outline and ADR 0032.
-   - Code-side wording: the schema's top-level `description` names
-     `title`; `tree_view.py`'s docstring says "id" where `_fold` prints
-     one; `tests/test_pane.py` drops its unused `tree_view` import and its
-     cut sentence names the group.
-4. The version: `pyproject.toml` and `KIT_VERSION` read `0.16.0`.
-5. o7's commit, approved by the user; SC1.3 run green after it with no
-   tracked file modified; the suite run whole.
-6. Two-Key; o7 and the contract closed through `taskcontract progress`.
-7. Close: STATE.md regenerated, this plan struck; the push and the PR on
-   the user's word.
+1. ~~Open.~~ PR #63 merged at `ea3c83c`; the branch cut from it; the plan
+   at `d465cd4`.
+2. ~~The live run.~~ Pane `w9:pE`: the keys by `send-keys`, a render on
+   o7's `approve-tests` record that kept the cursor and the open items,
+   then the user's clicks, wheel and Ctrl-C. The pane closed itself on
+   exit.
+3. ~~The release text.~~ Approved in one batch. ADR 0031 stays as written
+   (ADRs are append-only, `DOCS-SYSTEM.md:45`); ADR 0032 amends it. The
+   first suite run failed on the o1 test that pinned the marks red; it
+   now pins them green and no red mark in section 9, approved with the
+   batch.
+4. ~~The version.~~ `0.16.0` in both.
+5. ~~o7's commit.~~ At `3040fa7`, approved by the user; SC1.3 green after
+   it.
+6. ~~Two-Key.~~ Round 1 FAIL: the evidence paragraph said a closed unit or
+   contract always reads done, while a later record wins; the sweep found
+   three test comments stating retired pane lines. Fix at `1bab527`,
+   approved by the user; PASS at round 2; o7 and the contract closed.
+7. ~~Close.~~ STATE.md regenerated, this plan struck; the push and the PR
+   on the user's word.
 8. Release: the merge on the user's word, the annotated tag `v0.16.0` at
    the merge, then the self-pin (`.github/workflows/sdlc.yml` line 20 and
    `USAGE.md` line 377 to `@v0.16.0`) through its own PR, with USAGE's
@@ -59,17 +60,30 @@ ADR 0032; `taskcontract tree` still prints every item and exits 0, and
 Steps 1, 2, 7 and 8 sit outside a contract unit, so the tree does not show
 them.
 
-Decisions this session: nine, all the user's. (1) This plan and rulings 1
+Decisions this session: ten, all the user's. (1) This plan and rulings 1
 to 4; (2) the merge of PR #63; (3) the live run's verdict; (4) the release
-text batch; (5) o7's commit; (6) the push and the PR; (7) the merge; (8)
-the tag and its message; (9) the self-pin PR.
+text batch, with the test amendment; (5) o7's commit; (6) the fix commit;
+(7) the push and the PR; (8) the merge; (9) the tag and its message; (10)
+the self-pin PR.
 
 Deferred, not this session:
+- The history backfill first next session: one `progress done` per
+  contract that shipped, checked against CHANGELOG first, so finished
+  work stops reading `to do` above live work. With it, prerequisites 7 and
+  8 (titles, feature documents).
+- The tree's order: contracts sort by folder name and each opens down to
+  its units, so finished features stand above live ones. A feature
+  document candidate (finished features closed to one line, or live ones
+  first), decided after the backfill.
+- `taskcontract/__main__.py:85`: the `--follow` help still describes the
+  0.15.0 pane; the file sits outside project-tree's scope.
+- Two-Key advisories, wording: CHANGELOG's and ADR 0032's "a closed
+  contract reads done whatever its verdicts read" omit the later-record
+  limit; USAGE's evidence paragraph reads best as "after its own close";
+  the no-red test covers section 9 only.
 - Test gaps: no pane test checks that a `parts:` list without `evidence`
   hides an approval's seat; the row pattern in `tests/conftest.py` splits
   a plain name at its first ` [`.
-- Prerequisites 7 to 9 on the kit's own tree (titles, feature documents,
-  progress records).
 - G1, the pilot's config line, and the rest of STATE.md's carried list.
 
 House rules in force: no pipes or chains in any authored command string;
