@@ -3,6 +3,8 @@
 
 id: spec-interview
 
+title: Product specification interview
+
 intent: >-
   No venue in the kit writes the feature doc, so a PO writes the template
   by hand or arrives at intake without one. After this task the plugin
