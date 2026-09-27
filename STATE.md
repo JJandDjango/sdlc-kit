@@ -14,28 +14,25 @@
   per contract (`a55fb7e` to `0d392ad`), all ready-green.
 - The tree now prints every feature by its title; 15 read `[done]`.
 - **`glossary-alias-disjointness` never shipped**: ready, three units,
-  and VT010 appears only in its own contract. It stays `[to do]`.
-- PR #65 (the 0.16.0 self-pin) merged at `7767767` before this session.
-- `session-56-backfill` holds the plan, the titles and this wrap; the
-  push and the PR wait on the user's word.
+  and VT010 appears only in its own contract. The user parked it at
+  session close: no build planned. The contract is unchanged, since no
+  dependency blocks it, so the tree still reads it `[to do]`.
+- PR #66 merged at `6ea51f0` (the plan, the titles and the wrap).
 
 ## Blockers
 - None.
 
 ## Next actions
-1. Merge the session-56 PR once CI reads green (its `contracts` job
-   validates the 16 titled contracts).
-2. The tree's order, a feature document candidate, written through an
+1. The tree's order, a feature document candidate, written through an
    interview: 15 of 16 features now read done, so finished work fills
    the tree above live work. The user's likely want: finished features
    closed to one line.
-3. G1 after that, so the pane follows G1's conditions. The pilot's config
+2. G1 after that, so the pane follows G1's conditions. The pilot's config
    line, in the engine's session; the engine's install ref moves to
    `v0.16.0` there (pull, not push).
-4. `glossary-alias-disjointness`: build it or park it, the user's call.
-5. Prerequisite 7: feature documents for the 15 contracts without one,
+3. Prerequisite 7: feature documents for the 15 contracts without one,
    each through its own interview.
-6. Small, parked: `taskcontract/__main__.py:85`'s `--follow` help still
+4. Small, parked: `taskcontract/__main__.py:85`'s `--follow` help still
    describes the 0.15.0 pane; Two-Key's wording advisories (CHANGELOG's
    and ADR 0032's "a closed contract reads done whatever its verdicts
    read" omit the later-record limit; USAGE's evidence paragraph reads
@@ -43,7 +40,8 @@
    only); two test gaps (no pane test for a `parts:` list without
    `evidence` hiding a seat; `tests/conftest.py`'s row pattern splits a
    plain name at its first ` [`).
-7. Deferred, carried: `derived-language` (prerequisite 5); ADR 0029's
+5. Deferred, carried: `glossary-alias-disjointness` (parked by the user,
+   2026-09-26); `derived-language` (prerequisite 5); ADR 0029's
    appendix copy and Gherkin for project-tree, with `feature-document`'s
    open question; flag the Claude pane itself; the hook's key action and
    its four known edges, in its README; `.sdlc/config.yaml` still lists
