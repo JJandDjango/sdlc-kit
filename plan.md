@@ -42,17 +42,25 @@ done and every feature by its plain name.
 | `g0-declaration` | 0.14.0 |
 | `glossary-alias-disjointness` | not shipped |
 
+**Closed.** The deliverable is met: 12 closes recorded at `4986614`;
+16 titles at `a55fb7e` to `0d392ad`, each ready-green; the tree prints 15
+features `[done]`, `glossary-alias-disjointness` `[to do]`, and no feature
+`(no title)`.
+
 ## Steps
 
-1. Branch `session-56-backfill` from main at `7767767`; this plan
-   committed there.
-2. The closes: `taskcontract progress done <id>` for the 12; the tree reads
-   each `[done]` and `glossary-alias-disjointness` `[to do]`.
-3. The titles: 16 drafts shown in one batch; on approval, one commit each;
-   `validate --profile ready` green for each; the tree prints no
-   `(no title)`.
-4. Close: `STATE.md` regenerated, this plan struck; the push and the PR on
-   the user's word; the merge once CI reads green.
+1. ~~Open.~~ Branch `session-56-backfill` from `7767767`; the plan at
+   `4986614`.
+2. ~~The closes.~~ `progress done` for the 12; each reads `[done]` at
+   `4986614`.
+3. ~~The titles.~~ Approved in one batch; one commit each by a scratch
+   script; all 16 ready-green.
+4. ~~Close.~~ `STATE.md` regenerated, this plan struck; the push and the
+   PR on the user's word; the merge once CI reads green.
+
+Decisions this session: four, all the user's. (1) The scope (item 1);
+(2) this plan and rulings 1 to 5; (3) the title batch and its commits;
+(4) the push and the PR.
 
 Deferred, not this session:
 - Prerequisite 7: feature documents for the 13 older contracts.
