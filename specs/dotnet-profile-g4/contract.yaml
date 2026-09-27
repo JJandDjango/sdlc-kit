@@ -3,6 +3,8 @@
 
 id: dotnet-profile-g4
 
+title: The dotnet merge gate at G4, tests, secrets, dependencies and suppressions
+
 intent: >-
   The dotnet overlay carries the merge gate's mechanical core:
   sdlc-dotnet.yml grows from inner-loop echo into the G4 venue -
