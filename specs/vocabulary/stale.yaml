@@ -10,8 +10,8 @@ name: Stale
 
 definition: >-
   A feature whose document holds a revision newer than the one its
-  contract was derived from, other than intake's "Ready:" row or a
-  "Measured:" row.
+  contract was derived from, other than intake's "Ready:" row, a
+  "Measured:" row or a "Signed:" row.
 
 kind: attribute
 
@@ -20,3 +20,4 @@ since: 2026-09-25
 
 sources:
   - docs/features/project-tree.md
+  - decisions/0034-a-seat-signs-its-half-in-a-revision-row.md

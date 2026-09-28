@@ -1,0 +1,20 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Born draft at tree-first-level's intake (session 60) from the Terms of
+# docs/features/tree-first-level.md, decided at its Q9 (2026-09-28);
+# ratified by the user 2026-09-28 (class-S flip; the PR merge is the
+# outer record, ADR 0025).
+
+term: first-level
+
+name: First level
+
+definition: >-
+  The tree's top items: each gate item, `gates/none`, and each feature.
+
+kind: entity
+
+status: ratified
+since: 2026-09-28
+
+sources:
+  - docs/features/tree-first-level.md

@@ -1,0 +1,23 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Born draft at tree-first-level's intake (session 60) from the Terms of
+# docs/features/tree-first-level.md, decided at its Q9 (2026-09-28);
+# ratified by the user 2026-09-28 (class-S flip; the PR merge is the
+# outer record, ADR 0025).
+
+term: roll-up
+
+name: Roll-up
+
+definition: >-
+  An item's status from the statuses of the items it counts: the first
+  of failed, waiting on a seat, blocked and doing that any of them
+  reads; else done when all read done; else doing when any reads done;
+  else to do.
+
+kind: entity
+
+status: ratified
+since: 2026-09-28
+
+sources:
+  - docs/features/tree-first-level.md

@@ -1,0 +1,180 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: tree-first-level
+
+title: The tree's first level shows where each gate and feature stands
+
+intent: >-
+  Kit `0.16.0` always reads each gate item as `to do`, while each verdict
+  at `gates/G0` reads `done`. A feature document with no contract is absent
+  from the tree. After this task each gate item reads the roll-up of the
+  verdicts at its gate, and each of its conditions reads the roll-up of
+  that condition. A gate item or condition that is not `done` names each
+  feature that holds it back, as a diagnostic. A feature before intake
+  shows at the first level from its first revision, with its last revision
+  and the signature of each half. Once intake writes its contract, the
+  feature stays one item. The kit version reads `0.17.0`.
+
+scope:
+  - taskcontract/tree.py
+  - taskcontract/tree_view.py
+  - taskcontract/pane.py
+  - pyproject.toml
+  - skills/sdlc/init.py
+  - .github/workflows/sdlc.yml
+  - tests/
+  - USAGE.md
+
+non_goals:
+  - No stored state; the tree derives every status at each run and writes
+    no file.
+  - No doc content beyond the revision and the signature of each half; a
+    feature before intake never shows its `Statement`, its `Success
+    criteria` or its checks.
+  - No ready checks; the tree runs none of the ready checks of a feature
+    document, and each stays with `feature-document`.
+  - No G1 work; the rules of G1, the status of its conditions and its
+    activation are the work of the feature document of G1.
+  - No feature under a gate item; each feature stays at the first level.
+  - No change to the pane; its behavior for `Up`, `Down`, `Left` and
+    `Right`, its rule for closed items and its line layout each stays as
+    before.
+  - No feature document for the 15 contracts without one; each still
+    carries the drift mark `no feature document`.
+  - No change to `taskcontract/checker.py`, `taskcontract/data/gates.yaml`,
+    `taskcontract/progress.py`, `skills/sdlc/flows/intake.md` or
+    `skills/product-specification-interview/`.
+
+decomposition:
+  - unit: t1-gate-rollup
+    id: t1-gate-rollup
+    confirmed_by: [user]
+    done_means: >-
+      `USAGE.md` gains its `tree-first-level` section first, its status
+      marks red. Each gate item reads the roll-up of the verdicts at its
+      gate, and leaves out each `inactive` verdict. Each condition under a
+      gate item reads the roll-up of that condition across the same
+      verdicts. A gate item or condition that is not `done` names each
+      feature holding it back, one diagnostic per feature. A finding counts
+      in no roll-up.
+    acceptance_sketch:
+      - >-
+        verify a gate item reads the roll-up of the verdicts at its gate, by
+        the rule for the roll-up of a feature. Verify a closed feature's
+        verdicts count as they read, each `inactive` verdict stays out, and a
+        gate with no verdict reads `to do` (SC1.1)
+      - >-
+        verify each condition under a gate item reads the roll-up of that
+        condition across the same verdicts. Verify a gate or condition that is
+        not `done` names each feature holding it back, as the diagnostic
+        `{feature} holds {id} at {status}` (SC1.2)
+      - >-
+        verify a finding still stands once under the condition or gate its
+        `gate:` field names. Verify the finding shows its kind, never a status,
+        and counts in no roll-up (SC1.3)
+  - unit: t2-before-intake
+    id: t2-before-intake
+    depends_on: [t1-gate-rollup]
+    confirmed_by: [user]
+    done_means: >-
+      A feature document with no contract shows as a feature at the first
+      level from its `r1` row. The feature reads its plain name from its
+      title line. Its G0 verdict reads `to do` and counts in the roll-up of
+      `gates/G0`. Once its contract exists, the feature stays one item.
+    acceptance_sketch:
+      - >-
+        verify a doc at `docs/features/<id>.md` with no
+        `specs/<id>/contract.yaml` shows as a feature at the first level from a
+        table holding only `r1`. Verify the feature reads its plain name from
+        its title line. Verify that once the contract exists, the feature
+        shows once, with the verdicts, units and drift mark of its contract.
+        Verify the feature then shows no revision or half (SC2.1, SC4.1)
+      - >-
+        verify a feature before intake reads its G0 verdict `to do`, its next
+        gate `inactive`, and the verdict counts in the roll-up of `gates/G0`.
+        Verify a feature with a contract still reads its G0 verdict from the
+        validator: `done` at `ready-green`, `blocked` at `draft-green` with
+        TC003, `to do` at `draft-green` otherwise, `failed` at `draft-red`
+        (SC2.2)
+      - >-
+        verify the first level still lists each active gate and each gate a
+        finding names, in kit order. Verify `gates/none` stands next when a
+        finding names no gate, then each feature. Verify each feature with a
+        contract stays in the order of `specs/`, and a feature before intake
+        stands among them by its id (SC2.3)
+  - unit: t3-halves
+    id: t3-halves
+    depends_on: [t2-before-intake]
+    confirmed_by: [user]
+    done_means: >-
+      A feature before intake shows its last revision and two half items,
+      `<id>/request` and `<id>/solution`. Each half reads `done` with the
+      seat and revision of its signature, or `to do` with no signature. The
+      drift mark leaves out `Signed:` rows. A live pane on the kit shows each
+      half of `g1-requirements-spec` and `gates/G0 [doing]`.
+    acceptance_sketch:
+      - >-
+        verify a feature before intake shows the last revision of its doc.
+        Verify each half shows the seat and revision of its signature, or no
+        signature. Verify the feature reads `to do` until a half has a
+        signature, then `doing` (SC3.1)
+      - >-
+        verify a doc whose revision table holds no row that counts shows the
+        feature with `no revision table`. Verify a signature row in any form
+        other than the one ADR 0034 fixes counts as no signature (SC3.2)
+      - >-
+        verify a feature with a contract still carries its drift mark: `no
+        feature document`, `no "Ready:" row` or `stale: document rD, contract
+        from rM`. Verify the roll-up of a feature still reads its units and
+        verdicts but not the `inactive` one. Verify a closed feature reads
+        `done` once its units do (SC3.3, SC4.3)
+  - unit: t4-release
+    id: t4-release
+    depends_on: [t3-halves]
+    confirmed_by: [user]
+    done_means: >-
+      Kit `0.17.0` ships with the `USAGE.md` marks all green and its
+      `CHANGELOG.md` entry. `KIT_VERSION` reads `0.17.0`.
+    acceptance_sketch:
+      - >-
+        verify a feature with a contract still reads its plain name from the
+        `title` of its contract, never from its doc (SC4.2)
+
+dependencies: []
+
+entities:
+  - task-contract
+  - contract-profile
+  - feature
+  - feature-document
+  - feature-before-intake
+  - closed-feature
+  - tree
+  - pane
+  - item
+  - first-level
+  - gate
+  - gate-item
+  - active-gate
+  - condition
+  - verdict
+  - status
+  - roll-up
+  - finding
+  - diagnostic
+  - plain-name
+  - title-line
+  - revision
+  - half
+  - signature
+  - drift-mark
+  - stale
+  - intake
+  - intake-seat
+  - decomposition-unit
+  - acceptance-sketch
+
+provenance:
+  origin: human-request
+  ref: docs/features/tree-first-level.md

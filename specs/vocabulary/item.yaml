@@ -10,7 +10,7 @@ name: Item
 
 definition: >-
   One line of the tree with its own id: a feature, gate, condition,
-  finding, unit, task or check.
+  finding, unit, task, check or half.
 
 kind: entity
 
@@ -19,3 +19,4 @@ since: 2026-09-25
 
 sources:
   - docs/features/project-tree.md
+  - docs/features/tree-first-level.md

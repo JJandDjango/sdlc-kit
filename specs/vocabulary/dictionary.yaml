@@ -396,7 +396,6 @@ words:
   - {word: greppable, pos: noun}
   - {word: grows, pos: verb}
   - {word: guard, pos: noun}
-  - {word: half, pos: noun}
   - {word: hand, pos: noun}
   - {word: happen, pos: noun}
   - {word: harness, pos: noun}
@@ -433,7 +432,6 @@ words:
   - {word: instance, pos: noun}
   - {word: instantiate, pos: noun}
   - {word: instructions, pos: noun}
-  - {word: intake, pos: noun}
   - {word: integrity, pos: noun}
   - {word: interface, pos: noun}
   - {word: interpretation, pos: noun}

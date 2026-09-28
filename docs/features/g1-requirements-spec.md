@@ -3,6 +3,7 @@
 | 2026-09-27 | user | r1: Created in kit session 58 through an interview with the user, one question at a time, in the format ADR 0029 ratified and ADR 0033 amended; typed by Claude on the user's word. The request half, in progress. PO seat: user; engineer seat: user |
 | 2026-09-27 | user | r2: Measured: ADR 0033's checks before signing, on the request half, run by Claude on the user's word: no new term clashes with a ratified term; `component` and `venue` trip CL003, and the dictionary cedes both at intake; lang-check's contract rules find 86 in the text intake copies (76 unknown words, 10 sentences over the cap), each left to intake's rewrite of the contract's wording |
 | 2026-09-27 | user | r3: The request half finished in kit session 58: the terms (Q9), ADR 0033's checks before signing (r2), ready checks 1 to 8 read back with two fixes (message 5 for SC1.2; SC1.1's review tied to the revision its contract was derived from); typed by Claude on the user's word. Signed by the PO seat (user) |
+| 2026-09-28 | user | r4: Signed: request half. The PO seat's r3 signature, restated in the form ADR 0034 fixes; typed by Claude on the user's word |
 
 # g1-requirements-spec - Failure points found before development starts
 
