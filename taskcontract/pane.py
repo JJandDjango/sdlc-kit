@@ -7,10 +7,10 @@ the current task is `approve-tests` or `approve-commit`; the outline; the
 lines the pane reports, each whole; and the cursor line.
 
 The outline holds every line `taskcontract tree` prints, in its order and
-nested as it indents them: each item, and each condition's diagnostics as
-leaves right under it, before its child items. An item's label opens on its
-full id at the top level and on the last segment of its id below it, then
-its plain name and the parts `tree: pane: parts:` selects; the current
+nested as it indents them: each item, and the diagnostics of a condition
+or a gate item as leaves right under it, before its child items. An item's
+label opens on its full id at the top level and on the last segment of its
+id below it, then its plain name and the parts `tree: pane: parts:` selects; the current
 task's label carries `current` whatever the parts. A label is plain text,
 never markup, so `[to do]` keeps its brackets. The pane opens with each
 contract open down to its units and every other item closed; a current task
@@ -21,9 +21,9 @@ A closed item that holds something shows it in a group right after its
 status, or after its plain name when `parts:` leaves the status out:
 `(<n> items: <counts>)`, the items one level below it counted by status
 (a finding by its kind), or under `tree: pane: fold: names` each named as
-`<id> [<status>]`; a closed condition with diagnostics reads `(<k>
-diagnostics)`. An open item shows no group, so opening an item drops it
-and closing the item adds it back.
+`<id> [<status>]`; a closed condition or gate item with diagnostics reads
+`(<k> diagnostics)`. An open item shows no group, so opening an item drops
+it and closing the item adds it back.
 
 A plain name that would push the status, the group, and on the current task
 `current`, past the outline's right edge is cut where they still fit,
@@ -120,9 +120,9 @@ def label(item: Item, depth: int, parts: list[str] | None = None,
 
 
 def group(item: Item, depth: int, fold: str | None) -> str:
-    """What a closed item holds, in parentheses: a condition's diagnostics
-    counted, else the items one level below it, counted by status or, with
-    `fold` set to `names`, named."""
+    """What a closed item holds, in parentheses: its diagnostics counted,
+    a condition's or a gate item's, else the items one level below it,
+    counted by status or, with `fold` set to `names`, named."""
     if item.diagnostics:
         return f"({len(item.diagnostics)} diagnostics)"
     return f"({len(item.children)} items: {_fold(item.children, depth + 1, fold)})"

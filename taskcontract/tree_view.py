@@ -25,7 +25,9 @@ after exactly one space. A line break inside a part reads as one space, so
 an item keeps one line.
 Under a condition that is not done, each of its diagnostics prints on a
 line of its own, one level deeper, as `- ` and the validator's message
-without its code; such a line is not an item and has no id.
+without its code; under a gate item or its condition that is not done, as
+`- ` and `<contract> holds <id> at <status>`, one per contract holding it
+back. Such a line is not an item and has no id.
 
 `taskcontract tree <id>` queries one item: the id matched whole, as the model
 holds it or as the tree prints it, every item with it printed as one block,
@@ -36,7 +38,7 @@ with an intent, one line per link kind with its targets joined by `, `,
 `doc:` with the feature doc's path at line 1, `file: <path>:<line>` (a contract or verdict at line 1, a unit or
 check at its entry's first line, a finding's file at line 1), and `page:`,
 the kit page that defines a gate, a verdict's or a condition's gate, or a
-task. A condition's diagnostics never print here. So a block never passes
+task. An item's diagnostics never print here. So a block never passes
 seven lines, whatever a field holds. The unreadable sources follow on
 stderr. An unknown id prints `no node '<id>' - print the tree to list every
 node id` on stderr alone and exits 2; an id with `--follow` exits 2 too.
@@ -69,8 +71,8 @@ VOCABULARY = "specs/vocabulary/"
 
 
 def render(items: list[Item]) -> str:
-    """The tree as text, one line per item, each condition's diagnostics
-    right under it one level deeper, byte-identical across runs."""
+    """The tree as text, one line per item, each item's diagnostics right
+    under it one level deeper, byte-identical across runs."""
     lines: list[str] = []
 
     def walk(item: Item, depth: int) -> None:

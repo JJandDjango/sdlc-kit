@@ -543,8 +543,9 @@ def test_sc2_1_the_conditions_of_every_gate_but_g0_read_to_do(tmp_path, capsys):
         under = _children(rows, base)
         assert under and all(cid.startswith(f"{base}/{gate}.") for cid in under), base
         assert {_tag(rows, cid) for cid in under} == {"to do"}, base
-    # the repository level reads no validator: G0's conditions there read to do
-    assert [_tag(rows, f"gates/G0/{c}") for c in G0_CONDITIONS] == ["to do"] * 3
+    # the repository level rolls up its features' conditions: a closed contract's
+    # verdict counts as it reads (tree-first-level t1)
+    assert [_tag(rows, f"gates/G0/{c}") for c in G0_CONDITIONS] == ["done"] * 3
 
 
 # --- SC2.2 what the rules report, and the findings under a condition --------------
@@ -627,7 +628,8 @@ def test_sc2_2_a_finding_that_names_a_condition_stands_once_under_it_for_the_rep
     assert _children(rows, "gates/G3/G3.1") == ["gates/G3/G3.1/slow-loop"]
     assert _children(rows, "gates/G0/G0.2") == ["gates/G0/G0.2/tidy-terms"]
     assert _row(rows, "gates/G3/G3.1")["line"] == "  gates/G3/G3.1 Formatter [to do]"
-    assert _row(rows, "gates/G0/G0.2")["line"] == "  gates/G0/G0.2 Vocabulary coverage [to do]"
+    # the roll-up of G0.2 across the verdicts (tree-first-level t1), never the finding
+    assert _row(rows, "gates/G0/G0.2")["line"] == "  gates/G0/G0.2 Vocabulary coverage [doing]"
     assert _row(rows, "gates/G3/G3.1/slow-loop")["line"] == (
         f"    gates/G3/G3.1/slow-loop {STATEMENT} [kind: gap] gate: G3.1")
     for slug in ("slow-loop", "tidy-terms"):
@@ -733,12 +735,19 @@ def test_usage_marks_its_project_tree_subsections_green_and_its_example_is_the_t
         tmp_path, capsys):
     section = _section_nine()
     headings = [text for text in section.splitlines() if text.startswith("### ")]
-    assert headings[-5:] == [
+    first = headings.index(f"### Gates and their conditions {GREEN}")
+    assert headings[first:first + 5] == [
         f"### {name} {GREEN}" for name in (
             "Gates and their conditions", "Plain names and titles",
             "Drift from the feature document", "Blocked and waiting, named",
             "The interactive pane")]
-    assert "\U0001F534" not in section  # every mark green at the release (project-tree o7)
+    # every mark green at the release (project-tree o7), up to the first subsection
+    # a later contract appends red (tree-first-level's, at pass zero)
+    reds = [text for text in section.splitlines()
+            if text.startswith("### ") and "\U0001F534" in text]
+    start = section.index(f"### Gates and their conditions {GREEN}")
+    end = section.index(reds[0]) if reds else len(section)
+    assert "\U0001F534" not in section[start:end]
     part = section[section.index(f"### Gates and their conditions {GREEN}"):]
     example = part.split("```\n", 2)[1].splitlines()
     # the contract line opens on its id and its title, then its status (project-tree

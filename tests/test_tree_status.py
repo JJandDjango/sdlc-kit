@@ -392,14 +392,14 @@ def test_a_verdict_counts_toward_failed_and_blocked_but_never_starts_its_contrac
     assert _tag(rows, "delta") == "failed"
 
 
-def test_a_gate_item_reads_to_do_whatever_its_contracts_read(tmp_path, capsys):
+def test_a_gate_item_reads_the_roll_up_of_its_contracts_verdicts(tmp_path, capsys):
     root = _repo(tmp_path)
     _dump(root / ".sdlc" / "findings" / "idea.yaml", _finding("idea", "none", "proposal"))
     _progress(root, "alpha", _step("alpha", "done", "10:00"))
     _progress(root, "beta", _step("beta", "done", "10:01"))
     rows, _ = _print(root, capsys)
     assert [_tag(rows, rid) for rid in ("alpha/G0", "beta/G0", "alpha", "beta")] == ["done"] * 4
-    assert _tag(rows, "gates/G0") == "to do"    # no finding under it
+    assert _tag(rows, "gates/G0") == "done"     # every verdict at G0 reads done (tree-first-level t1)
     assert _tag(rows, "gates/none") == "to do"  # a finding under it, which holds no status
 
 
