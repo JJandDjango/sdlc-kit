@@ -9,8 +9,8 @@ term: feature
 name: Feature
 
 definition: >-
-  A piece of work with its own feature document and contract; a
-  top-level item of the tree.
+  A piece of work with its own feature document, and a contract once
+  intake writes it; a top-level item of the tree.
 
 kind: entity
 
@@ -19,3 +19,4 @@ since: 2026-09-25
 
 sources:
   - docs/features/project-tree.md
+  - docs/features/tree-first-level.md

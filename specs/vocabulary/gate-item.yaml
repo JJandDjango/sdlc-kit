@@ -1,0 +1,22 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Born draft at tree-first-level's intake (session 60) from the Terms of
+# docs/features/tree-first-level.md, decided at its Q9 (2026-09-28);
+# ratified by the user 2026-09-28 (class-S flip; the PR merge is the
+# outer record, ADR 0025).
+
+term: gate-item
+
+name: Gate item
+
+definition: >-
+  A gate's item at the first level, `gates/<gate>`, holding its
+  conditions and the findings that name it. A verdict is one feature's
+  result at a gate; a gate item reads all of them.
+
+kind: entity
+
+status: ratified
+since: 2026-09-28
+
+sources:
+  - docs/features/tree-first-level.md
