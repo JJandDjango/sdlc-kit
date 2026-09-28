@@ -33,38 +33,42 @@ with a Two-Key PASS:
    for it (Q14), and the spec channel, never the developer, writes tests.
    The script is local and untracked: one edit, launched by `scriptPath`.
 
+**Closed.** The deliverable is met: t1 at `a0f36e2` (USAGE) and
+`709d2cc` (code and tests), Two-Key PASS at round 1 with four
+advisories, carried in `STATE.md`. Suite 663 passed, scope-check green,
+and the kit's own `gates/G0` now reads `done`.
+
 ## Steps
 
-1. Open. Branch `session-61-tree-first-level-t1` from `1f30226`; commit
-   this plan.
-2. t1, pass zero. The `tree-first-level` section, marks red, and the
-   edit at `USAGE.md:891`, shown in chat in full. It settles what the
-   contract leaves open: where a `holds` diagnostic stands under its item,
-   and the roll-up's order when verdicts disagree (the rule for a
-   feature's roll-up, restated for a gate). Any narrowing of a contract
-   sentence is flagged before approval. Commit on the user's word.
-3. t1, draft. `spec-channel-drafter.js` for SC1.1 to SC1.3 into a new
-   `tests/test_tree_rollup.py`, with a prototype; the whole suite on the
-   prototype in a scratch worktree.
-4. t1, retire. The ruling 2 edit, then `test-retirer.js` with the
-   prototype as its overlay: each failing assertion amended or retired.
-5. t1, approve the list and prove red. The standing checks (each fixed
-   detail against the contract and the document, repeated names, session
-   labels, every `done` resting on a rule that ran); the tests written;
-   `progress run --expect red` per check.
-6. t1, green. `unit-developer.js` from its interface note; the docstrings
-   retire with the rule. Claude runs the suite after each round.
-7. t1, commit and Two-Key. The commit on review; each check green at the
-   clean commit; `two-key-unit-verifier.js`; `progress done` on PASS.
-8. Close. PR; `STATE.md` regenerated (it still says PR #71 waits); this
-   plan struck.
+1. ~~Open.~~ Branch cut from `1f30226`; the plan at `27aeb6b`.
+2. ~~t1, pass zero.~~ Three red subsections in section 9, a second
+   callout, and the old line 891 scoped to a feature's other gates, at
+   `a0f36e2` on the user's word. A gate reads `doing` over a mix of
+   `done` and `to do` verdicts, following the document's example; the
+   user kept that reading.
+3. ~~t1, draft.~~ 25 tests (16 names) in `tests/test_tree_rollup.py`,
+   red 25 of 25 on assertions; the prototype changed `tree.py` alone and
+   caught ten mutations.
+4. ~~t1, retire.~~ `test-retirer.js` gained `overlay`; with the
+   prototype over `tree.py`, nine tests failed in five modules, all
+   amended, none retired, including the release test `a0f36e2` broke.
+5. ~~t1, approve the list and prove red.~~ Approved by Claude; SC1.1,
+   SC1.2 and SC1.3 red (13, 10 and 1 failing).
+6. ~~t1, green.~~ Round 1, no deviation; suite 663 passed, the
+   developer's run and Claude's. Claude rewrapped two `pane.py`
+   docstring lines.
+7. ~~t1, commit and Two-Key.~~ At `709d2cc`; the three checks green at
+   the clean commit; PASS at round 1; the unit closed.
+8. Close. `STATE.md` regenerated; this plan struck; the push and the PR
+   on the user's word.
 
 Steps 1 and 8 sit outside a contract unit, so the tree does not show
 them.
 
-Decisions now: three. Rulings 1 and 2, and this plan. Later: the USAGE
-section (the user's), the test list and the commit (Claude's on review),
-then the push, the PR and the merge (the user's).
+Decisions this session: eight. The user's at plan review: (1) the plan,
+(2) ruling 1, (3) ruling 2. The user's: (4) the USAGE section, with the
+`doing` reading. Claude's, on review: (5) t1's test list, (6) t1's
+commit. The user's at the close: (7) the push and the PR, (8) the merge.
 
 Deferred, not this session:
 - `t2-before-intake`, `t3-halves`, `t4-release` (ships 0.17.0).
