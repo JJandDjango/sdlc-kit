@@ -1,39 +1,81 @@
-# Plan - Session 60 (2026-09-28) - tree-first-level at intake
+# Plan - Session 61 (2026-09-28) - tree-first-level t1
 
-**Deliverable:** `specs/tree-first-level/contract.yaml`, derived from
-`docs/features/tree-first-level.md` at r6, ready-green, on a PR.
+**Deliverable:** unit `t1-gate-rollup` of `tree-first-level` on one PR,
+with a Two-Key PASS:
+
+- `USAGE.md` gains the `tree-first-level` section first, every status
+  mark red.
+- `taskcontract/tree.py`: each gate item reads the roll-up of the
+  verdicts at its gate, each `inactive` verdict left out, a closed
+  feature's verdicts counted as they read, `to do` with no verdict. Each
+  condition reads the roll-up of that condition across the same
+  verdicts. A gate item or condition that is not `done` names each
+  feature holding it back: `{feature} holds {id} at {status}`. A finding
+  stands once under the condition or gate its `gate:` field names, shows
+  its kind, and counts in no roll-up. Checks SC1.1 to SC1.3.
+- Retired: the rule that a gate item and its conditions always read
+  `to do`, in `tree.py`'s module and `derive` docstrings and at
+  `USAGE.md:891`, and the assertions that pin it over done verdicts
+  (about ten, seen in six modules: `test_tree_status.py`,
+  `test_tree_conditions.py`, `test_tree_titles.py`, `test_tree_query.py`,
+  `test_pane.py`, `test_pane_keys.py`).
+
+**Rulings at plan review** (Claude's recommendation first):
+
+1. Delegation as in sessions 52 to 55. The user approves the USAGE
+   section in chat before any drafting. Claude approves the test list and
+   the commit on review. The push, the PR and the merge stay on the
+   user's word.
+2. `test-retirer.js` gains an optional `overlay` argument: step 2 copies
+   the drafter's prototype source files over the export, in place of
+   deleting names. t1's retirement flips values on existing fixtures, so
+   there is no name to delete. The feature document names test-retirer
+   for it (Q14), and the spec channel, never the developer, writes tests.
+   The script is local and untracked: one edit, launched by `scriptPath`.
 
 ## Steps
 
-1. ~~Open.~~ PR #70 merged at `55bc0de`; branch
-   `session-60-tree-first-level-intake`.
-2. ~~The term commit.~~ `dab3623`: ADR 0034; eleven new terms; Feature,
-   Item and Stale amended; the dictionary cedes `half` and `intake`;
-   `g1-requirements-spec` gains `r4: Signed: request half`.
-3. ~~Intake.~~ `bb20b67`: four units, twelve checks in ten sketches (two
-   pairs, the schema's cap of three); the language door at zero after
-   one rewrite; ready-green on the first loop; each unit kept by the
-   engineer seat.
-4. ~~The document gains intake's `Ready:` row.~~ r8, derived from r6; the
-   status line reads ready.
-5. ~~Close.~~ `STATE.md` regenerated; this plan struck; the push on the
-   user's word; the PR next.
+1. Open. Branch `session-61-tree-first-level-t1` from `1f30226`; commit
+   this plan.
+2. t1, pass zero. The `tree-first-level` section, marks red, and the
+   edit at `USAGE.md:891`, shown in chat in full. It settles what the
+   contract leaves open: where a `holds` diagnostic stands under its item,
+   and the roll-up's order when verdicts disagree (the rule for a
+   feature's roll-up, restated for a gate). Any narrowing of a contract
+   sentence is flagged before approval. Commit on the user's word.
+3. t1, draft. `spec-channel-drafter.js` for SC1.1 to SC1.3 into a new
+   `tests/test_tree_rollup.py`, with a prototype; the whole suite on the
+   prototype in a scratch worktree.
+4. t1, retire. The ruling 2 edit, then `test-retirer.js` with the
+   prototype as its overlay: each failing assertion amended or retired.
+5. t1, approve the list and prove red. The standing checks (each fixed
+   detail against the contract and the document, repeated names, session
+   labels, every `done` resting on a rule that ran); the tests written;
+   `progress run --expect red` per check.
+6. t1, green. `unit-developer.js` from its interface note; the docstrings
+   retire with the rule. Claude runs the suite after each round.
+7. t1, commit and Two-Key. The commit on review; each check green at the
+   clean commit; `two-key-unit-verifier.js`; `progress done` on PASS.
+8. Close. PR; `STATE.md` regenerated (it still says PR #71 waits); this
+   plan struck.
 
-**Closed** once step 5's commit lands: the deliverable is met, the
-contract ready-green and derived from r6. The deliverable first read r7;
-r6 is the text revision r7 signs.
+Steps 1 and 8 sit outside a contract unit, so the tree does not show
+them.
 
-Decisions this session: seven, all the user's. (1) Merge PR #70 and
-start the term commit; (2) the eleven terms, Feature and Item; (3)
-Stale's amendment; (4) ADR 0034; (5) the plan; (6) the four units at
-the readback; (7) the intake commit and the push.
+Decisions now: three. Rulings 1 and 2, and this plan. Later: the USAGE
+section (the user's), the test list and the commit (Claude's on review),
+then the push, the PR and the merge (the user's).
 
 Deferred, not this session:
-- The build, t1 to t4.
+- `t2-before-intake`, `t3-halves`, `t4-release` (ships 0.17.0).
 - G1's solution half, then its intake.
-- `feature-document`, prerequisite 7, and `STATE.md` Next actions 5 and
-  6, carried unchanged.
+- `STATE.md` Next actions 3 to 6 and its open questions, carried
+  unchanged.
 
 House rules in force: no pipes or chains in any authored command string;
-commit messages via Write + `git commit -F`; the push, the PR and the
-merge on the user's word.
+commit messages via Write + `git commit -F`; Workflows launched by
+`scriptPath`; a `Contract:` trailer, alone in the final paragraph, on
+every commit that touches a non-free path; each task recorded through
+`taskcontract progress`, each check's run through `progress run`; no
+tracked file touched while a verifier runs; a surprise mid-build is an
+OPEN and a re-intake, never a silent edit.
