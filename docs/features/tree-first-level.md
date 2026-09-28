@@ -7,11 +7,12 @@
 | 2026-09-28 | user | r5: Measured: ADR 0033's checks before signing, on the solution half, run by Claude on the user's word: Scope holds the release unit's paths, `CHANGELOG.md`, `decisions/` and `docs/` are free paths, and no out-of-scope path falls inside Scope; no new term; ready check 11 finds two facts with no Sources row (a feature's place at the first level, a feature's status); 12 and 13 pass |
 | 2026-09-28 | user | r6: The solution half finished in kit session 59 through Q10 to Q15: the signature form, Interfaces with its examples and edges, Sources, Scope, Out of scope, Constraints, Units, Order, Risks and cost; ready check 11's two Sources rows added (r5); typed by Claude on the user's word |
 | 2026-09-28 | user | r7: Signed: solution half. The engineer seat signs r6 |
+| 2026-09-28 | intake | r8: Ready: contract `tree-first-level` validates ready-green, derived from r6 in kit session 60; the PO seat (user) signed the request half at r3 (r4), the engineer seat (user) the solution half at r6 (r7); four units, t1 to t4, each confirmed by seat user; the 11 new terms ratified and ADR 0034 accepted at `dab3623`; t2 and t3 each hold four checks in three sketches, SC2.1 with SC4.1 and SC3.3 with SC4.3, since the schema caps a unit at three; t1 writes the `USAGE.md` section first; the language door reads zero after the rewrite; until t3 ships, kit 0.16.0 counts `Signed:` rows as text and reads this contract stale (document r7, contract from r6) |
 
 # tree-first-level - The tree's first level shows where each gate and feature stands
 
 `sdlc_development_kit` · seats: PO user, engineer user · contract:
-`tree-first-level`, draft · PR: none · merge SHA: none
+`tree-first-level`, ready · PR: none · merge SHA: none
 
 ## Statement
 
