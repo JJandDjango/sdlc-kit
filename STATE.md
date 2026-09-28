@@ -2,40 +2,43 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-28 (session 60 close, tree-first-level at intake)._
+> _Generated 2026-09-28 (session 61 close, tree-first-level t1 built)._
 
 ## Now
-- **tree-first-level is at intake**: `specs/tree-first-level/contract.yaml`
-  is ready-green at `bb20b67`, derived from the document's r6; the
-  document reads r8, intake's `Ready:` row, and its status line reads
-  ready. Four units, `t1-gate-rollup`, `t2-before-intake`, `t3-halves`,
-  `t4-release`, a chain, each confirmed by seat user. Twelve checks in ten
-  sketches: the schema caps a unit at three, so t2 pairs SC2.1 with SC4.1
-  and t3 pairs SC3.3 with SC4.3 (the tree reads each pair as one check,
-  `SC2.1+SC4.1`). t1 writes the `USAGE.md` section first, marks red; t3
-  carries SC3.1's manual receipt, a live pane on the kit.
-- The tree reads the contract `stale: document r7, contract from r6`
-  until t3 ships: 0.16.0 counts a `Signed:` row as text.
-- The term commit `dab3623`: ADR 0034 (the signature form, amending ADR
-  0029), 11 terms ratified, Feature and Item amended, Stale amended to
-  leave out `Signed:` rows (the user's addition at ratification), the
-  dictionary cedes `half` and `intake`, and `g1-requirements-spec` gains
-  `r4: Signed: request half`.
-- On branch `session-60-tree-first-level-intake`, pushed; the PR on the
-  user's word. Session 59's PR #70 merged at `55bc0de`.
+- **tree-first-level t1 is built**: `t1-gate-rollup` at `a0f36e2`
+  (USAGE, three red subsections at the end of section 9) and `709d2cc`
+  (code and tests), Two-Key PASS at round 1, the unit closed. Each gate
+  item and condition reads the roll-up of the features' verdicts and
+  names each feature holding it back, `<id> holds <id> at <status>`. A
+  gate reads `doing` over a mix of `done` and `to do` (the user's reading
+  at USAGE approval). The kit's own `gates/G0` now reads `done`.
+- t2, t3 and t4 remain, a chain. The tree reads the contract `stale:
+  document r7, contract from r6` until t3 ships: 0.16.0's drift rule
+  counts a `Signed:` row as text.
+- On branch `session-61-tree-first-level-t1`, not pushed; the push and
+  the PR on the user's word. Session 60's PR #71 merged at `1f30226`.
 - Carried: 17 features: 15 `[done]`; `glossary-alias-disjointness` is
-  parked by the user, `[to do]`; `tree-first-level` `[to do]`.
+  parked by the user, `[to do]`; `tree-first-level` `[doing]`.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. The build, in order: `t1-gate-rollup`, `t2-before-intake`,
-   `t3-halves`, `t4-release`; two to three sessions. t1 adds behavior and
-   retires the rule that a gate item always reads `to do`: about ten
-   assertions, found by test-retirer (Q14 kept it one unit). t3's manual
+1. The rest of the build, in order: `t2-before-intake`, `t3-halves`,
+   `t4-release`; one or two sessions. USAGE's text for t2 and t3 stands
+   red since `a0f36e2`: refine it at each unit's pass zero, flagging any
+   narrowing. t2 retires the tree docstring's "opens each contract's
+   docs/features/<id>.md for its revision table only". t3's manual
    receipt: a live pane on the kit showing `g1-requirements-spec`'s halves
-   and `gates/G0 [doing]`.
+   and `gates/G0 [doing]`. t4's sweep carries t1's Two-Key advisories:
+   "Six statuses" (`USAGE.md:632`) says a parent reads `to do` when
+   nothing under it has started, which a gate item no longer does; the
+   contract's SC1.1 sketch says "by the rule for the roll-up of a
+   feature", looser than its sources (the code follows the sources);
+   `709d2cc`'s message counts nine amended tests where the diff holds
+   eight plus the release test; `Theory:` stands in the paragraph before
+   the final one, so git parses only `Contract:` as a trailer (the house
+   form).
 2. Then G1's solution half, through the interview at the engineer seat,
    to ADR 0033; open for it: where the component declaration record and
    the review record live, G1's rules and their codes, the venue, and how
@@ -51,7 +54,8 @@
    and ADR 0032's "a closed contract reads done whatever its verdicts
    read" omit the later-record limit; USAGE's evidence paragraph reads
    best as "after its own close"; the no-red test covers section 9
-   only); two test gaps (no pane test for a `parts:` list without
+   only, and since `709d2cc` only project-tree's subsections up to the
+   first red heading); two test gaps (no pane test for a `parts:` list without
    `evidence` hiding a seat; `tests/conftest.py`'s row pattern splits a
    plain name at its first ` [`).
 6. Deferred, carried: `glossary-alias-disjointness` (parked by the user,
@@ -118,7 +122,10 @@
   stops an agent past about 400K tokens as a hallucination risk. Split a
   unit whose drafting needs both new behavior and a retirement:
   `test-retirer.js` deletes the code in an export, runs the suite and
-  reads only the tests that fail. The release unit's Two-Key runs with
+  reads only the tests that fail. When the retirement flips values on
+  existing fixtures and no name goes, pass `overlay` (the prototype's
+  changed files) in place of `deletions`: the suite runs on the export
+  with the prototype over it. The release unit's Two-Key runs with
   `sweep: true`.
 - Before approving a drafted list: run the whole suite on the prototype
   in a scratch worktree (`git worktree add --detach`, overlay, run with
@@ -165,8 +172,9 @@
 - `/sdlc audit` drops a `W001` warning beside an error.
 - Should TC016 ride the parked line?
 - Track `.claude/workflows/`? Its four scripts hold the session method and
-  exist only on this machine; the Two-Key grade prompt still names a
-  Co-Authored-By line.
+  exist only on this machine (`test-retirer.js` gained `overlay` in
+  session 61); the Two-Key grade prompt still names a Co-Authored-By
+  line.
 - Ratify 5b? The hook command per stack? The four metrics for wave B.
 - The engine's `plan.md` holds an uncommitted edit; the engine session's
   to commit.

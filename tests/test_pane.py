@@ -498,8 +498,9 @@ def test_sc4_1_with_no_current_task_the_cursor_starts_on_the_first_line(tmp_path
     shot = _open(_repo(tmp_path))
     assert shot["cursor"] == 0 and shot["top"] == 0
     assert shot["cursor_label"] == shot["lines"][0]
-    # closed, the gate's line adds what it holds (o6-pane-keys)
-    assert shot["lines"][0].startswith("gates/G0 Planning / Intake [to do] (4 items: ")
+    # closed, the gate's line adds what it holds (o6-pane-keys): its diagnostics, one
+    # per feature holding its roll-up back (tree-first-level t1)
+    assert shot["lines"][0].startswith("gates/G0 Planning / Intake [failed] (2 diagnostics)")
     name, page = _pages("gates")["G0"]
     assert shot["cursor_text"] == f"{page} | {name}"
 

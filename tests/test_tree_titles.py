@@ -271,10 +271,11 @@ def test_sc1_1_a_gate_a_condition_and_a_finding_open_on_their_id_and_plain_name(
         tmp_path, capsys):
     lines = _lines(_repo(tmp_path), capsys)
     for text in (
-            "gates/G0 Planning / Intake [to do]",
-            "  gates/G0/G0.1 Definition-of-ready [to do]",
-            "  gates/G0/G0.2 Vocabulary coverage [to do]",
-            "  gates/G0/G0.3 Unit confirmation [to do]",
+            # the roll-up of the features' verdicts at G0 (tree-first-level t1)
+            "gates/G0 Planning / Intake [done]",
+            "  gates/G0/G0.1 Definition-of-ready [done]",
+            "  gates/G0/G0.2 Vocabulary coverage [done]",
+            "  gates/G0/G0.3 Unit confirmation [done]",
             f"  gates/G0/stale-pin {PIN} [kind: gap] gate: G0",
             # a gate a finding names, not active: its gate name, then its mark
             "gates/G3 Implementation [to do] inactive",
@@ -369,7 +370,7 @@ def test_sc1_1_an_item_whose_source_gives_no_text_shows_no_plain_name(tmp_path, 
             "  gates/G0/stale-pin [kind: gap] gate: G0"):
         assert text in lines, text
     # beside them, the items whose source gives text show it
-    for text in ("gates/G0 Planning / Intake [to do]",
+    for text in ("gates/G0 Planning / Intake [failed]",  # the roll-up (tree-first-level t1)
                  "  alpha/G1 Requirements / Spec [to do] inactive",
                  "    alpha/a3-bare/approve-tests Approve the test list [to do]"):
         assert text in lines, text

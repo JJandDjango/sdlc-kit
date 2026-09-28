@@ -44,12 +44,19 @@ owns, and one that is not done carries its rules' messages as its
 diagnostics, the draft profile's when it failed, else the ready profile's.
 A contract the tree cannot read as a mapping reads only its `G0.1` so,
 since the joins behind the other two never ran on it. Warnings never count.
-A verdict at any other gate, the inactive verdict, their conditions and
-every gate item and its conditions read `to do`. A unit or contract rolls
-up its children but the inactive verdict, so it reads `done` only when
-every other child does; a closed contract's verdicts never count either,
-so it reads `done` once its units do, or at once when it shows none, while
-each verdict keeps its reading.
+A verdict at any other gate, the inactive verdict and their conditions
+read `to do`. A gate item rolls up each contract's verdict at its gate but
+an inactive one, and each of its conditions that condition across the same
+verdicts, a closed contract's verdicts counting as they read: the first of
+`failed`, `waiting on a seat`, `blocked` and `doing` any reads, else `done`
+or `to do` when every one reads it, else `doing`, and `to do` when none
+counts. One that is not done carries, as its diagnostics, `<contract> holds
+<id> at <status>` for each contract whose verdict or condition is not done,
+in the contracts' order. A finding counts in no roll-up. A unit or
+contract rolls up its children but the inactive verdict, so it reads
+`done` only when every other child does; a closed contract's verdicts
+never count either, so it reads `done` once its units do, or at once when
+it shows none, while each verdict keeps its reading.
 
 The current task is derived from the task states, never stored: the task
 whose `doing` record is latest, else the first `to do` task in the contract
@@ -165,7 +172,8 @@ class Item:
     # The kit page that defines a gate or a task; a verdict's or a condition's
     # is its gate's.
     page: str | None = None
-    # A condition's messages from its rules, each on one line; never an item.
+    # A condition's messages from its rules, or a gate's or its condition's
+    # `holds` lines, each on one line; never an item.
     diagnostics: list[str] = field(default_factory=list)
     # An approval's seats, its unit's `confirmed_by`; named only while it waits.
     seats: list[str] = field(default_factory=list)
@@ -233,8 +241,11 @@ def build(root: Path, cache: dict[str, G0Reading] | None = None
     items = _gate_items(order, active, findings, gates)
     contracts = [_contract_item(root, cid, instance, active, upcoming, gates, tasks)
                  for cid, instance in read_contracts(root, problems)]
-    items += contracts
     derive(root, contracts, read_progress(root, problems), cache)
+    for item in items:
+        if item.level == "gate":
+            _gate_roll_up(item, contracts)
+    items += contracts
     return items, problems
 
 
@@ -310,7 +321,7 @@ def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]],
            cache: dict[str, G0Reading] | None = None) -> None:
     """Set every status under the contracts, the verdicts' evidence, the G0
     conditions' diagnostics and the current mark; the gate items and their
-    conditions keep `to do`."""
+    conditions roll up after, from what this sets."""
     readings: dict[str, _Reading] = {}
     # Each check's last run and each task's own last record, whatever closed
     # it after, and each unit's and contract's latest close.
@@ -557,6 +568,45 @@ def _roll_up(item: Item, closed: bool = False) -> None:
         item.status = TO_DO
 
 
+def _gate_roll_up(gate: Item, contracts: list[Item]) -> None:
+    """A gate item's status from each contract's verdict at its gate, but an
+    inactive one, and each of its conditions' from the same verdicts' own
+    reading of it; a closed contract's verdicts count as they read, and a
+    finding never counts. One that is not done names each contract holding
+    it back, in the contracts' order."""
+    gid = gate.id.split("/", 1)[1]
+    verdicts = [(contract.id, child) for contract in contracts
+                for child in contract.children
+                if child.level == "verdict" and child.id == f"{contract.id}/{gid}"
+                and INACTIVE not in child.marks]
+    _hold(gate, gid, [(cid, verdict.status) for cid, verdict in verdicts])
+    for condition in gate.children:
+        if condition.level != "condition":
+            continue
+        key = condition.id.rsplit("/", 1)[-1]
+        _hold(condition, key, [(cid, child.status) for cid, verdict in verdicts
+                               for child in verdict.children
+                               if child.id == f"{verdict.id}/{key}"])
+
+
+def _hold(item: Item, key: str, readings: list[tuple[str, str]]) -> None:
+    """Set a gate's or condition's status from (contract, status) readings,
+    the first of ROLL_UP any reads, else `done` or `to do` when all read it,
+    else `doing`, and `to do` with none; and name each contract not done."""
+    statuses = [status for _, status in readings]
+    first = next((status for status in ROLL_UP if status in statuses), None)
+    if first is not None:
+        item.status = first
+    elif all(status == TO_DO for status in statuses):
+        item.status = TO_DO
+    elif all(status == DONE for status in statuses):
+        item.status = DONE
+    else:
+        item.status = DOING
+    item.diagnostics = [f"{cid} holds {key} at {status}"
+                        for cid, status in readings if status != DONE]
+
+
 def _walk(item: Item):
     """The item and everything under it, in print order."""
     yield item
@@ -721,7 +771,8 @@ def _condition_of(finding: Finding, gates: dict[str, dict]) -> str | None:
 
 def _condition_items(base: str, entry: dict | None) -> list[Item]:
     """A gate's conditions under `base`, in its page's order, each reading
-    `to do`, with its name as its plain name and its gate's page."""
+    `to do` until read or rolled up, with its name as its plain name and its
+    gate's page."""
     return [Item(f"{base}/{condition.get('id')}", "condition",
                  name=text(condition.get("name")), page=_page(entry))
             for condition in _conditions(entry)]

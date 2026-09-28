@@ -267,7 +267,8 @@ def _wanted(root, lines, fold=None):
             continue
         item = model[rid]
         if under[0].startswith("- "):
-            held = f"({len(under)} diagnostics)"
+            # its own diagnostics only, never the conditions or findings after them
+            held = f"({sum(text.startswith('- ') for text in under)} diagnostics)"
             finding = False
         else:
             kids = [model[text.split(" ", 1)[0]] for text in under]
@@ -627,9 +628,10 @@ def test_sc4_2_a_closed_item_counts_what_it_holds_after_its_status(tmp_path, cap
     assert (1, A1 + " (9 items: 9 to do)", False) in nodes
     assert (1, G0_HEAD + " (3 items: 2 done, 1 failed)" + G0_TAIL, False) in nodes
     assert (2, "G0.2 Vocabulary coverage [to do] (1 diagnostics)", False) in nodes
+    # a gate item that names features holding it back folds as a condition does
+    # (tree-first-level t1)
+    assert (0, "gates/G0 Planning / Intake [failed] (2 diagnostics)", False) in nodes
     # a finding counts by what its own line shows in the status's place, its kind
-    assert (0, "gates/G0 Planning / Intake [to do] (4 items: 3 to do, 1 kind: gap)",
-            False) in nodes
     assert (0, "gates/none [to do] (1 items: 1 kind: gap)", False) in nodes
 
 
