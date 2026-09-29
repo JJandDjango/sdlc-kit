@@ -2,16 +2,18 @@
 
 The tree is computed at every print and never stored: ADR 0024's rule for
 the unit graph, carried to the whole work. `build` reads the contracts under
-specs/, `active_gates` from .sdlc/config.yaml, the findings under
-.sdlc/findings/, each contract's progress file under .sdlc/progress/, and
-the two name lists the package ships (data/gates.yaml, data/tasks.yaml).
+specs/, the files directly under docs/features/, `active_gates` from
+.sdlc/config.yaml, the findings under .sdlc/findings/, each contract's
+progress file under .sdlc/progress/, and the two name lists the package
+ships (data/gates.yaml, data/tasks.yaml).
 When an active `G0` verdict shows, it also runs the validator on that
 contract and runs git twice: once for `HEAD`, once for the contract files
 that differ from it. A caller that passes a verdict cache (the `--follow`
 pane) keeps the validator's reading per contract, the verdict's and its
 conditions', between prints, and the validator runs only for a contract
-the cache lacks; git still runs at every print. It opens each contract's
-docs/features/<id>.md for its revision table only, prints none of its
+the cache lacks; git still runs at every print. It opens each file
+directly under docs/features/, a contract's for its revision table and a
+feature before intake's for its title line, prints none of their other
 words, reads no other document and writes no file.
 
 The gates stand first, at the repository level, each opening first into
@@ -20,11 +22,14 @@ finding names a gate and never a contract (ADR 0023's form bans
 identifiers), so each finding stands once: under the condition its `gate:`
 field names when its gate lists that condition, such as G3.1, else under
 the gate, after its conditions. A gate a finding names shows even when it
-is not active. Then each contract, with its verdict at every active gate,
-then its inactive next gate (the first gate in the kit's order after the
-last active one, `G0` when none is active, none after the last), each
-verdict opening into its gate's conditions; then its units, each unit's
-seven tasks and its checks.
+is not active. Then each feature, in one order by id: each contract, and
+each feature before intake, a `*.md` file directly under docs/features/
+whose id has no specs/<id>/contract.yaml, at the level `feature`. Each
+shows its verdict at every active gate, then its inactive next gate (the
+first gate in the kit's order after the last active one, `G0` when none is
+active, none after the last), each verdict opening into its gate's
+conditions; then a contract's units, each unit's seven tasks and its
+checks. A feature before intake shows no unit.
 
 Every item but a finding carries one of six statuses; a finding records
 none, so it shows its kind. A task step reads its last record in the
@@ -45,15 +50,17 @@ diagnostics, the draft profile's when it failed, else the ready profile's.
 A contract the tree cannot read as a mapping reads only its `G0.1` so,
 since the joins behind the other two never ran on it. Warnings never count.
 A verdict at any other gate, the inactive verdict and their conditions
-read `to do`. A gate item rolls up each contract's verdict at its gate but
-an inactive one, and each of its conditions that condition across the same
-verdicts, a closed contract's verdicts counting as they read: the first of
-`failed`, `waiting on a seat`, `blocked` and `doing` any reads, else `done`
-or `to do` when every one reads it, else `doing`, and `to do` when none
-counts. One that is not done carries, as its diagnostics, `<contract> holds
-<id> at <status>` for each contract whose verdict or condition is not done,
-in the contracts' order. A finding counts in no roll-up. A unit or
-contract rolls up its children but the inactive verdict, so it reads
+read `to do`, as does each verdict of a feature before intake and each of
+its conditions, with no evidence and no diagnostic. A gate item rolls up
+each feature's verdict at its gate but an inactive one, and each of its
+conditions that condition across the same verdicts, a closed contract's
+verdicts counting as they read: the first of `failed`, `waiting on a
+seat`, `blocked` and `doing` any reads, else `done` or `to do` when every
+one reads it, else `doing`, and `to do` when none counts. One that is not
+done carries, as its diagnostics, `<feature> holds <id> at <status>` for
+each feature whose verdict or condition is not done, in the features'
+order. A finding counts in no roll-up. A unit, a contract or a feature
+before intake rolls up its children but the inactive verdict, so it reads
 `done` only when every other child does; a closed contract's verdicts
 never count either, so it reads `done` once its units do, or at once when
 it shows none, while each verdict keeps its reading.
@@ -72,14 +79,18 @@ gives a gate, a verdict's gate, a condition or a task. The field's ends are
 stripped and each line break reads as one space; a field that is absent,
 not text or blank gives no plain name, save that a contract then reads
 `(no title)`, as does one the tree cannot read as a mapping. The tree reads
-the title from the contract, never from its feature doc. A contract alone
-carries a summary, its `intent` by the same rule. Links come from two
-fields only: a unit's `depends_on` entries, as the unit graph reads them,
-each linked once in the order of its first appearance, and a finding's
-`gate:` value as written. A contract with a file at docs/features/<id>.md
-carries that path as its feature doc reference. A line prints its plain
-name after its id, then its links, the reference and the summary after the
-marks and evidence.
+a contract's title from the contract, never from its feature doc. A
+feature before intake's plain name is the text after the first ` - ` of
+its doc's first `# ` line, by the same rule. It reads `(no title)` when
+the doc has no such line, no text after the ` - `, or cannot be read as
+text, and the tree prints no problem line for it. A contract alone
+carries a summary, its `intent` by the same rule. Links come from two fields only: a unit's
+`depends_on` entries, as the unit graph reads them, each linked once in
+the order of its first appearance, and a finding's `gate:` value as
+written. A contract with a file at docs/features/<id>.md, and each feature
+before intake, carries that path as its feature doc reference. A line
+prints its plain name after its id, then its links, the reference and the
+summary after the marks and evidence.
 
 A contract carries at most one drift mark, read afresh at every print from
 its feature doc's revision table, the first table in the file. A row counts
@@ -93,8 +104,9 @@ as text, and `stale: document rD, contract from rM` when the document's
 revision is higher; else there is none, and the contract matches its
 document. A contract the tree cannot read as a mapping carries it too.
 
-Each item but a gate, a condition, a task and the no-gate item names the
-file it is read from, and a unit or check the keys to its entry there;
+Each item but a gate, a condition, a task, the no-gate item, a feature
+before intake and its verdicts names the file it is read from, and a unit
+or check the keys to its entry there;
 `reference` turns that into the entry's line, parsing the file afresh, so
 only the query calls it. A gate, a verdict, a condition and a task carry
 the kit page their list gives, a condition its gate's.
@@ -154,7 +166,7 @@ _DERIVED = re.compile(r"derived from r([0-9]+)(?!\w)")
 @dataclass
 class Item:
     """One entry of the tree; `level` is gate, condition, none, finding,
-    contract, verdict, unit, task or check."""
+    contract, feature (a feature before intake), verdict, unit, task or check."""
 
     id: str
     level: str
@@ -164,7 +176,7 @@ class Item:
     children: list[Item] = field(default_factory=list)
     evidence: str | None = None  # what the status was read from
     links: list[str] = field(default_factory=list)  # each `<kind>: <target>`
-    doc: str | None = None  # a contract's feature doc path
+    doc: str | None = None  # a contract's or a feature before intake's feature doc path
     name: str | None = None  # the plain name, by the text rule
     summary: str | None = None  # a contract's intent, by the text rule
     source: str | None = None  # the repo path of the file the item is read from
@@ -239,13 +251,20 @@ def build(root: Path, cache: dict[str, G0Reading] | None = None
     upcoming = next_gate(active, order)
     findings = read_findings(root, problems)
     items = _gate_items(order, active, findings, gates)
+    read = read_contracts(root, problems)
     contracts = [_contract_item(root, cid, instance, active, upcoming, gates, tasks)
-                 for cid, instance in read_contracts(root, problems)]
+                 for cid, instance in read]
     derive(root, contracts, read_progress(root, problems), cache)
+    before = [_feature_item(root, fid, active, upcoming, gates)
+              for fid in read_features(root, {cid for cid, _ in read})]
+    for feature in before:
+        _roll_up(feature)
+    # One order for both kinds: a contract's folder name is its id.
+    features = sorted(contracts + before, key=lambda item: item.id)
     for item in items:
         if item.level == "gate":
-            _gate_roll_up(item, contracts)
-    items += contracts
+            _gate_roll_up(item, features)
+    items += features
     return items, problems
 
 
@@ -569,11 +588,11 @@ def _roll_up(item: Item, closed: bool = False) -> None:
 
 
 def _gate_roll_up(gate: Item, contracts: list[Item]) -> None:
-    """A gate item's status from each contract's verdict at its gate, but an
+    """A gate item's status from each feature's verdict at its gate, but an
     inactive one, and each of its conditions' from the same verdicts' own
     reading of it; a closed contract's verdicts count as they read, and a
-    finding never counts. One that is not done names each contract holding
-    it back, in the contracts' order."""
+    finding never counts. One that is not done names each feature holding
+    it back, in the features' order."""
     gid = gate.id.split("/", 1)[1]
     verdicts = [(contract.id, child) for contract in contracts
                 for child in contract.children
@@ -708,6 +727,31 @@ def read_contracts(root: Path, problems: list[str]) -> list[tuple[str, dict | No
     return [(path.parent.name, _load(path, root, problems, "contract")) for path in paths]
 
 
+def read_features(root: Path, contracts: set[str]) -> list[str]:
+    """The id of each feature before intake, in id order: each file named
+    `*.md` directly in docs/features/ whose id is not in `contracts`."""
+    folder = root / "docs" / "features"
+    if not folder.is_dir():
+        return []
+    ids = [path.name[:-len(".md")] for path in folder.iterdir()
+           if path.name.endswith(".md") and path.is_file()]
+    return sorted(fid for fid in ids if fid and fid not in contracts)
+
+
+def title(path: Path) -> str | None:
+    """A feature doc's plain name: the text after the first ` - ` of its
+    first `# ` line, by the text rule; None when there is no such line, no
+    text after it, or the file cannot be read as text. No other line is read."""
+    try:
+        lines = path.read_bytes().decode("utf-8-sig").splitlines()
+    except (OSError, UnicodeDecodeError):
+        return None
+    line = next((line for line in lines if line.startswith("# ")), None)
+    if line is None or " - " not in line:
+        return None
+    return text(line.split(" - ", 1)[1])
+
+
 def check_ids(sketches: list) -> list[str]:
     """One id per sketch line by the trailing-parentheses rule; a line that
     names none, or repeats an id, is `sketch-<n>` by its position from 1."""
@@ -793,16 +837,9 @@ def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str
     verdicts and its mark, and shows no unit."""
     doc = f"docs/features/{cid}.md"
     source = f"specs/{cid}/contract.yaml"
-    verdicts = [(gate, []) for gate in active]
-    if upcoming is not None:
-        verdicts.append((upcoming, [INACTIVE]))
     mark = drift(root / doc)
     item = Item(cid, "contract", marks=[mark] if mark else [],
-                children=[Item(f"{cid}/{gate}", "verdict", marks=marks,
-                               children=_condition_items(f"{cid}/{gate}", gates.get(gate)),
-                               name=_name(gates.get(gate)),
-                               source=source, page=_page(gates.get(gate)))
-                          for gate, marks in verdicts],
+                children=_verdict_items(cid, active, upcoming, gates, source),
                 doc=doc if (root / doc).is_file() else None,
                 name=(text(instance.get("title")) if instance is not None else None) or NO_TITLE,
                 summary=text(instance.get("intent")) if instance is not None else None,
@@ -826,6 +863,29 @@ def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str
             for n, (check, sketch) in enumerate(zip(check_ids(sketches), sketches))]
         item.children.append(unit_item)
     return item
+
+
+def _feature_item(root: Path, fid: str, active: list[str], upcoming: str | None,
+                  gates: dict[str, dict]) -> Item:
+    """A feature before intake: its plain name from its doc's title line,
+    `(no title)` when that gives none, and its verdicts as a contract's, each
+    reading `to do` from no file; no unit and no mark."""
+    doc = f"docs/features/{fid}.md"
+    return Item(fid, "feature", children=_verdict_items(fid, active, upcoming, gates, None),
+                doc=doc, name=title(root / doc) or NO_TITLE)
+
+
+def _verdict_items(base: str, active: list[str], upcoming: str | None,
+                   gates: dict[str, dict], source: str | None) -> list[Item]:
+    """A feature's verdict at each active gate, then the upcoming gate's
+    marked `inactive`, each opening into its gate's conditions."""
+    verdicts = [(gate, []) for gate in active]
+    if upcoming is not None:
+        verdicts.append((upcoming, [INACTIVE]))
+    return [Item(f"{base}/{gate}", "verdict", marks=marks,
+                 children=_condition_items(f"{base}/{gate}", gates.get(gate)),
+                 name=_name(gates.get(gate)), source=source, page=_page(gates.get(gate)))
+            for gate, marks in verdicts]
 
 
 def _seats(value) -> list[str]:

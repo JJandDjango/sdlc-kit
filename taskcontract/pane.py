@@ -13,7 +13,7 @@ label opens on its full id at the top level and on the last segment of its
 id below it, then its plain name and the parts `tree: pane: parts:` selects; the current
 task's label carries `current` whatever the parts. A label is plain text,
 never markup, so `[to do]` keeps its brackets. The pane opens with each
-contract open down to its units and every other item closed; a current task
+feature open down to its units and every other item closed; a current task
 opens its unit too, and the cursor starts on it with the window scrolled to
 it, else on the first line.
 
@@ -134,7 +134,7 @@ def cursor_text(root: Path, row: Row) -> str:
     if row.message is not None:
         return row.message
     item = row.item
-    if item.level == "contract" and item.doc:
+    if item.level in ("contract", "feature") and item.doc:
         reference = f"{item.doc}:1"
     elif item.level in ("gate", "verdict", "condition", "task"):
         reference = item.page
