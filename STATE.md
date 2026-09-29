@@ -2,43 +2,52 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-28 (session 61 close, tree-first-level t1 built)._
+> _Generated 2026-09-28 (session 62 close, tree-first-level t2 built)._
 
 ## Now
-- **tree-first-level t1 is built**: `t1-gate-rollup` at `a0f36e2`
-  (USAGE, three red subsections at the end of section 9) and `709d2cc`
-  (code and tests), Two-Key PASS at round 1, the unit closed. Each gate
-  item and condition reads the roll-up of the features' verdicts and
-  names each feature holding it back, `<id> holds <id> at <status>`. A
-  gate reads `doing` over a mix of `done` and `to do` (the user's reading
-  at USAGE approval). The kit's own `gates/G0` now reads `done`.
-- t2, t3 and t4 remain, a chain. The tree reads the contract `stale:
+- **tree-first-level t2 is built**: `t2-before-intake` at `83532e5`
+  (USAGE, "Features before intake" refined at pass zero, still red) and
+  `556c0eb` (code and tests), Two-Key PASS at round 1, the unit closed.
+  Each `*.md` file directly under `docs/features/` with no contract shows
+  at the first level as a feature before intake, at the item level
+  `feature` (so `progress` refuses it: a done record before intake would
+  close the contract at intake). Its G0 verdict counts in `gates/G0`, so
+  the kit's `gates/G0` reads `doing`, held by `g1-requirements-spec`.
+- t3 and t4 remain, a chain. The tree reads the contract `stale:
   document r7, contract from r6` until t3 ships: 0.16.0's drift rule
   counts a `Signed:` row as text.
-- On branch `session-61-tree-first-level-t1`, not pushed; the push and
-  the PR on the user's word. Session 60's PR #71 merged at `1f30226`.
-- Carried: 17 features: 15 `[done]`; `glossary-alias-disjointness` is
-  parked by the user, `[to do]`; `tree-first-level` `[doing]`.
+- On branch `session-62-tree-first-level-t2`, not pushed; the push and
+  the PR on the user's word. Session 61's PR #72 merged at `8afca18`.
+- Carried: 18 features: 17 with a contract, 15 of them `[done]`;
+  `glossary-alias-disjointness` is parked by the user, `[to do]`;
+  `tree-first-level` `[doing]`; and `g1-requirements-spec` before intake,
+  `[to do]`.
 
 ## Blockers
 - None.
 
 ## Next actions
-1. The rest of the build, in order: `t2-before-intake`, `t3-halves`,
-   `t4-release`; one or two sessions. USAGE's text for t2 and t3 stands
-   red since `a0f36e2`: refine it at each unit's pass zero, flagging any
-   narrowing. t2 retires the tree docstring's "opens each contract's
-   docs/features/<id>.md for its revision table only". t3's manual
-   receipt: a live pane on the kit showing `g1-requirements-spec`'s halves
-   and `gates/G0 [doing]`. t4's sweep carries t1's Two-Key advisories:
-   "Six statuses" (`USAGE.md:632`) says a parent reads `to do` when
-   nothing under it has started, which a gate item no longer does; the
-   contract's SC1.1 sketch says "by the rule for the roll-up of a
-   feature", looser than its sources (the code follows the sources);
-   `709d2cc`'s message counts nine amended tests where the diff holds
-   eight plus the release test; `Theory:` stands in the paragraph before
-   the final one, so git parses only `Contract:` as a trailer (the house
-   form).
+1. The rest of the build, in order: `t3-halves`, then `t4-release`.
+   USAGE's "Revisions and halves" stands red: refine it at t3's pass
+   zero, flagging any narrowing. t3 hangs the halves on t2's `feature`
+   item and retires the drift rule's "every row but `Ready:` and
+   `Measured:`" (docstring and `drift`). t2's tests pin a feature line by
+   its parts, never whole, so t3's mark and halves should break none of
+   them. t3's manual receipt: a live pane on the kit showing
+   `g1-requirements-spec`'s halves and `gates/G0 [doing]`. t4's sweep
+   carries t1's Two-Key advisories: "Six statuses" (`USAGE.md:632`) says
+   a parent reads `to do` when nothing under it has started, which a gate
+   item no longer does; the contract's SC1.1 sketch says "by the rule for
+   the roll-up of a feature", looser than its sources (the code follows
+   the sources); `709d2cc`'s message counts nine amended tests where the
+   diff holds eight plus the release test; `Theory:` stands in the
+   paragraph before the final one, so git parses only `Contract:` as a
+   trailer (the house form). And t2's: `tree_view.py`'s module docstring
+   (lines 7, 21-22, 29) still gives a plain name, a doc reference and
+   `holds` lines to contracts only; `tree.py:14` says the tree "opens
+   each file directly under docs/features/", where it opens only the
+   `*.md` ones; `tree.py:87` runs to about 100 characters (Claude's
+   rewrap).
 2. Then G1's solution half, through the interview at the engineer seat,
    to ADR 0033; open for it: where the component declaration record and
    the review record live, G1's rules and their codes, the venue, and how
@@ -126,7 +135,9 @@
   existing fixtures and no name goes, pass `overlay` (the prototype's
   changed files) in place of `deletions`: the suite runs on the export
   with the prototype over it. The release unit's Two-Key runs with
-  `sweep: true`.
+  `sweep: true`. Every Two-Key receipt must exit 0: the computed verdict
+  fails on any other exit, so an expected refusal belongs in a test, not
+  in the receipt list (session 62).
 - Before approving a drafted list: run the whole suite on the prototype
   in a scratch worktree (`git worktree add --detach`, overlay, run with
   `python -P -m pytest <worktree>/tests`); check each fixed detail against
@@ -157,6 +168,9 @@
   Beside it: G0.3's unit confirmation repeated the engineer seat's
   signature on project-tree and tree-first-level (ADR 0033's recorded
   non-goal).
+- A feature before intake's id compares as an exact string, so on
+  Windows `docs/features/Ready.md` beside `specs/ready/` shows as a
+  second feature (t2's developer). Leave it, or match ids without case?
 - `lang-check` does not resolve a plural of a glossary term (`features`
   against Feature, `halves` against Half): tree-first-level's rewrite
   worked around both.

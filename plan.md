@@ -26,33 +26,46 @@ the USAGE text in chat before any drafting. Claude approves the test list
 and the commit on review. The push, the PR and the merge stay on the
 user's word.
 
+**Closed.** The deliverable is met: t2 at `83532e5` (USAGE) and
+`556c0eb` (code and tests), Two-Key PASS at round 1 with three
+advisories, carried in `STATE.md`. Suite 696 passed, scope-check green,
+and the kit's `gates/G0` now reads `doing`, held by
+`g1-requirements-spec`.
+
 ## Steps
 
-1. Open. Branch cut from `8afca18` (PR #72's merge); this plan committed.
-2. t2, pass zero. Refine "Features before intake" (`USAGE.md:1212`),
-   marks red; before and after shown in chat, each reading flagged;
-   committed on the user's word.
-3. t2, draft. `spec-channel-drafter.js`: tests for SC2.1, SC2.2, SC2.3
-   and SC4.1, red from the scratchpad, satisfied by a prototype of
-   `tree.py`.
-4. t2, retire. `test-retirer.js` with the prototype as `overlay`: each
-   test that fails on the export, amended or retired.
-5. t2, approve the list and prove red. The whole suite on the prototype
-   in a scratch worktree; each fixed detail checked against the contract
-   and the feature document; `progress run --expect red` per check.
-6. t2, green. `unit-developer.js` from the interface note; Claude runs the
-   suite after each round.
-7. t2, commit and Two-Key. The four checks green at the clean commit;
-   `two-key-unit-verifier.js`; `progress done` on PASS.
+1. ~~Open.~~ Branch cut from `8afca18` (PR #72's merge); the plan at
+   `da94a6e`, with the user's three readings for pass zero.
+2. ~~t2, pass zero.~~ At `83532e5` on the user's word: a document with no
+   revision shows; a title line with no words after ` - ` reads `(no
+   title)`; the query paragraph moved here from t3's subsection; and a
+   fourth reading, a verdict before intake names `page:` and no `file:`.
+3. ~~t2, draft.~~ 20 tests (32 cases) in `tests/test_tree_before_intake.py`,
+   red 32 of 32 on assertions; the prototype changed `tree.py` and
+   `pane.py` and caught 11 mutations. Claude ruled the item's level
+   `feature`, never `contract`, so `progress` refuses it; one more test
+   pins that (21 tests, 33 cases).
+4. ~~t2, retire.~~ With the prototype as `overlay`, two kit-tree tests
+   failed (`test_tree.py`, `test_tree_titles.py`), both amended, none
+   retired.
+5. ~~t2, approve the list and prove red.~~ The whole suite on the
+   prototype in a scratch worktree, 696 passed; approved by Claude;
+   `SC2.1+SC4.1`, `SC2.2` and `SC2.3` red (24, 8 and 1 failing).
+6. ~~t2, green.~~ Round 1, no deviation; suite 696 passed, the developer's
+   run and Claude's. Claude reworded one docstring sentence.
+7. ~~t2, commit and Two-Key.~~ At `556c0eb`; the three checks green at
+   the clean commit; PASS at round 1; the unit closed. The first launch
+   was stopped: a receipt meant to exit 2 would have failed it.
 8. Close. `STATE.md` regenerated; this plan struck; the push and the PR
    on the user's word.
 
 Steps 1 and 8 sit outside a contract unit, so the tree does not show
 them.
 
-Decisions this session: six. The user's: (1) the plan, (2) the USAGE
-text with its readings. Claude's, on review: (3) t2's test list, (4) t2's
-commit. The user's at the close: (5) the push and the PR, (6) the merge.
+Decisions this session: seven. The user's: (1) the plan with its three
+readings, (2) the USAGE text with the fourth. Claude's: (3) the item
+level `feature`, (4) t2's test list, (5) t2's commit. The user's at the
+close: (6) the push and the PR, (7) the merge.
 
 Deferred, not this session:
 - `t3-halves`, `t4-release` (ships 0.17.0).
