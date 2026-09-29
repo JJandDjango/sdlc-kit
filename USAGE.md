@@ -1213,16 +1213,17 @@ gates/G0 Planning / Intake [doing]
 
 🔴 Each `.md` file directly under `docs/features/` that has no
 `specs/<id>/contract.yaml` shows as a feature at the first level: a
-**feature before intake**, from its first revision on. Its id is the
-file's name without `.md`. The features with a contract keep the order of
+**feature before intake**, from its first revision on. A document whose
+table holds no revision shows too. Its id is the file's name without
+`.md`. The features with a contract keep the order of
 `specs/`, and a feature before intake stands among them by its id.
 
 🔴 Its plain name is the words of its document's title line, the first
 `# ` line, after the first ` - `: the words intake copies into the
-contract's `title`. A document with no title line, or one that cannot be
-read as text, reads `(no title)`. The tree reads such a document once per
-print, its first table and its title line, and prints none of its other
-words.
+contract's `title`. A document with no title line, a title line with no
+words after a ` - `, or a document that cannot be read as text reads `(no
+title)`. The tree reads such a document once per print, its first table
+and its title line, and prints none of its other words.
 
 🔴 It shows its verdicts as a feature with a contract does: its G0
 verdict, then its next gate marked `inactive`, each opening into its
@@ -1230,6 +1231,11 @@ conditions. Its G0 verdict and those conditions read `to do` and name no
 validator run, since there is no contract to validate. That verdict
 counts in `gates/G0`'s roll-up, and `gates/G0` names the feature: `<id>
 holds G0 at to do`.
+
+🔴 `taskcontract tree <id>` prints a feature before intake's line, then
+`doc: docs/features/<id>.md:1`; the cursor line shows the same
+reference. Its verdicts name their `page:` and no `file:`, since no file
+decides them.
 
 🔴 Once intake writes `specs/<id>/contract.yaml`, the feature stays one
 item: it shows its contract's verdicts, units and drift mark, and none of
@@ -1283,8 +1289,7 @@ g1-requirements-spec Failure points found before development starts [doing] no c
   g1-requirements-spec/solution Solution half [to do]
 ```
 
-🔴 `taskcontract tree <id>` prints a feature before intake's line, then
-`doc: docs/features/<id>.md:1`; and a half's line, then its `file:`: the
+🔴 `taskcontract tree <id>` prints a half's line, then its `file:`: the
 line of its latest `Signed:` row, or line 1 when it has none. The cursor
 line shows the same reference.
 
