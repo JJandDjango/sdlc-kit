@@ -39,8 +39,11 @@ tests read the kit's own tree.
 from __future__ import annotations
 
 import asyncio
+import builtins
 import importlib
 import importlib.util
+import io
+import os
 import re
 from pathlib import Path
 
@@ -387,6 +390,27 @@ def test_sc3_1_the_cursor_line_on_a_half_shows_its_file_reference(tmp_path):
     # A half's label: its id's last segment, then the line the tree prints.
     assert [label for label, _ in shown[1:]] == [
         "request Request half [done] by ana at r1", "solution Solution half [to do]"]
+
+
+def test_constraint_4_a_feature_document_is_read_once_per_print(tmp_path, capsys, monkeypatch):
+    root = _repo(tmp_path)
+    before = _doc(root, "x", ["r1: First draft", ("ana", "r2: Signed: request half")])
+    _write_contract(root, "c")
+    after = _doc(root, "c", ["r1: First draft", "r2: Ready: derived from r1",
+                             ("ana", "r3: Signed: solution half")])
+    opened = []
+    original = builtins.open
+
+    def counting(file, *args, **kwargs):
+        if isinstance(file, (str, bytes, os.PathLike)):
+            opened.append(Path(os.fsdecode(file)).resolve())
+        return original(file, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "open", counting)
+    monkeypatch.setattr(io, "open", counting)
+    _print(root, capsys)
+    # Each document opens once, a feature before intake's and a contract's.
+    assert (opened.count(before.resolve()), opened.count(after.resolve())) == (1, 1)
 
 
 def test_progress_refuses_a_halfs_id(tmp_path, capsys):

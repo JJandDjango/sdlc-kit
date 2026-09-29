@@ -358,14 +358,14 @@ class Signature:
     signs: int
 
 
-def revisions(path: Path) -> tuple[int | None, dict[str, Signature]]:
-    """A feature before intake's revision, the highest N of a text row, and
-    the signature that counts for each half a row signs, by the half's id
-    segment; None and none when no text row stands in the first table or the
-    file cannot be read as text. A row signs the text row above it with the
-    highest N; of a half's signatures, the highest own N counts, the lower
-    row winning a tie. None of the table's words print but the signer."""
-    lines = _lines(path)
+def revisions(lines: list[str] | None) -> tuple[int | None, dict[str, Signature]]:
+    """A feature before intake's revision, the highest N of a text row in
+    `lines`, and the signature that counts for each half a row signs, by the
+    half's id segment; None and none when no text row stands in the first
+    table or `lines` is None, the file not readable as text. A row signs the
+    text row above it with the highest N; of a half's signatures, the highest
+    own N counts, the lower row winning a tie. None of the table's words
+    print but the signer."""
     if lines is None:
         return None, {}
     revision = None
@@ -826,11 +826,11 @@ def read_features(root: Path, contracts: set[str]) -> list[str]:
     return sorted(fid for fid in ids if fid and fid not in contracts)
 
 
-def title(path: Path) -> str | None:
-    """A feature doc's plain name: the text after the first ` - ` of its
-    first `# ` line, by the text rule; None when there is no such line, no
-    text after it, or the file cannot be read as text. No other line is read."""
-    lines = _lines(path)
+def title(lines: list[str] | None) -> str | None:
+    """A feature doc's plain name: the text after the first ` - ` of the
+    first `# ` line in `lines`, by the text rule; None when there is no such
+    line, no text after it, or `lines` is None, the file not readable as
+    text. No other line is read."""
     if lines is None:
         return None
     line = next((line for line in lines if line.startswith("# ")), None)
@@ -957,9 +957,11 @@ def _feature_item(root: Path, fid: str, active: list[str], upcoming: str | None,
     """A feature before intake: its plain name from its doc's title line,
     `(no title)` when that gives none, its revision mark, and its verdicts
     as a contract's, each reading `to do` from no file; then its two halves,
-    each `done` by the signature that counts for it, else `to do`. No unit."""
+    each `done` by the signature that counts for it, else `to do`. No unit.
+    The doc is read once; its revision, signatures and title use its lines."""
     doc = f"docs/features/{fid}.md"
-    revision, signatures = revisions(root / doc)
+    lines = _lines(root / doc)
+    revision, signatures = revisions(lines)
     halves = []
     for key, name in HALVES:
         signature = signatures.get(key)
@@ -971,7 +973,7 @@ def _feature_item(root: Path, fid: str, active: list[str], upcoming: str | None,
     mark = f"no contract: document r{revision}" if revision is not None else NO_REVISION
     return Item(fid, "feature", marks=[mark],
                 children=_verdict_items(fid, active, upcoming, gates, None) + halves,
-                doc=doc, name=title(root / doc) or NO_TITLE)
+                doc=doc, name=title(lines) or NO_TITLE)
 
 
 def _verdict_items(base: str, active: list[str], upcoming: str | None,
