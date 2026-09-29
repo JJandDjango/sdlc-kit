@@ -58,8 +58,12 @@ text. Claude's: (3) t3's test list, (4) t3's commit. The user's at the
 close: (5) the push and the PR, (6) the merge.
 
 Deferred, not this session:
-- `t4-release` (ships 0.17.0, sweeps t1's and t2's Two-Key advisories);
-  added only on the user's word if t3 closes with room.
+- `t4-release` (ships 0.17.0, sweeps t1's and t2's Two-Key advisories,
+  and `USAGE.md:994`); next after t3, this session if it fits.
+- `feature-document` after 0.17.0, ahead of G1's solution half (user,
+  2026-09-29): interview its REQUEST into `docs/features/`, intake,
+  build, release 0.18.0. When it ships, tell the user the kit is ready to
+  use on another machine.
 - G1's solution half, then its intake.
 - `STATE.md` Next actions 3 to 6 and its open questions, carried
   unchanged.
