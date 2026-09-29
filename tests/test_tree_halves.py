@@ -570,8 +570,9 @@ def test_sc3_3_a_signed_row_never_ages_a_contracts_drift_mark(tmp_path, capsys):
 ROLL_UPS = {
     # G0 active: the halves count beside the G0 verdict, never the inactive G1
     "g0-active": (("G0",), {"p-none": "to do", "p-request": "doing", "p-both": "doing"}),
-    # no gate active: G0 is the inactive verdict and stays out, so the halves decide
-    "none-active": ((), {"p-none": "to do", "p-request": "doing"}),
+    # no gate active: G0 is the inactive verdict and stays out, so the halves
+    # decide, and a feature before intake never reads done
+    "none-active": ((), {"p-none": "to do", "p-request": "doing", "p-both": "doing"}),
 }
 
 

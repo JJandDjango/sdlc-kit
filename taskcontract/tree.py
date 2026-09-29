@@ -66,7 +66,8 @@ unit, a contract or a feature before intake rolls up its children but the
 inactive verdict, a feature's halves among them, so it reads
 `done` only when every other child does; a closed contract's verdicts
 never count either, so it reads `done` once its units do, or at once when
-it shows none, while each verdict keeps its reading.
+it shows none, while each verdict keeps its reading. A feature before
+intake never reads `done`: it reads `doing` in its place.
 
 The current task is derived from the task states, never stored: the task
 whose `doing` record is latest, else the first `to do` task in the contract
@@ -655,7 +656,8 @@ def _roll_up(item: Item, closed: bool = False) -> None:
     """A unit's, contract's or feature before intake's status from its
     children's but the inactive verdict's, a feature's halves among them,
     and a closed contract's from its units' alone, `done` when it has none;
-    a verdict done alone never starts its contract."""
+    a verdict done alone never starts its contract. A feature before intake
+    never reads `done`: it reads `doing` in its place."""
     for child in item.children:
         if child.level == "unit":
             _roll_up(child)
@@ -666,7 +668,7 @@ def _roll_up(item: Item, closed: bool = False) -> None:
     if first is not None:
         item.status = first
     elif (statuses or closed) and all(status == DONE for status in statuses):
-        item.status = DONE
+        item.status = DOING if item.level == "feature" else DONE
     elif any(child.status == DONE for child in children if child.level != "verdict"):
         item.status = DOING
     else:
