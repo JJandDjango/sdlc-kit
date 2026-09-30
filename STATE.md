@@ -2,25 +2,32 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-30 (session 65 close, feature-document's request half signed)._
+> _Generated 2026-09-30 (session 66 close, feature-document's solution half signed)._
 
 ## Now
-- **feature-document's request half is signed**:
-  `docs/features/feature-document.md`, written through the interview's Q1
-  to Q9 from the r1 REQUEST, the PO seat signing r3 at r4. Five success
-  criteria (the interview writes the format; the checks before signing;
-  Gherkin per check; intake holds the definition of done; kit 0.18.0
-  carries it), 14 checks, six new messages, 15 new terms and Stale
-  amended. The five questions from `a800c34:STATE.md` are answered in its
-  Decisions. The tree reads it `doing`: request half done at r3, solution
-  half to do.
-- The request half widened the build. Prerequisite 5: a command that runs
-  the vocabulary and language checks on a draft outside `specs/` (the
-  scratch script stands in on this machine only), which brings
-  `taskcontract/` into scope. Prerequisite 6: an ADR amending 0029 (the
-  appendix names the contract's path; ready check 6 asks where each
-  entry was measured). One OPEN for the engineer seat:
-  `taskcontract/tree.py:196` counts a `Parked:` row as a text change.
+- **feature-document is signed, both halves at r8**:
+  `docs/features/feature-document.md`, the solution half written through
+  Q10 to Q16 at the engineer seat; r9 and r10 sign r8. The tree reads it
+  `doing`, `no contract: document r8`, both halves done. Five units in
+  order: `f1-format`, `f2-sections`, `f3-signing` (with the command),
+  `f4-intake` (with the tree's `Parked:` reading), `f5-release`; two
+  manual receipts (a live run through both signatures, intake parking on
+  it).
+- The solution half's calls: prerequisite 5 is `lang-check --draft
+  <state-file>`, reading the interview's state file, never the document,
+  with `CL014` for a new term that matches a ratified one; the state file
+  moves to `docs/features/<id>.state.yaml`; the document exists from r1
+  and grows section by section; the Gherkin sits in the Appendix, tagged
+  `[PO seat · derived from rN]`; the Units table gains a Done means cell
+  and `+` pairs. A `Parked:` row changes no text (the OPEN, answered).
+- The request half changed twice, each time re-signed: r5 (a check's id
+  sits at the end of its sketch line, in parentheses, not the head; SC4.2
+  and Stale name `Parked:`), then r8 (SC2.1 and prerequisite 5 gain each
+  unit's `done_means`, since intake copies it word for word; prerequisite
+  6 gains the Gherkin's tag and the Units table's cells).
+- Risk 5 changes a plan: the interview never picks up a document it did
+  not start, so G1's solution half is still written by hand from the two
+  NOTES files, not through the interview.
 - Kit 0.17.0 is released and self-pinned (PR #76 merged at `e833283`).
   The user's order (2026-09-29) stands: `feature-document` (0.18.0) before
   G1's solution half. When it ships, tell the user the kit is ready on
@@ -35,17 +42,19 @@
 - None. The session's commit, push and PR wait on the user's word.
 
 ## Next actions
-1. `feature-document`'s solution half (session 66), through the interview
-   at the engineer seat, to ADR 0033: Scope (with `taskcontract/` for
-   prerequisite 5), Out of scope, Interfaces with examples, Sources,
-   Constraints, Units with retirements and tests by check id, Order with
-   its reason, Risks and cost; answer the `Parked:` row OPEN; the checks
-   before signing on the solution half. Then intake: ratify the 15 terms
-   and Stale's amendment, the dictionary cedes `check` and `tag`,
-   prerequisite 6's ADR. Then the build and release 0.18.0. Five to seven
-   sessions left.
-2. Then G1's solution half, through the interview at the engineer seat,
-   to ADR 0033; open for it: where the component declaration record and
+1. `feature-document`'s intake (session 67), from r8: ratify the 15
+   terms and Stale's amendment (its list now holds `Parked:`) in their own
+   commit, the dictionary ceding `check` and `tag`; prerequisite 6's ADR
+   amending 0029 (the appendix names the contract's path; ready check 6
+   asks where each entry was measured; the Gherkin's tag; the Units
+   table's Done means cell and `+` pairs); then the contract, five units
+   f1 to f5, each `done_means` copied word for word (they read zero
+   language findings at r7), the 177 request-half findings answered by
+   the rewrite. Then the build in f1 to f5's order and release 0.18.0:
+   four to five sessions left.
+2. Then G1's solution half, by hand from the two NOTES files (the
+   interview never picks up a document it did not start, feature-document
+   risk 5), to ADR 0033; open for it: where the component declaration record and
    the review record live, G1's rules and their codes, the venue, and how
    the 16 features done read G1 inactive once G1 is active. Then its
    intake. The pilot's config line, in the engine's session; the engine's
@@ -88,8 +97,9 @@
   signing run from a scratch script: add the document's new terms as
   drafts to `load_terms`, report CL003 through
   `lang.validate_dictionary_doc`, and run `lang.check_contract` on a draft
-  contract holding the statement, the non-goals and the checks; a
-  `Violation`'s code is its `rule` field.
+  contract holding the statement, the non-goals, the checks and each
+  unit's `done_means` (the Units table's Done means cell, which intake
+  copies word for word); a `Violation`'s code is its `rule` field.
 - A deferred item that waits on a prerequisite is measured again once the
   prerequisite lands, before it becomes work.
 - Intake from a feature document: ratify its new terms first, in their
