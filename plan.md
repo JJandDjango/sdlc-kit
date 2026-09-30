@@ -33,46 +33,52 @@ reads its plain name from its contract's `title`, never from its doc.
    `709d2cc`'s message (history) and the `Theory:` placement (the house
    form).
 
+**Closed.** The deliverable is met: t4 at `dd225b2` and its fixes
+`3076424`, `3da0128` and `b9d080c`, Two-Key PASS at round 4,
+`tree-first-level` closed at `b9d080c`; PR #75 merged at `4a9fec0`,
+tagged `v0.17.0`; the self-pin at `6c748f6`. Suite 749 passed.
+
 ## Steps
 
-1. Open. PR #74 merged at `a5ba12c`; branch
-   `session-64-tree-first-level-t4` cut from it; this plan committed on
-   its own.
-2. The release text, drafted by Claude: section 9's three 🔴 subsections
-   go 🟢 and its "Ratified, not shipped" note folds into the shipped note
-   (kit 0.17.0, ADR 0034, ADR 0035, contract `specs/tree-first-level/`);
-   the CHANGELOG 0.17.0 entry; ADR 0035; MAP's work-tree row (gate
-   roll-up, features before intake, the 0034 and 0035 links); the sweep of
-   ruling 4. The user approves it in one batch.
-3. The version: `0.17.0` in `pyproject.toml` and `skills/sdlc/init.py`.
-   The whole suite runs before the commit.
-4. t4's commit, on the user's approval; then SC4.2's run green with no
-   tracked file modified.
-5. Two-Key, `sweep: true`. A FAIL gets a fix commit on the user's
-   approval, then another round.
-6. Close: `STATE.md` regenerated, this plan struck; the push and the PR on
-   the user's word.
-7. Release: the merge once CI reads green; the annotated tag `v0.17.0` at
-   the merge; the self-pin (`.github/workflows/sdlc.yml` and USAGE's `uv`
-   line move to `v0.17.0`) on its own PR, which the wrap rides. USAGE's
-   `uv` line, run with `python -P` against the tag, must install 0.17.0
-   and read `specs/tree-first-level` ready-green.
+1. ~~Open.~~ PR #74 merged at `a5ba12c`; the branch cut from it; the plan
+   at `9c4edb2`.
+2. ~~The release text.~~ Approved in one batch, 15 edits: section 9 green,
+   the green paragraphs t1 to t3 changed rewritten, ADR 0035 (it also
+   amends 0029's "no headings read by the tooling"), the CHANGELOG entry,
+   MAP's row, the docstring sweep.
+3. ~~The version.~~ `0.17.0` in both; suite 749 passed.
+4. ~~t4's commit.~~ At `dd225b2`, approved by the user; SC4.2 green after
+   it.
+5. ~~Two-Key.~~ Round 1 FAIL: USAGE's outline paragraph and two test
+   docstrings, fixed at `3076424`. Round 2 FAIL: two more test
+   docstrings, fixed at `3da0128` with its five advisories. Round 3 FAIL:
+   USAGE's condition id row; the user approved a fourth round past the
+   cap, on an end-to-end read of section 9 against the code, which found
+   the evidence paragraph too: fix `b9d080c`. Round 4 PASS; t4 and the
+   contract closed.
+6. ~~Close.~~ `STATE.md` regenerated, this plan struck; they ride the
+   self-pin PR.
+7. ~~Release.~~ PR #75 merged at `4a9fec0` once CI read green; the
+   annotated tag `v0.17.0` there; the self-pin at `6c748f6` on
+   `session-64-release`. USAGE's `uv` line, run with `python -P` against
+   the tag, installed 0.17.0 and read `specs/tree-first-level`
+   ready-green. The self-pin PR's merge waits on the user's word.
 
 Steps 1, 6 and 7 sit outside a contract unit, so the tree does not show
 them.
 
-Decisions this session, all the user's: (1) this plan and rulings 1 to 4;
-(2) the release text batch; (3) t4's commit; (4) a fix commit, if Two-Key
-fails; (5) the push and the PR; (6) the merge; (7) the tag and its
-message; (8) the self-pin PR.
+Decisions this session, all the user's: (1) the merge of PR #74; (2) this
+plan and rulings 1 to 4; (3) the release text batch; (4) t4's commit; (5)
+to (7) three fix commits; (8) the fourth Two-Key round; (9) the push and
+the PR; (10) the merge and the tag; (11) the self-pin PR's merge.
 
 Deferred, not this session:
 - `feature-document` (0.18.0), next: interview its REQUEST into
   `docs/features/`, intake, build, release. When it ships, tell the user
   the kit is ready to use on another machine.
+- t4's four Two-Key advisories (wording), in `STATE.md` Next actions 4.
 - G1's solution half, then its intake.
-- `STATE.md` Next actions 4 to 6 and its open questions, carried
-  unchanged.
+- `STATE.md` Next actions 3 to 5 and its open questions, carried.
 
 House rules in force: no pipes or chains in any authored command string;
 commit messages via Write + `git commit -F`; Workflows launched by
