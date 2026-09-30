@@ -26,40 +26,52 @@ approves the USAGE text in chat before any drafting. Claude approves the
 test list and the commit on review. The push, the PR and the merge stay on
 the user's word.
 
+**Closed.** The deliverable is met: t3 at `a09278b` (USAGE), `00ce617`
+(code and tests), `e5a814f` and `f1374c8` (two fixes), Two-Key PASS at
+round 2. Suite 749 passed, scope-check green; on the kit,
+`g1-requirements-spec` shows both halves and `tree-first-level` lost its
+stale mark. The user chose to wrap before t4.
+
 ## Steps
 
-1. Open. Branch cut from `1a86561` (PR #73's merge); this plan.
-2. t3, pass zero. Refine "Revisions and halves"; flag each narrowing or
-   reading against the contract and the feature document; the user
-   approves the text in chat; commit, marks red.
-3. t3, draft. `spec-channel-drafter.js` drafts the list for SC3.1, SC3.2
-   and SC3.3+SC4.3, proves it red, and proves it satisfiable on a
-   prototype.
-4. t3, retire. `test-retirer.js`, with the prototype as `overlay`, finds
-   the tests that pin a `Signed:` row counting as text.
-5. t3, approve the list and prove red. The whole suite on the prototype in
-   a scratch worktree; the standing checks (details against the contract,
-   caps against free text with line breaks, no session labels, no repeated
-   name); Claude approves; `progress run --expect red` per check.
-6. t3, green. `unit-developer.js` from the interface note; Claude runs the
-   suite after each round.
-7. t3, commit and receipt. Checks green at the clean commit; the live pane
-   receipt above.
-8. t3, Two-Key. `two-key-unit-verifier.js`; every receipt exits 0; the unit
-   closes through `progress done` on PASS.
-9. Close. `STATE.md` regenerated (and its stale "not pushed" line gone);
-   this plan struck; the push and the PR on the user's word.
+1. ~~Open.~~ Branch cut from `1a86561`; the plan at `ca3bea5`.
+2. ~~t3, pass zero.~~ At `a09278b` on the user's word, with five readings:
+   a text row; newest and latest as the highest revision, a tie to the
+   lower row; no text row above or a blank `Revised By` cell is no
+   signature; the fixed words after `rN:`; every `Signed:` row out of both
+   revisions. `USAGE.md:994` goes to t4's sweep.
+3. ~~t3, draft.~~ 16 tests (52 cases) in `tests/test_tree_halves.py`, red
+   52 of 52; the prototype changed `tree.py` only and caught 8 mutations.
+4. ~~t3, retire.~~ Nothing retired or amended: 696 passed on the overlay.
+5. ~~t3, approve the list and prove red.~~ 748 passed on the prototype in a
+   scratch worktree. Claude's rulings: the kit path by the house idiom; the
+   pane test not called live; the no-active-gate edge left unpinned
+   (reversed at step 8). Checks red: 20, 29 and 3 cases.
+6. ~~t3, green.~~ Round 1, no behavior deviation (`_last_cells` became
+   `_rows` and `_counted`); suite 748 passed, the developer's run and
+   Claude's.
+7. ~~t3, commit and receipt.~~ At `00ce617`; checks green clean; a live
+   herdr pane on the kit showed both halves under `gates/G0 [doing]`.
+8. ~~t3, Two-Key.~~ Before launch Claude saw the unpinned edge contradict
+   the approved USAGE text: fix `e5a814f`, a feature before intake never
+   reads `done`. Round 1 FAIL: the document opened twice per print
+   (Constraint 4). Fix `f1374c8`, read once, with a test counting opens.
+   Round 2 PASS; the unit closed.
+9. ~~Close.~~ `STATE.md` regenerated; this plan struck; the push and the PR
+   on the user's word.
 
 Steps 1 and 9 sit outside a contract unit, so the tree does not show
 them.
 
-Decisions this session: six. The user's: (1) this plan, (2) the USAGE
-text. Claude's: (3) t3's test list, (4) t3's commit. The user's at the
-close: (5) the push and the PR, (6) the merge.
+Decisions this session: ten. The user's: (1) this plan, (2) the USAGE
+text, (3) the order after t3 (t4, then `feature-document` ahead of G1),
+(4) wrap before t4. Claude's: (5) t3's test list, (6) t3's commit, (7)
+the fix to never `done`, (8) the fix to one read. The user's at the
+close: (9) the push and the PR, (10) the merge.
 
 Deferred, not this session:
-- `t4-release` (ships 0.17.0, sweeps t1's and t2's Two-Key advisories,
-  and `USAGE.md:994`); next after t3, this session if it fits.
+- `t4-release` (ships 0.17.0, sweeps t1's, t2's and t3's Two-Key
+  advisories, listed in `STATE.md`); next session.
 - `feature-document` after 0.17.0, ahead of G1's solution half (user,
   2026-09-29): interview its REQUEST into `docs/features/`, intake,
   build, release 0.18.0. When it ships, tell the user the kit is ready to
