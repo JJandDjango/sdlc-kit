@@ -2,93 +2,64 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-29 (session 63 close, tree-first-level t3 built)._
+> _Generated 2026-09-30 (session 64 close, tree-first-level released as 0.17.0)._
 
 ## Now
-- **tree-first-level t3 is built**: `t3-halves` at `a09278b` (USAGE,
-  "Revisions and halves" refined at pass zero, still red), `00ce617`
-  (code and tests), `e5a814f` (a feature before intake never reads
-  `done`) and `f1374c8` (its document read once per print), Two-Key PASS
-  at round 2, the unit closed. A feature before intake names `no
-  contract: document rN` or `no revision table`, and shows two items at
-  the level `half`, `<id>/request` and `<id>/solution`, signed by an ADR
-  0034 row (`by <signer> at rN`) or `to do`. The drift mark leaves out
-  `Signed:` rows. On the kit, `g1-requirements-spec` reads `doing` with
-  its request half `done by user at r3`, and `tree-first-level` lost its
-  stale mark. Suite 749 passed.
-- Two-Key round 1 failed on Constraint 4 of the feature document (a
-  document read twice per print), which no sketch named.
-- On branch `session-63-tree-first-level-t3`, not pushed; the push and the
-  PR on the user's word. Session 62's PR #73 merged at `1a86561`.
-- The user's order (2026-09-29): t4 releases 0.17.0; then
-  `feature-document` (0.18.0) ahead of G1's solution half, because the
-  user wants to use the kit on another machine and the shipped interview
-  skill still asks ADR 0026's questions. When it ships, tell the user the
-  kit is ready there, with the tag to install. Until then another machine
-  runs the interview by hand from the two `NOTES_feature-document_*`
-  files, with `docs/features/tree-first-level.md` as the exemplar.
-- Carried: 18 features: 17 with a contract, 15 of them `[done]`;
+- **tree-first-level is RELEASED as 0.17.0**: `t4-release` at `dd225b2`
+  (USAGE section 9 green, ADR 0035, the CHANGELOG entry, MAP's row,
+  `KIT_VERSION`), fixes `3076424`, `3da0128` and `b9d080c`, Two-Key PASS
+  at round 4 (the user approved a round past the cap). The unit and the
+  contract closed at `b9d080c`. PR #75 merged at `4a9fec0`, tag `v0.17.0`
+  there; the self-pin at `6c748f6` on `session-64-release`, with this
+  wrap, waits for its PR. USAGE's `uv` line against the tag installs
+  0.17.0 and reads `specs/tree-first-level` ready-green. Suite 749 passed.
+- Rounds 1 to 3 each failed on stale statements the grep sweep missed:
+  test docstrings, then USAGE's condition id row. Round 3's fix read
+  section 9 end to end against the code, which found one more.
+- The user's order (2026-09-29): `feature-document` (0.18.0) next, ahead
+  of G1's solution half, because the user wants to use the kit on another
+  machine and the shipped interview skill still asks ADR 0026's
+  questions. When it ships, tell the user the kit is ready there, with the
+  tag to install. Until then another machine installs `v0.17.0` and runs
+  the interview by hand from the two `NOTES_feature-document_*` files,
+  with `docs/features/tree-first-level.md` as the exemplar.
+- Carried: 18 features: 17 with a contract, 16 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
-  `tree-first-level` `[doing]`; `g1-requirements-spec` before intake,
-  `[doing]`.
+  `g1-requirements-spec` before intake, `[doing]`.
 
 ## Blockers
-- None.
+- None. The self-pin PR and its merge wait on the user's word.
 
 ## Next actions
-1. `t4-release`: kit 0.17.0, USAGE's `tree-first-level` marks green, its
-   CHANGELOG entry, `KIT_VERSION`, `pyproject.toml`, `.github/workflows/
-   sdlc.yml`; Two-Key with `sweep: true`. Its sweep, named here since t4's
-   done_means names none of it:
-   - t1: "Six statuses" (`USAGE.md:632`) says a parent reads `to do` when
-     nothing under it has started, which a gate item no longer does; the
-     contract's SC1.1 sketch says "by the rule for the roll-up of a
-     feature", looser than its sources; `709d2cc`'s message counts nine
-     amended tests where the diff holds eight plus the release test;
-     `Theory:` stands above the final paragraph, so git parses only
-     `Contract:` as a trailer (the house form).
-   - t2: `tree_view.py`'s module docstring (lines 7, 21-22, 29) gives a
-     plain name, a doc reference and `holds` lines to contracts only;
-     `tree.py:14` says the tree opens "each file directly under
-     docs/features/", where it opens only `*.md`; `tree.py:87` runs to
-     about 100 characters.
-   - t3: `USAGE.md:994` (0.16.0's drift text) still leaves out only
-     `Ready:` and `Measured:` rows, amended in words by the red paragraph
-     that closes "Revisions and halves" (the user's pass-zero decision);
-     USAGE's no-signature list (about line 1272) omits that a row of fewer
-     than three cells signs nothing and that the signer is the cell before
-     the last; `tree_view.py`'s docstring names neither the new marks nor
-     a half's `file:` line; `tree.py:67` says a feature before intake
-     "reads `done` only when every other child does" beside the sentence
-     that it never reads `done`.
-   Release shape as below; then the self-pin PR, which the wrap rides.
-2. `feature-document`: interview `REQUEST_feature-document_2026-09-18.md`
+1. `feature-document`: interview `REQUEST_feature-document_2026-09-18.md`
    (untracked, r1 typed by hand, says "Ships as kit 0.14.0") into
    `docs/features/feature-document.md`, both halves signed, folding in
-   ADRs 0033 and 0034 and the five open questions at `a800c34:STATE.md`
-   (a check's false premise, a release unit with no check, the
-   three-sketch cap, an appendix copy that ages, a `done_means` broader
-   than its line). Then intake, the build (template, interview flows,
-   readiness check, intake's definition of done, Gherkin derivation),
-   release 0.18.0. Estimate seven to nine sessions.
-3. Then G1's solution half, through the interview at the engineer seat,
+   ADRs 0033, 0034 and 0035 and the five open questions at
+   `a800c34:STATE.md` (a check's false premise, a release unit with no
+   check, the three-sketch cap, an appendix copy that ages, a `done_means`
+   broader than its line). Then intake, the build (template, interview
+   flows, readiness check, intake's definition of done, Gherkin
+   derivation), release 0.18.0. Estimate seven to nine sessions.
+2. Then G1's solution half, through the interview at the engineer seat,
    to ADR 0033; open for it: where the component declaration record and
    the review record live, G1's rules and their codes, the venue, and how
-   the 15 features done read G1 inactive once G1 is active. Then its
+   the 16 features done read G1 inactive once G1 is active. Then its
    intake. The pilot's config line, in the engine's session; the engine's
    install ref moves to the newest tag there (pull, not push).
-4. Prerequisite 7: feature documents for the 15 contracts without one,
+3. Prerequisite 7: feature documents for the 15 contracts without one,
    each through its own interview.
-5. Small, parked: `taskcontract/__main__.py:85`'s `--follow` help still
-   describes the 0.15.0 pane; Two-Key's wording advisories (CHANGELOG's
-   and ADR 0032's "a closed contract reads done whatever its verdicts
-   read" omit the later-record limit; USAGE's evidence paragraph reads
-   best as "after its own close"; the no-red test covers section 9 only,
-   and since `709d2cc` only project-tree's subsections up to the first red
-   heading); two test gaps (no pane test for a `parts:` list without
-   `evidence` hiding a seat; `tests/conftest.py`'s row pattern splits a
-   plain name at its first ` [`).
-6. Deferred, carried: `glossary-alias-disjointness` (parked by the user,
+4. Small, parked: t4's four Two-Key advisories (USAGE:904's "The `G0`
+   verdict still reads from the validator" unqualified; wrap nits at
+   USAGE:686, :1101, :1142; the ratified Diagnostic term,
+   `specs/vocabulary/diagnostic.yaml`, still says "under its condition",
+   which only a ratification changes); `taskcontract/__main__.py:85`'s
+   `--follow` help still describes the 0.15.0 pane; Two-Key's wording
+   advisories (CHANGELOG's and ADR 0032's "a closed contract reads done
+   whatever its verdicts read" omit the later-record limit); two test gaps
+   (no pane test for a `parts:` list without `evidence` hiding a seat;
+   `tests/conftest.py`'s row pattern splits a plain name at its first
+   ` [`).
+5. Deferred, carried: `glossary-alias-disjointness` (parked by the user,
    2026-09-26); `derived-language` (prerequisite 5); ADR 0029's appendix
    copy and Gherkin for project-tree; flag the Claude pane itself; the
    hook's key action and its four known edges, in its README;
@@ -133,6 +104,11 @@
   silently: flag any narrowing or reading to the user before approval. A
   release rewrite that simplifies a rule gets checked against the code
   first.
+- A release sweep reads each changed page end to end against the code,
+  besides a `git grep` per stale class: grep finds a sentence by its
+  words, and a table row or a general "a verdict" carries none of the
+  words a new kind of item brings (session 64 lost three rounds to it).
+  Sweep test docstrings too; the grader counts them as shipped.
 - ADRs are append-only (`DOCS-SYSTEM.md:45`): a later ADR amends an
   earlier one in its own text, never an edit.
 - Record each task as it finishes through `taskcontract progress`, and
@@ -149,16 +125,14 @@
   stops an agent past about 400K tokens). `test-retirer.js` takes
   `overlay` (the prototype's changed files) when no name goes. The release
   unit's Two-Key runs with `sweep: true`. Every Two-Key receipt must exit
-  0. Session 63's subagents: drafter 196K, retirer 66K, developers 111K,
-  62K, 64K and 59K, Two-Key 198K and 204K a round.
+  0. Session 64's Two-Key rounds: 278K, 242K, 254K and 243K.
 - Before approving a drafted list: run the whole suite on the prototype
   in a scratch worktree (`git worktree add --detach`, overlay, `python -P
   -m pytest <worktree>/tests`); check each fixed detail against the
-  contract, the feature document and its Constraints (session 63's round
-  1 failed on Constraint 4, which no sketch names); pin caps against free
-  text holding line breaks; strip session labels; check for a repeated
-  name. An edge left unpinned must still agree with the USAGE text the
-  user approved.
+  contract, the feature document and its Constraints; pin caps against
+  free text holding line breaks; strip session labels; check for a
+  repeated name. An edge left unpinned must still agree with the USAGE
+  text the user approved.
 - Before accepting a developer deviation, test it against every
   done_means sentence. Run the suite yourself after every developer round;
   a developer whose suite run outlasts its turn leaves Claude's run as the
@@ -171,13 +145,15 @@
   move, `pane read <new> --source visible`, `pane close <new>`. Own pane:
   `printenv HERDR_PANE_ID`. Never report state on another session's pane.
 - The whole suite runs 3 to 6 minutes; a local model holding RAM can get
-  a background run killed for memory.
+  a background run killed for memory. A PR's CI waits through `gh pr
+  checks <n> --watch` in the background.
 - `scope-check` outside Actions needs `--base <sha>`: main's tip.
 - Attribution is off: a commit's final paragraph is `Contract:` alone, and
   a PR body ends at its last sentence.
 - Release shape: PR, merge commit, annotated tag at the merge, then the
   self-pin through its own PR, which the wrap rides. Run USAGE's `uv` line
-  against the new tag. main's ruleset requires a PR for every change.
+  against the new tag with `python -P`. main's ruleset requires a PR for
+  every change.
 
 ## Open questions
 - The `intake-seat` term says a seat is never delegated to an agent, while
@@ -200,7 +176,7 @@
 - Should TC016 ride the parked line?
 - Track `.claude/workflows/`? Its four scripts hold the session method and
   exist only on this machine; the Two-Key grade prompt still names a
-  Co-Authored-By line.
+  Co-Authored-By line, and another machine has none of them.
 - Ratify 5b? The hook command per stack? The four metrics for wave B.
 - The engine's `plan.md` holds an uncommitted edit; the engine session's
   to commit.
