@@ -1,7 +1,9 @@
 """The status suite for ADR 0031 (contract tree-view, unit t3-status-and-cursor).
 
 Every item of `taskcontract tree` shows one of six statuses, and a parent
-reads `done` only when every item under it reads `done` (SC3.1). A
+reads `done` only when every item under it that counts reads `done`
+(SC3.1); since tree-first-level's t1 a gate item counts its features'
+verdicts instead of the items under it. A
 contract's G0 verdict reads from the validator at the ready and draft
 profiles, and names the validator command and the HEAD id (SC7.3). The
 current task derives from the records in `.sdlc/progress/<contract>.yaml`,

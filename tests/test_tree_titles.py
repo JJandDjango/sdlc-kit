@@ -5,21 +5,23 @@ the item is, then the parts `tree: pane: parts:` selects, in their fixed
 order (SC1.1). The plain name is a gate's and a verdict's gate name in
 `taskcontract/data/gates.yaml`, a condition's name there, a task's name in
 `taskcontract/data/tasks.yaml`, a feature's contract `title` (else the
-literal `(no title)`), a unit's `done_means`, a check's sketch line and a
-finding's `statement`, each by the text rule: its ends stripped, each line
-break one space. An item whose source gives no text shows no plain name and
-reads as before but for that; only a feature shows `(no title)` in its
-place. The `summary` part, after ` | `, holds only a feature's intent, and
-`taskcontract tree <id>` prints its `summary:` line only for a feature.
+literal `(no title)`; since tree-first-level's t2, a feature before intake
+takes the words of its document's title line instead), a unit's
+`done_means`, a check's sketch line and a finding's `statement`, each by
+the text rule: its ends stripped, each line break one space. An item whose
+source gives no text shows no plain name and reads as before but for that;
+only a feature shows `(no title)` in its place. The `summary` part, after
+` | `, holds only a contract's intent, and `taskcontract tree <id>` prints
+its `summary:` line only for a contract.
 `parts:` never leaves out the plain name, as it never leaves out the id.
 The pane's item lines open the same way, the last segment of the id under
 another item; its waiting line keeps ids alone.
 
 The contract schema (1.5.0) takes an optional top-level `title`: a string
 of one line that holds more than blanks. A blank title or one holding a
-line break fails the draft profile with TC002. The tree reads the title
-from the contract only, never from the feature document, and the intake
-flow copies it from the feature document's title line.
+line break fails the draft profile with TC002. The tree reads a
+contract's title from the contract only, never from the feature document,
+and the intake flow copies it from the feature document's title line.
 
 Each test drives the CLI in process against a fixture repo under tmp_path,
 outside any git repository, so a verdict's evidence reads `at no commit`;

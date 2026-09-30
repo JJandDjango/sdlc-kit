@@ -5,28 +5,32 @@ item's full id, the node path ADR 0031 gives it, so the print states every
 id whole, then its plain name (the name the kit's lists give a gate, a
 verdict's gate, a condition or a task; a unit's `done_means`; a check's
 sketch line; a finding's statement; a contract's `title`, else `(no
-title)`). Then the status in brackets, or a finding's kind in its place,
+title)`; the words of a feature before intake's title line after its
+first ` - `, else `(no title)`; a half's `Request half` or `Solution
+half`). Then the status in brackets, or a finding's kind in its place,
 then the item's marks (`inactive` on a gate a finding names that is not
-active and on a contract's next gate, `current` on the current task, and
-on a contract its drift mark: `no feature document`, `no "Ready:" row` or
-`stale: document rD, contract from rM`), then
-its evidence (on a `G0` verdict, the validator command and the `HEAD` it
-read; on a check whose last run was green as expected, that run's command
-and `HEAD`; on a task done by its own record, `by <seat>` on an approval
-and the record's `HEAD`; on a unit or contract done by its close, the
-close's `HEAD`; each with `dirty` when it applies; on a task blocked by its
-own record, `because <reason>`; on the approval that holds the current
-task, `seat: <seats>`, its unit's `confirmed_by` joined by `, `).
-Then its links (`depends_on: <contract>/<unit>` on a unit, `gate: <value>`
-on a finding), then a contract's feature doc reference (`doc:
-docs/features/<id>.md`), and last a contract's summary, its intent, after
-` | `. Each part but the id and status prints only when the item has it,
-after exactly one space. A line break inside a part reads as one space, so
-an item keeps one line.
+active and on a feature's next gate, `current` on the current task, on a
+contract its drift mark: `no feature document`, `no "Ready:" row` or
+`stale: document rD, contract from rM`, and on a feature before intake
+`no contract: document rN` or `no revision table`), then its evidence (on
+a contract's `G0` verdict, the validator command and the `HEAD` it read;
+on a check whose last run was green as expected, that run's command and
+`HEAD`; on a task done by its own record, `by <seat>` on an approval and
+the record's `HEAD`; on a unit or contract done by its close, the close's
+`HEAD`; each with `dirty` when it applies; on a task blocked by its own
+record, `because <reason>`; on the approval that holds the current task,
+`seat: <seats>`, its unit's `confirmed_by` joined by `, `; on a signed
+half, `by <signer> at rN`). Then its links (`depends_on:
+<contract>/<unit>` on a unit, `gate: <value>` on a finding), then a
+feature's doc reference (`doc: docs/features/<id>.md`), on a contract with
+a file there and on each feature before intake, and last a contract's
+summary, its intent, after ` | `. Each part but the id and status prints
+only when the item has it, after exactly one space. A line break inside a
+part reads as one space, so an item keeps one line.
 Under a condition that is not done, each of its diagnostics prints on a
 line of its own, one level deeper, as `- ` and the validator's message
 without its code; under a gate item or its condition that is not done, as
-`- ` and `<contract> holds <id> at <status>`, one per contract holding it
+`- ` and `<feature> holds <id> at <status>`, one per feature holding it
 back. Such a line is not an item and has no id.
 
 `taskcontract tree <id>` queries one item: the id matched whole, as the model
@@ -35,13 +39,15 @@ in the tree's order, with one empty line between blocks. A block opens on
 the item's line cut after the evidence, then gives one labeled field per
 line, each only when the item has it: `summary:` whole, on a contract
 with an intent, one line per link kind with its targets joined by `, `,
-`doc:` with the feature doc's path at line 1, `file: <path>:<line>` (a contract or verdict at line 1, a unit or
-check at its entry's first line, a finding's file at line 1), and `page:`,
-the kit page that defines a gate, a verdict's or a condition's gate, or a
-task. An item's diagnostics never print here. So a block never passes
-seven lines, whatever a field holds. The unreadable sources follow on
-stderr. An unknown id prints `no node '<id>' - print the tree to list every
-node id` on stderr alone and exits 2; an id with `--follow` exits 2 too.
+`doc:` with the feature doc's path at line 1, `file: <path>:<line>` (a
+contract or its verdict at line 1, a unit or check at its entry's first
+line, a finding's file at line 1, a half's feature doc at its counting
+signature's row, else line 1), and `page:`, the kit page that defines a
+gate, a verdict's or a condition's gate, or a task. An item's diagnostics
+never print here. So a block never passes seven lines, whatever a field
+holds. The unreadable sources follow on stderr. An unknown id prints `no
+node '<id>' - print the tree to list every node id` on stderr alone and
+exits 2; an id with `--follow` exits 2 too.
 
 `--follow` runs the interactive pane, taskcontract/pane.py, imported only
 then; without the `pane` extra it prints `taskcontract tree: --follow

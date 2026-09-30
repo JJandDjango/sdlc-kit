@@ -10,12 +10,13 @@ The outline holds every line `taskcontract tree` prints, in its order and
 nested as it indents them: each item, and the diagnostics of a condition
 or a gate item as leaves right under it, before its child items. An item's
 label opens on its full id at the top level and on the last segment of its
-id below it, then its plain name and the parts `tree: pane: parts:` selects; the current
-task's label carries `current` whatever the parts. A label is plain text,
-never markup, so `[to do]` keeps its brackets. The pane opens with each
-feature open down to its units and every other item closed; a current task
-opens its unit too, and the cursor starts on it with the window scrolled to
-it, else on the first line.
+id below it, then its plain name and the parts `tree: pane: parts:`
+selects; the current task's label carries `current` whatever the parts. A
+label is plain text, never markup, so `[to do]` keeps its brackets. The
+pane opens with each feature open, so a contract shows its units and a
+feature before intake its verdicts and halves, and every other item
+closed; a current task opens its unit too, and the cursor starts on it
+with the window scrolled to it, else on the first line.
 
 A closed item that holds something shows it in a group right after its
 status, or after its plain name when `parts:` leaves the status out:

@@ -3,8 +3,9 @@
 `taskcontract tree` prints the work as one tree, computed from the repo's
 files at every run: the gates with their findings, then each contract with
 a verdict per active gate, its units, each unit's seven tasks and its
-checks. Unit t1-tree-shape fixes that shape (SC1.1), the one place each
-finding prints (SC1.2), and a print that is derived, never stored (SC1.3).
+checks (and, since tree-first-level's t2, each feature before intake).
+Unit t1-tree-shape fixes that shape (SC1.1), the one place each finding
+prints (SC1.2), and a print that is derived, never stored (SC1.3).
 Statuses are asserted only as members of the six values: t3 derives them.
 
 Unit t2-summaries-and-links ends each line with what its sources say: a
@@ -16,8 +17,9 @@ Since project-tree's o2-titles, the source text of every item but a
 contract is its plain name, right after its id, before its status; the
 summary after ` | ` holds only a contract's intent. The tests below read
 the plain name as the row's `name`. Since project-tree's o3-stale the tree
-opens a feature document for its revision table alone, and a contract's
-marks hold its drift mark (`no feature document`, `no "Ready:" row`).
+opens a contract's feature document for its revision table alone, and a
+contract's marks hold its drift mark (`no feature document`, `no "Ready:"
+row`).
 """
 
 from __future__ import annotations
@@ -690,7 +692,8 @@ def test_a_link_prints_only_from_depends_on_or_a_finding_gate(tmp_path, capsys):
     assert linked == ["gates/G0/stale-pin", "gates/G3/G3.1/slow-loop", "alpha/a2-edges"]
 
 
-# --- SC4.2 no document read but a feature doc's revision table (project-tree o3)
+# --- SC4.2 no document read but a feature doc's revision table (project-tree o3);
+# since tree-first-level's t2, a feature before intake's title line too
 
 _WATCHES: list[list[str]] = []  # while a list is here, it collects each path opened
 _HOOKED: list = []

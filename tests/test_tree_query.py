@@ -16,8 +16,10 @@ line on stderr and exits 2 (SC6.2). A file reference is a repo path with the
 line its item starts at: a contract and a finding at line 1 of their file, a
 unit and a check at the line their entry starts in the contract file, and a
 contract's feature doc, a file reference too (SC4.2), at its line 1. A gate
-and a task point to the kit page that defines them, and a verdict to both
-its contract file and its gate's page (SC6.3).
+and a task point to the kit page that defines them, and a contract's
+verdict to both its contract file and its gate's page (SC6.3); since
+tree-first-level's t2, a feature before intake's verdict points to its
+page alone.
 
 Since project-tree's o2-titles the first line carries the item's plain name
 after its id, and `summary:` prints only for a contract, its intent: every

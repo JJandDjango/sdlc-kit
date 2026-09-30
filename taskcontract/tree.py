@@ -11,7 +11,7 @@ contract and runs git twice: once for `HEAD`, once for the contract files
 that differ from it. A caller that passes a verdict cache (the `--follow`
 pane) keeps the validator's reading per contract, the verdict's and its
 conditions', between prints, and the validator runs only for a contract
-the cache lacks; git still runs at every print. It opens each file
+the cache lacks; git still runs at every print. It opens each `*.md` file
 directly under docs/features/, a contract's for its revision table and a
 feature before intake's for its title line and its revision table, prints
 none of their other words but a signer, reads no other document and writes
@@ -63,11 +63,11 @@ done carries, as its diagnostics, `<feature> holds <id> at <status>` for
 each feature whose verdict or condition is not done, in the features'
 order. A finding counts in no roll-up, nor does a half at a gate item. A
 unit, a contract or a feature before intake rolls up its children but the
-inactive verdict, a feature's halves among them, so it reads
-`done` only when every other child does; a closed contract's verdicts
-never count either, so it reads `done` once its units do, or at once when
-it shows none, while each verdict keeps its reading. A feature before
-intake never reads `done`: it reads `doing` in its place.
+inactive verdict, a feature's halves among them. A unit or a contract so
+reads `done` only when every other child does, and a feature before
+intake never reads `done`, reading `doing` in its place. A closed
+contract's verdicts never count either, so it reads `done` once its units
+do, or at once when it shows none, while each verdict keeps its reading.
 
 The current task is derived from the task states, never stored: the task
 whose `doing` record is latest, else the first `to do` task in the contract
@@ -88,13 +88,14 @@ feature before intake's plain name is the text after the first ` - ` of
 its doc's first `# ` line, by the same rule. It reads `(no title)` when
 the doc has no such line, no text after the ` - `, or cannot be read as
 text, and the tree prints no problem line for it. A contract alone
-carries a summary, its `intent` by the same rule. Links come from two fields only: a unit's
-`depends_on` entries, as the unit graph reads them, each linked once in
-the order of its first appearance, and a finding's `gate:` value as
-written. A contract with a file at docs/features/<id>.md, and each feature
-before intake, carries that path as its feature doc reference. A line
-prints its plain name after its id, then its links, the reference and the
-summary after the marks and evidence.
+carries a summary, its `intent` by the same rule. Links come from two
+fields only: a unit's `depends_on` entries, as the unit graph reads them,
+each linked once in the order of its first appearance, and a finding's
+`gate:` value as written. A contract with a file at
+docs/features/<id>.md, and each feature before intake, carries that path
+as its feature doc reference. A line prints its plain name after its id,
+then its links, the reference and the summary after the marks and
+evidence.
 
 A contract carries at most one drift mark, read afresh at every print from
 its feature doc's revision table, the first table in the file. A row counts
@@ -152,7 +153,9 @@ TASKS_PATH = DATA_DIR / "tasks.yaml"
 
 STATUSES = ("to do", "doing", "done", "failed", "blocked", "waiting on a seat")
 TO_DO, DOING, DONE, FAILED, BLOCKED, WAITING = STATUSES
-# A parent takes the first of these that any child reads.
+# A parent takes the first of these that any child reads. A gate item takes
+# the first any feature's counted verdict reads, and each of its conditions
+# the first that condition reads under those verdicts.
 ROLL_UP = (FAILED, WAITING, BLOCKED, DOING)
 NO_GATE = "none"
 FORM = "TEMPLATE.yaml"  # the findings form, never a finding
@@ -697,9 +700,9 @@ def _gate_roll_up(gate: Item, contracts: list[Item]) -> None:
 
 
 def _hold(item: Item, key: str, readings: list[tuple[str, str]]) -> None:
-    """Set a gate's or condition's status from (contract, status) readings,
+    """Set a gate's or condition's status from (feature, status) readings,
     the first of ROLL_UP any reads, else `done` or `to do` when all read it,
-    else `doing`, and `to do` with none; and name each contract not done."""
+    else `doing`, and `to do` with none; and name each feature not done."""
     statuses = [status for _, status in readings]
     first = next((status for status in ROLL_UP if status in statuses), None)
     if first is not None:

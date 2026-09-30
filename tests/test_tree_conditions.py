@@ -20,10 +20,12 @@ under it: `- ` and the validator's message without its code, each line
 break read as one space, each message once, in the validator's order; a
 failed condition lists the draft profile's messages, any other the ready
 profile's. At the repository level each gate that shows opens into its
-conditions too, which read `to do`, and a finding whose `gate:` names a
-condition its gate lists stands once under that condition, never under a
-feature (SC2.2). The G0 verdict still reads from the validator, with its
-evidence unchanged, and agrees with its conditions (SC2.3).
+conditions too, and a finding whose `gate:` names a condition its gate
+lists stands once under that condition, never under a feature (SC2.2).
+Such a condition read `to do` in this unit; since tree-first-level's t1 it
+reads the roll-up of that condition across the features' verdicts. The G0
+verdict still reads from the validator, with its evidence unchanged, and
+agrees with its conditions (SC2.3).
 
 Each test drives the CLI in process against a fixture repo under
 tmp_path and runs the real validator. The fixture repos sit outside any

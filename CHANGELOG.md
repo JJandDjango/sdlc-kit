@@ -9,6 +9,41 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.17.0 - 2026-09-30 (tag `v0.17.0`)
+
+- **Gates roll up their features** (`tree-first-level`, ADR 0035, unit
+  `t1-gate-rollup`). A gate item at the first level reads the roll-up of
+  the features' verdicts at its gate, and each of its conditions reads
+  that condition across the same verdicts. An `inactive` verdict never
+  counts, and a closed feature's verdicts count as they read. A gate item
+  or condition that is not `done` names each feature holding it back,
+  `<feature> holds <id> at <status>`. A finding counts in no roll-up.
+  Delta note: none; a gate item that read `to do` now reads what its
+  features read.
+- **A feature document shows before intake** (`tree-first-level`, unit
+  `t2-before-intake`). Each `.md` file directly under `docs/features/`
+  with no `specs/<id>/contract.yaml` shows at the first level from its
+  first revision, named by its title line's words after the first ` - `,
+  else `(no title)`. Its G0 verdict reads `to do` and counts in the
+  roll-up of `gates/G0`. Once intake writes the contract, the feature
+  stays one item and takes its name from the contract's `title`. Delta
+  note: while a document waits for intake, it holds `gates/G0` at `to do`
+  or `doing`.
+- **Revisions and halves** (`tree-first-level`, ADR 0034, unit
+  `t3-halves`). A feature before intake marks its document's revision,
+  `no contract: document rN` or `no revision table`, and shows two halves,
+  `<id>/request` and `<id>/solution`. A half reads `done`, `by <signer> at
+  rN`, when a row in ADR 0034's form signs it (`rN: Signed: request half`
+  or `rN: Signed: solution half`), else `to do`. The feature reads `to
+  do` until a half is signed, then `doing`, and never `done`. The drift
+  mark leaves out `Signed:` rows. Delta note: a signature typed in words
+  reads unsigned; add a `Signed:` row that restates it.
+- **The release is written down** (`tree-first-level`, unit
+  `t4-release`). `USAGE.md` section 9, "Following the work", reads green
+  throughout. Kit `0.16.0` -> `0.17.0`; the contract schema stays at
+  `1.5.0`. Delta note: none beyond the notes above; pin the install ref to
+  the tag.
+
 ## 0.16.0 - 2026-09-26 (tag `v0.16.0`)
 
 - **Each item shows its plain name, and a contract its `title`**

@@ -9,12 +9,13 @@ a render, word for word; and the cursor line (`#cursor`). The app writes
 nothing to stderr and no file (SC4.1).
 
 The outline holds every line `taskcontract tree` prints, in its order: each
-item, and each diagnostic under its condition. An item's line opens on its
-full id at the top level and on the last segment of its id under another
-item, then its plain name and the parts `tree: pane: parts:` selects; the
-current task's line carries `current` whatever `parts:` selects. Labels are
-plain text, never markup. The pane opens each feature (every contract) down
-to its units and every other item closed; a current task also opens its own
+item, and each diagnostic under its condition or gate item. An item's line
+opens on its full id at the top level and on the last segment of its id
+under another item, then its plain name and the parts `tree: pane: parts:`
+selects; the current task's line carries `current` whatever `parts:`
+selects. Labels are plain text, never markup. The pane opens each feature,
+so a contract shows its units and a feature before intake its verdicts and
+halves, and every other item closed; a current task also opens its own
 unit. The cursor starts on the current task, with the window scrolled to
 it, else on the first line. A plain name that would push the status, a
 closed item's group (`(<n> items: <counts>)`) and `current` past the
@@ -22,10 +23,11 @@ outline's right edge is cut where they still fit, ending in `...` (SC4.1).
 
 The cursor line shows the item at the cursor: `<reference> | <plain name>`,
 the name whole, the reference the one `taskcontract tree <id>` prints (a
-feature's `doc:` value, else its `file:`; a unit's, a check's and a
-finding's `file:`; a gate's, a verdict's, a condition's and a task's
-`page:`). No plain name: the reference alone; neither: the id. On a
-diagnostic: the diagnostic whole (SC1.2).
+feature's `doc:` value, else its `file:`; a unit's, a check's, a
+finding's and, since tree-first-level's t3, a half's `file:`; a gate's, a
+verdict's, a condition's and a task's `page:`). No plain name: the
+reference alone; neither: the id. On a diagnostic: the diagnostic whole
+(SC1.2).
 
 Without the extra, `--follow` prints one line on stderr and exits 2. Only
 `taskcontract/pane.py` imports Textual, and only when `--follow` runs.
