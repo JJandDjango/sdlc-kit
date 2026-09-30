@@ -991,9 +991,10 @@ and then the plain name. The waiting line keeps the id alone.
 
 🟢 The pane's cursor line and `taskcontract tree <id>` show each item's
 plain name and document reference from its source: a feature's title and
-its feature document; a unit's `done_means` and a check's sketch line,
-each with its contract file and line; a gate's, a condition's and a
-task's name and kit page.
+its feature document; a half's name and the row of its counting
+signature, else the document's line 1 ("Revisions and halves"); a unit's `done_means` and a check's
+sketch line, each with its contract file and line; a gate's, a
+condition's and a task's name and kit page.
 
 ### Drift from the feature document 🟢
 

@@ -153,7 +153,9 @@ TASKS_PATH = DATA_DIR / "tasks.yaml"
 
 STATUSES = ("to do", "doing", "done", "failed", "blocked", "waiting on a seat")
 TO_DO, DOING, DONE, FAILED, BLOCKED, WAITING = STATUSES
-# A parent takes the first of these that any child reads.
+# A parent takes the first of these that any child reads. A gate item takes
+# the first any feature's counted verdict reads, and each of its conditions
+# the first that condition reads under those verdicts.
 ROLL_UP = (FAILED, WAITING, BLOCKED, DOING)
 NO_GATE = "none"
 FORM = "TEMPLATE.yaml"  # the findings form, never a finding
@@ -698,9 +700,9 @@ def _gate_roll_up(gate: Item, contracts: list[Item]) -> None:
 
 
 def _hold(item: Item, key: str, readings: list[tuple[str, str]]) -> None:
-    """Set a gate's or condition's status from (contract, status) readings,
+    """Set a gate's or condition's status from (feature, status) readings,
     the first of ROLL_UP any reads, else `done` or `to do` when all read it,
-    else `doing`, and `to do` with none; and name each contract not done."""
+    else `doing`, and `to do` with none; and name each feature not done."""
     statuses = [status for _, status in readings]
     first = next((status for status in ROLL_UP if status in statuses), None)
     if first is not None:

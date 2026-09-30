@@ -14,8 +14,8 @@ keys, the pointer and the wheel, and what a closed item's line shows:
   status: `(<n> items: <counts>)`, `<n>` the items it holds and the counts
   by status in the six statuses' order, zeros left out; under `tree: pane:
   fold: names`, `(<n> items: <id> [<status>], ...)`, each id as its own line
-  opens (the last segment). A closed condition counts its diagnostics,
-  `(<n> diagnostics)`. One item reads `(1 items: ...)`. An open item and an
+  opens (the last segment). A closed condition or gate item counts its
+  diagnostics, `(<n> diagnostics)`. One item reads `(1 items: ...)`. An open item and an
   item that holds nothing show no parentheses; opening an item drops them
   and closing it adds them back. When `tree: pane: parts:` leaves the status
   out, the parentheses follow the plain name. A bad `fold:` value keeps the
