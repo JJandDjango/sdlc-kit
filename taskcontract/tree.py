@@ -13,8 +13,9 @@ pane) keeps the validator's reading per contract, the verdict's and its
 conditions', between prints, and the validator runs only for a contract
 the cache lacks; git still runs at every print. It opens each file
 directly under docs/features/, a contract's for its revision table and a
-feature before intake's for its title line, prints none of their other
-words, reads no other document and writes no file.
+feature before intake's for its title line and its revision table, prints
+none of their other words but a signer, reads no other document and writes
+no file.
 
 The gates stand first, at the repository level, each opening first into
 its conditions, the named parts gates.yaml lists in its page's order. A
@@ -29,7 +30,8 @@ shows its verdict at every active gate, then its inactive next gate (the
 first gate in the kit's order after the last active one, `G0` when none is
 active, none after the last), each verdict opening into its gate's
 conditions; then a contract's units, each unit's seven tasks and its
-checks. A feature before intake shows no unit.
+checks. A feature before intake shows no unit; after its verdicts come its
+two halves, `<id>/request` and `<id>/solution`, at the level `half`.
 
 Every item but a finding carries one of six statuses; a finding records
 none, so it shows its kind. A task step reads its last record in the
@@ -59,11 +61,13 @@ seat`, `blocked` and `doing` any reads, else `done` or `to do` when every
 one reads it, else `doing`, and `to do` when none counts. One that is not
 done carries, as its diagnostics, `<feature> holds <id> at <status>` for
 each feature whose verdict or condition is not done, in the features'
-order. A finding counts in no roll-up. A unit, a contract or a feature
-before intake rolls up its children but the inactive verdict, so it reads
+order. A finding counts in no roll-up, nor does a half at a gate item. A
+unit, a contract or a feature before intake rolls up its children but the
+inactive verdict, a feature's halves among them, so it reads
 `done` only when every other child does; a closed contract's verdicts
 never count either, so it reads `done` once its units do, or at once when
-it shows none, while each verdict keeps its reading.
+it shows none, while each verdict keeps its reading. A feature before
+intake never reads `done`: it reads `doing` in its place.
 
 The current task is derived from the task states, never stored: the task
 whose `doing` record is latest, else the first `to do` task in the contract
@@ -94,22 +98,40 @@ summary after the marks and evidence.
 
 A contract carries at most one drift mark, read afresh at every print from
 its feature doc's revision table, the first table in the file. A row counts
-when its last cell opens on `r<N>:`; the document's revision is the highest
-N of a counted row that is neither a `Ready:` nor a `Measured:` row, and
-the contract's is the `rM` that the first `derived from rM` in the newest
-`Ready:` row naming one gives, the lower row winning a tie. The mark reads
+when its last cell opens on `r<N>:`, and a text row is a counted row that
+opens, after `r<N>:` and its blanks, on none of `Ready:`, `Measured:` or
+`Signed:`; the document's revision is the highest N of a text row, so a
+`Signed:` row, a signature or not, never ages it, and the contract's is
+the `rM` that the first `derived from rM` in the newest `Ready:` row naming
+one gives, the lower row winning a tie. The mark reads
 `no feature document` when no file is at docs/features/<id>.md, `no
 "Ready:" row` when no `Ready:` row names an `rM` or the file cannot be read
 as text, and `stale: document rD, contract from rM` when the document's
 revision is higher; else there is none, and the contract matches its
 document. A contract the tree cannot read as a mapping carries it too.
 
+A feature before intake carries one mark from the same table, `no contract:
+document rN`, rN the highest N of a text row wherever it stands, or `no
+revision table` when the table holds no text row or the file cannot be
+read as text. A row signs a half (ADR 0034) when its last cell opens
+`r<N>:`, its blanks, then `Signed: request half` or `Signed: solution
+half`, case as shown, one space between the words and the half's name
+ending at a word's end, free words after; when a text row stands above
+it; and when its `Revised By` cell, the one before the last, is not blank,
+so a row of fewer than three cells signs nothing. It signs the text row
+above it with the highest N. Of a half's signatures the highest own N
+counts, the lower row winning a tie; a signed half reads `done` and names
+`by <signer> at rN`, the signer that cell stripped and rN the row it
+signs, and a half with none reads `to do`. A half carries no mark, link,
+doc reference, summary, diagnostic or page.
+
 Each item but a gate, a condition, a task, the no-gate item, a feature
-before intake and its verdicts names the file it is read from, and a unit
-or check the keys to its entry there;
+before intake and its verdicts names the file it is read from, a half its
+feature doc, and a unit or check the keys to its entry there;
 `reference` turns that into the entry's line, parsing the file afresh, so
-only the query calls it. A gate, a verdict, a condition and a task carry
-the kit page their list gives, a condition its gate's.
+only the query calls it; a half's line is its counting signature's row,
+else 1. A gate, a verdict, a condition and a task carry the kit page their
+list gives, a condition its gate's.
 """
 
 from __future__ import annotations
@@ -155,18 +177,28 @@ _CHECK_ID = re.compile(r"^[A-Za-z][A-Za-z0-9._-]*$")
 # A contract's drift marks when it has no stale one.
 NO_DOCUMENT = "no feature document"
 NO_READY = 'no "Ready:" row'
+# A feature before intake's mark when its doc gives no text row.
+NO_REVISION = "no revision table"
+# A feature before intake's halves, each an id segment and a plain name.
+HALVES = (("request", "Request half"), ("solution", "Solution half"))
 # A feature doc's revision table: a pipe after a backslash never splits a
 # cell; a counted row's last cell opens on `r<N>:`, and a `Ready:` row names
 # its `rM` by the first `derived from rM`, the digits ending at a non-word.
+# A text row opens on none of the three words, and only a text row ages
+# anything; a signature's words after `r<N>:` are fixed (ADR 0034), the
+# half's name ending at a non-word.
 _PIPE = re.compile(r"(?<!\\)\|")
 _REVISION = re.compile(r"r([0-9]+):\s*")
 _DERIVED = re.compile(r"derived from r([0-9]+)(?!\w)")
+_NOT_TEXT = ("Ready:", "Measured:", "Signed:")
+_SIGNED = re.compile(r"Signed: (request|solution) half(?!\w)")
 
 
 @dataclass
 class Item:
     """One entry of the tree; `level` is gate, condition, none, finding,
-    contract, feature (a feature before intake), verdict, unit, task or check."""
+    contract, feature (a feature before intake), verdict, half, unit, task or
+    check."""
 
     id: str
     level: str
@@ -181,6 +213,7 @@ class Item:
     summary: str | None = None  # a contract's intent, by the text rule
     source: str | None = None  # the repo path of the file the item is read from
     place: tuple = ()  # the keys from that file's top to the item's entry
+    line: int | None = None  # a half's signature row, its line in the file from 1
     # The kit page that defines a gate or a task; a verdict's or a condition's
     # is its gate's.
     page: str | None = None
@@ -291,26 +324,22 @@ def drift(path: Path) -> str | None:
     """A contract's drift mark from the feature doc at `path`: `no feature
     document` when no file is there, `no "Ready:" row` when no `Ready:` row
     names an `rM` or the file cannot be read as text, `stale: document rD,
-    contract from rM` when the document's revision passed the contract's,
-    else None. Only the first table is read, and none of its words print."""
+    contract from rM` when the document's revision, which leaves out the
+    `Ready:`, `Measured:` and `Signed:` rows, passed the contract's, else
+    None. Only the first table is read, and none of its words print."""
     if not path.is_file():
         return NO_DOCUMENT
-    try:
-        lines = path.read_bytes().decode("utf-8-sig").splitlines()
-    except (OSError, UnicodeDecodeError):
+    lines = _lines(path)
+    if lines is None:
         return NO_READY
     document = contract = None
     newest = -1  # the N of the `Ready:` row that gave `contract`
-    for cell in _last_cells(lines):
-        match = _REVISION.match(cell)
-        if match is None:
-            continue
-        n, rest = int(match.group(1)), cell[match.end():]
+    for _, n, rest, _ in _counted(lines):
         if rest.startswith("Ready:"):
             derived = _DERIVED.search(rest)
             if derived is not None and n >= newest:  # a tie: the lower row wins
                 newest, contract = n, int(derived.group(1))
-        elif not rest.startswith("Measured:"):
+        elif not rest.startswith(_NOT_TEXT):
             document = n if document is None else max(document, n)
     if contract is None:
         return NO_READY
@@ -319,12 +348,69 @@ def drift(path: Path) -> str | None:
     return None
 
 
-def _last_cells(lines: list[str]):
-    """The last cell of each row of the first table, the first run of lines
-    that open on `|`, blanks stripped; a row's one closing pipe is dropped
-    first, and a row without it still counts."""
+@dataclass(frozen=True)
+class Signature:
+    """The signature that counts for a half: its row's line in the file from
+    1, the row's `Revised By` cell and the N of the text row it signs."""
+
+    line: int
+    signer: str
+    signs: int
+
+
+def revisions(lines: list[str] | None) -> tuple[int | None, dict[str, Signature]]:
+    """A feature before intake's revision, the highest N of a text row in
+    `lines`, and the signature that counts for each half a row signs, by the
+    half's id segment; None and none when no text row stands in the first
+    table or `lines` is None, the file not readable as text. A row signs the
+    text row above it with the highest N; of a half's signatures, the highest
+    own N counts, the lower row winning a tie. None of the table's words
+    print but the signer."""
+    if lines is None:
+        return None, {}
+    revision = None
+    signed: dict[str, tuple[int, Signature]] = {}  # each half's own N and signature
+    for number, n, rest, cells in _counted(lines):
+        if not rest.startswith(_NOT_TEXT):
+            revision = n if revision is None else max(revision, n)
+            continue
+        match = _SIGNED.match(rest)
+        # The `Revised By` cell stands just before the changes; a row of
+        # fewer than three cells has none.
+        signer = cells[-2] if len(cells) >= 3 else ""
+        if match is None or revision is None or not signer:
+            continue
+        half = match.group(1)
+        if half not in signed or n >= signed[half][0]:  # a tie: the lower row wins
+            signed[half] = (n, Signature(number, signer, revision))
+    return revision, {half: signature for half, (_, signature) in signed.items()}
+
+
+def _lines(path: Path) -> list[str] | None:
+    """A feature doc's lines, or None when it cannot be read as text."""
+    try:
+        return path.read_bytes().decode("utf-8-sig").splitlines()
+    except (OSError, UnicodeDecodeError):
+        return None
+
+
+def _counted(lines: list[str]):
+    """(line, N, rest, cells) for each counted row of the first table: its
+    line from 1, the N its last cell opens on, the words after `r<N>:` and
+    its blanks, and its cells, blanks stripped."""
+    for number, cells in _rows(lines):
+        cell = cells[-1] if cells else ""
+        match = _REVISION.match(cell)
+        if match is not None:
+            yield number, int(match.group(1)), cell[match.end():], cells
+
+
+def _rows(lines: list[str]):
+    """(line, cells) for each row of the first table, the first run of lines
+    that open on `|`: its line from 1 and its cells, blanks stripped; a row's
+    one closing pipe is dropped first, and a row without it still counts."""
     started = False
-    for line in lines:
+    for number, line in enumerate(lines, start=1):
         row = line.strip()
         if not row.startswith("|"):
             if started:
@@ -333,7 +419,7 @@ def _last_cells(lines: list[str]):
         started = True
         if row.endswith("|") and not row.endswith("\\|"):
             row = row[:-1]
-        yield _PIPE.split(row)[-1].strip()
+        yield number, [cell.strip() for cell in _PIPE.split(row)[1:]]
 
 
 def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]],
@@ -567,9 +653,11 @@ def dirty_contracts(root: Path) -> set[str]:
 
 
 def _roll_up(item: Item, closed: bool = False) -> None:
-    """A unit's or contract's status from its children's but the inactive
-    verdict's, and a closed contract's from its units' alone, `done` when it
-    has none; a verdict done alone never starts its contract."""
+    """A unit's, contract's or feature before intake's status from its
+    children's but the inactive verdict's, a feature's halves among them,
+    and a closed contract's from its units' alone, `done` when it has none;
+    a verdict done alone never starts its contract. A feature before intake
+    never reads `done`: it reads `doing` in its place."""
     for child in item.children:
         if child.level == "unit":
             _roll_up(child)
@@ -580,7 +668,7 @@ def _roll_up(item: Item, closed: bool = False) -> None:
     if first is not None:
         item.status = first
     elif (statuses or closed) and all(status == DONE for status in statuses):
-        item.status = DONE
+        item.status = DOING if item.level == "feature" else DONE
     elif any(child.status == DONE for child in children if child.level != "verdict"):
         item.status = DOING
     else:
@@ -738,13 +826,12 @@ def read_features(root: Path, contracts: set[str]) -> list[str]:
     return sorted(fid for fid in ids if fid and fid not in contracts)
 
 
-def title(path: Path) -> str | None:
-    """A feature doc's plain name: the text after the first ` - ` of its
-    first `# ` line, by the text rule; None when there is no such line, no
-    text after it, or the file cannot be read as text. No other line is read."""
-    try:
-        lines = path.read_bytes().decode("utf-8-sig").splitlines()
-    except (OSError, UnicodeDecodeError):
+def title(lines: list[str] | None) -> str | None:
+    """A feature doc's plain name: the text after the first ` - ` of the
+    first `# ` line in `lines`, by the text rule; None when there is no such
+    line, no text after it, or `lines` is None, the file not readable as
+    text. No other line is read."""
+    if lines is None:
         return None
     line = next((line for line in lines if line.startswith("# ")), None)
     if line is None or " - " not in line:
@@ -868,11 +955,25 @@ def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str
 def _feature_item(root: Path, fid: str, active: list[str], upcoming: str | None,
                   gates: dict[str, dict]) -> Item:
     """A feature before intake: its plain name from its doc's title line,
-    `(no title)` when that gives none, and its verdicts as a contract's, each
-    reading `to do` from no file; no unit and no mark."""
+    `(no title)` when that gives none, its revision mark, and its verdicts
+    as a contract's, each reading `to do` from no file; then its two halves,
+    each `done` by the signature that counts for it, else `to do`. No unit.
+    The doc is read once; its revision, signatures and title use its lines."""
     doc = f"docs/features/{fid}.md"
-    return Item(fid, "feature", children=_verdict_items(fid, active, upcoming, gates, None),
-                doc=doc, name=title(root / doc) or NO_TITLE)
+    lines = _lines(root / doc)
+    revision, signatures = revisions(lines)
+    halves = []
+    for key, name in HALVES:
+        signature = signatures.get(key)
+        halves.append(Item(f"{fid}/{key}", "half", status=DONE if signature else TO_DO,
+                           evidence=(f"by {signature.signer} at r{signature.signs}"
+                                     if signature else None),
+                           name=name, source=doc,
+                           line=signature.line if signature else None))
+    mark = f"no contract: document r{revision}" if revision is not None else NO_REVISION
+    return Item(fid, "feature", marks=[mark],
+                children=_verdict_items(fid, active, upcoming, gates, None) + halves,
+                doc=doc, name=title(lines) or NO_TITLE)
 
 
 def _verdict_items(base: str, active: list[str], upcoming: str | None,
@@ -925,10 +1026,13 @@ def _units(instance: dict | None) -> list[tuple[int, str, dict, list[str]]]:
 
 def reference(root: Path, item: Item) -> str | None:
     """`<path>:<line>` for the item's source file, or None when it has none:
-    the line its entry starts at, else 1. It parses the file afresh, so only
-    the query calls it, and only for the items it prints."""
+    a half's signature row, else the line its entry starts at, else 1. It
+    parses the file afresh, so only the query calls it, and only for the
+    items it prints."""
     if item.source is None:
         return None
+    if item.line is not None:
+        return f"{item.source}:{item.line}"
     node = _node(root / item.source, item.place) if item.place else None
     return f"{item.source}:{node.start_mark.line + 1 if node is not None else 1}"
 

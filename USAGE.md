@@ -1245,9 +1245,9 @@ the revision and halves below. Its plain name comes from the contract's
 ### Revisions and halves 🔴
 
 🔴 A feature before intake names its document's revision as a mark, `no
-contract: document rN`. `rN` is the highest revision of a row that counts
-and opens on none of `Ready:`, `Measured:` or `Signed:`. A document whose
-table holds no row that counts, or that cannot be read as text, shows `no
+contract: document rN`. `rN` is the highest revision of a **text row**: a
+row that counts and opens on none of `Ready:`, `Measured:` or `Signed:`. A
+document with no text row, or that cannot be read as text, shows `no
 revision table` in its place.
 
 🔴 After its verdicts come its two **halves**, one item each:
@@ -1259,13 +1259,17 @@ revision table` in its place.
 
 🔴 A seat signs its half with a revision row whose changes cell opens
 `rN: Signed: request half` or `rN: Signed: solution half`, free words
-after (ADR 0034). The row changes no text: it signs the newest row above
-it that is neither a `Ready:`, a `Measured:` nor a `Signed:` row. A
-signed half reads `done` and names its signature as evidence, `by
-<signer> at rN`: the signer is the row's `Revised By` cell, `rN` the row
-it signs. A half's latest `Signed:` row counts. A half with no such row
-reads `to do`, and a signature in any other form, or one that names
-neither half, counts as none.
+after (ADR 0034). After `rN:` those words are fixed: case as shown, one
+space between them, the half's name ending at a word's end. The row
+changes no text: it signs the text row above it with the highest
+revision, a tie going to the lower row. A signed half reads `done` and
+names its signature as evidence, `by <signer> at rN`: the signer is the
+row's `Revised By` cell, `rN` the row it signs. The half names its seat:
+the PO seat signs the request half, the engineer seat the solution half.
+When a half has more than one signature, the row with the highest
+revision counts, a tie going to the lower row. A half with none reads `to
+do`. A row is no signature when it takes any other form, names neither
+half, has no text row above it, or has a blank `Revised By` cell.
 
 ```
 | 2026-09-28 | user | r4: Signed: request half. The PO seat signs r3 |
@@ -1290,8 +1294,8 @@ g1-requirements-spec Failure points found before development starts [doing] no c
 ```
 
 🔴 `taskcontract tree <id>` prints a half's line, then its `file:`: the
-line of its latest `Signed:` row, or line 1 when it has none. The cursor
-line shows the same reference.
+line of the row whose signature counts, or line 1 when it has none. The
+cursor line shows the same reference.
 
 ```
 g1-requirements-spec/request Request half [done] by user at r3
@@ -1300,7 +1304,8 @@ file: docs/features/g1-requirements-spec.md:6
 
 🔴 A `Signed:` row never ages a contract: the document's revision in
 "Drift from the feature document" leaves out `Signed:` rows, as it
-leaves out `Ready:` and `Measured:` rows.
+leaves out `Ready:` and `Measured:` rows. That holds for every row that
+opens `Signed:`, a signature or not.
 
 ---
 
