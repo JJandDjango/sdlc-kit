@@ -1,0 +1,21 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Born draft at feature-document's intake (session 67) from the Terms of
+# docs/features/feature-document.md, decided at its Q9 (2026-09-30);
+# ratified by the user 2026-09-30 (class-S flip; the PR merge is the
+# outer record, ADR 0025).
+
+term: release-unit
+
+name: Release unit
+
+definition: >-
+  The unit that ships a kit version: its CHANGELOG entry, USAGE marks
+  and version strings.
+
+kind: entity
+
+status: ratified
+since: 2026-09-30
+
+sources:
+  - docs/features/feature-document.md

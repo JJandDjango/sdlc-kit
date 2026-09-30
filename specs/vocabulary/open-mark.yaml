@@ -1,0 +1,22 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Born draft at feature-document's intake (session 67) from the Terms of
+# docs/features/feature-document.md, decided at its Q9 (2026-09-30);
+# ratified by the user 2026-09-30 (class-S flip; the PR merge is the
+# outer record, ADR 0025).
+
+term: open-mark
+
+name: OPEN mark
+
+definition: >-
+  A gap marked in the document with the word OPEN. One standing above
+  the seat boundary or in Decisions and open questions parks the
+  document at intake.
+
+kind: entity
+
+status: ratified
+since: 2026-09-30
+
+sources:
+  - docs/features/feature-document.md

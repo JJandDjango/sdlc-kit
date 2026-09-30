@@ -127,7 +127,6 @@ words:
   - {word: changes, pos: noun}
   - {word: channel, pos: noun}
   - {word: channels, pos: noun}
-  - {word: check, pos: noun}
   - {word: checkable, pos: noun}
   - {word: checked, pos: noun}
   - {word: checking, pos: noun}
@@ -878,7 +877,6 @@ words:
   - {word: surfaces, pos: noun}
   - {word: synonym, pos: noun}
   - {word: table, pos: noun}
-  - {word: tag, pos: verb}
   - {word: tag-on-, pos: noun}
   - {word: tag-on-bump, pos: noun}
   - {word: tagged, pos: verb}
