@@ -1,0 +1,224 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: feature-document
+
+title: The interview writes the ratified format, and intake holds its definition of done
+
+intent: >-
+  Kit `0.17.0` ships the interview of ADR 0028. The interview writes the
+  template of ADR 0026 at `REQUEST_{slug}_{date}.md`, under five rules.
+  Intake still reads the Implementation section, and an OPEN never makes a
+  parked document. After this task the interview writes the format of ADR
+  0029, as ADRs 0033 to 0036 change it, at `docs/features/<id>.md` from
+  `r1`. Before each seat records its signature on its half, the interview
+  runs the checks before signing and the ready checks of that half. The
+  interview derives one scenario per check, and the PO seat accepts,
+  changes or drops each. Intake rejects ready while a ready check has a
+  gap, or a check stands in no unit or in two. An OPEN makes a parked
+  document, with a `Parked:` row and no contract. The kit version reads
+  `0.18.0`.
+
+scope:
+  - skills/product-specification-interview/
+  - skills/sdlc/flows/intake.md
+  - taskcontract/lang.py
+  - taskcontract/__main__.py
+  - taskcontract/tree.py
+  - tests/
+  - USAGE.md
+  - pyproject.toml
+  - skills/sdlc/init.py
+  - .github/workflows/sdlc.yml
+
+non_goals:
+  - No new gate condition; the interview stays before G0.
+  - No change to the schema of a contract. The id of a check stays last in
+    its entry, inside `( )`. A unit still holds at most three entries in its
+    acceptance sketch.
+  - No contract in the Appendix of a doc where the kit runs; the Appendix
+    names the path `specs/<id>/contract.yaml`, the one contract.
+  - No code reads a section of a doc; code reads only the revision table and
+    the title line (ADRs 0034, 0035), and a ready check stays a question to
+    the seat.
+  - No hook at `git commit`; a hook that rejects a `git commit` while a
+    derived block is stale or an OPEN stands stays with Wave B.
+  - No change to the seats (ADR 0025); intake still covers each unit with
+    its seats, and each approval stays with the user.
+  - No migration; each doc of `project-tree`, G1 and `tree-first-level`
+    stays unchanged, and each REQUEST file at the root stays unchanged.
+  - No doc for the 15 contracts without one; each waits for its own
+    interview.
+  - No writes to Drive, Jira or `.docx`, and none of the ten modules ADR
+    0028 drops. The Google Docs form stays the Markdown that W4 shows, and
+    `styled-rendering` stays a separate feature.
+  - No change to `taskcontract/checker.py`,
+    `taskcontract/schemas/task-contract.schema.json`,
+    `taskcontract/data/gates.yaml`, `skills/sdlc/flows/vocab.md` or
+    `skills/sdlc/templates/hooks-protect-specs.py.template`.
+
+decomposition:
+  - unit: f1-format
+    id: f1-format
+    confirmed_by: [user]
+    done_means: >-
+      The interview writes the ratified format at `docs/features/<id>.md`
+      from r1, with its state file beside it.
+    acceptance_sketch:
+      - >-
+        verify a doc the interview writes lands at `docs/features/<id>.md`
+        with its title line, `# <id> - <title>`. Verify the doc holds each
+        ratified section in order, with the seat boundary and a tag under the
+        name of each section. Verify its revision rows carry numbers, and
+        `r1` names both seats. Verify each fix section, all four, stands only in
+        the doc of a fix, with its reference and regression scenario. Verify the
+        interview writes only the doc and its state file, and never runs
+        intake. Verify an existing path still gets its error, and the Google
+        Docs form writes nothing (SC1.1)
+  - unit: f2-sections
+    id: f2-sections
+    depends_on: [f1-format]
+    confirmed_by: [user]
+    done_means: >-
+      The interview writes each section in the ratified order, one question
+      at a time, and derives one scenario per check.
+    acceptance_sketch:
+      - >-
+        verify the interview covers each section in the ratified order, one
+        question at a time. Verify the interview writes its state file after
+        each step, and a later run goes on at the step `next` names. Verify
+        the interview covers the question `a thing we will not build, or a
+        place we will not touch?` at Non-goals and Out of scope. Verify a
+        success criterion past five gets the prompt `Six criteria is two
+        features. Which criteria form the second document?`. Verify the
+        interview reads content from the seat back per section. Verify the
+        interview covers with the seat each answer that differs from that
+        content (SC1.2)
+      - >-
+        verify the interview derives one scenario per check once the checks
+        stand. Verify each scenario joins its check by the id of the check.
+        Verify the PO seat accepts, changes or drops each scenario (SC3.1)
+      - >-
+        verify the interview never shows a scenario whose Then needs a fact
+        its check lacks, and that check counts as a thin check. Verify ready
+        check 3 reads a thin check as an OPEN. Verify a check with no scenario
+        the PO seat accepts gets an OPEN at the signature of the Request half.
+        Verify a scenario the PO seat drops makes its check a thin check
+        (SC3.2, SC3.3)
+  - unit: f3-signing
+    id: f3-signing
+    depends_on: [f2-sections]
+    confirmed_by: [user]
+    done_means: >-
+      The interview runs the checks before each signature, marks each gap
+      OPEN, and writes the `Signed:` row.
+    acceptance_sketch:
+      - >-
+        verify a signature lands as a row `rN: Signed: request half` or `rN:
+        Signed: solution half`. Verify that row stands after the content row
+        the signature covers, with no row between. Verify the tree then shows
+        the doc as a feature before intake, with its plain name, its last
+        revision and each half with a signature (SC1.3)
+      - >-
+        verify that before the signature of the Request half, the interview
+        runs the new terms as drafts through `vocab-check` and CL003. Verify the interview runs a draft contract of the Statement,
+        the Non-goals and the checks through `lang-check`. Verify that before
+        the signature of the Solution half, the interview runs each
+        `done_means` through `lang-check`. Verify the interview checks Scope
+        against the paths of the release unit. Verify the interview writes
+        nothing under `specs/`. Verify the interview records each run as a
+        `Measured:` row (SC2.1)
+      - >-
+        verify each ready check with a gap gets an OPEN with its notice:
+        checks 1 to 8 for the Request half, 11 to 14 for the Solution half.
+        Verify a derived block whose stamp is below the last content revision
+        gets the stale notice. Verify the interview never stops the seat,
+        whose word to write or record a signature stands at any count. Verify each entry of Existing
+        behavior touched names the file or step of its source. Verify the
+        checks before signing read each entry against that source. Verify an
+        entry false against its source gets an OPEN under ready check 6
+        (SC2.2, SC2.3)
+  - unit: f4-intake
+    id: f4-intake
+    depends_on: [f3-signing]
+    confirmed_by: [user]
+    done_means: >-
+      Intake rejects ready on an open gap or a check without one unit, and
+      writes each `done_means` word for word.
+    acceptance_sketch:
+      - >-
+        verify intake rejects ready while a check stands in no unit or in two,
+        or a unit holds no check. Verify intake names the id with its error,
+        and makes a parked document. Verify a unit of over three checks holds two in
+        one entry of its acceptance sketch, with the id of each
+        (SC4.1)
+      - >-
+        verify intake makes a parked document while an OPEN stands above the
+        seat boundary or in the Decisions section, or a ready check has a gap.
+        Verify intake then writes a `Parked:` row with its error, a row that
+        changes no content, and no contract (SC4.2)
+      - >-
+        verify intake writes each `done_means` word for word from its row
+        under Units. Verify its `Ready:` row names both seats and the revision
+        of each signature. Verify intake still stops without a ratified roster
+        of seats, and writes the title line into `title`. Verify intake still
+        covers each unit with its seats, and holds a contract with a
+        `blocked` dependency at draft (SC4.3)
+  - unit: f5-release
+    id: f5-release
+    depends_on: [f4-intake]
+    confirmed_by: [user]
+    done_means: >-
+      Kit 0.18.0 ships the interview, and USAGE shows it with all marks green.
+    acceptance_sketch:
+      - >-
+        verify an install of the kit at the tag `v0.18.0` holds the interview
+        and the intake flow of this release. Verify the install runs through
+        the plugin and through `uv`, as `USAGE.md` states. Verify the kit
+        version reads `0.18.0` (SC5.1)
+      - >-
+        verify the interview section of `USAGE.md` covers the format, the
+        checks before signing, the signature of each half and the Gherkin
+        step. Verify the section covers each error intake rejects with.
+        Verify all marks of the section are green. Verify `CHANGELOG.md` names the release (SC5.2)
+
+dependencies: []
+
+entities:
+  - task-contract
+  - contract-profile
+  - feature-document
+  - feature
+  - feature-before-intake
+  - intake
+  - half
+  - signature
+  - revision
+  - title-line
+  - plain-name
+  - tree
+  - consumer
+  - dependency
+  - acceptance-sketch
+  - intake-seat
+  - decomposition-unit
+  - stale
+  - success-criterion
+  - check
+  - ready-check
+  - checks-before-signing
+  - seat-boundary
+  - tag
+  - derived-block
+  - stamp
+  - measured-row
+  - scenario
+  - thin-check
+  - open-mark
+  - parked-document
+  - state-file
+  - release-unit
+
+provenance:
+  origin: human-request
+  ref: docs/features/feature-document.md

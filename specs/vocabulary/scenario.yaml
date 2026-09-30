@@ -1,0 +1,21 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Born draft at feature-document's intake (session 67) from the Terms of
+# docs/features/feature-document.md, decided at its Q9 (2026-09-30);
+# ratified by the user 2026-09-30 (class-S flip; the PR merge is the
+# outer record, ADR 0025).
+
+term: scenario
+
+name: Scenario
+
+definition: >-
+  The one Gherkin scenario derived from a check, joined to it by the
+  check's id.
+
+kind: entity
+
+status: ratified
+since: 2026-09-30
+
+sources:
+  - docs/features/feature-document.md
