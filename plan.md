@@ -29,27 +29,37 @@ section in chat before any drafting; Claude approves the test list and
 the commit on review; the push, the PR and the merge stay on the user's
 word.
 
+**Closed.** The deliverable is met: f1 at `6e0b381` (USAGE) and
+`0e1514e` (skill and tests), Two-Key PASS at round 1 with four
+advisories, carried in `STATE.md`. Suite 766 passed, scope-check green,
+`prompt_lang` green on all five prompt files; the unit closed.
+
 ## Steps
 
-1. Open. Branch `session-68-feature-document-f1` from `5d3051a`; commit
-   this plan.
-2. f1, pass zero. Write USAGE's interview section, marks red, shown in
-   chat before and after; commit on the user's word.
-3. f1, draft. `spec-channel-drafter.js`: the SC1.1 test list, red from
-   the scratchpad, satisfiable on a scratch prototype.
-4. f1, retire. `test-retirer.js` with `overlay` (the prototype rewrites
-   the template in place); amend or retire what fails.
-5. f1, approve the list and prove red. The whole suite on the prototype
-   in a scratch worktree; each fixed detail checked against the contract,
-   the document and its Constraints; then `progress run SC1.1 --expect
-   red`.
-6. f1, green. `unit-developer.js`; Claude runs the suite, `prompt_lang`
-   and the size cap after the round.
-7. f1, commit and Two-Key. Commit with the `Contract:` trailer; SC1.1
-   green at the clean commit; `two-key-unit-verifier.js`; `progress done`
-   on PASS.
-8. Close. `STATE.md` regenerated; this plan struck; the push and the PR
-   on the user's word.
+1. ~~Open.~~ Branch cut from `5d3051a`; the plan at `8ad7c21`.
+2. ~~f1, pass zero.~~ Section 4's interview subsection rewritten for
+   f1 to f4, every mark red, at `6e0b381` on the user's word, with three
+   readings kept: the section covers f1 to f4; section 9's lists of rows
+   that change no text gain `Parked:` in f4; the Next step line keeps
+   its behavior with the new path.
+3. ~~f1, draft.~~ 19 tests in `tests/test_interview_format.py`, red 19
+   of 19; the prototype changed four skill files, passed `prompt_lang`,
+   and caught nine mutations. Claude renamed four tests that carried
+   session labels and pinned ADR 0026's section names out of the prose.
+4. ~~f1, retire.~~ The retirer's own suite run was killed when its agent
+   returned; Claude ran the overlaid export in the session: three
+   failures in `test_skill_interview.py`, two retired with
+   `TEMPLATE_SECTIONS`, the chain-free count amended to two.
+5. ~~f1, approve the list and prove red.~~ The worktree suite passed
+   766; approved by Claude; SC1.1 red, 19 failing.
+6. ~~f1, green.~~ Round 1; three deviations, none against `done_means`
+   (a stray `</output>` it reported removing was the Read tool's
+   wrapper; nothing changed). Suite 766, the developer's run and
+   Claude's.
+7. ~~f1, commit and Two-Key.~~ At `0e1514e`; SC1.1 green at the clean
+   commit; PASS at round 1; the unit closed.
+8. ~~Close.~~ `STATE.md` regenerated; this plan struck; the push and the
+   PR on the user's word.
 
 Steps 1 and 8 sit outside a contract unit, so the tree does not show
 them.
@@ -61,6 +71,8 @@ user's at the close: (5) the push and the PR, (6) the merge.
 Deferred, not this session:
 - `f2-sections`, `f3-signing`, `f4-intake`, `f5-release` (ships 0.18.0).
 - G1's solution half by hand (risk 5), after 0.18.0.
+- `test-retirer.js` waits on the whole suite inside its agent, and the
+  run dies when the agent returns; hand the suite run to the session.
 - `STATE.md` Next actions 3 to 5 and its open questions, carried.
 
 House rules in force: no pipes or chains in any authored command string;
