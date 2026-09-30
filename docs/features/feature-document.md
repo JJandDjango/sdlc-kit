@@ -10,11 +10,12 @@
 | 2026-09-30 | user | r8: The solution half finished in kit session 66 through Q10 to Q16: Scope, Out of scope, Interfaces with its examples and edges, Sources, Constraints, Units, Order, Risks and cost. The findings at r7 answered: three `done_means` rewritten with known words (zero findings after), three Sources rows added, f5 names `MAP.md:42`. The request half amended at Q12 and here: SC2.1 and prerequisite 5 gain each unit's `done_means`; prerequisite 6 gains the Gherkin's tag and the Units table's cells; typed by Claude on the user's word |
 | 2026-09-30 | user | r9: Signed: request half. The PO seat signs r8; typed by Claude on the user's word |
 | 2026-09-30 | user | r10: Signed: solution half. The engineer seat signs r8; typed by Claude on the user's word |
+| 2026-09-30 | intake | r11: Ready: contract `feature-document` validates ready-green, derived from r8 in kit session 67; the PO seat (user) signed the request half at r8 (r9), the engineer seat (user) the solution half at r8 (r10); five units, f1 to f5, each confirmed by seat user; the 15 new terms ratified, Stale amended and ADR 0036 accepted at `fde018d`; f2 and f3 each hold four checks in three sketches, SC3.2 with SC3.3 and SC2.2 with SC2.3, since the schema caps a unit at three; each `done_means` copied word for word from Units; the language door reads zero after one rewrite of 72 findings; the standing line stays in the document only, since the dictionary cannot say it |
 
 # feature-document - The interview writes the ratified format, and intake holds its definition of done
 
 `sdlc_development_kit` · seats: PO user, engineer user · contract:
-`feature-document`, draft · PR: none · merge SHA: none
+`feature-document`, ready · PR: none · merge SHA: none
 
 ## Statement
 
