@@ -101,49 +101,184 @@ brownfield adoption is additive by construction.
 
 ## 4. Day 2 — the contract flow
 
-### `/sdlc:product-specification-interview` — writing the feature document 🟢
+### `/sdlc:product-specification-interview` — writing the feature document 🔴
 
-> 🟢 **Shipped** (kit 0.13.0, [ADR 0028](decisions/0028-specification-interview-skill.md),
-> contract `specs/spec-interview/`); the tag lands with `playbook-guardrails`.
+> 🔴 **Ratified, not shipped** (contract `specs/feature-document/`;
+> [ADR 0029](decisions/0029-feature-document-format-and-done.md) as ADRs
+> 0033 to 0036 amend it; kit 0.18.0). Every mark in this section flips
+> green at the release. Until then, kit 0.17.0's interview writes ADR
+> 0026's template at `REQUEST_<slug>_<date>.md` (ADR 0028), and each 🟢
+> paragraph elsewhere holds for 0.17.0.
 
-Intake consumes a feature document (§8, ADR 0026). This skill writes one.
-Run it in the target repo with a slug for the feature:
+Intake consumes a feature document (§8). This skill writes one, one
+question at a time, and has each seat sign its half. Run it in the target
+repo with the feature's id:
 
 ```
 /sdlc:product-specification-interview csv-export
 ```
 
-🟢 It asks the template's sections one question at a time: the path, the
-origin (feature or bug fix; a bug fix also takes the incident reference
-and its regression scenario), the seats, and any material you paste
-first; then
-the story and background, three to five success criteria with two or
-three Gherkin scenarios each, non-goals, previously defined items,
-prerequisites, business requirements, and open questions. The
-Implementation section is asked only when an engineer seat is named. A
-sixth success criterion prompts a split into two documents. State saves
-after every section to a file beside the document, so a later run resumes
-at the exact question.
-
-🟢 Before writing, it reads the document back and checks what intake will
-need: an outcome-shaped story, a non-goal, scenarios under every
-criterion, seats named. Gaps are marked OPEN. The check advises and never
-blocks, because the document is yours.
-
-🟢 **What it writes:** the document, in the template's shape, at a path
-you confirm (default `REQUEST_<slug>_<date>.md` at the repo root), plus
-its state file. It never overwrites, never touches `specs/`, and never
-runs intake. On request it renders the same document paste-ready for
-Google Docs.
-
-**Next step:** it ends by naming the command that consumes the document:
+🔴 **The document.** The interview writes `docs/features/<id>.md` from r1
+on, and its state file beside it, `docs/features/<id>.state.yaml`. It
+writes r1 at the end of the opening and each section as its step closes,
+so the tree shows the document as a feature before intake from its first
+revision (§9, "Features before intake"). The document opens on its
+revision table, its title line `# <id> - <title>`, and a status line.
+Drawn on a feature `x`, PO seat ann, engineer seat raj:
 
 ```
-/sdlc intake REQUEST_<slug>_<date>.md
+| Revision Date | Revised By | Changes Made |
+| :-: | :-: | :-- |
+| 2026-10-01 | ann | r1: Created through /sdlc:product-specification-interview. The request half, in progress. PO seat: ann; engineer seat: raj |
+
+# x - The outcome, in a few words
+
+`repo` · seats: PO ann, engineer raj · contract: `x`, draft · PR: none · merge SHA: none
 ```
 
-🟢 Every prompt file of the skill passes `python -m prompt_lang`, and a
-structural test in the suite holds the shape.
+🔴 The eighteen sections of ADR 0029 follow in order, each heading
+followed by its tag: owner and kind, such as `[PO seat · authored]`. The
+request half, Statement to Acceptance criteria, stands above the seat
+boundary, a `---` line, and the PO seat signs it. The solution half,
+Proposed solution (Scope, Out of scope, Interfaces, Sources, Constraints,
+Units, Order) and Risks and cost, stands below it, and the engineer seat
+signs it. The record follows: Decisions and open questions, Traceability,
+Notes and the Appendix. The four bug-fix sections appear only in a bug
+fix's document, with its incident reference and regression scenario. A
+section with nothing to say reads "(none)". Before intake, the Appendix's
+Contract block reads "(none: intake writes `specs/<id>/contract.yaml`)",
+with no stamp.
+
+🔴 **The run.** The interview asks the sections in order, one question at
+a time. It writes the state file after every step, and a later run
+resumes at the step its `next` names. Material you hand it at the opening
+is confirmed section by section, and an answer that conflicts with it is
+asked, never settled silently. At Non-goals and Out of scope it asks "a
+thing we will not build, or a place we will not touch?" to sort each
+refusal into its list. A sixth success criterion draws "Six criteria is
+two features. Which criteria form the second document?". A section
+changed by hand since the interview last wrote it is shown beside the
+answer, and you say which stands.
+
+🔴 **The Gherkin step.** Once the checks stand, the interview proposes one
+scenario per check, joined to it by its id, and the PO seat accepts,
+edits or drops each. The block is tagged `[PO seat · derived from rN]`:
+
+```
+Scenario: SC1.1 A written document lands at its path
+  Given a run for the id `x`, with no file at `docs/features/x.md`
+  When the interview writes the document
+  Then `docs/features/x.md` opens on its revision table, and its title line reads `# x - The outcome, in a few words`
+```
+
+🔴 A scenario whose Then needs a fact its check lacks is never offered:
+the check is marked thin instead. A scenario the PO seat drops marks its
+check thin too. Ready check 3 reads a thin check as an OPEN.
+
+🔴 **The checks before signing.** Before the PO seat signs, the interview
+runs the document's new terms as drafts through the vocabulary check and
+`CL003`, and a draft contract of the statement, the non-goals and the
+checks through the language check. It also reads each entry of Existing
+behavior touched against the file or step the entry names. Before the
+engineer seat signs, it runs each unit's `done_means` through the
+language check and checks Scope against the release unit's paths. The
+runs go through one command that reads the state file, never the
+document, and writes nothing:
+
+```
+$ python -m taskcontract lang-check --draft docs/features/x.state.yaml
+specs/vocabulary/dictionary.yaml: $.words[41].word: CL003 'check' collides with a glossary term name, alias, or slug - the glossary is the open class; keep the layers disjoint
+docs/features/x.state.yaml: answers.statement: CL008 sentence of 41 words exceeds the descriptive cap of 25
+docs/features/x.state.yaml: answers.checks[SC2.1]: CL012 acceptance sketch must open with an approved verb (got 'each')
+docs/features/x.state.yaml: answers.terms[Seat]: CL014 new term 'seat' matches ratified term 'intake-seat' - map it to that term, or rename it
+draft: 14 new terms, 1 amended; 9 non-goals; 14 checks; 0 units; 4 findings (CL003 1, CL008 1, CL012 1, CL014 1)
+```
+
+🔴 `CL014` reports a new term that matches a ratified one; an amended
+term replaces its ratified definition among the drafts and is never a
+`CL014`. The command exits 1 when any finding is an error, as
+`lang-check` does. A state file missing or not YAML reads
+`docs/features/x.state.yaml: $: CL000 unreadable draft: {reason}`, exit
+1. With no repo dictionary only `CL014` runs, and the last line ends
+`(no dictionary here - door at rest)`. A key the state file lacks reads
+as empty. Without `--draft`, `lang-check` reads `specs/` as before.
+
+🔴 Each run lands as a `Measured:` row. Then the interview reads that
+half's ready checks, 1 to 8 for the request half and 11 to 14 for the
+solution half, and marks each gap inline with its message:
+
+```
+- SC2.1: verify ...
+  OPEN: Ready check 3: SC2.1 is thin: its Then needs the count it reports.
+```
+
+🔴 The interview reports each gap as `Ready check {n}: {gap}. Marked
+OPEN.`, and a derived block stamped below the newest revision as `{block}
+is stamped r{n}; the newest revision is r{m}. Stale.` The checks advise
+and never block: the seat's word to sign or to write stands, whatever the
+count.
+
+🔴 **The signatures.** A seat signs its half with a row that opens `rN:
+Signed: request half` or `rN: Signed: solution half`, written right after
+the row it signs (ADR 0034). The tree then shows that half `done`, by its
+signer at the revision signed (§9, "Revisions and halves"). The rows the
+interview and intake write, in one table's order:
+
+```
+| 2026-10-01 | ann | r2: Measured: the checks before signing, on the request half: 4 findings (CL003 1, CL008 1, CL012 1, CL014 1); ready checks 1 to 8: 1 OPEN |
+| 2026-10-01 | ann | r3: The request half finished: ... |
+| 2026-10-01 | ann | r4: Signed: request half. The PO seat signs r3 |
+| 2026-10-02 | raj | r5: Measured: the checks before signing, on the solution half: ... |
+| 2026-10-02 | raj | r6: The solution half finished: ... |
+| 2026-10-02 | raj | r7: Signed: solution half. The engineer seat signs r6 |
+| 2026-10-03 | intake | r8: Parked: Check SC2.3 is assigned to no unit. |
+| 2026-10-03 | raj | r9: SC2.3 goes to unit u2 |
+| 2026-10-03 | raj | r10: Signed: solution half. The engineer seat signs r9 |
+| 2026-10-03 | intake | r11: Ready: contract `x` validates ready-green, derived from r9; the PO seat (ann) signed the request half at r3 (r4), the engineer seat (raj) the solution half at r9 (r10) |
+```
+
+🔴 **What it writes.** The interview writes only the document and its
+state file. It never writes under `specs/`, never writes a `Ready:` or
+`Parked:` row, and never runs intake. An existing path at the opening
+gets "A document already exists at {path}. Name another path." On
+request it shows the document as the Google Docs form and writes that
+form nowhere. A state file at the old `REQUEST_<slug>_*.state.yaml` path
+is never read: a run for that id starts fresh.
+
+🔴 **Intake's refusals.** `/sdlc intake docs/features/<id>.md` derives
+the contract from the newest revision both seats signed. It refuses
+ready while an OPEN mark stands above the seat boundary or in Decisions
+and open questions, a ready check has a gap, a check stands in no unit
+or in two, or a unit delivers no check. It names the id:
+
+```
+Check {id} is assigned to no unit.
+Check {id} is assigned to units {a} and {b}.
+Unit {id} delivers no check.
+```
+
+🔴 A refusal parks the document: intake writes `r{n}: Parked: {what
+stands}` and no contract. A `Parked:` row changes no text: like
+`Ready:`, `Measured:` and `Signed:` rows, it never ages a stamp or the
+drift mark, never moves the newest revision, and is never the row a
+`Signed:` row signs. On ready, intake copies each unit's `done_means`
+word for word from its row under Units, where `+` joins two checks that
+share a sketch, and a unit of more than three checks pairs two in one
+sketch that names both ids. Its `Ready:` row names both seats and the
+revision each signed. Intake still stops without a ratified seat roster,
+copies the title line into `title`, confirms each unit with its seats,
+and holds a contract with a `blocked` dependency at draft.
+
+🔴 **Next step:** the interview ends by naming the command that consumes
+the document:
+
+```
+/sdlc intake docs/features/<id>.md
+```
+
+🔴 Every prompt file of the skill passes `python -m prompt_lang` and stays
+under 12,000 characters, and a structural test in the suite holds the
+shape.
 
 ### `/sdlc intake` — the G0 venue
 Give it a raw request ("add CSV export"). 🟢 Intake first checks for a
