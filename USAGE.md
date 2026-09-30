@@ -552,13 +552,11 @@ a test the implementer cannot edit.
 > contracts `specs/tree-view/` and `specs/pane-view/`; kit 0.16.0,
 > [ADR 0032](decisions/0032-plain-names-conditions-drift-and-an-outline.md),
 > contract `specs/project-tree/`, "Gates and their conditions" to "The
-> interactive pane").
-
-> 🔴 **Ratified, not shipped:** the three subsections marked 🔴 at the end
-> of this section (contract `specs/tree-first-level/`,
-> [ADR 0034](decisions/0034-a-seat-signs-its-half-in-a-revision-row.md),
-> kit 0.17.0). Their marks flip green at the release; until then, each 🟢
-> paragraph they change holds for 0.16.0.
+> interactive pane"; kit 0.17.0,
+> [ADR 0034](decisions/0034-a-seat-signs-its-half-in-a-revision-row.md) and
+> [ADR 0035](decisions/0035-gates-roll-up-and-a-feature-shows-before-intake.md),
+> contract `specs/tree-first-level/`, "Gates roll up their features" to
+> "Revisions and halves").
 
 🟢 `taskcontract tree` prints the repo's work as one tree, computed from
 the kit's files at every run and never stored. It reads the contracts,
@@ -566,7 +564,8 @@ the kit's files at every run and never stored. It reads the contracts,
 lists the kit ships (`taskcontract/data/gates.yaml` and
 `taskcontract/data/tasks.yaml`). Of the documents, it reads only each
 feature document's revision table ("Drift from the feature document",
-below): nothing else under `docs/`, and no REQUEST, STATE or plan. It
+below), and the title line of one with no contract ("Features before
+intake"): nothing else under `docs/`, and no REQUEST, STATE or plan. It
 writes no file; `taskcontract progress` is the only writer, and only under
 `.sdlc/progress/`.
 
@@ -579,16 +578,19 @@ Each finding under `.sdlc/findings/` prints once, under the gate its
 one ("Gates and their conditions", below); `gate: none` prints under a
 `none` item, and the form's `TEMPLATE.yaml` prints nothing. A finding is
 read only from a `.yaml` file, so a `.yml` file there never shows. Then
-each contract, with its verdict at every gate in `active_gates` and at
-the next gate, marked `inactive`, its units, each unit's seven tasks, and
-its checks, one per `acceptance_sketch` line.
+each feature: a contract, with its verdict at every gate in
+`active_gates` and at the next gate, marked `inactive`, its units, each
+unit's seven tasks, and its checks, one per `acceptance_sketch` line; or a
+feature before intake, with its verdicts and its two halves ("Features
+before intake", below).
 
 🟢 Every item has an id, a path you pass to the commands below:
 
 | Item | Id |
 |---|---|
 | a gate, a finding, the no-gate item | `gates/G0`, `gates/G0/<finding>`, `gates/none` |
-| a contract, its verdict at a gate | `<contract>`, `<contract>/G0` |
+| a feature, its verdict at a gate | `<feature>`, `<feature>/G0` |
+| a half | `<feature>/request`, `<feature>/solution` |
 | a unit | `<contract>/<unit>` |
 | a task | `<contract>/<unit>/<task>`, with the keys in "The seven tasks" |
 | a check | `<contract>/<unit>/<check>`: the ids in the sketch's trailing parentheses, joined with `+` (`SC5.1+SC5.2`), else `sketch-<n>`, counted from 1 |
@@ -596,19 +598,21 @@ its checks, one per `acceptance_sketch` line.
 🟢 An item's summary and its plain name ("Plain names and titles",
 below) are its source's own text, with their ends stripped and each line
 break read as one space. Only a contract has a summary, its `intent`. The
-plain names are a contract's `title`, a unit's `done_means`, a check's
-sketch line, a finding's `statement`, and a gate's, a condition's or a
-task's name from the kit's lists. Links come only from source fields: a
-unit's `depends_on`, each entry once in the order it first appears, and a
-finding's `gate`. A feature document shows as a file reference, found by
-the contract's id at `docs/features/<id>.md`.
+plain names are a contract's `title`, a feature before intake's title
+line, a half's `Request half` or `Solution half`, a unit's `done_means`, a
+check's sketch line, a finding's `statement`, and a gate's, a condition's
+or a task's name from the kit's lists. Links come only from source fields:
+a unit's `depends_on`, each entry once in the order it first appears, and
+a finding's `gate`. A feature document shows as a file reference, found by
+the feature's id at `docs/features/<id>.md`.
 
 🟢 Each item prints on one line, indented two spaces per level: its full
 id, its plain name, then its status in brackets (a finding shows `[kind:
 <kind>]` in its place), its marks (`inactive` on a gate that is not
-active, `current` on the current task, a contract's drift mark), its
-evidence, its links (`depends_on: <contract>/<unit>`, `gate: <value>`), a
-contract's `doc: docs/features/<id>.md`, and last ` | ` and its summary.
+active, `current` on the current task, a contract's drift mark, a feature
+before intake's revision mark), its evidence, its links (`depends_on:
+<contract>/<unit>`, `gate: <value>`), a feature's
+`doc: docs/features/<id>.md`, and last ` | ` and its summary.
 The plain name and each part after the status print only when the item
 has them, and a line break inside a part, such as in a multi-line
 `--reason`, reads as one space, so an item keeps one line.
@@ -629,12 +633,15 @@ status, so it shows its `kind`.
   ready-green, `blocked` when draft-green with `TC003`, `to do` when
   draft-green otherwise, `failed` when draft-red. An active gate the kit
   cannot compute yet reads `to do`.
-- 🟢 A parent takes the first of `failed`, `waiting on a seat`, `blocked`
-  and `doing` that any child has. It reads `done` only when every child
-  reads `done`, and `to do` when nothing under it has started. Two
-  children never count: a contract's inactive gate ("Gates and their
-  conditions") and, once the contract is closed, its verdicts ("Blocked
-  and waiting, named").
+- 🟢 A unit or a feature takes the first of `failed`, `waiting on a
+  seat`, `blocked` and `doing` that any child has. It reads `done` only
+  when every child reads `done`, and `to do` when nothing under it has
+  started. Two children never count: a feature's inactive gate ("Gates
+  and their conditions") and, once a contract is closed, its verdicts
+  ("Blocked and waiting, named"). A feature before intake never reads
+  `done` ("Revisions and halves"). A gate item and its conditions read the
+  roll-up of the features' verdicts instead ("Gates roll up their
+  features").
 
 🟢 An item names its evidence on its line. A done check names the run
 that proved it, `via <command> at <commit>`. A done task names the commit
@@ -944,7 +951,9 @@ plain name, as it never leaves out the id, so `[]` shows both.
 | a gate, a verdict | the gate's name in `taskcontract/data/gates.yaml` |
 | a condition | its name in `taskcontract/data/gates.yaml` |
 | a task | its name in `taskcontract/data/tasks.yaml` |
-| a feature | its contract's `title`, else `(no title)` |
+| a feature with a contract | its contract's `title`, else `(no title)` |
+| a feature before intake | its document's title line, after the first ` - `, else `(no title)` |
+| a half | `Request half` or `Solution half` |
 | a unit | its `done_means` |
 | a check | its sketch line |
 | a finding | its `statement` |
@@ -965,15 +974,15 @@ apply-discount Apply one discount code per order [doing] doc: docs/features/appl
     apply-discount/u1-code-field/write-tests Write the tests [doing] current
 ```
 
-🟢 A feature's plain name is its contract's `title`, an optional field of
-one line that holds more than blanks. The contract schema moves from 1.4.0
-to 1.5.0 for it, and a `title` that is blank or holds a line break fails
-the draft profile with `TC002`, under G0.1. The tree reads the `title`
-from the contract, never from the document. Intake copies it from the
-feature document's title line, `# <id> - <title>`: the words after
-`<id> - `, or the whole heading when it opens on anything else. A
-contract without a `title`, as every contract written before 0.16.0 is
-until one is added, shows `(no title)`.
+🟢 Once a feature has a contract, its plain name is the contract's
+`title`, an optional field of one line that holds more than blanks. The
+contract schema moves from 1.4.0 to 1.5.0 for it, and a `title` that is
+blank or holds a line break fails the draft profile with `TC002`, under
+G0.1. The tree reads the `title` from the contract, never from the
+document. Intake copies it from the feature document's title line,
+`# <id> - <title>`: the words after `<id> - `, or the whole heading when
+it opens on anything else. A contract without a `title`, as every contract
+written before 0.16.0 is until one is added, shows `(no title)`.
 
 🟢 The pane's item lines open the same way, on the last segment of the id
 and then the plain name. The waiting line keeps the id alone.
@@ -986,14 +995,16 @@ task's name and kit page.
 
 ### Drift from the feature document 🟢
 
-🟢 The tree opens each feature's document at `docs/features/<id>.md` for
-its revision table only: the first table in the file. A row counts when
-its last cell, the changes made, opens on `r<N>:`; the tree skips every
-other row. Two revisions come from the rows that count:
+🟢 For a feature with a contract, the tree opens its document at
+`docs/features/<id>.md` for its revision table only: the first table in
+the file. A row counts when its last cell, the changes made, opens on
+`r<N>:`; the tree skips every other row. Two revisions come from the rows
+that count:
 
 - 🟢 The **document's revision** is the highest `rN` of a row that is
-  neither a `Ready:` row (its cell opens `rN: Ready:`) nor a `Measured:`
-  row (`rN: Measured:`).
+  none of a `Ready:` row (its cell opens `rN: Ready:`), a `Measured:` row
+  (`rN: Measured:`) or a `Signed:` row (`rN: Signed:`, a signature or
+  not).
 - 🟢 The **contract's revision** is the `rM` that the newest `Ready:` row
   names, the one with the highest `rN` among those whose cell holds
   `derived from rM`. Intake writes the row in that fixed shape, `rN:
@@ -1161,23 +1172,23 @@ an id with `--follow` still gets its own line first:
 taskcontract tree: --follow needs the pane extra - pip install 'sdlc-taskcontract[pane]'
 ```
 
-### Gates roll up their features 🔴
+### Gates roll up their features 🟢
 
-🔴 A gate item at the first level reads the roll-up of the features'
+🟢 A gate item at the first level reads the roll-up of the features'
 verdicts at its gate, and each of its conditions reads the roll-up of
 that condition across the same verdicts: each feature's own reading of
 the condition ("Gates and their conditions", above). A verdict marked
 `inactive` never counts. A closed feature's verdicts count as they read:
 a close governs only its own feature's roll-up.
 
-🔴 The roll-up takes the first of `failed`, `waiting on a seat`,
+🟢 The roll-up takes the first of `failed`, `waiting on a seat`,
 `blocked` and `doing` that any verdict reads. Otherwise it reads `done`
 when every verdict reads `done`, `to do` when every verdict reads `to
 do`, and `doing` when some read `done` and some `to do`. A gate or
 condition that no verdict counts in reads `to do`, as it does in a
 repository with no feature.
 
-🔴 A gate item or condition that is not `done` names each feature
+🟢 A gate item or condition that is not `done` names each feature
 holding it back: each feature whose counted verdict, or whose reading of
 that condition, is not `done`. Each prints as one line under the item,
 `- ` then the message, in the tree's order of features, before the
@@ -1187,17 +1198,17 @@ item's conditions and findings:
 {feature} holds {id} at {status}
 ```
 
-🔴 `{feature}` is the feature's id, `{id}` the gate's or condition's own
+🟢 `{feature}` is the feature's id, `{id}` the gate's or condition's own
 id (`G0`, `G0.1`), and `{status}` what that verdict or condition reads.
 The pane folds a closed gate item that names features as it folds a
 condition, `(<n> diagnostics)`, and shows a `holds` line whole on the
 cursor line.
 
-🔴 A finding still stands once, under the condition or gate its `gate:`
+🟢 A finding still stands once, under the condition or gate its `gate:`
 field names, and shows its kind, never a status. It counts in no
 roll-up, so a finding never changes what a gate or condition reads.
 
-🔴 With two features, `apply-discount` at `to do` as in "Gates and their
+🟢 With two features, `apply-discount` at `to do` as in "Gates and their
 conditions" and `ship-rates` `done` at G0:
 
 ```
@@ -1209,55 +1220,55 @@ gates/G0 Planning / Intake [doing]
   gates/G0/G0.3 Unit confirmation [done]
 ```
 
-### Features before intake 🔴
+### Features before intake 🟢
 
-🔴 Each `.md` file directly under `docs/features/` that has no
+🟢 Each `.md` file directly under `docs/features/` that has no
 `specs/<id>/contract.yaml` shows as a feature at the first level: a
 **feature before intake**, from its first revision on. A document whose
 table holds no revision shows too. Its id is the file's name without
 `.md`. The features with a contract keep the order of
 `specs/`, and a feature before intake stands among them by its id.
 
-🔴 Its plain name is the words of its document's title line, the first
+🟢 Its plain name is the words of its document's title line, the first
 `# ` line, after the first ` - `: the words intake copies into the
 contract's `title`. A document with no title line, a title line with no
 words after a ` - `, or a document that cannot be read as text reads `(no
 title)`. The tree reads such a document once per print, its first table
 and its title line, and prints none of its other words.
 
-🔴 It shows its verdicts as a feature with a contract does: its G0
+🟢 It shows its verdicts as a feature with a contract does: its G0
 verdict, then its next gate marked `inactive`, each opening into its
 conditions. Its G0 verdict and those conditions read `to do` and name no
 validator run, since there is no contract to validate. That verdict
 counts in `gates/G0`'s roll-up, and `gates/G0` names the feature: `<id>
 holds G0 at to do`.
 
-🔴 `taskcontract tree <id>` prints a feature before intake's line, then
+🟢 `taskcontract tree <id>` prints a feature before intake's line, then
 `doc: docs/features/<id>.md:1`; the cursor line shows the same
 reference. Its verdicts name their `page:` and no `file:`, since no file
 decides them.
 
-🔴 Once intake writes `specs/<id>/contract.yaml`, the feature stays one
+🟢 Once intake writes `specs/<id>/contract.yaml`, the feature stays one
 item: it shows its contract's verdicts, units and drift mark, and none of
 the revision and halves below. Its plain name comes from the contract's
 `title` from then on, never from its document.
 
-### Revisions and halves 🔴
+### Revisions and halves 🟢
 
-🔴 A feature before intake names its document's revision as a mark, `no
+🟢 A feature before intake names its document's revision as a mark, `no
 contract: document rN`. `rN` is the highest revision of a **text row**: a
 row that counts and opens on none of `Ready:`, `Measured:` or `Signed:`. A
 document with no text row, or that cannot be read as text, shows `no
 revision table` in its place.
 
-🔴 After its verdicts come its two **halves**, one item each:
+🟢 After its verdicts come its two **halves**, one item each:
 
 | Item | Id | Plain name |
 |---|---|---|
 | the request half | `<feature>/request` | Request half |
 | the solution half | `<feature>/solution` | Solution half |
 
-🔴 A seat signs its half with a revision row whose changes cell opens
+🟢 A seat signs its half with a revision row whose changes cell opens
 `rN: Signed: request half` or `rN: Signed: solution half`, free words
 after (ADR 0034). After `rN:` those words are fixed: case as shown, one
 space between them, the half's name ending at a word's end. The row
@@ -1269,13 +1280,14 @@ the PO seat signs the request half, the engineer seat the solution half.
 When a half has more than one signature, the row with the highest
 revision counts, a tie going to the lower row. A half with none reads `to
 do`. A row is no signature when it takes any other form, names neither
-half, has no text row above it, or has a blank `Revised By` cell.
+half, has no text row above it, or has a blank `Revised By` cell, the
+cell before the last, so a row of fewer than three cells signs nothing.
 
 ```
 | 2026-09-28 | user | r4: Signed: request half. The PO seat signs r3 |
 ```
 
-🔴 A feature before intake rolls up its verdicts, but not the inactive
+🟢 A feature before intake rolls up its verdicts, but not the inactive
 one, and its halves: it reads `to do` until a seat signs a half, then
 `doing`. G1's feature before intake, with its request half signed:
 
@@ -1293,7 +1305,7 @@ g1-requirements-spec Failure points found before development starts [doing] no c
   g1-requirements-spec/solution Solution half [to do]
 ```
 
-🔴 `taskcontract tree <id>` prints a half's line, then its `file:`: the
+🟢 `taskcontract tree <id>` prints a half's line, then its `file:`: the
 line of the row whose signature counts, or line 1 when it has none. The
 cursor line shows the same reference.
 
@@ -1302,10 +1314,9 @@ g1-requirements-spec/request Request half [done] by user at r3
 file: docs/features/g1-requirements-spec.md:6
 ```
 
-🔴 A `Signed:` row never ages a contract: the document's revision in
-"Drift from the feature document" leaves out `Signed:` rows, as it
-leaves out `Ready:` and `Measured:` rows. That holds for every row that
-opens `Signed:`, a signature or not.
+🟢 A `Signed:` row never ages a contract: the document's revision in
+"Drift from the feature document" leaves out every row that opens
+`Signed:`, a signature or not.
 
 ---
 
