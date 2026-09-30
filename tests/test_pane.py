@@ -23,10 +23,11 @@ outline's right edge is cut where they still fit, ending in `...` (SC4.1).
 
 The cursor line shows the item at the cursor: `<reference> | <plain name>`,
 the name whole, the reference the one `taskcontract tree <id>` prints (a
-feature's `doc:` value, else its `file:`; a unit's, a check's and a
-finding's `file:`; a gate's, a verdict's, a condition's and a task's
-`page:`). No plain name: the reference alone; neither: the id. On a
-diagnostic: the diagnostic whole (SC1.2).
+feature's `doc:` value, else its `file:`; a unit's, a check's, a
+finding's and, since tree-first-level's t3, a half's `file:`; a gate's, a
+verdict's, a condition's and a task's `page:`). No plain name: the
+reference alone; neither: the id. On a diagnostic: the diagnostic whole
+(SC1.2).
 
 Without the extra, `--follow` prints one line on stderr and exits 2. Only
 `taskcontract/pane.py` imports Textual, and only when `--follow` runs.

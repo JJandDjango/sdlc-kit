@@ -651,17 +651,19 @@ names its seat too, `by <seat> at <commit>`. A unit or contract that
 reads `done` after a close with `progress done` names that close, `at
 <commit>`; one that a later record changed, such as a task started again
 or a check's red run, reads as that record says and names none. A
-blocked
-task names its reason, `because <reason>`. A `G0` verdict, whatever it reads, names
-the validator run behind it: `via python -m taskcontract validate
-specs/<contract>/contract.yaml --profile ready at <commit>`.
+blocked task names its reason, `because <reason>`. A contract's `G0`
+verdict, whatever it reads, names the validator run behind it:
+`via python -m taskcontract validate specs/<contract>/contract.yaml
+--profile ready at <commit>`; a feature before intake's names none, since
+no validator runs ("Features before intake"). A signed half names its
+signature, `by <signer> at rN` ("Revisions and halves").
 
 🟢 Evidence ends in `dirty` in two cases. A run, a task's record or a
 close reads `dirty` when a tracked file differed from `HEAD` as it was
 recorded; untracked files do not count, so the untracked REQUESTs in a
-repo's root never mark it. A `G0` verdict reads `dirty` when its own
-contract file differs from `HEAD`: changed, staged or not, or not yet
-committed. Outside a git repository the commit reads `no commit`, and
+repo's root never mark it. A contract's `G0` verdict reads `dirty` when
+its own contract file differs from `HEAD`: changed, staged or not, or not
+yet committed. Outside a git repository the commit reads `no commit`, and
 nothing reads `dirty`.
 
 ### The three modes 🟢
@@ -680,8 +682,8 @@ nothing reads `dirty`.
   a feature's document shows on its `doc:` line at line 1. A gate, a
   verdict, a condition and a task name the kit page that defines the gate
   or the task, a path in the kit's repository. So an item never takes
-  more than seven lines, whatever its fields hold. Every id the tree prints works here,
-  matched whole. An id that names two items (a check whose sketch names a
+  more than seven lines, whatever its fields hold. Every id the tree
+  prints works here, matched whole. An id that names two items (a check whose sketch names a
   task key, such as `(commit)`, or a unit named like an active gate)
   prints both, in the tree's order, with an empty line between them. An
   unknown id exits 2 with `no node '{id}' - print the tree to list every
@@ -885,10 +887,13 @@ then `G1` marked `inactive`. An inactive gate and its conditions read `to
 do`, and never count toward the contract's status, so a closed contract
 still reads `done`.
 
-🟢 Each of G0's conditions takes its status from the rules it owns, read
-as the `G0` verdict is read: `failed` when one of its rules fails the
-draft profile, `done` when none fails the ready profile, `blocked` when
-`TC003` fails it, and `to do` otherwise.
+🟢 Under a contract, each of G0's conditions takes its status from the
+rules it owns, read as the `G0` verdict is read: `failed` when one of its
+rules fails the draft profile, `done` when none fails the ready profile,
+`blocked` when `TC003` fails it, and `to do` otherwise. A feature before
+intake's conditions read `to do` ("Features before intake"), and a gate
+item's read the roll-up of the features' ("Gates roll up their
+features").
 
 | Condition | Its rules |
 |---|---|
@@ -934,7 +939,7 @@ conditions.
 
 | Item | Id |
 |---|---|
-| a condition | `gates/<gate>/<condition>`, `<contract>/<gate>/<condition>` |
+| a condition | `gates/<gate>/<condition>`, `<feature>/<gate>/<condition>` |
 | a finding that names a condition | `gates/<gate>/<condition>/<finding>` |
 
 🟢 `taskcontract tree <id>` prints a condition as it prints a gate: its
@@ -965,8 +970,8 @@ line break read as one space. An item whose source gives no text, such as
 `gates/none` or a unit without `done_means`, shows no plain name; only a
 feature shows `(no title)` in its place. A unit's, a check's and a
 finding's plain name is the text that closed their line in 0.15.0, now
-after the id, so the `summary` part holds only a feature's `intent`, and
-`taskcontract tree <id>` prints its `summary:` line only for a feature.
+after the id, so the `summary` part holds only a contract's `intent`, and
+`taskcontract tree <id>` prints its `summary:` line only for a contract.
 An excerpt:
 
 ```
@@ -992,9 +997,9 @@ and then the plain name. The waiting line keeps the id alone.
 🟢 The pane's cursor line and `taskcontract tree <id>` show each item's
 plain name and document reference from its source: a feature's title and
 its feature document; a half's name and the row of its counting
-signature, else the document's line 1 ("Revisions and halves"); a unit's `done_means` and a check's
-sketch line, each with its contract file and line; a gate's, a
-condition's and a task's name and kit page.
+signature, else the document's line 1 ("Revisions and halves"); a unit's
+`done_means` and a check's sketch line, each with its contract file and
+line; a gate's, a condition's and a task's name and kit page.
 
 ### Drift from the feature document 🟢
 
@@ -1133,8 +1138,8 @@ USAGE.md | Approve the test list
 reference, then ` | ` and its plain name, whole, wrapping onto as many
 rows as it needs. The reference is the one `taskcontract tree <id>`
 prints: a feature's `doc:`, or its `file:` when it has no feature
-document; a unit's, a check's and a finding's `file:`; a gate's, a
-verdict's, a condition's and a task's `page:`. An item with no plain name
+document; a unit's, a check's, a finding's and a half's `file:`; a
+gate's, a verdict's, a condition's and a task's `page:`. An item with no plain name
 shows its reference alone, and one with neither shows its id. On a
 diagnostic, the cursor line shows the diagnostic whole.
 
