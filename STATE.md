@@ -2,44 +2,48 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-30 (session 64 close, tree-first-level released as 0.17.0)._
+> _Generated 2026-09-30 (session 65 close, feature-document's request half signed)._
 
 ## Now
-- **tree-first-level is RELEASED as 0.17.0**: `t4-release` at `dd225b2`
-  (USAGE section 9 green, ADR 0035, the CHANGELOG entry, MAP's row,
-  `KIT_VERSION`), fixes `3076424`, `3da0128` and `b9d080c`, Two-Key PASS
-  at round 4 (the user approved a round past the cap). The unit and the
-  contract closed at `b9d080c`. PR #75 merged at `4a9fec0`, tag `v0.17.0`
-  there; the self-pin at `6c748f6` on `session-64-release`, with this
-  wrap, waits for its PR. USAGE's `uv` line against the tag installs
-  0.17.0 and reads `specs/tree-first-level` ready-green. Suite 749 passed.
-- Rounds 1 to 3 each failed on stale statements the grep sweep missed:
-  test docstrings, then USAGE's condition id row. Round 3's fix read
-  section 9 end to end against the code, which found one more.
-- The user's order (2026-09-29): `feature-document` (0.18.0) next, ahead
-  of G1's solution half, because the user wants to use the kit on another
-  machine and the shipped interview skill still asks ADR 0026's
-  questions. When it ships, tell the user the kit is ready there, with the
-  tag to install. Until then another machine installs `v0.17.0` and runs
-  the interview by hand from the two `NOTES_feature-document_*` files,
-  with `docs/features/tree-first-level.md` as the exemplar.
-- Carried: 18 features: 17 with a contract, 16 of them `[done]`;
+- **feature-document's request half is signed**:
+  `docs/features/feature-document.md`, written through the interview's Q1
+  to Q9 from the r1 REQUEST, the PO seat signing r3 at r4. Five success
+  criteria (the interview writes the format; the checks before signing;
+  Gherkin per check; intake holds the definition of done; kit 0.18.0
+  carries it), 14 checks, six new messages, 15 new terms and Stale
+  amended. The five questions from `a800c34:STATE.md` are answered in its
+  Decisions. The tree reads it `doing`: request half done at r3, solution
+  half to do.
+- The request half widened the build. Prerequisite 5: a command that runs
+  the vocabulary and language checks on a draft outside `specs/` (the
+  scratch script stands in on this machine only), which brings
+  `taskcontract/` into scope. Prerequisite 6: an ADR amending 0029 (the
+  appendix names the contract's path; ready check 6 asks where each
+  entry was measured). One OPEN for the engineer seat:
+  `taskcontract/tree.py:196` counts a `Parked:` row as a text change.
+- Kit 0.17.0 is released and self-pinned (PR #76 merged at `e833283`).
+  The user's order (2026-09-29) stands: `feature-document` (0.18.0) before
+  G1's solution half. When it ships, tell the user the kit is ready on
+  the other machine, with the tag to install. Until then another machine
+  installs `v0.17.0` and runs the interview by hand from the two
+  `NOTES_feature-document_*` files.
+- Carried: 19 features: 17 with a contract, 16 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
-  `g1-requirements-spec` before intake, `[doing]`.
+  `g1-requirements-spec` and `feature-document` before intake, `[doing]`.
 
 ## Blockers
-- None. The self-pin PR and its merge wait on the user's word.
+- None. The session's commit, push and PR wait on the user's word.
 
 ## Next actions
-1. `feature-document`: interview `REQUEST_feature-document_2026-09-18.md`
-   (untracked, r1 typed by hand, says "Ships as kit 0.14.0") into
-   `docs/features/feature-document.md`, both halves signed, folding in
-   ADRs 0033, 0034 and 0035 and the five open questions at
-   `a800c34:STATE.md` (a check's false premise, a release unit with no
-   check, the three-sketch cap, an appendix copy that ages, a `done_means`
-   broader than its line). Then intake, the build (template, interview
-   flows, readiness check, intake's definition of done, Gherkin
-   derivation), release 0.18.0. Estimate seven to nine sessions.
+1. `feature-document`'s solution half (session 66), through the interview
+   at the engineer seat, to ADR 0033: Scope (with `taskcontract/` for
+   prerequisite 5), Out of scope, Interfaces with examples, Sources,
+   Constraints, Units with retirements and tests by check id, Order with
+   its reason, Risks and cost; answer the `Parked:` row OPEN; the checks
+   before signing on the solution half. Then intake: ratify the 15 terms
+   and Stale's amendment, the dictionary cedes `check` and `tag`,
+   prerequisite 6's ADR. Then the build and release 0.18.0. Five to seven
+   sessions left.
 2. Then G1's solution half, through the interview at the engineer seat,
    to ADR 0033; open for it: where the component declaration record and
    the review record live, G1's rules and their codes, the venue, and how
