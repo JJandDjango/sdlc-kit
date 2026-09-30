@@ -9,12 +9,13 @@ a render, word for word; and the cursor line (`#cursor`). The app writes
 nothing to stderr and no file (SC4.1).
 
 The outline holds every line `taskcontract tree` prints, in its order: each
-item, and each diagnostic under its condition. An item's line opens on its
-full id at the top level and on the last segment of its id under another
-item, then its plain name and the parts `tree: pane: parts:` selects; the
-current task's line carries `current` whatever `parts:` selects. Labels are
-plain text, never markup. The pane opens each feature (every contract) down
-to its units and every other item closed; a current task also opens its own
+item, and each diagnostic under its condition or gate item. An item's line
+opens on its full id at the top level and on the last segment of its id
+under another item, then its plain name and the parts `tree: pane: parts:`
+selects; the current task's line carries `current` whatever `parts:`
+selects. Labels are plain text, never markup. The pane opens each feature,
+so a contract shows its units and a feature before intake its verdicts and
+halves, and every other item closed; a current task also opens its own
 unit. The cursor starts on the current task, with the window scrolled to
 it, else on the first line. A plain name that would push the status, a
 closed item's group (`(<n> items: <counts>)`) and `current` past the

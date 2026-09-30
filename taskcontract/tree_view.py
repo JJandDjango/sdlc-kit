@@ -5,8 +5,9 @@ item's full id, the node path ADR 0031 gives it, so the print states every
 id whole, then its plain name (the name the kit's lists give a gate, a
 verdict's gate, a condition or a task; a unit's `done_means`; a check's
 sketch line; a finding's statement; a contract's `title`, else `(no
-title)`; a feature before intake's title line, else `(no title)`; a
-half's `Request half` or `Solution half`). Then the status in brackets, or
+title)`; the words of a feature before intake's title line after its
+first ` - `, else `(no title)`; a half's `Request half` or `Solution
+half`). Then the status in brackets, or
 a finding's kind in its place, then the item's marks (`inactive` on a
 gate a finding names that is not active and on a feature's next gate,
 `current` on the current task, on a contract its drift mark: `no feature

@@ -598,13 +598,14 @@ before intake", below).
 🟢 An item's summary and its plain name ("Plain names and titles",
 below) are its source's own text, with their ends stripped and each line
 break read as one space. Only a contract has a summary, its `intent`. The
-plain names are a contract's `title`, a feature before intake's title
-line, a half's `Request half` or `Solution half`, a unit's `done_means`, a
-check's sketch line, a finding's `statement`, and a gate's, a condition's
-or a task's name from the kit's lists. Links come only from source fields:
-a unit's `depends_on`, each entry once in the order it first appears, and
-a finding's `gate`. A feature document shows as a file reference, found by
-the feature's id at `docs/features/<id>.md`.
+plain names are a contract's `title`, the words of a feature before
+intake's title line after its first ` - `, a half's `Request half` or
+`Solution half`, a unit's `done_means`, a check's sketch line, a finding's
+`statement`, and a gate's, a condition's or a task's name from the kit's
+lists. Links come only from source fields: a unit's `depends_on`, each
+entry once in the order it first appears, and a finding's `gate`. A
+feature document shows as a file reference, found by the feature's id at
+`docs/features/<id>.md`.
 
 🟢 Each item prints on one line, indented two spaces per level: its full
 id, its plain name, then its status in brackets (a finding shows `[kind:
@@ -674,11 +675,12 @@ nothing reads `dirty`.
   `summary:` whole, on a contract only, one line per link kind with its
   targets joined by `, `, `doc:`, `file:` and `page:`. A file reference
   is a repo path with the line the item starts at: line 1 for a contract,
-  its verdicts and a finding, and the line its entry starts for a unit or
-  a check; a contract's feature doc shows on its `doc:` line at line 1. A
-  gate, a verdict, a condition and a task name the kit page that defines
-  the gate or the task, a path in the kit's repository. So an item never takes more than seven
-  lines, whatever its fields hold. Every id the tree prints works here,
+  its verdicts and a finding, the line its entry starts for a unit or a
+  check, and for a half the line of its counting signature, else line 1;
+  a feature's document shows on its `doc:` line at line 1. A gate, a
+  verdict, a condition and a task name the kit page that defines the gate
+  or the task, a path in the kit's repository. So an item never takes
+  more than seven lines, whatever its fields hold. Every id the tree prints works here,
   matched whole. An id that names two items (a check whose sketch names a
   task key, such as `(commit)`, or a unit named like an active gate)
   prints both, in the tree's order, with an empty line between them. An
@@ -1082,14 +1084,15 @@ cursor line. 0.15.0's where-am-I line, fold lines and `no current task`
 line give way to the outline.
 
 🟢 The outline holds every line `taskcontract tree` prints, in its order:
-each item, and each diagnostic under its condition. An item's line opens
-as "The pane's lines" gives, a top-level item on its full id and any
-other on the last segment of its id, then its plain name and the parts
-`tree: pane: parts:` selects. Each line shows its text as written, so `[to do]` reads as
-brackets, never as a style.
+each item, and each diagnostic under its condition or gate item. An
+item's line opens as "The pane's lines" gives, a top-level item on its
+full id and any other on the last segment of its id, then its plain name
+and the parts `tree: pane: parts:` selects. Each line shows its text as
+written, so `[to do]` reads as brackets, never as a style.
 
-🟢 The pane opens with each feature open down to its units, and every
-other item closed, whether or not a task is in flight. A task in flight
+🟢 The pane opens with each feature open, so a contract shows its units
+and a feature before intake its verdicts and halves, and every other item
+closed, whether or not a task is in flight. A task in flight
 also opens its own unit, so the current task shows. Its line carries
 `current` whatever `parts:` selects, the cursor starts on it, and the
 window scrolls to it. With no current task the cursor starts on the first
@@ -1099,8 +1102,8 @@ line.
 status: `(<n> items: <counts>)`, the items one level below it counted by
 status in the order "Six statuses" gives, zeros left out, then each
 finding by its kind, `<n> kind: <kind>`; or under `fold: names` each item
-as `<id> [<status>]`, joined by `, `. A closed condition counts its diagnostics, `(<n>
-diagnostics)`.
+as `<id> [<status>]`, joined by `, `. A closed condition or gate item
+counts its diagnostics, `(<n> diagnostics)`.
 
 🟢 A plain name that would push the status, those parentheses and the
 current task's `current` past the pane's right edge is cut where they
@@ -1230,7 +1233,8 @@ table holds no revision shows too. Its id is the file's name without
 `specs/`, and a feature before intake stands among them by its id.
 
 🟢 Its plain name is the words of its document's title line, the first
-`# ` line, after the first ` - `: the words intake copies into the
+`# ` line, after the first ` - `. For a title line in the template's
+form, `# <id> - <title>`, those are the words intake copies into the
 contract's `title`. A document with no title line, a title line with no
 words after a ` - `, or a document that cannot be read as text reads `(no
 title)`. The tree reads such a document once per print, its first table

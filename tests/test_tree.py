@@ -16,8 +16,9 @@ Since project-tree's o2-titles, the source text of every item but a
 contract is its plain name, right after its id, before its status; the
 summary after ` | ` holds only a contract's intent. The tests below read
 the plain name as the row's `name`. Since project-tree's o3-stale the tree
-opens a feature document for its revision table alone, and a contract's
-marks hold its drift mark (`no feature document`, `no "Ready:" row`).
+opens a contract's feature document for its revision table alone, and a
+contract's marks hold its drift mark (`no feature document`, `no "Ready:"
+row`).
 """
 
 from __future__ import annotations

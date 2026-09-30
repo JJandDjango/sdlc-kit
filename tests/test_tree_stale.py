@@ -1,11 +1,12 @@
 """The drift suite (contract project-tree, unit o3-stale).
 
-The tree opens each feature's document at docs/features/<id>.md for its
+The tree opens each contract's document at docs/features/<id>.md for its
 revision table only: the first table in the file, a run of lines that open
 on `|`. A row counts when its last cell, the changes made, opens on
 `r<N>:`; the tree skips every other row. The document's revision is the
-highest rN of a counted row that is neither a `Ready:` row (its cell opens
-`rN: Ready:`) nor a `Measured:` row (`rN: Measured:`). The contract's
+highest rN of a counted row that is none of a `Ready:` row (its cell opens
+`rN: Ready:`), a `Measured:` row (`rN: Measured:`) or, since
+tree-first-level's t3, a `Signed:` row (`rN: Signed:`). The contract's
 revision is the rM that the newest `Ready:` row names: the one with the
 highest rN among those whose cell holds `derived from rM` (SC5.1).
 
