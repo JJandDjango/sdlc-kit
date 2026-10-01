@@ -217,20 +217,22 @@ term replaces its ratified definition among the drafts and is never a
 `(no dictionary here - door at rest)`. A key the state file lacks reads
 as empty. Without `--draft`, `lang-check` reads `specs/` as before.
 
-🔴 Each run lands as a `Measured:` row. Then the interview reads that
-half's ready checks, 1 to 8 for the request half and 11 to 14 for the
-solution half, and marks each gap inline with its message:
+🔴 Then the interview reads that half's ready checks, 1 to 8 for the
+request half and 11 to 14 for the solution half, and marks each gap
+inline with its message:
 
 ```
 - SC2.1: verify ...
   OPEN: Ready check 3: SC2.1 is thin: its Then needs the count it reports.
 ```
 
-🔴 The interview reports each gap as `Ready check {n}: {gap}. Marked
-OPEN.`, and a derived block stamped below the newest revision as `{block}
-is stamped r{n}; the newest revision is r{m}. Stale.` The checks advise
-and never block: the seat's word to sign or to write stands, whatever the
-count.
+🔴 Each run of the checks then lands as one `Measured:` row: the
+command's findings, the count of OPEN marks under that half's ready
+checks, and for the solution half the Scope result. The interview
+reports each gap as `Ready check {n}: {gap}. Marked OPEN.`, and a derived
+block stamped below the newest revision as `{block} is stamped r{n}; the
+newest revision is r{m}. Stale.` The checks advise and never block: the
+seat's word to sign or to write stands, whatever the count.
 
 🔴 **The signatures.** A seat signs its half with a row that opens `rN:
 Signed: request half` or `rN: Signed: solution half`, written right after
