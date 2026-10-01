@@ -2,9 +2,11 @@
 
 The skill is prompt-only, so its regression suite holds the shape the
 contract names (ADR 0028): the file set, the frontmatter, the PromptLang
-tag set, dispatch coverage, the template's section order, the write
-surface, and chain-free command lines. `python -m prompt_lang` is the
-form receipt; this suite is the CI-side proxy that needs no validator.
+tag set, dispatch coverage, the write surface, and chain-free command
+lines. The template's sections and the document's path are
+tests/test_interview_format.py's (contract: feature-document).
+`python -m prompt_lang` is the form receipt; this suite is the CI-side
+proxy that needs no validator.
 """
 
 from __future__ import annotations
@@ -26,12 +28,6 @@ PROMPTLANG_TAGS = {"purpose", "instructions", "variables", "context",
 SKILL_TAGS = ("purpose", "variables", "context", "instructions",
               "constraints", "criteria")
 CHAIN_CHARS = ";|&>"
-TEMPLATE_SECTIONS = (
-    "## Feature statement", "## Description", "## Background Information",
-    "## Success Criteria", "## Requirements", "## Previously Defined",
-    "## Prerequisites", "## Business Requirements", "## Implementation",
-    "## Misc.", "## Acceptance Criteria", "## Additional Notes",
-)
 SECTION_STEPS = (
     "Q1. FEATURE STATEMENT", "Q2. DESCRIPTION", "Q3. BACKGROUND",
     "Q4. SUCCESS CRITERIA", "Q5. REQUIREMENTS", "Q6. PREVIOUSLY DEFINED",
@@ -145,24 +141,6 @@ def test_readiness_advises_and_never_blocks():
     assert "the user's word to write is final" in text
 
 
-def test_output_writes_from_the_template_and_names_intake():
-    text = _text(FLOWS / "output.md")
-    assert "templates/feature-document.md.template" in text
-    assert "A document already exists at {path}. Name another path." in text
-    assert "`/sdlc intake {path}`" in text
-    assert "Google Docs form" in text
-
-
-def test_template_carries_every_section_in_order():
-    text = _text(TEMPLATE)
-    positions = [text.index(heading) for heading in TEMPLATE_SECTIONS]
-    assert positions == sorted(positions)
-    assert "| Revision Date | Revised By | Changes Made |" in text
-    assert "**Seats:**" in text
-    assert "**Not in scope:**" in text
-    assert "Reserved for intake" in text
-
-
 # --- unit: s5-shape-and-docs ---
 
 def test_write_surface_is_the_document_and_its_state_file():
@@ -176,7 +154,7 @@ def test_write_surface_is_the_document_and_its_state_file():
 def test_bash_call_commands_are_chain_free():
     lines = [line for path in _prompt_files()
              for line in _text(path).splitlines() if "one Bash call" in line]
-    assert len(lines) >= 3  # dispatch, O5, W2
+    assert len(lines) >= 2  # dispatch, O1
     for line in lines:
         commands = re.findall(r"`([^`]+)`", line)
         assert commands, line  # the authored command is always a code span

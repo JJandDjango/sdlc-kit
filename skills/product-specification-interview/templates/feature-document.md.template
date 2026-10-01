@@ -1,104 +1,173 @@
 | Revision Date | Revised By | Changes Made |
-| :-: | :-: | :-: |
-| {{ date }} | {{ seats.po }} | Created by /sdlc:product-specification-interview |
-|  | intake | Reserved for intake: contract id, state (ready or parked), merge SHA |
+| :-: | :-: | :-- |
+| {date} | {po} | r1: Created through /sdlc:product-specification-interview. The request half, in progress. PO seat: {po}; engineer seat: {engineer} |
 
-# {{ title }}
+# {id} - {title}
 
-*Title matches the Jira key. Intake derives the task id from it and records the key as the contract's provenance reference.*
+`{repo}` · seats: PO {po}, engineer {engineer} · contract: `{id}`, draft · PR: none · merge SHA: none
 
-**Seats:** PO seat: {{ seats.po }} · Engineer seat: {{ seats.engineer, or "none" }}
+## Statement
 
-*Who answers at intake. Recorded per unit in the contract as confirmed_by.*
+`[PO seat · authored]`
 
-## Feature statement
-
-As a {{ feature_statement.role }}, I want {{ feature_statement.capability }}, so I can {{ feature_statement.outcome }}.
-
-*Lands as the contract's intent, in the PO's words. The "so I can" clause is the outcome.*
+{statement}
 
 ## Description
 
-{{ description }}
+`[PO seat · authored]`
 
-*What the feature is, in prose. Stays in this document.*
+{description}
 
-## Background Information
+{bug fix only}
+### Findings at a glance
 
-{{ background }}
-{{ bug fix only: "Incident: " incident_ref, then "Regression: " regression }}
+Incident: {incident_ref}
 
-*Why now, history, links. Stays in this document; the contract links back here.*
+{findings_at_a_glance}
+{end bug fix only}
 
-## Success Criteria
+## Background
 
-*One line each: an outcome a test can decide. Each becomes one unit's done-meaning.*
+`[PO seat · authored]`
 
-{{ success_criteria: one numbered line per criterion, "1. SC1: text" }}
+{background}
 
-## Requirements
+### Existing behavior touched
 
-**Not in scope:** {{ not_in_scope: one line each, the standing line first when it holds }}
+{existing_behavior}
 
-*Placeholder. Intake confirms it is still true for this feature and asks what else is out. A non-goal is the adjacent thing someone would plausibly build or expect, deliberately left out; anything nobody would wonder about does not belong here.*
+{bug fix only}
+## Findings
 
-{{ requirements: one line each }}
+`[PO seat · authored]`
 
-*Then the constraints that must hold.*
+{findings}
 
-## Previously Defined
+## Why this happened
 
-{{ previously_defined: one line each }}
+`[PO seat · authored]`
 
-*Existing CRUD operations and permission rules this feature touches. They become ratified terms and regression scenarios.*
+{why_this_happened}
+{end bug fix only}
+
+## Success criteria
+
+`[PO seat · authored]`
+
+{success_criteria}
+
+## Non-goals
+
+`[PO seat · authored]`
+
+{non_goals}
 
 ## Prerequisites
 
-{{ prerequisites: one line each, "(exists)" or "(missing)" after the item }}
+`[PO seat · authored]`
 
-*What must exist first: a permission, a role, another ticket. Each becomes a dependency (resolved or blocked) or a guard unit.*
+{prerequisites}
 
-## Business Requirements
+## Acceptance criteria
 
-Additions: {{ business_requirements.additions: one line each }}
+`[PO seat · authored]`
 
-Subtractions: {{ business_requirements.subtractions: one line each }}
+### Checks
 
-Error messages: {{ business_requirements.error_messages: one line each, verbatim in quotes }}
+{checks}
 
-*All additions, subtractions, and error messages. Each addition or subtraction is a unit; each error message is a scenario and a term.*
+### Error messages, verbatim
 
-## Implementation
+{error_messages}
 
-{{ implementation: "Files: ...", "Order: ...", "Tests: ..." on three lines; or the OPEN mark when left for intake }}
+{bug fix only}
+### Regression check
 
-*The engineer's three answers at intake: which files change, in what order, which tests prove it. Endpoint table below when there is one.*
+Regression: {regression}
+{end bug fix only}
 
-| Method | Path | Request | Response |
-| :-: | :-: | :-: | :-: |
-{{ implementation.endpoints: one row each, or one row "none" }}
+---
 
-## Misc.
+## Proposed solution
 
-{{ misc: one line per question, "- Q: ... A: ..." with "A: OPEN" when undecided }}
+`[Engineer seat · authored]`
 
-*Questions asked and answers decided; open ones marked OPEN. Decided answers become scenarios, criteria, non-goals, or terms; open ones carry to the requirements gate.*
+### Scope
 
-## Acceptance Criteria
+{scope}
 
-*Gherkin, grouped under the Success Criterion each scenario proves. Two or three scenarios per group; the groups are the units.*
+### Out of scope
 
-{{ for each success criterion, in order: }}
-### {{ sc.id }}: {{ sc.text }}
+{out_of_scope}
 
-Scenario: {{ scenario.name }}
-  Given {{ scenario.given }}
-  When {{ scenario.when }}
-  Then {{ scenario.then }}
-{{ end; a criterion with no scenario gets "OPEN: no scenario under SCn" }}
+### Interfaces
 
-## Additional Notes
+{interfaces}
 
-{{ additional_notes }}
+### Sources
 
-*Anything else. Stays in this document.*
+{sources}
+
+### Constraints
+
+{constraints}
+
+### Units
+
+{units}
+
+### Order
+
+{order}
+
+## Risks and cost
+
+`[Both seats · authored]`
+
+{risks_and_cost}
+
+## Decisions and open questions
+
+`[Both seats · authored]`
+
+{decisions}
+
+## Traceability
+
+### Links out
+
+`[Both seats · authored]`
+
+{links_out}
+
+### Record
+
+`[Intake · derived from r{n}]`
+
+{record}
+
+## Notes
+
+`[Both seats · authored]`
+
+{notes}
+
+## Appendix
+
+### Contract
+
+`[Intake · derived]`
+
+(none: intake writes `specs/{id}/contract.yaml`)
+
+### Gherkin
+
+`[PO seat · derived from r{n}]`
+
+{gherkin}
+
+### Terms
+
+`[PO seat · authored]`
+
+{terms}

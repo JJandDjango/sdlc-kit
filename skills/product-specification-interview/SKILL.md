@@ -1,68 +1,81 @@
 ---
 name: product-specification-interview
 description: Write an intake-ready feature document through a one-question-at-a-time interview - the raw request /sdlc intake consumes. Resumable, with an advisory readiness check; writes only the document and its state file.
-argument-hint: "[slug]"
+argument-hint: "[id]"
 ---
 
 # `/sdlc:product-specification-interview` - write the feature document
 
 <purpose>
 Write the consumer's feature document, the raw request `/sdlc intake`
-consumes (ADR 0026, ADR 0028), through a structured interview: the
-template's sections one question at a time, state saved after every
-section, an advisory readiness check, then the document in the
-template's shape at a path the user confirms. The skill sits upstream
-of G0 and adds no gate condition. This file dispatches; the flow files
-execute; the constraints and criteria here bind inside every flow.
+consumes (ADR 0028, ADR 0029), through a structured interview: the
+ratified sections one question at a time, the document written as r1 at
+the close of the opening and each section written into it as its step
+closes, state saved after every step, and an advisory readiness check.
+The skill sits upstream of G0 and adds no gate condition. This file
+dispatches; the flow files execute; the constraints and criteria here
+bind inside every flow.
 </purpose>
 
 <variables>
 | Variable | Description | Default |
 |---|---|---|
-| `$1` | Feature slug matching `^[a-z][a-z0-9-]{2,63}$`; names the document and its state file, which is found by `REQUEST_{slug}_*.state.yaml` at the repo root | asked when absent |
+| `$1` | Feature id matching `^[a-z][a-z0-9-]{2,63}$`; names the document `docs/features/{id}.md` and its state file `docs/features/{id}.state.yaml` | asked when absent |
 </variables>
 
 <context>
 Runs in the consumer repo's Claude Code session; cwd is the repo root.
 {skill-dir} is the directory holding this file:
-  {skill-dir}/flows/opening.md    O1-O6: path, origin, title, seats, materials; the state file written from O1 on
-  {skill-dir}/flows/sections.md   Q1-Q12: the template's sections in order, one question at a time
+  {skill-dir}/flows/opening.md    O1-O6: id, origin, title, seats, materials; the state file from O1 on, the document as r1 at O6
+  {skill-dir}/flows/sections.md   Q1-Q12: the sections in order, one question at a time
   {skill-dir}/flows/readiness.md  R1-R4: readback, advisory check, OPEN marks
-  {skill-dir}/flows/output.md     W1-W5: render, write (no-clobber), Google Docs form, name the next command
+  {skill-dir}/flows/output.md     W1-W2: Google Docs form, name the next command
   {skill-dir}/templates/feature-document.md.template
 
-Files: the document, `REQUEST_{slug}_{date}.md` by default at the repo
-root (the user confirms the path in O1), and beside it the state file
-`REQUEST_{slug}_{date}.state.yaml` (YAML: `phase`, `next`, `origin`,
-`title`, `seats`, `path`, `answers`, `open`, `history`). The state file
-is the only memory between runs: every flow reads it on entry and
-writes it after every answered step, so a later run resumes at the
-exact step `next` names.
+Files: the document at `docs/features/{id}.md`, and beside it the state
+file `docs/features/{id}.state.yaml` (YAML, `schema:
+spec-interview-state/2`: `id`, `phase`, `next`, `origin`, `title`,
+`seats`, `answers`, `open`, `history`). The state file is the only memory
+between runs: every flow reads it on entry and writes it after every
+answered step, so a later run resumes at the exact step `next` names.
 
-The template is the consumer's own (ADR 0026; the 2026-09-10 mapping):
-revision table; title as the Jira key; Seats line; Feature statement;
-Description; Background Information; Success Criteria; Requirements
-with "Not in scope" on top; Previously Defined; Prerequisites; Business
-Requirements; Implementation; Misc.; Acceptance Criteria (Gherkin
-grouped under each success criterion); Additional Notes.
+The template is ADR 0029's format as ADRs 0033 to 0036 amend it: the
+revision table with numbered rows; the title line `# {id} - {title}`; the
+status line; then eighteen sections, each heading followed by its tag,
+owner and kind (`[PO seat · authored]`, `[Engineer seat · authored]`,
+`[Both seats · authored]`, or derived with its stamp, such as
+`[Intake · derived from r{n}]`). The request half (Statement,
+Description, Background with Existing behavior touched, Success
+criteria, Non-goals, Prerequisites, Acceptance criteria with Checks and
+Error messages) stands above the seat boundary, a `---` line, and the PO
+seat signs it. The solution half (Proposed solution: Scope, Out of scope,
+Interfaces, Sources, Constraints, Units, Order; then Risks and cost)
+stands below it, and the engineer seat signs it. The record follows:
+Decisions and open questions, Traceability (Links out, Record), Notes,
+and the Appendix (Contract, Gherkin, Terms). Before intake, the Contract
+block names `specs/{id}/contract.yaml` with no stamp. The four bug-fix
+sections (Findings at a glance, Findings, Why this happened, Regression
+check) stand only in a bug fix's document.
 
 Domain modules, the ancestor skill's question packs, are deferred (ADR
-0028); the seam is Q9 in sections.md, after Business Requirements.
-Interview disciplines in force in every flow: one question at a time;
-quantify vague terms; probe a thin answer once, then mark it and move
-on; summarize after each section.
+0028); the seam is Q9 in sections.md. Interview disciplines in force in
+every flow: one question at a time; quantify vague terms; probe a thin
+answer once, then mark it and move on; summarize after each section.
 </context>
 
 <instructions>
-0. DISPATCH on the argument. PARSE `$1` as the slug; ASK for it when absent or when it fails the pattern. LOAD the state file with one Bash call `ls REQUEST_{slug}_*.state.yaml` at the repo root. Exactly one file resumes; none starts a new run; two or more means ASK which one (AskUserQuestion).
+0. DISPATCH on the argument. PARSE `$1` as the feature id; ASK for it when absent or when it fails the pattern. LOAD the state file with one Bash call `ls docs/features/{id}.state.yaml` at the repo root. Exactly one file resumes; none starts a new run at O1.
+   A state file at the old `REQUEST_{slug}_*.state.yaml` path is never read: a run for that id starts fresh.
 1. ROUTE by the state file's `phase`, and EXECUTE the flow from the step `next` names (a new run starts at O1): `opening` - LOAD {skill-dir}/flows/opening.md; `sections` - LOAD {skill-dir}/flows/sections.md; `readiness` - LOAD {skill-dir}/flows/readiness.md; `output` - LOAD {skill-dir}/flows/output.md; `complete` - REPORT the document path and `/sdlc intake {path}`, then return.
-2. EXECUTE the loaded flow's steps in order, exactly as written there. A flow ends by writing `phase` and `next` to the state file and returning here; step 1 routes again until `complete` or the user pauses.
+2. EXECUTE the loaded flow's steps in order, exactly as written there. After O6 writes r1, WRITE each section into the document as its step closes, in the template's place under its heading and tag; a section with nothing to say reads "(none)". A flow ends by writing `phase` and `next` to the state file and returning here; step 1 routes again until `complete` or the user pauses.
 3. REPORT at every pause and at the end: the state file path, the phase, the step to resume at, and after output the document path and `/sdlc intake {path}`. A failed step returns control to the conversation with the failure stated in one line - never a silent stop.
 </instructions>
 
 <constraints>
-- Write ONLY the document and its state file. Never write under `specs/`, never run `/sdlc intake`, never edit an existing document.
-- Never overwrite: an existing file at the document path is reported and another path asked for; only this skill rewrites the state file, and only in place.
+- Write ONLY the document and its state file. Never write under `specs/`, never run `/sdlc intake`, and never write a `Ready:` or `Parked:` row: intake writes those.
+- Every revision row opens `r{n}: `, numbered one past the table's last row; the interview adds a row when it writes the document.
+- Never overwrite: an existing document at the opening is reported and another id asked for; only this skill rewrites the document and the state file, and only in place.
+- A section changed by hand since the interview last wrote it is shown beside the answer, and the seat says which stands; never overwrite a hand edit silently.
 - The readiness check advises and never blocks: the document is the requester's; gaps are marked OPEN and the user decides.
 - Ask one question at a time; wait for the answer; never batch sections.
 - Do NOT chain shell commands - every Bash call is a single segment: no pipes, no semicolons, no `&&`, no redirects.
@@ -71,10 +84,10 @@ on; summarize after each section.
 </constraints>
 
 <criteria>
-- [ ] Dispatch honored: the slug parsed or asked; the state file found by the `ls` pattern; one file resumes at `next` in whatever phase, none starts at O1, several ask.
+- [ ] Dispatch honored: the id parsed or asked; the state file found at its one path; a hit resumes at `next` in whatever phase, none starts at O1.
 - [ ] Every flow loaded from its own file under {skill-dir}/flows/ before it runs.
-- [ ] State written after every section; a later run resumes at the exact step.
-- [ ] The document lands in the template's shape at the confirmed path; no overwrite; `specs/` untouched.
+- [ ] State written after every step; a later run resumes at the exact step.
+- [ ] The document lands at `docs/features/{id}.md` as r1 in the template's format, and each section lands as its step closes; no overwrite; `specs/` untouched.
 - [ ] The final report names `/sdlc intake {path}`.
 - [ ] Every Bash call a single segment.
 </criteria>
