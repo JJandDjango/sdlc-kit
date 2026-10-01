@@ -20,7 +20,7 @@ SKILL_DIR = ROOT / "skills" / "product-specification-interview"
 FLOWS = SKILL_DIR / "flows"
 
 FLOW_FIRST_STEP = {"opening.md": "O1.", "request.md": "Q1.", "solution.md": "S1.",
-                   "readiness.md": "R1.", "output.md": "W1."}
+                   "signing.md": "P1.", "output.md": "W1."}
 PROMPTLANG_TAGS = {"purpose", "instructions", "variables", "context",
                    "constraints", "examples", "output", "criteria",
                    "routing", "directives"}
@@ -97,15 +97,6 @@ def test_opening_writes_the_state_file_and_never_overwrites():
     text = _text(FLOWS / "opening.md")
     assert "WRITE the state file" in text
     assert "A document already exists at {path}. Name another path." in text
-
-
-# --- unit: s4-document-flows ---
-
-def test_readiness_advises_and_never_blocks():
-    text = _text(FLOWS / "readiness.md")
-    assert "never blocks" in text
-    assert "OPEN" in text
-    assert "the user's word to write is final" in text
 
 
 # --- unit: s5-shape-and-docs ---

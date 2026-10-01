@@ -9,7 +9,7 @@ from pathlib import Path
 
 from .checker import PROFILES, load_schema, validate_path
 from .graph import main_graph
-from .lang import main_lang_check, main_lang_extract
+from .lang import main_lang_check, main_lang_draft, main_lang_extract
 from .progress import RUNS, main_progress
 from .scaffold import scaffold
 from .scope_check import main_scope_check
@@ -64,6 +64,10 @@ def main(argv=None) -> int:
                       help="emit findings in the note+findings envelope")
     lang.add_argument("--schema", type=Path, default=None,
                       help="override the packaged dictionary schema file")
+    lang.add_argument("--draft", type=Path, default=None, metavar="STATE",
+                      help="check the drafts in an interview's state file instead of "
+                           "specs/: its new terms, statement, non-goals, checks and "
+                           "each unit's done_means; writes nothing")
     lext = sub.add_parser(
         "lang-extract",
         help="report-only calibration harvest: candidate words, banned hits, "
@@ -155,6 +159,8 @@ def main(argv=None) -> int:
         return main_scope_check(args)
 
     if args.command == "lang-check":
+        if args.draft is not None:
+            return main_lang_draft(args)
         return main_lang_check(args)
 
     if args.command == "lang-extract":

@@ -28,8 +28,9 @@ PROMPTLANG_TAGS = {"purpose", "instructions", "variables", "context",
 CHAIN_CHARS = ";|&>"
 CHAR_CEILING = 12_000  # tests/test_skill_interview.py CHAR_CEILING
 
-# One flow per half; readiness.md and output.md stand until their own unit.
-FLOW_FILES = {"opening.md", "request.md", "solution.md", "readiness.md", "output.md"}
+# One flow per half; signing.md holds the checks before each seat signs, and
+# output.md stands until its own unit.
+FLOW_FILES = {"opening.md", "request.md", "solution.md", "signing.md", "output.md"}
 HALVES = (("request.md", "Q", "Q1-Q15"), ("solution.md", "S", "S1-S11"))
 
 # One step per section: its id, its name, and its key under `answers` (the
@@ -149,9 +150,9 @@ def test_sc1_2_skill_holds_one_flow_per_half_and_no_sections_flow():
 def test_sc1_2_no_prompt_file_points_at_the_retired_sections_flow():
     for path in [SKILL_DIR / "SKILL.md"] + sorted(FLOWS.glob("*.md")):
         assert "sections.md" not in _text(path), path.name
-    readiness = _flat(_text(FLOWS / "readiness.md"))  # its pointer names both halves
-    assert "{skill-dir}/flows/request.md" in readiness
-    assert "{skill-dir}/flows/solution.md" in readiness
+    signing = _flat(_text(FLOWS / "signing.md"))  # its pointer names both halves
+    assert "{skill-dir}/flows/request.md" in signing
+    assert "{skill-dir}/flows/solution.md" in signing
 
 
 def test_sc1_2_dispatch_routes_each_half_to_its_own_flow():
@@ -162,7 +163,7 @@ def test_sc1_2_dispatch_routes_each_half_to_its_own_flow():
     for name in FLOW_FILES:
         assert f"{{skill-dir}}/flows/{name}" in skill, name
     assert "Q1-Q15" in skill and "S1-S11" in skill  # each half's steps, in the file list
-    for phase in ("opening", "request", "solution", "readiness", "output", "complete"):
+    for phase in ("opening", "request", "solution", "output", "complete"):
         assert f"`{phase}`" in skill, phase
     assert "none starts a new run" in skill  # no state file -> the first question
     assert "Exactly one file resumes" in skill  # a state file -> the recorded step
@@ -258,10 +259,10 @@ def test_sc1_2_a_pause_keeps_next_and_a_later_run_goes_on_at_that_step():
 
 def test_sc1_2_each_half_hands_over_when_its_last_step_closes():
     last = _step("request.md", "Q", "Q15")
-    assert "`phase: solution`" in last and "`next: S1`" in last
+    assert "`phase: request`" in last and "`next: P1`" in last
     assert "S1" in _steps(_flow("solution.md"), "S")
     last = _step("solution.md", "S", "S11")
-    assert "`phase: readiness`" in last and "`next: R1`" in last
+    assert "`phase: solution`" in last and "`next: E1`" in last
 
 
 def test_sc1_2_bug_fix_sections_are_asked_only_for_a_bug_fix():
@@ -413,7 +414,7 @@ def test_sc3_3_a_check_with_no_accepted_scenario_gets_an_open_where_the_request_
     gherkin = _step("request.md", "Q", "Q15")
     assert "At the signature of the request half" in gherkin
     assert UNCONFIRMED_OPEN in gherkin
-    assert gherkin.index(UNCONFIRMED_OPEN) < gherkin.index("`phase: solution`")
+    assert gherkin.index(UNCONFIRMED_OPEN) < gherkin.index("`phase: request`")
 
 
 # --- Constraints 1, 2 and 5 of the feature document ---
@@ -421,7 +422,7 @@ def test_sc3_3_a_check_with_no_accepted_scenario_gets_an_open_where_the_request_
 def test_c1_flows_of_both_halves_keep_the_promptlang_form_and_the_ceiling():
     touched = {SKILL_DIR / "SKILL.md": "{skill-dir}/flows/request.md",
                FLOWS / "opening.md": "`phase: request`",
-               FLOWS / "readiness.md": "{skill-dir}/flows/request.md",
+               FLOWS / "signing.md": "{skill-dir}/flows/request.md",
                FLOWS / "request.md": "Q15. GHERKIN",
                FLOWS / "solution.md": "S11. NOTES"}
     for path, marker in touched.items():
