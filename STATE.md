@@ -2,24 +2,29 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-30 (session 68 close, feature-document f1 built)._
+> _Generated 2026-09-30 (session 69 close, feature-document f2 built)._
 
 ## Now
-- **`f1-format` is built and closed** (session 68, branch
-  `session-68-feature-document-f1`): USAGE's interview subsection at
-  `6e0b381`, rewritten for f1 to f4 with every mark red; the skill and
-  tests at `0e1514e`. The interview's template holds ADR 0029's format
-  as 0033 to 0036 amend it, the document lands at `docs/features/<id>.md`
-  as r1 at O6, the state file at `docs/features/<id>.state.yaml`
-  (`spec-interview-state/2`), and output's render at the end retired.
-  Two-Key PASS at round 1, suite 766. Four units remain: `f2-sections`
-  (SC1.2, SC3.1, SC3.2+SC3.3), `f3-signing` (SC1.3, SC2.1, SC2.2+SC2.3,
-  with `lang-check --draft`), `f4-intake` (SC4.1 to SC4.3, with the tree's
-  `Parked:` reading), `f5-release` (SC5.1, SC5.2). Two manual receipts: a
-  live run through both signatures (SC1.3), intake parking on it (SC4.1).
-- Interim state until f2 and f3, by design: `flows/sections.md` still asks
-  ADR 0026's Q1 to Q12 and `flows/readiness.md` its five rules, against
-  the new template.
+- **`f2-sections` is built and closed** (session 69, branch
+  `session-69-feature-document-f2`): USAGE's words for an r1 document at
+  `df00510`, on two user rulings; the skill and tests at `432da9c`.
+  `flows/sections.md` retired for one flow per half: `flows/request.md`
+  asks Q1 to Q15 in the template's order and closes on Terms (Q14) and
+  the Gherkin step (Q15); `flows/solution.md` asks S1 to S11, the
+  solution half then Decisions, Links out and Notes. O6 writes "(not yet
+  asked)" for a section no step has written, and leaves the Gherkin and
+  the Record without a stamp. Q15 derives one scenario per check, marks a
+  thin check `OPEN: Ready check 3: ...` under its line in Checks, and
+  stamps the block. Two-Key PASS at round 1, suite 795. Three units
+  remain: `f3-signing` (SC1.3, SC2.1, SC2.2+SC2.3, with `lang-check
+  --draft`), `f4-intake` (SC4.1 to SC4.3, with the tree's `Parked:`
+  reading), `f5-release` (SC5.1, SC5.2). Two manual receipts: a live run
+  through both signatures (SC1.3), intake parking on it (SC4.1).
+- `f1-format` closed in session 68 (USAGE `6e0b381`, unit `0e1514e`).
+- Interim state until f3, by design: `flows/readiness.md` keeps its five
+  rules, which read keys f2 retired (`not_in_scope`, `misc`, "so I can",
+  two or three scenarios per criterion), so a run at HEAD marks false
+  gaps there.
 - The contract at intake (session 67): ADR 0036 and 15 terms at
   `fde018d`, the contract at `63508f2`, six readings kept at readback.
 - Risk 5 stands: the interview never picks up a document it did not
@@ -33,7 +38,7 @@
   `NOTES_feature-document_*` files.
 - Carried: 19 features: 18 with a contract, 16 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
-  `feature-document` `[doing]`, f1 closed; `g1-requirements-spec` before
+  `feature-document` `[doing]`, f1 and f2 closed; `g1-requirements-spec` before
   intake, `[doing]`.
 
 ## Blockers
@@ -41,24 +46,35 @@
 
 ## Next actions
 1. Build `feature-document`'s remaining units in order, one per session
-   (session 69 on: `f2-sections`), then release 0.18.0: three sessions.
+   (session 70: `f3-signing`), then release 0.18.0: three sessions.
    Each unit's Retirements row names what test-retirer should find. Every
    prompt file a unit touches passes `python -m prompt_lang` and stays
-   under 12,000 characters (Constraints 1). f1's Two-Key advisories, for
-   f2 and f3 to settle:
-   - O6 fills no stamp in the derived tags (`[Intake · derived from
-     r{n}]` under Record, `[PO seat · derived from r{n}]` under Gherkin),
-     so an r1 document carries a literal `r{n}`; say what a block not yet
-     derived reads (f2 for the Gherkin, f3 for the stale rule).
-   - O6 writes "(none)" into every section not yet asked, the words a
-     section with nothing to say reads; f2 decides the placeholder.
-   - No flow writes an OPEN mark inline since W1 retired;
-     `readiness.md:25` still says to write the document; `sections.md`
-     records ADR 0026's answer keys; O4 names `sections.md` Q9 as the
-     solution half (true once f2 lands).
-   - Wording, for f5's sweep: `SKILL.md:44` and `USAGE.md:139` say
-     "then eighteen sections" after the status line, but ADR 0029's
-     eighteen count the table, the title and the status line.
+   under 12,000 characters (Constraints 1). Advisories from f1's and
+   f2's Two-Key, by the unit that settles each:
+   - f3, the stamp: Q15 stamps the Gherkin with the newest revision when
+     it runs, which is r1, since a step adds no revision row. The feature
+     document draws `derived from r3`, the "request half finished" row.
+     f3 stamps the block again at that row, or it reads stale at once.
+   - f3, `readiness.md`: R2 reads the retired keys; `readiness.md:25`
+     still says to write the document; R1 runs a section's step and
+     "then return to R1", but each step moves `next` on, and Q15 hands
+     off to the solution half.
+   - f3, `thin`: the state file holds `thin: true` (an answer probed
+     once) and `thin: {reason}` (a thin check); Q15's "not thin" could
+     match the first. Rename the probe mark.
+   - f3, a request half changed late: S2 can send "a thing we will not
+     build" into Non-goals after the PO seat signed; say how that ages
+     the signature. With no engineer seat S2 is skipped, so the places
+     Q9 sorted into `answers.out_of_scope` never reach the document.
+   - f3 makes true `request.md:11`'s "the checks before signing read the
+     terms"; f4 makes true `solution.md:49`'s "intake copies the done
+     means word for word". `solution.md:12` says the engineer seat
+     answers S1 to S8, while S8 says both seats answer.
+   - f5's sweep, wording: `SKILL.md` and `USAGE.md:139` say "then
+     eighteen sections" after the status line, but ADR 0029's eighteen
+     count the table, the title and the status line; USAGE says the PO
+     seat "accepts, edits or drops", the flow "accept, change or drop",
+     the contract's words.
 2. Then G1's solution half, by hand from the two NOTES files (the
    interview never picks up a document it did not start, feature-document
    risk 5), to ADRs 0033 and 0036; open for it: where the component declaration record and
@@ -70,7 +86,8 @@
    each through its own interview.
 4. Small, parked: `test-retirer.js` has its agent wait on the whole
    suite, and the run dies when the agent returns (session 68); hand the
-   suite run to the session. t4's four Two-Key advisories (USAGE:904's "The `G0`
+   suite run to the session. Its overlay cannot delete a file, and its
+   `tar` step needs `--force-local` under Git Bash (session 69). t4's four Two-Key advisories (USAGE:904's "The `G0`
    verdict still reads from the validator" unqualified; wrap nits at
    USAGE:686, :1101, :1142; the ratified Diagnostic term,
    `specs/vocabulary/diagnostic.yaml`, still says "under its condition",
@@ -153,8 +170,14 @@
   `overlay` (the prototype's changed files) when no name goes. The release
   unit's Two-Key runs with `sweep: true`. Every Two-Key receipt must exit
   0. Session 64's Two-Key rounds: 278K, 242K, 254K and 243K; session
-  68's f1: 226K. A workflow agent's whole-suite run can die when the
-  agent returns: run it in the session and classify from its output. For
+  68's f1: 226K; session 69's f2: 263K (drafter 221K, retirer 80K,
+  developer 131K and 62K). A workflow agent's whole-suite run can die
+  when the agent returns: run it in the session and classify from its
+  output. For the retirer, run the overlaid suite in a scratch worktree
+  first, then name the failing tests in `context`, have it run only
+  their module, and say any file deletion there. Never run two whole
+  suites at once: the session's run was stopped three minutes in while
+  a developer's ran (session 69). For
   a prompt-only unit, the drafter's prototype is a scratch copy of the
   skill folder, not the `taskcontract` package (say so in its `notes`).
 - Before approving a drafted list: run the whole suite on the prototype
@@ -167,7 +190,10 @@
 - Before accepting a developer deviation, test it against every
   done_means sentence. Run the suite yourself after every developer round;
   a developer whose suite run outlasts its turn leaves Claude's run as the
-  receipt. A path wrapper left with no caller goes.
+  receipt. A path wrapper left with no caller goes. For a prompt unit,
+  read each new step against the ADRs the format cites, besides the
+  interface note: f2's S6 lacked ADR 0033's tests and retirements until
+  a second developer round (session 69).
 - A manual receipt (a live pane) is taken after the commit and handed to
   Two-Key as a focus pointer holding its text. The herdr probe: `herdr
   pane split --pane <own> --direction down --cwd <root> --no-focus`, `pane

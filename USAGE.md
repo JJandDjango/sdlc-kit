@@ -145,9 +145,13 @@ Units, Order) and Risks and cost, stands below it, and the engineer seat
 signs it. The record follows: Decisions and open questions, Traceability,
 Notes and the Appendix. The four bug-fix sections appear only in a bug
 fix's document, with its incident reference and regression scenario. A
-section with nothing to say reads "(none)". Before intake, the Appendix's
-Contract block reads "(none: intake writes `specs/<id>/contract.yaml`)",
-with no stamp.
+section with nothing to say reads "(none)", and one the interview has not
+asked yet reads "(not yet asked)". Before intake, the Appendix's Contract
+block reads "(none: intake writes `specs/<id>/contract.yaml`)", with no
+stamp. The Gherkin and the Record carry no stamp either until their step
+writes them: they read "(none: the Gherkin step writes one scenario per
+check)" under `[PO seat · derived]` and "(none: intake writes the
+record)" under `[Intake · derived]`.
 
 🔴 **The run.** The interview asks the sections in order, one question at
 a time. It writes the state file after every step, and a later run
