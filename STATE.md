@@ -49,7 +49,8 @@
   intake, `[doing]`.
 
 ## Blockers
-- None. The session's push and PR wait on the user's word.
+- None. Session 70 reached `main` through PR #82, a merge commit, on
+  the user's word (2026-10-01).
 
 ## Next actions
 1. Build `feature-document`'s remaining units in order, one per session

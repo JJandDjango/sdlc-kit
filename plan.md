@@ -85,7 +85,8 @@ prompt files; the unit closed.
    PASS at round 1 on the three commits, thirteen receipts, five
    advisories; the unit closed.
 10. ~~Close.~~ `STATE.md` regenerated; this plan struck; the three
-    scratch worktrees removed; the push and the PR on the user's word.
+    scratch worktrees removed; pushed and merged through PR #82, each on
+    the user's word.
 
 Steps 1 and 10 sit outside a contract unit, so the tree does not show
 them.
