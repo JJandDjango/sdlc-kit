@@ -2,29 +2,36 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-09-30 (session 69 close, feature-document f2 built)._
+> _Generated 2026-10-01 (session 70 close, feature-document f3 built)._
 
 ## Now
-- **`f2-sections` is built and closed** (session 69, branch
-  `session-69-feature-document-f2`): USAGE's words for an r1 document at
-  `df00510`, on two user rulings; the skill and tests at `432da9c`.
-  `flows/sections.md` retired for one flow per half: `flows/request.md`
-  asks Q1 to Q15 in the template's order and closes on Terms (Q14) and
-  the Gherkin step (Q15); `flows/solution.md` asks S1 to S11, the
-  solution half then Decisions, Links out and Notes. O6 writes "(not yet
-  asked)" for a section no step has written, and leaves the Gherkin and
-  the Record without a stamp. Q15 derives one scenario per check, marks a
-  thin check `OPEN: Ready check 3: ...` under its line in Checks, and
-  stamps the block. Two-Key PASS at round 1, suite 795. Three units
-  remain: `f3-signing` (SC1.3, SC2.1, SC2.2+SC2.3, with `lang-check
-  --draft`), `f4-intake` (SC4.1 to SC4.3, with the tree's `Parked:`
-  reading), `f5-release` (SC5.1, SC5.2). Two manual receipts: a live run
-  through both signatures (SC1.3), intake parking on it (SC4.1).
-- `f1-format` closed in session 68 (USAGE `6e0b381`, unit `0e1514e`).
-- Interim state until f3, by design: `flows/readiness.md` keeps its five
-  rules, which read keys f2 retired (`not_in_scope`, `misc`, "so I can",
-  two or three scenarios per criterion), so a run at HEAD marks false
-  gaps there.
+- **`f3-signing` is built and closed** (session 70, branch
+  `session-70-feature-document-f3`): USAGE at `9fd60ad` (three user
+  rulings) and `dddef83` (the `Measured:` row lands once the ready checks
+  are read); the command, the skill and the tests at `5ddd858`.
+  `lang-check --draft <state file>` reads the interview's state file
+  only, joins the new terms as drafts in memory, reports `CL014`, and
+  ends on a count line. `flows/readiness.md` retired for
+  `flows/signing.md`: P1 to P7 before the PO seat signs, E1 to E7 before
+  the engineer seat signs; each run shows the command's lines, reads the
+  half's ready checks (1 to 8, 11 to 14), marks each gap OPEN, reports a
+  stale block, and lands as one `Measured:` row; the signature is a text
+  row and the `Signed:` row right after it. No new phase: Q15 hands to
+  P1, S11 to E1. Two-Key PASS at round 1, suite 877. Two units remain:
+  `f4-intake` (SC4.1 to SC4.3, with the tree's `Parked:` reading) and
+  `f5-release` (SC5.1, SC5.2).
+- The rulings (user, 2026-10-01): each text row the interview writes
+  moves the Gherkin's stamp; a write into a signed half adds a text row
+  and the seat is asked to sign again; with no engineer seat the solution
+  half's steps, checks and signature are skipped, and Out of scope lists
+  the PO seat's places as not confirmed.
+- SC1.3's manual receipt is taken: a second Claude session ran the skill
+  at `5ddd858` on a toy feature `hello-name`, 99 turns, both halves
+  signed, the tree showing both `done`. Its document, state file and
+  transcript stand untracked in `RECEIPT_feature-document-f3_2026-10-01/`
+  for f4's receipt. The document holds two OPEN marks below the seat
+  boundary (ready checks 12 and 14), which the engineer seat signed over.
+- `f1-format` closed in session 68, `f2-sections` in session 69.
 - The contract at intake (session 67): ADR 0036 and 15 terms at
   `fde018d`, the contract at `63508f2`, six readings kept at readback.
 - Risk 5 stands: the interview never picks up a document it did not
@@ -38,7 +45,7 @@
   `NOTES_feature-document_*` files.
 - Carried: 19 features: 18 with a contract, 16 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
-  `feature-document` `[doing]`, f1 and f2 closed; `g1-requirements-spec` before
+  `feature-document` `[doing]`, f1 to f3 closed; `g1-requirements-spec` before
   intake, `[doing]`.
 
 ## Blockers
@@ -46,30 +53,35 @@
 
 ## Next actions
 1. Build `feature-document`'s remaining units in order, one per session
-   (session 70: `f3-signing`), then release 0.18.0: three sessions.
+   (session 71: `f4-intake`), then release 0.18.0: two sessions.
    Each unit's Retirements row names what test-retirer should find. Every
    prompt file a unit touches passes `python -m prompt_lang` and stays
-   under 12,000 characters (Constraints 1). Advisories from f1's and
-   f2's Two-Key, by the unit that settles each:
-   - f3, the stamp: Q15 stamps the Gherkin with the newest revision when
-     it runs, which is r1, since a step adds no revision row. The feature
-     document draws `derived from r3`, the "request half finished" row.
-     f3 stamps the block again at that row, or it reads stale at once.
-   - f3, `readiness.md`: R2 reads the retired keys; `readiness.md:25`
-     still says to write the document; R1 runs a section's step and
-     "then return to R1", but each step moves `next` on, and Q15 hands
-     off to the solution half.
-   - f3, `thin`: the state file holds `thin: true` (an answer probed
-     once) and `thin: {reason}` (a thin check); Q15's "not thin" could
-     match the first. Rename the probe mark.
-   - f3, a request half changed late: S2 can send "a thing we will not
-     build" into Non-goals after the PO seat signed; say how that ages
-     the signature. With no engineer seat S2 is skipped, so the places
-     Q9 sorted into `answers.out_of_scope` never reach the document.
-   - f3 makes true `request.md:11`'s "the checks before signing read the
-     terms"; f4 makes true `solution.md:49`'s "intake copies the done
-     means word for word". `solution.md:12` says the engineer seat
-     answers S1 to S8, while S8 says both seats answer.
+   under 12,000 characters (Constraints 1). Carried, by the unit that
+   settles each:
+   - f4, the receipt: intake on `RECEIPT_feature-document-f3_2026-10-01/
+     hello-name.md` with one check left out of Units. The document holds
+     two OPEN marks (ready checks 12 and 14), so intake parks on those
+     first (SC4.2); for SC4.1's message, answer both and take one check
+     out of a Units row. The live-run method is under Standing practice.
+   - f4 makes true `solution.md`'s "intake copies the done means word
+     for word".
+   - f5's sweep, the signing flow (f3's Two-Key and live run): E2 gives
+     a free path (`CHANGELOG.md`, `MAP.md`) no exemption, so a release
+     row that names one reads `outside Scope`; S6 never asks which unit
+     is the release unit; P6 writes `next: P1` before Q15 proposes a
+     changed check's scenario again, so a pause there skips it (the
+     stale report then shows it); E6's path back into a request-half
+     section runs neither Q15 nor P1 to P5 again, and leaves the order
+     of the PO seat's new signature and E1 unsaid; Q14 never asks
+     whether a term amends another; S3 never asks for each output kind,
+     so ready check 12 opens with no turn to answer it; the "sections
+     written" count in the finished rows is one a seat cannot check;
+     with no engineer seat, S1's Out of scope lines land under no text
+     row. In the live run E1 showed 3 of the command's 16 lines, against
+     "SHOW its lines as printed".
+   - f5's sweep, the command: with a repo dictionary that cannot be
+     read, `--draft` prints its `CL000` line and still ends `(no
+     dictionary here - door at rest)`.
    - f5's sweep, wording: `SKILL.md` and `USAGE.md:139` say "then
      eighteen sections" after the status line, but ADR 0029's eighteen
      count the table, the title and the status line; USAGE says the PO
@@ -201,6 +213,28 @@
   wait-output <new> --match <text>`, `pane send-keys <new> down ...` to
   move, `pane read <new> --source visible`, `pane close <new>`. Own pane:
   `printenv HERDR_PANE_ID`. Never report state on another session's pane.
+- A live run of the interview (session 70): two worktrees at the unit
+  commit, outside Claude Code's temp tree. One is the plugin folder
+  (`--plugin-dir`), the other the repository the session runs in; a
+  session may not write in its own plugin's folder, where every write
+  reads "a sensitive file". The skill's name takes the plugin folder's
+  name (`<folder>:product-specification-interview`), never `sdlc:`,
+  which is the installed release. The second session runs headless
+  (`claude -p`, then `--resume <id>` per turn) through
+  `.claude/workflows/live-run-driver.py`, which runs each turn detached
+  and hidden (`CREATE_NO_WINDOW`: a window that takes the focus is not
+  acceptable); `.claude/workflows/live-run-seats.js` has one agent answer
+  as the seats from a script, blind to the skill's files. About 100
+  turns, 35 minutes, 85K tokens. Copy the document, its state file and
+  the transcript to an untracked `RECEIPT_*` folder before the worktrees
+  go.
+- A unit with a code half and a prompt half (session 70): two drafter
+  runs side by side, each with its own scratch folder and test file,
+  then two developers side by side on separate files, each told not to
+  run the whole suite; the session runs it once after both. Session
+  70's f3: drafters 222K and 255K, retirer 93K, developers 108K, 113K
+  and 74K, Two-Key 334K. Hand each developer its interface note as a
+  file, written from the drafter's result by a script.
 - The whole suite runs 3 to 6 minutes; a local model holding RAM can get
   a background run killed for memory. A PR's CI waits through `gh pr
   checks <n> --watch` in the background.
@@ -213,6 +247,12 @@
   every change.
 
 ## Open questions
+- `lang-check --draft` runs none of vocab-check's own rules on a draft
+  term, as the feature document's Interfaces draws it. A term with a
+  definition under 20 characters (VT002) or a name that fails the slug
+  pattern (VT006) reads clean before the PO seat signs and fails once
+  intake writes its term file. Add the two rules to the command, or
+  leave them to intake? (f3's Two-Key, an advisory.)
 - `lang` skips an ALL-CAPS token before it matches a glossary phrase, so
   "OPEN mark" never matches its own term (`mark` reads unknown); the
   contract says "an OPEN". Fix in `lang.py`, or leave?

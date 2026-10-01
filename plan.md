@@ -43,48 +43,61 @@ Approvals split as in sessions 61 to 64, 68 and 69: Claude approves the
 test list and the commit on review; the plan, the rulings, the USAGE
 text, the push, the PR and the merge stay on the user's word.
 
+**Closed.** The deliverable is met: f3 at `9fd60ad` and `dddef83`
+(USAGE) and `5ddd858` (the command, the skill and the tests), Two-Key
+PASS at round 1 with five advisories, carried in `STATE.md`. Suite 877
+passed, scope-check green, `prompt_lang` green on the four touched
+prompt files; the unit closed.
+
 ## Steps
 
-1. Open. Branch `session-70-feature-document-f3` cut from `8cd3d27`;
-   this plan committed once the user has read it.
-2. f3, the rulings. Three readings go to the user in one message, each
-   with a recommendation: when the Gherkin stamp moves; what a request
-   half changed after its signature does to that signature; where Q9's
-   places land with no engineer seat. Then any USAGE text they change,
-   approved in chat and committed on its own.
-3. f3, draft. Two narrow drafter runs: the command (`lang-check --draft`,
-   `CL014`), its prototype the `taskcontract` package; then the flows,
-   their prototype a scratch copy of the skill folder. Each list proved
-   red, each prototype proved green.
-4. f3, retire. The session runs the overlaid suite in a scratch
-   worktree, then test-retirer reads only the failing tests' module.
-5. f3, approve the list and prove red. The worktree suite passes; each
-   fixed detail checked against the contract, the feature document and
-   its Constraints; `progress run --expect red` per check.
-6. f3, green. Two developer rounds at least: the command, then the
-   flows. The session runs the suite after each.
-7. f3, commit. Each check green at the clean commit.
-8. f3, the live run. The receipt for SC1.3, in a scratch worktree at the
-   commit. Its shape goes to the user first (recommended: a second
-   Claude session in a herdr pane runs the skill from the worktree, and
-   this session answers as two toy seats). The document and its state
-   file are kept for f4's receipt.
-9. f3, Two-Key. The receipt's text rides as a focus pointer; the unit
-   closes on PASS.
-10. Close. `STATE.md` regenerated; this plan struck; the push and the PR
-    on the user's word.
+1. ~~Open.~~ Branch cut from `8cd3d27`; the plan at `19e4c40`.
+2. ~~f3, the rulings.~~ The user ruled all three as recommended. USAGE's
+   three paragraphs at `9fd60ad`, approved in chat.
+3. ~~f3, draft.~~ Two drafter runs side by side. The command: 27 tests
+   (45 cases) in `tests/test_lang_draft.py`, red 45 of 45, the prototype
+   green with thirteen mutations caught. The flows: 37 tests (38 cases)
+   in `tests/test_interview_signing.py`, red 38 of 38, the prototype
+   green with eighteen mutations caught.
+4. ~~f3, retire.~~ The overlaid suite in a worktree: eight failures in
+   two modules. The retirer retired
+   `test_readiness_advises_and_never_blocks` and amended seven.
+5. ~~f3, approve the list and prove red.~~ The worktree suite passed
+   877; approved by Claude; SC1.3, SC2.1 and SC2.2+SC2.3 red (15, 53 and
+   15 failing).
+6. ~~f3, green.~~ Two developers side by side, no deviation; the
+   session's suite read 877. Round 2 was Claude's to ask for, on
+   `flows/signing.md`: which row is the release unit, the path back into
+   a request-half section from E6, and the `CL000` line copied without
+   its locator. Plain `lang-check` proved byte for byte on three roots.
+7. ~~f3, commit.~~ At `5ddd858`; each check green at the clean commit;
+   scope-check green.
+8. ~~f3, the live run.~~ The approved shape changed in how it ran: the
+   second session ran headless, turn by turn, and an agent answered as
+   the two seats from a script (about 100 turns would not fit a pane
+   read from this session). Two false starts: a session may not write in
+   its own plugin's folder, and the driver opened a window per turn
+   until it started the session hidden. 99 turns, both halves signed,
+   the tree showing both `done`. Kept in
+   `RECEIPT_feature-document-f3_2026-10-01/`.
+9. ~~f3, Two-Key.~~ One USAGE sentence first, on the user's approval:
+   the `Measured:` row lands once the ready checks are read (`dddef83`).
+   PASS at round 1 on the three commits, thirteen receipts, five
+   advisories; the unit closed.
+10. ~~Close.~~ `STATE.md` regenerated; this plan struck; the three
+    scratch worktrees removed; the push and the PR on the user's word.
 
 Steps 1 and 10 sit outside a contract unit, so the tree does not show
 them.
 
-Session boundary: f3 is the largest unit (code, prompt text and a live
-run). If context nears 40% before step 8, the session wraps at step 7's
-commit, and session 71 opens on the live run and Two-Key.
-
-Decisions this session: ten. The user's: (1) this plan, (2) to (4) the
-three rulings, (5) the USAGE text they change, (6) the live run's shape.
-Claude's, on review: (7) the test list, (8) the commit. The user's at
-the close: (9) the push and the PR, (10) the merge.
+Decisions this session: eleven. The user's: (1) this plan, (2) to (4)
+the three rulings, (5) the USAGE text they change, (6) the live run's
+shape, (7) the `Measured:` row's sentence in USAGE. Claude's, on review:
+(8) the test list, (9) the commit. The user's at the close: (10) the
+push and the PR, (11) the merge. Readings Claude settled with the test
+list and told the user: no `VT` line from the command (now an open
+question in `STATE.md`), and a seat that declines to sign pauses the
+run before the solution half opens.
 
 Deferred, not this session:
 - `f4-intake`, `f5-release` (ships 0.18.0).
