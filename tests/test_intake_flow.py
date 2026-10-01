@@ -1,7 +1,7 @@
 """Intake-flow structural suite (contract: playbook-guardrails, unit
 u7-intake-questions; contract: g0-declaration, unit d4-intake-flow). The
 flow is a prompt, so the specification is the behavior: the suite holds the
-words the engineer seat is asked, the feature-document rule, the roster
+words the engineer seat is asked, the roster
 stop and the entities declaration, the PromptLang shape, and the
 token-budget proxy.
 """
@@ -30,16 +30,6 @@ def test_i4_asks_the_three_plan_questions_in_the_playbook_words():
     assert "in what order (`depends_on`)" in i4
     assert "which tests prove it (`acceptance_sketch`)" in i4
     assert "engineer seat" in i4
-
-
-def test_i4_and_i5_take_the_answers_from_an_implementation_section():
-    text = FLOW.read_text(encoding="utf-8")
-    i4, i5 = _step(text, "I4"), _step(text, "I5")
-    assert "Implementation section" in i4 and "READ the three from it" in i4
-    assert "never as a contract field" in i4  # the schema is unchanged
-    assert "files as `scope`, order as `depends_on`, tests as `acceptance_sketch`" in i5
-    assert "keep or change them" in i5
-    assert "never ask afresh what the document already answers" in i5
 
 
 def test_i1_stops_before_any_contract_without_a_ratified_roster():

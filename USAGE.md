@@ -587,10 +587,12 @@ not the author.
 
 🟢 The engineer seat's three answers are the playbook's plan questions,
 asked in those words at I4 and I5: which files change (`scope`), in what
-order (`depends_on`), which tests prove it (`acceptance_sketch`). When the
-raw request is a feature document with an Implementation section, intake
-reads the three from it and asks the seats to keep or change them (kit
+order (`depends_on`), which tests prove it (`acceptance_sketch`) (kit
 0.13.0).
+
+🔴 When the raw request is a feature document, intake reads the three
+from its Scope, Order and Units sections and asks the seats to keep or
+change them.
 
 ### The answer record 🟢
 
@@ -1483,6 +1485,11 @@ file: docs/features/g1-requirements-spec.md:6
 🟢 A `Signed:` row never ages a contract: the document's revision in
 "Drift from the feature document" leaves out every row that opens
 `Signed:`, a signature or not.
+
+### A parked document 🔴
+
+🔴 A `Parked:` row is no text row either: intake writes it when it parks
+a document, and it never moves `rN`.
 
 ---
 

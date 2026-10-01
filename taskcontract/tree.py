@@ -100,11 +100,11 @@ evidence.
 A contract carries at most one drift mark, read afresh at every print from
 its feature doc's revision table, the first table in the file. A row counts
 when its last cell opens on `r<N>:`, and a text row is a counted row that
-opens, after `r<N>:` and its blanks, on none of `Ready:`, `Measured:` or
-`Signed:`; the document's revision is the highest N of a text row, so a
-`Signed:` row, a signature or not, never ages it, and the contract's is
-the `rM` that the first `derived from rM` in the newest `Ready:` row naming
-one gives, the lower row winning a tie. The mark reads
+opens, after `r<N>:` and its blanks, on none of `Ready:`, `Measured:`,
+`Signed:` or `Parked:`; the document's revision is the highest N of a text
+row, so a `Signed:` row, a signature or not, never ages it, and the
+contract's is the `rM` that the first `derived from rM` in the newest
+`Ready:` row naming one gives, the lower row winning a tie. The mark reads
 `no feature document` when no file is at docs/features/<id>.md, `no
 "Ready:" row` when no `Ready:` row names an `rM` or the file cannot be read
 as text, and `stale: document rD, contract from rM` when the document's
@@ -187,13 +187,13 @@ HALVES = (("request", "Request half"), ("solution", "Solution half"))
 # A feature doc's revision table: a pipe after a backslash never splits a
 # cell; a counted row's last cell opens on `r<N>:`, and a `Ready:` row names
 # its `rM` by the first `derived from rM`, the digits ending at a non-word.
-# A text row opens on none of the three words, and only a text row ages
+# A text row opens on none of the four words, and only a text row ages
 # anything; a signature's words after `r<N>:` are fixed (ADR 0034), the
 # half's name ending at a non-word.
 _PIPE = re.compile(r"(?<!\\)\|")
 _REVISION = re.compile(r"r([0-9]+):\s*")
 _DERIVED = re.compile(r"derived from r([0-9]+)(?!\w)")
-_NOT_TEXT = ("Ready:", "Measured:", "Signed:")
+_NOT_TEXT = ("Ready:", "Measured:", "Signed:", "Parked:")
 _SIGNED = re.compile(r"Signed: (request|solution) half(?!\w)")
 
 
@@ -328,8 +328,9 @@ def drift(path: Path) -> str | None:
     document` when no file is there, `no "Ready:" row` when no `Ready:` row
     names an `rM` or the file cannot be read as text, `stale: document rD,
     contract from rM` when the document's revision, which leaves out the
-    `Ready:`, `Measured:` and `Signed:` rows, passed the contract's, else
-    None. Only the first table is read, and none of its words print."""
+    `Ready:`, `Measured:`, `Signed:` and `Parked:` rows, passed the
+    contract's, else None. Only the first table is read, and none of its
+    words print."""
     if not path.is_file():
         return NO_DOCUMENT
     lines = _lines(path)

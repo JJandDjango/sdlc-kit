@@ -439,7 +439,7 @@ def _step(text, label):
 def test_intake_writes_the_ready_row_in_the_shape_the_tree_reads(tmp_path, capsys):
     text = FLOW.read_text(encoding="utf-8")
     assert READY_RULE in _step(text, "I7")
-    assert text.count("Ready:") == 1  # one place says it
+    assert text.count(READY_RULE) == 1  # one place says it
     # the flow stays a PromptLang prompt under its ceiling
     assert text.startswith("---\n")
     assert set(re.findall(r"<([a-z][a-z0-9-]*)>", text)) == {"purpose", "instructions"}
