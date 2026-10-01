@@ -1486,6 +1486,11 @@ file: docs/features/g1-requirements-spec.md:6
 "Drift from the feature document" leaves out every row that opens
 `Signed:`, a signature or not.
 
+### A parked document 🔴
+
+🔴 A `Parked:` row is no text row either: intake writes it when it parks
+a document, and it never moves `rN`.
+
 ---
 
 ## 10. Troubleshooting
