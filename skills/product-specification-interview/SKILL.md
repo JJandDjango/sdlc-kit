@@ -27,7 +27,8 @@ bind inside every flow.
 Runs in the consumer repo's Claude Code session; cwd is the repo root.
 {skill-dir} is the directory holding this file:
   {skill-dir}/flows/opening.md    O1-O6: id, origin, title, seats, materials; the state file from O1 on, the document as r1 at O6
-  {skill-dir}/flows/sections.md   Q1-Q12: the sections in order, one question at a time
+  {skill-dir}/flows/request.md    Q1-Q15: the request half in order, one question at a time, then Terms and the Gherkin step
+  {skill-dir}/flows/solution.md   S1-S11: the solution half in order, then the record's authored sections
   {skill-dir}/flows/readiness.md  R1-R4: readback, advisory check, OPEN marks
   {skill-dir}/flows/output.md     W1-W2: Google Docs form, name the next command
   {skill-dir}/templates/feature-document.md.template
@@ -53,27 +54,29 @@ Interfaces, Sources, Constraints, Units, Order; then Risks and cost)
 stands below it, and the engineer seat signs it. The record follows:
 Decisions and open questions, Traceability (Links out, Record), Notes,
 and the Appendix (Contract, Gherkin, Terms). Before intake, the Contract
-block names `specs/{id}/contract.yaml` with no stamp. The four bug-fix
-sections (Findings at a glance, Findings, Why this happened, Regression
-check) stand only in a bug fix's document.
+block names `specs/{id}/contract.yaml` with no stamp, and the Gherkin
+and the Record carry no stamp until their step writes them. The four
+bug-fix sections (Findings at a glance, Findings, Why this happened,
+Regression check) stand only in a bug fix's document.
 
 Domain modules, the ancestor skill's question packs, are deferred (ADR
-0028); the seam is Q9 in sections.md. Interview disciplines in force in
-every flow: one question at a time; quantify vague terms; probe a thin
-answer once, then mark it and move on; summarize after each section.
+0028); the seam is the solution flow, solution.md. Interview disciplines
+in force in every flow: one question at a time; quantify vague terms;
+probe a thin answer once, then mark it and move on; summarize after each
+section.
 </context>
 
 <instructions>
 0. DISPATCH on the argument. PARSE `$1` as the feature id; ASK for it when absent or when it fails the pattern. LOAD the state file with one Bash call `ls docs/features/{id}.state.yaml` at the repo root. Exactly one file resumes; none starts a new run at O1.
    A state file at the old `REQUEST_{slug}_*.state.yaml` path is never read: a run for that id starts fresh.
-1. ROUTE by the state file's `phase`, and EXECUTE the flow from the step `next` names (a new run starts at O1): `opening` - LOAD {skill-dir}/flows/opening.md; `sections` - LOAD {skill-dir}/flows/sections.md; `readiness` - LOAD {skill-dir}/flows/readiness.md; `output` - LOAD {skill-dir}/flows/output.md; `complete` - REPORT the document path and `/sdlc intake {path}`, then return.
-2. EXECUTE the loaded flow's steps in order, exactly as written there. After O6 writes r1, WRITE each section into the document as its step closes, in the template's place under its heading and tag; a section with nothing to say reads "(none)". A flow ends by writing `phase` and `next` to the state file and returning here; step 1 routes again until `complete` or the user pauses.
+1. ROUTE by the state file's `phase`, and EXECUTE the flow from the step `next` names (a new run starts at O1): `opening` - LOAD {skill-dir}/flows/opening.md; `request` - LOAD {skill-dir}/flows/request.md; `solution` - LOAD {skill-dir}/flows/solution.md; `readiness` - LOAD {skill-dir}/flows/readiness.md; `output` - LOAD {skill-dir}/flows/output.md; `complete` - REPORT the document path and `/sdlc intake {path}`, then return.
+2. EXECUTE the loaded flow's steps in order, exactly as written there. After O6 writes r1, WRITE each section into the document as its step closes, in the template's place under its heading and tag; a section with nothing to say reads "(none)", and one no step has written yet reads "(not yet asked)". A flow ends by writing `phase` and `next` to the state file and returning here; step 1 routes again until `complete` or the user pauses.
 3. REPORT at every pause and at the end: the state file path, the phase, the step to resume at, and after output the document path and `/sdlc intake {path}`. A failed step returns control to the conversation with the failure stated in one line - never a silent stop.
 </instructions>
 
 <constraints>
 - Write ONLY the document and its state file. Never write under `specs/`, never run `/sdlc intake`, and never write a `Ready:` or `Parked:` row: intake writes those.
-- Every revision row opens `r{n}: `, numbered one past the table's last row; the interview adds a row when it writes the document.
+- Every revision row opens `r{n}: `, numbered one past the table's last row; a section's step adds no row.
 - Never overwrite: an existing document at the opening is reported and another id asked for; only this skill rewrites the document and the state file, and only in place.
 - A section changed by hand since the interview last wrote it is shown beside the answer, and the seat says which stands; never overwrite a hand edit silently.
 - The readiness check advises and never blocks: the document is the requester's; gaps are marked OPEN and the user decides.

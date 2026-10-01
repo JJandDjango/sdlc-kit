@@ -1,10 +1,11 @@
 """Specification-interview structural suite (contract: spec-interview).
 
 The skill is prompt-only, so its regression suite holds the shape the
-contract names (ADR 0028): the file set, the frontmatter, the PromptLang
-tag set, dispatch coverage, the write surface, and chain-free command
-lines. The template's sections and the document's path are
-tests/test_interview_format.py's (contract: feature-document).
+contract names (ADR 0028): the frontmatter, the PromptLang tag set, the
+write surface, and chain-free command lines. The template's sections and
+the document's path are tests/test_interview_format.py's; the file set,
+the dispatch and each half's steps are tests/test_interview_sections.py's
+(contract: feature-document).
 `python -m prompt_lang` is the form receipt; this suite is the CI-side
 proxy that needs no validator.
 """
@@ -17,10 +18,8 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 SKILL_DIR = ROOT / "skills" / "product-specification-interview"
 FLOWS = SKILL_DIR / "flows"
-TEMPLATE = SKILL_DIR / "templates" / "feature-document.md.template"
 
-FLOW_FILES = {"opening.md", "sections.md", "readiness.md", "output.md"}
-FLOW_FIRST_STEP = {"opening.md": "O1.", "sections.md": "Q1.",
+FLOW_FIRST_STEP = {"opening.md": "O1.", "request.md": "Q1.", "solution.md": "S1.",
                    "readiness.md": "R1.", "output.md": "W1."}
 PROMPTLANG_TAGS = {"purpose", "instructions", "variables", "context",
                    "constraints", "examples", "output", "criteria",
@@ -28,12 +27,6 @@ PROMPTLANG_TAGS = {"purpose", "instructions", "variables", "context",
 SKILL_TAGS = ("purpose", "variables", "context", "instructions",
               "constraints", "criteria")
 CHAIN_CHARS = ";|&>"
-SECTION_STEPS = (
-    "Q1. FEATURE STATEMENT", "Q2. DESCRIPTION", "Q3. BACKGROUND",
-    "Q4. SUCCESS CRITERIA", "Q5. REQUIREMENTS", "Q6. PREVIOUSLY DEFINED",
-    "Q7. PREREQUISITES", "Q8. BUSINESS REQUIREMENTS", "Q9. IMPLEMENTATION",
-    "Q10. MISC", "Q11. ACCEPTANCE CRITERIA", "Q12. ADDITIONAL NOTES",
-)
 # Coarse token-budget proxy: PromptLang fails a file at 4000 cl100k
 # tokens; kit prose runs about 3.5 characters per token.
 CHAR_CEILING = 12_000
@@ -53,13 +46,6 @@ def _frontmatter(text: str) -> str:
 
 
 # --- unit: s2-skill-entry ---
-
-def test_skill_file_set_is_exactly_the_ratified_set():
-    assert (SKILL_DIR / "SKILL.md").is_file()
-    assert {p.name for p in FLOWS.glob("*.md")} == FLOW_FILES
-    assert TEMPLATE.is_file()
-    assert not (SKILL_DIR / "modules").exists()  # deferred, ADR 0028
-
 
 def test_skill_name_is_the_command():
     frontmatter = _frontmatter(_text(SKILL_DIR / "SKILL.md"))
@@ -95,16 +81,6 @@ def test_skill_entry_carries_every_block():
         assert f"<{tag}>" in text and f"</{tag}>" in text, tag
 
 
-def test_dispatch_names_every_flow_and_phase():
-    text = _text(SKILL_DIR / "SKILL.md")
-    for name in FLOW_FILES:
-        assert f"flows/{name}" in text, name
-    for phase in ("`opening`", "`sections`", "`readiness`", "`output`", "`complete`"):
-        assert phase in text, phase
-    assert "none starts a new run" in text  # no state file -> the first question
-    assert "Exactly one file resumes" in text  # a state file -> the recorded step
-
-
 def test_every_prompt_file_stays_under_the_budget_proxy():
     for path in _prompt_files():
         assert len(_text(path)) < CHAR_CEILING, path.name
@@ -115,15 +91,6 @@ def test_every_prompt_file_stays_under_the_budget_proxy():
 def test_each_flow_opens_on_its_first_step():
     for name, first in FLOW_FIRST_STEP.items():
         assert first in _text(FLOWS / name), name
-
-
-def test_sections_follow_the_template_order_with_a_state_write():
-    text = _text(FLOWS / "sections.md")
-    positions = [text.index(step) for step in SECTION_STEPS]
-    assert positions == sorted(positions)
-    assert "WRITE the state file with the section's answers" in text
-    assert "Six criteria is two features" in text  # the split guard
-    assert "left for intake (no engineer seat)" in text
 
 
 def test_opening_writes_the_state_file_and_never_overwrites():

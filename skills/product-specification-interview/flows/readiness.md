@@ -13,7 +13,7 @@ here. {skill-dir} is the directory holding SKILL.md.
 </purpose>
 
 <instructions>
-R1. READBACK - LOAD the state file. SHOW the document as it stands, section by section in the template's order, one line per item. ASK "Anything to change before the checks?" A change names a section: EXECUTE that section's step from {skill-dir}/flows/sections.md, then return to R1.
+R1. READBACK - LOAD the state file. SHOW the document as it stands, section by section in the template's order, one line per item. ASK "Anything to change before the checks?" A change names a section: EXECUTE that section's step from {skill-dir}/flows/request.md or {skill-dir}/flows/solution.md, then return to R1.
 
 R2. CHECK what intake will need, and record every miss under `open` with its section name:
    - the feature statement's outcome clause names a state of the world ("so I can ...")
