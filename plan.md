@@ -34,37 +34,43 @@ Approvals split as in sessions 61 to 64 and 68: Claude approves the test
 list and the commit on review; the push, the PR and the merge stay on
 the user's word.
 
+**Closed.** The deliverable is met: f2 at `df00510` (USAGE) and
+`432da9c` (skill and tests), Two-Key PASS at round 1 with seven
+advisories, carried in `STATE.md`. Suite 795 passed, scope-check green,
+`prompt_lang` green on all six prompt files; the unit closed.
+
 ## Steps
 
-1. Open. Cut `session-69-feature-document-f2` from `310991d`; commit
-   this plan on its own.
-2. f2, the two advisories. Claude shows the two placeholder readings in
-   chat, with a recommendation each, checked against USAGE's approved
-   text; the user rules.
-3. f2, draft. `spec-channel-drafter.js` drafts the test list for SC1.2,
-   SC3.1 and SC3.2+SC3.3, proves it red, and proves it satisfiable on a
-   scratch copy of the skill folder.
-4. f2, retire. `test-retirer.js` with `overlay`; the session runs the
-   overlaid suite itself and classifies from its output.
-5. f2, approve the list and prove red. The whole suite on the prototype
-   in a scratch worktree; each fixed detail checked against the
-   contract, the feature document and Constraints; session labels
-   stripped; then `progress run <check> --expect red`.
-6. f2, green. `unit-developer.js` from the interface note; Claude runs
-   the suite after each round and tests any deviation against
-   `done_means`.
-7. f2, commit and Two-Key. Each check green at the clean commit;
-   `two-key-unit-verifier.js`; `progress done` on PASS.
-8. Close. `STATE.md` regenerated; this plan struck; the push and the PR
-   on the user's word.
+1. ~~Open.~~ Branch cut from `310991d`; the plan at `282ace4`.
+2. ~~f2, the two advisories.~~ The user ruled both as recommended: a
+   derived block not yet written carries no stamp, and a section not yet
+   asked reads "(not yet asked)". USAGE's text at `df00510`, approved in
+   chat.
+3. ~~f2, draft.~~ 32 tests in `tests/test_interview_sections.py`, red 32
+   of 32; the prototype passed 32 and `prompt_lang`, and caught twelve
+   mutations.
+4. ~~f2, retire.~~ The session ran the overlaid suite in a worktree: four
+   failures in `tests/test_skill_interview.py`. The retirer retired
+   three with `FLOW_FILES` and `SECTION_STEPS` and amended one.
+5. ~~f2, approve the list and prove red.~~ The worktree suite passed
+   795; approved by Claude; SC1.2, SC3.1 and SC3.2+SC3.3 red (21, 4 and
+   4 failing).
+6. ~~f2, green.~~ Two rounds, no deviation. Round 2 was Claude's to ask
+   for: S6 gained each unit's tests and retirements (ADR 0033). The
+   session's first suite run was stopped while the developer's ran;
+   its second read 795.
+7. ~~f2, commit and Two-Key.~~ At `432da9c`; each check green at the
+   clean commit; PASS at round 1; the unit closed.
+8. ~~Close.~~ `STATE.md` regenerated; this plan struck; the push and the
+   PR on the user's word.
 
 Steps 1 and 8 sit outside a contract unit, so the tree does not show
 them.
 
-Decisions this session: seven. The user's: (1) this plan, (2) and (3)
-the two placeholder readings. Claude's, on review: (4) the test list,
-(5) the commit. The user's at the close: (6) the push and the PR, (7)
-the merge.
+Decisions this session: eight. The user's: (1) this plan, (2) and (3)
+the two placeholder readings, (4) the USAGE text they change. Claude's,
+on review: (5) the test list, (6) the commit. The user's at the close:
+(7) the push and the PR, (8) the merge.
 
 Deferred, not this session:
 - `f3-signing`, `f4-intake`, `f5-release` (ships 0.18.0).
