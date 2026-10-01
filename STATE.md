@@ -57,7 +57,14 @@
   each on the user's word.
 
 ## Next actions
-1. Release 0.18.0: `f5-release` (session 72), the last unit of
+1. Session 72 opens with a re-intake of `feature-document` (user,
+   2026-10-01): the document's Scope gains `skills/sdlc/SKILL.md`, so
+   f5's sweep can make its lines 75, 79 and 91 true (they say intake
+   writes only the contract and never touches `docs/`, while the flow
+   writes `Ready:` and `Parked:` rows into the document). The document
+   takes a text row and the signature of the seat whose half changes,
+   then intake writes the contract's `scope` and a new `Ready:` row.
+   Then release 0.18.0: `f5-release`, the last unit of
    `feature-document`. Its Retirements row names what moves: `KIT_VERSION`,
    `pyproject.toml` and `sdlc.yml` to 0.18.0, USAGE's marks to green, a
    `CHANGELOG.md` entry, `MAP.md:42`'s v1 interview row. Its Two-Key runs
@@ -69,8 +76,9 @@
      `USAGE.md:593` stands inside green section 8; `intake.md:23` uses
      "above" for a table position and for a higher revision number; I5
      still offers `strike`, which on a feature document leaves checks in
-     no unit after I2's refusals ran; and `skills/sdlc/SKILL.md` (an open
-     question below). From the drafter: after a `done_means` change goes
+     no unit after I2's refusals ran; and `skills/sdlc/SKILL.md:75`,
+     `:79` and `:91`, once the re-intake puts the file in Scope. From
+     the drafter: after a `done_means` change goes
      back to the document at I5 or I7, a contract file exists, and the
      next run meets I3's "contract already exists, ASK".
    - f5's sweep, the signing flow (f3's Two-Key and live run): E2 gives
@@ -270,12 +278,6 @@
   every change.
 
 ## Open questions
-- `skills/sdlc/SKILL.md:75`, `:79` and `:91` say intake writes only
-  `specs/{id}/contract.yaml` and never touches `docs/`, while the flow
-  writes `Ready:` and `Parked:` rows into the document (the `Ready:` row
-  since 0.17.0). `SKILL.md` stands outside `feature-document`'s Scope:
-  widen the Scope through a re-intake before f5, or give the fix its own
-  small contract? (f4's Two-Key, an advisory.)
 - `lang-check --draft` runs none of vocab-check's own rules on a draft
   term, as the feature document's Interfaces draws it. A term with a
   definition under 20 characters (VT002) or a name that fails the slug

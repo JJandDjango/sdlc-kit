@@ -82,7 +82,9 @@ closed.
 Steps 1 and 9 sit outside a contract unit, so the tree does not show
 them.
 
-Decisions this session: ten. The user's: (1) this plan, with the
+Decisions this session: eleven, the eleventh the user's at the close:
+the re-intake for `skills/sdlc/SKILL.md` opens session 72. The other
+ten. The user's: (1) this plan, with the
 receipt's shape; (2) park before stop; (3) a copied `done_means` is
 never reworded at intake; (4) USAGE's plan-answers paragraph; (5)
 USAGE's `Parked:` sentence; (6) its place, a red subsection. Claude's,
@@ -98,7 +100,8 @@ Deferred, not this session:
 - `f5-release` (ships 0.18.0), with its sweep list in `STATE.md` Next
   actions 1, f4's six advisories among them.
 - `skills/sdlc/SKILL.md` says intake writes only the contract, outside
-  this contract's Scope: an open question in `STATE.md`.
+  this contract's Scope: a re-intake that adds it to Scope opens session
+  72 (user, 2026-10-01), in `STATE.md` Next actions 1.
 - `lang-check --draft` runs neither VT002 nor VT006 on a draft term:
   left to intake, an open question in `STATE.md`.
 - G1's solution half by hand (risk 5), after 0.18.0.
