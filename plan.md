@@ -27,76 +27,83 @@ a Two-Key PASS:
   `_NOT_TEXT`'s "none of the three words" (docstring and tuple). The
   tests that pin them are found by test-retirer.
 - `intake.md` passes `python -m prompt_lang` and stays under 12,000
-  characters (Constraints 1). It holds 5,358 now, so no split is
-  planned; a split would need a path outside Scope, and so a re-intake.
+  characters (Constraints 1).
 - One manual receipt for SC4.1: a live intake on f3's document
   (`RECEIPT_feature-document-f3_2026-10-01/hello-name.md`) with one check
   left out of Units writes the `Parked:` row and no contract.
-
-`USAGE.md` already holds f4's text ("Intake's refusals", lines 269 to
-291), approved in session 68; its marks stay red until f5. Any change to
-that text comes to the user in chat first.
 
 Approvals split as in sessions 61 to 64 and 68 to 70: Claude approves
 the test list and the commit on review; the plan, any ruling, the USAGE
 text, the receipt's shape, the push, the PR and the merge stay on the
 user's word.
 
+**Closed.** The deliverable is met: f4 at `b654e6d` (the flow, the tree
+and the tests), `40c16ce` and `e5680cd` (USAGE), Two-Key PASS at round 1
+with six advisories, carried in `STATE.md`. Suite 915 passed, scope-check
+green, `prompt_lang` green on `intake.md` (9,989 characters); the unit
+closed.
+
 ## Steps
 
-1. Open. Branch `session-71-feature-document-f4` cut from `795c175`;
-   this plan committed on the user's word.
-2. f4, draft. Two drafter runs side by side, each with its own scratch
-   folder and test file. The flow: SC4.1, SC4.2 and SC4.3 against a
-   scratch copy of `skills/sdlc/`. The tree: SC4.2's `Parked:` reading
-   against `taskcontract/tree.py`. Each proves its list red, then green
-   on its prototype.
-3. f4, retire. The overlaid suite runs in a scratch worktree; the
-   retirer gets the failing tests by name and runs only their modules.
-4. f4, approve the list and prove red. The whole suite on the prototype
-   in the worktree; each fixed detail read against the contract, the
-   feature document and its Constraints; Claude approves; SC4.1, SC4.2
-   and SC4.3 recorded red.
-5. f4, green. Two developers side by side on separate files (the flow,
-   the tree), each from an interface note file, neither running the
-   whole suite; the session runs it once after both. `prompt_lang` on
-   `intake.md`.
-6. f4, commit. On Claude's review; each check green at the clean
-   commit; scope-check green against `795c175`.
-7. f4, the receipt. Two worktrees at the unit commit (the plugin folder
-   and the repository), `hello-name.md` and its state file copied to
-   `docs/features/`. Run A, the document as f3 left it: intake parks on
-   the OPEN under ready check 12 or 14, one `Parked:` row, no contract.
-   Then a hand edit as the toy engineer seat: both OPEN marks answered,
-   one check taken out of a Units row, one text row and a `Signed:
-   solution half` row after it. Run B: the row reads `Parked: Check {id}
-   is assigned to no unit.`, and no contract stands. Both runs headless
-   and hidden through `live-run-driver.py`. The documents and
-   transcripts are kept in `RECEIPT_feature-document-f4_2026-10-01/`.
-8. f4, Two-Key. On the unit's commits, the receipt as a focus pointer;
-   `progress done` on PASS.
-9. Close. `STATE.md` regenerated; this plan struck; the scratch
-   worktrees removed; push, PR and merge, each on the user's word.
+1. ~~Open.~~ Branch cut from `795c175`; the plan at `4221674`.
+2. ~~f4, draft.~~ Two drafter runs side by side. The tree: 8 tests (14
+   cases) in `tests/test_tree_parked.py`, red 14 of 14, the prototype
+   green on one changed line, seven mutations caught. The flow: 21 tests
+   in `tests/test_intake_refusals.py`, red 21 of 21, the prototype green.
+   The user then ruled on three points, and a narrow amendment round took
+   the flow list to 25 tests, red 25 of 25, twelve mutations caught.
+3. ~~f4, retire.~~ The overlaid suite in a worktree: two failures. The
+   retirer retired
+   `test_i4_and_i5_take_the_answers_from_an_implementation_section` and
+   amended one assertion of `tests/test_tree_stale.py`, which counted the
+   word `Ready:` in the flow.
+4. ~~f4, approve the list and prove red.~~ The worktree suite passed
+   915; approved by Claude; SC4.1, SC4.2 and SC4.3 red (6, 24 and 9
+   failing).
+5. ~~f4, green.~~ Two developers side by side, no deviation; the flow
+   came out identical to the reviewed prototype. The session's suite
+   read 915.
+6. ~~f4, commit.~~ At `b654e6d`; each check green at the clean commit;
+   scope-check green.
+7. ~~f4, the receipt.~~ Two headless, hidden intake runs at `b654e6d`,
+   one turn each. Run A parked on the two OPEN marks (`r8`). After the
+   hand edit (rows r9 and r10), run B parked with `Check SC2.2 is
+   assigned to no unit.` (`r11`). No contract either time. Kept in
+   `RECEIPT_feature-document-f4_2026-10-01/`.
+8. ~~f4, Two-Key.~~ One USAGE sentence first, on the user's approval: a
+   `Parked:` row is no text row (`e5680cd`), under its own red
+   subsection because a standing test keeps section 9's green
+   subsections free of red marks. PASS at round 1 on the three commits,
+   nine receipts, six advisories; the unit closed.
+9. ~~Close.~~ `STATE.md` regenerated; this plan struck; the three
+   scratch worktrees removed. The push, the PR and the merge wait on the
+   user's word.
 
 Steps 1 and 9 sit outside a contract unit, so the tree does not show
 them.
 
-Decisions expected: six. The user's: (1) this plan, with the receipt's
-shape in step 7; (2) the push and the PR; (3) the merge. Claude's, on
-review: (4) the test list, (5) the commit. Open until the draft: (6)
-which message a `Parked:` row carries when more than one thing stands
-(an OPEN and a check in no unit). The contract names one row and one
-`{what stands}`; a reading that narrows it comes to the user before the
-list is approved.
+Decisions this session: ten. The user's: (1) this plan, with the
+receipt's shape; (2) park before stop; (3) a copied `done_means` is
+never reworded at intake; (4) USAGE's plan-answers paragraph; (5)
+USAGE's `Parked:` sentence; (6) its place, a red subsection. Claude's,
+on review: (7) the test list, (8) the commit. The user's at the close:
+(9) the push and the PR, (10) the merge. Readings Claude settled with
+the test list and told the user: one `Parked:` row names every thing
+that stands; a pair of checks in one sketch entry reads `(SC2.2,
+SC2.3)`, as the tree parses it; a ready-check gap intake finds goes in
+the row as `Ready check {n}: {gap}. Marked OPEN.`, and intake writes no
+inline mark.
 
 Deferred, not this session:
 - `f5-release` (ships 0.18.0), with its sweep list in `STATE.md` Next
-  actions 1.
+  actions 1, f4's six advisories among them.
+- `skills/sdlc/SKILL.md` says intake writes only the contract, outside
+  this contract's Scope: an open question in `STATE.md`.
 - `lang-check --draft` runs neither VT002 nor VT006 on a draft term:
-  left to intake, the gap logged for f5's sweep.
+  left to intake, an open question in `STATE.md`.
 - G1's solution half by hand (risk 5), after 0.18.0.
 - `test-retirer.js` waits on the whole suite inside its agent; the fix
-  stays parked, and step 3 works around it.
+  stays parked, and step 3 worked around it.
 - `STATE.md` Next actions 3 to 5 and its open questions, carried.
 
 House rules in force: no pipes or chains in any authored command string;

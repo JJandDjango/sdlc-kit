@@ -2,36 +2,40 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-01 (session 70 close, feature-document f3 built)._
+> _Generated 2026-10-01 (session 71 close, feature-document f4 built)._
 
 ## Now
-- **`f3-signing` is built and closed** (session 70, branch
-  `session-70-feature-document-f3`): USAGE at `9fd60ad` (three user
-  rulings) and `dddef83` (the `Measured:` row lands once the ready checks
-  are read); the command, the skill and the tests at `5ddd858`.
-  `lang-check --draft <state file>` reads the interview's state file
-  only, joins the new terms as drafts in memory, reports `CL014`, and
-  ends on a count line. `flows/readiness.md` retired for
-  `flows/signing.md`: P1 to P7 before the PO seat signs, E1 to E7 before
-  the engineer seat signs; each run shows the command's lines, reads the
-  half's ready checks (1 to 8, 11 to 14), marks each gap OPEN, reports a
-  stale block, and lands as one `Measured:` row; the signature is a text
-  row and the `Signed:` row right after it. No new phase: Q15 hands to
-  P1, S11 to E1. Two-Key PASS at round 1, suite 877. Two units remain:
-  `f4-intake` (SC4.1 to SC4.3, with the tree's `Parked:` reading) and
-  `f5-release` (SC5.1, SC5.2).
-- The rulings (user, 2026-10-01): each text row the interview writes
-  moves the Gherkin's stamp; a write into a signed half adds a text row
-  and the seat is asked to sign again; with no engineer seat the solution
-  half's steps, checks and signature are skipped, and Out of scope lists
-  the PO seat's places as not confirmed.
-- SC1.3's manual receipt is taken: a second Claude session ran the skill
-  at `5ddd858` on a toy feature `hello-name`, 99 turns, both halves
-  signed, the tree showing both `done`. Its document, state file and
-  transcript stand untracked in `RECEIPT_feature-document-f3_2026-10-01/`
-  for f4's receipt. The document holds two OPEN marks below the seat
-  boundary (ready checks 12 and 14), which the engineer seat signed over.
-- `f1-format` closed in session 68, `f2-sections` in session 69.
+- **`f4-intake` is built and closed** (session 71, branch
+  `session-71-feature-document-f4`): the flow, the tree and the tests at
+  `b654e6d`; USAGE at `40c16ce` (intake reads the plan answers from
+  Scope, Order and Units) and `e5680cd` (a `Parked:` row is no text row,
+  a red subsection at the end of section 9). On a feature document, I2
+  reads the document before the scaffold, in three parts. REFUSALS: an
+  OPEN mark, a gap under ready checks 1 to 8 and 11 to 14, a check in no
+  unit or in two, a unit with no check. PARK: one `r{n}: Parked:` row
+  that names every thing that stands, and no contract. SIGNATURES, read
+  only when nothing stands: a half with no `Signed:` row, or a text row
+  above the newest signed revision, stops intake with no row. I4 copies
+  each `done_means` word for word; a pair of checks in one sketch entry
+  reads `(SC2.2, SC2.3)`; I7's `Ready:` cell names both seats and the
+  revision each signed; I4 and I5 no longer read an Implementation
+  section. `_NOT_TEXT` gained `Parked:`. Two-Key PASS at round 1, suite
+  915. One unit remains: `f5-release` (SC5.1, SC5.2).
+- The rulings (user, 2026-10-01): intake parks before it stops, so a
+  missing signature never hides a refusal and gets no `Parked:` row; a
+  copied `done_means` is never reworded at intake, and a change goes to
+  the document's Units row through the interview and a new signature.
+  A reading told to the user: one `Parked:` row names every thing that
+  stands, in a fixed order.
+- SC4.1's manual receipt is taken: two headless intake runs at `b654e6d`
+  on f3's `hello-name.md`, one turn each. Run A parked on the two OPEN
+  marks (`r8`). Run B, after a hand edit signed at r10, parked with
+  `Check SC2.2 is assigned to no unit.` (`r11`). Neither wrote a
+  contract, and the tree read the solution half `done by raj at r9`. The
+  documents and transcripts stand untracked in
+  `RECEIPT_feature-document-f4_2026-10-01/`, beside f3's receipt folder.
+- `f1-format` closed in session 68, `f2-sections` in session 69,
+  `f3-signing` in session 70.
 - The contract at intake (session 67): ADR 0036 and 15 terms at
   `fde018d`, the contract at `63508f2`, six readings kept at readback.
 - Risk 5 stands: the interview never picks up a document it did not
@@ -45,27 +49,30 @@
   `NOTES_feature-document_*` files.
 - Carried: 19 features: 18 with a contract, 16 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
-  `feature-document` `[doing]`, f1 to f3 closed; `g1-requirements-spec` before
+  `feature-document` `[doing]`, f1 to f4 closed; `g1-requirements-spec` before
   intake, `[doing]`.
 
 ## Blockers
-- None. Session 70 reached `main` through PR #82, a merge commit, on
-  the user's word (2026-10-01).
+- None. Session 71's branch waits for the push, the PR and the merge,
+  each on the user's word.
 
 ## Next actions
-1. Build `feature-document`'s remaining units in order, one per session
-   (session 71: `f4-intake`), then release 0.18.0: two sessions.
-   Each unit's Retirements row names what test-retirer should find. Every
-   prompt file a unit touches passes `python -m prompt_lang` and stays
-   under 12,000 characters (Constraints 1). Carried, by the unit that
-   settles each:
-   - f4, the receipt: intake on `RECEIPT_feature-document-f3_2026-10-01/
-     hello-name.md` with one check left out of Units. The document holds
-     two OPEN marks (ready checks 12 and 14), so intake parks on those
-     first (SC4.2); for SC4.1's message, answer both and take one check
-     out of a Units row. The live-run method is under Standing practice.
-   - f4 makes true `solution.md`'s "intake copies the done means word
-     for word".
+1. Release 0.18.0: `f5-release` (session 72), the last unit of
+   `feature-document`. Its Retirements row names what moves: `KIT_VERSION`,
+   `pyproject.toml` and `sdlc.yml` to 0.18.0, USAGE's marks to green, a
+   `CHANGELOG.md` entry, `MAP.md:42`'s v1 interview row. Its Two-Key runs
+   with `sweep: true`. Carried for it:
+   - f5's sweep, intake (f4's Two-Key, six advisories): USAGE's green
+     text at `:1170` and `:1427` lists three row kinds and must gain
+     `Parked:` when the marks turn; `USAGE.md:594` says "asks the seats"
+     where the flow asks the engineer seat; the red paragraph at
+     `USAGE.md:593` stands inside green section 8; `intake.md:23` uses
+     "above" for a table position and for a higher revision number; I5
+     still offers `strike`, which on a feature document leaves checks in
+     no unit after I2's refusals ran; and `skills/sdlc/SKILL.md` (an open
+     question below). From the drafter: after a `done_means` change goes
+     back to the document at I5 or I7, a contract file exists, and the
+     next run meets I3's "contract already exists, ASK".
    - f5's sweep, the signing flow (f3's Two-Key and live run): E2 gives
      a free path (`CHANGELOG.md`, `MAP.md`) no exemption, so a release
      row that names one reads `outside Scope`; S6 never asks which unit
@@ -235,7 +242,22 @@
   run the whole suite; the session runs it once after both. Session
   70's f3: drafters 222K and 255K, retirer 93K, developers 108K, 113K
   and 74K, Two-Key 334K. Hand each developer its interface note as a
-  file, written from the drafter's result by a script.
+  file, written from the drafter's result by a script. Session 71's f4:
+  drafters 147K and 166K, an amendment round 116K, retirer 69K,
+  developers 62K and 59K, Two-Key 263K. A ruling that lands after the
+  draft goes through a narrow amendment round of the same drafter: it
+  copies the draft and the prototype to a new scratch folder, changes
+  both only as the pins need, and returns the whole interface note.
+- A live intake run (session 71): the same two worktrees and driver as
+  the interview's live run, one driver copy and `live/` folder per run.
+  The first message is `/<plugin folder>:sdlc intake
+  docs/features/<id>.md`; a document that parks ends in one turn, so the
+  session drives it and no seat agent is needed. A hand edit that stands
+  in for the interview adds a text row, a `Signed:` row after it, and
+  moves the Gherkin's stamp.
+- A red USAGE sentence in section 9 goes under its own red subsection at
+  the section's end: `tests/test_tree_conditions.py:752` holds the green
+  subsections free of red marks.
 - The whole suite runs 3 to 6 minutes; a local model holding RAM can get
   a background run killed for memory. A PR's CI waits through `gh pr
   checks <n> --watch` in the background.
@@ -248,6 +270,12 @@
   every change.
 
 ## Open questions
+- `skills/sdlc/SKILL.md:75`, `:79` and `:91` say intake writes only
+  `specs/{id}/contract.yaml` and never touches `docs/`, while the flow
+  writes `Ready:` and `Parked:` rows into the document (the `Ready:` row
+  since 0.17.0). `SKILL.md` stands outside `feature-document`'s Scope:
+  widen the Scope through a re-intake before f5, or give the fix its own
+  small contract? (f4's Two-Key, an advisory.)
 - `lang-check --draft` runs none of vocab-check's own rules on a draft
   term, as the feature document's Interfaces draws it. A term with a
   definition under 20 characters (VT002) or a name that fails the slug
