@@ -164,6 +164,11 @@ two features. Which criteria form the second document?". A section
 changed by hand since the interview last wrote it is shown beside the
 answer, and you say which stands.
 
+🔴 With no engineer seat named, the interview skips the solution half's
+steps, its checks and its signature. Out of scope then lists the places
+the PO seat named at Non-goals, each marked `(from the PO seat, not
+confirmed)`, and ready check 8 marks the missing seat OPEN.
+
 🔴 **The Gherkin step.** Once the checks stand, the interview proposes one
 scenario per check, joined to it by its id, and the PO seat accepts,
 edits or drops each. The block is tagged `[PO seat · derived from rN]`:
@@ -178,6 +183,11 @@ Scenario: SC1.1 A written document lands at its path
 🔴 A scenario whose Then needs a fact its check lacks is never offered:
 the check is marked thin instead. A scenario the PO seat drops marks its
 check thin too. Ready check 3 reads a thin check as an OPEN.
+
+🔴 Each text row the interview writes moves the block's stamp to that
+row, once every check changed since the last stamp has a confirmed
+scenario again. A row written by hand moves no stamp, so the checks
+before signing report the block stale.
 
 🔴 **The checks before signing.** Before the PO seat signs, the interview
 runs the document's new terms as drafts through the vocabulary check and
@@ -240,6 +250,11 @@ interview and intake write, in one table's order:
 | 2026-10-03 | raj | r10: Signed: solution half. The engineer seat signs r9 |
 | 2026-10-03 | intake | r11: Ready: contract `x` validates ready-green, derived from r9; the PO seat (ann) signed the request half at r3 (r4), the engineer seat (raj) the solution half at r9 (r10) |
 ```
+
+🔴 A write into a half after its seat signed adds a text row, and the
+interview asks that seat to sign again, with a new `Signed:` row right
+after it. The seat's word stands: a seat that declines keeps its older
+signature, and the interview names the revision it covers.
 
 🔴 **What it writes.** The interview writes only the document and its
 state file. It never writes under `specs/`, never writes a `Ready:` or
