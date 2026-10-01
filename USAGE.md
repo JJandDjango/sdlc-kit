@@ -164,6 +164,11 @@ two features. Which criteria form the second document?". A section
 changed by hand since the interview last wrote it is shown beside the
 answer, and you say which stands.
 
+🔴 With no engineer seat named, the interview skips the solution half's
+steps, its checks and its signature. Out of scope then lists the places
+the PO seat named at Non-goals, each marked `(from the PO seat, not
+confirmed)`, and ready check 8 marks the missing seat OPEN.
+
 🔴 **The Gherkin step.** Once the checks stand, the interview proposes one
 scenario per check, joined to it by its id, and the PO seat accepts,
 edits or drops each. The block is tagged `[PO seat · derived from rN]`:
@@ -178,6 +183,11 @@ Scenario: SC1.1 A written document lands at its path
 🔴 A scenario whose Then needs a fact its check lacks is never offered:
 the check is marked thin instead. A scenario the PO seat drops marks its
 check thin too. Ready check 3 reads a thin check as an OPEN.
+
+🔴 Each text row the interview writes moves the block's stamp to that
+row, once every check changed since the last stamp has a confirmed
+scenario again. A row written by hand moves no stamp, so the checks
+before signing report the block stale.
 
 🔴 **The checks before signing.** Before the PO seat signs, the interview
 runs the document's new terms as drafts through the vocabulary check and
@@ -207,20 +217,22 @@ term replaces its ratified definition among the drafts and is never a
 `(no dictionary here - door at rest)`. A key the state file lacks reads
 as empty. Without `--draft`, `lang-check` reads `specs/` as before.
 
-🔴 Each run lands as a `Measured:` row. Then the interview reads that
-half's ready checks, 1 to 8 for the request half and 11 to 14 for the
-solution half, and marks each gap inline with its message:
+🔴 Then the interview reads that half's ready checks, 1 to 8 for the
+request half and 11 to 14 for the solution half, and marks each gap
+inline with its message:
 
 ```
 - SC2.1: verify ...
   OPEN: Ready check 3: SC2.1 is thin: its Then needs the count it reports.
 ```
 
-🔴 The interview reports each gap as `Ready check {n}: {gap}. Marked
-OPEN.`, and a derived block stamped below the newest revision as `{block}
-is stamped r{n}; the newest revision is r{m}. Stale.` The checks advise
-and never block: the seat's word to sign or to write stands, whatever the
-count.
+🔴 Each run of the checks then lands as one `Measured:` row: the
+command's findings, the count of OPEN marks under that half's ready
+checks, and for the solution half the Scope result. The interview
+reports each gap as `Ready check {n}: {gap}. Marked OPEN.`, and a derived
+block stamped below the newest revision as `{block} is stamped r{n}; the
+newest revision is r{m}. Stale.` The checks advise and never block: the
+seat's word to sign or to write stands, whatever the count.
 
 🔴 **The signatures.** A seat signs its half with a row that opens `rN:
 Signed: request half` or `rN: Signed: solution half`, written right after
@@ -240,6 +252,11 @@ interview and intake write, in one table's order:
 | 2026-10-03 | raj | r10: Signed: solution half. The engineer seat signs r9 |
 | 2026-10-03 | intake | r11: Ready: contract `x` validates ready-green, derived from r9; the PO seat (ann) signed the request half at r3 (r4), the engineer seat (raj) the solution half at r9 (r10) |
 ```
+
+🔴 A write into a half after its seat signed adds a text row, and the
+interview asks that seat to sign again, with a new `Signed:` row right
+after it. The seat's word stands: a seat that declines keeps its older
+signature, and the interview names the revision it covers.
 
 🔴 **What it writes.** The interview writes only the document and its
 state file. It never writes under `specs/`, never writes a `Ready:` or

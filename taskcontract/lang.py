@@ -10,6 +10,15 @@ Speaks the verdict contract: exit 0 green / 1 red with CLnnn findings;
 absence of the repo dictionary is green by design (adoption pace, the
 vocab-check precedent). The --json envelope carries the form-note.
 
+lang-check --draft - the same door held to the interview's state file
+before a seat signs: the new terms join the glossary as drafts in
+memory, CL014 reports a new term that matches a ratified one, the
+dictionary is checked against the glossary plus the drafts, and the
+tier-1 rules run on a draft contract of the statement, the non-goals,
+the checks and each unit's done_means. Reads the state file, never the
+document or a specs contract; writes nothing; the last line counts
+what it read and found.
+
 lang-extract - report-only calibration: harvests candidate words with
 frequencies, base banned-candidate hits, and the per-contract census
 from the registry-bound fields. Writes nothing; runs before the door
@@ -80,6 +89,13 @@ _CODE_SPAN = re.compile(r"`[^`]*`")
 _SENTENCE_END = re.compile(r"(?<=[.!?])\s+")
 _STRIP_PUNCT = "()[]{}<>.,;:!?\"'*"
 _WORD = re.compile(r"[a-z][a-z-]*\Z")
+_SLUG_BREAK = re.compile(r"[^a-z0-9]+")
+
+# The draft contract (--draft): the registry path each state-file text is read as.
+DRAFT_STATEMENT = "intent"
+DRAFT_NON_GOAL = "non_goals[]"
+DRAFT_CHECK = "decomposition[].acceptance_sketch[]"
+DRAFT_DONE_MEANS = "decomposition[].done_means"
 
 
 def load_dictionary_schema(schema_path: Path | None = None) -> dict:
@@ -318,6 +334,66 @@ class _Lexicon:
         return self.pos.get(word) == "verb"
 
 
+def _check_text(name: str, jsonpath: str, text: str, row: dict,
+                lexicon: _Lexicon) -> list[Violation]:
+    """Tier-1 rules over one text, read as the registry row's field."""
+    text_type = str(row.get("text_type", "descriptive"))
+    cap = CAPS.get(text_type, CAPS["descriptive"])
+    verb_first = str(row.get("path", "")).endswith("acceptance_sketch[]")
+    violations: list[Violation] = []
+    for sentence in _sentences(text):
+        tokens = _consume_phrases(_tokens(sentence), lexicon.phrases)
+        checkable = [t for t in tokens if t[1] is not None]
+        if len(checkable) > cap:
+            violations.append(Violation(
+                name, jsonpath, "CL008",
+                f"sentence of {len(checkable)} words exceeds the "
+                f"{text_type} cap of {cap}"))
+        first = next((t[1] for t in tokens if t[1] is not None), None)
+        if first in PRONOUN_SUBJECTS:
+            violations.append(Violation(
+                name, jsonpath, "CL010",
+                f"sentence opens on pronoun '{first}' - name the subject"))
+        if verb_first and first is not None and not lexicon.is_verb(first):
+            violations.append(Violation(
+                name, jsonpath, "CL012",
+                f"acceptance sketch must open with an approved verb "
+                f"(got '{first}')"))
+        has_number = any(
+            (word in NUMBER_WORDS) or any(c.isdigit() for c in raw)
+            for raw, word in tokens)
+        for raw, word in tokens:
+            if word is None:
+                continue
+            if word in lexicon.banned:
+                targets, reason = lexicon.banned[word]
+                tail = f" ({reason})" if reason else ""
+                hint = (f" - use instead: {', '.join(targets)}"
+                        if targets else " - delete it or state the bound")
+                violations.append(Violation(
+                    name, jsonpath, "CL007",
+                    f"banned word '{word}'{tail}{hint}"))
+            elif word in MODALS:
+                # rule-owned class: legal in descriptive prose
+                if text_type == "procedural":
+                    violations.append(Violation(
+                        name, jsonpath, "CL009",
+                        f"modal '{word}' in a procedural field - only "
+                        f"must-semantics belong here"))
+            elif word in COMPARATIVES:
+                # rule-owned class: legal with a number in the sentence
+                if not has_number:
+                    violations.append(Violation(
+                        name, jsonpath, "CL011",
+                        f"comparative '{word}' without a number in the sentence"))
+            elif not lexicon.knows(word):
+                violations.append(Violation(
+                    name, jsonpath, "CL006",
+                    f"unknown word '{word}' - add it to the dictionary "
+                    f"(full lane) or rewrite with approved words"))
+    return violations
+
+
 def check_contract(file, lexicon: _Lexicon) -> list[Violation]:
     """Tier-1 rules over the registry-bound fields of one contract."""
     name = str(file)
@@ -332,60 +408,8 @@ def check_contract(file, lexicon: _Lexicon) -> list[Violation]:
     for row in lexicon.fields:
         if not isinstance(row, dict) or row.get("artifact") != "task-contract":
             continue
-        text_type = str(row.get("text_type", "descriptive"))
-        cap = CAPS.get(text_type, CAPS["descriptive"])
-        verb_first = str(row.get("path", "")).endswith("acceptance_sketch[]")
         for jsonpath, text in _walk_field(instance, str(row.get("path", ""))):
-            for sentence in _sentences(text):
-                tokens = _consume_phrases(_tokens(sentence), lexicon.phrases)
-                checkable = [t for t in tokens if t[1] is not None]
-                if len(checkable) > cap:
-                    violations.append(Violation(
-                        name, jsonpath, "CL008",
-                        f"sentence of {len(checkable)} words exceeds the "
-                        f"{text_type} cap of {cap}"))
-                first = next((t[1] for t in tokens if t[1] is not None), None)
-                if first in PRONOUN_SUBJECTS:
-                    violations.append(Violation(
-                        name, jsonpath, "CL010",
-                        f"sentence opens on pronoun '{first}' - name the subject"))
-                if verb_first and first is not None and not lexicon.is_verb(first):
-                    violations.append(Violation(
-                        name, jsonpath, "CL012",
-                        f"acceptance sketch must open with an approved verb "
-                        f"(got '{first}')"))
-                has_number = any(
-                    (word in NUMBER_WORDS) or any(c.isdigit() for c in raw)
-                    for raw, word in tokens)
-                for raw, word in tokens:
-                    if word is None:
-                        continue
-                    if word in lexicon.banned:
-                        targets, reason = lexicon.banned[word]
-                        tail = f" ({reason})" if reason else ""
-                        hint = (f" - use instead: {', '.join(targets)}"
-                                if targets else " - delete it or state the bound")
-                        violations.append(Violation(
-                            name, jsonpath, "CL007",
-                            f"banned word '{word}'{tail}{hint}"))
-                    elif word in MODALS:
-                        # rule-owned class: legal in descriptive prose
-                        if text_type == "procedural":
-                            violations.append(Violation(
-                                name, jsonpath, "CL009",
-                                f"modal '{word}' in a procedural field - only "
-                                f"must-semantics belong here"))
-                    elif word in COMPARATIVES:
-                        # rule-owned class: legal with a number in the sentence
-                        if not has_number:
-                            violations.append(Violation(
-                                name, jsonpath, "CL011",
-                                f"comparative '{word}' without a number in the sentence"))
-                    elif not lexicon.knows(word):
-                        violations.append(Violation(
-                            name, jsonpath, "CL006",
-                            f"unknown word '{word}' - add it to the dictionary "
-                            f"(full lane) or rewrite with approved words"))
+            violations.extend(_check_text(name, jsonpath, text, row, lexicon))
     violations.sort(key=lambda v: (v.path, v.rule))
     return violations
 
@@ -435,6 +459,159 @@ def main_lang_check(args) -> int:
             state = "armed" if armed else "no dictionary here - door at rest"
             print(f"lang-green: {Path(args.root) / DICTIONARY_FILE} ({state}; {FORM_NOTE})")
     return 1 if errors else 0
+
+
+def load_draft_answers(state):
+    """(answers, violations) - answers None when the state file is unreadable (CL000).
+
+    A missing, null or empty `answers` reads as empty.
+    """
+    name = str(Path(state))
+    try:
+        doc = yaml.safe_load(Path(state).read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, yaml.YAMLError) as exc:
+        reason = " ".join(str(exc).split())
+        return None, [Violation(name, "$", "CL000", f"unreadable draft: {reason}")]
+    if not isinstance(doc, dict):
+        return None, [Violation(name, "$", "CL000",
+                                "unreadable draft: the state file is not a mapping")]
+    answers = doc.get("answers")
+    return (answers if isinstance(answers, dict) else {}), []
+
+
+def _draft_list(answers: dict, key: str) -> list:
+    value = answers.get(key)
+    return value if isinstance(value, list) else []
+
+
+def _draft_entry(entry, i: int, key: str):
+    """(label, text) of one check or unit - the label is its id, else its index."""
+    if not isinstance(entry, dict):
+        return i, None
+    label = entry.get("id")
+    return (i if label is None else label), entry.get(key)
+
+
+def _draft_terms(entries: list, glossary: dict[str, dict], name: str):
+    """(terms, new, amended, violations) - the glossary with the drafts joined.
+
+    A term whose `amends` names a glossary slug replaces that definition
+    and adds no surface. Every other term is new: it gets CL014 when its
+    name or slug matches a ratified term's slug, name or alias, then
+    joins as a draft so its surfaces resolve in the dictionary check and
+    the draft contract.
+    """
+    ratified: dict[str, str] = {}
+    for slug in sorted(glossary):
+        doc = glossary[slug]
+        if doc.get("status") != "ratified":
+            continue
+        for surface in [slug, doc.get("name")] + list(doc.get("aliases") or []):
+            if isinstance(surface, str):
+                ratified.setdefault(surface.lower(), slug)
+
+    terms = dict(glossary)
+    new = amended = 0
+    violations: list[Violation] = []
+    for entry in entries:
+        entry = entry if isinstance(entry, dict) else {}
+        amends = entry.get("amends")
+        if isinstance(amends, str) and amends in glossary:
+            amended += 1
+            terms[amends] = {**terms[amends], "definition": entry.get("definition")}
+            continue
+        new += 1
+        written = entry.get("name")
+        if not isinstance(written, str) or not written.split():
+            continue
+        shown = " ".join(written.split())
+        lowered = shown.lower()
+        slug = _SLUG_BREAK.sub("-", lowered).strip("-")
+        matches = sorted({ratified[s] for s in (lowered, slug) if s in ratified})
+        if matches:
+            violations.append(Violation(
+                name, f"answers.terms[{shown}]", "CL014",
+                f"new term '{lowered}' matches ratified term '{matches[0]}' "
+                f"- map it to that term, or rename it"))
+        if slug and slug not in terms:
+            terms[slug] = {"name": shown, "definition": entry.get("definition"),
+                           "status": "draft"}
+    return terms, new, amended, violations
+
+
+def _draft_text(name: str, path: str, text, field: str,
+                lexicon: _Lexicon) -> list[Violation]:
+    """Tier-1 rules over one draft text, read as the registry's `field`;
+    a field the registry leaves out gets no rule."""
+    violations: list[Violation] = []
+    if not isinstance(text, str):
+        return violations
+    for row in lexicon.fields:
+        if isinstance(row, dict) and row.get("artifact") == "task-contract" \
+                and row.get("path") == field:
+            violations.extend(_check_text(name, path, text, row, lexicon))
+    violations.sort(key=lambda v: v.rule)
+    return violations
+
+
+def lang_draft(state, root=Path("."), schema_doc: dict | None = None):
+    """(violations, count line) - count line None when the state file is unreadable.
+
+    The drafts live in memory only: reads the state file, the glossary
+    and the dictionary, never the document or a specs contract. With no
+    repo dictionary only CL014 runs.
+    """
+    name = str(Path(state))
+    answers, violations = load_draft_answers(state)
+    if answers is None:
+        return violations, None
+    doc, violations = load_repo_dictionary(root)
+    terms, new, amended, matches = _draft_terms(
+        _draft_list(answers, "terms"), load_terms(root), name)
+    non_goals = _draft_list(answers, "non_goals")
+    checks = _draft_list(answers, "checks")
+    units = _draft_list(answers, "units")
+    if doc is not None:
+        violations = violations + validate_dictionary_doc(
+            doc, str(Path(root) / DICTIONARY_FILE), terms, schema_doc=schema_doc)
+        lexicon = _Lexicon(doc, terms)
+        drafts = [("answers.statement", answers.get("statement"), DRAFT_STATEMENT)]
+        for i, text in enumerate(non_goals):
+            drafts.append((f"answers.non_goals[{i}]", text, DRAFT_NON_GOAL))
+        for i, entry in enumerate(checks):
+            label, text = _draft_entry(entry, i, "text")
+            drafts.append((f"answers.checks[{label}]", text, DRAFT_CHECK))
+        for i, entry in enumerate(units):
+            label, text = _draft_entry(entry, i, "done_means")
+            drafts.append((f"answers.units[{label}]", text, DRAFT_DONE_MEANS))
+        for path, text, field in drafts:
+            violations.extend(_draft_text(name, path, text, field, lexicon))
+    violations = violations + matches
+
+    count = (f"draft: {new} new terms, {amended} amended; {len(non_goals)} non-goals; "
+             f"{len(checks)} checks; {len(units)} units; {len(violations)} findings")
+    tally: dict[str, int] = {}
+    for violation in violations:
+        tally[violation.rule] = tally.get(violation.rule, 0) + 1
+    if tally:
+        count += " (" + ", ".join(f"{rule} {tally[rule]}" for rule in sorted(tally)) + ")"
+    if doc is None:
+        count += " (no dictionary here - door at rest)"
+    return violations, count
+
+
+def main_lang_draft(args) -> int:
+    violations, count = lang_draft(args.draft, args.root, schema_doc=(
+        load_dictionary_schema(args.schema) if args.schema else None))
+    if args.as_json:
+        print(json.dumps({"note": FORM_NOTE, "draft": count,
+                          "findings": [vars(v) for v in violations]}, indent=2))
+    else:
+        for violation in violations:
+            print(violation.line)
+        if count is not None:
+            print(count)
+    return 1 if any(v.severity == "error" for v in violations) else 0
 
 
 def main_lang_extract(args) -> int:

@@ -22,10 +22,12 @@ Rules in force for every step:
   settled silently: "The material says X; you said Y. Which stands?"
 - Quantify vague terms: "fast" becomes a number and a unit; "many"
   becomes a count.
-- Probe a thin answer once; then record it with `thin: true` and move
+- Probe a thin answer once; then record it with `probed: true` and move
   on.
 - A step adds no revision row: it writes its section in place, under
-  the heading and tag r1 laid down.
+  the heading and tag r1 laid down. One exception, from SKILL.md's
+  constraints: a write into a half after its seat signed adds a text
+  row, and the interview asks that seat to sign again.
 - A pause ("pause", "later", "stop") writes the state file with `next`
   unchanged and returns to SKILL.md step 3.
 Answers live in the state file under `answers`, by the key each step
@@ -66,5 +68,5 @@ Q14. TERMS - ASK "Which words does this document use in a sense a reader must be
 Q15. GHERKIN - Derived, once the checks stand: PROPOSE one scenario per check in `answers.checks`, in the checks' order, each joined to its check by the check's id: a line `Scenario: {id} {name}`, then its Given, When and Then lines. Every fact in a scenario comes from its check. A scenario whose Then needs a fact its check lacks is never shown: the check is a thin check instead, with the reason `its Then needs {fact}`. SHOW the other scenarios one at a time and ASK the PO seat to accept, change or drop each; a change is held to the same rule, and a changed scenario the PO seat then accepts counts as confirmed. A scenario the PO seat drops makes its check a thin check, with the reason `scenario dropped`. Record `answers.gherkin: [{check, name, given, when, then, status}]`, the status `accepted`, `changed` or `dropped`, and WRITE the state file after each scenario, so a pause resumes at the first check with neither an entry nor a thin mark.
    For a thin check, WRITE into the document, under its line in Checks, `OPEN: Ready check 3: {id} is thin: {reason}.`; record `thin: {reason}` on its `answers.checks` entry and the OPEN line in `open`; REPORT `Ready check 3: {gap}. Marked OPEN.`
    When every check has its answer, WRITE the Gherkin block into the document under its heading: the tag `[PO seat · derived from r{n}]`, where r{n} is the newest revision, the highest `rN` of a row that opens on none of `Ready:`, `Measured:`, `Signed:` or `Parked:`; then each scenario with the status `accepted` or `changed`, in the checks' order.
-   At the signature of the request half, a check with no confirmed scenario carries an OPEN. Before the hand-off, READ `answers.gherkin`: for each check that is not thin and has no `accepted` or `changed` scenario, WRITE into the document, under its line in Checks, `OPEN: Ready check 3: {id} has no confirmed scenario.`, add the line to `open`, and REPORT it in the same form. Then WRITE the state file with `phase: solution`, `next: S1`, and return to SKILL.md step 1.
+   At the signature of the request half, a check with no confirmed scenario carries an OPEN. Before the hand-off, READ `answers.gherkin`: for each check that is not thin and has no `accepted` or `changed` scenario, WRITE into the document, under its line in Checks, `OPEN: Ready check 3: {id} has no confirmed scenario.`, add the line to `open`, and REPORT it in the same form. Then WRITE the state file with `phase: request`, `next: P1`, and return to SKILL.md step 1.
 </instructions>
