@@ -5,8 +5,9 @@ revision table only: the first table in the file, a run of lines that open
 on `|`. A row counts when its last cell, the changes made, opens on
 `r<N>:`; the tree skips every other row. The document's revision is the
 highest rN of a counted row that is none of a `Ready:` row (its cell opens
-`rN: Ready:`), a `Measured:` row (`rN: Measured:`) or, since
-tree-first-level's t3, a `Signed:` row (`rN: Signed:`). The contract's
+`rN: Ready:`), a `Measured:` row (`rN: Measured:`), since
+tree-first-level's t3 a `Signed:` row (`rN: Signed:`), or, since
+feature-document's f4, a `Parked:` row (`rN: Parked:`). The contract's
 revision is the rM that the newest `Ready:` row names: the one with the
 highest rN among those whose cell holds `derived from rM` (SC5.1).
 

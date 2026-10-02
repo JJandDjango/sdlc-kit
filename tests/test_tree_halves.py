@@ -473,7 +473,7 @@ NOT_SIGNATURES = {
     "two-spaces-after-signed": ("r2: Signed:  solution half", "r1"),
     "neither-half": ("r2: Signed: the whole document", "r1"),
     "solution-half-then-a-digit": ("r2: Signed: solution half2", "r1"),
-    # rows that open on none of the three are text rows
+    # rows that open on none of `Ready:`, `Measured:`, `Signed:` or `Parked:` are text rows
     "no-colon": ("r2: Signed request half", "r2"),
     "in-words": ("r2: The request half, signed by the PO seat (user)", "r2"),
     "later-in-the-cell": ("r2: Restated. Signed: request half", "r2"),

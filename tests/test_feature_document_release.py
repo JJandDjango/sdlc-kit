@@ -65,8 +65,10 @@ INTAKE_WRITES = ("- intake writes ONLY `specs/{id}/contract.yaml` and, for a fea
                  "parked document gets no contract, and a red contract never hands "
                  "off to development.")
 INTAKE_CRITERION = ("handoff refused while red; a feature document read before the "
-                    "scaffold, parked with one `Parked:` row and no contract while a "
-                    "refusal stands, else given its `Ready:` row; nothing else written.")
+                    "scaffold: parked with one `Parked:` row and no contract while a "
+                    "refusal stands, stopped with no row and no contract while a "
+                    "signature is missing, and given its `Ready:` row only once the "
+                    "contract validates ready-green; nothing else written.")
 
 
 def _read(path: Path) -> str:
