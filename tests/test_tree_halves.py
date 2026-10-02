@@ -3,9 +3,9 @@
 A feature before intake names its document's revision as a mark after its
 status, `no contract: document rN`: rN is the highest revision of a text
 row, a row of the document's first table whose last cell opens on `r<N>:`
-and then on none of `Ready:`, `Measured:` or `Signed:`. A document with no
-text row, or that cannot be read as text, shows `no revision table` there
-instead (SC3.1, SC3.2).
+and then on none of `Ready:`, `Measured:`, `Signed:` or `Parked:`. A
+document with no text row, or that cannot be read as text, shows `no
+revision table` there instead (SC3.1, SC3.2).
 
 After its verdicts come its two halves, the items `<id>/request` (plain
 name `Request half`) and `<id>/solution` (`Solution half`), in that order.

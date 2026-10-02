@@ -9,6 +9,50 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.18.0 - 2026-10-01 (tag `v0.18.0`)
+
+- **The interview writes the ratified format** (`feature-document`, ADR
+  0029 as ADRs 0033 to 0036 amend it, unit `f1-format`).
+  `/sdlc:product-specification-interview` writes the feature document at
+  `docs/features/<id>.md` from r1, with its state file beside it at
+  `docs/features/<id>.state.yaml` (`spec-interview-state/2`): the revision
+  table, the title line, the status line, then the sections in ADR 0029's
+  order, each under its tag. The tree shows the document as a feature
+  before intake from its first revision. Delta note: a state file at the
+  old `REQUEST_<slug>_*.state.yaml` path is never read; a run for that id
+  starts fresh.
+- **One flow per half, and a Gherkin step** (`feature-document`, unit
+  `f2-sections`). The interview asks the request half and then the
+  solution half, one question at a time, and writes each section as its
+  step closes. Once the checks stand it derives one scenario per check,
+  and the PO seat accepts, changes or drops each; a check whose scenario
+  cannot be derived from it, or is dropped, is a thin check, marked OPEN.
+  Delta note: `flows/sections.md` is gone,
+  replaced by `flows/request.md` and `flows/solution.md`.
+- **The checks before signing, and the signatures** (`feature-document`,
+  ADRs 0033 and 0034, unit `f3-signing`). Before a seat signs its half,
+  the interview runs `python -m taskcontract lang-check --draft <state
+  file>`, which reads the state file and writes nothing, and reads that
+  half's ready checks: 1 to 8 for the request half, 11 to 14 for the
+  solution half. `CL014` reports a new term that matches a ratified one.
+  Each run lands as a `Measured:` row, each gap is marked OPEN, and the
+  seat's word to sign stands: its signature is a `Signed:` row. Delta
+  note: `lang-check` without `--draft` prints what 0.17.0 prints;
+  `flows/readiness.md` and its five rules are gone.
+- **Intake holds the definition of done** (`feature-document`, ADR 0036,
+  unit `f4-intake`). On a feature document, intake refuses ready while an
+  OPEN mark stands, a ready check has a gap, a check stands in no unit or
+  in two, or a unit delivers no check. A refusal writes one `Parked:` row
+  that names every thing that stands, and no contract. On ready, intake
+  copies each unit's `done_means` word for word, and its `Ready:` row
+  names both seats and the revision each signed. Delta note: intake no
+  longer reads an Implementation section, and the tree no longer counts a
+  `Parked:` row as a text change.
+- **The release is written down** (`feature-document`, unit
+  `f5-release`). `USAGE.md`'s interview section reads green throughout.
+  Kit `0.17.0` -> `0.18.0`; the contract schema stays at `1.5.0`. Delta
+  note: none beyond the notes above; pin the install ref to the tag.
+
 ## 0.17.0 - 2026-09-30 (tag `v0.17.0`)
 
 - **Gates roll up their features** (`tree-first-level`, ADR 0035, unit

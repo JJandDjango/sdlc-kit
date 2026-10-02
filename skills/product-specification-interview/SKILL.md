@@ -42,7 +42,8 @@ answered step, so a later run resumes at the exact step `next` names.
 
 The template is ADR 0029's format as ADRs 0033 to 0036 amend it: the
 revision table with numbered rows; the title line `# {id} - {title}`; the
-status line; then eighteen sections, each heading followed by its tag,
+status line; then the other fifteen of the eighteen sections, each
+heading followed by its tag,
 owner and kind (`[PO seat · authored]`, `[Engineer seat · authored]`,
 `[Both seats · authored]`, or derived with its stamp, such as
 `[Intake · derived from r{n}]`). The request half (Statement,
