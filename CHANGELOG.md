@@ -9,7 +9,7 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
-## 0.18.0 - 2026-10-01 (tag `v0.18.0`)
+## 0.18.0 - 2026-10-02 (tag `v0.18.0`)
 
 - **The interview writes the ratified format** (`feature-document`, ADR
   0029 as ADRs 0033 to 0036 amend it, unit `f1-format`).

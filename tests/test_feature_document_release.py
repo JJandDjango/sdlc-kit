@@ -57,7 +57,7 @@ SIGNATURE_STOP = ("Intake reads the signatures only when nothing stands. A half 
 SECTION_8 = (f"{GREEN} When the raw request is a feature document, intake reads the "
              "three from its Scope, Order and Units sections and asks the engineer "
              "seat to keep or change them.")
-RELEASE_HEADING = "## 0.18.0 - 2026-10-01 (tag `v0.18.0`)"
+RELEASE_HEADING = "## 0.18.0 - 2026-10-02 (tag `v0.18.0`)"
 STRATA_EXCEPTION = ("One exception: intake adds its `Ready:` or `Parked:` row to a "
                     "feature document's revision table at `docs/features/{id}.md`.")
 INTAKE_WRITES = ("- intake writes ONLY `specs/{id}/contract.yaml` and, for a feature "
