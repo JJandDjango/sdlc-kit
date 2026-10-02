@@ -22,6 +22,7 @@ intent: >-
 scope:
   - skills/product-specification-interview/
   - skills/sdlc/flows/intake.md
+  - skills/sdlc/SKILL.md
   - taskcontract/lang.py
   - taskcontract/__main__.py
   - taskcontract/tree.py

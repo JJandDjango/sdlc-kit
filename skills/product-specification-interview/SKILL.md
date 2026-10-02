@@ -42,7 +42,8 @@ answered step, so a later run resumes at the exact step `next` names.
 
 The template is ADR 0029's format as ADRs 0033 to 0036 amend it: the
 revision table with numbered rows; the title line `# {id} - {title}`; the
-status line; then eighteen sections, each heading followed by its tag,
+status line; then the other fifteen of the eighteen sections, each
+heading followed by its tag,
 owner and kind (`[PO seat · authored]`, `[Engineer seat · authored]`,
 `[Both seats · authored]`, or derived with its stamp, such as
 `[Intake · derived from r{n}]`). The request half (Statement,
@@ -54,8 +55,9 @@ Interfaces, Sources, Constraints, Units, Order; then Risks and cost)
 stands below it, and the engineer seat signs it. The record follows:
 Decisions and open questions, Traceability (Links out, Record), Notes,
 and the Appendix (Contract, Gherkin, Terms). Before intake, the Contract
-block names `specs/{id}/contract.yaml` with no stamp, and the Gherkin
-and the Record carry no stamp until their step writes them. The four
+block names `specs/{id}/contract.yaml` with no stamp; the Gherkin
+carries no stamp until its step writes it, and the Record carries none,
+since no step writes it yet. The four
 bug-fix sections (Findings at a glance, Findings, Why this happened,
 Regression check) stand only in a bug fix's document.
 

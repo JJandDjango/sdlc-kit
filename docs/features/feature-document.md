@@ -11,6 +11,9 @@
 | 2026-09-30 | user | r9: Signed: request half. The PO seat signs r8; typed by Claude on the user's word |
 | 2026-09-30 | user | r10: Signed: solution half. The engineer seat signs r8; typed by Claude on the user's word |
 | 2026-09-30 | intake | r11: Ready: contract `feature-document` validates ready-green, derived from r8 in kit session 67; the PO seat (user) signed the request half at r8 (r9), the engineer seat (user) the solution half at r8 (r10); five units, f1 to f5, each confirmed by seat user; the 15 new terms ratified, Stale amended and ADR 0036 accepted at `fde018d`; f2 and f3 each hold four checks in three sketches, SC3.2 with SC3.3 and SC2.2 with SC2.3, since the schema caps a unit at three; each `done_means` copied word for word from Units; the language door reads zero after one rewrite of 72 findings; the standing line stays in the document only, since the dictionary cannot say it |
+| 2026-10-01 | user | r12: The solution half amended in kit session 72, a re-intake during the build: Scope gains `skills/sdlc/SKILL.md` for its three lines that say intake writes only the contract and never touches `docs/` (found at f4's Two-Key); f5's Retirements cell names them, and one decision entry records it. No check, no `done_means` and no out-of-scope path changes; typed by Claude on the user's word |
+| 2026-10-01 | user | r13: Signed: solution half. The engineer seat signs r12; typed by Claude on the user's word |
+| 2026-10-01 | intake | r14: Ready: contract `feature-document` validates ready-green, derived from r12; the PO seat (user) signed the request half at r8 (r9), the engineer seat (user) the solution half at r12 (r13) |
 
 # feature-document - The interview writes the ratified format, and intake holds its definition of done
 
@@ -306,6 +309,8 @@ it), then run intake again."
   template (SC1 to SC3)
 - `skills/sdlc/flows/intake.md`: intake's refusals and its word-for-word
   `done_means` (SC4)
+- `skills/sdlc/SKILL.md`: its three lines on what intake writes, which
+  f5's sweep makes true (SC4)
 - `taskcontract/lang.py`, `taskcontract/__main__.py`: prerequisite 5's
   command, which runs the checks on a draft and writes nothing
 - `taskcontract/tree.py`: a `Parked:` row changes no text
@@ -516,7 +521,7 @@ Edges:
 | `f2-sections` | SC1.2, SC3.1, SC3.2+SC3.3 | The interview writes each section in the ratified order, one question at a time, and derives one scenario per check. | one automated test per check | `flows/sections.md` (Q1 to Q12), replaced by one flow per half; the tests that pin it, found by test-retirer (seen: `FLOW_FILES`, `SECTION_STEPS`, `test_skill_file_set_is_exactly_the_ratified_set`) |
 | `f3-signing` | SC1.3, SC2.1, SC2.2+SC2.3 | The interview runs the checks before each signature, marks each gap OPEN, and writes the `Signed:` row. | one automated test per check; for SC1.3 also a manual receipt: a live run on a small feature in a scratch worktree, both halves signed, `taskcontract tree` showing both halves done | `flows/readiness.md` and its five rules, replaced by ready checks 1 to 14 and the stale rule; `test_readiness_advises_and_never_blocks`, found by test-retirer; and f2's file-set test, which flips when `readiness.md` goes |
 | `f4-intake` | SC4.1, SC4.2, SC4.3 | Intake rejects ready on an open gap or a check without one unit, and writes each `done_means` word for word. | one automated test per check; for SC4.1 also a manual receipt: intake on f3's document with one check left out of Units writes the `Parked:` row and no contract | I4 and I5 reading the Implementation section; `test_i4_and_i5_take_the_answers_from_an_implementation_section`; `_NOT_TEXT`'s "none of the three words" (docstring and tuple) |
-| `f5-release` | SC5.1, SC5.2 | Kit 0.18.0 ships the interview, and USAGE shows it with all marks green. | SC5.1 a manual receipt after the tag: USAGE's `uv` line run with `python -P` reads 0.18.0, and the plugin at the tag holds the new flows; SC5.2 automated | `KIT_VERSION`, `pyproject.toml` and `sdlc.yml` move to 0.18.0; USAGE's marks go green; a `CHANGELOG.md` entry; `MAP.md:42`'s v1 interview row |
+| `f5-release` | SC5.1, SC5.2 | Kit 0.18.0 ships the interview, and USAGE shows it with all marks green. | SC5.1 a manual receipt after the tag: USAGE's `uv` line run with `python -P` reads 0.18.0, and the plugin at the tag holds the new flows; SC5.2 automated | `KIT_VERSION`, `pyproject.toml` and `sdlc.yml` move to 0.18.0; USAGE's marks go green; a `CHANGELOG.md` entry; `MAP.md:42`'s v1 interview row; `skills/sdlc/SKILL.md`'s three lines that say intake writes only the contract and never touches `docs/` |
 
 ### Order
 
@@ -640,6 +645,12 @@ it, by the user's order of 2026-09-29.
 - Q: Can a `done_means` pass the language door word for word? A: Each is
   written plainly, and the checks before the engineer seat signs run
   them (Q14, decided 2026-09-30).
+- Q: `skills/sdlc/SKILL.md` says intake writes only the contract and
+  never touches `docs/`, while the flow writes `Ready:` and `Parked:`
+  rows into the document, and the file sits outside Scope. A: It joins
+  Scope for those three lines, and `f5-release` makes them true in its
+  sweep. No check and no `done_means` changes (found at f4's Two-Key,
+  decided 2026-10-01).
 
 ## Appendix
 

@@ -72,11 +72,11 @@ is the live container, deliberately empty until its G3 slice
 <constraints>
 - Do NOT overwrite existing files. init is no-clobber by design; the merge targets are printed, never merged; never add a flag or step that forces an overwrite.
 - Do NOT edit an existing contract without the user's explicit direction - contracts are immutable to implementers (write-surface rule); intake edits only the contract it is itself authoring.
-- Do NOT touch Cairn strata (THEORY.md, MAP.md, STATE.md, CONVENTIONS.md, decisions/, docs/): recommend /cairn, never write on its behalf.
+- Do NOT touch Cairn strata (THEORY.md, MAP.md, STATE.md, CONVENTIONS.md, decisions/, docs/): recommend /cairn, never write on its behalf. One exception: intake adds its `Ready:` or `Parked:` row to a feature document's revision table at `docs/features/{id}.md`.
 - Do NOT chain shell commands - every Bash call is a single segment: no pipes, no semicolons, no `&&`, no redirects.
 - `audit` is report-only: never fix its findings unasked, never route it through a writing step.
 - `update` is report-only by default: `--apply` writes exactly one named kit-owned file per user-directed call; merge targets and consumer-owned files are never applied; no bulk path exists.
-- intake writes ONLY `specs/{id}/contract.yaml`; a red contract never hands off to development.
+- intake writes ONLY `specs/{id}/contract.yaml` and, for a feature document, one `Ready:` or `Parked:` row in its revision table; a parked document gets no contract, and a red contract never hands off to development.
 - Vocab writes land ONLY under `specs/vocabulary/`; the List flow is read-only.
 - Lang flows are report-only; dictionary deltas are user-consented class-E edits on the 0014 lanes.
 - NEVER flip a term's status to `ratified` unasked. Extraction and day-2 authoring are born `draft`; the single born-ratified path is the greenfield init seed, where the interviewee is the principal. A TC010/TC011 in a contract loop means fork the term or drop the ref - never ratify to turn a contract green.
@@ -88,7 +88,7 @@ is the live container, deliberately empty until its G3 slice
 - [ ] Target confirmed (cwd, or git root if chosen); git absence noted, never blocking; Cairn recommended when absent and its files untouched.
 - [ ] Answers captured - project_name / adoption / stack, from the interview or supplied by the invocation; init.py invoked once; stdout reported with created / skipped / merge-by-hand surfaced.
 - [ ] New flow: `taskcontract new` invoked; created path + loop line reported, or the failure + install hint.
-- [ ] Intake flow: stopped before any contract when no ratified `intake-seat` stands; contract authored on its own scaffold with `entities` declared; the unit graph rendered and every unit answered by a human before the contract is final, `confirmed_by` recorded on every unit; validate looped (max 5) to ready-green or PARKED with a named blocker; handoff refused while red; nothing else written.
+- [ ] Intake flow: stopped before any contract when no ratified `intake-seat` stands; contract authored on its own scaffold with `entities` declared; the unit graph rendered and every unit answered by a human before the contract is final, `confirmed_by` recorded on every unit; validate looped (max 5) to ready-green or PARKED with a named blocker; handoff refused while red; a feature document read before the scaffold: parked with one `Parked:` row and no contract while a refusal stands, stopped with no row and no contract while a signature is missing, and given its `Ready:` row only once the contract validates ready-green; nothing else written.
 - [ ] Audit flow: audit.py ran by absolute path; findings reported verbatim; nothing written or fixed.
 - [ ] Update flow: update.py ran by absolute path; drift reported by class (kit-owned / merge-target / consumer); apply only per-file on explicit user direction; merge targets and consumer files never applied.
 - [ ] Vocab flows: listing computed and reported verbatim; add scaffolds red and draft; extract reads only declared surfaces, births 5-15 draft terms with sources, loops the door to green (max 5), and leaves every ratification to the user.

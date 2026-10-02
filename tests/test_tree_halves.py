@@ -3,9 +3,9 @@
 A feature before intake names its document's revision as a mark after its
 status, `no contract: document rN`: rN is the highest revision of a text
 row, a row of the document's first table whose last cell opens on `r<N>:`
-and then on none of `Ready:`, `Measured:` or `Signed:`. A document with no
-text row, or that cannot be read as text, shows `no revision table` there
-instead (SC3.1, SC3.2).
+and then on none of `Ready:`, `Measured:`, `Signed:` or `Parked:`. A
+document with no text row, or that cannot be read as text, shows `no
+revision table` there instead (SC3.1, SC3.2).
 
 After its verdicts come its two halves, the items `<id>/request` (plain
 name `Request half`) and `<id>/solution` (`Solution half`), in that order.
@@ -473,7 +473,7 @@ NOT_SIGNATURES = {
     "two-spaces-after-signed": ("r2: Signed:  solution half", "r1"),
     "neither-half": ("r2: Signed: the whole document", "r1"),
     "solution-half-then-a-digit": ("r2: Signed: solution half2", "r1"),
-    # rows that open on none of the three are text rows
+    # rows that open on none of `Ready:`, `Measured:`, `Signed:` or `Parked:` are text rows
     "no-colon": ("r2: Signed request half", "r2"),
     "in-words": ("r2: The request half, signed by the PO seat (user)", "r2"),
     "later-in-the-cell": ("r2: Restated. Signed: request half", "r2"),
