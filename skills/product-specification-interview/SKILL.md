@@ -55,8 +55,9 @@ Interfaces, Sources, Constraints, Units, Order; then Risks and cost)
 stands below it, and the engineer seat signs it. The record follows:
 Decisions and open questions, Traceability (Links out, Record), Notes,
 and the Appendix (Contract, Gherkin, Terms). Before intake, the Contract
-block names `specs/{id}/contract.yaml` with no stamp, and the Gherkin
-and the Record carry no stamp until their step writes them. The four
+block names `specs/{id}/contract.yaml` with no stamp; the Gherkin
+carries no stamp until its step writes it, and the Record carries none,
+since no step writes it yet. The four
 bug-fix sections (Findings at a glance, Findings, Why this happened,
 Regression check) stand only in a bug fix's document.
 

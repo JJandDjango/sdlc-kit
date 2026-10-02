@@ -145,10 +145,11 @@ fix's document, with its incident reference and regression scenario. A
 section with nothing to say reads "(none)", and one the interview has not
 asked yet reads "(not yet asked)". Before intake, the Appendix's Contract
 block reads "(none: intake writes `specs/<id>/contract.yaml`)", with no
-stamp. The Gherkin and the Record carry no stamp either until their step
-writes them: they read "(none: the Gherkin step writes one scenario per
-check)" under `[PO seat · derived]` and "(none: intake writes the
-record)" under `[Intake · derived]`.
+stamp. The Gherkin carries no stamp either until its step writes it: it
+reads "(none: the Gherkin step writes one scenario per check)" under
+`[PO seat · derived]`. The Record reads "(none: intake writes the
+record)" under `[Intake · derived]` and keeps that line: kit 0.18.0 has
+no step that writes the Record.
 
 🟢 **The run.** The interview asks the sections in order, one question at
 a time. It writes the state file after every step, and a later run
