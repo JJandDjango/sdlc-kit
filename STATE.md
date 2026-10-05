@@ -2,36 +2,38 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-02 (session 72 close, feature-document released as 0.18.0)._
+> _Generated 2026-10-05 (session 73 close: nothing built; 0.18.0 is in use on
+> a second machine, and its feedback opens the next session)._
 
 ## Now
-- **Kit 0.18.0 is released** (session 72): PR #84 merged at `771176e`,
-  tagged `v0.18.0` there, contract `feature-document` closed. The
-  self-pin is `ca99e7a` on branch `session-72-release`: the kit's own
-  workflow and USAGE's `uv` line take the tag. This wrap rides it.
-- The session's commits. `6400e5d`: the re-intake, the document's rows
-  r12 (Scope gains `skills/sdlc/SKILL.md`), r13 (the engineer seat signs
-  the solution half again) and r14 (`Ready:`, derived from r12); the
-  contract's `scope` gained one line and no unit changed. `ad20034`:
-  `f5-release`, with USAGE's interview section green, the CHANGELOG
-  entry, `MAP.md:42`, the three lines of `skills/sdlc/SKILL.md`, and
-  `tests/test_feature_document_release.py` (13 tests). `f767494` and
-  `5fe7c0d`: two fix rounds. `4d8139c`: the CHANGELOG heading takes the
-  tag's date. Two-Key PASS at round 3; suite 928.
-- SC5.1's receipt is taken: USAGE's `uv` line against the tag, run with
-  `python -P`, installs 0.18.0 and reads `specs/feature-document`
-  ready-green. Both receipts, before and after the tag, stand untracked
-  in `RECEIPT_feature-document-f5_2026-10-01/`.
-- The rulings and readings (user, session 72): at the re-intake, ready
-  check 3 reads no gap on this feature's own document, which holds no
-  Gherkin block; the release sweep fixes wording against the code and
-  parks each change of behavior; USAGE says no step writes the Record
-  yet; the CHANGELOG heading carries the tag's date.
-- Another machine installs `v0.18.0` through the plugin (`/plugin
-  marketplace add JJandDjango/sdlc-kit`, `/plugin install
-  sdlc@sdlc-kit`). The copy channel carries `skills/sdlc` alone: no
-  interview, and intake's ready-check questions point into the
-  interview's folder.
+- **Session 73 built nothing** (2026-10-02 to 2026-10-05): a resume, a
+  video review and one backlog note. Kit 0.18.0 stands released: PR #84
+  merged at `771176e`, tagged `v0.18.0` there, contract
+  `feature-document` closed; the self-pin `ca99e7a` and session 72's
+  wrap `9bac822` merged through PR #85 at `40eb767`. Session 72's own
+  Now, with its commits and rulings, is at `9bac822:STATE.md`. SC5.1's
+  two receipts stand untracked in
+  `RECEIPT_feature-document-f5_2026-10-01/`.
+- **0.18.0 is set up and in use on a second machine** (user,
+  2026-10-04), and the user holds feedback from that use (2026-10-05).
+  What an install there takes, read from the files in session 73: the
+  plugin (`/plugin marketplace add JJandDjango/sdlc-kit`, `/plugin
+  install sdlc@sdlc-kit`), since the copy channel carries `skills/sdlc`
+  alone and so no interview; and `pip install
+  git+https://github.com/JJandDjango/sdlc-kit.git@v0.18.0`, since the
+  interview's P1 and E1 run `python -m taskcontract lang-check --draft`
+  (`skills/product-specification-interview/flows/signing.md:49`, `:71`).
+  The interview needs no `/sdlc` setup in the repo; intake does. This
+  repo holds no receipt of that install.
+- **Backlog: honest and dishonest functions**
+  (`NOTES_honest-functions_2026-10-04.md`), from Logan Smith's "How to
+  write the perfect function". The kit holds the test run's side
+  (G4.4's derived seed, G5.2 and G5.3's replay recipe, G4.11's
+  quarantine) and nothing on what the code under test touches or on a
+  test's own body. The file holds four candidate conditions for
+  checking, three rules for generating tests by kind, and five open
+  points. No contract and no term: a feature document once it becomes
+  work.
 - Risk 5 stands: the interview never picks up a document it did not
   start, so G1's solution half is written by hand from the two NOTES
   files.
@@ -40,10 +42,16 @@
   `g1-requirements-spec` before intake, `[doing]`.
 
 ## Blockers
-- None. Branch `session-72-release` waits for the push, the PR and the
-  merge, each on the user's word.
+- None. This wrap reaches `main` through a PR from branch
+  `session-73-wrap`; the push, the PR and the merge are each on the
+  user's word.
 
 ## Next actions
+Opener (user, 2026-10-05): the feedback from the second machine's use of
+0.18.0. Read it first, before a deliverable is agreed. It is the measure
+item 2 waits for (which advisories a consumer meets), and it bears on
+the open question about USAGE section 2.
+
 1. G1's solution half, by hand from the two NOTES files (risk 5), to
    ADRs 0033 and 0036; open for it: where the component declaration
    record and the review record live, G1's rules and their codes, the
@@ -107,7 +115,10 @@
    the advisories at `a800c34:STATE.md` Next actions 4; `spec-doc-type`;
    the demo intake; wave B; 5b; the G4.6 finding;
    `no-check-reads-the-source-document`; the prototype renderer's two gaps
-   (`styled-rendering`).
+   (`styled-rendering`); honest and dishonest functions, conditions on
+   checking and generating tests
+   (`NOTES_honest-functions_2026-10-04.md`, a feature document once it
+   becomes work).
 
 ## Standing practice
 - At resume, read the pilot's `E:\ImSimProject\engine\STATE.md` beside
@@ -130,6 +141,14 @@
   copies word for word); a `Violation`'s code is its `rule` field.
 - A deferred item that waits on a prerequisite is measured again once the
   prerequisite lands, before it becomes work.
+- An idea that is not yet a feature goes into a `NOTES_*.md` file (a
+  free path, `.sdlc/config.yaml:10`) with one line under Next actions 5;
+  the interview's materials step reads the file when the idea becomes a
+  feature. Before filing it, grep `docs/gates.md` and the gate pages for
+  what the kit already holds (session 73).
+- A wrap written before its own PR merges words its Blockers line so it
+  stays true after the merge: sessions 71 and 72 each left a line the
+  next resume had to correct.
 - Intake from a feature document: ratify its new terms first, in their
   own commit, with any ADR the document's prerequisites name. A term
   whose single-word name or slug equals a dictionary word trips CL003;
@@ -292,7 +311,10 @@
   written? And which feature carries the Record's step?
 - Should USAGE section 2 say the interview, and intake on a feature
   document, need the plugin channel, or should the copy line carry both
-  skill folders?
+  skill folders? On the copy channel, intake's ready-check questions
+  point into the interview's folder. Beside it (session 73): section 2's
+  `pip` line carries no tag and does not say the interview's draft
+  checks need the package.
 - `lang-check --draft` runs none of vocab-check's own rules on a draft
   term, as the feature document's Interfaces draws it. A term with a
   definition under 20 characters (VT002) or a name that fails the slug
