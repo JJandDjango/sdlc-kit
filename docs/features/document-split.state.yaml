@@ -1,0 +1,300 @@
+schema: spec-interview-state/2
+id: document-split
+started: 2026-10-06
+phase: solution
+next: S1
+origin: feature
+title: "Requirements and design stand in two documents, each signed by its own seat"
+seats:
+  po: user
+  engineer: user
+materials:
+  - NOTES_document-split_2026-10-06.md
+answers:
+  statement: >-
+    As an engineer who holds the engineer seat alone, I want a feature's
+    request and its design in two documents, each signed by its own
+    seat, so that the PO team signs only text it reads and a design is
+    ready to build on one engineer's signature.
+  description: >-
+    As the document's Description section reads: two documents, what
+    each holds and which seat signs it; the design run starts later from
+    a signed requirements document; the design names the requirements
+    revision it was written against; it answers the four cases; intake
+    takes the pair and writes one contract; the Google Docs form renders
+    each document alone; a combined document intake has read stays as a
+    record.
+  background:
+    source: material
+    confirmed: Q4, 2026-10-06
+    text: >-
+      As the document's Background section reads at r1: the team's
+      answer of 2026-10-05 in three points, the lifecycle it asked for
+      in five steps, the four cases for asking another engineer before
+      the PR, and why now. Worded for a public repo, not quoted.
+  existing_behavior:
+    source: material
+    confirmed: Q5, 2026-10-06, nine entries
+    entries:
+      - text: One document per feature holds both halves, the request half above a `---` line and the solution half below it.
+        source: skills/product-specification-interview/templates/feature-document.md.template:89
+      - text: Each seat signs its half in its own `Signed:` row.
+        source: ADR 0034; skills/product-specification-interview/SKILL.md:81
+      - text: One interview writes both halves into the one document, and one state file holds the run.
+        source: skills/product-specification-interview/SKILL.md:36
+      - text: With no engineer seat, the interview skips the solution half and its signature.
+        source: skills/product-specification-interview/flows/solution.md:41
+      - text: Intake reads one document. It derives the contract from the newest revision both seats signed, and it stops, with no row and no contract, when a half has no signature.
+        source: skills/sdlc/flows/intake.md:23
+      - text: Intake writes its `Ready:` or `Parked:` row into that one document's revision table.
+        source: skills/sdlc/flows/intake.md:22
+      - text: The tree shows each `.md` file directly under `docs/features/` as one feature before intake, and reads a feature's document at `docs/features/<id>.md`.
+        source: taskcontract/tree.py:27, :929
+      - text: "`lang-check --draft` reads the run's one state file for both halves: the statement, the non-goals, the checks and the terms at P1, and each unit's `done_means` at E1."
+        source: skills/product-specification-interview/flows/signing.md:49, :71
+      - text: The Google Docs form shows the whole document.
+        source: skills/product-specification-interview/flows/output.md:17
+  success_criteria:
+    - id: SC1
+      from_candidates: [1, 2, 3, 9]
+      text: "A feature's request and its design stand in two documents: the requirements document holds the PO seat's sections alone, and the design document holds the engineer seat's sections alone."
+    - id: SC2
+      from_candidates: [4]
+      text: "Each document is written in its own interview run and signed by its own seat: the requirements run asks nothing of an engineer seat, and the design run starts from a signed requirements document and asks nothing of a PO seat."
+    - id: SC3
+      from_candidates: [5]
+      text: "A design document names the requirements revision it was written against, and a requirements change after that revision makes the design read stale, both before the engineer seat signs and at intake."
+    - id: SC4
+      from_candidates: [6, 8]
+      text: "Intake writes one contract from a pair whose two signatures stand and whose design is not stale, and writes none from anything else."
+    - id: SC5
+      from_candidates: [7]
+      text: "A design document answers each of the four cases, a yes names who was asked and what was decided, and a missing answer is reported before the engineer seat signs."
+  success_criteria_readings:
+    - SC4's "none from anything else" means intake refuses a combined document that has not been through intake; G1's document is split by hand.
+    - SC3 puts no duty on the PO seat; the engineer seat reads the change and signs the design again.
+    - Candidate 9 (the Google Docs form) becomes a check under SC1, and candidate 8 (combined documents stay as records) becomes checks under SC4.
+    - Candidate 6 said a missing signature parks; today it stops intake with no `Parked:` row (skills/sdlc/flows/intake.md:23). The checks keep today's behavior unless the PO seat says otherwise.
+  non_goals:
+    - No new authorizations are added (the standing line).
+    - "No computed fourth case: no config list of public contract paths is checked against the design's Scope. Moved to a later feature."
+    - No review of the design by Claude in a fresh context before the engineer seat signs. Moved to a later feature.
+    - No PR brief generated from the design document for the final reviewer. Moved to a later feature.
+    - No second engineer signs or reviews the design document before the PR.
+    - "No command splits a combined document: G1's is split by hand."
+    - No section of either half is reworded, reordered or dropped. The design document gains only the named revision and the four cases.
+  out_of_scope:
+    - The documents and contracts of features already through intake (feature-document, project-tree and tree-first-level among them).
+  prerequisites:
+    - {item: "Kit 0.18.0, the interview and intake this feature changes", exists: true}
+    - {item: "An ADR that amends ADR 0029 and ADRs 0033 to 0036 for the pair", exists: false, owner: "the user ratifies it before intake"}
+    - {item: "The terms `requirements document` and `design document`, ratified", exists: false, owner: "the user ratifies them before intake, in their own commit"}
+    - {item: "G1's document with its signed request half", exists: true}
+  checks_note: Each check's full text stands under `checks`, as the document's Checks section reads; `check_subjects` holds a short subject and the regression entries each check carries.
+  check_subjects:
+    - {id: SC1.1, text: "a requirements run writes a requirements document: the request half's sections, its own Decisions and Notes, Gherkin and Terms; no solution section; a bug fix's four sections", regression: [1]}
+    - {id: SC1.2, text: "a design run writes a design document: the named requirements revision, the solution half, Risks and cost, the four cases, its own Decisions, Traceability, Notes, the Contract block; the Google Docs form shows each document alone", regression: [1, 9]}
+    - {id: SC1.3, text: "the tree shows a pair as one feature before intake, and a combined document through intake as today", regression: [7]}
+    - {id: SC2.1, text: "a requirements run asks for no engineer seat, ends at the PO seat's signature naming the design run, and resumes at its step", regression: [3, 4]}
+    - {id: SC2.2, text: "a design run starts only on signed requirements, else stops with its message; asks for no PO seat; shows the places the PO seat refused; resumes at its step", regression: [3]}
+    - {id: SC2.3, text: "each signature row lands in its own document in the 0.18.0 wording; the checks before signing run on that seat's document; a design run changes no line of the requirements document", regression: [2, 8]}
+    - {id: SC3.1, text: "a design document names one requirements revision; a resumed design run names the revisions between, asks the engineer seat to confirm, writes a text row and asks for a new signature"}
+    - {id: SC3.2, text: "a stale design is reported before the engineer seat signs, and intake stops with the same message"}
+    - {id: SC4.1, text: "intake writes one contract from a pair, word for word, and its Ready or Parked row lands in both revision tables", regression: [5, 6]}
+    - {id: SC4.2, text: "intake stops with no row and no contract on a missing PO signature, a missing engineer signature, or a stale design, and reports which", regression: [5]}
+    - {id: SC4.3, text: "intake stops on a combined document with no Ready row; one with a Ready row stays unchanged; G1's document stands as a pair"}
+    - {id: SC5.1, text: "a design run asks the four cases one at a time and writes each answer; a yes names who was asked and what was decided"}
+    - {id: SC5.2, text: "a case with no answer, or a yes that lacks an answer, is an OPEN with its message; the seat's word to sign stands"}
+  checks:
+    - id: SC1.1
+      text: >-
+        verify a requirements run writes a requirements document that
+        holds the request half's sections in the ratified order, each
+        with its heading and tag as kit 0.18.0 writes them, then its own
+        Decisions and open questions and Notes, and the Appendix's
+        Gherkin and Terms blocks. It holds no Proposed solution, no
+        Risks and cost, no Traceability and no Contract block. A bug
+        fix's four sections stand in it
+    - id: SC1.2
+      text: >-
+        verify a design run writes a design document that holds the
+        requirements revision it was written against, the Proposed
+        solution's seven sections in the ratified order, Risks and cost,
+        the four cases, its own Decisions and open questions,
+        Traceability, Notes and the Appendix's Contract block. It holds
+        no section tagged for the PO seat. The Google Docs form of
+        either document shows that document alone
+    - id: SC1.3
+      text: >-
+        verify the tree shows a pair as one feature before intake, with
+        each document's newest revision and its signature, and shows a
+        combined document already through intake as it does today. A
+        feature with a requirements document and no design document yet
+        shows as one feature too
+    - id: SC2.1
+      text: >-
+        verify a requirements run asks for a PO seat and for no engineer
+        seat, asks only the request half's steps, the Terms and the
+        Gherkin, runs the checks before the PO seat signs, and ends at
+        that signature by naming the design run as the next command. A
+        pause resumes at the step its state names
+    - id: SC2.2
+      text: >-
+        verify a design run starts only for a feature whose requirements
+        document stands with the PO seat's signature on its newest text
+        revision, and otherwise stops with its message and writes
+        nothing. It asks for an engineer seat and for no PO seat, shows
+        the engineer seat each place the PO seat refused at Non-goals,
+        asks only the solution half's steps and the four cases, and
+        resumes at the step its state names
+    - id: SC2.3
+      text: >-
+        verify each seat's signature lands in its own document as a row
+        `rN: Signed: request half` or `rN: Signed: solution half`,
+        written right after the row it signs. The checks before each
+        seat signs run on that seat's document and land there as a
+        `Measured:` row. A design run changes no line of the
+        requirements document
+    - id: SC3.1
+      text: >-
+        verify a design document names one requirements revision: the
+        newest text revision of the requirements document when the
+        engineer seat last confirmed the design against it. A design run
+        that resumes on a newer requirements revision names the
+        revisions between and asks the engineer seat to confirm the
+        design against them. On that word the design names the newer
+        revision in a text row, and the engineer seat is asked to sign
+        again
+    - id: SC3.2
+      text: >-
+        verify that when the requirements document holds a text revision
+        newer than the one the design names, the checks before the
+        engineer seat signs report the design stale with its message,
+        and intake on that pair stops with the same message
+    - id: SC4.1
+      text: >-
+        verify intake, given a pair whose two signatures stand and whose
+        design names the requirements' newest text revision, writes one
+        contract: the statement, the non-goals, the checks and the terms
+        from the requirements document, and the scope, the units and
+        each `done_means` from the design document, word for word. Its
+        `Ready:` row, or its `Parked:` row when a refusal stands in
+        either document, lands in both revision tables
+    - id: SC4.2
+      text: >-
+        verify intake stops, with no row and no contract, and reports
+        which case holds: the requirements document has no PO signature
+        on its newest text revision, the design document has no engineer
+        signature on its newest text revision, or the design is stale
+    - id: SC4.3
+      text: >-
+        verify intake, given a combined document that holds no `Ready:`
+        row, stops with its message and writes nothing. A combined
+        document that holds a `Ready:` row stays unchanged, and its
+        contract validates as before. G1's document stands as a pair,
+        with its request half's text and signature carried over
+        unchanged
+    - id: SC5.1
+      text: >-
+        verify a design run asks the engineer seat the four cases one at
+        a time (an ambiguity in the requirements; more than one
+        solution; a solution unconventional to the codebase; a change to
+        a public contract: routes, a gateway definition, events, a
+        schema) and writes each answer into the design document as yes
+        or no. A yes takes two more answers, who was asked and what was
+        decided, and the document shows both
+    - id: SC5.2
+      text: >-
+        verify the checks before the engineer seat signs report each
+        case with no answer, and each yes that lacks who was asked or
+        what was decided, as an OPEN with its message. The seat's word
+        to sign still stands
+  check_readings:
+    - Gherkin and Terms go with the requirements; Risks and cost, Traceability and the Contract block go with the design; each document keeps its own Decisions and Notes; bug-fix sections go with the requirements.
+    - A design run refuses unsigned requirements (the strict reading of SC2).
+    - A design run never edits the requirements document; an ambiguity goes back through a requirements run.
+    - A stale design stops intake like a missing signature, with no Parked row.
+    - Intake's row lands in both documents.
+    - Signature rows keep their 0.18.0 wording.
+    - A missing answer to one of the four cases is an OPEN, so intake parks on it.
+  risks_and_cost:
+    source: material
+    risks:
+      - The final PR reviewer arrives without context.
+      - One engineer who designs alone has blind spots.
+      - The two documents drift, the requirements changing after the design was written against them.
+  decisions:
+    source: material
+    decided:
+      - Two documents, a requirements document and a design document (2026-10-06).
+      - Candidates 1 to 9 stay; the three non-goals move to later features (2026-10-06).
+      - This feature comes before G1's solution half (2026-10-06).
+      - Gherkin and Terms go with the requirements; Risks and cost, Traceability and the Contract block go with the design; each document keeps its own Decisions and Notes (SC1.1, SC1.2; 2026-10-06).
+      - The four bug-fix sections go with the requirements document (SC1.1; 2026-10-06).
+      - 'The term "Feature document" stays, as the umbrella (Terms; 2026-10-06).'
+      - A design run stops on unsigned requirements (SC2.2; 2026-10-06).
+      - A stale design stops intake with no Parked row (SC3.2, SC4.2; 2026-10-06).
+      - Intake's row lands in both documents (SC4.1; 2026-10-06).
+    undecided:
+      - Are any combined documents in flight in another repo?
+      - The pair's file names and paths, and one state file or two.
+      - Which seat confirms each unit at intake (G0.3)?
+      - Who the engineer seat tells when a case turns to yes during the build.
+  notes:
+    source: material
+    text: The gate list separates G1 (docs/gates.md:129) from G2 (docs/gates.md:154); a reading, not a ruling, puts the four cases on G1.3, G2.3 and G2.2.
+  gherkin_note: Each scenario's Given, When and Then lines stand in the document's Gherkin block, stamped r1; all thirteen accepted in one reply on 2026-10-06, none changed, none dropped, no thin check.
+  gherkin:
+    - {check: SC1.1, name: A requirements run writes a requirements document, status: accepted}
+    - {check: SC1.2, name: A design run writes a design document, status: accepted}
+    - {check: SC1.3, name: The tree shows a pair as one feature, status: accepted}
+    - {check: SC2.1, name: A requirements run ends at the PO seat's signature, status: accepted}
+    - {check: SC2.2, name: A design run starts only on signed requirements, status: accepted}
+    - {check: SC2.3, name: Each seat signs in its own document, status: accepted}
+    - {check: SC3.1, name: A design document names one requirements revision, status: accepted}
+    - {check: SC3.2, name: A stale design is reported, status: accepted}
+    - {check: SC4.1, name: Intake writes one contract from a pair, status: accepted}
+    - {check: SC4.2, name: Intake stops on a missing signature or a stale design, status: accepted}
+    - {check: SC4.3, name: Intake refuses a combined document before intake, status: accepted}
+    - {check: SC5.1, name: A design run asks the four cases, status: accepted}
+    - {check: SC5.2, name: A missing answer is an OPEN, status: accepted}
+  error_messages:
+    - {text: "No requirements document for {id}. Run the requirements interview first.", checks: [SC2.2]}
+    - {text: "The requirements document is unsigned at r{n}. The PO seat signs before the design starts.", checks: [SC2.2]}
+    - {text: "The design names requirements r{n}; the requirements stand at r{m}. Stale.", checks: [SC3.2, SC4.2]}
+    - {text: "The requirements document has no PO signature on r{n}.", checks: [SC4.2]}
+    - {text: "The design document has no engineer signature on r{n}.", checks: [SC4.2]}
+    - {text: "{path} is a combined document with no Ready: row. Intake reads a pair.", checks: [SC4.3]}
+    - {text: "case {k} has no answer", shape: "Ready check {n}: {gap}. Marked OPEN.", checks: [SC5.2]}
+    - {text: "case {k} reads yes and names no one asked", shape: "Ready check {n}: {gap}. Marked OPEN.", checks: [SC5.2]}
+    - {text: "case {k} reads yes and names no decision", shape: "Ready check {n}: {gap}. Marked OPEN.", checks: [SC5.2]}
+  terms:
+    - {name: Requirements document, definition: "The document of a feature that holds its request half and that the PO seat signs."}
+    - {name: Design document, definition: "The document of a feature that holds its solution half and that one engineer seat signs."}
+    - {name: Pair, definition: "A feature's requirements document and its design document, taken together."}
+    - {name: Combined document, definition: "A document in kit 0.18.0's format, with both halves in one file."}
+    - {name: Requirements run, definition: "An interview run that writes a requirements document."}
+    - {name: Design run, definition: "An interview run that writes a design document, started from a signed requirements document."}
+    - {name: Text revision, definition: "A revision whose row opens on none of \"Ready:\", \"Measured:\", \"Signed:\" or \"Parked:\"."}
+    - {name: Consult case, definition: "One of the four conditions under which the engineer seat asks another engineer before the PR: an ambiguity in the requirements, more than one solution, a solution unconventional to the codebase, or a change to a public contract."}
+    - {name: Public contract, definition: "A surface that code outside the feature depends on: routes, a gateway definition, events, a schema."}
+    - {name: Feature document, amends: feature-document, definition: "What a feature's contract is derived from: a pair, or one combined document."}
+    - {name: Half, amends: half, definition: "The request half, which the PO seat signs and a requirements document holds, or the solution half, which the engineer seat signs and a design document holds. A combined document holds both."}
+    - {name: Stale, amends: stale, definition: "A feature whose document holds a revision newer than the one its contract was derived from, or a derived block whose stamp is older than its document's newest revision, or a design document that names a requirements revision older than the requirements document's newest text revision. A \"Ready:\", \"Measured:\", \"Signed:\" or \"Parked:\" row never counts."}
+    - {name: Revision, amends: revision, definition: "One numbered row of a document's revision table, the first table in a requirements document, a design document or a combined document: r1, r2 and on."}
+    - {name: Feature before intake, amends: feature-before-intake, definition: "A feature with a requirements document, a pair or a combined document, and no contract yet at `specs/<id>/contract.yaml`."}
+open: []
+history:
+  - {at: 2026-10-06, event: id confirmed}
+  - {at: 2026-10-06, event: "origin, title, seats and materials confirmed in one reply"}
+  - {at: 2026-10-06, event: "opening complete, document written as r1"}
+  - {at: 2026-10-06, event: "Q1 statement accepted as proposed"}
+  - {at: 2026-10-06, event: "Q2 description and Q4 background approved in one reply; Q3 skipped, a feature"}
+  - {at: 2026-10-06, event: "Q5 nine entries confirmed; Q6 and Q7 skipped, a feature"}
+  - {at: 2026-10-06, event: "Q8 five criteria accepted as proposed, folded from the nine candidates"}
+  - {at: 2026-10-06, event: "Q9 standing line confirmed; seven non-goals and one place not touched approved"}
+  - {at: 2026-10-06, event: "Q10 four prerequisites and Q11 thirteen checks approved in one reply, with seven readings; the Description's 'names no file' corrected to 'holds no scope'"}
+  - {at: 2026-10-06, event: "Q12 nine messages and Q14 fourteen terms (nine new, five amended) approved in one reply; SC1.3 gains the requirements-only feature; Q13 skipped, a feature"}
+  - {at: 2026-10-06, event: "Q15 thirteen scenarios accepted in one reply; the Gherkin block written, stamped r1; request flow complete"}
+  - {at: 2026-10-06, event: "P1 to P5: the draft check found 179 (CL003 1, CL006 145, CL008 14, CL010 3, CL012 16), left to intake's rewrite; P2 found entry 8 against its source and ready check 5 found two prerequisites with no owner; the PO seat's answer closed both, so no OPEN was marked; r2 Measured"}
+  - {at: 2026-10-06, event: "request half signed: r3 the finishing row, r4 the signature; the Gherkin stamp moved to r3"}
