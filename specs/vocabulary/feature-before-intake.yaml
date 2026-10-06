@@ -9,8 +9,8 @@ term: feature-before-intake
 name: Feature before intake
 
 definition: >-
-  A feature whose document is at `docs/features/<id>.md` and whose
-  contract is not yet at `specs/<id>/contract.yaml`.
+  A feature with a requirements document, a pair or a combined
+  document, and no contract yet at `specs/<id>/contract.yaml`.
 
 kind: entity
 
@@ -19,3 +19,5 @@ since: 2026-09-28
 
 sources:
   - docs/features/tree-first-level.md
+  - docs/features/document-split.md
+  - decisions/0037-a-feature-document-is-a-pair-and-each-document-has-one-seat.md

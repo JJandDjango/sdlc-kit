@@ -11,8 +11,10 @@ name: Stale
 definition: >-
   A feature whose document holds a revision newer than the one its
   contract was derived from, or a derived block whose stamp is older than
-  its document's newest revision. A "Ready:", "Measured:", "Signed:" or
-  "Parked:" row never counts.
+  its document's newest revision, or a design document that names a
+  requirements revision older than the requirements document's newest
+  text revision. A "Ready:", "Measured:", "Signed:" or "Parked:" row
+  never counts.
 
 kind: attribute
 
@@ -24,3 +26,5 @@ sources:
   - decisions/0034-a-seat-signs-its-half-in-a-revision-row.md
   - docs/features/feature-document.md
   - decisions/0036-the-appendix-names-the-contract-and-a-unit-row-holds-done.md
+  - docs/features/document-split.md
+  - decisions/0037-a-feature-document-is-a-pair-and-each-document-has-one-seat.md
