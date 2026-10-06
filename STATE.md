@@ -2,20 +2,35 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-05 (session 73 close: nothing built; 0.18.0 is in use on
-> a second machine, and its feedback opens the next session)._
+> _Generated 2026-10-06 (session 74 close: document-split's request half is
+> signed; its solution half opens the next session)._
 
 ## Now
-- **Session 73 built nothing** (2026-10-02 to 2026-10-05): a resume, a
-  video review and one backlog note. Kit 0.18.0 stands released: PR #84
-  merged at `771176e`, tagged `v0.18.0` there, contract
-  `feature-document` closed; the self-pin `ca99e7a` and session 72's
-  wrap `9bac822` merged through PR #85 at `40eb767`. Session 72's own
-  Now, with its commits and rulings, is at `9bac822:STATE.md`. SC5.1's
-  two receipts stand untracked in
-  `RECEIPT_feature-document-f5_2026-10-01/`.
+- **Session 74 (2026-10-06): `document-split`'s request half is
+  signed.** The feature makes the one feature document two: a
+  requirements document the PO seat signs, and a design document one
+  engineer seat writes and signs alone. Its document,
+  `docs/features/document-split.md`, stands at r4 (`Signed: request
+  half. The PO seat signs r3`), written through the 0.18.0 interview;
+  the state file beside it reads `phase: solution`, `next: S1`. It
+  holds five criteria, 13 checks, 13 scenarios, nine new terms and five
+  amended ones (Feature document, Half, Stale, Revision, Feature before
+  intake). The tree shows it `[doing] no contract: document r3`.
+- The origin: the user's team answered the 0.18.0 process on 2026-10-05
+  (`NOTES_document-split_2026-10-06.md`). The PO team reads only the
+  request; one engineer writes the design; another engineer is asked
+  before the PR only in four cases (an ambiguity, more than one
+  solution, a solution unconventional to the codebase, a change to a
+  public contract); the final PR review stays.
+- The draft check at r2 found 179 (CL003 1, CL006 145, CL008 14, CL010
+  3, CL012 16), left to intake's rewrite of the contract's wording, as
+  `feature-document`'s 174 were. `pair` trips CL003, and the dictionary
+  cedes it at intake.
+- Kit 0.18.0 stands released: PR #84 merged at `771176e`, tagged
+  `v0.18.0` there. Session 72's Now is at `9bac822:STATE.md`, session
+  73's at `5252799:STATE.md`.
 - **0.18.0 is set up and in use on a second machine** (user,
-  2026-10-04), and the user holds feedback from that use (2026-10-05).
+  2026-10-04); its feedback is this feature's origin.
   What an install there takes, read from the files in session 73: the
   plugin (`/plugin marketplace add JJandDjango/sdlc-kit`, `/plugin
   install sdlc@sdlc-kit`), since the copy channel carries `skills/sdlc`
@@ -25,35 +40,37 @@
   (`skills/product-specification-interview/flows/signing.md:49`, `:71`).
   The interview needs no `/sdlc` setup in the repo; intake does. This
   repo holds no receipt of that install.
-- **Backlog: honest and dishonest functions**
-  (`NOTES_honest-functions_2026-10-04.md`), from Logan Smith's "How to
-  write the perfect function". The kit holds the test run's side
-  (G4.4's derived seed, G5.2 and G5.3's replay recipe, G4.11's
-  quarantine) and nothing on what the code under test touches or on a
-  test's own body. The file holds four candidate conditions for
-  checking, three rules for generating tests by kind, and five open
-  points. No contract and no term: a feature document once it becomes
-  work.
+- This machine, found in session 74: the `sdlc` plugin was stale at
+  `36c0720` (the 0.14.0 self-pin) and now sits at `40eb767`; Python
+  3.14, the default, lacked `jsonschema` and now holds it.
 - Risk 5 stands: the interview never picks up a document it did not
   start, so G1's solution half is written by hand from the two NOTES
-  files.
-- Carried: 19 features: 18 with a contract, 17 of them `[done]`;
+  files. It now waits behind `document-split`, and SC4.3 has G1's
+  document split by hand into a pair.
+- Carried: 20 features: 18 with a contract, 17 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
-  `g1-requirements-spec` before intake, `[doing]`.
+  `g1-requirements-spec` and `document-split` before intake, `[doing]`.
 
 ## Blockers
 - None. This wrap reaches `main` through a PR from branch
-  `session-73-wrap`; the push, the PR and the merge are each on the
-  user's word.
+  `session-74-document-split`, which also holds session 73's wrap
+  `5252799` (`session-73-wrap` is pushed and has no PR of its own); the
+  push, the PR and the merge are each on the user's word.
 
 ## Next actions
-Opener (user, 2026-10-05): the feedback from the second machine's use of
-0.18.0. Read it first, before a deliverable is agreed. It is the measure
-item 2 waits for (which advisories a consumer meets), and it bears on
-the open question about USAGE section 2.
+Opener: `document-split`'s solution half.
+`/sdlc:product-specification-interview document-split` resumes at S1
+with the engineer seat. Open for that seat: the pair's file names and
+paths, one state file or two, which seat confirms each unit at intake
+(G0.3), who the engineer seat tells when a case turns to yes during the
+build, and whether combined documents are in flight on the second
+machine (asked 2026-10-06, not yet answered). Then the ADR that amends
+0029 and 0033 to 0036, the nine terms and five amendments ratified in
+their own commit, intake (the 179 findings rewritten there), and the
+build, as kit 0.19.0.
 
-1. G1's solution half, by hand from the two NOTES files (risk 5), to
-   ADRs 0033 and 0036; open for it: where the component declaration
+1. Behind `document-split`: G1's solution half, by hand from the two
+   NOTES files (risk 5), to ADRs 0033 and 0036; open for it: where the component declaration
    record and the review record live, G1's rules and their codes, the
    venue, and how the 17 features done read G1 inactive once G1 is
    active. Then its intake, through 0.18.0's flow: the document needs
@@ -62,7 +79,8 @@ the open question about USAGE section 2.
    ref moves to `v0.18.0` there (pull, not push).
 2. Deferred from 0.18.0's sweep (Two-Key's advisories, rounds 1 to 3),
    each a change of behavior or a sentence a test pins word for word.
-   A measure comes first: which of them a consumer meets.
+   A measure comes first: which of them a consumer meets. The
+   2026-10-05 feedback named none.
    - The interview: E2 gives a free path (`CHANGELOG.md`, `MAP.md`) no
      exemption; S6 never asks which unit is the release unit; P6 writes
      `next: P1` before Q15 proposes a changed check's scenario again;
@@ -118,7 +136,9 @@ the open question about USAGE section 2.
    (`styled-rendering`); honest and dishonest functions, conditions on
    checking and generating tests
    (`NOTES_honest-functions_2026-10-04.md`, a feature document once it
-   becomes work).
+   becomes work); `document-split`'s three later features (the fourth
+   case computed from a list of public contract paths, Claude's review
+   of a design in a fresh context, a PR brief for the final reviewer).
 
 ## Standing practice
 - At resume, read the pilot's `E:\ImSimProject\engine\STATE.md` beside
@@ -302,8 +322,25 @@ the open question about USAGE section 2.
   self-pin through its own PR, which the wrap rides. Run USAGE's `uv` line
   against the new tag with `python -P`. main's ruleset requires a PR for
   every change.
+- The interview in this repo (session 74): before `/sdlc:`, list
+  `C:/Users/hyden/.claude/plugins/cache/sdlc-kit/sdlc` and check it
+  holds main's tip; else run the flows from `skills/` here, which equal
+  the tag when `git diff --stat v<tag> HEAD -- skills/` prints nothing.
+  The user answers in batches: propose each section's text, say the
+  count first, and one reply covers it (the request half took nine
+  replies). `lang-check --draft` reads the state file alone, so
+  `answers.statement`, `answers.non_goals`, `answers.checks[].text` and
+  `answers.terms[]` hold the full text, and a YAML list item that opens
+  on a quoted word is quoted whole. A gap the seat's answer closes
+  before the `Measured:` row is never marked.
+- This repo is public. A document's Background words a consumer's
+  feedback plainly, without quoting it, and a NOTES file leaves out a
+  remark the user made in confidence.
 
 ## Open questions
+- The interview's flows ask one question at a time, and session 74's
+  seat answered in batches of proposed text. Does the flow gain a batch
+  path, or does the rule stay and the session keep its own practice?
 - This feature's own document holds no Gherkin block and reads "eighteen
   sections" at line 413; the Record waits for a step no release has
   built. Write the 14 scenarios and the count through a text row and

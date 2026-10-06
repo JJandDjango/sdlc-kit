@@ -18,19 +18,44 @@ Approvals: the plan, the struck list, each interview answer, the
 signature, each commit, the push, the PR and the merge stay on the
 user's word.
 
+**Closed.** The deliverable is met: `docs/features/document-split.md`
+stands at r4, `Signed: request half. The PO seat signs r3`, with five
+criteria, 13 checks, 13 scenarios, nine new terms and five amended, and
+no OPEN. The draft check's 179 findings are left to intake's rewrite.
+
 ## Steps
 
-1. Open. Branch `session-74-document-split` from `5252799`; this plan
-   committed on its own.
-2. Strike. The candidate list, shown in chat; the user strikes.
-3. Notes. `NOTES_document-split_2026-10-06.md`: the team's feedback word
-   for word, the three risks, the kept candidates and the open points.
-   The interview's materials step (O5) reads it.
-4. Interview, opening (O1 to O6): id, origin, title, seats, materials;
-   the document lands as r1.
-5. Interview, request half (Q1 to Q15), one question at a time.
-6. Checks before signing (P1 to P7), then the PO seat's signature.
-7. Close. `STATE.md` regenerated, this plan struck, one commit.
+1. ~~Open.~~ Branch `session-74-document-split` from `5252799`; the plan
+   at `0f76de8`.
+2. ~~Strike.~~ Candidates 1 to 9 kept; 10 to 12 moved to later features.
+3. ~~Notes.~~ `NOTES_document-split_2026-10-06.md`, the team's feedback
+   word for word. The user's closing remark is left out: the repo is
+   public.
+4. ~~Interview, opening.~~ Run from the repo's skill folder, which
+   equals the `v0.18.0` tag: the installed plugin was stale at `36c0720`
+   and was updated mid-session. The five answers in one reply; r1.
+5. ~~Interview, request half.~~ Q1 to Q15 in six replies, each on
+   proposed text. Q5 gained three entries read from the code; Q8 folded
+   the nine candidates into five criteria; Q11's 13 checks carry seven
+   readings, recorded under Decisions and open questions.
+6. ~~Checks before signing.~~ The draft check found 179, as
+   `feature-document`'s 174. Two gaps (entry 8 against its source, two
+   prerequisites with no owner) closed on the seat's word before the
+   `Measured:` row, r2. The finishing row r3; the signature r4.
+7. ~~Close.~~ `STATE.md` regenerated, this plan struck. The commit, the
+   push, the PR and the merge wait on the user's word.
+
+Decisions this session: thirteen, all the user's. (1) Take the team's
+lifecycle, and build it ahead of G1's solution half; (2) the push of
+`session-73-wrap`; (3) the plan and the struck list; (4) the opening's
+five answers; (5) the statement; (6) the description and the background;
+(7) the nine entries of existing behavior; (8) the five criteria; (9)
+the non-goals; (10) the prerequisites and the 13 checks with their seven
+readings; (11) the messages, the terms and SC1.3's addition; (12) the 13
+scenarios; (13) the two fixes and the signature. Claude's, each told to
+the user: the plan's commit, the Background worded without quoting, the
+closing remark cut from the notes, and `jsonschema` installed into
+Python 3.14 so the draft check could run.
 
 Deferred, not this session:
 - The solution half (S1 to S11, E1 to E7), intake and the build.
