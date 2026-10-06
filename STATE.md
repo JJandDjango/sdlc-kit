@@ -2,95 +2,94 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-06 (session 75 close: document-split's solution half is
-> signed; intake opens the next session)._
+> _Generated 2026-10-06 (session 76 close: document-split's ADR and terms
+> stand on main; the language rewrite and intake open the next session)._
 
 ## Now
-- **Session 75 (2026-10-06): `document-split`'s solution half is
-  signed.** The feature makes the one feature document two: a
-  requirements document the PO seat signs, and a design document one
-  engineer seat writes and signs alone. Both halves stand signed in
-  `docs/features/document-split.md` at r7 (`Signed: solution half. The
-  engineer seat signs r6`), written through the 0.18.0 interview; the
-  state file beside it reads `phase: output`, `next: W1`, the Google
-  Docs form. It holds five criteria, 13 checks, 13 scenarios, nine new
-  terms and five amended ones, six units and no OPEN. The tree shows it
-  `[doing] no contract: document r6`, both halves `[done]`.
+- **Session 76 (2026-10-06): `document-split`'s two prerequisites are
+  met, and its contract is not yet written.** PR #88 merged at
+  `1b4173b`. It holds ADR 0037 (`bd38eb6`), which amends ADR 0029 and
+  ADRs 0033 to 0036 for the pair, and the term commit (`62cbe4a`): nine
+  new terms, seven amended, the dictionary without `pair`. The glossary
+  holds 75 terms. The session's deliverable was the contract at ready;
+  the session ended at the plan's boundary, after step 4, on the user's
+  word, so the language rewrite and intake have not run.
+- The document stands as session 75 left it: both halves signed at r7
+  in `docs/features/document-split.md` (`Signed: solution half. The
+  engineer seat signs r6`), the state file at `phase: output`, `next:
+  W1`. Five criteria, 13 checks, 13 scenarios, six units and no OPEN.
+  The tree shows it `[doing] no contract: document r6`, both halves
+  `[done]`.
+- Two of the seven amendments rest on ADR 0037 and not on the document.
+  The neighbor read found `ready-check` ("14 questions") and
+  `drift-mark` ("the one mark") false under the ADR; the user ratified
+  both. The document's Terms block still says five, and the term
+  commit's message says why. `open-mark`'s "above the seat boundary"
+  fits a combined document only and was left as it is.
+- Plan step 5 is done: the document's Scope covers the release unit.
+  Each file 0.18.0's release unit touched, the four that name the
+  version (`pyproject.toml`, `skills/sdlc/init.py`, `sdlc.yml`,
+  `USAGE.md`) and the four outside the interview's folder that speak of
+  the feature document (`skills/sdlc/SKILL.md`, `intake.md`, `tree.py`,
+  `tree_view.py`) are in Scope or on a free path. No text row is needed
+  before intake.
 - The design, as signed: the requirements document keeps
   `docs/features/<id>.md`, and the design document is
   `docs/features/<id>.design.md`, each with its own state file. A
-  design run is the same skill with a second argument, `design`. The
-  design names its requirements revision in its revision table. Consult
-  cases is a section asked at S9 under a new ready check, 15. Intake
-  takes the requirements path and writes its row in both tables. The
-  tree gains the marks `design rN` and `stale: design rN, contract from
-  rM`. Six units, `d1-requirements` to `d6-release`, ship as kit
-  0.19.0; `d6` takes SC4.3 and opens G1's design document.
-- Read before the design by four explorers (610K tokens, 11 minutes):
-  G1's document holds no solution half, so it stands unchanged as a
-  requirements document. The request half gives no words for three
-  behaviors (intake with no design document, a design run on a combined
-  document, intake on a combined document through intake); each is an
-  edge under Interfaces, and the request half stays as signed.
-- The origin: the user's team answered the 0.18.0 process on 2026-10-05
-  (`NOTES_document-split_2026-10-06.md`). The PO team reads only the
-  request; one engineer writes the design; another engineer is asked
-  before the PR only in four cases (an ambiguity, more than one
-  solution, a solution unconventional to the codebase, a change to a
-  public contract); the final PR review stays.
-- The draft check at r5 found 179 (CL003 1, CL006 145, CL008 14, CL010
-  3, CL012 16), the same as at r2, left to intake's rewrite of the
-  contract's wording. The six `done_means` read clean, since intake
-  copies them word for word. `pair` trips CL003, and the dictionary
-  cedes it at intake.
+  design run is the same skill with a second argument, `design`. Intake
+  takes the requirements path and writes its row in both tables. Six
+  units, `d1-requirements` to `d6-release`, ship as kit 0.19.0, one at a
+  time; `d6` takes SC4.3 and opens G1's design document.
+- **The user wants this feature on the second machine as soon as
+  possible** (2026-10-06). Nothing session 76 merged is installable
+  there: the ADR and the terms change the record, not the skills. What
+  stands between today and that install: the language rewrite, intake,
+  the six units and the tag. What an install takes, read from the files
+  in session 73: the plugin (`/plugin marketplace add
+  JJandDjango/sdlc-kit`, `/plugin install sdlc@sdlc-kit`) and `pip
+  install git+https://github.com/JJandDjango/sdlc-kit.git@v<tag>`, since
+  the interview's P1 and E1 run `python -m taskcontract lang-check
+  --draft`. The interview needs no `/sdlc` setup in the repo; intake
+  does. This repo holds no receipt of the install there.
 - Kit 0.18.0 stands released: PR #84 merged at `771176e`, tagged
-  `v0.18.0` there. Session 72's Now is at `9bac822:STATE.md`, session
-  73's at `5252799:STATE.md`, session 74's at `977da55:STATE.md`.
-- **0.18.0 is set up and in use on a second machine** (user,
-  2026-10-04); its feedback is this feature's origin.
-  What an install there takes, read from the files in session 73: the
-  plugin (`/plugin marketplace add JJandDjango/sdlc-kit`, `/plugin
-  install sdlc@sdlc-kit`), since the copy channel carries `skills/sdlc`
-  alone and so no interview; and `pip install
-  git+https://github.com/JJandDjango/sdlc-kit.git@v0.18.0`, since the
-  interview's P1 and E1 run `python -m taskcontract lang-check --draft`
-  (`skills/product-specification-interview/flows/signing.md:49`, `:71`).
-  The interview needs no `/sdlc` setup in the repo; intake does. This
-  repo holds no receipt of that install.
-- This machine, found in session 74: the `sdlc` plugin was stale at
-  `36c0720` (the 0.14.0 self-pin) and now sits at `40eb767`; Python
-  3.14, the default, lacked `jsonschema` and now holds it.
-- Risk 5 loosens for G1: a design run starts from a requirements
-  document it did not write, so G1's design is written through the
-  interview once 0.19.0 ships, not by hand from the two NOTES files. It
-  waits behind `document-split`'s build.
+  `v0.18.0` there. The installed `sdlc` plugin sits at `40eb767`, and
+  `git diff --stat v0.18.0 main -- skills/` prints nothing, so its flows
+  are 0.18.0's. Session 75's Now is at `686df2e:STATE.md`.
+- This machine: no Python here holds `rich` (3.14, 3.13 and 3.10), so
+  the 77 tests that import the pane fail under each, and `uv` is not
+  installed. The whole suite read green, 928 passed, in a scratch venv
+  that holds the test extra. `py -m pip install "textual>=8.2,<9"` into
+  3.14 would end that step; the user has not said.
+- G1's design is written through the interview once 0.19.0 ships, not
+  by hand from the two NOTES files. It waits behind `document-split`'s
+  build.
 - Carried: 20 features: 18 with a contract, 17 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
   `g1-requirements-spec` and `document-split` before intake, `[doing]`.
 
 ## Blockers
 - None. This wrap reaches `main` through a PR from branch
-  `session-75-document-split`; the push, the PR and the merge are each
-  on the user's word.
+  `session-76-wrap`; the push, the PR and the merge are each on the
+  user's word.
 
 ## Next actions
-Opener: `document-split` goes to intake, under kit 0.18.0.
-First the ADR, 0037, that amends 0029 and 0033 to 0036: the document's
-Notes list what it carries (the two templates, the one-seat tags, the
-r1 rows and status lines, ready check 8 and the new ready check 15, the
-named revision, one row in each table, the three edge messages). Then
-the nine terms and five amendments, ratified in their own commit, the
-dictionary ceding `pair`; `seat-boundary` and `parked-document` rest on
-one document and stand outside the five. Then `/sdlc intake
-docs/features/document-split.md` through the installed 0.18.0 plugin:
-the 179 findings rewritten in the contract's wording, each `done_means`
-copied as it stands. Then the build, `d1` to `d6`, as kit 0.19.0; a
-re-intake during it runs through that plugin too, since after `d5` the
-repo's own intake reads a pair. The interview itself resumes at W1, the
-Google Docs form, when one is wanted. Still unanswered: whether
-combined documents are in flight on the second machine (asked twice on
-2026-10-06; the document records it as not known, and the design holds
-either way).
+Opener: `document-split` goes to intake, under kit 0.18.0. The ADR and
+the terms stand on main, and the Scope check is done. First the language
+door on a draft (plan step 6): a scratch script builds the lexicon with
+the ratified terms and runs `check_contract` on a draft contract outside
+`specs/`; the draft check's 179 findings are rewritten in the contract's
+wording until it reads zero, and each `done_means` is copied as it
+stands. `case` alone is an unknown word, and the checks say "the four
+cases". Then `/sdlc:sdlc intake docs/features/document-split.md` through
+the installed plugin, the seats' confirmations in one batch, and its own
+commit with the `Contract:` trailer. Then the receipts: `validate
+--profile ready`, the tree, the whole suite. Then the build, `d1` to
+`d6`, as kit 0.19.0; a re-intake during it runs through that plugin too,
+since after `d5` the repo's own intake reads a pair. The interview
+itself resumes at W1, the Google Docs form, when one is wanted. Still
+unanswered: whether combined documents are in flight on the second
+machine (asked twice on 2026-10-06; the document records it as not
+known, and the design holds either way).
 
 1. Behind `document-split`: G1's design document, through a design run
    once 0.19.0 ships (`d6` opens it at r1), to ADRs 0033, 0036 and
@@ -197,7 +196,11 @@ either way).
   own commit, with any ADR the document's prerequisites name. A term
   whose single-word name or slug equals a dictionary word trips CL003;
   the dictionary cedes the word in the same commit. Check each amended
-  term's neighbors for a definition the change contradicts. Check the
+  term's neighbors for a definition the change contradicts, and read
+  the glossary against the feature's ADR too: the Terms block is decided
+  before the design, and session 76 found `ready-check` and `drift-mark`
+  false under ADR 0037 (each amended in the term commit on the ADR's
+  authority, on the user's word). Check the
   document's Scope against the release unit's needs:
   `skills/sdlc/init.py` (`KIT_VERSION`), `.github/workflows/sdlc.yml`,
   and every file whose sentences the feature makes false, both skills'
@@ -339,6 +342,16 @@ either way).
   a background run killed for memory. A PR's CI waits through `gh pr
   checks <n> --watch` in the background; started right after a push it
   can end `no checks reported`, so watch again.
+- The suite on this machine (session 76): no Python holds the `pane`
+  extra, so run it from a scratch venv: `py -3.14 -m venv
+  <scratch>/venv`, then that venv's `python -m pip install
+  "textual>=8.2,<9" "pytest>=8" "jsonschema>=4.18" "PyYAML>=6"`, then
+  its `python -P -m pytest tests -q` in the background. `lang-check`
+  prints about 130 exempt lines before its last one: run it in the
+  background and grep the output for `lang-green`.
+- A session that ends at the plan's boundary (session 76): its commits
+  land through the session's PR, and the wrap rides its own PR from a
+  new branch off main.
 - `scope-check` outside Actions needs `--base <sha>`: main's tip.
 - Attribution is off: a commit's final paragraph is `Contract:` alone, and
   a PR body ends at its last sentence.
@@ -375,6 +388,11 @@ either way).
   remark the user made in confidence.
 
 ## Open questions
+- The second machine and the build (2026-10-06, the user wants the
+  feature there as soon as possible): the interview's two runs and their
+  signing exist after `d3`. Can that machine take the plugin from the
+  build's branch then, before `d6` tags 0.19.0? Not checked: how the
+  plugin channel pins a ref, and whether that machine runs intake.
 - The interview's flows ask one question at a time, and session 74's
   seat answered in batches of proposed text. Does the flow gain a batch
   path, or does the rule stay and the session keep its own practice?

@@ -25,16 +25,35 @@ the whole suite.
 The session boundary, if context runs short: after step 4. The ADR and
 the terms stand committed, and intake opens the next session.
 
+**Closed at the boundary.** The deliverable is not met: the session
+ended after step 4 on the user's word, with step 5 done besides. PR #88
+merged at `1b4173b` with this plan (`8773b04`), ADR 0037 (`bd38eb6`) and
+the terms (`62cbe4a`: nine new, seven amended, the dictionary without
+`pair`). The two amendments past the document's five, `ready-check` and
+`drift-mark`, rest on ADR 0037. Step 5 found the document's Scope
+covering the release unit, so no text row is needed. Steps 6 to 8, the
+language door, intake and the receipts, open session 77.
+
+Decisions this session: six replies, all the user's. (1) The deliverable
+and the plan; (2) the plan's commit, its push and PR #88; (3) ADR 0037
+as written; (4) the fourteen term texts and the two extra amendments;
+(5) the push of the terms and the merge on CI green; (6) the session's
+end at the boundary. Claude's, each told to the user: two reasons worded
+in the ADR's Alternatives; the ADR's two bullets past the Notes' list
+(the text revision, the tree); `open-mark` left as it is; the suite run
+from a scratch venv, since no Python here holds `rich`; step 5 done
+while the boundary question waited.
+
 ## Steps
 
-1. Open. Branch `session-76-document-split` from `419f575`; this plan,
+1. ~~Open.~~ Branch `session-76-document-split` from `419f575`; this plan,
    committed on the user's word.
-2. Materials. Read ADRs 0029 and 0033 to 0036, the document's
+2. ~~Materials.~~ Read ADRs 0029 and 0033 to 0036, the document's
    Interfaces, Consult cases and Notes, and intake's flow
    (`skills/sdlc/flows/intake.md`). The installed plugin sits at
    `40eb767`; `git diff --stat v0.18.0 main -- skills/` prints nothing,
    so its flows are 0.18.0's.
-3. ADR 0037. Draft `decisions/0037-*.md`. It amends 0029 and 0033 to
+3. ~~ADR 0037.~~ Draft `decisions/0037-*.md`. It amends 0029 and 0033 to
    0036 in its own text and carries what the document's Notes list: the
    two templates and each document's sections; each section's one-seat
    tag; the r1 rows and the status lines; ready check 8 for the PO seat
@@ -42,14 +61,14 @@ the terms stand committed, and intake opens the next session.
    `Confirmed against requirements r{m}` row; one `Ready:` or `Parked:`
    row in each table; the three edge messages. Shown whole in chat for
    ratification, then its own commit.
-4. Terms. Nine new term files and five amended ones under
+4. ~~Terms.~~ Nine new term files and five amended ones under
    `specs/vocabulary/`, each definition copied from the document's Terms
    block; the dictionary cedes `pair` in the same commit. Read each
    amended term's neighbors for a definition the change contradicts;
    `seat-boundary` and `parked-document` stand as they are. `vocab-check`
    and the whole suite read green. Shown before and after in chat for
    ratification, then its own commit.
-5. Scope against the release unit. Read the document's Scope against
+5. ~~Scope against the release unit.~~ Read the document's Scope against
    what `d6-release` needs: `skills/sdlc/init.py` (`KIT_VERSION`),
    `pyproject.toml`, `.github/workflows/sdlc.yml`, both skills'
    `SKILL.md`, and each file whose sentences the feature makes false. A
@@ -69,9 +88,9 @@ the terms stand committed, and intake opens the next session.
 8. Receipts. `validate --profile ready` on the contract, `taskcontract
    tree` showing `document-split` with a ready contract, and the whole
    suite, each read from its output.
-9. Close. `STATE.md` regenerated, this plan struck, the memory index
-   updated. The commit, the push, the PR and the merge wait on the
-   user's word.
+9. ~~Close.~~ `STATE.md` regenerated, this plan struck, the memory index
+   updated, on branch `session-76-wrap`. The commit, the push, the PR
+   and the merge wait on the user's word.
 
 Deferred, not this session:
 - The build, `d1-requirements` to `d6-release`, as kit 0.19.0.
