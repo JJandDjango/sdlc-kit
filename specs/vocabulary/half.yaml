@@ -9,8 +9,9 @@ term: half
 name: Half
 
 definition: >-
-  The request half of a feature document, which the PO seat signs, or
-  its solution half, which the engineer seat signs.
+  The request half, which the PO seat signs and a requirements document
+  holds, or the solution half, which the engineer seat signs and a
+  design document holds. A combined document holds both.
 
 kind: entity
 
@@ -19,3 +20,5 @@ since: 2026-09-28
 
 sources:
   - docs/features/tree-first-level.md
+  - docs/features/document-split.md
+  - decisions/0037-a-feature-document-is-a-pair-and-each-document-has-one-seat.md

@@ -9,8 +9,9 @@ term: revision
 name: Revision
 
 definition: >-
-  One numbered row of a feature document's revision table, the first
-  table in the document: r1, r2 and on.
+  One numbered row of a document's revision table, the first table in a
+  requirements document, a design document or a combined document: r1,
+  r2 and on.
 
 kind: entity
 
@@ -19,3 +20,5 @@ since: 2026-09-28
 
 sources:
   - docs/features/tree-first-level.md
+  - docs/features/document-split.md
+  - decisions/0037-a-feature-document-is-a-pair-and-each-document-has-one-seat.md

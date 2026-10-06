@@ -9,8 +9,8 @@ term: ready-check
 name: Ready check
 
 definition: >-
-  One of the 14 questions a feature document answers before intake
-  reads it ready (ADRs 0029 and 0033).
+  One of the 15 questions a feature document answers before intake
+  reads it ready (ADRs 0029, 0033 and 0037).
 
 kind: entity
 
@@ -21,3 +21,4 @@ sources:
   - docs/features/feature-document.md
   - decisions/0029-feature-document-format-and-done.md
   - decisions/0033-the-solution-half-names-sources-examples-and-retirements.md
+  - decisions/0037-a-feature-document-is-a-pair-and-each-document-has-one-seat.md

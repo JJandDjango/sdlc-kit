@@ -9,8 +9,8 @@ term: feature-document
 name: Feature document
 
 definition: >-
-  The document a feature's contract is derived from, at
-  `docs/features/<id>.md`.
+  What a feature's contract is derived from: a pair, or one combined
+  document.
 
 kind: entity
 
@@ -19,3 +19,5 @@ since: 2026-09-25
 
 sources:
   - docs/features/project-tree.md
+  - docs/features/document-split.md
+  - decisions/0037-a-feature-document-is-a-pair-and-each-document-has-one-seat.md

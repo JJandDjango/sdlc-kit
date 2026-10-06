@@ -9,9 +9,10 @@ term: drift-mark
 name: Drift mark
 
 definition: >-
-  The one mark a feature with a contract carries from its document's
+  The mark a feature with a contract carries from its document's
   revision table: `no feature document`, `no "Ready:" row` or `stale:
-  document rD, contract from rM`.
+  document rD, contract from rM`. A pair's design document adds its own
+  after it: `stale: design rD, contract from rM`.
 
 kind: entity
 
@@ -20,3 +21,4 @@ since: 2026-09-28
 
 sources:
   - docs/features/tree-first-level.md
+  - decisions/0037-a-feature-document-is-a-pair-and-each-document-has-one-seat.md

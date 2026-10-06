@@ -1,0 +1,20 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Born draft at document-split's intake (session 76) from the Terms of
+# docs/features/document-split.md, decided at its Q14 (2026-10-06);
+# ratified by the user 2026-10-06 (class-S flip; the PR merge is the
+# outer record, ADR 0025).
+
+term: requirements-run
+
+name: Requirements run
+
+definition: >-
+  An interview run that writes a requirements document.
+
+kind: entity
+
+status: ratified
+since: 2026-10-06
+
+sources:
+  - docs/features/document-split.md
