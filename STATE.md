@@ -2,33 +2,50 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-06 (session 74 close: document-split's request half is
-> signed; its solution half opens the next session)._
+> _Generated 2026-10-06 (session 75 close: document-split's solution half is
+> signed; intake opens the next session)._
 
 ## Now
-- **Session 74 (2026-10-06): `document-split`'s request half is
+- **Session 75 (2026-10-06): `document-split`'s solution half is
   signed.** The feature makes the one feature document two: a
   requirements document the PO seat signs, and a design document one
-  engineer seat writes and signs alone. Its document,
-  `docs/features/document-split.md`, stands at r4 (`Signed: request
-  half. The PO seat signs r3`), written through the 0.18.0 interview;
-  the state file beside it reads `phase: solution`, `next: S1`. It
-  holds five criteria, 13 checks, 13 scenarios, nine new terms and five
-  amended ones (Feature document, Half, Stale, Revision, Feature before
-  intake). The tree shows it `[doing] no contract: document r3`.
+  engineer seat writes and signs alone. Both halves stand signed in
+  `docs/features/document-split.md` at r7 (`Signed: solution half. The
+  engineer seat signs r6`), written through the 0.18.0 interview; the
+  state file beside it reads `phase: output`, `next: W1`, the Google
+  Docs form. It holds five criteria, 13 checks, 13 scenarios, nine new
+  terms and five amended ones, six units and no OPEN. The tree shows it
+  `[doing] no contract: document r6`, both halves `[done]`.
+- The design, as signed: the requirements document keeps
+  `docs/features/<id>.md`, and the design document is
+  `docs/features/<id>.design.md`, each with its own state file. A
+  design run is the same skill with a second argument, `design`. The
+  design names its requirements revision in its revision table. Consult
+  cases is a section asked at S9 under a new ready check, 15. Intake
+  takes the requirements path and writes its row in both tables. The
+  tree gains the marks `design rN` and `stale: design rN, contract from
+  rM`. Six units, `d1-requirements` to `d6-release`, ship as kit
+  0.19.0; `d6` takes SC4.3 and opens G1's design document.
+- Read before the design by four explorers (610K tokens, 11 minutes):
+  G1's document holds no solution half, so it stands unchanged as a
+  requirements document. The request half gives no words for three
+  behaviors (intake with no design document, a design run on a combined
+  document, intake on a combined document through intake); each is an
+  edge under Interfaces, and the request half stays as signed.
 - The origin: the user's team answered the 0.18.0 process on 2026-10-05
   (`NOTES_document-split_2026-10-06.md`). The PO team reads only the
   request; one engineer writes the design; another engineer is asked
   before the PR only in four cases (an ambiguity, more than one
   solution, a solution unconventional to the codebase, a change to a
   public contract); the final PR review stays.
-- The draft check at r2 found 179 (CL003 1, CL006 145, CL008 14, CL010
-  3, CL012 16), left to intake's rewrite of the contract's wording, as
-  `feature-document`'s 174 were. `pair` trips CL003, and the dictionary
+- The draft check at r5 found 179 (CL003 1, CL006 145, CL008 14, CL010
+  3, CL012 16), the same as at r2, left to intake's rewrite of the
+  contract's wording. The six `done_means` read clean, since intake
+  copies them word for word. `pair` trips CL003, and the dictionary
   cedes it at intake.
 - Kit 0.18.0 stands released: PR #84 merged at `771176e`, tagged
   `v0.18.0` there. Session 72's Now is at `9bac822:STATE.md`, session
-  73's at `5252799:STATE.md`.
+  73's at `5252799:STATE.md`, session 74's at `977da55:STATE.md`.
 - **0.18.0 is set up and in use on a second machine** (user,
   2026-10-04); its feedback is this feature's origin.
   What an install there takes, read from the files in session 73: the
@@ -43,34 +60,41 @@
 - This machine, found in session 74: the `sdlc` plugin was stale at
   `36c0720` (the 0.14.0 self-pin) and now sits at `40eb767`; Python
   3.14, the default, lacked `jsonschema` and now holds it.
-- Risk 5 stands: the interview never picks up a document it did not
-  start, so G1's solution half is written by hand from the two NOTES
-  files. It now waits behind `document-split`, and SC4.3 has G1's
-  document split by hand into a pair.
+- Risk 5 loosens for G1: a design run starts from a requirements
+  document it did not write, so G1's design is written through the
+  interview once 0.19.0 ships, not by hand from the two NOTES files. It
+  waits behind `document-split`'s build.
 - Carried: 20 features: 18 with a contract, 17 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
   `g1-requirements-spec` and `document-split` before intake, `[doing]`.
 
 ## Blockers
 - None. This wrap reaches `main` through a PR from branch
-  `session-74-document-split`, which also holds session 73's wrap
-  `5252799` (`session-73-wrap` is pushed and has no PR of its own); the
-  push, the PR and the merge are each on the user's word.
+  `session-75-document-split`; the push, the PR and the merge are each
+  on the user's word.
 
 ## Next actions
-Opener: `document-split`'s solution half.
-`/sdlc:product-specification-interview document-split` resumes at S1
-with the engineer seat. Open for that seat: the pair's file names and
-paths, one state file or two, which seat confirms each unit at intake
-(G0.3), who the engineer seat tells when a case turns to yes during the
-build, and whether combined documents are in flight on the second
-machine (asked 2026-10-06, not yet answered). Then the ADR that amends
-0029 and 0033 to 0036, the nine terms and five amendments ratified in
-their own commit, intake (the 179 findings rewritten there), and the
-build, as kit 0.19.0.
+Opener: `document-split` goes to intake, under kit 0.18.0.
+First the ADR, 0037, that amends 0029 and 0033 to 0036: the document's
+Notes list what it carries (the two templates, the one-seat tags, the
+r1 rows and status lines, ready check 8 and the new ready check 15, the
+named revision, one row in each table, the three edge messages). Then
+the nine terms and five amendments, ratified in their own commit, the
+dictionary ceding `pair`; `seat-boundary` and `parked-document` rest on
+one document and stand outside the five. Then `/sdlc intake
+docs/features/document-split.md` through the installed 0.18.0 plugin:
+the 179 findings rewritten in the contract's wording, each `done_means`
+copied as it stands. Then the build, `d1` to `d6`, as kit 0.19.0; a
+re-intake during it runs through that plugin too, since after `d5` the
+repo's own intake reads a pair. The interview itself resumes at W1, the
+Google Docs form, when one is wanted. Still unanswered: whether
+combined documents are in flight on the second machine (asked twice on
+2026-10-06; the document records it as not known, and the design holds
+either way).
 
-1. Behind `document-split`: G1's solution half, by hand from the two
-   NOTES files (risk 5), to ADRs 0033 and 0036; open for it: where the component declaration
+1. Behind `document-split`: G1's design document, through a design run
+   once 0.19.0 ships (`d6` opens it at r1), to ADRs 0033, 0036 and
+   0037; open for it: where the component declaration
    record and the review record live, G1's rules and their codes, the
    venue, and how the 17 features done read G1 inactive once G1 is
    active. Then its intake, through 0.18.0's flow: the document needs
@@ -333,6 +357,19 @@ build, as kit 0.19.0.
   `answers.terms[]` hold the full text, and a YAML list item that opens
   on a quoted word is quoted whole. A gap the seat's answer closes
   before the `Measured:` row is never marked.
+- A solution half (session 75): read the materials first, one narrow
+  read-only explorer per slice (the interview skill, intake, the
+  `taskcontract` code, the release unit and pages), each returning
+  change sites, pinning tests and design questions with `file:line`;
+  split the result into one file per slice with a scratch script. Lead
+  the first batch with the shape calls Scope depends on. Before the
+  `Measured:` row, probe each `done_means` through `lang-check --draft`
+  on a scratch state file that holds the real terms, and reword to
+  zero: intake copies them word for word, the cap is 20 words, a term
+  of several words counts as one, and `document`, `engineer` and `case`
+  alone are unknown words. A Decisions line never says "an OPEN" in
+  prose: intake parks on an OPEN mark there. Five batches and the
+  signature took eight replies.
 - This repo is public. A document's Background words a consumer's
   feedback plainly, without quoting it, and a NOTES file leaves out a
   remark the user made in confidence.

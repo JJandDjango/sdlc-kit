@@ -1,8 +1,8 @@
 schema: spec-interview-state/2
 id: document-split
 started: 2026-10-06
-phase: solution
-next: S1
+phase: output
+next: W1
 origin: feature
 title: "Requirements and design stand in two documents, each signed by its own seat"
 seats:
@@ -83,8 +83,136 @@ answers:
     - No second engineer signs or reviews the design document before the PR.
     - "No command splits a combined document: G1's is split by hand."
     - No section of either half is reworded, reordered or dropped. The design document gains only the named revision and the four cases.
+  scope:
+    - skills/product-specification-interview/
+    - skills/sdlc/flows/intake.md
+    - skills/sdlc/SKILL.md
+    - taskcontract/tree.py
+    - taskcontract/tree_view.py
+    - taskcontract/pane.py
+    - tests/
+    - USAGE.md
+    - pyproject.toml
+    - skills/sdlc/init.py
+    - .github/workflows/sdlc.yml
+  scope_note: As the document's Scope section reads, with each path's checks. Outside the build, at intake, prerequisite 2's ADR and the nine terms with the five amendments. CHANGELOG.md, MAP.md, decisions/ and docs/ are free paths.
   out_of_scope:
-    - The documents and contracts of features already through intake (feature-document, project-tree and tree-first-level among them).
+    - "The documents and contracts of features already through intake, feature-document, project-tree and tree-first-level among them (from the PO seat, confirmed by the engineer seat). This feature's own combined document joins them."
+    - "taskcontract/lang.py, taskcontract/__main__.py (lang-check --draft runs unchanged on either run's state file)"
+    - "taskcontract/checker.py (the validator's rules, G0.3's among them)"
+    - "taskcontract/schemas/task-contract.schema.json (the contract's schema stays at 1.5.0)"
+    - "taskcontract/data/gates.yaml"
+    - "taskcontract/progress.py (the half ids and their refusals)"
+    - "skills/sdlc/flows/ other than intake.md"
+  interfaces:
+    note: The drawn outputs and the edges stand in the document's Interfaces section; this entry holds the calls behind them, confirmed in one reply on 2026-10-06.
+    files:
+      requirements_document: "docs/features/{id}.md"
+      requirements_state: "docs/features/{id}.state.yaml"
+      design_document: "docs/features/{id}.design.md"
+      design_state: "docs/features/{id}.design.state.yaml"
+    commands:
+      requirements_run: "/sdlc:product-specification-interview {id}"
+      design_run: "/sdlc:product-specification-interview {id} design"
+      intake: "/sdlc intake docs/features/{id}.md"
+    templates:
+      - templates/requirements-document.md.template
+      - templates/design-document.md.template
+    state_schema: "spec-interview-state/2, kept; the design run's file adds requirements_revision, answers.cases and a copy of the requirements document's new terms under answers.terms"
+    named_revision: "the 'requirements r{m}' of the design's newest text row that names one; r1 names it first, and a row 'Confirmed against requirements r{m}' names a newer one"
+    consult_cases: "a section after Risks and cost, asked at S9; Decisions and open questions, Links out and Notes move to S10, S11 and S12; ready check 15 holds its three gaps"
+    tags: "each authored section carries its document's one seat; Record and Contract keep the intake tag"
+    rows: "each Ready: row names its own table's revisions; the design's adds 'against requirements r{m}'; a Parked: row lands in both tables with one list"
+    tree_marks:
+      - "design r{n}, after 'no contract: document r{n}', on a pair before intake"
+      - "stale: design r{n}, contract from r{m}, on a pair through intake"
+    edge_messages:
+      - "No design document for {id}. Run the design interview first."
+      - "{path} is a combined document through intake. Its contract stands."
+      - "{path} is a combined document. Split it by hand, then run the design interview."
+    readings:
+      - "Three behaviors the request half gives no words for are edges of this section, with their own words; the request half stays as signed."
+      - "A pair through intake takes a drift mark for its design document, which no check asks for."
+      - "G1's document holds no solution half, so it stands as a requirements document unchanged."
+      - "A thing the engineer seat will not build is an OPEN in the design's Decisions and open questions for the PO seat."
+  sources_note: Each fact's Read from and When two disagree cells stand in the document's Sources table, one row per fact; 31 confirmed in one reply on 2026-10-06, and one added on the seat's word before the Measured row, for ready check 11.
+  sources:
+    - A feature's id and its two paths
+    - Which run is asked for
+    - The title line
+    - A run's seat
+    - A feature or a bug fix
+    - The ratified sections, their order and tags
+    - A section's text
+    - The step to resume at
+    - The newest text revision
+    - A seat's signature
+    - The requirements revision a design names
+    - The revisions between
+    - A stale design
+    - The check ids
+    - The new terms the draft check reads at E1
+    - The places the PO seat refused
+    - A consult case's answer
+    - The checks' results before signing
+    - A ready check's result
+    - A combined document
+    - A feature through intake
+    - Each contract field
+    - A unit's done_means
+    - A check's unit
+    - An OPEN mark that parks
+    - The revision a contract was derived from
+    - The release unit's paths
+    - The kit's version
+    - What a machine installs
+    - G1's request half
+    - That a combined document's contract still validates
+    - An entry of Existing behavior touched
+  constraints:
+    - "Every prompt file the build touches passes python -m prompt_lang, keeps the PromptLang tag set, and stays under the 12,000-character ceiling its suites pin. A flow that still outgrows the ceiling splits by run into another flow file."
+    - "Every shell command a prompt file authors is one segment."
+    - "The skill stays prompt-only, Markdown and the two templates. The build adds no taskcontract command; a signature, a newest text revision and a stale design are read by the prompt."
+    - "No tool reads a feature document's sections; the draft check reads only a state file, and the tree only each document's revision table and the requirements document's title line."
+    - "A run writes only its own document and its own state file. A design run changes no line of the requirements document or of the requirements run's state file. Intake writes the Ready and Parked rows, one in each table, and never a Signed row."
+    - "Intake keeps its nine steps and their order, and the word Signed stands in I2 and I7 alone."
+    - "Kept byte for byte; what lang-check prints, what the tree prints for a feature with no design document, the half ids with their names and level, and the row words."
+    - "No section of either half is reworded, reordered or dropped."
+    - "The build changes no byte of the combined documents through intake or of G1's document."
+    - "No new dependency, and the contract's schema stays at 1.5.0."
+  units_note: Each unit's Tests and Retirements cells stand in full in the document's Units table; this entry holds each cell's subject. All six confirmed in one reply on 2026-10-06.
+  units:
+    - id: d1-requirements
+      checks: [SC1.1, SC2.1]
+      done_means: "A requirements run writes a requirements document with the PO seat only, and names the design run after its signature."
+      tests: "one automated test per check"
+      retirements: "the combined template, O4's engineer seat question, P7's hand-over to S1, ready check 8's both seats, W2's intake command after a requirements run, the eighteen-section count, USAGE's 0.18.0 interview text, and the tests that pin them"
+    - id: d2-design
+      checks: [SC1.2, SC2.2, SC5.1]
+      done_means: "A design run needs a requirements document with its signature, writes a design document that names its revision, and records each consult case."
+      tests: "one automated test per check"
+      retirements: "S1's branch and S11's hand-over for no engineer seat, both seats at S8, S2's write into Non-goals, the span S1-S11, and the tests that pin them"
+    - id: d3-signing
+      checks: [SC2.3, SC3.1, SC5.2]
+      done_means: "A design run writes its checks, each text revision and its signature into the design document, and marks a consult case with no answer OPEN."
+      tests: "one automated test per check; for SC2.3 also a manual receipt, a live run of both runs with each seat signed in its own document"
+      retirements: "E6's way back into the request half, E7's move of the Gherkin stamp, E1's path to the one state file, the span ready checks 11 to 14, and the tests that pin them"
+    - id: d4-tree
+      checks: [SC1.3]
+      done_means: "The tree shows a pair as one feature with each half's revision and signature, and marks a design document past its contract."
+      tests: "automated; also a manual receipt, taskcontract tree on d3's saved pair"
+      retirements: none
+    - id: d5-intake
+      checks: [SC3.2+SC4.2, SC4.1]
+      done_means: "Intake writes one contract from a pair, and stops on a missing signature or on a stale design."
+      tests: "one automated test per sketch; also two manual receipts, each a live intake run on d3's pair that ends in one turn"
+      retirements: "intake's one r{m} and its stop in free words, the two seat boundary sentences, intake's only write, the sdlc skill's three one-row sentences, and the tests that pin them"
+    - id: d6-release
+      checks: [SC4.3]
+      done_means: "Kit 0.19.0 ships the pair: intake stops on a combined document with no `Ready:` row, G1 stands as a pair, and USAGE reads green."
+      tests: "automated; also two manual receipts, a design run's opening for g1-requirements-spec and the install at the tag"
+      retirements: "KIT_VERSION, pyproject.toml and sdlc.yml move to 0.19.0, USAGE's red marks go green, the CHANGELOG entry, MAP.md's three rows, the G0 gate page's title sentence, and the tests that pin them"
+  order: "d1-requirements, d2-design, d3-signing, d4-tree, d5-intake, d6-release, one at a time; the reasons stand in the document's Order section."
   prerequisites:
     - {item: "Kit 0.18.0, the interview and intake this feature changes", exists: true}
     - {item: "An ADR that amends ADR 0029 and ADRs 0033 to 0036 for the pair", exists: false, owner: "the user ratifies it before intake"}
@@ -223,6 +351,15 @@ answers:
       - The final PR reviewer arrives without context.
       - One engineer who designs alone has blind spots.
       - The two documents drift, the requirements changing after the design was written against them.
+      - A signature, a newest text revision and a stale design are read by the prompt in three places, and tests pin the words, never the reading.
+      - No live run takes intake to ready-green on a pair before the release.
+      - signing.md has 1,198 characters free under its ceiling and intake.md 1,971.
+      - A re-intake of this combined document during the build runs through the installed 0.18.0 plugin.
+      - A consumer's combined document with no Ready row is refused from 0.19.0 on.
+      - The three edge messages and the design's drift mark stand under no check.
+      - A design run copies the check ids and the new terms by reading the requirements document.
+    cost: Six units, one session each; four take manual receipts; before the build, one session for the ADR, the terms and intake.
+    worth: The PO team signs the requirements document alone, a design is ready to build on one engineer's signature, and G1's design is written through the interview.
   decisions:
     source: material
     decided:
@@ -235,14 +372,36 @@ answers:
       - A design run stops on unsigned requirements (SC2.2; 2026-10-06).
       - A stale design stops intake with no Parked row (SC3.2, SC4.2; 2026-10-06).
       - Intake's row lands in both documents (SC4.1; 2026-10-06).
-    undecided:
-      - Are any combined documents in flight in another repo?
-      - The pair's file names and paths, and one state file or two.
-      - Which seat confirms each unit at intake (G0.3)?
-      - Who the engineer seat tells when a case turns to yes during the build.
+      - "Combined documents in flight in another repo take no path here; whether any are is not known (the user has not said; asked 2026-10-06, probed: true)."
+      - "The pair stands at docs/features/{id}.md and docs/features/{id}.design.md, each with its own state file beside it (Interfaces; 2026-10-06)."
+      - "At intake I5 stands as it is; the engineer seat answers for the units, and no rule names a seat (2026-10-06)."
+      - "A case that turns to yes during the build goes into the design document through the design run, with a text row and the signature again (2026-10-06)."
+      - "A design run is started by the same skill with a second argument, design (2026-10-06)."
+      - "A design names its requirements revision in its revision table (SC1.2, SC3.1; 2026-10-06)."
+      - "Ready check 15 holds the cases' gaps, and ready check 8 asks for the PO seat alone (SC5.2, SC2.1; 2026-10-06)."
+      - "The request half is not reopened for its three unworded behaviors; each is an edge under Interfaces (2026-10-06)."
+      - "The tree marks a design newer than its contract (Interfaces; 2026-10-06)."
+      - "G1's document is no combined document and stands unchanged; d6 opens its design document (SC4.3; 2026-10-06)."
+      - "A thing the engineer seat will not build is an open mark in the design's Decisions and open questions (SC2.3; 2026-10-06)."
+      - "The build adds no command that reads signatures and staleness (Constraints; 2026-10-06)."
+      - "d6 ships the release on SC4.3 (2026-10-06)."
+      - "The version is 0.19.0 (2026-10-06)."
+    undecided: []
+  links_out:
+    - "NOTES_document-split_2026-10-06.md"
+    - "decisions/0029-feature-document-format-and-done.md and ADRs 0033 to 0036"
+    - "docs/features/feature-document.md"
+    - "docs/features/g1-requirements-spec.md"
+    - "docs/gates.md"
+    - "USAGE.md, the interview's section and section 9"
+    - "PR #86"
   notes:
     source: material
     text: The gate list separates G1 (docs/gates.md:129) from G2 (docs/gates.md:154); a reading, not a ruling, puts the four cases on G1.3, G2.3 and G2.2.
+    added:
+      - "What prerequisite 2's ADR carries, as the document's Notes list it."
+      - "For the term commit at intake, seat-boundary and parked-document rest on one document and stand outside the five amendments."
+      - "This document is the last one written combined; the draft check's findings at E1 are left to intake's rewrite."
   gherkin_note: Each scenario's Given, When and Then lines stand in the document's Gherkin block, stamped r1; all thirteen accepted in one reply on 2026-10-06, none changed, none dropped, no thin check.
   gherkin:
     - {check: SC1.1, name: A requirements run writes a requirements document, status: accepted}
@@ -298,3 +457,10 @@ history:
   - {at: 2026-10-06, event: "Q15 thirteen scenarios accepted in one reply; the Gherkin block written, stamped r1; request flow complete"}
   - {at: 2026-10-06, event: "P1 to P5: the draft check found 179 (CL003 1, CL006 145, CL008 14, CL010 3, CL012 16), left to intake's rewrite; P2 found entry 8 against its source and ready check 5 found two prerequisites with no owner; the PO seat's answer closed both, so no OPEN was marked; r2 Measured"}
   - {at: 2026-10-06, event: "request half signed: r3 the finishing row, r4 the signature; the Gherkin stamp moved to r3"}
+  - {at: 2026-10-06, event: "S1 scope and S2 out of scope approved in one reply, with the pair's paths, two state files and the design argument; the PO seat's one place confirmed"}
+  - {at: 2026-10-06, event: "S3 interfaces approved in one reply, with thirteen calls folded in"}
+  - {at: 2026-10-06, event: "S4 sources, 31 rows, and S5 ten constraints approved in one reply"}
+  - {at: 2026-10-06, event: "S6 six units and S7 order approved in one reply"}
+  - {at: 2026-10-06, event: "S8 risks and cost, S9 decisions, S10 links out and S11 notes approved in one reply; the fact on combined documents in another repo not given, recorded as not known"}
+  - {at: 2026-10-06, event: "E1 to E5: the draft check found 197, 18 of them on the six done_means; the engineer seat approved six rewordings, a Sources row for ready check 11 and a drawn Parked row for ready check 12 before the Measured row, so no OPEN was marked; the second run found 179 (CL003 1, CL006 145, CL008 14, CL010 3, CL012 16), left to intake's rewrite; Scope covered; r5 Measured"}
+  - {at: 2026-10-06, event: "solution half signed: r6 the finishing row, r7 the signature; the Gherkin stamp moved to r6"}
