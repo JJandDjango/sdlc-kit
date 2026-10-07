@@ -3,11 +3,11 @@
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
 > _Generated 2026-10-07 (session 82 end: document-split's d5-intake is
-> built, Two-Key PASS round 1; d6-release opens the next session)._
+> on main, Two-Key PASS round 1; d6-release opens the next session)._
 
 ## Now
-- **Session 82 (2026-10-07): `d5-intake` is built, Two-Key PASS round 1
-  at `4681b42`.** Intake reads a pair: it takes the requirements
+- **Session 82 (2026-10-07): `d5-intake` is built and on main, Two-Key
+  PASS round 1 at `4681b42`.** Intake reads a pair: it takes the requirements
   document's path, finds the design document beside it, reads its
   refusals on both, and parks the pair with one `Parked:` row in each
   table. Only when nothing stands does it read the signatures, each in
@@ -20,7 +20,9 @@
   1036 passed in a scratch venv, `prompt_lang` on both skill folders,
   `ready-green`, `scope-green` against `cc0ebd2`, and the two manual
   receipts. The session's deliverable is met. Session 81's wrap reached
-  main first, through PR #95 at `cc0ebd2`.
+  main first, through PR #95 at `cc0ebd2`. PR #96 merged at `72ac76e`
+  on the user's word, after both CI checks read green: the plan
+  (`d82144d`), the unit (`4681b42`) and the first wrap (`9f93958`).
 - The unit (`4681b42`): three prompt files and no code.
   `skills/sdlc/flows/intake.md`'s I2 reads four parts in order, DESIGN,
   REFUSALS, PARK and STOPS; I4 gains one sentence of field sources; I7
@@ -80,7 +82,7 @@
   possible, 2026-10-06). The plugin follows main:
   `.claude-plugin/marketplace.json` sets `source: "./"` with no ref, so
   a `/plugin marketplace update sdlc-kit` there delivers what main
-  holds. Once `d5` merges, intake there reads a pair, and a pair
+  holds. With `d5` on main, intake there reads a pair, and a pair
   written there can go through intake. A combined document with no
   `Ready:` row then meets `No design document for x` until `d6`
   merges; whether one is in flight there is not known. The tree that
@@ -118,10 +120,9 @@
   `[doing]`.
 
 ## Blockers
-- None. `d5-intake` stands at `4681b42`, Two-Key PASS round 1. The
-  branch `session-82-document-split-d5` carries the plan (`d82144d`),
-  the unit and this wrap to main through one PR; its push, its PR and
-  its merge are each on the user's word.
+- None. `d5-intake` is on main at `72ac76e` (PR #96). This file's own
+  commit, the session's second wrap, rides a PR of its own from branch
+  `session-82-wrap`; its merge is on the user's word.
 
 ## Next actions
 Opener: `d6-release`, the last unit of `document-split`'s build, which
