@@ -13,9 +13,12 @@ pane) keeps the validator's reading per contract, the verdict's and its
 conditions', between prints, and the validator runs only for a contract
 the cache lacks; git still runs at every print. It opens each `*.md` file
 directly under docs/features/, a contract's for its revision table and a
-feature before intake's for its title line and its revision table, prints
-none of their other words but a signer, reads no other document and writes
-no file.
+feature before intake's for its title line and its revision table. A file
+there whose name ends `.design.md` is a design document, the second of a
+pair: it is opened once, for its revision table only, and only when its
+requirements document, docs/features/<id>.md, stands beside it. The tree
+prints none of their other words but a signer, reads no other document and
+writes no file.
 
 The gates stand first, at the repository level, each opening first into
 its conditions, the named parts gates.yaml lists in its page's order. A
@@ -25,13 +28,15 @@ field names when its gate lists that condition, such as G3.1, else under
 the gate, after its conditions. A gate a finding names shows even when it
 is not active. Then each feature, in one order by id: each contract, and
 each feature before intake, a `*.md` file directly under docs/features/
-whose id has no specs/<id>/contract.yaml, at the level `feature`. Each
-shows its verdict at every active gate, then its inactive next gate (the
-first gate in the kit's order after the last active one, `G0` when none is
-active, none after the last), each verdict opening into its gate's
-conditions; then a contract's units, each unit's seven tasks and its
-checks. A feature before intake shows no unit; after its verdicts come its
-two halves, `<id>/request` and `<id>/solution`, at the level `half`.
+whose id has no specs/<id>/contract.yaml, at the level `feature`; a file
+whose name ends `.design.md` is never a feature, and one with no
+requirements document beside it prints nothing. Each shows its verdict at
+every active gate, then its inactive next gate (the first gate in the kit's
+order after the last active one, `G0` when none is active, none after the
+last), each verdict opening into its gate's conditions; then a contract's
+units, each unit's seven tasks and its checks. A feature before intake
+shows no unit; after its verdicts come its two halves, `<id>/request` and
+`<id>/solution`, at the level `half`.
 
 Every item but a finding carries one of six statuses; a finding records
 none, so it shows its kind. A task step reads its last record in the
@@ -87,52 +92,65 @@ a contract's title from the contract, never from its feature doc. A
 feature before intake's plain name is the text after the first ` - ` of
 its doc's first `# ` line, by the same rule. It reads `(no title)` when
 the doc has no such line, no text after the ` - `, or cannot be read as
-text, and the tree prints no problem line for it. A contract alone
-carries a summary, its `intent` by the same rule. Links come from two
-fields only: a unit's `depends_on` entries, as the unit graph reads them,
-each linked once in the order of its first appearance, and a finding's
-`gate:` value as written. A contract with a file at
-docs/features/<id>.md, and each feature before intake, carries that path
-as its feature doc reference. A line prints its plain name after its id,
-then its links, the reference and the summary after the marks and
+text, and the tree prints no problem line for it. A design document's
+title line is never read. A contract alone carries a summary, its `intent`
+by the same rule. Links come from two fields only: a unit's `depends_on`
+entries, as the unit graph reads them, each linked once in the order of its
+first appearance, and a finding's `gate:` value as written. A contract with
+a file at docs/features/<id>.md, and each feature before intake, carries
+that path as its feature doc reference. A line prints its plain name after
+its id, then its links, the reference and the summary after the marks and
 evidence.
 
-A contract carries at most one drift mark, read afresh at every print from
-its feature doc's revision table, the first table in the file. A row counts
-when its last cell opens on `r<N>:`, and a text row is a counted row that
-opens, after `r<N>:` and its blanks, on none of `Ready:`, `Measured:`,
-`Signed:` or `Parked:`; the document's revision is the highest N of a text
-row, so a `Signed:` row, a signature or not, never ages it, and the
-contract's is the `rM` that the first `derived from rM` in the newest
+A contract carries at most one drift mark from its feature doc, read afresh
+at every print from that doc's revision table, the first table in the file.
+A row counts when its last cell opens on `r<N>:`, and a text row is a
+counted row that opens, after `r<N>:` and its blanks, on none of `Ready:`,
+`Measured:`, `Signed:` or `Parked:`; the document's revision is the highest
+N of a text row, so a `Signed:` row, a signature or not, never ages it, and
+the contract's is the `rM` that the first `derived from rM` in the newest
 `Ready:` row naming one gives, the lower row winning a tie. The mark reads
 `no feature document` when no file is at docs/features/<id>.md, `no
 "Ready:" row` when no `Ready:` row names an `rM` or the file cannot be read
 as text, and `stale: document rD, contract from rM` when the document's
 revision is higher; else there is none, and the contract matches its
-document. A contract the tree cannot read as a mapping carries it too.
+document. A contract the tree cannot read as a mapping carries it too. A
+contract with a pair carries at most one more, from the design document,
+after the feature doc's. That mark reads `stale: design rD, contract from
+rM`, given by the same rule when the design document's revision is higher
+than the `rM` that its own table's newest `Ready:` row names. The design
+document adds no other mark, so none when its table names no `rM`, none when
+it cannot be read as text, and none when no requirements document stands
+beside it.
 
 A feature before intake carries one mark from the same table, `no contract:
 document rN`, rN the highest N of a text row wherever it stands, or `no
 revision table` when the table holds no text row or the file cannot be
-read as text. A row signs a half (ADR 0034) when its last cell opens
-`r<N>:`, its blanks, then `Signed: request half` or `Signed: solution
-half`, case as shown, one space between the words and the half's name
-ending at a word's end, free words after; when a text row stands above
-it; and when its `Revised By` cell, the one before the last, is not blank,
-so a row of fewer than three cells signs nothing. It signs the text row
-above it with the highest N. Of a half's signatures the highest own N
-counts, the lower row winning a tie; a signed half reads `done` and names
-`by <signer> at rN`, the signer that cell stripped and rN the row it
-signs, and a half with none reads `to do`. A half carries no mark, link,
-doc reference, summary, diagnostic or page.
+read as text. A pair carries a second after it, from the design
+document's table by the same rule: `design rN`, or `design: no revision
+table`; before intake no mark says a design is stale. A row signs a half
+(ADR 0034) when its last cell opens `r<N>:`, its blanks, then `Signed:
+request half` or `Signed: solution half`, case as shown, one space between
+the words and the half's name ending at a word's end, free words after;
+when a text row stands above it; and when its `Revised By` cell, the one
+before the last, is not blank, so a row of fewer than three cells signs
+nothing. It signs the text row above it with the highest N. Of a half's
+signatures the highest own N counts, the lower row winning a tie; a signed
+half reads `done` and names `by <signer> at rN`, the signer that cell
+stripped and rN the row it signs, and a half with none reads `to do`. Each
+table counts alone: the request half reads the requirements document's
+table and no other, and where a design document stands, its table alone
+gives the solution half, a `Signed: solution half` row in the requirements
+document counting for nothing. A half carries no mark, link, doc reference,
+summary, diagnostic or page.
 
 Each item but a gate, a condition, a task, the no-gate item, a feature
 before intake and its verdicts names the file it is read from, a half its
-feature doc, and a unit or check the keys to its entry there;
-`reference` turns that into the entry's line, parsing the file afresh, so
-only the query calls it; a half's line is its counting signature's row,
-else 1. A gate, a verdict, a condition and a task carry the kit page their
-list gives, a condition its gate's.
+feature doc, a pair's solution half the design document, and a unit or
+check the keys to its entry there; `reference` turns that into the entry's
+line, parsing the file afresh, so only the query calls it; a half's line is
+its counting signature's row, else 1. A gate, a verdict, a condition and a
+task carry the kit page their list gives, a condition its gate's.
 """
 
 from __future__ import annotations
@@ -182,6 +200,9 @@ NO_DOCUMENT = "no feature document"
 NO_READY = 'no "Ready:" row'
 # A feature before intake's mark when its doc gives no text row.
 NO_REVISION = "no revision table"
+# A pair's second document, by its name's end, and the word its marks carry.
+DESIGN_SUFFIX = ".design.md"
+DESIGN = "design"
 # A feature before intake's halves, each an id segment and a plain name.
 HALVES = (("request", "Request half"), ("solution", "Solution half"))
 # A feature doc's revision table: a pipe after a backslash never splits a
@@ -323,14 +344,16 @@ def text(value) -> str | None:
     return " ".join(value.strip().splitlines()) or None
 
 
-def drift(path: Path) -> str | None:
+def drift(path: Path, word: str = "document") -> str | None:
     """A contract's drift mark from the feature doc at `path`: `no feature
     document` when no file is there, `no "Ready:" row` when no `Ready:` row
     names an `rM` or the file cannot be read as text, `stale: document rD,
     contract from rM` when the document's revision, which leaves out the
     `Ready:`, `Measured:`, `Signed:` and `Parked:` rows, passed the
     contract's, else None. Only the first table is read, and none of its
-    words print."""
+    words print. `word` is the name the stale mark gives the document:
+    `design` for a pair's design document, whose stale mark alone the
+    caller keeps."""
     if not path.is_file():
         return NO_DOCUMENT
     lines = _lines(path)
@@ -348,7 +371,7 @@ def drift(path: Path) -> str | None:
     if contract is None:
         return NO_READY
     if document is not None and document > contract:
-        return f"stale: document r{document}, contract from r{contract}"
+        return f"stale: {word} r{document}, contract from r{contract}"
     return None
 
 
@@ -821,12 +844,14 @@ def read_contracts(root: Path, problems: list[str]) -> list[tuple[str, dict | No
 
 def read_features(root: Path, contracts: set[str]) -> list[str]:
     """The id of each feature before intake, in id order: each file named
-    `*.md` directly in docs/features/ whose id is not in `contracts`."""
+    `*.md` directly in docs/features/ whose id is not in `contracts`, but
+    never one whose name ends `.design.md`, a design document."""
     folder = root / "docs" / "features"
     if not folder.is_dir():
         return []
     ids = [path.name[:-len(".md")] for path in folder.iterdir()
-           if path.name.endswith(".md") and path.is_file()]
+           if path.name.endswith(".md") and not path.name.endswith(DESIGN_SUFFIX)
+           and path.is_file()]
     return sorted(fid for fid in ids if fid and fid not in contracts)
 
 
@@ -922,14 +947,22 @@ def _conditions(entry: dict | None) -> list[dict]:
 def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str],
                    upcoming: str | None, gates: dict[str, dict],
                    tasks: dict[str, dict]) -> Item:
-    """A contract with its drift mark: its verdict at each active gate, then
-    the upcoming gate's verdict marked `inactive`, each opening into its
-    gate's conditions; then its units. An unreadable contract keeps its
-    verdicts and its mark, and shows no unit."""
+    """A contract with its drift marks, its feature doc's and then, for a
+    pair, the design document's stale mark: its verdict at each active gate,
+    then the upcoming gate's verdict marked `inactive`, each opening into
+    its gate's conditions; then its units. An unreadable contract keeps its
+    verdicts and its marks, and shows no unit."""
     doc = f"docs/features/{cid}.md"
+    design = root / f"docs/features/{cid}{DESIGN_SUFFIX}"
     source = f"specs/{cid}/contract.yaml"
     mark = drift(root / doc)
-    item = Item(cid, "contract", marks=[mark] if mark else [],
+    marks = [mark] if mark else []
+    if mark != NO_DOCUMENT and design.is_file():
+        stale = drift(design, DESIGN)
+        # The stale mark is the only one a design document adds.
+        if stale not in (None, NO_DOCUMENT, NO_READY):
+            marks.append(stale)
+    item = Item(cid, "contract", marks=marks,
                 children=_verdict_items(cid, active, upcoming, gates, source),
                 doc=doc if (root / doc).is_file() else None,
                 name=(text(instance.get("title")) if instance is not None else None) or NO_TITLE,
@@ -962,20 +995,32 @@ def _feature_item(root: Path, fid: str, active: list[str], upcoming: str | None,
     `(no title)` when that gives none, its revision mark, and its verdicts
     as a contract's, each reading `to do` from no file; then its two halves,
     each `done` by the signature that counts for it, else `to do`. No unit.
-    The doc is read once; its revision, signatures and title use its lines."""
+    A pair adds the design document's mark after the doc's, `design rN` or
+    `design: no revision table`, and reads its solution half from the
+    design document's table alone, which that half then names. Each
+    document is read once; the doc's revision, signatures and title use its
+    lines, the design document's revision and signatures its own."""
     doc = f"docs/features/{fid}.md"
+    design = f"docs/features/{fid}{DESIGN_SUFFIX}"
     lines = _lines(root / doc)
     revision, signatures = revisions(lines)
+    marks = [f"no contract: document r{revision}" if revision is not None else NO_REVISION]
+    sources = {key: (doc, signatures) for key, _ in HALVES}
+    if (root / design).is_file():
+        design_revision, design_signatures = revisions(_lines(root / design))
+        marks.append(f"{DESIGN} r{design_revision}" if design_revision is not None
+                     else f"{DESIGN}: {NO_REVISION}")
+        sources["solution"] = (design, design_signatures)
     halves = []
     for key, name in HALVES:
-        signature = signatures.get(key)
+        source, signed = sources[key]
+        signature = signed.get(key)
         halves.append(Item(f"{fid}/{key}", "half", status=DONE if signature else TO_DO,
                            evidence=(f"by {signature.signer} at r{signature.signs}"
                                      if signature else None),
-                           name=name, source=doc,
+                           name=name, source=source,
                            line=signature.line if signature else None))
-    mark = f"no contract: document r{revision}" if revision is not None else NO_REVISION
-    return Item(fid, "feature", marks=[mark],
+    return Item(fid, "feature", marks=marks,
                 children=_verdict_items(fid, active, upcoming, gates, None) + halves,
                 doc=doc, name=title(lines) or NO_TITLE)
 
