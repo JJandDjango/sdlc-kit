@@ -72,7 +72,7 @@ QUESTION = "Confirm the design against"
 QUESTION_ONE = '"Confirm the design against r4?"'
 QUESTION_TWO = '"Confirm the design against r4 and r5?"'
 QUESTION_MORE = '"Confirm the design against r4, r5 and r6?"'
-NAMED_REVISION = ("The design names one requirements revision: the `requirements r{m}` of the"
+NAMED_REVISION = ("The design names one requirements revision: the `requirements r{n}` of the"
                   " design table's newest text row that names one")
 
 # Ready check 15, its three gaps, and the two shapes a gap is marked and

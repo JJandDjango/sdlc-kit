@@ -142,7 +142,7 @@ def test_sc3_2_a_design_is_stale_when_the_requirements_hold_a_newer_text_revisio
     assert STALE_RULE in e4
     assert STALE_RULE in stops
     # Intake names what each side of the rule is read from.
-    assert ("The design names the `requirements r{m}` of its table's newest text row that "
+    assert ("The design names the `requirements r{n}` of its table's newest text row that "
             "names one.") in stops
     assert ("A document's newest text revision is the highest row of its own table that "
             f"{NOT_TEXT}.") in stops
@@ -152,7 +152,8 @@ def test_sc3_2_e4_reports_a_stale_design_and_the_seats_word_to_sign_still_stands
     text = _read(SIGNING)
     e4 = _step(text, "E4")
     assert f"{STALE_RULE}: REPORT {STALE}" in e4
-    assert e4.endswith(f"REPORT {STALE} {WORD_STANDS}")
+    assert e4.endswith(f"REPORT {STALE}, with r{{n}} the revision the design names and r{{m}} "
+                       f"the requirements document's newest text revision. {WORD_STANDS}")
     # The stale blocks are still read: a design document holds a derived Contract block.
     _in_order(e4, "READ each derived block's stamp against the newest revision.",
               "REPORT each stale block with its message.", STALE_RULE)
@@ -174,7 +175,8 @@ def test_sc3_2_intake_stops_on_a_stale_design_with_the_message_e4_reports():
     assert _flat(signing).count(STALE) == 1
     assert _flat(flow).count(STALE) == 1
     assert _flat(flow).count("Stale.") == 1
-    assert f"then {STALE}, with r{{m}} the requirements document's newest text revision" in stops
+    assert (f"then {STALE}, with r{{n}} there the revision the design names and r{{m}} the "
+            "requirements document's newest text revision") in stops
     # A stale design stops intake; it parks nothing.
     _in_order(stops, STALE, "STOP before any contract exists: write no row and no contract")
 
