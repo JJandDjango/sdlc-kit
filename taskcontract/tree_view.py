@@ -11,8 +11,10 @@ half`). Then the status in brackets, or a finding's kind in its place,
 then the item's marks (`inactive` on a gate a finding names that is not
 active and on a feature's next gate, `current` on the current task, on a
 contract its drift mark: `no feature document`, `no "Ready:" row` or
-`stale: document rD, contract from rM`, and on a feature before intake
-`no contract: document rN` or `no revision table`), then its evidence (on
+`stale: document rD, contract from rM`, then for a pair its design
+document's, `stale: design rD, contract from rM`, and on a feature before
+intake `no contract: document rN` or `no revision table`, then for a pair
+`design rN` or `design: no revision table`), then its evidence (on
 a contract's `G0` verdict, the validator command and the `HEAD` it read;
 on a check whose last run was green as expected, that run's command and
 `HEAD`; on a task done by its own record, `by <seat>` on an approval and
@@ -41,13 +43,14 @@ line, each only when the item has it: `summary:` whole, on a contract
 with an intent, one line per link kind with its targets joined by `, `,
 `doc:` with the feature doc's path at line 1, `file: <path>:<line>` (a
 contract or its verdict at line 1, a unit or check at its entry's first
-line, a finding's file at line 1, a half's feature doc at its counting
-signature's row, else line 1), and `page:`, the kit page that defines a
-gate, a verdict's or a condition's gate, or a task. An item's diagnostics
-never print here. So a block never passes seven lines, whatever a field
-holds. The unreadable sources follow on stderr. An unknown id prints `no
-node '<id>' - print the tree to list every node id` on stderr alone and
-exits 2; an id with `--follow` exits 2 too.
+line, a finding's file at line 1, a half's feature doc, or for a pair's
+solution half the design document, `docs/features/<id>.design.md`, at its
+counting signature's row, else line 1), and `page:`, the kit page that
+defines a gate, a verdict's or a condition's gate, or a task. An item's
+diagnostics never print here. So a block never passes seven lines, whatever
+a field holds. The unreadable sources follow on stderr. An unknown id
+prints `no node '<id>' - print the tree to list every node id` on stderr
+alone and exits 2; an id with `--follow` exits 2 too.
 
 `--follow` runs the interactive pane, taskcontract/pane.py, imported only
 then; without the `pane` extra it prints `taskcontract tree: --follow
