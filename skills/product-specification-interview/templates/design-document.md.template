@@ -1,0 +1,85 @@
+| Revision Date | Revised By | Changes Made |
+| :-: | :-: | :-- |
+| {date} | {engineer} | r1: Created through /sdlc:product-specification-interview. The design, in progress, against requirements r{m}. Engineer seat: {engineer} |
+
+# {id} - {title}
+
+`{repo}` · seat: engineer {engineer} · requirements: `docs/features/{id}.md` · contract: `{id}`, draft · PR: none · merge SHA: none
+
+## Proposed solution
+
+`[Engineer seat · authored]`
+
+### Scope
+
+{scope}
+
+### Out of scope
+
+{out_of_scope}
+
+### Interfaces
+
+{interfaces}
+
+### Sources
+
+{sources}
+
+### Constraints
+
+{constraints}
+
+### Units
+
+{units}
+
+### Order
+
+{order}
+
+## Risks and cost
+
+`[Engineer seat · authored]`
+
+{risks_and_cost}
+
+## Consult cases
+
+`[Engineer seat · authored]`
+
+{cases}
+
+## Decisions and open questions
+
+`[Engineer seat · authored]`
+
+{decisions}
+
+## Traceability
+
+### Links out
+
+`[Engineer seat · authored]`
+
+{links_out}
+
+### Record
+
+`[Intake · derived from r{n}]`
+
+{record}
+
+## Notes
+
+`[Engineer seat · authored]`
+
+{notes}
+
+## Appendix
+
+### Contract
+
+`[Intake · derived]`
+
+(none: intake writes `specs/{id}/contract.yaml`)

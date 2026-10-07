@@ -28,8 +28,9 @@ stands whatever the count of findings and OPEN marks.
   `Ready:`, `Measured:`, `Signed:` or `Parked:`.
 - A derived block is stale when its tag's `derived from r{n}` stands
   below the newest revision. The report reads `{block} is stamped r{n};
-  the newest revision is r{m}. Stale.`, with `{block}` one of `Gherkin`,
-  `Contract`, `Record`. Before intake the Contract and the Record carry
+  the newest revision is r{m}. Stale.`, with `{block}` the block's name. A
+  requirements document holds one derived block, `Gherkin`; `Contract`
+  and `Record` stand in a design document. Before intake the Contract and the Record carry
   no stamp and are never stale.
 - A half's checks are one run, P1 to P5 or E1 to E5. `next` stays at the
   run's first step until the `Measured:` row is written: a pause

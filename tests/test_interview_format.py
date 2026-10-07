@@ -18,6 +18,7 @@ ROOT = Path(__file__).parent.parent
 SKILL_DIR = ROOT / "skills" / "product-specification-interview"
 FLOWS = SKILL_DIR / "flows"
 TEMPLATE = SKILL_DIR / "templates" / "requirements-document.md.template"
+DESIGN_TEMPLATE = SKILL_DIR / "templates" / "design-document.md.template"
 
 PROMPTLANG_TAGS = {"purpose", "instructions", "variables", "context",
                    "constraints", "examples", "output", "criteria",
@@ -226,4 +227,4 @@ def test_c3_skill_stays_prompt_only_with_its_template():
     assert "# {id} - {title}" in _text(TEMPLATE).splitlines()  # f1's template
     for path in SKILL_DIR.rglob("*"):
         if path.is_file():
-            assert path.suffix == ".md" or path == TEMPLATE, path
+            assert path.suffix == ".md" or path in (TEMPLATE, DESIGN_TEMPLATE), path

@@ -34,6 +34,7 @@ ROOT = _ABOVE if (_ABOVE / "skills").is_dir() else Path.cwd()
 SKILL_DIR = ROOT / "skills" / "product-specification-interview"
 FLOWS = SKILL_DIR / "flows"
 TEMPLATE = SKILL_DIR / "templates" / "requirements-document.md.template"
+DESIGN_TEMPLATE = SKILL_DIR / "templates" / "design-document.md.template"
 
 PROMPTLANG_TAGS = {"purpose", "instructions", "variables", "context",
                    "constraints", "examples", "output", "criteria",
@@ -76,7 +77,6 @@ NEWEST_REVISION = ("the highest `rN` of a row that opens on none of `Ready:`, `M
 FALSE_ENTRY_OPEN = ("`OPEN: Ready check 6: {entry} no longer holds:"
                     " {what the source says}.`")
 UNCONFIRMED_OPEN = "`OPEN: Ready check 3: {id} has no confirmed scenario.`"
-UNCONFIRMED_PLACE = "`(from the PO seat, not confirmed)`"
 SIGN_REQUEST_QUESTION = '"Sign the request half now, or go back to a section?"'
 SIGN_SOLUTION_QUESTION = '"Sign the solution half now, or go back to a section?"'
 NEVER_BLOCKS = ("The checks advise and never block: the seat's word to sign, or to write,"
@@ -211,7 +211,7 @@ def test_sc1_3_each_half_hands_over_to_its_checks_and_each_signature_hands_on():
     gherkin = _step("request.md", "Q", "Q15")
     assert "`phase: request`" in gherkin and "`next: P1`" in gherkin
     assert "`next: S1`" not in gherkin  # the PO seat signs before the solution half opens
-    notes = _step("solution.md", "S", "S11")
+    notes = _step("solution.md", "S", "S12")
     assert "`phase: solution`" in notes and "`next: E1`" in notes
     signed = _signing_step("P7")
     assert "`phase: output`" in signed and "`next: W1`" in signed
@@ -277,10 +277,6 @@ def test_sc1_3_a_write_into_a_signed_half_adds_a_text_row_and_the_seat_is_asked_
         assert "A step adds no revision row" in context, name
         assert "a write into a half after its seat signed" in context, name
         assert "adds a text row" in context and "sign again" in context, name
-    # The case that raised it: Out of scope sends a thing we will not build to Non-goals.
-    out_of_scope = _step("solution.md", "S", "S2")
-    assert "adds a text row" in out_of_scope
-    assert "asks the PO seat to sign again" in out_of_scope
 
 
 def test_sc1_3_a_seat_that_declines_keeps_its_older_signature_and_gets_no_new_signed_row():
@@ -294,23 +290,17 @@ def test_sc1_3_a_seat_that_declines_keeps_its_older_signature_and_gets_no_new_si
         assert "REPORT the step to resume at" in body, step
 
 
-def test_sc1_3_solution_flows_purpose_agrees_with_the_step_both_seats_answer():
-    purpose = _block(_flow("solution.md"), "purpose")
-    assert "The engineer seat answers S1 to S7, and both seats answer S8" in purpose
-    assert "answers S1 to S8" not in purpose
-    assert "Both seats answer" in _step("solution.md", "S", "S8")
-
-
 # --- SC1.3: Constraints 1 and 3 of the feature document ---
 
 def test_sc1_3_skill_folder_holds_the_signing_flow_markdown_and_the_template_and_no_code():
     assert {p.name for p in FLOWS.glob("*.md")} == FLOW_FILES
     held = {p.relative_to(SKILL_DIR).as_posix() for p in SKILL_DIR.rglob("*") if p.is_file()}
-    assert held == ({"SKILL.md", "templates/requirements-document.md.template"}
+    assert held == ({"SKILL.md", "templates/requirements-document.md.template",
+                     "templates/design-document.md.template"}
                     | {f"flows/{name}" for name in FLOW_FILES})
     for path in SKILL_DIR.rglob("*"):
         if path.is_file():
-            assert path.suffix == ".md" or path == TEMPLATE, path
+            assert path.suffix == ".md" or path in (TEMPLATE, DESIGN_TEMPLATE), path
 
 
 def test_sc1_3_touched_prompt_files_keep_the_promptlang_tags_and_the_ceiling():
@@ -544,7 +534,7 @@ def test_sc2_2_going_back_to_a_section_runs_the_checks_again_from_their_first_st
     assert "writes the state file with `next` unchanged" in context
 
 
-# --- SC2.2: what retires, and the seat that is not named ---
+# --- SC2.2: what retires ---
 
 def test_sc2_2_readiness_flow_retires_with_every_line_that_names_it():
     assert not (FLOWS / "readiness.md").exists()
@@ -565,20 +555,6 @@ def test_sc2_2_probe_mark_is_probed_true_so_thin_marks_only_a_thin_check():
     for path in _prompt_files():
         assert "thin: true" not in _text(path), path.name
     assert "`thin: {reason}`" in _step("request.md", "Q", "Q15")  # a thin check's mark stays
-
-
-def test_sc2_2_no_engineer_seat_skips_the_solution_halfs_steps_checks_and_signature():
-    scope = _step("solution.md", "S", "S1")
-    assert "When `seats.engineer` is null" in scope
-    assert "skips the solution half's steps S1 to S8, its checks and its signature" in scope
-    assert "`next: S9`" in scope
-    # Out of scope lists the places the PO seat named at Non-goals, each marked.
-    assert "under Out of scope" in scope and "`answers.out_of_scope`" in scope
-    assert UNCONFIRMED_PLACE in scope
-    # The run goes from the record's sections straight to the output flow.
-    notes = _step("solution.md", "S", "S11")
-    assert re.search(r"with no engineer seat `phase: output`, `next: W1`", notes)
-    assert "ready check 8 has marked the missing seat OPEN" in scope
 
 
 # --- SC2.3: each entry of Existing behavior touched, read against its source ---

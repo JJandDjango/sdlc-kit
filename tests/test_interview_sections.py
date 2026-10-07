@@ -4,8 +4,9 @@
 The skill is prompt-only, so this suite pins the text of its files, as
 tests/test_interview_format.py does: one flow per half replaces the
 sections flow, the request flow asks its sections in the template's order
-and the solution flow in kit 0.18.0's order of its headings, one question
-at a time, and each writes the state file after every step (SC1.2);
+and the solution flow in kit 0.18.0's order of its headings, with Consult
+cases after Risks and cost, one question at a time, and each writes the
+state file after every step (SC1.2);
 the request half closes on the Gherkin step, which derives one scenario
 per check, joined by the check's id, and marks a thin check OPEN (SC3.1,
 SC3.2, SC3.3). Text is matched after collapsing each whitespace run to one
@@ -32,7 +33,7 @@ CHAR_CEILING = 12_000  # tests/test_skill_interview.py CHAR_CEILING
 # One flow per half; signing.md holds the checks before each seat signs, and
 # output.md stands until its own unit.
 FLOW_FILES = {"opening.md", "request.md", "solution.md", "signing.md", "output.md"}
-HALVES = (("request.md", "Q", "Q1-Q15"), ("solution.md", "S", "S1-S11"))
+HALVES = (("request.md", "Q", "Q1-Q15"), ("solution.md", "S", "S1-S12"))
 
 # One step per section: its id, its name, and its key under `answers` (the
 # template's placeholder). The Regression check reads O2's `regression`.
@@ -62,22 +63,24 @@ SOLUTION_STEPS = (
     ("S6", "UNITS", "units"),
     ("S7", "ORDER", "order"),
     ("S8", "RISKS AND COST", "risks_and_cost"),
-    ("S9", "DECISIONS AND OPEN QUESTIONS", "decisions"),
-    ("S10", "LINKS OUT", "links_out"),
-    ("S11", "NOTES", "notes"),
+    ("S9", "CONSULT CASES", "cases"),
+    ("S10", "DECISIONS AND OPEN QUESTIONS", "decisions"),
+    ("S11", "LINKS OUT", "links_out"),
+    ("S12", "NOTES", "notes"),
 )
 # A bug-fix step, and the step a feature's run goes to in its place.
 BUG_FIX_STEPS = {"Q3": "Q4", "Q6": "Q7", "Q7": "Q8", "Q13": "Q14"}
 # The request half's template placeholder no step asks: O2's incident
 # reference.
 NOT_A_STEP = {"incident_ref"}
-# The solution half's headings a step asks, in kit 0.18.0's order. The
-# requirements template holds none of them; each step is named for its
-# heading.
+# The solution half's headings a step asks, in kit 0.18.0's order, with
+# Consult cases after Risks and cost. The requirements template holds none
+# of them; each step is named for its heading.
 SOLUTION_HEADINGS = (
     "### Scope", "### Out of scope", "### Interfaces", "### Sources",
     "### Constraints", "### Units", "### Order",
     "## Risks and cost",
+    "## Consult cases",
     "## Decisions and open questions",
     "### Links out",
     "## Notes",
@@ -154,8 +157,9 @@ def _template_keys() -> list[str]:
 def test_sc1_2_skill_holds_one_flow_per_half_and_no_sections_flow():
     assert {p.name for p in FLOWS.glob("*.md")} == FLOW_FILES
     held = {p.relative_to(SKILL_DIR).as_posix() for p in SKILL_DIR.rglob("*") if p.is_file()}
-    assert held == ({"SKILL.md", "templates/requirements-document.md.template"}
-                    | {f"flows/{name}" for name in FLOW_FILES})  # Markdown and the template
+    assert held == ({"SKILL.md", "templates/requirements-document.md.template",
+                     "templates/design-document.md.template"}
+                    | {f"flows/{name}" for name in FLOW_FILES})  # Markdown and the templates
 
 
 def test_sc1_2_no_prompt_file_points_at_the_retired_sections_flow():
@@ -173,7 +177,7 @@ def test_sc1_2_dispatch_routes_each_half_to_its_own_flow():
     assert "`sections`" not in skill  # the old phase retires
     for name in FLOW_FILES:
         assert f"{{skill-dir}}/flows/{name}" in skill, name
-    assert "Q1-Q15" in skill and "S1-S11" in skill  # each half's steps, in the file list
+    assert "Q1-Q15" in skill and "S1-S12" in skill  # each half's steps, in the file list
     for phase in ("opening", "request", "solution", "output", "complete"):
         assert f"`{phase}`" in skill, phase
     assert "none starts a new run" in skill  # no state file -> the first question
@@ -269,7 +273,7 @@ def test_sc1_2_each_half_hands_over_when_its_last_step_closes():
     last = _step("request.md", "Q", "Q15")
     assert "`phase: request`" in last and "`next: P1`" in last
     assert "S1" in _steps(_flow("solution.md"), "S")
-    last = _step("solution.md", "S", "S11")
+    last = _step("solution.md", "S", "S12")
     assert "`phase: solution`" in last and "`next: E1`" in last
 
 
@@ -293,8 +297,8 @@ def test_sc1_2_sorting_question_is_asked_at_non_goals_and_at_out_of_scope():
     out_of_scope = _step("solution.md", "S", "S2")
     for step in (non_goals, out_of_scope):
         assert SORTING_QUESTION in step, step[:40]
-        assert "`answers.non_goals`" in step, step[:40]  # each refusal goes to its list
         assert "`answers.out_of_scope`" in step, step[:40]
+    assert "`answers.non_goals`" in non_goals  # a thing we will not build goes to its list
 
 
 def test_sc1_2_a_sixth_success_criterion_draws_the_split_message():
@@ -322,14 +326,7 @@ def test_sc1_2_an_answer_that_differs_from_the_material_is_asked_never_settled_s
         assert "never settled silently" in flat, name
 
 
-# --- SC1.2: the engineer seat, the modules seam, the answers' shapes ---
-
-def test_sc1_2_engineer_seat_decides_whether_the_solution_half_is_asked():
-    first = _step("solution.md", "S", "S1")
-    assert "When `seats.engineer` is null" in first
-    assert "`next: S9`" in first  # the record's sections are still asked
-    assert '"(not yet asked)"' in first  # S1 to S8 stay as r1 wrote them
-
+# --- SC1.2: the modules seam, the answers' shapes ---
 
 def test_sc1_2_modules_seam_names_the_solution_flow():
     skill = _flat(_text(SKILL_DIR / "SKILL.md"))
@@ -430,7 +427,7 @@ def test_c1_flows_of_both_halves_keep_the_promptlang_form_and_the_ceiling():
                FLOWS / "opening.md": "`phase: request`",
                FLOWS / "signing.md": "{skill-dir}/flows/request.md",
                FLOWS / "request.md": "Q15. GHERKIN",
-               FLOWS / "solution.md": "S11. NOTES"}
+               FLOWS / "solution.md": "S12. NOTES"}
     for path, marker in touched.items():
         assert path.is_file(), f"{path.name} is not written"
         text = _text(path)
