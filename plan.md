@@ -1,42 +1,40 @@
-# Plan - Session 79 (2026-10-07) - document-split d2
+# Plan - Session 80 (2026-10-07) - document-split d3
 
-**Deliverable:** unit `d2-design` of `document-split` on one PR, with a
+**Deliverable:** unit `d3-signing` of `document-split` on one PR, with a
 Two-Key PASS:
 
-- `skills/product-specification-interview/`: a design run is the same
-  skill with a second argument, `design`. It writes the design document
-  at `docs/features/<id>.design.md`, with its own state file, from a new
-  design template. The document names the text revision of the
-  requirements document the design stands against. It then holds the
-  seven Proposed solution sections in the ratified order, the Risks
-  section, each consult case, its own Decisions section, Traceability,
-  Notes and the Appendix's Contract block. It holds no section tagged
-  for the PO seat. The Google Docs form of either document shows only
-  that one. Check SC1.2.
-- The run starts only when the requirements document holds the PO
-  seat's signature on its last text revision; otherwise it stops with
-  its error and writes nothing. It needs an engineer seat and no PO
-  seat, shows that seat each entry the PO seat rejected at Non-goals,
-  and covers only the Solution half's steps and the consult cases. A
-  later run goes on at the step its state file names. Check SC2.2.
-- The run covers the four consult cases with the engineer seat, one at
-  a time, at S9, and writes each answer as `yes` or `no`. A `yes` needs
-  an entry under `Who was asked` and under `What was decided`, and the
-  document shows both. Check SC5.1.
-- Retired: S1's branch for no engineer seat and S11's hand-over for it;
-  "both seats answer S8"; S2's write into Non-goals and its PO
-  signature; the span `S1-S11`, now S1 to S12; and the tests that pin
-  them, found by test-retirer (seen: `SOLUTION_STEPS`,
-  `test_sc1_2_engineer_seat_decides_whether_the_solution_half_is_asked`,
-  `test_sc1_3_solution_flows_purpose_agrees_with_the_step_both_seats_answer`).
-- What `d1` left standing, owned here: the dispatch reads `$1` only, so
-  `{id} design` re-enters the `complete` route; `SKILL.md`'s
-  description, purpose and its lines for S1-S11, with
-  `tests/test_interview_signing.py:558` pinning two of its sentences;
-  `flows/signing.md`'s context, which names Contract and Record as
-  blocks P4 may report; `flows/solution.md` S1's sentence on ready
-  check 8; O6's Record clause, back for the design document.
-- Constraints in force: every prompt file d2 touches passes `python -m
+- `skills/product-specification-interview/`: each seat's signature lands
+  in that seat's own document, as a row `rN: Signed: request half` or
+  `rN: Signed: solution half`, right after the row it covers, with no
+  row between. Each seat's checks before signing run on that seat's
+  document and land there as a `Measured:` row. A design run changes no
+  line of the requirements document. Check SC2.3, which also takes a
+  manual receipt: a live run of both runs on a small feature.
+- A design document names one text revision of the requirements
+  document: the last one the engineer seat accepted the design against.
+  A design run that goes on while a later text revision stands names
+  each revision between and asks the engineer seat whether the design
+  still stands against each. On the seat's word the design document
+  gains a text revision that names the later one, and the run then
+  needs a new signature. Check SC3.1.
+- The engineer seat's checks before signing report as an OPEN, with its
+  notice, each consult case with no answer and each `yes` that lacks an
+  entry under `Who was asked` or under `What was decided`. The seat's
+  word to sign still stands. Check SC5.2.
+- Retired: E6's way back into the request half; E7's move of the
+  Gherkin stamp; E1's path to the one state file; the span "ready
+  checks 11 to 14"; and the tests that pin them, found by test-retirer
+  (seen: `DRAFT_COMMAND`, `MEASURED_SOLUTION`,
+  `test_sc2_2_ready_checks_11_to_14_stand_as_questions_before_the_engineer_seat_signs`;
+  the two tree tests the Retirements cell names are already gone).
+- What `d2` left standing, owned here: `flows/solution.md`'s
+  frontmatter description omits Consult cases; `SKILL.md`'s criteria at
+  lines 107 and 110 speak for the requirements run alone; `SKILL.md`'s
+  step 2 and constraints still say "a half after its seat signed"; a
+  finished design state has no way back to a section; what stands under
+  the template's `{cases}` placeholder for a consult case with no
+  answer.
+- Constraints in force: every prompt file d3 touches passes `python -m
   prompt_lang`, keeps the PromptLang tag set and stays under 12,000
   characters, and a flow that outgrows the ceiling splits by run into
   another flow file (1); every authored command is one segment (2); the
@@ -46,96 +44,85 @@ Two-Key PASS:
   keep their headings and order (8); no byte changes in the four
   documents Constraints 9 names.
 
-USAGE already holds `d2`'s text, red, approved in session 78, so there
+USAGE already holds `d3`'s text, red, approved in session 78, so there
 is no pass zero: the unit opens at the drafter. A change to that text
 comes to the user in chat first.
 
-The design run's checks before signing, its `Measured:` row and its
-`Signed:` row are `d3`'s. `d2`'s run ends where the Solution half's
-steps end.
+The tight spot: `flows/signing.md` stands near 10,700 of its 12,000
+characters. The drafter replaces sentences first. If the design run's
+steps do not fit, it splits the flow by run into another file, and the
+four older tests that pin the five flow files are amended; Claude rules
+on that at step 4 and tells the user.
 
-The second machine holds its plugin at 0.18.0 until `d3` merges (user,
-2026-10-07). `d2`'s merge to main falls inside that hold.
+`d3`'s merge ends the second machine's plugin hold (user, 2026-10-07).
 
-Approvals split as in session 78: Claude approves the test list and the
-unit's commit on review; the plan's commit, the push, the PR and the
-merge stay on the user's word.
+Approvals split as in sessions 78 and 79: Claude approves the test list
+and the unit's commit on review; the plan's commit, the push, the PR
+and the merge stay on the user's word.
 
-The session boundary, if context runs short: after step 4. The approved
-list, the prototype and the interface note are copied to an untracked
-folder in this root, and the developer round opens the next session.
-
-**Closed.** The deliverable is met: `d2-design` stands at `bfd4058`,
-Two-Key PASS round 1. The receipts read green at the clean commit:
-SC1.2 at 7 tests, SC2.2 at 9 and SC5.1 at 3, the unit's 30 tests, the
-whole suite at 962 passed in a scratch venv, `prompt_lang` on the
-skill's six prompt files, `validate --profile ready`, and `scope-check`
-against `29aedba`. Three older test functions retired and twelve were
-amended. The developer ran twice: the second round fixed three
-sentences of free wording found on review. The session did not need its
-boundary.
+The session boundary, if context runs short: after step 4, as in
+session 79 (the approved list, the prototype and the interface note
+copied to an untracked folder in this root). A second one after step 6:
+the unit stands committed, and the live run and Two-Key open the next
+session.
 
 ## Steps
 
-1. ~~Open.~~ Branch `session-79-document-split-d2` from `29aedba`; this
+1. Open. Branch `session-80-document-split-d3` from `58eb097`; this
    plan, committed on the user's word. A scratch venv for the suite and
-   the form validator, by `STATE.md`'s two recipes: no Python here holds
-   the pane extra or `prompt_lang`.
-2. ~~d2, draft.~~ `spec-channel-drafter.js` drafts the test list for
-   SC1.2, SC2.2 and SC5.1, proves it red from the repo root, and proves
-   it satisfiable on a scratch copy of the skill folder. One drafter, as
-   `d1` (198K tokens for two checks); its reading stays on the skill
-   folder, the contract, the document's Solution half and USAGE's red
-   text.
-3. ~~d2, retire.~~ The session overlays the prototype on a scratch
+   the form validator, by `STATE.md`'s two recipes.
+2. d3, draft. `spec-channel-drafter.js` drafts the test list for SC2.3,
+   SC3.1 and SC5.2, proves it red from the repo root, and proves it
+   satisfiable on a scratch copy of the skill folder. One drafter, as
+   `d2` (207K tokens for three checks); its reading stays on the skill
+   folder, the contract, the feature document's signing and revision
+   text, and USAGE's red text.
+3. d3, retire. The session overlays the prototype on a scratch
    worktree, runs the whole suite there and names the failing tests and
    their modules; `test-retirer.js` with `overlay` runs only those
    modules.
-4. ~~d2, approve the list and prove red.~~ Each fixed detail checked
+4. d3, approve the list and prove red. Each fixed detail checked
    against the contract, the feature document, its Constraints and
    USAGE's red text; caps pinned against free text with line breaks;
    session labels stripped; then `progress run <check> --expect red`
    for each of the three checks, the command run alone first.
-5. ~~d2, green.~~ `unit-developer.js` from the interface note, handed
-   over as a file outside the drafter's folder; Claude runs the suite,
+5. d3, green. `unit-developer.js` from the interface note, handed over
+   as a file outside the drafter's folder; Claude runs the suite,
    `prompt_lang` and the size cap after each round, tests any deviation
-   against `done_means`, and reads each new step against ADRs 0029 and
+   against `done_means`, reads the developer's free wording against
+   each step it touches, and reads each new step against ADRs 0029 and
    0033 to 0037.
-6. ~~d2, commit and Two-Key.~~ Commit with the `Contract:` trailer; each
-   check green at the clean commit; `ready-green` and `scope-green`
-   against `29aedba`; `two-key-unit-verifier.js`; `progress done` on
-   PASS.
-7. ~~Close.~~ `STATE.md` regenerated; this plan struck; the memory index
+6. d3, commit. Commit with the `Contract:` trailer; each check green at
+   the clean commit; `ready-green` and `scope-green` against `58eb097`.
+7. d3, live run (SC2.3's manual receipt). Two worktrees at the unit's
+   commit, outside Claude Code's temp tree. `live-run-driver.py` drives
+   a requirements run to the PO seat's signature, then a design run to
+   the engineer seat's, with `live-run-seats.js` answering as the
+   seats; no spawn opens a window. The receipt: each `Signed:` row in
+   its own document, and the requirements document byte for byte the
+   same before and after the design run. The pair, both state files and
+   the transcripts go to untracked
+   `RECEIPT_document-split-d3_2026-10-07/`; `d4` and `d5` take their
+   manual receipts from that pair.
+8. d3, Two-Key. `two-key-unit-verifier.js`, with the live run's text as
+   a focus pointer; `progress done` on PASS.
+9. Close. `STATE.md` regenerated; this plan struck; the memory index
    updated; the push, the PR and the merge on the user's word.
 
-Steps 1 and 7 sit outside a contract unit, so the tree does not show
+Steps 1 and 9 sit outside a contract unit, so the tree does not show
 them.
 
-Decisions this session: five, as planned. The user's: (1) this plan and
-its commit. (2) The push and the PR, and (3) the merge, wait on the
-user's word. Claude's, on review: (4) the test list, with three
-retirements, twelve amendments and two docstring lines the session
-corrected in the amended modules; (5) the unit's commit. Claude's
-readings, each in the unit's commit message: the design template holds
-a `{cases}` placeholder and S9 writes the table; `SKILL.md`'s
-description and purpose stand, since each seat still signs its half in
-its own document; the stop on a combined document is pinned in `d2`, as
-the feature document's edge states it.
+Decisions this session: five planned. The user's: (1) this plan and its
+commit; (2) the push and the PR; (3) the merge. Claude's, on review:
+(4) the test list, with its retirements and amendments; (5) the unit's
+commit. A sixth only if USAGE's red text must change.
 
 Deferred, not this session:
-- `d3-signing` to `d6-release` (ships 0.19.0), one unit a session.
-- What `d2` leaves standing, listed in `STATE.md`'s Now, all `d3`'s:
-  Two-Key's three advisories on the skill (`flows/solution.md`'s
-  frontmatter description, `SKILL.md`'s criteria at lines 107 and 110,
-  `flows/signing.md`'s E1 and E6), `SKILL.md`'s step 2 and constraints
-  on "a half after its seat signed", and the way back to a section from
-  a finished design state.
-- The fifth thing `d1` left standing is `d3`'s: its retire list finds
-  the two tree tests already gone.
-- Whether the second machine's marketplace updates on its own: not
-  checked, and the plugin hold rests on it.
+- `d4-tree` to `d6-release` (ships 0.19.0), one unit a session.
 - A test of the plugin update on the second machine, after `d3`'s
   merge; the `pip` half there takes a commit sha in place of the tag.
+- Whether the second machine's marketplace updates on its own: not
+  checked; it matters only until `d3` merges.
 - Whether combined documents are in flight on the second machine: not
   known, and the design holds either way.
 - The interview's last step for this feature's own document, W1: the
