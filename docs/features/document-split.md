@@ -7,6 +7,7 @@
 | 2026-10-06 | user | r5: Measured: the checks before signing, on the solution half: 179 findings (CL003 1, CL006 145, CL008 14, CL010 3, CL012 16); Scope against the release unit's paths: covered; ready checks 11 to 14: 0 OPEN |
 | 2026-10-06 | user | r6: The solution half finished: 8 sections written, 0 OPEN |
 | 2026-10-06 | user | r7: Signed: solution half. The engineer seat signs r6 |
+| 2026-10-06 | intake | r8: Ready: contract `document-split` validates ready-green, derived from r6; the PO seat (user) signed the request half at r3 (r4), the engineer seat (user) the solution half at r6 (r7) |
 
 # document-split - Requirements and design stand in two documents, each signed by its own seat
 
