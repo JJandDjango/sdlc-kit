@@ -22,29 +22,48 @@ The session boundary, if context runs short: after step 3. The draft
 that reads zero is copied to an untracked file in this root, and intake
 opens the next session.
 
+**Closed.** The deliverable is met: intake wrote the contract at
+`6ef6366`, ready-green, derived from r6, and the document holds its r8
+`Ready:` row. The language door read 177 findings on the document's own
+wording and 0 on the contract. The standing line stays in the document
+only. The receipts read green: `validate --profile ready`, `vocab-check`,
+`lang-check`, `scope-check`, the tree, and the whole suite at 928
+passed.
+
+Decisions this session: two replies and one choice, all the user's.
+(1) The deliverable and the plan, with the plan's commit; (2) the
+readback in one reply: six units kept, the three plan answers, `user`
+for both seats, the wording with its five readings, and intake's commit;
+(3) the standing line dropped from the contract. The wrap's commit, the
+push, the PR and the merge wait on the user's word. Claude's, each told
+to the user: SC4.1's "word for word" read on each `done_means`;
+`condition` kept out of SC4.2; `drift-mark` among the entities; the
+`Ready:` row in I7's exact shape, with the standing line recorded in
+intake's commit message; the suite run from a scratch venv.
+
 ## Steps
 
-1. Open. Branch `session-77-document-split` from `7ddbb6f`; this plan,
+1. ~~Open.~~ Branch `session-77-document-split` from `7ddbb6f`; this plan,
    committed on the user's word.
-2. The plugin. List `C:/Users/hyden/.claude/plugins/cache/sdlc-kit/sdlc`
+2. ~~The plugin.~~ List `C:/Users/hyden/.claude/plugins/cache/sdlc-kit/sdlc`
    and read `git diff --stat v0.18.0 main -- skills/`: when it prints
    nothing, the installed flows are 0.18.0's.
-3. The language door, on a draft. A scratch script builds the lexicon
+3. ~~The language door, on a draft.~~ A scratch script builds the lexicon
    with the ratified terms and runs `check_contract` on a draft contract
    outside `specs/`. The draft check's 179 findings are rewritten there
    in the contract's wording until it reads zero. Each `done_means` is
    copied word for word from the Units table. `case` alone is an unknown
    word, and the checks say "the four cases".
-4. Intake. `/sdlc:sdlc intake docs/features/document-split.md` through
+4. ~~Intake.~~ `/sdlc:sdlc intake docs/features/document-split.md` through
    the installed plugin: I1 the seat roster, I2 the document read (a
    stop or a park here writes nothing under `specs/`), I3 the scaffold,
    the seats' confirmations in one batch, I6 the write, I7 the loop to
    ready-green, and the `Ready:` row in the document. Then its own
    commit, with the `Contract:` trailer.
-5. Receipts. `validate --profile ready` on the contract, `taskcontract
+5. ~~Receipts.~~ `validate --profile ready` on the contract, `taskcontract
    tree` showing `document-split` with a ready contract, and the whole
    suite from a scratch venv, each read from its output.
-6. Close. `STATE.md` regenerated, this plan struck, the memory index
+6. ~~Close.~~ `STATE.md` regenerated, this plan struck, the memory index
    updated. The commit, the push, the PR and the merge wait on the
    user's word.
 
