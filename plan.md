@@ -78,37 +78,51 @@ list, the prototype and the interface note copied to an untracked
 folder in this root). A second one after step 6: the unit stands
 committed, and the two live runs and Two-Key open the next session.
 
+**Closed.** The deliverable is met: `d5-intake` stands at `4681b42`,
+Two-Key PASS round 1. The receipts read green at the clean commit:
+SC3.2 with SC4.2 at 8 tests and SC4.1 at 9, the unit's 17 tests, the
+whole suite at 1036 passed in a scratch venv, `prompt_lang` on both
+skill folders, `validate --profile ready`, and `scope-check` against
+`cc0ebd2`. Both manual receipts hold, in
+`RECEIPT_document-split-d5_2026-10-07/`: the stale pair stopped with
+the stale message and nothing written, and the pair with SC3.2 left
+out of Units took one `Parked:` row in each table and no contract.
+Thirteen older tests retired and two were amended. `flows/signing.md`
+stayed one file, at 11,730 of 12,000 characters, and `flows/intake.md`
+stands at 11,005, which leaves `d6` about 990. The developer ran once.
+The session did not need its boundary.
+
 ## Steps
 
-1. Open. Branch `session-82-document-split-d5` from `cc0ebd2`; this
+1. ~~Open.~~ Branch `session-82-document-split-d5` from `cc0ebd2`; this
    plan, committed on the user's word. A scratch venv for the suite and
    the form validator, by `STATE.md`'s two recipes.
-2. d5, draft. `spec-channel-drafter.js` drafts the test list for the
+2. ~~d5, draft.~~ `spec-channel-drafter.js` drafts the test list for the
    two sketches (SC3.2 with SC4.2, and SC4.1), proves it red from the
    repo root, and proves it satisfiable on a scratch copy of the two
    skill folders. One drafter, as `d3` (179K tokens for three checks);
    its reading stays on `intake.md`, `skills/sdlc/SKILL.md`,
    `signing.md`, the contract, the feature document's intake text and
    USAGE's red text.
-3. d5, retire. The session overlays the prototype on a scratch
+3. ~~d5, retire.~~ The session overlays the prototype on a scratch
    worktree, runs the whole suite there and names the failing tests and
    their modules; `test-retirer.js` with `overlay` runs only those
    modules.
-4. d5, approve the list and prove red. Each fixed detail checked
+4. ~~d5, approve the list and prove red.~~ Each fixed detail checked
    against the contract, the feature document, its Constraints, USAGE's
    red text and the ratified terms under `specs/vocabulary/`; the three
    messages word for word; caps pinned against free text with line
    breaks; session labels stripped; then `progress run <check> --expect
    red` for each of the three checks, the command run alone first.
-5. d5, green. `unit-developer.js` from the interface note, handed over
+5. ~~d5, green.~~ `unit-developer.js` from the interface note, handed over
    as a file outside the drafter's folder; Claude runs the suite,
    `prompt_lang` and the size cap after each round, tests any deviation
    against `done_means`, reads the developer's free wording against
    each step it touches, and reads each new step against ADRs 0029 and
    0033 to 0037.
-6. d5, commit. Commit with the `Contract:` trailer; each check green at
+6. ~~d5, commit.~~ Commit with the `Contract:` trailer; each check green at
    the clean commit; `ready-green` and `scope-green` against `cc0ebd2`.
-7. d5, two live intake runs (the manual receipts). Two worktrees at the
+7. ~~d5, two live intake runs (the manual receipts).~~ Two worktrees at the
    unit's commit, outside Claude Code's temp tree, and one driver copy
    and `live/` folder a run. `d3`'s `pair/` is copied under the
    repository worktree's `docs/features/` and hand-edited for each run.
@@ -116,10 +130,10 @@ committed, and the two live runs and Two-Key open the next session.
    spawn opens a window. Receipt one: the stale message, no row, no
    contract. Receipt two: a `Parked:` row in each table, no contract.
    Both go to untracked `RECEIPT_document-split-d5_2026-10-07/`.
-8. d5, Two-Key. `two-key-unit-verifier.js`, with both receipts' text as
+8. ~~d5, Two-Key.~~ `two-key-unit-verifier.js`, with both receipts' text as
    a focus pointer that says the grader reads and the receipts key
    runs; `progress done` on PASS.
-9. Close. `STATE.md` regenerated; this plan struck; the memory index
+9. ~~Close.~~ `STATE.md` regenerated; this plan struck; the memory index
    updated; the push, the PR and the merge on the user's word.
 
 Steps 1 and 9 sit outside a contract unit, so the tree does not show
@@ -130,8 +144,26 @@ commit; (2) the push and the PR; (3) the merge. Claude's, on review:
 (4) the test list, with its retirements and amendments; (5) the unit's
 commit. A sixth only if USAGE's red text must change.
 
+As it went: five, as planned, and no sixth. (1) The user approved this
+plan and its commit, `d82144d`. (2) The push and the PR, and (3) the
+merge, wait on the user's word. Claude's, on review: (4) the test list,
+with one amendment before approval, thirteen retirements and two
+amended tests; (5) the unit's commit. The amendment: the draft's
+sentence of field sources opened on the title sentence's own first
+words, which broke `tests/test_tree_titles.py`, a test the unit does
+not retire; it now opens "For a pair". The readings named above held.
+One more: `d3`'s saved pair carries three OPEN marks, so the receipts'
+hand edit closed those too, or the pair would have parked before
+intake read the stale design.
+
 Deferred, not this session:
 - `d6-release` (ships 0.19.0), the next session.
+- Two-Key's three wording advisories (I2's placeholder letters, I8's
+  "a parked document", a section comment in
+  `tests/test_intake_refusals.py`), for `d6`'s sweep.
+- A design run lets a unit hold more than three checks with no `+` in
+  its Checks cell: seen in both live runs, under `STATE.md` Next
+  actions 2.
 - Whether combined documents are in flight on the second machine: not
   known. It decides only whether that machine's plugin update waits for
   `d6`.
