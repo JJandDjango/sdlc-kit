@@ -2,38 +2,53 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-06 (session 77 close: document-split stands at ready;
-> the build, d1 first, opens the next session)._
+> _Generated 2026-10-07 (session 78 close: document-split's d1-requirements
+> is built, Two-Key PASS round 1; d2-design opens the next session)._
 
 ## Now
-- **Session 77 (2026-10-06): `document-split` stands at ready.** Intake
-  under kit 0.18.0 wrote `specs/document-split/contract.yaml`
-  (`6ef6366`), derived from r6, and the document took its r8 `Ready:`
-  row. Six units, `d1-requirements` to `d6-release`, in one line of
-  `depends_on`; 13 checks in ten sketches, `d5` pairing SC3.2 with
-  SC4.2; 30 entities; `confirmed_by: [user]` on each unit. The session's
-  deliverable is met. The receipts: `ready-green`, `vocab-green`,
-  `lang-green`, `scope-green` against `7ddbb6f`, the tree's line for
-  the feature, `[to do]` with its contract file, and the whole suite,
-  928 passed, in a scratch venv.
-- The document's text is unchanged: both halves signed at r7, the state
-  file at `phase: output`, `next: W1`. Intake read no OPEN mark, no gap
-  under ready checks 1 to 8 and 11 to 14, and each check in one unit;
-  ready check 14 is answered by the Notes line that leaves the draft
-  check's findings to intake's rewrite. ADR 0037 and the terms stand on
-  main since session 76 (PR #88 at `1b4173b`); the glossary holds 75
-  terms.
-- The language door: the document's own wording read 177 findings on a
-  draft outside `specs/`, and the contract reads 0 after one rewrite.
-  Five readings went to the user and stand; intake's commit message
-  lists them. The standing line stays in the document only, on the
-  user's word, so the contract holds six non-goals. Claude had first
-  derived it as "No new approval" on a wrong reading of
-  feature-document's contract, and said so before the `Ready:` row.
-- Two term amendments of session 76, `ready-check` and `drift-mark`,
-  rest on ADR 0037 and not on the document, whose Terms block still
-  says five. `open-mark`'s "above the seat boundary" fits a combined
-  document only and was left as it is.
+- **Session 78 (2026-10-06, closed 2026-10-07): `d1-requirements` is
+  built, Two-Key PASS round 1 at `6602242`.** A requirements run writes
+  the requirements document for the PO seat alone and names the design
+  run after its signature (SC1.1, SC2.1). On branch
+  `session-78-document-split-d1`: the plan (`3faac34`), pass zero
+  (`bcd6600`), the unit (`6602242`) and this wrap. The receipts: both checks green at the clean commit, the
+  unit's 22 tests, the whole suite at 935 passed in a scratch venv,
+  `prompt_lang` on the skill's six prompt files, `ready-green`, and
+  `scope-green` against `67ac09e`. The session's deliverable is met.
+- Pass zero (`bcd6600`): USAGE's interview section is rewritten for kit
+  0.19.0, every mark red, 0.18.0's text gone, a callout pointing to tag
+  `v0.18.0` for the shipped guide; it covers `d1` to `d6`. Section 9
+  gains one red subsection at its end, "A pair of documents". Six tests
+  of `tests/test_feature_document_release.py` retired with the text they
+  pinned. The user approved the text in chat with five readings; the
+  commit message lists them.
+- The unit (`6602242`): `templates/requirements-document.md.template`
+  replaces the combined template, with the request half byte for byte
+  as 0.18.0 wrote it; O4 asks the PO seat alone; ready check 8 "names
+  the PO seat alone" (ADR 0037's words); P7 hands over to W1; W2 names
+  `/sdlc:product-specification-interview {id} design`.
+  `tests/test_interview_requirements.py` holds the 22 tests; eight
+  older test functions retired and sixteen were amended.
+- What `d1` leaves standing: four advisories of its Two-Key, (1) to (3)
+  and (5), and one line of the unit's commit message, (4). The Two-Key's
+  fifth advisory is its own: its grader read the receipts and did not
+  run pytest itself. (1) The
+  command W2 names does nothing yet: the dispatch parses `$1` only, so
+  `{id} design` re-enters the `complete` route until `d2` builds the
+  design run. (2) `SKILL.md`'s description and purpose still say each
+  seat signs its half, and its lines for S1-S11 and E1-E7 stand;
+  `tests/test_interview_signing.py:558` pins the two sentences. (3)
+  `flows/signing.md`'s context still names Contract and Record as blocks
+  P4 may report. (4) `flows/solution.md` S1 still says ready check 8
+  marked a missing seat OPEN. (5) The two tree tests the Units table
+  lists under `d3` retired in `d1`, since they drew their document from
+  the deleted template; `tests/test_tree_halves.py` holds what they
+  proved. O6 no longer fills a Record block; `d2`'s design run brings
+  it back.
+- The document's text is unchanged since intake: both halves signed at
+  r7, the `Ready:` row at r8, the contract at `6ef6366`. ADR 0037 and
+  the terms stand on main since session 76; the glossary holds 75
+  terms. Session 77's Now is at `8e7a488:STATE.md`.
 - The design, as signed: the requirements document keeps
   `docs/features/<id>.md`, and the design document is
   `docs/features/<id>.design.md`, each with its own state file. A
@@ -42,10 +57,18 @@
   units, `d1-requirements` to `d6-release`, ship as kit 0.19.0, one at a
   time; `d6` takes SC4.3 and opens G1's design document.
 - **The user wants this feature on the second machine as soon as
-  possible** (2026-10-06). Nothing sessions 76 and 77 merged is
-  installable there: the ADR, the terms and the contract change the
-  record, not the skills. What stands between today and that install:
-  the six units and the tag. What an install takes, read from the files
+  possible** (2026-10-06). The plugin follows main, read in session 78
+  and not tested there: `.claude-plugin/marketplace.json` sets `source:
+  "./"` with no ref, and both cached copies on this machine are main
+  merge commits. So no branch install is needed: a plugin update there
+  after `d3`'s merge delivers both runs and their signing, and intake
+  reads a pair only after `d5`. The same fact has a cost: a plugin
+  update there between `d1`'s merge and `d3`'s delivers a requirements
+  run whose next command does nothing yet. **The user ruled on
+  2026-10-07: one PR a unit to main, as before, and that machine holds
+  its plugin at 0.18.0 until `d3` merges**, so no `/plugin marketplace
+  update sdlc-kit` there before then. The `pip` half takes a commit
+  sha in place of the tag. What an install takes, read from the files
   in session 73: the plugin (`/plugin marketplace add
   JJandDjango/sdlc-kit`, `/plugin install sdlc@sdlc-kit`) and `pip
   install git+https://github.com/JJandDjango/sdlc-kit.git@v<tag>`, since
@@ -53,37 +76,45 @@
   --draft`. The interview needs no `/sdlc` setup in the repo; intake
   does. This repo holds no receipt of the install there.
 - Kit 0.18.0 stands released: PR #84 merged at `771176e`, tagged
-  `v0.18.0` there. The installed `sdlc` plugin sits at `40eb767`, and
-  `git diff --stat v0.18.0 main -- skills/` prints nothing, so its flows
-  are 0.18.0's. Session 76's Now is at `4e1faa8:STATE.md`.
+  `v0.18.0` there. The installed `sdlc` plugin sits at `40eb767`, whose
+  `skills/` equal the tag's. Once `d1` merges, main's `skills/` differ
+  from the tag, so this machine's plugin stays as installed until the
+  release: a re-intake during the build runs through it.
 - This machine: no Python here holds `rich` (3.14, 3.13 and 3.10), so
-  the 77 tests that import the pane fail under each, and `uv` is not
-  installed. The whole suite read green, 928 passed, in a scratch venv
-  that holds the test extra. `py -m pip install "textual>=8.2,<9"` into
-  3.14 would end that step; the user has not said.
+  the 77 tests that import the pane fail under each; none holds
+  `prompt_lang`, and `uv` is not installed. The whole suite read green,
+  935 passed, in a scratch venv that holds the test extra and the form
+  validator. `py -m pip install "textual>=8.2,<9"` into 3.14 would end
+  the first step; the user has not said.
 - G1's design is written through the interview once 0.19.0 ships, not
   by hand from the two NOTES files. It waits behind `document-split`'s
   build.
 - Carried: 20 features: 19 with a contract, 17 of them `[done]`;
-  `document-split` at ready, `[to do]`; `glossary-alias-disjointness`
+  `document-split` `[doing]`, one unit of six done;
+  `glossary-alias-disjointness`
   parked by the user, `[to do]`; `g1-requirements-spec` before intake,
   `[doing]`.
 
 ## Blockers
-- None. Session 77's three commits (the plan, intake, the wrap) reach
-  `main` through one PR from branch `session-77-document-split`; the
-  push, the PR and the merge are each on the user's word.
+- None. Session 78's four commits (the plan, pass zero, the unit, the
+  wrap) reach `main` through one PR from branch
+  `session-78-document-split-d1`; the push, the PR and the merge are
+  each on the user's word.
 
 ## Next actions
-Opener: the build of `document-split`, `d1-requirements` first, as kit
+Opener: `d2-design`, the second unit of `document-split`'s build as kit
 0.19.0: one unit a session, each a delegated session that ends on its
-Two-Key. `d1` writes USAGE's new text first, under red marks, once the
-user approves that text; it is a prompt unit, so the drafter's prototype
-is a scratch copy of the skill folder. Before `d1`, the first open
-question below: whether the second machine can take the plugin from the
-build's branch after `d3`. A re-intake during the build runs through
-the installed 0.18.0 plugin, since after `d5` the repo's own intake
-reads a pair. The interview itself resumes at W1, the Google Docs form,
+Two-Key. `d2` builds the design run to SC1.2, SC2.2 and SC5.1: the
+`design` argument and its dispatch, the design template, the two stops
+on the requirements document, S1 to S12 with Consult cases at S9. USAGE
+already holds its text, red, approved in session 78, so `d2` opens at
+the drafter; a change to that text comes to the user in chat first. It
+is a prompt unit: the drafter's prototype is a scratch copy of the
+skill folder. `d2` also owns what `d1` left standing in `SKILL.md` and
+`flows/solution.md` (Now, above), and brings O6's Record clause back
+for the design document. A re-intake during the build runs through the
+installed 0.18.0 plugin, since after `d5` the repo's own intake reads a
+pair. The interview itself resumes at W1, the Google Docs form,
 when one is wanted. Still unanswered: whether combined documents are in
 flight on the second machine (asked twice on 2026-10-06; the document
 records it as not known, and the design holds either way).
@@ -341,9 +372,32 @@ records it as not known, and the design holds either way).
 - A red USAGE sentence in section 9 goes under its own red subsection at
   the section's end: `tests/test_tree_conditions.py:752` holds the green
   subsections free of red marks. After a release USAGE holds the red
-  mark in its two legend lines only, and
-  `tests/test_feature_document_release.py` pins that count: the next
-  feature's pass-zero red text retires or amends that test.
+  mark in its two legend lines only, and the release unit's suite pins
+  that count: the next feature's pass zero retires that test, as
+  session 78 did for 0.18.0's.
+- Pass zero for a section a release already shipped (session 78): the
+  whole section is rewritten red, with a callout that points to the last
+  tag for the shipped guide, and the release suite's tests on that
+  section retire in the same commit, each told to the user. Run the
+  suite on the new text before the approval message: it names the
+  tests, so the text, the readings and the retirements go to the user
+  as one decision.
+- A prompt unit's build (session 78, `d1`): the drafter's test finds
+  the skill by the release suite's ROOT idiom, its red run starts in
+  the repo root, and its prototype is `<scratch>/proto/skills/...` with
+  a copy of the test at `proto/tests/`. The session overlays the
+  prototype on a scratch worktree with a script that mirrors the skill
+  folder, runs the whole suite there, and names the failing tests and
+  their modules to the retirer, which runs only those modules. The
+  developer gets the interface note as a file outside the drafter's
+  folder, and `scratchRoot` names the folders it may not read. Run a
+  `progress run` command alone first: its inner `python` is the system
+  one, and a missing module would read as a red. Session 78's `d1`:
+  drafter 198K, retirer 159K, developer 95K, Two-Key 215K, PASS round 1.
+- The form validator on this machine (session 78): put one line,
+  `E:/foundations`, in a `foundations.pth` under the scratch venv's
+  `Lib/site-packages`, and `pip install tiktoken` there. `python -m
+  prompt_lang` takes one path, and a folder works.
 - The whole suite runs 3 to 6 minutes; a local model holding RAM can get
   a background run killed for memory. A PR's CI waits through `gh pr
   checks <n> --watch` in the background; started right after a push it
@@ -394,11 +448,11 @@ records it as not known, and the design holds either way).
   remark the user made in confidence.
 
 ## Open questions
-- The second machine and the build (2026-10-06, the user wants the
-  feature there as soon as possible): the interview's two runs and their
-  signing exist after `d3`. Can that machine take the plugin from the
-  build's branch then, before `d6` tags 0.19.0? Not checked: how the
-  plugin channel pins a ref, and whether that machine runs intake.
+- The second machine's plugin hold (ruled 2026-10-07, see Now): does
+  that machine's marketplace update on its own? Not checked. If it does,
+  the hold needs that turned off there, or the units left move to a
+  build branch that merges once at `d3`. Also not known: whether that
+  machine runs intake.
 - The interview's flows ask one question at a time, and session 74's
   seat answered in batches of proposed text. Does the flow gain a batch
   path, or does the rule stay and the session keep its own practice?
