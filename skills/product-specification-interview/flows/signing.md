@@ -87,7 +87,7 @@ E3. READY CHECKS - READ the document against ready checks 11 to 15, each a quest
    15. Does each of the four cases have an answer, and does each yes name who was asked and what was decided?
    A gap under the last question is one of three, each marked under Consult cases as `OPEN: Ready check 15: {gap}.`: `case {k} has no answer`, `case {k} reads yes and names no one asked`, `case {k} reads yes and names no decision`.
 
-E4. STALE BLOCKS - READ each derived block's stamp against the newest revision. REPORT each stale block with its message.
+E4. STALE BLOCKS - READ each derived block's stamp against the newest revision. REPORT each stale block with its message. A design is stale when the requirements document holds a text revision newer than the one the design names: REPORT `The design names requirements r{n}; the requirements stand at r{m}. Stale.` The seat's word to sign still stands.
 
 E5. MEASURED ROW - WRITE into the design document the row `r{n}: Measured: the checks before signing, on the solution half: {findings}; Scope against the release unit's paths: {scope}; ready checks 11 to 15: {count} OPEN`. `{findings}` and `{count}` read as at P5, the count under ready checks 11 to 15; `{scope}` reads `covered`, or `{paths} outside Scope`, or with no release unit `no release unit, check skipped`. Each run of the checks writes one row. Then WRITE the state file with `next: E6`.
 

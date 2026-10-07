@@ -29,8 +29,6 @@ CHANGELOG = ROOT / "CHANGELOG.md"
 MAP = ROOT / "MAP.md"
 PYPROJECT = ROOT / "pyproject.toml"
 INIT = ROOT / "skills" / "sdlc" / "init.py"
-SDLC_SKILL = ROOT / "skills" / "sdlc" / "SKILL.md"
-CHAR_CEILING = 12_000  # PromptLang fails at 4000 tokens; ~3.5 chars per token
 
 GREEN = "\U0001F7E2"
 
@@ -38,17 +36,6 @@ SECTION_8 =(f"{GREEN} When the raw request is a feature document, intake reads t
              "three from its Scope, Order and Units sections and asks the engineer "
              "seat to keep or change them.")
 RELEASE_HEADING = "## 0.18.0 - 2026-10-02 (tag `v0.18.0`)"
-STRATA_EXCEPTION = ("One exception: intake adds its `Ready:` or `Parked:` row to a "
-                    "feature document's revision table at `docs/features/{id}.md`.")
-INTAKE_WRITES = ("- intake writes ONLY `specs/{id}/contract.yaml` and, for a feature "
-                 "document, one `Ready:` or `Parked:` row in its revision table; a "
-                 "parked document gets no contract, and a red contract never hands "
-                 "off to development.")
-INTAKE_CRITERION = ("handoff refused while red; a feature document read before the "
-                    "scaffold: parked with one `Parked:` row and no contract while a "
-                    "refusal stands, stopped with no row and no contract while a "
-                    "signature is missing, and given its `Ready:` row only once the "
-                    "contract validates ready-green; nothing else written.")
 
 
 def _read(path: Path) -> str:
@@ -101,15 +88,6 @@ def _banner(section: str) -> str:
             break
         quote.append(line)
     return _flat("\n".join(quote))
-
-
-def _item(text: str, opening: str) -> str:
-    """One list item of a prompt file, whitespace folded: from its opening
-    to the next line that opens an item or a tag."""
-    start = text.find("\n" + opening)
-    assert start >= 0, f"no item opens {opening!r}"
-    end = re.compile(r"^(- |<)", re.MULTILINE).search(text, start + 1 + len(opening))
-    return _flat(text[start:end.start() if end else len(text)])
 
 
 def _in_order(haystack: str, *needles: str) -> None:
@@ -191,12 +169,3 @@ def test_sc5_2_the_map_row_names_the_document_its_signed_and_parked_rows_and_fou
         assert re.search(rf"\]\(decisions/{adr}-[a-z0-9-]+\.md\)", row), (
             f"the row links no decisions/{adr}")
     assert "an advisory readiness check" not in row
-
-
-def test_sc5_2_the_sdlc_skill_says_intake_writes_its_row_into_the_feature_document():
-    text = _read(SDLC_SKILL)
-    assert _item(text, "- Do NOT touch Cairn strata").endswith(
-        "never write on its behalf. " + STRATA_EXCEPTION)
-    assert _item(text, "- intake writes ONLY") == INTAKE_WRITES
-    assert _item(text, "- [ ] Intake flow:").endswith(INTAKE_CRITERION)
-    assert len(text) < CHAR_CEILING
