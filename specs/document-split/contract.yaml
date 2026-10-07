@@ -1,0 +1,238 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: document-split
+
+title: Requirements and design stand in two documents, each signed by its own seat
+
+intent: >-
+  Kit `0.18.0` writes one combined document per feature. Both seats record
+  a signature in that one doc, and intake reads it. After this task the
+  interview writes a pair. A requirements run writes the requirements
+  document, which holds the Request half and the signature of the PO seat
+  only. A design run then writes the design document, from a requirements
+  document that carries its signature. The design document holds the
+  Solution half, each consult case and the signature of one `engineer`
+  seat. The design document names the text revision of the requirements
+  document that the design stands against. A later text revision of the
+  requirements document makes the design stale. Intake writes one contract
+  from a pair that carries the signature of each seat and no stale design.
+  Intake stops on a combined document that holds no `Ready:` row, and a
+  combined document with a `Ready:` row stays unchanged. The tree shows a
+  pair as one feature. The kit version reads `0.19.0`.
+
+scope:
+  - skills/product-specification-interview/
+  - skills/sdlc/flows/intake.md
+  - skills/sdlc/SKILL.md
+  - taskcontract/tree.py
+  - taskcontract/tree_view.py
+  - taskcontract/pane.py
+  - tests/
+  - USAGE.md
+  - pyproject.toml
+  - skills/sdlc/init.py
+  - .github/workflows/sdlc.yml
+
+non_goals:
+  - No computed consult case; no code checks a config list of public
+    contract paths against the Scope of the design. A later feature carries
+    this.
+  - No step where Claude reads the design in a new context before the
+    signature of the `engineer` seat. A later feature carries this.
+  - No PR note from the design document for the human who reads the PR
+    last. A later feature carries this.
+  - No other `engineer` reads the design document or records a signature
+    on it before the PR.
+  - No command makes a pair from a combined document; the doc of G1
+    becomes a pair by hand.
+  - No section of either half changes its content or its order, and none
+    drops. The design document gains only the named revision and the
+    section `Consult cases`.
+
+decomposition:
+  - unit: d1-requirements
+    id: d1-requirements
+    confirmed_by: [user]
+    done_means: >-
+      A requirements run writes a requirements document with the PO seat
+      only, and names the design run after its signature.
+    acceptance_sketch:
+      - >-
+        verify a requirements run writes a requirements document that holds
+        each section of the Request half in the ratified order. Verify each
+        section carries its name and tag as kit `0.18.0` writes them. Verify
+        the requirements document then holds its own Decisions section and
+        Notes, and the Gherkin block and the Terms block of the Appendix.
+        Verify the requirements document holds no Proposed solution, no
+        Risks section, no Traceability and no Contract block. Verify each
+        fix section, all four, stands in the requirements document of a fix
+        (SC1.1)
+      - >-
+        verify a requirements run needs a PO seat and no `engineer` seat.
+        Verify the requirements run covers only the steps of the Request
+        half, the Terms and the Gherkin. Verify the requirements run runs
+        the checks before signing for the PO seat. Verify the requirements
+        run stops at that signature and names the design run as the next
+        command. Verify a later run goes on at the step its state file
+        names (SC2.1)
+  - unit: d2-design
+    id: d2-design
+    depends_on: [d1-requirements]
+    confirmed_by: [user]
+    done_means: >-
+      A design run needs a requirements document with its signature, writes
+      a design document that names its revision, and records each consult
+      case.
+    acceptance_sketch:
+      - >-
+        verify a design run writes a design document that names the text
+        revision of the requirements document the design stands against.
+        Verify the design document holds each section of the Proposed
+        solution, all seven, in the ratified order. Verify the design
+        document then holds the Risks section, each consult case, its own
+        Decisions section, Traceability, Notes and the Contract block of
+        the Appendix. Verify the design document holds no section tagged
+        for the PO seat. Verify the Google Docs form of a requirements
+        document or of a design document shows only that one (SC1.2)
+      - >-
+        verify a design run runs only for a feature whose requirements
+        document holds the signature of the PO seat on its last text
+        revision. Verify a design run otherwise stops with its error and
+        writes nothing. Verify the design run needs an `engineer` seat and
+        no PO seat. Verify the design run shows the `engineer` seat each
+        entry the PO seat rejects at Non-goals. Verify the design run
+        covers only the steps of the Solution half and each consult case.
+        Verify a later run goes on at the step its state file names (SC2.2)
+      - >-
+        verify a design run covers each consult case, all four, with the
+        `engineer` seat, one at a time. Verify the design run writes each
+        answer into the design document as `yes` or `no`. Verify a `yes`
+        needs an entry under `Who was asked` and under `What was decided`,
+        and the design document shows both (SC5.1)
+  - unit: d3-signing
+    id: d3-signing
+    depends_on: [d2-design]
+    confirmed_by: [user]
+    done_means: >-
+      A design run writes its checks, each text revision and its signature
+      into the design document, and marks a consult case with no answer
+      OPEN.
+    acceptance_sketch:
+      - >-
+        verify the signature of each seat lands in the own doc of that seat
+        as a row `rN: Signed: request half` or `rN: Signed: solution half`.
+        Verify that row stands after the row the signature covers, with no
+        row between. Verify the checks before signing of each seat run on
+        the doc of that seat and land there as a `Measured:` row. Verify a
+        design run changes no line of the requirements document (SC2.3)
+      - >-
+        verify a design document names one text revision of the
+        requirements document. Verify the named revision is the last text
+        revision the `engineer` seat accepts the design against. Verify a
+        design run that goes on while a later text revision stands names
+        each text revision between. Verify the design run then covers with
+        the `engineer` seat whether the design still stands against each.
+        Verify that on the word of the seat the design document gains a
+        text revision that names the later one. Verify the design run then
+        needs a new signature from the `engineer` seat (SC3.1)
+      - >-
+        verify the checks before signing of the `engineer` seat report each
+        consult case with no answer as an OPEN with its notice. Verify the
+        checks report as an OPEN each `yes` that lacks an entry under `Who
+        was asked` or under `What was decided`. Verify the word of the seat
+        to record its signature still stands (SC5.2)
+  - unit: d4-tree
+    id: d4-tree
+    depends_on: [d3-signing]
+    confirmed_by: [user]
+    done_means: >-
+      The tree shows a pair as one feature with each half's revision and
+      signature, and marks a design document past its contract.
+    acceptance_sketch:
+      - >-
+        verify the tree shows a pair as one feature before intake, with the
+        last revision and the signature of each doc. Verify the tree shows
+        a combined document already through intake as it does today. Verify
+        a feature with a requirements document and no design document yet
+        also shows as one feature (SC1.3)
+  - unit: d5-intake
+    id: d5-intake
+    depends_on: [d4-tree]
+    confirmed_by: [user]
+    done_means: >-
+      Intake writes one contract from a pair, and stops on a missing
+      signature or on a stale design.
+    acceptance_sketch:
+      - >-
+        verify a design is stale when the requirements document holds a
+        text revision later than the one the design names. Verify the
+        checks before signing of the `engineer` seat report a stale design
+        with its error. Verify intake on that pair stops with the same
+        error. Verify intake stops, with no row and no contract, and reports
+        which of three holds. Verify one is a requirements document with no
+        signature of the PO seat on its last text revision. Verify another
+        is a design document with no signature of the `engineer` seat on
+        its last text revision. Verify the last is a stale design
+        (SC3.2, SC4.2)
+      - >-
+        verify intake writes one contract from a pair with the signature of
+        each seat and no stale design. Verify intake reads the Statement,
+        the Non-goals, the checks and the terms from the requirements
+        document. Verify intake reads the scope and the units from the
+        design document, and writes each `done_means` word for word. Verify
+        the `Ready:` row of intake lands in the revision table of each doc
+        of the pair. Verify a `Parked:` row lands in each instead when
+        intake rejects ready on either doc (SC4.1)
+  - unit: d6-release
+    id: d6-release
+    depends_on: [d5-intake]
+    confirmed_by: [user]
+    done_means: >-
+      Kit 0.19.0 ships the pair: intake stops on a combined document with
+      no `Ready:` row, G1 stands as a pair, and USAGE reads green.
+    acceptance_sketch:
+      - >-
+        verify intake on a combined document that holds no `Ready:` row
+        stops with its error and writes nothing. Verify a combined document
+        that holds a `Ready:` row stays unchanged, and its contract
+        validates as before. Verify the doc of G1 stands as a pair, with
+        the content and signature of its Request half unchanged (SC4.3)
+
+dependencies: []
+
+entities:
+  - task-contract
+  - feature-document
+  - requirements-document
+  - design-document
+  - pair
+  - combined-document
+  - requirements-run
+  - design-run
+  - feature
+  - feature-before-intake
+  - intake
+  - intake-seat
+  - half
+  - signature
+  - revision
+  - text-revision
+  - stale
+  - consult-case
+  - public-contract
+  - decomposition-unit
+  - tree
+  - drift-mark
+  - check
+  - checks-before-signing
+  - ready-check
+  - measured-row
+  - open-mark
+  - state-file
+  - tag
+  - scenario
+
+provenance:
+  origin: human-request
+  ref: docs/features/document-split.md
