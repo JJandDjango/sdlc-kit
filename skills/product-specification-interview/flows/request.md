@@ -26,8 +26,8 @@ Rules in force for every step:
   on.
 - A step adds no revision row: it writes its section in place, under
   the heading and tag r1 laid down. One exception, from SKILL.md's
-  constraints: a write into a half after its seat signed adds a text
-  row, and the interview asks that seat to sign again.
+  constraints: a write into a document after its seat signed adds a
+  text row, and the interview asks that seat to sign again.
 - A pause ("pause", "later", "stop") writes the state file with `next`
   unchanged and returns to SKILL.md step 3.
 Answers live in the state file under `answers`, by the key each step
