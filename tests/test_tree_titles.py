@@ -238,7 +238,8 @@ def test_sc1_1_every_kit_contract_stands_as_a_feature_and_each_line_opens_on_its
     contracts = sorted(KIT.glob("specs/*/contract.yaml"), key=lambda p: p.parent.name)
     assert contracts
     tops = [text for text in lines if not text.startswith(" ")]
-    documents = {p.stem for p in KIT.glob("docs/features/*.md") if p.is_file()}
+    documents = {p.stem for p in KIT.glob("docs/features/*.md")
+                 if p.is_file() and not p.name.endswith(".design.md")}
     assert [text.split(" ", 1)[0] for text in tops if not text.startswith("gates/")] == sorted(
         {path.parent.name for path in contracts} | documents)
     assert _starting(tops, "gates/G0 ").startswith("gates/G0 Planning / Intake [")

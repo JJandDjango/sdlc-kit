@@ -1,0 +1,54 @@
+schema: spec-interview-state/2
+id: g1-requirements-spec
+started: 2026-10-07
+phase: solution
+next: S1
+requirements_revision: r3
+origin: feature
+title: "Failure points found before development starts"
+seats:
+  engineer: user
+answers:
+  terms:
+    source: docs/features/g1-requirements-spec.md, Terms, as read at r3
+    new:
+      - term: Failure point
+        text: anything in a feature's requirements, boundary schemas or hard cores' designs that would fail development.
+      - term: Development
+        text: the work on a feature's units; it starts when its first unit's first task is recorded as started.
+      - term: Boundary schema
+        text: "a file that fixes the shape of data crossing a service or trust boundary: JSON Schema, OpenAPI or protobuf."
+      - term: Hard core
+        text: a component whose defect would be concurrency- or protocol-shaped, invisible until late, and costly to reverse; all three hold (ADR 0007).
+      - term: Model
+        text: a formal description of a hard core's design, in TLA+ or P.
+      - term: Linter
+        text: "the tool that lints a boundary schema: Spectral or `buf lint`."
+      - term: Checker
+        text: "the tool that explores a model: TLC or the P checker."
+      - term: Pin
+        text: "a tool's version and settings, committed in the repository: a linter's ruleset, or a model's configuration."
+      - term: Component
+        text: a part of a consumer's system with its own paths.
+      - term: Component declaration record
+        text: each component's paths, whether it is a hard core, and its oracle designation.
+      - term: Oracle designation
+        text: "how a component's generated inputs are judged: differential, fuzz, property-only, concurrency, soak, or none with a reason."
+      - term: Review
+        text: a person's pass over G1.3's 11 items against a feature document at one revision, signed with the seat and revision.
+      - term: Venue
+        text: where and when a gate runs.
+      - term: Ready check
+        text: one of the 14 questions a feature document answers before intake reads it ready (ADRs 0029 and 0033).
+      - term: Two-Key
+        text: the independent verifier's grade of one unit, PASS or FAIL.
+open: []
+history:
+  - at: 2026-10-07
+    event: design read, requirements document signed at r3 by its r4 row; id confirmed
+  - at: 2026-10-07
+    event: O4 answered, engineer seat user
+  - at: 2026-10-07
+    event: O5 answered, no material
+  - at: 2026-10-07
+    event: opening complete, document written as r1

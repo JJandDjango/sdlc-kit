@@ -1637,10 +1637,11 @@ cell before the last, so a row of fewer than three cells signs nothing.
 
 🟢 A feature before intake rolls up its verdicts, but not the inactive
 one, and its halves: it reads `to do` until a seat signs a half, then
-`doing`. G1's feature before intake, with its request half signed:
+`doing`. G1's feature before intake, with its request half signed and
+its design document at r1 ("A pair of documents"):
 
 ```
-g1-requirements-spec Failure points found before development starts [doing] no contract: document r3 doc: docs/features/g1-requirements-spec.md
+g1-requirements-spec Failure points found before development starts [doing] no contract: document r3 design r1 doc: docs/features/g1-requirements-spec.md
   g1-requirements-spec/G0 Planning / Intake [to do]
     g1-requirements-spec/G0/G0.1 Definition-of-ready [to do]
     g1-requirements-spec/G0/G0.2 Vocabulary coverage [to do]
