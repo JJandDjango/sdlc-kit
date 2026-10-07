@@ -2,22 +2,23 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-07 (session 81 close: document-split's d4-tree is
-> built, Two-Key PASS round 1; d5-intake opens the next session)._
+> _Generated 2026-10-07 (session 81 end: document-split's d4-tree is on
+> main, Two-Key PASS round 1; d5-intake opens the next session)._
 
 ## Now
-- **Session 81 (2026-10-07): `d4-tree` is built, Two-Key PASS round 1
-  at `1df7068`.** The tree shows a pair as one feature: a file under
-  `docs/features/` whose name ends `.design.md` is never a feature of
-  its own, the feature's line carries a second mark for the design's
-  newest text revision, and the solution half reads its signature from
-  the design document (SC1.3). Through intake the design's own drift
-  mark stands after the requirements document's. On branch
-  `session-81-document-split-d4`: the plan (`b988337`), the unit
-  (`1df7068`) and this wrap. The receipts: SC1.3 green at the clean
-  commit (29 cases), the unit's 41 cases, the whole suite at 1032
-  passed in a scratch venv, `ready-green`, `scope-green` against
-  `1030c8e`, and the manual receipt. The session's deliverable is met.
+- **Session 81 (2026-10-07): `d4-tree` is built and on main, Two-Key
+  PASS round 1 at `1df7068`.** The tree shows a pair as one feature: a
+  file under `docs/features/` whose name ends `.design.md` is never a
+  feature of its own, the feature's line carries a second mark for the
+  design's newest text revision, and the solution half reads its
+  signature from the design document (SC1.3). Through intake the
+  design's own drift mark stands after the requirements document's. PR
+  #94 merged at `d536131` on the user's word, after both CI checks read
+  green: the plan (`b988337`), the unit (`1df7068`) and the first wrap
+  (`4aaa583`). The receipts: SC1.3 green at the clean commit (29
+  cases), the unit's 41 cases, the whole suite at 1032 passed in a
+  scratch venv, `ready-green`, `scope-green` against `1030c8e`, and the
+  manual receipt. The session's deliverable is met.
 - The unit (`1df7068`): code in `taskcontract/tree.py` alone.
   `read_features` leaves out each `.design.md` file, so a design
   document with no requirements document beside it prints nothing.
@@ -75,7 +76,7 @@
   `d3` is on main since `1030c8e`, so the hold at 0.18.0 is over: a
   `/plugin marketplace update sdlc-kit` there delivers both runs and
   their signing. The tree that shows a pair as one feature is the `pip`
-  half's, at main's sha once this session's PR merges. Intake there
+  half's, at `d536131` or a later sha of main. Intake there
   still reads one combined document until `d5` merges, so a pair
   written there waits for `d5`. The `pip` half takes a commit sha in
   place of the tag. What an install takes, read from the
@@ -91,14 +92,16 @@
   `skills/` equal the tag's. Since `d1`'s merge main's `skills/` differ
   from the tag, so this machine's plugin stays as installed until the
   release: a re-intake during the build runs through it.
-- This machine: no Python here holds `rich` (3.14, 3.13 and 3.10), so
-  the 77 tests that import the pane fail under each; none holds
-  `prompt_lang`, and `uv` is not installed. The whole suite read green,
-  1032 passed, in a scratch venv that holds the test extra. `py -m pip
-  install "textual>=8.2,<9"` into 3.14 would end the first step; the
-  user has not said. With no `uv`, the `google_workspace` server cannot
-  start: its command is `uvx workspace-mcp` (found in session 81; the
-  user set the fix aside while working from a remote machine).
+- This machine, since session 81: the system Python (3.14.2) holds
+  `textual` 8.2.8 and `rich`, so `python -m taskcontract tree --follow`
+  starts with no scratch venv; the whole suite is not yet run under it.
+  The whole suite read green, 1032 passed, in a scratch venv that holds
+  the test extra. No Python here holds `prompt_lang`. `uv` 0.12.23 is
+  installed through winget, on the user PATH for a process started
+  after the install. The `google_workspace` server's command, `uvx
+  workspace-mcp`, exits 0 on `--help` with its package cached; the
+  server connects only once Claude Code restarts, which is not yet
+  seen, and its Google token is not checked.
 - G1's design is written through the interview once 0.19.0 ships, not
   by hand from the two NOTES files. It waits behind `document-split`'s
   build.
@@ -109,9 +112,10 @@
   `[doing]`.
 
 ## Blockers
-- None. Session 81's three commits (the plan, the unit, the wrap) reach
-  `main` through one PR from branch `session-81-document-split-d4`; the
-  push, the PR and the merge are each on the user's word.
+- None. `d4-tree` is on main at `d536131` (PR #94). This file's own
+  commit, the session's second wrap, rides a PR of its own from branch
+  `session-81-wrap`; its push, its PR and its merge are each on the
+  user's word.
 
 ## Next actions
 Opener: `d5-intake`, the fifth unit of `document-split`'s build as kit
@@ -452,8 +456,11 @@ known, and the design holds either way).
   prototype. `tree_receipt.py` there takes a tree print as a receipt.
   Give Two-Key a focus pointer that says the grader reads and the
   receipts key runs: `d4`'s grader ran a second suite under the system
-  Python at the same time. Session 81's `d4`: drafter 213K, developers
-  94K and 75K, Two-Key 179K, PASS round 1.
+  Python at the same time. A workflow agent can see the user's last
+  chat message: `d4`'s drafter read "skip this part" there and asked
+  which part, so say in the brief when such a message is not for it.
+  Session 81's `d4`: drafter 213K, developers 94K and 75K, Two-Key
+  179K, PASS round 1.
 - A live run of both runs (session 80, `d3`): two worktrees at the unit
   commit, and one driver folder a run, made by a script that copies
   `live-run-driver.py` with its `PLUGIN` and `WORKTREE` lines set and
@@ -477,13 +484,15 @@ known, and the design holds either way).
   a background run killed for memory. A PR's CI waits through `gh pr
   checks <n> --watch` in the background; started right after a push it
   can end `no checks reported`, so watch again.
-- The suite on this machine (session 76): no Python holds the `pane`
-  extra, so run it from a scratch venv: `py -3.14 -m venv
-  <scratch>/venv`, then that venv's `python -m pip install
-  "textual>=8.2,<9" "pytest>=8" "jsonschema>=4.18" "PyYAML>=6"`, then
-  its `python -P -m pytest tests -q` in the background. `lang-check`
-  prints about 130 exempt lines before its last one: run it in the
-  background and grep the output for `lang-green`.
+- The suite on this machine: since session 81 the system Python 3.14
+  holds `textual`, so `python -P -m pytest tests -q` may run under it;
+  that run is not yet seen green. Until it is, the scratch venv stands
+  (session 76): `py -3.14 -m venv <scratch>/venv`, then that venv's
+  `python -m pip install "textual>=8.2,<9" "pytest>=8"
+  "jsonschema>=4.18" "PyYAML>=6"`, then its `python -P -m pytest tests
+  -q` in the background. `lang-check` prints about 130 exempt lines
+  before its last one: run it in the background and grep the output for
+  `lang-green`.
 - A session that ends at the plan's boundary (session 76): its commits
   land through the session's PR, and the wrap rides its own PR from a
   new branch off main.
@@ -530,9 +539,8 @@ known, and the design holds either way).
   no mark for the design: the `drift-mark` term and USAGE name one
   drift mark for a design, the stale one. Add `design: no "Ready:" row`
   through a term amendment and a USAGE sentence, or leave it?
-- Install `uv` on this machine (`winget install --id=astral-sh.uv -e`)?
-  The `google_workspace` server needs it, and so does `d6`'s tag
-  receipt, which runs through `uv run`.
+- Does the `google_workspace` server connect once Claude Code restarts,
+  now that `uv` is installed, and does its Google token still hold?
 - The way back from a finished state can ask a seat to sign twice: once
   at the section's write, under `SKILL.md`'s constraint on a write
   after a signature, and once at P7 or E7 after the checks run again.

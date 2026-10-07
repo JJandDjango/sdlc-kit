@@ -90,8 +90,9 @@ commit; (2) the push and the PR; (3) the merge. Claude's, on review:
 only if USAGE's red text must change.
 
 As it went: five, as planned, and no sixth. (1) The user approved this
-plan and its commit. (2) The push and the PR, and (3) the merge, wait
-on the user's word. Claude's, on review: (4) the test list, with one
+plan and its commit. (2) The user gave the word for the push and the
+PR, #94, and (3) for the merge once CI read green: `d536131`. Claude's,
+on review: (4) the test list, with one
 amendment before approval; (5) the unit's commit. The amendment: the
 draft pinned a mark `design: no "Ready:" row`, which the session's own
 brief had suggested and no source names; the ratified `drift-mark`
@@ -102,8 +103,9 @@ Deferred, not this session:
 - Whether a design table with no `Ready:` row should get a mark of its
   own: a term amendment and a USAGE sentence, under `STATE.md`'s Open
   questions.
-- `uv` on this machine: the `google_workspace` server and `d6`'s tag
-  receipt both need it; the user set the install aside.
+- Whether the `google_workspace` server connects once Claude Code
+  restarts: `uv` and `textual` went in at the session's end, on the
+  user's word, after the merge.
 - Two-Key's advisory on `tree.py`'s docstring for a contract folder
   named `x.design`: wording, for `d6`'s sweep.
 - `d5-intake` and `d6-release` (ships 0.19.0), one unit a session.
