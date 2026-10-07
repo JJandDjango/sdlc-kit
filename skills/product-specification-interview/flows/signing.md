@@ -24,6 +24,12 @@ stands whatever the count of findings and OPEN marks.
   A gap that already carries its mark is never marked twice and counts
   once; a gap the seat's answer closes loses its mark and its line in
   `open`.
+- Each seat's checks and rows stand in that seat's own document. P1 to
+  P7 read and write the requirements document, `docs/features/{id}.md`,
+  and the requirements run's state file; E1 to E7 the design document,
+  `docs/features/{id}.design.md`, and the design run's state file. No E
+  step changes a line of the requirements document or of the
+  requirements run's state file.
 - The newest revision is the highest `rN` of a row that opens on none of
   `Ready:`, `Measured:`, `Signed:` or `Parked:`.
 - A derived block is stale when its tag's `derived from r{n}` stands
@@ -69,21 +75,23 @@ P6. SIGN OR GO BACK - REPORT the OPEN marks that stand, in one block, or "no gap
 
 P7. SIGNATURE - WRITE into the document the text row `r{n}: The request half finished: {sections} sections written, {open} OPEN`, where `{sections}` counts the half's sections written and `{open}` the OPEN marks that stand in the half; the Gherkin block's stamp moves to this row, once every check changed since the last stamp has a confirmed scenario again. Then WRITE into the document, right after the first, with no row between, the row `r{n}: Signed: request half. The PO seat signs r{m}`, where r{m} is that text row. Both rows carry `seats.po` in Revised By. WRITE the state file with `phase: output`, `next: W1` and `history: + {at: now, event: request half signed}`, and return to SKILL.md step 1.
 
-E1. DRAFT CHECK - RUN one Bash call `python -m taskcontract lang-check --draft docs/features/{id}.state.yaml` at the repo root and SHOW its lines as printed. For this half the run reads each unit's `done_means`, from `answers.units`, through the language check. Exit 1 is a result, as at P1. HOLD the findings part of the command's last line for E5; a `CL000` line is held from `CL000` on, as at P1.
+E1. DRAFT CHECK - RUN one Bash call `python -m taskcontract lang-check --draft docs/features/{id}.design.state.yaml` at the repo root and SHOW its lines as printed. For this half the run reads each unit's `done_means`, from `answers.units`, through the language check, and reports the copied terms' findings again, since `answers.terms` holds a copy of the requirements document's new terms. Exit 1 is a result, as at P1. HOLD the findings part of the command's last line for E5; a `CL000` line is held from `CL000` on, as at P1.
 
 E2. SCOPE - CHECK Scope against the paths of the release unit's row under Units: each path that row names stands in `answers.scope`, or is a finding. The release unit is the unit that ships the release: its row names the release's own paths, such as a version file. ASK the engineer seat which row it is when the rows leave it unclear. HOLD the result for E5. A document with no release unit skips this check and says so in its `Measured:` row.
 
-E3. READY CHECKS - READ the document against ready checks 11 to 14, each a question, and mark each gap as the context says:
+E3. READY CHECKS - READ the document against ready checks 11 to 15, each a question, and mark each gap as the context says:
    11. Does every fact a check names have a Sources row, and does every pair of sources that can disagree name its winner?
    12. Does every output kind have a drawn example, with its edges?
    13. Does every unit name its retirements or "none", and list its tests by check id and kind?
    14. Do the checks run before signing read green, or does each finding stand answered in the document?
+   15. Does each of the four cases have an answer, and does each yes name who was asked and what was decided?
+   A gap under the last question is one of three, each marked under Consult cases as `OPEN: Ready check 15: {gap}.`: `case {k} has no answer`, `case {k} reads yes and names no one asked`, `case {k} reads yes and names no decision`.
 
 E4. STALE BLOCKS - READ each derived block's stamp against the newest revision. REPORT each stale block with its message.
 
-E5. MEASURED ROW - WRITE into the document the row `r{n}: Measured: the checks before signing, on the solution half: {findings}; Scope against the release unit's paths: {scope}; ready checks 11 to 14: {count} OPEN`. `{findings}` and `{count}` read as at P5, the count under ready checks 11 to 14; `{scope}` reads `covered`, or `{paths} outside Scope`, or with no release unit `no release unit, check skipped`. Each run of the checks writes one row. Then WRITE the state file with `next: E6`.
+E5. MEASURED ROW - WRITE into the design document the row `r{n}: Measured: the checks before signing, on the solution half: {findings}; Scope against the release unit's paths: {scope}; ready checks 11 to 15: {count} OPEN`. `{findings}` and `{count}` read as at P5, the count under ready checks 11 to 15; `{scope}` reads `covered`, or `{paths} outside Scope`, or with no release unit `no release unit, check skipped`. Each run of the checks writes one row. Then WRITE the state file with `next: E6`.
 
-E6. SIGN OR GO BACK - REPORT the OPEN marks that stand, in one block, or "no gaps". ASK the engineer seat "Sign the solution half now, or go back to a section?" The seat's word to sign stands, whatever the count: WRITE the state file with `next: E7` and go to E7. To go back, the seat names a section: EXECUTE that section's step from {skill-dir}/flows/solution.md, WRITE the state file with `next: E1`, and go to E1, so the command and the ready checks run again. When the seat names a section of the request half, EXECUTE that section's step from {skill-dir}/flows/request.md instead: the write lands in the signed request half, so SKILL.md's constraints apply (it adds a text row, and the interview asks the PO seat to sign again); the state file then takes `next: E1` the same way, and the checks run again. A seat that declines to sign gets no `Signed:` row: WRITE the state file with `next: E6`, REPORT the step to resume at, and return to SKILL.md step 3.
+E6. SIGN OR GO BACK - REPORT the OPEN marks that stand, in one block, or "no gaps". ASK the engineer seat "Sign the solution half now, or go back to a section?" The seat's word to sign stands, whatever the count: WRITE the state file with `next: E7` and go to E7. To go back, the seat names a section of the design document: EXECUTE that section's step from {skill-dir}/flows/solution.md, WRITE the state file with `next: E1`, and go to E1, so the command and the ready checks run again. When the seat names a section of the requirements document, REPORT the requirements run's command, `/sdlc:product-specification-interview {id}`, WRITE nothing and ASK the question again: a design run changes no line of the requirements document. A seat that declines to sign gets no `Signed:` row: WRITE the state file with `next: E6`, REPORT the step to resume at, and return to SKILL.md step 3.
 
-E7. SIGNATURE - WRITE into the document the text row `r{n}: The solution half finished: {sections} sections written, {open} OPEN`, the counts as at P7; the Gherkin block's stamp moves to this row, once every check changed since the last stamp has a confirmed scenario again. Then WRITE into the document, right after the first, with no row between, the row `r{n}: Signed: solution half. The engineer seat signs r{m}`, where r{m} is that text row. Both rows carry `seats.engineer` in Revised By. WRITE the state file with `phase: output`, `next: W1` and `history: + {at: now, event: solution half signed}`, and return to SKILL.md step 1.
+E7. SIGNATURE - WRITE into the design document the text row `r{n}: The solution half finished: {sections} sections written, {open} OPEN`, where `{sections}` counts the design document's sections written and `{open}` the OPEN marks that stand in it. Then WRITE into the design document, right after the first, with no row between, the row `r{n}: Signed: solution half. The engineer seat signs r{m}`, where r{m} is that text row. Both rows carry `seats.engineer` in Revised By. E7 changes no line of the requirements document. WRITE the state file with `phase: output`, `next: W1` and `history: + {at: now, event: solution half signed}`, and return to SKILL.md step 1.
 </instructions>

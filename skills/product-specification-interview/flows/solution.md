@@ -1,6 +1,6 @@
 ---
 name: spec-interview-flow-solution
-description: The Solution flow of /sdlc:product-specification-interview - the solution half's sections in order, then the record's authored sections, one question at a time; the document and the state file written as each step closes.
+description: The Solution flow of /sdlc:product-specification-interview - the solution half's sections in order, then Consult cases and the record's authored sections, one question at a time; the document and the state file written as each step closes.
 ---
 
 <purpose>
@@ -28,8 +28,8 @@ Rules in force for every step:
   on.
 - A step adds no revision row: it writes its section in place, under
   the heading and tag r1 laid down. One exception, from SKILL.md's
-  constraints: a write into a half after its seat signed adds a text
-  row, and the interview asks that seat to sign again.
+  constraints: a write into a document after its seat signed adds a
+  text row, and the interview asks that seat to sign again.
 - A pause ("pause", "later", "stop") writes the state file with `next`
   unchanged and returns to SKILL.md step 3.
 - The document is the design document, `docs/features/{id}.design.md`,
@@ -66,7 +66,7 @@ S9. CONSULT CASES - ASK the engineer seat the four cases, one case per question,
    | 2. More than one solution | {answer} | {asked} | {decided} |
    | 3. A solution unconventional to the codebase | {answer} | {asked} | {decided} |
    | 4. A change to a public contract: routes, a gateway definition, events, a schema | {answer} | {asked} | {decided} |
-   A `no` row leaves its last two cells empty.
+   A `no` row leaves its last two cells empty. A case not yet answered keeps its row, with an empty Answer cell, so ready check 15 has a row to read.
 
 S10. DECISIONS AND OPEN QUESTIONS - ASK "Which questions came up, and which have a decided answer?" Record `answers.decisions: [{q, a}]`; an undecided question gets `a: OPEN` and a line in `open`. An `OPEN:` line S2 wrote under the heading stays when S10 writes the section.
 

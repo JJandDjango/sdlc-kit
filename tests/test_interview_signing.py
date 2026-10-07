@@ -12,7 +12,7 @@ Signed: solution half`, written right after the text row it signs; how the
 tree reads those rows is held by tests/test_tree_halves.py. SC2.1: the draft check runs as one command
 before each signature and lands as a `Measured:` row; nothing is written
 under `specs/`. SC2.2: each ready check is a question (1 to 8 before the PO
-seat signs, 11 to 14 before the engineer seat signs), a gap is marked OPEN,
+seat signs, 11 to 15 before the engineer seat signs), a gap is marked OPEN,
 a stale block gets its message, and the checks never block. SC2.3: each
 entry of Existing behavior touched is read against the file or step it
 names.
@@ -52,6 +52,8 @@ ENGINEER_STEPS = (("E1", "DRAFT CHECK"), ("E2", "SCOPE"), ("E3", "READY CHECKS")
                   ("E7", "SIGNATURE"))
 
 DRAFT_COMMAND = "python -m taskcontract lang-check --draft docs/features/{id}.state.yaml"
+DESIGN_DRAFT_COMMAND = ("python -m taskcontract lang-check --draft"
+                        " docs/features/{id}.design.state.yaml")
 FINDINGS_EXAMPLE = "4 findings (CL003 1, CL008 1, CL012 1, CL014 1)"
 
 # The six revision rows the flow writes, as it draws them.
@@ -61,7 +63,7 @@ FINISHED_REQUEST = "r{n}: The request half finished: {sections} sections written
 SIGNED_REQUEST = "r{n}: Signed: request half. The PO seat signs r{m}"
 MEASURED_SOLUTION = ("r{n}: Measured: the checks before signing, on the solution half:"
                      " {findings}; Scope against the release unit's paths: {scope};"
-                     " ready checks 11 to 14: {count} OPEN")
+                     " ready checks 11 to 15: {count} OPEN")
 FINISHED_SOLUTION = "r{n}: The solution half finished: {sections} sections written, {open} OPEN"
 SIGNED_SOLUTION = "r{n}: Signed: solution half. The engineer seat signs r{m}"
 ROW_FORMS = {MEASURED_REQUEST, FINISHED_REQUEST, SIGNED_REQUEST,
@@ -103,9 +105,10 @@ READY_CHECKS = {
     12: ("output kind", "drawn example", "edges"),
     13: ("retirements", '"none"', "by check id and kind"),
     14: ("read green", "answered in the document"),
+    15: ("four cases", "an answer", "who was asked", "what was decided"),
 }
 REQUEST_CHECKS = list(range(1, 9))
-SOLUTION_CHECKS = list(range(11, 15))
+SOLUTION_CHECKS = list(range(11, 16))
 
 
 def _text(path: Path) -> str:
@@ -262,11 +265,11 @@ def test_sc1_3_the_flow_writes_six_row_forms_and_never_a_ready_or_parked_row():
             assert not form.startswith(("r{n}: Ready:", "r{n}: Parked:")), (path.name, form)
 
 
-# --- SC1.3: a write into a signed half, and a seat that declines ---
+# --- SC1.3: a write into a signed document, and a seat that declines ---
 
-def test_sc1_3_a_write_into_a_signed_half_adds_a_text_row_and_the_seat_is_asked_to_sign_again():
+def test_sc1_3_a_write_into_a_signed_document_adds_a_text_row_and_the_seat_is_asked_to_sign_again():
     constraints = _block(_text(SKILL_DIR / "SKILL.md"), "constraints")
-    assert "a write into a half after its seat signed adds a text row" in constraints
+    assert "a write into a document after its seat signed adds a text row" in constraints
     assert f"`{SIGNED_AGAIN_TEXT_ROW}`" in constraints
     assert "the interview asks that seat to sign again" in constraints
     assert "a new `Signed:` row right after it" in constraints
@@ -275,7 +278,7 @@ def test_sc1_3_a_write_into_a_signed_half_adds_a_text_row_and_the_seat_is_asked_
     for name in ("request.md", "solution.md"):
         context = _block(_flow(name), "context")
         assert "A step adds no revision row" in context, name
-        assert "a write into a half after its seat signed" in context, name
+        assert "a write into a document after its seat signed" in context, name
         assert "adds a text row" in context and "sign again" in context, name
 
 
@@ -343,9 +346,9 @@ def test_sc2_1_the_draft_check_runs_as_one_shell_segment_before_the_po_seat_sign
     assert order.index("P1") < order.index("P6") < order.index("P7")
 
 
-def test_sc2_1_the_same_command_runs_before_the_engineer_seat_signs_and_reads_each_done_means():
+def test_sc2_1_the_draft_check_runs_before_the_engineer_seat_signs_and_reads_each_done_means():
     check = _signing_step("E1")
-    assert f"one Bash call `{DRAFT_COMMAND}`" in check
+    assert f"one Bash call `{DESIGN_DRAFT_COMMAND}`" in check
     assert "SHOW its lines" in check
     assert "each unit's `done_means`" in check and "`answers.units`" in check
     order = list(_steps(_flow("signing.md"), "[PE]"))
@@ -354,18 +357,18 @@ def test_sc2_1_the_same_command_runs_before_the_engineer_seat_signs_and_reads_ea
 
 def test_sc2_1_every_shell_command_the_signing_flow_authors_is_one_segment():
     lines = [line for line in _flow("signing.md").splitlines() if "Bash" in line]
-    assert len(lines) == 2, lines  # the draft check, once per half
-    for line in lines:
+    assert len(lines) == 2, lines  # the draft check, once per seat
+    for line, draft in zip(lines, (DRAFT_COMMAND, DESIGN_DRAFT_COMMAND)):
         assert "one Bash call" in line, line
         commands = re.findall(r"`([^`]+)`", line)
-        assert DRAFT_COMMAND in commands, line
+        assert draft in commands, line
         for command in commands:
             assert not any(ch in command for ch in CHAIN_CHARS), command
-    # The flows name the command in one form only.
+    # The flows name the command in one form only, on each seat's state file.
     for path in _prompt_files():
         for span in re.findall(r"`([^`]+)`", _flat(_text(path))):
             if "lang-check" in span:
-                assert span == DRAFT_COMMAND, (path.name, span)
+                assert span in (DRAFT_COMMAND, DESIGN_DRAFT_COMMAND), (path.name, span)
 
 
 def test_sc2_1_a_finding_that_is_an_error_never_stops_the_run():
@@ -408,6 +411,8 @@ def test_sc2_1_the_signing_flow_writes_the_document_and_its_state_file_and_nothi
     assert any("document" in target for target in targets)
     assert any("state file" in target for target in targets)
     for target in targets:
+        if target.split()[:1] == ["nothing"]:  # a step that writes nothing
+            continue
         assert "state file" in target or "document" in target, target
     for span in re.findall(r"`([^`]+)`", flat):
         assert not span.startswith("specs/") or span == "specs/", span
@@ -441,8 +446,8 @@ def test_sc2_2_ready_checks_1_to_8_stand_as_questions_before_the_po_seat_signs()
     assert order.index("P3") < order.index("P6")
 
 
-def test_sc2_2_ready_checks_11_to_14_stand_as_questions_before_the_engineer_seat_signs():
-    _assert_ready_checks("E3", SOLUTION_CHECKS, "11 to 14")
+def test_sc2_2_ready_checks_11_to_15_stand_as_questions_before_the_engineer_seat_signs():
+    _assert_ready_checks("E3", SOLUTION_CHECKS, "11 to 15")
     order = list(_steps(_flow("signing.md"), "[PE]"))
     assert order.index("E3") < order.index("E6")
 
@@ -455,7 +460,7 @@ def test_sc2_2_ready_checks_9_and_10_are_intakes_and_appear_in_no_flow():
         for first, last in re.findall(r"[Rr]eady checks? (\d+)(?: (?:to|and) (\d+))?",
                                       _flat(_text(path))):
             named = (int(first), int(last)) if last else int(first)
-            assert named in [(1, 8), (11, 14)] + REQUEST_CHECKS + SOLUTION_CHECKS, (
+            assert named in [(1, 8), (11, 15)] + REQUEST_CHECKS + SOLUTION_CHECKS, (
                 path.name, named)
 
 
@@ -501,8 +506,9 @@ def test_sc2_2_each_text_row_the_interview_writes_moves_the_gherkin_stamp():
     constraints = _block(_text(SKILL_DIR / "SKILL.md"), "constraints")
     assert STAMP_MOVES in constraints
     assert HAND_ROW in constraints
-    for step in ("P7", "E7"):
-        assert "the Gherkin block's stamp moves to this row" in _signing_step(step), step
+    # The stamp moves at the PO seat's signature; a design document holds no Gherkin block.
+    assert "the Gherkin block's stamp moves to this row" in _signing_step("P7")
+    assert "stamp" not in _signing_step("E7")
 
 
 # --- SC2.2: the checks advise ---
