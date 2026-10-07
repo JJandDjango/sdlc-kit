@@ -66,35 +66,46 @@ copied to an untracked folder in this root). A second one after step 6:
 the unit stands committed, and the live run and Two-Key open the next
 session.
 
+**Closed.** The deliverable is met: `d3-signing` stands at `13901c3`,
+Two-Key PASS round 1. The receipts read green at the clean commit:
+SC2.3 at 8 tests, SC3.1 at 8 and SC5.2 at 3, the unit's 29 tests, the
+whole suite at 991 passed in a scratch venv, `prompt_lang` on the
+skill's six prompt files, `validate --profile ready`, and `scope-check`
+against `58eb097`. SC2.3's manual receipt holds, 14 of 14 lines, in
+`RECEIPT_document-split-d3_2026-10-07/`. Nine older tests were amended
+and none retired. `flows/signing.md` stayed one file, at 11,500 of
+12,000 characters. The developer ran twice: the second round added two
+sentences found on review. The session did not need its boundary.
+
 ## Steps
 
-1. Open. Branch `session-80-document-split-d3` from `58eb097`; this
+1. ~~Open.~~ Branch `session-80-document-split-d3` from `58eb097`; this
    plan, committed on the user's word. A scratch venv for the suite and
    the form validator, by `STATE.md`'s two recipes.
-2. d3, draft. `spec-channel-drafter.js` drafts the test list for SC2.3,
+2. ~~d3, draft.~~ `spec-channel-drafter.js` drafts the test list for SC2.3,
    SC3.1 and SC5.2, proves it red from the repo root, and proves it
    satisfiable on a scratch copy of the skill folder. One drafter, as
    `d2` (207K tokens for three checks); its reading stays on the skill
    folder, the contract, the feature document's signing and revision
    text, and USAGE's red text.
-3. d3, retire. The session overlays the prototype on a scratch
+3. ~~d3, retire.~~ The session overlays the prototype on a scratch
    worktree, runs the whole suite there and names the failing tests and
    their modules; `test-retirer.js` with `overlay` runs only those
    modules.
-4. d3, approve the list and prove red. Each fixed detail checked
+4. ~~d3, approve the list and prove red.~~ Each fixed detail checked
    against the contract, the feature document, its Constraints and
    USAGE's red text; caps pinned against free text with line breaks;
    session labels stripped; then `progress run <check> --expect red`
    for each of the three checks, the command run alone first.
-5. d3, green. `unit-developer.js` from the interface note, handed over
+5. ~~d3, green.~~ `unit-developer.js` from the interface note, handed over
    as a file outside the drafter's folder; Claude runs the suite,
    `prompt_lang` and the size cap after each round, tests any deviation
    against `done_means`, reads the developer's free wording against
    each step it touches, and reads each new step against ADRs 0029 and
    0033 to 0037.
-6. d3, commit. Commit with the `Contract:` trailer; each check green at
+6. ~~d3, commit.~~ Commit with the `Contract:` trailer; each check green at
    the clean commit; `ready-green` and `scope-green` against `58eb097`.
-7. d3, live run (SC2.3's manual receipt). Two worktrees at the unit's
+7. ~~d3, live run (SC2.3's manual receipt).~~ Two worktrees at the unit's
    commit, outside Claude Code's temp tree. `live-run-driver.py` drives
    a requirements run to the PO seat's signature, then a design run to
    the engineer seat's, with `live-run-seats.js` answering as the
@@ -104,9 +115,9 @@ session.
    the transcripts go to untracked
    `RECEIPT_document-split-d3_2026-10-07/`; `d4` and `d5` take their
    manual receipts from that pair.
-8. d3, Two-Key. `two-key-unit-verifier.js`, with the live run's text as
+8. ~~d3, Two-Key.~~ `two-key-unit-verifier.js`, with the live run's text as
    a focus pointer; `progress done` on PASS.
-9. Close. `STATE.md` regenerated; this plan struck; the memory index
+9. ~~Close.~~ `STATE.md` regenerated; this plan struck; the memory index
    updated; the push, the PR and the merge on the user's word.
 
 Steps 1 and 9 sit outside a contract unit, so the tree does not show
@@ -117,8 +128,26 @@ commit; (2) the push and the PR; (3) the merge. Claude's, on review:
 (4) the test list, with its retirements and amendments; (5) the unit's
 commit. A sixth only if USAGE's red text must change.
 
+As it went: five, as planned, and no sixth. (1) The user approved this
+plan and its commit. (2) The push and the PR, and (3) the merge, wait
+on the user's word. Claude's, on review: (4) the test list, with nine
+amendments and no retirement; (5) the unit's commit. Claude's readings,
+each in the unit's commit message: the stale design's report at E4 is
+SC3.2's, in `d5-intake`, so E4 stands as it was; a confirmation on a
+signed design asks for the signature with no run of the checks between;
+the Retirements cell's test for ready checks 11 to 14 stays under a new
+name.
+
 Deferred, not this session:
 - `d4-tree` to `d6-release` (ships 0.19.0), one unit a session.
+- Two-Key's four advisories, in `STATE.md`'s Now: two of wording
+  (`opening.md`'s purpose and `SKILL.md`'s file list do not name DESIGN
+  CONFIRM), for `d6`'s sweep.
+- Two edges the sources do not decide, under `STATE.md`'s Open
+  questions: the way back from a finished state can ask a seat to sign
+  twice; DESIGN CONFIRM has no design document to read before r1.
+- What the live run's seats found odd, none of it `d3`'s: listed in the
+  receipt folder's `RECEIPT.md` and under `STATE.md` Next actions 2.
 - A test of the plugin update on the second machine, after `d3`'s
   merge; the `pip` half there takes a commit sha in place of the tag.
 - Whether the second machine's marketplace updates on its own: not
