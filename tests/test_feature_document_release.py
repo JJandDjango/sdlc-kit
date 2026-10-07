@@ -1,12 +1,13 @@
 """The 0.18.0 release, structurally (contract: feature-document, unit
 f5-release). The unit ships documents and prompt text, so the pages are
 the behavior: the suite holds the green paragraphs of USAGE's sections 8
-and 9, the changelog entry, the map row, and the two skills' sentences on
-what intake writes and on the count of sections.
+and 9, the changelog entry, the map row, and the sdlc skill's sentences on
+what intake writes.
 
 The tests of USAGE's interview section and of the page's two legend lines
 retired when document-split rewrote that section under red marks (its
-unit d1-requirements, at pass zero).
+unit d1-requirements, at pass zero). The test of the interview skill's
+count of sections retired with the combined document that unit splits.
 
 Every sentence is searched with its whitespace folded and its quote marks
 dropped, so a page may wrap its lines. A section is cut by its heading,
@@ -29,7 +30,6 @@ MAP = ROOT / "MAP.md"
 PYPROJECT = ROOT / "pyproject.toml"
 INIT = ROOT / "skills" / "sdlc" / "init.py"
 SDLC_SKILL = ROOT / "skills" / "sdlc" / "SKILL.md"
-INTERVIEW_SKILL = ROOT / "skills" / "product-specification-interview" / "SKILL.md"
 CHAR_CEILING = 12_000  # PromptLang fails at 4000 tokens; ~3.5 chars per token
 
 GREEN = "\U0001F7E2"
@@ -200,9 +200,3 @@ def test_sc5_2_the_sdlc_skill_says_intake_writes_its_row_into_the_feature_docume
     assert _item(text, "- intake writes ONLY") == INTAKE_WRITES
     assert _item(text, "- [ ] Intake flow:").endswith(INTAKE_CRITERION)
     assert len(text) < CHAR_CEILING
-
-
-def test_sc5_2_the_interview_skill_counts_the_other_fifteen_of_the_eighteen_sections():
-    flat = _flat(_read(INTERVIEW_SKILL))
-    assert "the status line; then the other fifteen of the eighteen sections" in flat
-    assert "then eighteen sections" not in flat

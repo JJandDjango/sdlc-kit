@@ -1,9 +1,11 @@
 """The interview writes the ratified format (contract: feature-document, unit f1-format).
 
 The skill is prompt-only, so this suite pins the text of its files, as
-tests/test_skill_interview.py does: the template holds ADR 0029's format
-as ADRs 0033 to 0036 amend it, and the prompt files write that document at
+tests/test_skill_interview.py does: the prompt files write the document at
 `docs/features/{id}.md` from r1, with its state file beside it (SC1.1).
+The template is the requirements document's; its rows, sections and tags
+are held by tests/test_interview_requirements.py, and here only its title
+line and its bug-fix-only blocks are read.
 No test runs a model; `python -m prompt_lang` stays the form receipt.
 """
 
@@ -15,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 SKILL_DIR = ROOT / "skills" / "product-specification-interview"
 FLOWS = SKILL_DIR / "flows"
-TEMPLATE = SKILL_DIR / "templates" / "feature-document.md.template"
+TEMPLATE = SKILL_DIR / "templates" / "requirements-document.md.template"
 
 PROMPTLANG_TAGS = {"purpose", "instructions", "variables", "context",
                    "constraints", "examples", "output", "criteria",
@@ -28,61 +30,11 @@ STATE_LS = "ls docs/features/{id}.state.yaml"
 DOCUMENT_LS = "ls docs/features/{id}.md"
 BUG_OPEN, BUG_CLOSE = "{bug fix only}", "{end bug fix only}"
 
-# The document's first lines (Interfaces), in the template's placeholders.
+# The revision table's two heading lines, the document's first.
 FIRST_LINES = (
     "| Revision Date | Revised By | Changes Made |",
     "| :-: | :-: | :-- |",
-    "| {date} | {po} | r1: Created through /sdlc:product-specification-interview."
-    " The request half, in progress. PO seat: {po}; engineer seat: {engineer} |",
-    "",
-    "# {id} - {title}",
-    "",
-    "`{repo}` · seats: PO {po}, engineer {engineer} · contract: `{id}`, draft"
-    " · PR: none · merge SHA: none",
 )
-R1_CHANGES = ("r1: Created through /sdlc:product-specification-interview. The request"
-              " half, in progress. PO seat: {po}; engineer seat: {engineer}")
-
-# ADR 0029's sections in order as 0033 and 0036 amend them; "---" is the
-# seat boundary. A feature's document drops the four bug-fix-only headings.
-BUG_FIX_ONLY = {"### Findings at a glance", "## Findings", "## Why this happened",
-                "### Regression check"}
-BUG_FIX_OUTLINE = (
-    "## Statement",
-    "## Description", "### Findings at a glance",
-    "## Background", "### Existing behavior touched",
-    "## Findings",
-    "## Why this happened",
-    "## Success criteria",
-    "## Non-goals",
-    "## Prerequisites",
-    "## Acceptance criteria", "### Checks", "### Error messages, verbatim",
-    "### Regression check",
-    "---",
-    "## Proposed solution", "### Scope", "### Out of scope", "### Interfaces",
-    "### Sources", "### Constraints", "### Units", "### Order",
-    "## Risks and cost",
-    "## Decisions and open questions",
-    "## Traceability", "### Links out", "### Record",
-    "## Notes",
-    "## Appendix", "### Contract", "### Gherkin", "### Terms",
-)
-FEATURE_OUTLINE = tuple(h for h in BUG_FIX_OUTLINE if h not in BUG_FIX_ONLY)
-
-PO, ENGINEER, BOTH = ("`[PO seat · authored]`", "`[Engineer seat · authored]`",
-                      "`[Both seats · authored]`")
-TAGS = {
-    "## Statement": PO, "## Description": PO, "## Background": PO,
-    "## Findings": PO, "## Why this happened": PO, "## Success criteria": PO,
-    "## Non-goals": PO, "## Prerequisites": PO, "## Acceptance criteria": PO,
-    "## Proposed solution": ENGINEER,
-    "## Risks and cost": BOTH, "## Decisions and open questions": BOTH,
-    "### Links out": BOTH, "### Record": "`[Intake · derived from r{n}]`",
-    "## Notes": BOTH,
-    "### Contract": "`[Intake · derived]`",
-    "### Gherkin": "`[PO seat · derived from r{n}]`",
-    "### Terms": PO,
-}
 
 
 def _text(path: Path) -> str:
@@ -111,11 +63,6 @@ def _render(origin: str) -> list[str]:
             out.append(line)
     assert not inside, "bug-fix-only block never closed"
     return out
-
-
-def _outline(lines: list[str]) -> list[str]:
-    return [line.rstrip() for line in lines
-            if line.startswith(("## ", "### ")) or line.rstrip() == "---"]
 
 
 def _blocks(text: str) -> list[str]:
@@ -174,7 +121,7 @@ def test_sc1_1_dispatch_finds_the_state_file_at_its_one_path_in_one_bash_call():
     assert "`^[a-z][a-z0-9-]{2,63}$`" in skill  # the id pattern stays
 
 
-# --- SC1.1: the title line, the status line, numbered revision rows ---
+# --- SC1.1: the title line, numbered revision rows ---
 
 def test_sc1_1_template_opens_on_the_revision_table_then_the_title_line():
     lines = _text(TEMPLATE).splitlines()
@@ -187,48 +134,12 @@ def test_sc1_1_template_opens_on_the_revision_table_then_the_title_line():
     assert "ABC-1234" not in opening  # the Jira-key title retires
 
 
-def test_sc1_1_r1_row_names_both_seats_and_is_the_only_row():
-    lines = _text(TEMPLATE).splitlines()
-    assert lines[:2] == list(FIRST_LINES[:2])
-    assert "" in lines
-    rows = lines[2:lines.index("")]
-    assert len(rows) == 1, rows  # r1 alone; no row reserved for intake
-    cells = [cell.strip() for cell in rows[0].strip("|").split("|")]
-    assert cells == ["{date}", "{po}", R1_CHANGES]
-    assert "Reserved for intake" not in _text(TEMPLATE)
-
-
 def test_sc1_1_each_later_revision_row_takes_the_next_number():
     skill = _text(SKILL_DIR / "SKILL.md")
     assert "Every revision row opens `r{n}: `, numbered one past the table's last row" in skill
 
 
-# --- SC1.1: the ratified sections, the seat boundary, the tags ---
-
-def test_sc1_1_feature_document_holds_the_ratified_sections_in_order():
-    assert _outline(_render("feature")) == list(FEATURE_OUTLINE)
-
-
-def test_sc1_1_bug_fix_document_adds_the_four_bug_fix_sections_in_place():
-    assert _outline(_render("bug-fix")) == list(BUG_FIX_OUTLINE)
-    text = _text(TEMPLATE)
-    blocks = _blocks(text)
-    for heading in BUG_FIX_ONLY:
-        assert any(heading in block.splitlines() for block in blocks), heading
-    outside = re.sub(re.escape(BUG_OPEN) + r"\n.*?" + re.escape(BUG_CLOSE), "",
-                     text, flags=re.S)
-    for heading in BUG_FIX_ONLY:
-        assert heading not in outside.splitlines(), heading
-
-
-def test_sc1_1_every_section_carries_its_tag_under_its_heading():
-    lines = _render("bug-fix")
-    for heading, tag in TAGS.items():
-        assert heading in lines, heading
-        at = lines.index(heading)
-        following = next(line for line in lines[at + 1:] if line.strip())
-        assert following == tag, (heading, following)
-
+# --- SC1.1: the bug-fix-only blocks ---
 
 def test_sc1_1_bug_fix_sections_carry_the_incident_reference_and_regression_scenario():
     blocks = _blocks(_text(TEMPLATE))
@@ -245,16 +156,6 @@ def test_sc1_1_bug_fix_sections_carry_the_incident_reference_and_regression_scen
     assert "never leaves them empty" in opening
 
 
-def test_sc1_1_contract_block_names_the_path_with_no_stamp_before_intake():
-    lines = _render("feature")
-    assert "### Contract" in lines and "### Gherkin" in lines
-    block = lines[lines.index("### Contract") + 1:lines.index("### Gherkin")]
-    body = [line for line in block if line.strip()]
-    assert body[:2] == ["`[Intake · derived]`",
-                        "(none: intake writes `specs/{id}/contract.yaml`)"]
-    assert not any("derived from" in line for line in block), block
-
-
 # --- SC1.1: when the document is written, and what the interview writes ---
 
 def test_sc1_1_opening_writes_the_document_as_r1_at_its_last_step():
@@ -262,7 +163,7 @@ def test_sc1_1_opening_writes_the_document_as_r1_at_its_last_step():
     steps = _instruction_steps(opening, "O")
     assert steps, "the opening has no numbered steps"
     last = steps[-1]
-    assert "templates/feature-document.md.template" in last, last
+    assert "templates/requirements-document.md.template" in last, last
     assert "`docs/features/{id}.md`" in last and "r1" in last, last
     skill = _text(SKILL_DIR / "SKILL.md")
     assert "each section into the document as its step closes" in skill
@@ -286,12 +187,11 @@ def test_sc1_1_existing_path_is_refused_at_the_opening_with_its_kept_message():
     assert "Never overwrite" in _text(SKILL_DIR / "SKILL.md")
 
 
-def test_sc1_1_output_keeps_the_google_docs_form_writes_nothing_and_names_intake():
+def test_sc1_1_output_keeps_the_google_docs_form_and_writes_nothing():
     output = _text(FLOWS / "output.md")
     assert "Nothing is written" in output
     assert "Google Docs form" in output
-    assert "`/sdlc intake {path}`" in output
-    assert "templates/feature-document.md.template" not in output  # W1's render retires
+    assert ".md.template" not in output  # W1's render retires
     assert "WRITE the document" not in output  # W3's write retires
     assert "one Bash call" not in output  # W2's path check retires to the opening
 

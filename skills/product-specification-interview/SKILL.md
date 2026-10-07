@@ -31,7 +31,7 @@ Runs in the consumer repo's Claude Code session; cwd is the repo root.
   {skill-dir}/flows/solution.md   S1-S11: the solution half in order, then the record's authored sections
   {skill-dir}/flows/signing.md    P1-P7, E1-E7: the checks before each seat signs its half, then the signature
   {skill-dir}/flows/output.md     W1-W2: Google Docs form, name the next command
-  {skill-dir}/templates/feature-document.md.template
+  {skill-dir}/templates/requirements-document.md.template
 
 Files: the document at `docs/features/{id}.md`, and beside it the state
 file `docs/features/{id}.state.yaml` (YAML, `schema:
@@ -40,24 +40,19 @@ spec-interview-state/2`: `id`, `phase`, `next`, `origin`, `title`,
 between runs: every flow reads it on entry and writes it after every
 answered step, so a later run resumes at the exact step `next` names.
 
-The template is ADR 0029's format as ADRs 0033 to 0036 amend it: the
-revision table with numbered rows; the title line `# {id} - {title}`; the
-status line; then the other fifteen of the eighteen sections, each
-heading followed by its tag,
-owner and kind (`[PO seat · authored]`, `[Engineer seat · authored]`,
-`[Both seats · authored]`, or derived with its stamp, such as
-`[Intake · derived from r{n}]`). The request half (Statement,
+The template is the requirements document of ADR 0037, which amends
+ADR 0029's format: the revision table with numbered rows; the title line
+`# {id} - {title}`; a status line that names the PO seat; then the
+request half's sections, each heading followed by its tag, owner and
+kind (`[PO seat · authored]`, or derived with its stamp,
+`[PO seat · derived from r{n}]`). The request half (Statement,
 Description, Background with Existing behavior touched, Success
 criteria, Non-goals, Prerequisites, Acceptance criteria with Checks and
-Error messages) stands above the seat boundary, a `---` line, and the PO
-seat signs it. The solution half (Proposed solution: Scope, Out of scope,
-Interfaces, Sources, Constraints, Units, Order; then Risks and cost)
-stands below it, and the engineer seat signs it. The record follows:
-Decisions and open questions, Traceability (Links out, Record), Notes,
-and the Appendix (Contract, Gherkin, Terms). Before intake, the Contract
-block names `specs/{id}/contract.yaml` with no stamp; the Gherkin
-carries no stamp until its step writes it, and the Record carries none,
-since no step writes it yet. The four
+Error messages) comes first, and the PO seat signs it. Then follow
+Decisions and open questions, Notes, and the Appendix with Gherkin and
+Terms. The document holds no solution half, no Traceability, no
+Contract block and no line between halves. The Gherkin
+carries no stamp until its step writes it. The four
 bug-fix sections (Findings at a glance, Findings, Why this happened,
 Regression check) stand only in a bug fix's document.
 
@@ -71,9 +66,9 @@ summarize after each section.
 <instructions>
 0. DISPATCH on the argument. PARSE `$1` as the feature id; ASK for it when absent or when it fails the pattern. LOAD the state file with one Bash call `ls docs/features/{id}.state.yaml` at the repo root. Exactly one file resumes; none starts a new run at O1.
    A state file at the old `REQUEST_{slug}_*.state.yaml` path is never read: a run for that id starts fresh.
-1. ROUTE by the state file's `phase`, and EXECUTE the flow from the step `next` names (a new run starts at O1): `opening` - LOAD {skill-dir}/flows/opening.md; `request` - LOAD {skill-dir}/flows/request.md, or {skill-dir}/flows/signing.md when `next` names a P step; `solution` - LOAD {skill-dir}/flows/solution.md, or {skill-dir}/flows/signing.md when `next` names an E step; `output` - LOAD {skill-dir}/flows/output.md; `complete` - REPORT the document path and `/sdlc intake {path}`, then return.
+1. ROUTE by the state file's `phase`, and EXECUTE the flow from the step `next` names (a new run starts at O1): `opening` - LOAD {skill-dir}/flows/opening.md; `request` - LOAD {skill-dir}/flows/request.md, or {skill-dir}/flows/signing.md when `next` names a P step; `solution` - LOAD {skill-dir}/flows/solution.md, or {skill-dir}/flows/signing.md when `next` names an E step; `output` - LOAD {skill-dir}/flows/output.md; `complete` - REPORT the document path, the state file path and the design run's command, `/sdlc:product-specification-interview {id} design`, then OFFER the way back to a section: for a section the seat names, EXECUTE its step from {skill-dir}/flows/request.md and WRITE the state file with `phase: request`, `next: P1`, so the checks run again and the PO seat signs again; else return.
 2. EXECUTE the loaded flow's steps in order, exactly as written there. After O6 writes r1, WRITE each section into the document as its step closes, in the template's place under its heading and tag; a section with nothing to say reads "(none)", and one no step has written yet reads "(not yet asked)". A flow ends by writing `phase` and `next` to the state file and returning here; step 1 routes again until `complete` or the user pauses.
-3. REPORT at every pause and at the end: the state file path, the phase, the step to resume at, and after output the document path and `/sdlc intake {path}`. A failed step returns control to the conversation with the failure stated in one line - never a silent stop.
+3. REPORT at every pause and at the end: the state file path, the phase, the step to resume at, and after output the document path and `/sdlc:product-specification-interview {id} design`. A failed step returns control to the conversation with the failure stated in one line - never a silent stop.
 </instructions>
 
 <constraints>
@@ -95,6 +90,6 @@ summarize after each section.
 - [ ] State written after every step; a later run resumes at the exact step.
 - [ ] The document lands at `docs/features/{id}.md` as r1 in the template's format, and each section lands as its step closes; no overwrite; `specs/` untouched.
 - [ ] Each half's checks ran before its seat was asked to sign, and each run landed as a `Measured:` row; no seat was blocked.
-- [ ] The final report names `/sdlc intake {path}`.
+- [ ] The final report names the design run's command.
 - [ ] Every Bash call a single segment.
 </criteria>
