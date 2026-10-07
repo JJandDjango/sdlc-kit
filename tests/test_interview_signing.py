@@ -8,9 +8,8 @@ P7 for the PO seat and the request half, E1 to E7 for the engineer seat
 and the solution half. It replaces the readiness flow.
 
 SC1.3: a signature is a row that opens `rN: Signed: request half` or `rN:
-Signed: solution half`, written right after the text row it signs, and the
-tree shows a document that carries the flow's rows as a feature before
-intake with both halves done. SC2.1: the draft check runs as one command
+Signed: solution half`, written right after the text row it signs; how the
+tree reads those rows is held by tests/test_tree_halves.py. SC2.1: the draft check runs as one command
 before each signature and lands as a `Measured:` row; nothing is written
 under `specs/`. SC2.2: each ready check is a question (1 to 8 before the PO
 seat signs, 11 to 14 before the engineer seat signs), a gap is marked OPEN,
@@ -19,10 +18,8 @@ entry of Existing behavior touched is read against the file or step it
 names.
 
 Text is matched after collapsing each whitespace run to one space, so a
-line wrap inside a prompt file never fails a test. Two tests run the kit's
-own `taskcontract tree` on a document built from the row forms the flow
-holds; no test runs a model, and `python -m prompt_lang` stays the form
-receipt.
+line wrap inside a prompt file never fails a test. No test runs a model,
+and `python -m prompt_lang` stays the form receipt.
 """
 
 from __future__ import annotations
@@ -30,19 +27,13 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-import pytest
-import yaml
-
-from conftest import write_seat_roster
-from taskcontract.__main__ import main
-
 # The kit's root. In tests/ it is the folder above this file; a copy that
 # stands outside the kit reads the folder pytest runs from.
 _ABOVE = Path(__file__).resolve().parent.parent
 ROOT = _ABOVE if (_ABOVE / "skills").is_dir() else Path.cwd()
 SKILL_DIR = ROOT / "skills" / "product-specification-interview"
 FLOWS = SKILL_DIR / "flows"
-TEMPLATE = SKILL_DIR / "templates" / "feature-document.md.template"
+TEMPLATE = SKILL_DIR / "templates" / "requirements-document.md.template"
 
 PROMPTLANG_TAGS = {"purpose", "instructions", "variables", "context",
                    "constraints", "examples", "output", "criteria",
@@ -84,7 +75,6 @@ NEWEST_REVISION = ("the highest `rN` of a row that opens on none of `Ready:`, `M
                    " `Signed:` or `Parked:`")
 FALSE_ENTRY_OPEN = ("`OPEN: Ready check 6: {entry} no longer holds:"
                     " {what the source says}.`")
-MISSING_SEAT_OPEN = "`OPEN: Ready check 8: no engineer seat is named.`"
 UNCONFIRMED_OPEN = "`OPEN: Ready check 3: {id} has no confirmed scenario.`"
 UNCONFIRMED_PLACE = "`(from the PO seat, not confirmed)`"
 SIGN_REQUEST_QUESTION = '"Sign the request half now, or go back to a section?"'
@@ -108,7 +98,7 @@ READY_CHECKS = {
     6: ("Existing behavior touched", '"none"', "file or step it was measured from",
         "regression check"),
     7: ("error message", "verbatim"),
-    8: ("both seats", "bug fix", "`Measured:` row"),
+    8: ("Is the PO seat named", "bug fix", "`Measured:` row"),
     11: ("Sources row", "winner"),
     12: ("output kind", "drawn example", "edges"),
     13: ("retirements", '"none"', "by check id and kind"),
@@ -116,15 +106,6 @@ READY_CHECKS = {
 }
 REQUEST_CHECKS = list(range(1, 9))
 SOLUTION_CHECKS = list(range(11, 15))
-
-# The drawn feature: id `x`, PO seat ann, engineer seat raj.
-TITLE = "The outcome, in a few words"
-DRAWN_ROWS = (
-    "r2: Measured: the checks before signing, on the request half: 4 findings"
-    " (CL003 1, CL008 1, CL012 1, CL014 1); ready checks 1 to 8: 1 OPEN",
-    "r4: Signed: request half. The PO seat signs r3",
-    "r7: Signed: solution half. The engineer seat signs r6",
-)
 
 
 def _text(path: Path) -> str:
@@ -199,21 +180,6 @@ def _row_forms() -> list[str]:
     return re.findall(r"`(r\{n\}: [^`]+)`", _signing())
 
 
-def _form(opening: str) -> str:
-    found = sorted({form for form in _row_forms() if form.startswith(opening)})
-    assert len(found) == 1, (opening, found)
-    return found[0]
-
-
-def _fill(form: str, **values) -> str:
-    """A row form with each `{name}` replaced by its value."""
-    names = set(re.findall(r"\{([^{}]+)\}", form))
-    assert names <= set(values), (form, names - set(values))
-    for name in names:
-        form = form.replace("{" + name + "}", str(values[name]))
-    return form
-
-
 # --- SC1.3: the flow, its steps, and the dispatch that routes to it ---
 
 def test_sc1_3_signing_flow_holds_the_steps_of_each_half_in_order():
@@ -248,7 +214,7 @@ def test_sc1_3_each_half_hands_over_to_its_checks_and_each_signature_hands_on():
     notes = _step("solution.md", "S", "S11")
     assert "`phase: solution`" in notes and "`next: E1`" in notes
     signed = _signing_step("P7")
-    assert "`phase: solution`" in signed and "`next: S1`" in signed
+    assert "`phase: output`" in signed and "`next: W1`" in signed
     signed = _signing_step("E7")
     assert "`phase: output`" in signed and "`next: W1`" in signed
     assert re.search(r"^W1\. ", _flow("output.md"), flags=re.M)  # the output flow's first step
@@ -296,146 +262,6 @@ def test_sc1_3_the_flow_writes_six_row_forms_and_never_a_ready_or_parked_row():
             assert not form.startswith(("r{n}: Ready:", "r{n}: Parked:")), (path.name, form)
 
 
-# --- SC1.3: the tree reads the rows the flow draws ---
-
-@pytest.fixture
-def repo(tmp_path, monkeypatch):
-    """A repository under tmp_path with G0 active and a ratified seat roster,
-    read from a folder that is not its root, with no git repository above."""
-    cwd = tmp_path / "cwd"
-    cwd.mkdir()
-    monkeypatch.chdir(cwd)
-    monkeypatch.setenv("GIT_CEILING_DIRECTORIES", str(tmp_path))
-    monkeypatch.setenv("COLUMNS", "500")
-    root = tmp_path / "repo"
-    config = root / ".sdlc" / "config.yaml"
-    config.parent.mkdir(parents=True)
-    config.write_text(yaml.safe_dump({"kit": "fixture", "adoption": "greenfield",
-                                      "stack": "python", "active_gates": ["G0"]},
-                                     sort_keys=False), encoding="utf-8")
-    write_seat_roster(root)
-    return root
-
-
-def _request_rows() -> list[tuple[str, str, str]]:
-    """r2 to r4 as the flow draws them: the `Measured:` row, the text row,
-    then the PO seat's signature."""
-    return [
-        ("2026-10-01", "ann", _fill(_form("r{n}: Measured: the checks before signing, on the"
-                                          " request half"),
-                                    n=2, findings=FINDINGS_EXAMPLE, count=1)),
-        ("2026-10-01", "ann", _fill(_form("r{n}: The request half finished"),
-                                    n=3, sections=9, open=1)),
-        ("2026-10-01", "ann", _fill(_form("r{n}: Signed: request half"), n=4, m=3)),
-    ]
-
-
-def _solution_rows() -> list[tuple[str, str, str]]:
-    """r5 to r7 as the flow draws them, for the engineer seat."""
-    return [
-        ("2026-10-02", "raj", _fill(_form("r{n}: Measured: the checks before signing, on the"
-                                          " solution half"),
-                                    n=5, findings="0 findings", scope=NO_RELEASE_UNIT,
-                                    count=0)),
-        ("2026-10-02", "raj", _fill(_form("r{n}: The solution half finished"),
-                                    n=6, sections=8, open=1)),
-        ("2026-10-02", "raj", _fill(_form("r{n}: Signed: solution half"), n=7, m=6)),
-    ]
-
-
-def _write_document(root: Path, rows: list[tuple[str, str, str]]) -> Path:
-    """docs/features/x.md as the opening writes it from the template for the
-    drawn feature, then each row given, under r1 in the revision table."""
-    lines, inside = [], False
-    for line in _text(TEMPLATE).splitlines():
-        if line.strip() in ("{bug fix only}", "{end bug fix only}"):
-            inside = line.strip() == "{bug fix only}"
-        elif not inside:
-            lines.append(line)
-    text = "\n".join(lines) + "\n"
-    for key, value in {"date": "2026-10-01", "po": "ann", "engineer": "raj", "id": "x",
-                       "title": TITLE, "repo": "repo"}.items():
-        text = text.replace("{" + key + "}", value)
-    table, rest = text.split("\n\n", 1)
-    assert table.splitlines()[-1].endswith("engineer seat: raj |")  # r1 closes the table
-    path = root / "docs" / "features" / "x.md"
-    path.parent.mkdir(parents=True)
-    path.write_text(table + "\n" + "".join(f"| {date} | {by} | {changes} |\n"
-                                           for date, by, changes in rows)
-                    + "\n" + rest, encoding="utf-8")
-    return path
-
-
-def _tree(root: Path, capsys) -> list[str]:
-    """The lines `taskcontract tree` prints for the feature `x`: its own
-    line, then each line under it."""
-    assert main(["tree", "--root", str(root)]) == 0
-    captured = capsys.readouterr()
-    assert captured.err == ""
-    lines = captured.out.splitlines()
-    start = next((i for i, line in enumerate(lines) if line.startswith("x ")), None)
-    assert start is not None, "x is not printed at the first level"
-    end = next((i for i in range(start + 1, len(lines)) if not lines[i].startswith(" ")),
-               len(lines))
-    return lines[start:end]
-
-
-def _assert_feature_before_intake(line: str, revision: str) -> None:
-    assert line.startswith(f"x {TITLE} [doing]"), line  # its id, its plain name
-    assert line.endswith(" doc: docs/features/x.md"), line
-    assert f" no contract: document {revision} " in line, line  # its newest revision
-
-
-def test_sc1_3_tree_shows_the_document_the_flow_draws_as_a_feature_before_intake_with_both_halves_done(
-        repo, capsys):
-    rows = _request_rows() + _solution_rows()
-    drawn = [changes for _, _, changes in rows]
-    for row in DRAWN_ROWS:
-        assert row in drawn, row  # the flow's forms give the drawn rows word for word
-    path = _write_document(repo, rows)
-    files = sorted(p.relative_to(repo).as_posix() for p in repo.rglob("*"))
-    lines = _tree(repo, capsys)
-    # `Measured:` and `Signed:` rows stay out of the revision: r6 is the newest text row.
-    _assert_feature_before_intake(lines[0], "r6")
-    assert lines[-2:] == ["  x/request Request half [done] by ann at r3",
-                          "  x/solution Solution half [done] by raj at r6"]
-    # Each `Signed:` row stands on the line after the text row it signs.
-    table = _text(path).splitlines()
-    for signed, text_row in (("r4: Signed: request half", "r3: The request half finished"),
-                             ("r7: Signed: solution half", "r6: The solution half finished")):
-        at = next(i for i, line in enumerate(table) if signed in line)
-        assert text_row in table[at - 1], (signed, table[at - 1])
-    # The tree writes no file, and nothing stands under specs/ but the seat roster.
-    assert sorted(p.relative_to(repo).as_posix() for p in repo.rglob("*")) == files
-    assert not (repo / "specs" / "x").exists()
-
-
-SIGNED_AGAIN = {
-    # the PO seat signs the new text row: its half moves to that revision
-    "signs-again": (True, "[done] by ann at r5"),
-    # the PO seat declines: its older signature stays, at the revision it covers
-    "declines": (False, "[done] by ann at r3"),
-}
-
-
-@pytest.mark.parametrize("case", list(SIGNED_AGAIN))
-def test_sc1_3_tree_shows_a_half_written_into_after_its_signature_at_the_revision_its_seat_signed(
-        repo, capsys, case):
-    signs, request = SIGNED_AGAIN[case]
-    constraints = _block(_text(SKILL_DIR / "SKILL.md"), "constraints")
-    assert f"`{SIGNED_AGAIN_TEXT_ROW}`" in constraints
-    # A thing we will not build goes to Non-goals after the PO seat signed.
-    rows = _request_rows() + [("2026-10-02", "raj", _fill(
-        SIGNED_AGAIN_TEXT_ROW, n=5, **{"what changed": "Non-goals gains one line"}))]
-    if signs:
-        rows.append(("2026-10-02", "ann", _fill(_form("r{n}: Signed: request half"), n=6, m=5)))
-    _write_document(repo, rows)
-    lines = _tree(repo, capsys)
-    _assert_feature_before_intake(lines[0], "r5")
-    assert lines[-2:] == [f"  x/request Request half {request}",
-                          "  x/solution Solution half [to do]"]
-
-
 # --- SC1.3: a write into a signed half, and a seat that declines ---
 
 def test_sc1_3_a_write_into_a_signed_half_adds_a_text_row_and_the_seat_is_asked_to_sign_again():
@@ -480,7 +306,7 @@ def test_sc1_3_solution_flows_purpose_agrees_with_the_step_both_seats_answer():
 def test_sc1_3_skill_folder_holds_the_signing_flow_markdown_and_the_template_and_no_code():
     assert {p.name for p in FLOWS.glob("*.md")} == FLOW_FILES
     held = {p.relative_to(SKILL_DIR).as_posix() for p in SKILL_DIR.rglob("*") if p.is_file()}
-    assert held == ({"SKILL.md", "templates/feature-document.md.template"}
+    assert held == ({"SKILL.md", "templates/requirements-document.md.template"}
                     | {f"flows/{name}" for name in FLOW_FILES})
     for path in SKILL_DIR.rglob("*"):
         if path.is_file():
@@ -752,11 +578,6 @@ def test_sc2_2_no_engineer_seat_skips_the_solution_halfs_steps_checks_and_signat
     # The run goes from the record's sections straight to the output flow.
     notes = _step("solution.md", "S", "S11")
     assert re.search(r"with no engineer seat `phase: output`, `next: W1`", notes)
-    # Ready check 8 marks the missing seat OPEN.
-    eighth = _ready_checks("P3")[8]
-    assert "With `seats.engineer` null" in eighth
-    assert MISSING_SEAT_OPEN in eighth
-    assert "under the status line" in eighth
     assert "ready check 8 has marked the missing seat OPEN" in scope
 
 

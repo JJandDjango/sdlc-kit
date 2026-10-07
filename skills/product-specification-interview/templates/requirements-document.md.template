@@ -1,10 +1,10 @@
 | Revision Date | Revised By | Changes Made |
 | :-: | :-: | :-- |
-| {date} | {po} | r1: Created through /sdlc:product-specification-interview. The request half, in progress. PO seat: {po}; engineer seat: {engineer} |
+| {date} | {po} | r1: Created through /sdlc:product-specification-interview. The request half, in progress. PO seat: {po} |
 
 # {id} - {title}
 
-`{repo}` · seats: PO {po}, engineer {engineer} · contract: `{id}`, draft · PR: none · merge SHA: none
+`{repo}` · seat: PO {po} · contract: `{id}`, draft · PR: none · merge SHA: none
 
 ## Statement
 
@@ -86,79 +86,19 @@ Incident: {incident_ref}
 Regression: {regression}
 {end bug fix only}
 
----
-
-## Proposed solution
-
-`[Engineer seat · authored]`
-
-### Scope
-
-{scope}
-
-### Out of scope
-
-{out_of_scope}
-
-### Interfaces
-
-{interfaces}
-
-### Sources
-
-{sources}
-
-### Constraints
-
-{constraints}
-
-### Units
-
-{units}
-
-### Order
-
-{order}
-
-## Risks and cost
-
-`[Both seats · authored]`
-
-{risks_and_cost}
-
 ## Decisions and open questions
 
-`[Both seats · authored]`
+`[PO seat · authored]`
 
 {decisions}
 
-## Traceability
-
-### Links out
-
-`[Both seats · authored]`
-
-{links_out}
-
-### Record
-
-`[Intake · derived from r{n}]`
-
-{record}
-
 ## Notes
 
-`[Both seats · authored]`
+`[PO seat · authored]`
 
 {notes}
 
 ## Appendix
-
-### Contract
-
-`[Intake · derived]`
-
-(none: intake writes `specs/{id}/contract.yaml`)
 
 ### Gherkin
 

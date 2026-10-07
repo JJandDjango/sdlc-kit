@@ -3,8 +3,9 @@
 
 The skill is prompt-only, so this suite pins the text of its files, as
 tests/test_interview_format.py does: one flow per half replaces the
-sections flow, each flow asks its sections in the template's order, one
-question at a time, and writes the state file after every step (SC1.2);
+sections flow, the request flow asks its sections in the template's order
+and the solution flow in kit 0.18.0's order of its headings, one question
+at a time, and each writes the state file after every step (SC1.2);
 the request half closes on the Gherkin step, which derives one scenario
 per check, joined by the check's id, and marks a thin check OPEN (SC3.1,
 SC3.2, SC3.3). Text is matched after collapsing each whitespace run to one
@@ -20,7 +21,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 SKILL_DIR = ROOT / "skills" / "product-specification-interview"
 FLOWS = SKILL_DIR / "flows"
-TEMPLATE = SKILL_DIR / "templates" / "feature-document.md.template"
+TEMPLATE = SKILL_DIR / "templates" / "requirements-document.md.template"
 
 PROMPTLANG_TAGS = {"purpose", "instructions", "variables", "context",
                    "constraints", "examples", "output", "criteria",
@@ -67,9 +68,20 @@ SOLUTION_STEPS = (
 )
 # A bug-fix step, and the step a feature's run goes to in its place.
 BUG_FIX_STEPS = {"Q3": "Q4", "Q6": "Q7", "Q7": "Q8", "Q13": "Q14"}
-# Template placeholders no step asks: O2's incident reference, intake's
-# record, and the two that fill the derived blocks' own lines.
-NOT_A_STEP = {"incident_ref", "record", "id", "n"}
+# The request half's template placeholder no step asks: O2's incident
+# reference.
+NOT_A_STEP = {"incident_ref"}
+# The solution half's headings a step asks, in kit 0.18.0's order. The
+# requirements template holds none of them; each step is named for its
+# heading.
+SOLUTION_HEADINGS = (
+    "### Scope", "### Out of scope", "### Interfaces", "### Sources",
+    "### Constraints", "### Units", "### Order",
+    "## Risks and cost",
+    "## Decisions and open questions",
+    "### Links out",
+    "## Notes",
+)
 
 SORTING_QUESTION = "a thing we will not build, or a place we will not touch?"
 SPLIT_MESSAGE = "Six criteria is two features. Which criteria form the second document?"
@@ -81,7 +93,6 @@ STATE_WRITE = ("WRITE the state file with the section's answers and `next` set t
 SECTION_WRITE = "WRITE the section into the document under its heading and tag"
 
 GHERKIN_UNWRITTEN = "(none: the Gherkin step writes one scenario per check)"
-RECORD_UNWRITTEN = "(none: intake writes the record)"
 THIN_OPEN = "`OPEN: Ready check 3: {id} is thin: {reason}.`"
 UNCONFIRMED_OPEN = "`OPEN: Ready check 3: {id} has no confirmed scenario.`"
 OPEN_REPORT = "`Ready check 3: {gap}. Marked OPEN.`"
@@ -129,13 +140,13 @@ def _opening_step(step: str) -> str:
     return _step("opening.md", "O", step)
 
 
-def _template_keys() -> tuple[list[str], list[str]]:
-    """The template's section placeholders in order, above the seat boundary
-    and below it."""
+def _template_keys() -> list[str]:
+    """The template's section placeholders in order, from Statement down to
+    the last section a step of the request half asks."""
     body = _text(TEMPLATE).split("## Statement", 1)[1]
-    above, below = body.split("\n---\n", 1)
-    return tuple([key for key in re.findall(r"\{([a-z_]+)\}", part)
-                  if key not in NOT_A_STEP] for part in (above, below))
+    above = body.split("\n## Decisions and open questions\n", 1)[0]
+    return [key for key in re.findall(r"\{([a-z_]+)\}", above)
+            if key not in NOT_A_STEP]
 
 
 # --- SC1.2: one flow per half, and the dispatch that routes to it ---
@@ -143,7 +154,7 @@ def _template_keys() -> tuple[list[str], list[str]]:
 def test_sc1_2_skill_holds_one_flow_per_half_and_no_sections_flow():
     assert {p.name for p in FLOWS.glob("*.md")} == FLOW_FILES
     held = {p.relative_to(SKILL_DIR).as_posix() for p in SKILL_DIR.rglob("*") if p.is_file()}
-    assert held == ({"SKILL.md", "templates/feature-document.md.template"}
+    assert held == ({"SKILL.md", "templates/requirements-document.md.template"}
                     | {f"flows/{name}" for name in FLOW_FILES})  # Markdown and the template
 
 
@@ -190,9 +201,7 @@ def test_sc1_2_a_section_no_step_has_written_reads_not_yet_asked():
 def test_sc1_2_a_derived_block_not_yet_written_carries_no_stamp():
     close = _opening_step("O6")
     assert "`[PO seat · derived]`" in close and GHERKIN_UNWRITTEN in close
-    assert "`[Intake · derived]`" in close and RECORD_UNWRITTEN in close
     assert close.index("`[PO seat · derived]`") < close.index(GHERKIN_UNWRITTEN)
-    assert close.index("`[Intake · derived]`") < close.index(RECORD_UNWRITTEN)
 
 
 # --- SC1.2: the sections in the ratified order, one step each ---
@@ -204,7 +213,7 @@ def test_sc1_2_request_half_asks_its_sections_in_the_template_order_one_step_eac
         assert steps[step].startswith(f"{step}. {name} - "), (step, steps[step][:40])
         record = "`regression`" if key == "regression" else f"Record `answers.{key}"
         assert record in steps[step], (step, record)
-    above, _ = _template_keys()  # then the Appendix's two the PO seat owns
+    above = _template_keys()  # then the Appendix's two the PO seat owns
     assert [key for _, _, key in REQUEST_STEPS] == above + ["terms", "gherkin"]
 
 
@@ -214,9 +223,8 @@ def test_sc1_2_solution_half_asks_its_sections_in_the_template_order_one_step_ea
     for step, name, key in SOLUTION_STEPS:
         assert steps[step].startswith(f"{step}. {name} - "), (step, steps[step][:40])
         assert f"Record `answers.{key}" in steps[step], (step, key)
-    _, below = _template_keys()
-    assert [key for _, _, key in SOLUTION_STEPS] == [
-        key for key in below if key not in ("gherkin", "terms")]
+    assert [name for _, name, _ in SOLUTION_STEPS] == [
+        heading.lstrip("# ").upper() for heading in SOLUTION_HEADINGS]
 
 
 def test_sc1_2_each_half_asks_one_question_at_a_time():
@@ -317,8 +325,6 @@ def test_sc1_2_an_answer_that_differs_from_the_material_is_asked_never_settled_s
 # --- SC1.2: the engineer seat, the modules seam, the answers' shapes ---
 
 def test_sc1_2_engineer_seat_decides_whether_the_solution_half_is_asked():
-    seats = _opening_step("O4")
-    assert "solution.md" in seats
     first = _step("solution.md", "S", "S1")
     assert "When `seats.engineer` is null" in first
     assert "`next: S9`" in first  # the record's sections are still asked
