@@ -1,85 +1,115 @@
-# Plan - Session 77 (2026-10-06) - document-split, to a ready contract
+# Plan - Session 78 (2026-10-06) - document-split d1
 
-**Deliverable:** `specs/document-split/contract.yaml` at ready, derived
-by intake from `docs/features/document-split.md` under kit 0.18.0.
+**Deliverable:** unit `d1-requirements` of `document-split` on one PR,
+with a Two-Key PASS:
 
-Session 76 met the two prerequisites: ADR 0037 and the terms stand on
-main (PR #88 at `1b4173b`), and its wrap merged as PR #89 at `7ddbb6f`.
-The document stands signed at r7, and its Scope covers the release
-unit. Two things are left before the contract: the language door, then
-intake.
+- `USAGE.md` gains the feature's new text first, in the interview's
+  section and section 9, every status mark red; 0.18.0's interview text
+  goes.
+- `skills/product-specification-interview/`: a requirements run writes
+  the requirements document at `docs/features/<id>.md`. It holds each
+  Request half section in the ratified order, with its name and tag as
+  0.18.0 writes them, then its own Decisions section and Notes, and the
+  Appendix's Gherkin block and Terms block. It holds no Proposed
+  solution, no Risks section, no Traceability and no Contract block. A
+  fix's document holds all four fix sections. Check SC1.1.
+- The run needs a PO seat and no engineer seat. It covers only the
+  Request half's steps, the Terms and the Gherkin, runs the PO seat's
+  checks before signing, stops at that signature, and names the design
+  run as the next command. A later run goes on at the step its state
+  file names. Check SC2.1.
+- Retired: `templates/feature-document.md.template`, replaced by the
+  requirements template; O4's engineer seat question; P7's hand-over to
+  S1; ready check 8's "both seats" and its `no engineer seat is named`
+  OPEN; W2's intake command after a requirements run; the count "fifteen
+  of the eighteen sections"; and the tests that pin them, found by
+  test-retirer (seen: `FEATURE_OUTLINE`, `TAGS`, `R1_CHANGES`, the three
+  file-set tests,
+  `test_sc2_2_no_engineer_seat_skips_the_solution_halfs_steps_checks_and_signature`,
+  and the release suite's `BANNER`, `COUNT` and two red-mark tests).
+- Every prompt file d1 touches passes `python -m prompt_lang`, keeps the
+  PromptLang tag set and stays under 12,000 characters; every command it
+  authors is one segment (Constraints 1 and 2). No byte changes in the
+  four documents Constraints 9 names.
 
-Approvals: four points stay on the user's word. (1) This plan and its
-commit; (2) the seats' confirmations at intake, one batch, with the
-draft's rewritten sentences shown in chat before and after; (3)
-intake's commit; (4) the wrap's commit, the push, the PR and the merge.
-The user holds both seats.
+The second machine, read and not tested: `.claude-plugin/marketplace.json`
+sets `source: "./"` with no ref, and both cached plugin copies here are
+main commits, so the plugin follows main. A plugin update there after
+d3's merge delivers both runs and their signing; no branch install is
+needed. Intake reads a pair only after d5. The same fact has a cost: an
+update there between d1's merge and d3's delivers an interview that
+names a design run no flow holds yet. Recommendation: one PR a unit to
+main, as before, and that machine holds its plugin at 0.18.0 until d3
+merges. The user rules at step 8, before d1's merge.
 
-No code changes this session, so no Two-Key round. The receipts are
-`validate --profile ready`, the tree and the whole suite.
+Approvals split as in sessions 61 to 64 and 68 to 72: the user approves
+the USAGE text in chat before any drafting; Claude approves the test
+list and the unit's commit on review; the push, the PR and the merge
+stay on the user's word.
 
-The session boundary, if context runs short: after step 3. The draft
-that reads zero is copied to an untracked file in this root, and intake
-opens the next session.
-
-**Closed.** The deliverable is met: intake wrote the contract at
-`6ef6366`, ready-green, derived from r6, and the document holds its r8
-`Ready:` row. The language door read 177 findings on the document's own
-wording and 0 on the contract. The standing line stays in the document
-only. The receipts read green: `validate --profile ready`, `vocab-check`,
-`lang-check`, `scope-check`, the tree, and the whole suite at 928
-passed.
-
-Decisions this session: two replies and one choice, all the user's.
-(1) The deliverable and the plan, with the plan's commit; (2) the
-readback in one reply: six units kept, the three plan answers, `user`
-for both seats, the wording with its five readings, and intake's commit;
-(3) the standing line dropped from the contract. The wrap's commit, the
-push, the PR and the merge wait on the user's word. Claude's, each told
-to the user: SC4.1's "word for word" read on each `done_means`;
-`condition` kept out of SC4.2; `drift-mark` among the entities; the
-`Ready:` row in I7's exact shape, with the standing line recorded in
-intake's commit message; the suite run from a scratch venv.
+The session boundary, if context runs short: after step 5. The approved
+list, the prototype and the interface note are copied to an untracked
+folder in this root, and the developer round opens the next session.
 
 ## Steps
 
-1. ~~Open.~~ Branch `session-77-document-split` from `7ddbb6f`; this plan,
-   committed on the user's word.
-2. ~~The plugin.~~ List `C:/Users/hyden/.claude/plugins/cache/sdlc-kit/sdlc`
-   and read `git diff --stat v0.18.0 main -- skills/`: when it prints
-   nothing, the installed flows are 0.18.0's.
-3. ~~The language door, on a draft.~~ A scratch script builds the lexicon
-   with the ratified terms and runs `check_contract` on a draft contract
-   outside `specs/`. The draft check's 179 findings are rewritten there
-   in the contract's wording until it reads zero. Each `done_means` is
-   copied word for word from the Units table. `case` alone is an unknown
-   word, and the checks say "the four cases".
-4. ~~Intake.~~ `/sdlc:sdlc intake docs/features/document-split.md` through
-   the installed plugin: I1 the seat roster, I2 the document read (a
-   stop or a park here writes nothing under `specs/`), I3 the scaffold,
-   the seats' confirmations in one batch, I6 the write, I7 the loop to
-   ready-green, and the `Ready:` row in the document. Then its own
-   commit, with the `Contract:` trailer.
-5. ~~Receipts.~~ `validate --profile ready` on the contract, `taskcontract
-   tree` showing `document-split` with a ready contract, and the whole
-   suite from a scratch venv, each read from its output.
-6. ~~Close.~~ `STATE.md` regenerated, this plan struck, the memory index
-   updated. The commit, the push, the PR and the merge wait on the
-   user's word.
+1. Open. Branch `session-78-document-split-d1` from `67ac09e`; this
+   plan, committed on the user's word. A scratch venv for the suite, by
+   `STATE.md`'s recipe: no Python here holds the pane extra.
+2. d1, pass zero. Write USAGE's new text, marks red, shown in chat
+   before and after. A red sentence in section 9 goes under its own red
+   subsection at the section's end. A release-suite test the red text
+   fails is amended or retired in the same commit, and each one is told
+   to the user. Commit on the user's word.
+3. d1, draft. `spec-channel-drafter.js` drafts the test list for SC1.1
+   and SC2.1, proves it red, and proves it satisfiable on a scratch copy
+   of the skill folder.
+4. d1, retire. The session runs the overlaid suite in a scratch
+   worktree and names the failing tests; `test-retirer.js` with
+   `overlay` reads only their modules, and is told the template's
+   deletion.
+5. d1, approve the list and prove red. The whole suite on the prototype
+   in a scratch worktree; each fixed detail checked against the
+   contract, the feature document and its Constraints; session labels
+   stripped; then `progress run <check> --expect red` for each check.
+6. d1, green. `unit-developer.js` from the interface note; Claude runs
+   the suite, `prompt_lang` and the size cap after each round, tests any
+   deviation against `done_means`, and reads each new step against ADRs
+   0029 and 0033 to 0037.
+7. d1, commit and Two-Key. Commit with the `Contract:` trailer; each
+   check green at the clean commit; `two-key-unit-verifier.js`;
+   `progress done` on PASS.
+8. Close. `STATE.md` regenerated; this plan struck; the memory index
+   updated. The user rules on the second machine's plugin hold; the
+   push, the PR and the merge on the user's word.
+
+Steps 1 and 8 sit outside a contract unit, so the tree does not show
+them.
+
+Decisions this session: seven. The user's: (1) this plan and its
+commit, (2) the USAGE text and its commit. Claude's, on review: (3) the
+test list, (4) the unit's commit. The user's at the close: (5) the
+second machine's plugin hold, (6) the push and the PR, (7) the merge.
 
 Deferred, not this session:
-- The build, `d1-requirements` to `d6-release`, as kit 0.19.0.
-- Whether the second machine can take the plugin from the build's
-  branch after `d3`, before the 0.19.0 tag: not checked, and the build's
-  first session opens on it.
-- The interview's last step, W1: the Google Docs form, when one is
-  wanted. The `google_workspace` server failed to connect this session.
-- G1's design document, through a design run once 0.19.0 ships.
+- `d2-design` to `d6-release` (ships 0.19.0), one unit a session.
+- A test of the plugin update on the second machine, after d3's merge;
+  the `pip` half there takes a commit sha in place of the tag.
 - Whether combined documents are in flight on the second machine: not
   known, and the design holds either way.
+- The interview's last step for this feature's own document, W1: the
+  Google Docs form, when one is wanted. The `google_workspace` server
+  failed to connect this session.
+- G1's design document, through a design run once 0.19.0 ships.
+- `test-retirer.js` waits on the whole suite inside its agent; the fix
+  stays parked, and step 4 works around it.
 - `STATE.md` Next actions 2 to 5 and its open questions, carried.
 
 House rules in force: no pipes or chains in any authored command string;
-commit messages via Write + `git commit -F`; a `Contract:` trailer,
-alone in the final paragraph, on every commit that touches a non-free
-path; no spawn opens a window.
+commit messages via Write + `git commit -F`; Workflows launched by
+`scriptPath`; a `Contract:` trailer, alone in the final paragraph, on
+every commit that touches a non-free path; each task recorded through
+`taskcontract progress`, each check's run through `progress run`; no
+tracked file touched while a verifier runs; never two whole suites at
+once; no spawn opens a window; a surprise mid-build is an OPEN and a
+re-intake, never a silent edit.
