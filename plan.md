@@ -39,35 +39,46 @@ The session boundary, if context runs short: after step 4 (the approved
 list, the prototype and the interface note copied to an untracked
 folder in this root).
 
+**Closed.** The deliverable is met: `d4-tree` stands at `1df7068`,
+Two-Key PASS round 1. The receipts read green at the clean commit:
+SC1.3 at 29 cases, the unit's 41 cases, the whole suite at 1032 passed
+in a scratch venv, `validate --profile ready`, and `scope-check`
+against `1030c8e`. The manual receipt holds: the tree on `d3`'s saved
+pair prints one feature with both marks and both signers, saved in
+`RECEIPT_document-split-d4_2026-10-07/`. No older test was amended or
+retired, and the retirer did not run. The developer ran twice: the
+second round fixed two docstring sentences found on review. `pane.py`
+needed no change. The session did not need its boundary.
+
 ## Steps
 
-1. Open. Branch `session-81-document-split-d4` from `1030c8e`; this
+1. ~~Open.~~ Branch `session-81-document-split-d4` from `1030c8e`; this
    plan, committed on the user's word. A scratch venv for the suite, by
    `STATE.md`'s recipe.
-2. d4, draft. `spec-channel-drafter.js` drafts the test list for SC1.3,
+2. ~~d4, draft.~~ `spec-channel-drafter.js` drafts the test list for SC1.3,
    proves it red from the repo root, and proves it satisfiable on a
    scratch copy of the `taskcontract` package. Its reading stays on
    `tree.py`, the contract, the feature document's tree text, USAGE's
    red text and `d3`'s saved pair.
-3. d4, retire. The session overlays the prototype on a scratch
+3. ~~d4, retire.~~ The session overlays the prototype on a scratch
    worktree and runs the whole suite there. `test-retirer.js` runs only
    if an older test fails, on the failing modules alone.
-4. d4, approve the list and prove red. Each fixed detail checked
+4. ~~d4, approve the list and prove red.~~ Each fixed detail checked
    against the contract, the feature document, its Constraints and
    USAGE's red text; session labels stripped; then `progress run SC1.3
    --expect red`, the command run alone first.
-5. d4, green. `unit-developer.js` from the interface note, handed over
+5. ~~d4, green.~~ `unit-developer.js` from the interface note, handed over
    as a file outside the drafter's folder; Claude runs the suite after
    each round and tests any deviation against `done_means`.
-6. d4, commit. Commit with the `Contract:` trailer; SC1.3 green at the
+6. ~~d4, commit.~~ Commit with the `Contract:` trailer; SC1.3 green at the
    clean commit; `ready-green` and `scope-green` against `1030c8e`.
-7. d4, manual receipt. `d3`'s `pair/` copied under a scratch root's
+7. ~~d4, manual receipt.~~ `d3`'s `pair/` copied under a scratch root's
    `docs/features/`; `taskcontract tree` there prints one feature with
    both marks and both signers. The text goes to untracked
    `RECEIPT_document-split-d4_2026-10-07/`.
-8. d4, Two-Key. `two-key-unit-verifier.js`, with the receipt's text as
+8. ~~d4, Two-Key.~~ `two-key-unit-verifier.js`, with the receipt's text as
    a focus pointer; `progress done` on PASS.
-9. Close. `STATE.md` regenerated; this plan struck; the memory index
+9. ~~Close.~~ `STATE.md` regenerated; this plan struck; the memory index
    updated; the push, the PR and the merge on the user's word.
 
 Steps 1 and 9 sit outside a contract unit, so the tree does not show
@@ -78,7 +89,23 @@ commit; (2) the push and the PR; (3) the merge. Claude's, on review:
 (4) the test list, with any amendment; (5) the unit's commit. A sixth
 only if USAGE's red text must change.
 
+As it went: five, as planned, and no sixth. (1) The user approved this
+plan and its commit. (2) The push and the PR, and (3) the merge, wait
+on the user's word. Claude's, on review: (4) the test list, with one
+amendment before approval; (5) the unit's commit. The amendment: the
+draft pinned a mark `design: no "Ready:" row`, which the session's own
+brief had suggested and no source names; the ratified `drift-mark`
+term lists one drift mark for a design, so that case now adds no mark.
+Claude's readings stand in the unit's commit message.
+
 Deferred, not this session:
+- Whether a design table with no `Ready:` row should get a mark of its
+  own: a term amendment and a USAGE sentence, under `STATE.md`'s Open
+  questions.
+- `uv` on this machine: the `google_workspace` server and `d6`'s tag
+  receipt both need it; the user set the install aside.
+- Two-Key's advisory on `tree.py`'s docstring for a contract folder
+  named `x.design`: wording, for `d6`'s sweep.
 - `d5-intake` and `d6-release` (ships 0.19.0), one unit a session.
 - `d3`'s two wording advisories (`opening.md`'s purpose and
   `SKILL.md`'s file list do not name DESIGN CONFIRM), for `d6`'s sweep.
