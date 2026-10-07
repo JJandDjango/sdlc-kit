@@ -59,10 +59,10 @@ EXAMPLE = ("apply-discount Apply one discount code per order [doing] stale: docu
 
 # The intake flow's words for the Ready row (step I7 of skills/sdlc/flows/intake.md).
 READY_RULE = ("When the loop ends ready-green and the request is a feature document at "
-              "`docs/features/{id}.md`, ADD one row to its revision table: the date, "
-              "`intake`, and a changes cell that opens ``r{n}: Ready: contract `{id}` "
-              "validates ready-green, derived from r{m}``, with r{n} the next revision "
-              "and r{m} the signed revision intake read.")
+              "`docs/features/{id}.md`, ADD one row to each document's revision table: the "
+              "date, `intake`, and a changes cell that opens ``r{n}: Ready: contract `{id}` "
+              "validates ready-green, derived from r{m}``, with r{n} one past that table's "
+              "last row and r{m} that table's signed text revision, as I2 read it.")
 READY_CELL = "r{n}: Ready: contract `{id}` validates ready-green, derived from r{m}"
 
 HEADER = "| Revision Date | Revised By | Changes Made |\n| :-: | :-: | :-- |\n"
@@ -439,15 +439,21 @@ def _step(text, label):
 
 def test_intake_writes_the_ready_row_in_the_shape_the_tree_reads(tmp_path, capsys):
     text = FLOW.read_text(encoding="utf-8")
-    assert READY_RULE in _step(text, "I7")
+    i7 = _step(text, "I7")
+    assert READY_RULE in i7
     assert text.count(READY_RULE) == 1  # one place says it
     # the flow stays a PromptLang prompt under its ceiling
     assert text.startswith("---\n")
     assert set(re.findall(r"<([a-z][a-z0-9-]*)>", text)) == {"purpose", "instructions"}
     assert all(f"</{tag}>" in text for tag in ("purpose", "instructions"))
     assert len(text) < CHAR_CEILING
-    # the row, filled in as intake writes it, is the one the tree reads
-    cell = READY_CELL.format(n=3, m=2, id=CID)
+    # the requirements document's row, built from the flow's own words and filled in
+    # as intake writes it, is the one the tree reads
+    opens = re.search(r"a changes cell that opens ``(.*?)``,", i7).group(1)
+    assert opens == READY_CELL
+    end = re.search(r"The requirements document's cell goes on ``(.*?)``\.", i7).group(1)
+    cell = (opens + end).format(n=3, m=2, b=2, name="user", id=CID)
+    assert cell.startswith(READY_CELL.format(n=3, m=2, id=CID) + "; the PO seat (user) ")
     root = _repo(tmp_path, _document(*BASE, cell))
     assert _mark(root, capsys) is None
     _append_after_table(root, "r4: The solution half")

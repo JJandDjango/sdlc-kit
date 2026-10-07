@@ -1,11 +1,11 @@
 """Intake's refusals, structurally (contract: feature-document, unit
 f4-intake). The flow is a prompt, so the specification is the behavior:
-the suite holds the three refusal messages, the `Parked:` row and what it
-names, the readings that park a document or stop intake before any
-contract exists (the park first, the signature stop only when nothing
-stands), the word-for-word `done_means` that intake never rewords, the
-pair form the tree reads, the `Ready:` row that names both seats, and
-what the flow keeps.
+the suite holds how a check's unit is read, the ready-check gap and its
+message, the place of the refusals between the roster stop and the
+scaffold, the word-for-word `done_means` that intake never rewords, the
+sketch entry of two checks as the tree reads it, and what the flow keeps.
+The pair of documents, its `Parked:` and `Ready:` rows and its stops are
+held by tests/test_intake_pair.py.
 
 Every sentence is searched with its whitespace folded, so the flow may
 wrap its lines.
@@ -30,11 +30,6 @@ NO_UNIT = "`Check {id} is assigned to no unit.`"
 TWO_UNITS = "`Check {id} is assigned to units {a} and {b}.`"
 NO_CHECK = "`Unit {id} delivers no check.`"
 GAP = "`Ready check {n}: {gap}. Marked OPEN.`"
-PARKED = "`r{n}: Parked: {what stands}`"
-NOT_TEXT = "opens on none of `Ready:`, `Measured:`, `Signed:` or `Parked:`"
-READY = ("``r{n}: Ready: contract `{id}` validates ready-green, derived from r{m}; "
-         "the PO seat ({name}) signed the request half at r{a} (r{b}), "
-         "the engineer seat ({name}) the solution half at r{c} (r{d})``")
 TITLE = ("WRITE `title:` from its title line `# {id} - {title}`: the words after "
          "`{id} - `, or the whole heading text when the heading opens on anything else")
 COMMANDS = {"vocab-list", "new", "graph", "validate"}
@@ -68,13 +63,6 @@ def _in_order(haystack: str, *needles: str) -> None:
 
 # SC4.1: a check without one unit, or a unit without a check.
 
-def test_sc4_1_the_three_refusal_messages_stand_verbatim_each_naming_its_id():
-    i2 = _step(_flow(), "I2")
-    assert "A check assigned to no unit or to two, or a unit that delivers no check." in i2
-    assert "Each message names its id, verbatim:" in i2
-    _in_order(i2, NO_UNIT, TWO_UNITS, NO_CHECK)
-
-
 def test_sc4_1_a_checks_unit_is_read_from_the_checks_cell_where_plus_joins_two():
     i2 = _step(_flow(), "I2")
     assert ("A check's unit is read from the Checks cell of its row under Units, "
@@ -89,13 +77,6 @@ def test_sc4_1_the_refusals_run_after_the_roster_stop_and_before_the_scaffold():
     # The nine steps keep their ids and their order (SKILL.md cites I1-I9).
     assert re.findall(r"^(I\d+)\. ", text, re.MULTILINE) == [f"I{n}" for n in range(1, 10)]
     assert SCAFFOLD in _step(text, "I3")
-
-
-def test_sc4_1_a_units_refusal_parks_the_document():
-    i2 = _step(_flow(), "I2")
-    assert "REFUSALS - intake refuses ready while any of these stands:" in i2
-    _in_order(i2, NO_CHECK, "PARK - a refusal parks the document.", PARKED)
-    assert "then the Units messages, by check and then by unit, in the document's order" in i2
 
 
 def test_sc4_1_a_unit_of_more_than_three_checks_pairs_two_in_one_entry():
@@ -124,17 +105,11 @@ def test_sc4_1_a_pair_stands_in_one_parenthesis_with_a_comma_as_the_tree_reads_i
 
 # SC4.2: an OPEN mark or a ready-check gap parks the document.
 
-def test_sc4_2_an_open_mark_parks_above_the_seat_boundary_in_decisions_and_below():
-    i2 = _step(_flow(), "I2")
-    assert "An OPEN mark above the seat boundary or in Decisions and open questions." in i2
-    assert ("Below the seat boundary an OPEN mark is its ready check failing, "
-            "and parks too.") in i2
-
-
 def test_sc4_2_a_ready_check_gap_parks_with_its_message_and_counts_once():
     i2 = _step(_flow(), "I2")
     assert "A ready check with a gap." in i2
-    assert "READ the document against ready checks 1 to 8 and 11 to 14, each a question" in i2
+    assert ("READ the requirements document against ready checks 1 to 8 and the design "
+            "document against 11 to 15, each a question") in i2
     assert f"A gap reads {GAP}" in i2
     assert "A gap that already carries its OPEN mark counts once, as that mark." in i2
 
@@ -153,61 +128,6 @@ def test_sc4_2_a_ready_check_stays_a_question_and_every_command_is_one_segment()
     assert text.startswith("---\n")
     assert set(re.findall(r"<([a-z][a-z0-9-]*)>", text)) == {"purpose", "instructions"}
     assert len(text) < CHAR_CEILING
-
-
-def test_sc4_2_the_parked_row_carries_the_date_intake_and_the_next_revision():
-    i2 = _step(_flow(), "I2")
-    assert ("WRITE one row into its revision table: the date, `intake` in the Revised By "
-            f"cell, and the changes cell {PARKED}, with r{{n}} one past the table's last "
-            "row.") in i2
-
-
-def test_sc4_2_one_parked_row_names_every_thing_that_stands_in_a_fixed_order():
-    i2 = _step(_flow(), "I2")
-    assert ("`{what stands}` names every thing that stands, each in its own words, one "
-            "after another on one line, in this order:") in i2
-    _in_order(i2, "in this order:", "the OPEN marks in document order",
-              "then the ready-check gaps by check number", "then the Units messages")
-    assert "REPORT the same list and return to the conversation" in i2
-
-
-def test_sc4_2_a_refusal_writes_no_contract_and_changes_no_section():
-    text = _flow()
-    i2 = _step(text, "I2")
-    assert "READ it here, before the scaffold" in i2
-    assert ("A document that stops or parks here gets no contract: nothing under "
-            "`specs/` is created or changed.") in i2
-    assert ("That row is intake's only write: it changes no section and writes no "
-            "contract.") in i2
-    _in_order(_flat(text), NO_ROSTER, "PARK - a refusal parks the document.", SCAFFOLD)
-
-
-def test_sc4_2_a_parked_row_changes_no_text_and_a_later_run_reads_afresh():
-    i2 = _step(_flow(), "I2")
-    assert ("A `Parked:` row changes no text: a later run reads the document afresh, "
-            "and an earlier `Parked:` row parks nothing.") in i2
-    assert NOT_TEXT in i2  # never the row a `Signed:` row signs
-    assert "the seats fix the document through the interview, sign again, and run intake again" in i2
-
-
-def test_sc4_2_a_document_with_something_standing_parks_even_when_a_half_is_unsigned():
-    i2 = _step(_flow(), "I2")
-    assert ("Intake reads the refusals on the document as it stands, signed or not: a "
-            "document with something standing parks even when a half is unsigned.") in i2
-    # The refusals and the park stand before the signature stop.
-    _in_order(i2, "in three parts, in this order.",
-              "REFUSALS - intake refuses ready while any of these stands:",
-              "PARK - a refusal parks the document.", PARKED,
-              "SIGNATURES - read only when nothing stands.",
-              "When a half has no `Signed:` row")
-
-
-def test_sc4_2_a_missing_signature_gets_no_parked_row():
-    i2 = _step(_flow(), "I2")
-    assert ("A missing signature gets no `Parked:` row: the three refusals are all "
-            "that parks a document.") in i2
-    _in_order(i2, "STOP before any contract exists:", "A missing signature gets no "
-              "`Parked:` row", "The seat signs through the interview")
 
 
 def test_sc4_2_intake_writes_ready_and_parked_rows_and_never_a_signed_row():
@@ -239,38 +159,6 @@ def test_sc4_3_a_copied_done_means_is_never_reworded_at_i5_or_i7():
     # I5's answers and I7's loop otherwise stay as they are.
     assert "keep, change (the answer names the change), or strike" in _step(text, "I5")
     assert "Fix exactly what each TCnnn diagnostic names." in _step(text, "I7")
-
-
-def test_sc4_3_the_contract_derives_from_the_newest_revision_both_seats_signed():
-    i2 = _step(_flow(), "I2")
-    assert "a half's signature is its latest `Signed:` row" in i2
-    assert "the signer is that row's Revised By cell" in i2
-    assert (f"the revision it signs is the newest row above it that {NOT_TEXT}, never "
-            "the `Signed:` row's own number") in i2
-    assert ("r{m}, the newest revision both seats signed, is the higher of the two "
-            "revisions signed; intake derives the contract from the document at r{m}.") in i2
-
-
-def test_sc4_3_an_unsigned_half_or_revision_stops_intake_with_no_row_and_no_contract():
-    text = _flow()
-    i2 = _step(text, "I2")
-    assert "SIGNATURES - read only when nothing stands." in i2  # the park comes first
-    assert ("When a half has no `Signed:` row, or a row that opens on none of the four "
-            "words stands above r{m}, STOP before any contract exists:") in i2
-    assert "write no row and no contract, and return to the conversation" in i2
-    assert "The seat signs through the interview, then intake runs again." in i2
-    _in_order(_flat(text), "When a half has no `Signed:` row", SCAFFOLD)
-
-
-def test_sc4_3_the_ready_row_names_both_seats_and_the_revision_each_signed():
-    i7 = _step(_flow(), "I7")
-    assert "The cell then names both seats and the revision each signed" in i7
-    assert f"the whole cell reads {READY}." in i7
-    assert "r{m} is the newest revision both seats signed, as I2 read it" in i7
-    assert ("r{a} and r{c} are the revisions the two halves' `Signed:` rows sign, r{b} "
-            "and r{d} those rows' own numbers, and each {name} its row's Revised By "
-            "cell.") in i7
-    assert "When the loop ends ready-green" in i7  # the row waits for the green loop
 
 
 def test_sc4_3_the_roster_stop_still_stands_before_the_document_is_read():
