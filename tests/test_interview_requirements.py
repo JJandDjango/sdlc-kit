@@ -13,9 +13,9 @@ Terms and the Gherkin, runs the checks before the PO seat signs, and ends
 at that signature by naming the design run as the next command; a later run
 goes on at the step its state file names.
 
-Nothing here pins the design run, the design document or its template: a
-sentence that names an intake command is left free when it speaks of the
-design run.
+Nothing here pins the design run, the design document or its template's
+text: the folder's file set names the template's path, and a sentence that
+names an intake command is left free when it speaks of the design run.
 
 Text is matched after collapsing each whitespace run to one space, so a
 line wrap inside a prompt file never fails a test. No test runs a model;
@@ -43,7 +43,8 @@ CHAIN_CHARS = ";|&>"
 CHAR_CEILING = 12_000  # tests/test_skill_interview.py CHAR_CEILING
 
 FLOW_FILES = {"opening.md", "request.md", "solution.md", "signing.md", "output.md"}
-SKILL_FILES = ({"SKILL.md", "templates/requirements-document.md.template"}
+SKILL_FILES = ({"SKILL.md", "templates/requirements-document.md.template",
+                "templates/design-document.md.template"}
                | {f"flows/{name}" for name in FLOW_FILES})
 
 DESIGN_COMMAND = "/sdlc:product-specification-interview {id} design"
@@ -355,7 +356,7 @@ def test_sc1_1_skill_folder_holds_the_requirements_template_and_no_combined_temp
     assert TEMPLATE.is_file(), "templates/requirements-document.md.template is not written"
     assert not COMBINED_TEMPLATE.exists(), "templates/feature-document.md.template still stands"
     held = {p.relative_to(SKILL_DIR).as_posix() for p in SKILL_DIR.rglob("*") if p.is_file()}
-    assert held == SKILL_FILES  # SKILL.md, its five flows, one template, no code
+    assert held == SKILL_FILES  # SKILL.md, its five flows, two templates, no code
     for path in _prompt_files():
         assert "feature-document.md.template" not in _text(path), path.name
     assert "{skill-dir}/templates/requirements-document.md.template" in _text(

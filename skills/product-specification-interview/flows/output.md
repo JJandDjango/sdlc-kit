@@ -14,7 +14,7 @@ SKILL.md.
 </purpose>
 
 <instructions>
-W1. ASK "Do you want the Google Docs form?" When yes, SHOW the document's content in the Google Docs form: a first line "Paste with Edit > Paste from Markdown.", no code fences (Gherkin as indented plain lines), pipe tables kept, headings and bold kept. Nothing is written: the form stands in the conversation only.
+W1. ASK "Do you want the Google Docs form?" When yes, SHOW the document's content in the Google Docs form: a first line "Paste with Edit > Paste from Markdown.", no code fences (Gherkin as indented plain lines), pipe tables kept, headings and bold kept. The form shows the run's own document, and that one alone: the requirements document after a requirements run, the design document after a design run, never the pair. Nothing is written: the form stands in the conversation only.
 
-W2. WRITE the state file with `phase: complete`, `next: null`, and `history: + {at: now, event: output complete}`. REPORT: the document path, the state file path, the OPEN count, and the next command verbatim: `/sdlc:product-specification-interview {id} design`. Return to the conversation.
+W2. WRITE the state file with `phase: complete`, `next: null`, and `history: + {at: now, event: output complete}`. REPORT: the document path, the state file path, the OPEN count, and the next command verbatim: `/sdlc:product-specification-interview {id} design`. After a design run the next command is `/sdlc intake docs/features/{id}.md` instead, verbatim: intake takes the requirements document's path. Return to the conversation.
 </instructions>
