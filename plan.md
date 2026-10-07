@@ -145,8 +145,9 @@ commit; (2) the push and the PR; (3) the merge. Claude's, on review:
 commit. A sixth only if USAGE's red text must change.
 
 As it went: five, as planned, and no sixth. (1) The user approved this
-plan and its commit, `d82144d`. (2) The push and the PR, and (3) the
-merge, wait on the user's word. Claude's, on review: (4) the test list,
+plan and its commit, `d82144d`. (2) The user gave the word for the
+push and the PR, #96, and (3) for the merge once CI read green:
+`72ac76e`. Claude's, on review: (4) the test list,
 with one amendment before approval, thirteen retirements and two
 amended tests; (5) the unit's commit. The amendment: the draft's
 sentence of field sources opened on the title sentence's own first
