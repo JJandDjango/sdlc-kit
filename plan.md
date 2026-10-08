@@ -88,8 +88,9 @@ The glossary held 75 terms, where this plan said 76:
 `constraints.yaml` and `dictionary.yaml` are no term. The neighbor read
 of the other 72 found none made false. (4) The user gave the word for
 commit 1 with batch 1's answer, and for commit 2, the wrap, the push
-and the PR once the clean-commit checks read green. Decision (5), the
-merge, waits on the user's word after CI.
+and the PR once the clean-commit checks read green. (5) The user gave
+the word for the merge after CI read green: PR #102, on main at
+`9f2f9dd`.
 
 Step 8, as it went. `vocab-check` reads green at 89 terms, `lang-check`
 green, and the 19 contracts ready-green. The whole suite, under the
@@ -97,8 +98,15 @@ system Python, read 1058 passed before commit 2 and again at the clean
 commit, where `scope-check --base dfab2c6` reads `scope-green`. No test
 changed, and no agent ran.
 
-**Closed.** The deliverable is met but for the merge: ADR 0038 and G1's
-terms stand committed.
+**Closed.** The deliverable is met: ADR 0038 and G1's terms are on main
+at `9f2f9dd` (PR #102, merged 2026-10-08).
+
+After the merge. The user named a repeated fault: the wrap was
+committed inside the work PR, before the merge, so `STATE.md` could not
+name it. On the user's word the order is standing practice from here:
+the work PR merges first, then the wrap rides its own PR. This
+session's first wrap, `8ad25bc`, went the old way; a second, on branch
+`session-86-wrap`, records the merge and the practice.
 
 Deferred, not this session:
 - `/sdlc intake docs/features/g1-requirements-spec.md`, with about 91
