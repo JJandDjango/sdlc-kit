@@ -2,133 +2,116 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-07 (session 83 end: kit 0.19.0 is released, tag
-> `v0.19.0` at `7fe6342`; document-split is closed; G1's design run
+> _Generated 2026-10-07 (session 84 end: G1's design document is signed
+> at r3, at `cb56c87`; the PO seat's amendment of G1's requirements
 > opens the next session)._
 
 ## Now
-- **Session 83 (2026-10-07): kit 0.19.0 is released.** `d6-release` is
-  on main at `7fe6342` (PR #98), Two-Key PASS round 1 at `2c66f4b`, and
-  the annotated tag `v0.19.0` stands at that merge. The unit is two
-  commits. `e4ac931`: intake reads at I2, before
-  its four parts, whether the file is a combined document (one that
-  holds a `## Proposed solution` heading), and stops with one of two
-  messages and nothing written (SC4.3); USAGE reads green under 0.19.0
-  banners, with the red mark in its two legend lines alone;
-  `CHANGELOG.md` holds the 0.19.0 entry; `MAP.md`'s three rows and the
-  G0 page's title row name the pair; `KIT_VERSION` and `pyproject.toml`
-  read 0.19.0. `2c66f4b`: G1 stands as a pair, its design document at
-  r1 against requirements r3, written by a live design run from
-  `e4ac931` on the user's two answers (engineer seat `user`, no
-  material); G1's requirements document keeps every byte. The receipts,
-  at the clean commit: SC4.3 green at 10 tests, the unit's 28 tests,
-  the whole suite at 1062 passed in a scratch venv, `prompt_lang` on
-  both skill folders, `ready-green` on this contract and on the three
-  combined documents' contracts, `scope-green` against `204b671`, and
-  `lang-green`. The unit is closed in the progress record.
-- The release, each step on the user's word. PR #98 merged at
-  `7fe6342` after both CI checks read green: the plan (`b593053`), the
-  unit (`e4ac931`, `2c66f4b`) and the first wrap (`784cb6b`). The tag
-  `v0.19.0` was made at the merge and pushed. Manual receipt two holds:
-  USAGE's `uv` line against the tag, with `python -P`, installs 0.19.0
-  and reads `specs/document-split` ready-green, and the tag's `skills/`
-  equal the unit's. Both receipts are in untracked
-  `RECEIPT_document-split-d6_2026-10-07/`. `document-split` is closed
-  in the progress record. The self-pin (`bba1000`: `USAGE.md:706` and
-  `.github/workflows/sdlc.yml:20` at `v0.19.0`) rides a PR of its own
-  from branch `session-83-release`, with this file.
-- The release text: the user approved it as twelve deltas, saved whole
-  in `RECEIPT_document-split-d6_2026-10-07/release-text.md`. Beyond the
-  six wording advisories, the end-to-end read found three green USAGE
-  sentences the pair made inexact, and each is reworded: a design
-  document is the one file under `docs/features/` that is no feature
-  before intake; intake adds its `Ready:` row to each document's table;
-  intake writes a `Parked:` row in each table when it parks a pair.
-  `MAP.md`'s raw-request intake row reads `implemented (v1)`. Two
-  parts of delta 12 were dropped on signed sources, each told to the
-  user: the stale message keeps its letters `r{n}` and `r{m}`, since
-  the feature document lists it verbatim, and I8 keeps "a parked
-  document", a ratified term.
-- Sizes, as the suites count them: `intake.md` 11,504 of 12,000
-  characters, `signing.md` 11,830, `opening.md` 9,275, the interview's
-  `SKILL.md` 11,152.
-- What `d6` leaves standing. Two-Key's advisories, all wording: USAGE's
-  "Intake copies it from the feature document's title line"
-  (`USAGE.md:1324`) beside the G0 page's new words; "Drift from the
-  feature document" carries no pointer to "A pair of documents" for the
-  design's mark (`USAGE.md:1341`, `1368`); I2 says "in four parts" and
-  then "First, before the four parts". Three pins the next work moves:
-  `tests/test_document_split_g1_pair.py` and USAGE's drawing of G1 pin
-  `design r1` and `[to do]`, so G1's next design row moves both;
-  `tests/test_document_split_release.py` pins every line of `tree.py`
-  below its docstring by a sha256, so the next unit that changes
-  `tree.py` retires that assertion; the same file pins the red mark to
-  USAGE's two legend lines, so the next feature's pass zero retires
-  that test.
-- G1: `docs/features/g1-requirements-spec.design.md` stands at r1, and
-  its state file reads `next: S1`. The design run resumes there with
-  `/sdlc:product-specification-interview g1-requirements-spec design`,
-  once this machine's plugin holds 0.19.0's flows. Its copied term
-  "Ready check" says 14 questions where ADR 0037 gives 15: G1's PO seat
-  amends the requirements document before G1's intake. That document
-  was written by hand and has no state file, so how a requirements run
-  takes it is open.
-- `d1-requirements` stands at `6602242`, `d2-design` at `bfd4058`,
-  `d3-signing` at `13901c3`, `d4-tree` at `1df7068` and `d5-intake` at
-  `4681b42`, all on main (PRs #91 to #94, #96). The document's text is
-  unchanged since intake: both halves signed at r7, the `Ready:` row at
-  r8, the contract at `6ef6366`. Session 82's Now is at
-  `204b671:STATE.md`.
-- **The second machine** (the user wants this feature there as soon as
-  possible, 2026-10-06). The plugin follows main:
-  `.claude-plugin/marketplace.json` sets `source: "./"` with no ref, so
-  a `/plugin marketplace update sdlc-kit` there delivers 0.19.0's
-  flows. A combined document with no `Ready:` row then meets its own
-  message and is split by hand. The `pip` half takes `@v0.19.0`. This
-  repo holds no receipt of the install there, and the update there is
-  not tested.
-- Kit 0.19.0 stands released: tag `v0.19.0` at `7fe6342`. This
-  machine's installed `sdlc` plugin still sits at `40eb767`, whose
-  `skills/` equal `v0.18.0`'s, so `/sdlc:` here runs 0.18.0's flows
-  until the user updates the plugin.
-- This machine: the system Python (3.14.2) holds `textual` 8.2.8,
-  `rich` and `pytest`; the whole suite is still run in a scratch venv,
-  1062 passed. No Python here holds `prompt_lang`. `uv` 0.12.23 is
-  installed through winget but is not on a session's PATH: it runs by
-  its full path,
+
+- **Session 84 (2026-10-07): G1's design document is written and
+  signed.** `docs/features/g1-requirements-spec.design.md` holds its
+  twelve sections, signed at r3 by its r4 row, against requirements r3,
+  at `cb56c87`. A design run on kit 0.19.0's flows wrote it from S1 to
+  E7, the user answering in five batches of proposed text; the run
+  pauses at W1. The checks before signing read 3 findings, each on a
+  term copied from the requirements (`component`, `venue`, `ready
+  check`) and each answered under Decisions; Scope covered; ready
+  checks 11 to 15 with no gap. The requirements document keeps every
+  byte.
+- The design, in short. G1's rules run in a new subcommand, `g1-check`,
+  never inside `validate`, with six `RS` codes, each one message.
+  `g1-record` runs the repository's pinned tool and writes a committed
+  record a feature under `.sdlc/g1/`. A new flow, `/sdlc g1 {id}`, is
+  the venue. `specs/components.yaml` and the `g1` key of
+  `.sdlc/config.yaml` are the declarations, each written by a person. A
+  `g1.exempt` list keeps the features done inactive. `progress start`
+  and `progress done` refuse until G1 passes. Six units, `s1-lint` to
+  `s6-release`, as kit 0.20.0. The 13 shape calls stand in `plan.md`
+  and under the document's Decisions.
+- Three steps lead to G1's intake, which turns the tree's `gates/G0`
+  line `done`. The first is done. The second is the PO seat's amendment
+  of the requirements document: the three stale facts (15 features done
+  where 18 are, 14 ready checks where 15 are, the `gates/G0` line as
+  0.16.0 printed it); the four calls that go past r3 (messages 6 and 7,
+  I9's condition, the refusal on `done` and on a contract's close, a
+  review that names two revisions); the Review and Ready check terms;
+  and one Gherkin scenario for each of the 15 checks. The engineer seat
+  then confirms the design against the new revision and signs again.
+  The third is the terms and ADR 0038 in their own commit, then intake.
+- The tests. Three tests of `tests/test_document_split_g1_pair.py`
+  retired at the signature, through `test-retirer.js` on that module
+  alone: the tree's line, the pane's line and USAGE's drawing of G1's
+  pair. The fourth, which holds the requirements document's sha256,
+  breaks at the PO seat's amendment and retires then. USAGE's drawing
+  of G1 (`USAGE.md:1644`) stays as a dated example with no test behind
+  it, on the user's decision; `s6-release` redraws it. The whole suite
+  reads 1059 passed.
+- The explorers. Four read-only agents mapped the kit for the design
+  (897K tokens). Their files stand in untracked
+  `RECEIPT_g1-requirements-spec-design_2026-10-07/`: `rules.md`,
+  `tree.md`, `progress.md` and `intake-release.md`, each with change
+  sites, pinning tests and design questions by `file:line`. The
+  build's drafters read them.
+- The cost the design names: six units over about six sessions, after
+  two to three for the amendment and intake; 3.7 million agent tokens
+  at document-split's recorded pace (3,648K over its six units), 4 to 5
+  million likely, about 300K more for each lost Two-Key round.
+- Two kit gaps found, both parked. A design run's opening fixes no
+  shape for its copy of the terms: 0.19.0's live run wrote a mapping,
+  and `lang-check --draft` reads a list, so E1 read no copied term;
+  G1's copy is the list now. And the interview's `SKILL.md` printed its
+  id variable as `design`: this harness reads `$1` as the second word.
+- The user's idea (2026-10-07): the tree names no feature in flight.
+  Its top line is always `gates/G0`, and the feature shows only in that
+  line's diagnostic and in the one `[doing]` feature line. A top line
+  for it, or features not done printed first, is a feature of its own.
+- This machine: the `sdlc` plugin sits at `8635064`, its `skills/`
+  equal to `v0.19.0`'s, so `/sdlc:` runs 0.19.0's flows. The whole
+  suite ran under the system Python (3.14.2) for the first time, with
+  no scratch venv: 1059 passed in three minutes. No Python here holds
+  `prompt_lang`. `uv` 0.12.23 runs by its full path,
   `C:/Users/hyden/AppData/Local/Microsoft/WinGet/Packages/astral-sh.uv_Microsoft.Winget.Source_8wekyb3d8bbwe/uv.exe`.
-  The `google_workspace` server failed to connect again in session 83
-  (`Connection closed`); the cause is not looked into.
-- Carried: 20 features: 19 with a contract, 18 of them `[done]`,
-  `document-split` among them since the tag;
+  The `google_workspace` server failed to connect again (`Connection
+  closed`); the cause is not looked into.
+- Carried: kit 0.19.0 stands released, tag `v0.19.0` at `7fe6342`. 20
+  features: 19 with a contract, 18 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
-  `g1-requirements-spec` before intake, `[doing]`, now a pair.
+  `g1-requirements-spec` before intake, `[doing]`, a pair with both
+  halves signed. Session 83's Now is at `8635064:STATE.md`: d6's three
+  wording advisories and the second machine's untested plugin update
+  stand as they read there.
 
 ## Blockers
-- None. Kit 0.19.0 is tagged at `7fe6342`. This file's commit rides the
-  self-pin's PR from branch `session-83-release`; its merge is on the
-  user's word.
+
+- None. `cb56c87` and this file's commit ride one PR from branch
+  `session-84-g1-design`; its merge is on the user's word.
 
 ## Next actions
-Opener: G1's design document, from S1 on, through a design run on
-0.19.0's flows. First, this machine's plugin takes the release: the
-user runs `/plugin marketplace update sdlc-kit`, and the session then
-lists `C:/Users/hyden/.claude/plugins/cache/sdlc-kit/sdlc` and checks
-it holds the tag's `skills/` (`git diff --stat v0.19.0 HEAD --
-skills/` prints nothing when main's equal the tag's). Then
-`/sdlc:product-specification-interview g1-requirements-spec design`
-resumes at S1. The second machine takes the same plugin update, and
-its `pip` half takes `@v0.19.0`. The interview itself resumes at W1,
-the Google Docs form, when one is wanted.
 
-1. G1's design document, as the opener gives it (`d6` opened it at
-   r1), to ADRs 0033, 0036 and 0037; open for it: where the component declaration
-   record and the review record live, G1's rules and their codes, the
-   venue, and how the 17 features done read G1 inactive once G1 is
-   active. Then its intake, through 0.19.0's flow: the pair needs
-   one scenario per check and every check in one unit, or it parks. The
-   pilot's config line, in the engine's session; the engine's install
-   ref moves to `v0.19.0` there (pull, not push).
+Opener: the PO seat's amendment of G1's requirements document, the
+second of three steps to G1's intake. First decide how: the document
+was written by hand and has no state file, so a requirements run starts
+none for it; the standing practice is a hand amendment, a text row and
+a `Signed: request half` row. The amendment carries the list under Now,
+and its Gherkin block needs one scenario for each of the 15 checks. It
+changes the document's bytes, so the last test of
+`tests/test_document_split_g1_pair.py` retires with it. Then the
+engineer seat confirms: `/sdlc:product-specification-interview
+g1-requirements-spec design` runs DESIGN CONFIRM, writes `Confirmed
+against requirements r{m}` and asks for the signature again.
+
+1. G1's intake, after the amendment. The terms in their own commit: the
+   new terms, with `component` and `venue` ceded by the dictionary and
+   `ready check` mapped to the ratified term, and amendments to Rule,
+   Condition, Active gate and Review. ADR 0038 rides that commit: it
+   amends ADR 0031's "shown and never enforced" for the refusal and
+   fixes the homes of the records and the declarations. Then `/sdlc
+   intake docs/features/g1-requirements-spec.md`: the pair needs one
+   scenario per check and every check in one unit, or it parks. Then
+   the build, `s1-lint` first, which opens with pass zero. The pilot's
+   config line, in the engine's session; the engine's install ref moves
+   to the release that carries G1 (pull, not push).
+
 2. Deferred from 0.18.0's sweep (Two-Key's advisories, rounds 1 to 3),
    each a change of behavior or a sentence a test pins word for word.
    A measure comes first: which of them a consumer meets. The
@@ -200,7 +183,11 @@ the Google Docs form, when one is wanted.
    (`NOTES_honest-functions_2026-10-04.md`, a feature document once it
    becomes work); `document-split`'s three later features (the fourth
    case computed from a list of public contract paths, Claude's review
-   of a design in a fresh context, a PR brief for the final reviewer).
+   of a design in a fresh context, a PR brief for the final reviewer);
+   the tree names no feature in flight (the user, 2026-10-07); a design
+   run's opening fixes no shape for its copy of the terms
+   (`opening.md`); the interview's `SKILL.md` reads `$1` as the second
+   word under this harness.
 
 ## Standing practice
 - At resume, read the pilot's `E:\ImSimProject\engine\STATE.md` beside
@@ -496,6 +483,23 @@ the Google Docs form, when one is wanted.
   about ten minutes a run, 66K and 63K tokens. The session's scratch
   scripts (overlay, run-in, journal split, splice, driver copy,
   receipt) are kept in untracked `.claude/workflows/tools/`.
+- A design run in batches (session 84). Four read-only explorers come
+  first, a slice each (the rules, the tree, the progress record, intake
+  and the release), through one inline Workflow with a structured
+  result; `tools/split_explorers.py` splits its journal into one file a
+  slice. Then the shape calls as one batch, before S1, and four batches
+  of sections. Each batch shows only the details that carry a decision,
+  with the full text on request. `tools/state_text.py` copies each
+  section from the document into the state file (text, list, table or
+  question and answer), so the two cannot differ. Probe the done-means
+  sentences through `tools/probe_units.py` before the user sees them:
+  four runs took 17 unknown words to none. A release unit must hold a
+  check, or intake refuses it. Check each done-means sentence against
+  every path of the design: one was false of a contract's close, and
+  the design changed. Count a list after it is written, never before:
+  the session quoted two counts wrong. Source a cost from the recorded
+  figures and show the basis. Tokens: explorers 897K, retirer 62K; the
+  session closed near 40% of a 1M context.
 - The form validator on this machine (session 78): put one line,
   `E:/foundations`, in a `foundations.pth` under the scratch venv's
   `Lib/site-packages`, and `pip install tiktoken` there. `python -m
@@ -505,9 +509,9 @@ the Google Docs form, when one is wanted.
   checks <n> --watch` in the background; started right after a push it
   can end `no checks reported`, so watch again.
 - The suite on this machine: since session 81 the system Python 3.14
-  holds `textual`, so `python -P -m pytest tests -q` may run under it;
-  that run is not yet seen green. Until it is, the scratch venv stands
-  (session 76): `py -3.14 -m venv <scratch>/venv`, then that venv's
+  holds `textual`, so `python -P -m pytest tests -q` runs under it:
+  session 84 saw it green, 1059 passed in three minutes. A scratch venv
+  is needed only for the form validator (session 76): `py -3.14 -m venv <scratch>/venv`, then that venv's
   `python -m pip install "textual>=8.2,<9" "pytest>=8"
   "jsonschema>=4.18" "PyYAML>=6"`, then its `python -P -m pytest tests
   -q` in the background. `lang-check` prints about 130 exempt lines
