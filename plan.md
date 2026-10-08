@@ -133,14 +133,14 @@ did not need its boundary through step 10.
     receipts' text as focus pointers that say the grader reads and the
     receipts key runs; `progress done` on PASS. A failed round is
     `progress block`, a fix, and `start` again, three rounds at most.
-11. Close the unit. The push, the PR and the merge on the user's word,
+11. ~~Close the unit.~~ The push, the PR and the merge on the user's word,
     after CI reads green.
-12. The release, if context holds. The annotated tag `v0.19.0` at the
+12. ~~The release, if context holds.~~ The annotated tag `v0.19.0` at the
     merge commit on the user's word; manual receipt two (USAGE's `uv`
     line against the tag reads 0.19.0, and the plugin at the tag holds
     the new flows); the self-pin (`sdlc.yml` and the install pins)
     through its own PR, which the wrap rides.
-13. Close. `STATE.md` regenerated; this plan struck; the memory index
+13. ~~Close.~~ `STATE.md` regenerated; this plan struck; the memory index
     updated.
 
 Steps 1, 12 and 13 sit outside a contract unit, so the tree does not
@@ -165,8 +165,19 @@ it verbatim, and I8 keeps "a parked document", a ratified term.
 `test-retirer.js` did not run: the whole suite on the prototype named
 every older test, and each was a replacement or a one-line change. The
 combined read stands before I2's four parts with no label, not inside
-DESIGN, since an older test pins DESIGN's opening words. Decisions (4)
-to (7) wait on the user's word.
+DESIGN, since an older test pins DESIGN's opening words.
+
+Steps 11 and 12, the same day: three more, each the user's. (4) The
+push and the PR, #98, with the first wrap (`784cb6b`). (5) The merge,
+once both CI checks read green: `7fe6342`. (6) The tag: `v0.19.0`,
+annotated, at that merge, pushed. Manual receipt two holds against the
+tag, and `document-split` is closed in the progress record. The
+self-pin stands at `bba1000` on branch `session-83-release`, with the
+second wrap. Decision (7), the self-pin's merge, waits on the user's
+word.
+
+**Closed.** The deliverable is met and the release is made: kit 0.19.0
+is tagged at `7fe6342`. The session did not need its boundary.
 
 Deferred, not this session:
 - Two-Key's advisories, all wording, none blocking: USAGE's "Intake
