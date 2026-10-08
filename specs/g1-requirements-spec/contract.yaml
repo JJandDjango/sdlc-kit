@@ -1,0 +1,218 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: g1-requirements-spec
+
+title: Failure points found before development starts
+
+intent: >-
+  Today no gate checks a feature for a failure point before development.
+  A failure point shows during the build or after the release. After this
+  task the kit holds G1 as an active gate for each feature that its config
+  file does not list as exempt. G1.1 reads done when the record of the
+  linter shows each boundary schema in the scope of a feature clean under
+  its pin. G1.2 reads done when each hard core in that scope has a model
+  that its checker passes. G1.3 reads done when a human records a review
+  of its 11 items with a signature. Intake names G1 as the next step where
+  G1 is an active gate for the feature. No task can be recorded as
+  `doing`, and no task, unit or contract as done, before G1 passes for its
+  feature. The tree shows each condition of G1 with its status and each
+  diagnostic. The kit version reads `0.20.0`.
+
+scope:
+  - taskcontract/g1.py
+  - taskcontract/__main__.py
+  - taskcontract/data/gates.yaml
+  - taskcontract/data/g1-items.yaml
+  - taskcontract/data/tasks.yaml
+  - taskcontract/schemas/component-declaration.schema.json
+  - taskcontract/tree.py
+  - taskcontract/tree_view.py
+  - taskcontract/progress.py
+  - skills/sdlc/flows/g1.md
+  - skills/sdlc/SKILL.md
+  - skills/sdlc/flows/intake.md
+  - skills/sdlc/init.py
+  - skills/sdlc/templates/SDLC.md.template
+  - skills/sdlc/templates/specs-README.md.template
+  - pyproject.toml
+  - tests/
+  - USAGE.md
+  - SDLC.md
+  - .github/workflows/sdlc.yml
+  - specs/components.yaml
+  - .spectral.yaml
+
+non_goals:
+  - No new condition; G1 holds only the three conditions that its page
+    ratified, and the 11 items of G1.3 are kept as ratified.
+  - No agent records a signature on a G1.3 review; an agent may draft the
+    review, and only a human records its signature.
+  - No linter and no checker ships with the kit; the consumer is the one
+    to install and pin Spectral, `buf`, TLC and P.
+  - No review of the past; each feature already done, all 18, gets no G1
+    review, and its G1 reads `inactive`, as today.
+  - Not G2.5; the red run of the tests for each check stays with G2. The
+    finding of the pilot named that run as the next step of intake.
+  - Not the `gates/G0` line of the tree; that line still reads as kit
+    `0.17.0` derives it.
+
+decomposition:
+  - unit: s1-lint
+    id: s1-lint
+    confirmed_by: [user]
+    done_means: >-
+      With a boundary schema in a feature's scope, G1.1 reads done only
+      when the pinned linter's record shows it clean.
+    acceptance_sketch:
+      - >-
+        verify the linter runs under its pin on each JSON Schema, OpenAPI
+        or `protobuf` file that the feature adds or changes. Verify a
+        warning makes G1.1 read `failed`, as an error does (SC2.1)
+      - >-
+        verify a feature that adds or changes no boundary schema passes
+        G1.1, and no linter runs (SC2.2)
+      - >-
+        verify a linter that the repo did not install makes G1.1 read
+        `failed` with its error. Verify G1.1 does not pass (SC2.3)
+  - unit: s2-model
+    id: s2-model
+    depends_on: [s1-lint]
+    confirmed_by: [user]
+    done_means: >-
+      With a hard core in a feature's scope, G1.2 reads done only when the
+      record shows its model passes the checker.
+    acceptance_sketch:
+      - >-
+        verify each hard core in the component declaration record whose
+        paths are in the scope of the feature has a model. Verify TLC or P
+        passes that model under its pin (SC3.1)
+      - >-
+        verify a feature whose scope holds no hard core passes G1.2, and
+        no checker runs (SC3.2)
+      - >-
+        verify a hard core with no model makes G1.2 read `failed` with its
+        error. Verify a hard core whose checker the repo did not install
+        makes G1.2 read `failed` with its error (SC3.3)
+  - unit: s3-review
+    id: s3-review
+    depends_on: [s2-model]
+    confirmed_by: [user]
+    done_means: >-
+      A seat reads G1.3's 11 items at the venue, and G1.3 reads done only
+      from a review with a signature.
+    acceptance_sketch:
+      - >-
+        verify the review covers each of the 11 items of G1.3 against each
+        feature document of the feature. Verify a named human records a
+        signature on the review. Verify the signature names each revision
+        that the contract derives from, one for each doc of a pair (SC1.1)
+      - >-
+        verify each item that a review records as `unchecked` shows as a
+        diagnostic under G1.3. Verify the diagnostic names the item and
+        the section of the feature document that the item is about. Verify
+        G1.3 reads `failed` until the review of a later revision passes
+        (SC1.2)
+      - >-
+        verify the interview still covers ready checks 1 to 15, and intake
+        still covers them, as today. Verify the review covers none of them
+        again (SC1.3)
+  - unit: s4-tree
+    id: s4-tree
+    depends_on: [s3-review]
+    confirmed_by: [user]
+    done_means: >-
+      The tree shows G1 as an active gate where a feature needs it, with
+      each condition's status, diagnostics and review.
+    acceptance_sketch:
+      - >-
+        verify a feature past G0 shows G1 as an active gate. Verify G1.1,
+        G1.2 and G1.3 each take their status from their own rules. Verify
+        a condition that is not done lists each diagnostic (SC5.1)
+      - >-
+        verify each feature already done, all 18, shows G1 `inactive`, as
+        today. Verify the tree still marks the next gate after each active
+        gate `inactive` (SC5.2)
+      - >-
+        verify the status of G1 is the roll-up of its three conditions.
+        Verify a G1.3 review with a signature shows its seat and each
+        revision it names (SC5.3)
+  - unit: s5-start
+    id: s5-start
+    depends_on: [s4-tree]
+    confirmed_by: [user]
+    done_means: >-
+      Intake's report names G1 as the next step, and no unit's task reads
+      done before its feature's G1 passes.
+    acceptance_sketch:
+      - >-
+        verify the report of intake names G1 as the next step where G1 is
+        an active gate for the feature. Verify that line stands after the
+        path of the contract, its state, its seats and its scope line, as
+        today. Verify the report closes as today where G1 is no active
+        gate for the feature (SC4.1)
+      - >-
+        verify no task can be recorded as `doing` while G1 is an active
+        gate for its feature and G1 does not yet pass. Verify no task,
+        unit or contract can be recorded as done in that state. Verify the
+        kit rejects each such record and prints its error (SC4.2)
+  - unit: s6-release
+    id: s6-release
+    depends_on: [s5-start]
+    confirmed_by: [user]
+    done_means: >-
+      Kit 0.20.0 ships G1 with its documentation, and the kit's own tree
+      shows G1 as an active gate with G0 unchanged.
+    acceptance_sketch:
+      - >-
+        verify the G0 verdict of each contract still reads as the
+        validator reports. Verify the verdict reads `done` at
+        `ready-green`, and `blocked` when `draft-green` with `TC003`.
+        Verify the verdict reads `to do` when `draft-green` otherwise, and
+        `failed` when `draft-red` (SC4.3)
+
+dependencies: []
+
+entities:
+  - task-contract
+  - feature
+  - feature-document
+  - pair
+  - gate
+  - active-gate
+  - condition
+  - rule
+  - diagnostic
+  - verdict
+  - status
+  - roll-up
+  - finding
+  - decomposition-unit
+  - task
+  - check
+  - ready-check
+  - intake
+  - intake-seat
+  - tree
+  - item
+  - revision
+  - signature
+  - consumer
+  - failure-point
+  - development
+  - boundary-schema
+  - hard-core
+  - model
+  - linter
+  - checker
+  - pin
+  - component
+  - component-declaration-record
+  - oracle-designation
+  - review
+  - venue
+  - two-key
+
+provenance:
+  origin: human-request
+  ref: docs/features/g1-requirements-spec.md

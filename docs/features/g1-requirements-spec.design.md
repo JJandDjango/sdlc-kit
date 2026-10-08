@@ -6,6 +6,7 @@
 | 2026-10-07 | user | r4: Signed: solution half. The engineer seat signs r3 |
 | 2026-10-08 | user | r5: Confirmed against requirements r6 |
 | 2026-10-08 | user | r6: Signed: solution half. The engineer seat signs r5 |
+| 2026-10-08 | intake | r7: Ready: contract `g1-requirements-spec` validates ready-green, derived from r5, against requirements r6; the engineer seat (user) signed the solution half at r5 (r6) |
 
 # g1-requirements-spec - Failure points found before development starts
 

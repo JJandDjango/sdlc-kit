@@ -7,6 +7,7 @@
 | 2026-10-08 | user | r5: Measured: the checks before signing, on the request half: 93 findings (CL003 2, CL006 79, CL008 12); ready checks 1 to 8: 0 OPEN |
 | 2026-10-08 | user | r6: Amended by hand in kit session 85, after the design's signature: the counts of features done (18) and of ready checks (15); the gates/G0 case dated; messages 6 and 7; G1 named at intake only where it is active (SC4, SC4.1); the refusal on done and on a contract's close (SC4.2); a review's two revisions (SC1.1, SC5.3, Review); Ready check and Check mapped to their ratified terms; ADR 0037's shape (one seat in the status line and the Decisions tag, no line between halves, Notes); the Gherkin block, 15 scenarios; typed by Claude on the user's word |
 | 2026-10-08 | user | r7: Signed: request half. The PO seat signs r6 |
+| 2026-10-08 | intake | r8: Ready: contract `g1-requirements-spec` validates ready-green, derived from r6; the PO seat (user) signed the request half at r6 (r7) |
 
 # g1-requirements-spec - Failure points found before development starts
 
