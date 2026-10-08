@@ -4,6 +4,8 @@
 | 2026-10-07 | user | r2: Measured: the checks before signing, on the solution half: 3 findings (CL003 2, CL014 1); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
 | 2026-10-07 | user | r3: The solution half finished: 12 sections written, 0 OPEN |
 | 2026-10-07 | user | r4: Signed: solution half. The engineer seat signs r3 |
+| 2026-10-08 | user | r5: Confirmed against requirements r6 |
+| 2026-10-08 | user | r6: Signed: solution half. The engineer seat signs r5 |
 
 # g1-requirements-spec - Failure points found before development starts
 
