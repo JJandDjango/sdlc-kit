@@ -2,14 +2,15 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-07 (session 83, first wrap: document-split's
-> d6-release is built, Two-Key PASS round 1; the release follows its
-> merge)._
+> _Generated 2026-10-07 (session 83 end: kit 0.19.0 is released, tag
+> `v0.19.0` at `7fe6342`; document-split is closed; G1's design run
+> opens the next session)._
 
 ## Now
-- **Session 83 (2026-10-07): `d6-release` is built, Two-Key PASS round
-  1 at `2c66f4b`.** The unit stands as two commits on branch
-  `session-83-document-split-d6`. `e4ac931`: intake reads at I2, before
+- **Session 83 (2026-10-07): kit 0.19.0 is released.** `d6-release` is
+  on main at `7fe6342` (PR #98), Two-Key PASS round 1 at `2c66f4b`, and
+  the annotated tag `v0.19.0` stands at that merge. The unit is two
+  commits. `e4ac931`: intake reads at I2, before
   its four parts, whether the file is a combined document (one that
   holds a `## Proposed solution` heading), and stops with one of two
   messages and nothing written (SC4.3); USAGE reads green under 0.19.0
@@ -25,16 +26,17 @@
   both skill folders, `ready-green` on this contract and on the three
   combined documents' contracts, `scope-green` against `204b671`, and
   `lang-green`. The unit is closed in the progress record.
-- **Not yet done: the release.** The tag `v0.19.0` does not exist until
-  the user's word. After the merge come the annotated tag at the merge
-  commit, manual receipt two (USAGE's `uv` line against the tag with
-  `python -P` reads 0.19.0, and the plugin at the tag holds the new
-  flows), and the self-pin through its own PR: `USAGE.md:706` and
-  `.github/workflows/sdlc.yml:20` move from `v0.18.0`. The same install
-  against `2c66f4b` already reads 0.19.0, in
-  `RECEIPT_document-split-d6_2026-10-07/RECEIPT.md`. The contract is
-  not closed in the progress record: `progress done document-split`
-  follows the tag.
+- The release, each step on the user's word. PR #98 merged at
+  `7fe6342` after both CI checks read green: the plan (`b593053`), the
+  unit (`e4ac931`, `2c66f4b`) and the first wrap (`784cb6b`). The tag
+  `v0.19.0` was made at the merge and pushed. Manual receipt two holds:
+  USAGE's `uv` line against the tag, with `python -P`, installs 0.19.0
+  and reads `specs/document-split` ready-green, and the tag's `skills/`
+  equal the unit's. Both receipts are in untracked
+  `RECEIPT_document-split-d6_2026-10-07/`. `document-split` is closed
+  in the progress record. The self-pin (`bba1000`: `USAGE.md:706` and
+  `.github/workflows/sdlc.yml:20` at `v0.19.0`) rides a PR of its own
+  from branch `session-83-release`, with this file.
 - The release text: the user approved it as twelve deltas, saved whole
   in `RECEIPT_document-split-d6_2026-10-07/release-text.md`. Beyond the
   six wording advisories, the end-to-end read found three green USAGE
@@ -80,15 +82,15 @@
 - **The second machine** (the user wants this feature there as soon as
   possible, 2026-10-06). The plugin follows main:
   `.claude-plugin/marketplace.json` sets `source: "./"` with no ref, so
-  after `d6`'s merge a `/plugin marketplace update sdlc-kit` there
-  delivers 0.19.0's flows. A combined document with no `Ready:` row
-  then meets its own message and is split by hand. The `pip` half
-  takes a commit sha of main until the tag, then `@v0.19.0`. This repo
-  holds no receipt of the install there, and the update there is not
-  tested.
-- Kit 0.18.0 stands released at `771176e`. This machine's installed
-  `sdlc` plugin sits at `40eb767`, whose `skills/` equal that tag's, so
-  `/sdlc:` here still runs 0.18.0's flows until the plugin is updated.
+  a `/plugin marketplace update sdlc-kit` there delivers 0.19.0's
+  flows. A combined document with no `Ready:` row then meets its own
+  message and is split by hand. The `pip` half takes `@v0.19.0`. This
+  repo holds no receipt of the install there, and the update there is
+  not tested.
+- Kit 0.19.0 stands released: tag `v0.19.0` at `7fe6342`. This
+  machine's installed `sdlc` plugin still sits at `40eb767`, whose
+  `skills/` equal `v0.18.0`'s, so `/sdlc:` here runs 0.18.0's flows
+  until the user updates the plugin.
 - This machine: the system Python (3.14.2) holds `textual` 8.2.8,
   `rich` and `pytest`; the whole suite is still run in a scratch venv,
   1062 passed. No Python here holds `prompt_lang`. `uv` 0.12.23 is
@@ -97,36 +99,30 @@
   `C:/Users/hyden/AppData/Local/Microsoft/WinGet/Packages/astral-sh.uv_Microsoft.Winget.Source_8wekyb3d8bbwe/uv.exe`.
   The `google_workspace` server failed to connect again in session 83
   (`Connection closed`); the cause is not looked into.
-- Carried: 20 features: 19 with a contract, 17 of them `[done]`;
-  `document-split` `[doing]`, six units of six done, open until the
-  tag; `glossary-alias-disjointness` parked by the user, `[to do]`;
+- Carried: 20 features: 19 with a contract, 18 of them `[done]`,
+  `document-split` among them since the tag;
+  `glossary-alias-disjointness` parked by the user, `[to do]`;
   `g1-requirements-spec` before intake, `[doing]`, now a pair.
 
 ## Blockers
-- None. `d6-release` is built, Two-Key PASS round 1 at `2c66f4b`. This
-  file's commit rides the unit's PR. The push, the PR, the merge, the
-  tag and the self-pin's merge are each on the user's word, and a later
-  wrap records each as it lands.
+- None. Kit 0.19.0 is tagged at `7fe6342`. This file's commit rides the
+  self-pin's PR from branch `session-83-release`; its merge is on the
+  user's word.
 
 ## Next actions
-Opener: the release of kit 0.19.0, wherever session 83 left it. In
-order: the unit's PR merged on the user's word, after both CI checks
-read green; the annotated tag `v0.19.0` at the merge commit; manual
-receipt two (`uv run --no-project --with "sdlc-taskcontract @
-git+https://github.com/JJandDjango/sdlc-kit.git@v0.19.0" python -P`,
-then the version and a `validate`, and the plugin's `skills/` at the
-tag against the unit's); `progress done document-split`; the self-pin
-(`USAGE.md:706` and `.github/workflows/sdlc.yml:20` to `v0.19.0`)
-through its own PR, which the wrap rides; this machine's plugin
-updated to the tag. A `CHANGELOG.md` heading carries the tag's date:
-it reads 2026-10-07, and a tag on a later day moves the heading and
-`RELEASE_HEADING` in `tests/test_document_split_release.py` together.
-The interview itself resumes at W1, the Google Docs form, when one is
-wanted.
+Opener: G1's design document, from S1 on, through a design run on
+0.19.0's flows. First, this machine's plugin takes the release: the
+user runs `/plugin marketplace update sdlc-kit`, and the session then
+lists `C:/Users/hyden/.claude/plugins/cache/sdlc-kit/sdlc` and checks
+it holds the tag's `skills/` (`git diff --stat v0.19.0 HEAD --
+skills/` prints nothing when main's equal the tag's). Then
+`/sdlc:product-specification-interview g1-requirements-spec design`
+resumes at S1. The second machine takes the same plugin update, and
+its `pip` half takes `@v0.19.0`. The interview itself resumes at W1,
+the Google Docs form, when one is wanted.
 
-1. Behind the release: G1's design document, from S1 on, through a
-   design run on 0.19.0's flows (`d6` opened it at r1), to ADRs 0033,
-   0036 and 0037; open for it: where the component declaration
+1. G1's design document, as the opener gives it (`d6` opened it at
+   r1), to ADRs 0033, 0036 and 0037; open for it: where the component declaration
    record and the review record live, G1's rules and their codes, the
    venue, and how the 17 features done read G1 inactive once G1 is
    active. Then its intake, through 0.19.0's flow: the pair needs
