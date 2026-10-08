@@ -101,15 +101,12 @@ brownfield adoption is additive by construction.
 
 ## 4. Day 2 — the contract flow
 
-### `/sdlc:product-specification-interview` — writing the feature document 🔴
+### `/sdlc:product-specification-interview` — writing the feature document 🟢
 
-> 🔴 **Ratified, not shipped** (contract `specs/document-split/`;
-> [ADR 0029](decisions/0029-feature-document-format-and-done.md) as ADRs
-> 0033 to 0037 amend it; kit 0.19.0). Every mark in this section flips
-> green at the release. Until then, kit 0.18.0's interview writes one
-> combined document, both halves in one file at `docs/features/<id>.md`,
-> and intake reads that one file: this page at tag `v0.18.0` is its
-> guide. Each 🟢 paragraph elsewhere holds for 0.18.0.
+> 🟢 **Shipped** (kit 0.19.0, [ADR 0029](decisions/0029-feature-document-format-and-done.md)
+> as ADRs 0033 to 0037 amend it, contract `specs/document-split/`). Kit
+> 0.18.0's interview wrote one combined document, both halves in one file
+> at `docs/features/<id>.md`: this page at tag `v0.18.0` is its guide.
 
 Intake consumes a feature document (§8): a pair, the requirements
 document and the design document of one feature. This skill writes each
@@ -121,7 +118,7 @@ it in the target repo with the feature's id:
 /sdlc:product-specification-interview csv-export design   the design run: starts or resumes
 ```
 
-🔴 **The two documents.** A requirements run writes the requirements
+🟢 **The two documents.** A requirements run writes the requirements
 document at `docs/features/<id>.md`, the path a combined document held,
 and its state file beside it, `docs/features/<id>.state.yaml`. A design
 run writes the design document at `docs/features/<id>.design.md`, and its
@@ -131,7 +128,7 @@ r1 at the end of its opening and each section as its step closes, so the
 tree shows the feature before intake from the requirements document's
 first revision (§9, "Features before intake").
 
-🔴 **The requirements document** holds the request half, and the PO seat
+🟢 **The requirements document** holds the request half, and the PO seat
 signs it. It opens on its revision table, its title line `# <id> -
 <title>`, and a status line. Drawn on a feature `x`, PO seat ann:
 
@@ -145,7 +142,7 @@ signs it. It opens on its revision table, its title line `# <id> -
 `repo` · seat: PO ann · contract: `x`, draft · PR: none · merge SHA: none
 ```
 
-🔴 Then come the request half's sections in order, Statement to
+🟢 Then come the request half's sections in order, Statement to
 Acceptance criteria, each with its heading and its tag as kit 0.18.0
 writes them: owner and kind, such as `[PO seat · authored]`. The four
 bug-fix sections appear only in a bug fix's document, with its incident
@@ -158,7 +155,7 @@ asked yet reads "(not yet asked)". The Gherkin carries no stamp until its
 step writes it: it reads "(none: the Gherkin step writes one scenario per
 check)" under `[PO seat · derived]`.
 
-🔴 **The design document** holds the solution half, and one engineer seat
+🟢 **The design document** holds the solution half, and one engineer seat
 signs it. It names the requirements revision it stands against. Drawn
 for the same feature, engineer seat raj:
 
@@ -172,7 +169,7 @@ for the same feature, engineer seat raj:
 `repo` · seat: engineer raj · requirements: `docs/features/x.md` · contract: `x`, draft · PR: none · merge SHA: none
 ```
 
-🔴 Then come Proposed solution with its seven sections (Scope, Out of
+🟢 Then come Proposed solution with its seven sections (Scope, Out of
 scope, Interfaces, Sources, Constraints, Units, Order), Risks and cost,
 Consult cases, Decisions and open questions, Traceability (Links out,
 Record), Notes, and the Appendix with its Contract block. Each authored
@@ -183,7 +180,7 @@ seat. Before intake, the Contract block reads "(none: intake writes
 intake writes the record)" and keeps that line: kit 0.19.0 has no step
 that writes the Record.
 
-🔴 **The requirements run.** It asks for a PO seat and for no engineer
+🟢 **The requirements run.** It asks for a PO seat and for no engineer
 seat. It asks the request half's sections in order, then the Terms and
 the Gherkin, one question at a time. It writes its state file after
 every step, and a later run resumes at the step its `next` names.
@@ -198,7 +195,7 @@ criteria form the second document?". A section changed by hand since the
 interview last wrote it is shown beside the answer, and you say which
 stands.
 
-🔴 **The Gherkin step.** Once the checks stand, the requirements run
+🟢 **The Gherkin step.** Once the checks stand, the requirements run
 proposes one scenario per check, joined to it by its id, and the PO seat
 accepts, changes or drops each. The block is tagged `[PO seat · derived
 from rN]`:
@@ -210,16 +207,16 @@ Scenario: SC1.1 A written document lands at its path
   Then `docs/features/x.md` opens on its revision table, and its title line reads `# x - The outcome, in a few words`
 ```
 
-🔴 A scenario whose Then needs a fact its check lacks is never offered:
+🟢 A scenario whose Then needs a fact its check lacks is never offered:
 the check is marked thin instead. A scenario the PO seat drops marks its
 check thin too. Ready check 3 reads a thin check as an OPEN.
 
-🔴 Each text row the requirements run writes moves the block's stamp to
+🟢 Each text row the requirements run writes moves the block's stamp to
 that row, once every check changed since the last stamp has a confirmed
 scenario again. A row written by hand moves no stamp, so the checks
 before signing report the block stale.
 
-🔴 The requirements run then runs the checks before the PO seat signs,
+🟢 The requirements run then runs the checks before the PO seat signs,
 takes the signature, and ends by naming the design run as the next
 command:
 
@@ -227,7 +224,7 @@ command:
 /sdlc:product-specification-interview <id> design
 ```
 
-🔴 **The design run.** It reads the requirements document before it
+🟢 **The design run.** It reads the requirements document before it
 writes anything, and stops with nothing written on:
 
 ```
@@ -235,13 +232,13 @@ No requirements document for x. Run the requirements interview first.
 The requirements document is unsigned at r3. The PO seat signs before the design starts.
 ```
 
-🔴 The first when no file stands at the path; the second when no
+🟢 The first when no file stands at the path; the second when no
 `Signed: request half` row signs the newest text revision, here r3. A
 design run on a combined document stops too, with nothing written:
 `docs/features/x.md is a combined document. Split it by hand, then run
 the design interview.`
 
-🔴 Then the design run asks for an engineer seat and for no PO seat. It
+🟢 Then the design run asks for an engineer seat and for no PO seat. It
 asks no origin and no title: it reads both from the requirements
 document, with the check ids and the new terms. It reads the
 requirements document and the requirements run's state file, and writes
@@ -253,7 +250,7 @@ open questions as `OPEN: a non-goal for the PO seat: {thing}`, and
 nothing goes into the requirements document: the PO seat adds it through
 a requirements run, and the engineer seat then closes the mark.
 
-🔴 **Consult cases.** After Risks and cost the design run asks the
+🟢 **Consult cases.** After Risks and cost the design run asks the
 engineer seat the four cases, one at a time: the conditions under which
 the seat asks another engineer before the PR. Each answer is yes or no,
 and a yes takes two more answers, who was asked and what was decided:
@@ -271,7 +268,7 @@ and a yes takes two more answers, who was asked and what was decided:
 | 4. A change to a public contract: routes, a gateway definition, events, a schema | no | | |
 ```
 
-🔴 **The revision a design names.** A design names one requirements
+🟢 **The revision a design names.** A design names one requirements
 revision: the `requirements r{m}` of its newest text row that names one.
 r1 names it first. Every design run, at any step, reads the requirements
 document's newest text revision. On a newer one it shows the revisions
@@ -284,7 +281,7 @@ The design names requirements r3; the requirements stand at r5.
 Confirm the design against r4 and r5?
 ```
 
-🔴 On yes the design takes a text row, and a signed design is asked for
+🟢 On yes the design takes a text row, and a signed design is asked for
 its signature again:
 
 ```
@@ -292,7 +289,7 @@ its signature again:
 | 2026-10-10 | raj | r6: Signed: solution half. The engineer seat signs r5 |
 ```
 
-🔴 On no, nothing is written and the design is stale: it names a
+🟢 On no, nothing is written and the design is stale: it names a
 requirements revision older than the requirements document's newest text
 revision. The checks before the engineer seat signs report it, and intake
 stops on it, with one message:
@@ -301,7 +298,7 @@ stops on it, with one message:
 The design names requirements r3; the requirements stand at r5. Stale.
 ```
 
-🔴 **The checks before signing.** Each seat's checks run on that seat's
+🟢 **The checks before signing.** Each seat's checks run on that seat's
 own document and state file. Before the PO seat signs, the interview
 runs the document's new terms as drafts through the vocabulary check and
 `CL003`, and a draft contract of the statement, the non-goals and the
@@ -326,7 +323,7 @@ docs/features/x.design.state.yaml: answers.units[u2]: CL008 sentence of 31 words
 draft: 2 new terms, 0 amended; 0 non-goals; 0 checks; 3 units; 1 findings (CL008 1)
 ```
 
-🔴 `CL014` reports a new term that matches a ratified one; an amended
+🟢 `CL014` reports a new term that matches a ratified one; an amended
 term replaces its ratified definition among the drafts and is never a
 `CL014`. On the design's state file the command reports the copied
 terms' findings again. The command exits 1 when any finding is an error,
@@ -336,7 +333,7 @@ as `lang-check` does. A state file missing or not YAML reads
 `(no dictionary here - door at rest)`. A key the state file lacks reads
 as empty. Without `--draft`, `lang-check` reads `specs/` as before.
 
-🔴 Then the interview reads that document's ready checks, 1 to 8 for the
+🟢 Then the interview reads that document's ready checks, 1 to 8 for the
 requirements document and 11 to 15 for the design document, and marks
 each gap inline with its message:
 
@@ -345,7 +342,7 @@ each gap inline with its message:
   OPEN: Ready check 3: SC2.1 is thin: its Then needs the count it reports.
 ```
 
-🔴 Ready check 15 asks whether each of the four cases has an answer, and
+🟢 Ready check 15 asks whether each of the four cases has an answer, and
 whether each yes names who was asked and what was decided. Its gaps,
 each marked under Consult cases:
 
@@ -355,7 +352,7 @@ Ready check 15: case 2 reads yes and names no one asked. Marked OPEN.
 Ready check 15: case 2 reads yes and names no decision. Marked OPEN.
 ```
 
-🔴 Each run of the checks then lands as one `Measured:` row in that
+🟢 Each run of the checks then lands as one `Measured:` row in that
 seat's document: the command's findings, the count of OPEN marks under
 that document's ready checks, and for the design document the Scope
 result. The interview reports each gap as `Ready check {n}: {gap}. Marked
@@ -364,7 +361,7 @@ is stamped r{n}; the newest revision is r{m}. Stale.` The checks advise
 and never block: the seat's word to sign or to write stands, whatever
 the count.
 
-🔴 **The signatures.** Each seat signs in its own document, with a row
+🟢 **The signatures.** Each seat signs in its own document, with a row
 that opens `rN: Signed: request half` or `rN: Signed: solution half`,
 written right after the row it signs (ADR 0034). The tree then shows
 that half `done`, by its signer at the revision signed (§9, "Revisions
@@ -379,7 +376,7 @@ The requirements document's:
 | 2026-10-09 | intake | r5: Ready: contract `x` validates ready-green, derived from r3; the PO seat (ann) signed the request half at r3 (r4) |
 ```
 
-🔴 The design document's:
+🟢 The design document's:
 
 ```
 | 2026-10-08 | raj | r2: Measured: the checks before signing, on the solution half: 1 findings (CL008 1); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
@@ -388,14 +385,14 @@ The requirements document's:
 | 2026-10-09 | intake | r5: Ready: contract `x` validates ready-green, derived from r3, against requirements r3; the engineer seat (raj) signed the solution half at r3 (r4) |
 ```
 
-🔴 A write into a document after its seat signed adds a text row, and
+🟢 A write into a document after its seat signed adds a text row, and
 the interview asks that seat to sign again, with a new `Signed:` row
 right after it. The seat's word stands: a seat that declines keeps its
 older signature, and the interview names the revision it covers. A
 requirements run on a finished state reports its paths and the design
 run's command, then offers the way back to a section.
 
-🔴 **What it writes.** A run writes only its own document and its own
+🟢 **What it writes.** A run writes only its own document and its own
 state file. It never writes under `specs/`, never writes a `Ready:` or
 `Parked:` row, and never runs intake. A document at a run's path with no
 state file of that run beside it gets "A document already exists at
@@ -404,7 +401,7 @@ that one alone, as the Google Docs form, and writes that form nowhere. A
 state file at the old `REQUEST_<slug>_*.state.yaml` path is never read: a
 run for that id starts fresh.
 
-🔴 **Intake takes the pair.** `/sdlc intake docs/features/<id>.md` takes
+🟢 **Intake takes the pair.** `/sdlc intake docs/features/<id>.md` takes
 the requirements document's path and finds the design document beside
 it. It stops, with nothing written, on a combined document and on a
 missing design document:
@@ -415,12 +412,12 @@ docs/features/x.md is a combined document through intake. Its contract stands.
 No design document for x. Run the design interview first.
 ```
 
-🔴 A combined document is one that holds a `## Proposed solution`
+🟢 A combined document is one that holds a `## Proposed solution`
 heading. The first message is for one with no `Ready:` row. The second
 is for one with a `Ready:` row: it stays unchanged, and its contract
 validates as before.
 
-🔴 **Intake's refusals** are read on both documents. Intake refuses
+🟢 **Intake's refusals** are read on both documents. Intake refuses
 ready while an OPEN mark stands in either document, a ready check has a
 gap (1 to 8 on the requirements document, 11 to 15 on the design
 document), a check of the requirements document stands in no unit or in
@@ -433,7 +430,7 @@ Check {id} is assigned to units {a} and {b}.
 Unit {id} delivers no check.
 ```
 
-🔴 A refusal parks the pair: intake writes one row in each table,
+🟢 A refusal parks the pair: intake writes one row in each table,
 `r{n}: Parked: {what stands}`, numbered in its own table, and no
 contract. Both rows hold the same list, which names every thing that
 stands, the requirements document's things first. A `Parked:` row
@@ -441,7 +438,7 @@ changes no text: like `Ready:`, `Measured:` and `Signed:` rows, it never
 ages a stamp or the drift mark, never moves the newest revision, and is
 never the row a `Signed:` row signs.
 
-🔴 Intake reads the signatures only when nothing stands. It then stops
+🟢 Intake reads the signatures only when nothing stands. It then stops
 before any contract, writes no row, and reports each case that holds, in
 this order:
 
@@ -451,10 +448,10 @@ The design document has no engineer signature on r5.
 The design names requirements r3; the requirements stand at r5. Stale.
 ```
 
-🔴 The seat signs, or confirms the design, through its own run, and
+🟢 The seat signs, or confirms the design, through its own run, and
 intake runs again.
 
-🔴 On ready, intake writes one contract. It takes the title, the
+🟢 On ready, intake writes one contract. It takes the title, the
 statement, the non-goals, the checks and the terms from the requirements
 document, and the scope, the units, the order and the tests from the
 design document. It copies each unit's `done_means` word for word from
@@ -466,14 +463,14 @@ from r{m}` names its own table's signed text revision. Intake still
 stops without a ratified seat roster, confirms each unit with its seats,
 and holds a contract with a `blocked` dependency at draft.
 
-🔴 **Next step:** a requirements run ends by naming the design run, and a
+🟢 **Next step:** a requirements run ends by naming the design run, and a
 design run ends by naming the command that consumes the pair:
 
 ```
 /sdlc intake docs/features/<id>.md
 ```
 
-🔴 Every prompt file of the skill passes `python -m prompt_lang` and stays
+🟢 Every prompt file of the skill passes `python -m prompt_lang` and stays
 under 12,000 characters, and a structural test in the suite holds the
 shape.
 
@@ -892,7 +889,9 @@ a test the implementer cannot edit.
 > contract `specs/tree-first-level/`, "Gates roll up their features" to
 > "Revisions and halves"; kit 0.18.0,
 > [ADR 0036](decisions/0036-the-appendix-names-the-contract-and-a-unit-row-holds-done.md),
-> contract `specs/feature-document/`, "A parked document").
+> contract `specs/feature-document/`, "A parked document"; kit 0.19.0,
+> [ADR 0037](decisions/0037-a-feature-document-is-a-pair-and-each-document-has-one-seat.md),
+> contract `specs/document-split/`, "A pair of documents").
 
 🟢 `taskcontract tree` prints the repo's work as one tree, computed from
 the kit's files at every run and never stored. It reads the contracts,
@@ -1379,10 +1378,11 @@ apply-discount Apply one discount code per order [doing] stale: document r4, con
 shows within two seconds. The contract records nothing new for this.
 
 🟢 When the request is a feature document at `docs/features/<id>.md`,
-intake adds one row to its revision table once the contract validates
-ready-green: the date, `intake`, and a changes cell that opens
+intake adds one row to each document's revision table once the contract
+validates ready-green: the date, `intake`, and a changes cell that opens
 ``rN: Ready: contract `<id>` validates ready-green, derived from rM``,
-with `rN` the next revision and `rM` the signed revision intake read.
+with `rN` the next revision in that table and `rM` that table's signed
+text revision.
 
 ### Blocked and waiting, named 🟢
 
@@ -1569,10 +1569,12 @@ gates/G0 Planning / Intake [doing]
 
 🟢 Each `.md` file directly under `docs/features/` that has no
 `specs/<id>/contract.yaml` shows as a feature at the first level: a
-**feature before intake**, from its first revision on. A document whose
-table holds no revision shows too. Its id is the file's name without
-`.md`. The features with a contract keep the order of
-`specs/`, and a feature before intake stands among them by its id.
+**feature before intake**, from its first revision on. A design
+document, `<id>.design.md`, is the one exception ("A pair of
+documents"). A document whose table holds no revision shows too. Its id
+is the file's name without `.md`. The features with a contract keep the
+order of `specs/`, and a feature before intake stands among them by its
+id.
 
 🟢 Its plain name is the words of its document's title line, the first
 `# ` line, after the first ` - `. For a title line in the template's
@@ -1635,10 +1637,11 @@ cell before the last, so a row of fewer than three cells signs nothing.
 
 🟢 A feature before intake rolls up its verdicts, but not the inactive
 one, and its halves: it reads `to do` until a seat signs a half, then
-`doing`. G1's feature before intake, with its request half signed:
+`doing`. G1's feature before intake, with its request half signed and
+its design document at r1 ("A pair of documents"):
 
 ```
-g1-requirements-spec Failure points found before development starts [doing] no contract: document r3 doc: docs/features/g1-requirements-spec.md
+g1-requirements-spec Failure points found before development starts [doing] no contract: document r3 design r1 doc: docs/features/g1-requirements-spec.md
   g1-requirements-spec/G0 Planning / Intake [to do]
     g1-requirements-spec/G0/G0.1 Definition-of-ready [to do]
     g1-requirements-spec/G0/G0.2 Vocabulary coverage [to do]
@@ -1666,17 +1669,12 @@ file: docs/features/g1-requirements-spec.md:6
 
 ### A parked document 🟢
 
-🟢 A `Parked:` row is no text row either: intake writes it when it parks
-a document, and it never moves `rN`.
+🟢 A `Parked:` row is no text row either: intake writes one in each
+table when it parks a pair, and it never moves `rN`.
 
-### A pair of documents 🔴
+### A pair of documents 🟢
 
-> 🔴 **Ratified, not shipped** (contract `specs/document-split/`,
-> [ADR 0037](decisions/0037-a-feature-document-is-a-pair-and-each-document-has-one-seat.md);
-> kit 0.19.0). Until the release, the subsections above hold as they
-> read.
-
-🔴 The tree shows a pair before intake as one feature.
+🟢 The tree shows a pair before intake as one feature.
 `docs/features/<id>.design.md` is never a feature of its own, and a
 design document with no requirements document beside it prints nothing.
 The feature's line gains a second mark, the design document's newest
@@ -1694,13 +1692,13 @@ x/solution Solution half [done] by raj at r3
 file: docs/features/x.design.md:6
 ```
 
-🔴 With no design document, a feature prints as kit 0.18.0 prints it:
+🟢 With no design document, a feature prints as kit 0.18.0 prints it:
 one mark, and the solution half from the document's own `Signed:
 solution half` row, else `[to do]`. Once a design document stands, its
 table alone gives the solution half. A design document with no text row
 shows the mark `design: no revision table`.
 
-🔴 For a pair through intake, the drift mark reads each table against
+🟢 For a pair through intake, the drift mark reads each table against
 that table's `Ready:` row. The design's mark reads `stale: design r5,
 contract from r3`, after the requirements document's mark. A combined
 document through intake prints byte for byte as before. Before intake

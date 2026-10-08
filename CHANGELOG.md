@@ -9,6 +9,54 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.19.0 - 2026-10-07 (tag `v0.19.0`)
+
+- **A requirements run writes the requirements document**
+  (`document-split`, ADR 0037, unit `d1-requirements`).
+  `/sdlc:product-specification-interview <id>` asks for a PO seat alone
+  and writes the request half at `docs/features/<id>.md`, with the Terms
+  and the Gherkin, then names the design run as the next command. Delta
+  note: that run no longer asks for an engineer seat, and
+  `templates/feature-document.md.template` is gone, replaced by
+  `requirements-document.md.template` and `design-document.md.template`.
+- **A design run writes the design document** (`document-split`, unit
+  `d2-design`). `/sdlc:product-specification-interview <id> design`
+  reads a signed requirements document, asks for an engineer seat alone
+  and writes the solution half at `docs/features/<id>.design.md`, with
+  its state file at `docs/features/<id>.design.state.yaml`. Its r1 names
+  the requirements revision it stands against, and it asks the four
+  consult cases. Delta note: a design run stops on a combined document;
+  split it by hand first.
+- **Each seat signs in its own document** (`document-split`, unit
+  `d3-signing`). The checks before signing run on that seat's document
+  and state file, and land as a `Measured:` row there; ready check 15
+  reads the four cases. A design run that finds a newer requirements
+  revision asks the engineer seat to confirm the design against it.
+  Delta note: the design document's ready checks are 11 to 15, where
+  0.18.0 read 11 to 14.
+- **The tree shows a pair as one feature** (`document-split`, unit
+  `d4-tree`). A feature's line gains a second mark, the design
+  document's newest text revision, and the solution half reads its
+  signature from the design document. For a pair through intake the
+  drift mark reads each table against its own `Ready:` row. Delta note:
+  none; a feature with no design document prints as 0.18.0 prints it.
+- **Intake reads a pair** (`document-split`, unit `d5-intake`).
+  `/sdlc intake docs/features/<id>.md` takes the requirements document's
+  path and finds the design document beside it. A refusal parks the pair
+  with one `Parked:` row in each table. With nothing standing, intake
+  stops on a missing signature or a stale design, and on ready writes
+  one contract and one `Ready:` row in each table. The engineer seat's
+  checks before signing report a stale design with the message intake
+  prints. Delta note: intake stops with `No design document for {id}.
+  Run the design interview first.` where no design document stands.
+- **The release is written down** (`document-split`, unit `d6-release`).
+  Intake stops, with nothing written, on a combined document: one
+  message for a document with no `Ready:` row, one for a document
+  through intake, whose contract stands. `USAGE.md` reads green
+  throughout. Kit `0.18.0` -> `0.19.0`; the contract schema stays at
+  `1.5.0`. Delta note: a combined document with no `Ready:` row is split
+  by hand into a pair before intake; pin the install ref to the tag.
+
 ## 0.18.0 - 2026-10-02 (tag `v0.18.0`)
 
 - **The interview writes the ratified format** (`feature-document`, ADR

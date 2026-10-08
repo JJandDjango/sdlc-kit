@@ -27,7 +27,7 @@ bind inside every flow.
 <context>
 Runs in the consumer repo's Claude Code session; cwd is the repo root.
 {skill-dir} is the directory holding this file:
-  {skill-dir}/flows/opening.md    O1-O6: id, origin, title, seats, materials; the state file from O1 on, the document as r1 at O6
+  {skill-dir}/flows/opening.md    DESIGN READ, DESIGN CONFIRM, O1-O6: a design run's read of the requirements document and its confirmation; id, origin, title, seats, materials; the state file from O1 on, the document as r1 at O6
   {skill-dir}/flows/request.md    Q1-Q15: the request half in order, one question at a time, then Terms and the Gherkin step
   {skill-dir}/flows/solution.md   S1-S12: the design run's sections in order: the solution half, Consult cases, then the record's authored sections
   {skill-dir}/flows/signing.md    P1-P7, E1-E7: the checks before each seat signs its half, then the signature

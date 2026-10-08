@@ -32,8 +32,8 @@ document's revision, both in this mark and in the drift mark of a feature
 with a contract; a feature with a contract shows no halves, and its roll-up
 still reads its units and verdicts but the inactive one (SC3.3, SC4.3).
 
-The fixture repos sit under tmp_path, outside any git repository; two
-tests read the kit's own tree.
+The fixture repos sit under tmp_path, outside any git repository. The
+kit's own tree on G1 is read in tests/test_document_split_g1_pair.py.
 """
 
 from __future__ import annotations
@@ -73,9 +73,6 @@ VERDICT_LINES = [
     "    {fid}/G1/G1.2 Model checking [to do]",
     "    {fid}/G1/G1.3 Criteria completeness + ambiguity review [to do]",
 ]
-
-
-KIT = Path(__file__).resolve().parent.parent
 
 
 @pytest.fixture(autouse=True)
@@ -631,37 +628,6 @@ def test_sc4_3_a_features_roll_up_counts_its_halves_units_and_verdicts_but_the_i
     assert _row(rows, "c-closed/G0")["tag"] == g0
     if "G0" in gates:
         assert _row(rows, "d-closed-red/G0")["tag"] == "failed"
-
-
-# --- the kit's own tree -------------------------------------------------------
-
-def test_sc3_1_the_kits_tree_shows_g1s_halves_and_tree_first_level_unaged(capsys):
-    rows, _, _ = _print(KIT, capsys)
-    marks = _feature(rows, "g1-requirements-spec",
-                     name="Failure points found before development starts", status="doing")
-    assert _has_mark(marks, "no contract: document r3"), marks
-    assert _half(rows, "g1-requirements-spec/request") == (
-        "  g1-requirements-spec/request Request half [done] by user at r3")
-    assert _half(rows, "g1-requirements-spec/solution") == (
-        "  g1-requirements-spec/solution Solution half [to do]")
-    assert _row(rows, "gates/G0")["tag"] == "doing"
-    assert "g1-requirements-spec holds G0 at to do" in _row(rows, "gates/G0")["diagnostics"]
-    # Its r7 is a Signed: row, so its contract matches its document.
-    assert "stale:" not in _row(rows, "tree-first-level")["line"]
-    code, out, _ = _call(["tree", "g1-requirements-spec/request", "--root", str(KIT)], capsys)
-    assert (code, out) == (0, "g1-requirements-spec/request Request half [done] by user at r3\n"
-                              "file: docs/features/g1-requirements-spec.md:6\n")
-
-
-def test_sc3_1_the_pane_on_the_kit_shows_g1s_halves_and_gates_g0_doing():
-    pytest.importorskip("textual")
-    shown = _pane(KIT, ["gates/G0", "g1-requirements-spec/request",
-                        "g1-requirements-spec/solution"])
-    assert shown[0][0].startswith("gates/G0 Planning / Intake [doing]"), shown[0]
-    assert shown[1] == ("request Request half [done] by user at r3",
-                        "docs/features/g1-requirements-spec.md:6 | Request half")
-    assert shown[2] == ("solution Solution half [to do]",
-                        "docs/features/g1-requirements-spec.md:1 | Solution half")
 
 
 # --- the pane -------------------------------------------------------------------

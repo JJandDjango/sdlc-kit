@@ -362,7 +362,8 @@ def test_the_kit_tree_prints_every_contract(capsys):
     top = [rid for depth, rid, _, _ in _rows(out) if depth == 0]
     contracts = sorted(p.parent.name for p in (ROOT / "specs").glob("*/contract.yaml"))
     assert contracts
-    documents = {p.stem for p in (ROOT / "docs" / "features").glob("*.md") if p.is_file()}
+    documents = {p.stem for p in (ROOT / "docs" / "features").glob("*.md")
+                 if p.is_file() and not p.name.endswith(".design.md")}
     assert [rid for rid in top if not rid.startswith("gates/")] == sorted(
         set(contracts) | documents)
     assert "gates/G0" in top

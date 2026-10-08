@@ -16,9 +16,11 @@ directly under docs/features/, a contract's for its revision table and a
 feature before intake's for its title line and its revision table. A file
 there whose name ends `.design.md` is a design document, the second of a
 pair: it is opened once, for its revision table only, and only when its
-requirements document, docs/features/<id>.md, stands beside it. The tree
-prints none of their other words but a signer, reads no other document and
-writes no file.
+requirements document, docs/features/<id>.md, stands beside it. A
+contract's id holds no dot, by the schema's pattern, so no valid contract's
+document ends `.design.md`; a contract folder named `x.design` would still
+read docs/features/x.design.md as its own. The tree prints none of their
+other words but a signer, reads no other document and writes no file.
 
 The gates stand first, at the repository level, each opening first into
 its conditions, the named parts gates.yaml lists in its page's order. A
