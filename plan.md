@@ -71,40 +71,54 @@ after step 8 (the unit stands committed, and Two-Key opens the next
 session). A release unit lost three rounds in session 72 and four in
 session 64.
 
+**Built.** `d6-release` stands as two commits, `e4ac931` and `2c66f4b`,
+Two-Key PASS round 1. The receipts read green at the clean commit:
+SC4.3 at 10 tests, the unit's 28 tests, the whole suite at 1062 passed
+in a scratch venv, `prompt_lang` on both skill folders, `validate
+--profile ready` on this contract and on the three combined documents'
+contracts, `scope-check` against `204b671`, and `lang-check`. Manual
+receipt one holds, in `RECEIPT_document-split-d6_2026-10-07/`: a design
+run from `e4ac931` wrote G1's design document as r1 against
+requirements r3, in three turns, and changed no other file. The same
+install through `uv`, run against `2c66f4b`, reads 0.19.0. The drafter
+ran once (199K tokens), the developer once (66K), Two-Key once (281K).
+`flows/intake.md` stands at 11,504 of 12,000 characters. The session
+did not need its boundary through step 10.
+
 ## Steps
 
-1. Open. Branch `session-83-document-split-d6` from `204b671`; this
+1. ~~Open.~~ Branch `session-83-document-split-d6` from `204b671`; this
    plan, committed on the user's word. A scratch venv for the suite and
    the form validator, by `STATE.md`'s two recipes.
-2. d6, the release text. Claude reads each page the unit changes end to
+2. ~~d6, the release text.~~ Claude reads each page the unit changes end to
    end against the code (USAGE's sections under red marks, `MAP.md`'s
    three rows, the G0 page, the six advisories' sites), then shows the
    text in chat, before and after: the banner, the `CHANGELOG.md`
    entry, the rows, the title sentence and the sweep's fixes. The user
    approves it as one decision. Any USAGE sentence that narrows a
    contract sentence is flagged there.
-3. d6, draft. `spec-channel-drafter.js` drafts the test list for SC4.3
+3. ~~d6, draft.~~ `spec-channel-drafter.js` drafts the test list for SC4.3
    and pins the approved text; its prototype is a scratch copy of the
    files the unit changes, with a stand-in design document for G1. The
    version is pinned as a floor.
-4. d6, retire. The session overlays the prototype on a scratch
+4. ~~d6, retire.~~ The session overlays the prototype on a scratch
    worktree, runs the whole suite there and names the failing tests and
    their modules; `test-retirer.js` with `overlay` runs only those
    modules.
-5. d6, approve the list and prove red. Each fixed detail checked
+5. ~~d6, approve the list and prove red.~~ Each fixed detail checked
    against the contract, the feature document, its Constraints, USAGE's
    text and the ratified terms under `specs/vocabulary/`; the two
    messages word for word; caps pinned against free text with line
    breaks; session labels stripped; then `progress run SC4.3 --expect
    red`, the command run alone first.
-6. d6, green. `unit-developer.js` writes `intake.md`'s two refusals from
+6. ~~d6, green.~~ `unit-developer.js` writes `intake.md`'s two refusals from
    the interface note; the session types the approved text and the two
    versions. Claude runs the suite, `prompt_lang` and the size cap
    after each round, and reads the developer's free wording against
    each step it touches and against every path of the flow.
-7. d6, commit A. Commit with the `Contract:` trailer; the suite green
+7. ~~d6, commit A.~~ Commit with the `Contract:` trailer; the suite green
    at the clean commit.
-8. d6, the design run for G1 (manual receipt one) and commit B. Two
+8. ~~d6, the design run for G1 (manual receipt one) and commit B.~~ Two
    worktrees at commit A, outside Claude Code's temp tree; the run goes
    through its opening on the user's answers, and no spawn opens a
    window. The session checks the requirements document byte for byte,
@@ -112,10 +126,10 @@ session 64.
    and to untracked `RECEIPT_document-split-d6_2026-10-07/`, adds the
    held tests, and commits B. Then SC4.3 green at the clean commit,
    `ready-green`, `scope-green` against `204b671`, and `lang-green`.
-9. d6, the install before the tag. USAGE's `uv` line run against commit
+9. ~~d6, the install before the tag.~~ USAGE's `uv` line run against commit
    B through a `git+file` address, with `python -P`; its text goes to
    Two-Key as a focus pointer.
-10. d6, Two-Key. `two-key-unit-verifier.js` with `sweep: true`, both
+10. ~~d6, Two-Key.~~ `two-key-unit-verifier.js` with `sweep: true`, both
     receipts' text as focus pointers that say the grader reads and the
     receipts key runs; `progress done` on PASS. A failed round is
     `progress block`, a fix, and `start` again, three rounds at most.
@@ -138,7 +152,31 @@ run; (4) the push and the PR; (5) the merge; (6) the tag; (7) the
 self-pin's merge. Claude's, on review: (8) the test list, with its
 retirements and amendments; (9) the unit's two commits.
 
+As it went, through step 10: five of the nine. (1) The user approved
+this plan and its commit, `b593053`. (2) The user approved the release
+text as twelve deltas. (3) The user gave the opening's answers:
+engineer seat `user`, no material. Claude's, on review: (8) the test
+list, 28 tests in two files, with four one-string amendments in the
+first commit and, in the second, two tests replaced and two amended by
+one condition; (9) the unit's two commits. Three things differed from
+the plan. Delta 12 shrank on two signed sources, each told to the user:
+the stale message keeps its letters, since the feature document lists
+it verbatim, and I8 keeps "a parked document", a ratified term.
+`test-retirer.js` did not run: the whole suite on the prototype named
+every older test, and each was a replacement or a one-line change. The
+combined read stands before I2's four parts with no label, not inside
+DESIGN, since an older test pins DESIGN's opening words. Decisions (4)
+to (7) wait on the user's word.
+
 Deferred, not this session:
+- Two-Key's advisories, all wording, none blocking: USAGE's "Intake
+  copies it from the feature document's title line" beside the G0
+  page's new words (`USAGE.md:1324`); "Drift from the feature document"
+  carries no pointer to "A pair of documents" for the design's mark
+  (`USAGE.md:1341`, `1368`); I2 says "in four parts" and then "First,
+  before the four parts"; G1's copied term "Ready check" still says 14
+  questions, which G1's PO seat amends through a requirements run
+  before G1's intake.
 - Whether combined documents are in flight on the second machine: not
   known. After `d6`'s merge a combined document with no `Ready:` row
   meets its own message there, so the question closes with the merge.
