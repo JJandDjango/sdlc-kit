@@ -42,34 +42,58 @@ opens the next session.
 
 ## Steps
 
-1. Open. Branch `session-87-g1-intake` from `04e65c8`; this plan,
-   committed on the user's word.
-2. The plugin. Read at resume: the cache holds `863506491ca9`, and
+1. ~~Open.~~ Branch `session-87-g1-intake` from `04e65c8`; this plan,
+   committed on the user's word (`d1442b7`).
+2. ~~The plugin.~~ Read at resume: the cache holds `863506491ca9`, and
    `git diff --stat v0.19.0 HEAD -- skills/` prints nothing, so the
    installed flows are 0.19.0's.
-3. The language door, on a draft. A scratch script builds the lexicon
-   with the 89 ratified terms and runs `check_contract` on a draft
-   contract outside `specs/`, built from the state files' `answers`.
-   Its findings (r5's measure: 79 unknown words, 12 sentences over the
-   cap) are rewritten there in the contract's wording until it reads
-   zero.
-4. Intake. `/sdlc:sdlc intake docs/features/g1-requirements-spec.md`
+3. ~~The language door, on a draft.~~ A scratch script builds the
+   lexicon with the 89 ratified terms and runs `check_contract` on a
+   draft contract outside `specs/`, built from the state files'
+   `answers`. Its findings (r5's measure: 79 unknown words, 12
+   sentences over the cap) are rewritten there in the contract's
+   wording until it reads zero.
+4. ~~Intake.~~ `/sdlc:sdlc intake docs/features/g1-requirements-spec.md`
    through the installed plugin: I1 the seat roster, I2 the read of
    both documents (a stop or a park here writes nothing under
    `specs/`), I3 the scaffold, the seats' confirmations in one batch,
    I6 the write, I7 the loop to ready-green, and the `Ready:` rows it
-   writes. Then its own commit, with the `Contract:` trailer.
-5. Receipts. `validate --profile ready` on the contract, `vocab-check`,
-   `lang-check`, `scope-check --base 04e65c8`, `taskcontract tree`
-   showing `gates/G0` done and `g1-requirements-spec` with a ready
-   contract, and the whole suite under the system Python, each read
-   from its output.
-6. The work's close. The push, the PR and the merge, on the user's
-   word after CI reads green.
-7. The wrap, after the merge. `STATE.md` regenerated, this plan struck
-   and the memory index updated on a new branch off main, in a
+   writes. Then its own commit, with the `Contract:` trailer
+   (`84e64c0`).
+5. ~~Receipts.~~ `validate --profile ready` on the contract,
+   `vocab-check`, `lang-check`, `scope-check --base 04e65c8`,
+   `taskcontract tree` showing `gates/G0` done and
+   `g1-requirements-spec` with a ready contract, and the whole suite
+   under the system Python, each read from its output.
+6. ~~The work's close.~~ The push, the PR and the merge, on the user's
+   word after CI reads green (PR #104, on main at `fe8bd7b`).
+7. ~~The wrap, after the merge.~~ `STATE.md` regenerated, this plan
+   struck and the memory index updated on a new branch off main, in a
    wrap-only PR that names the work's merge commit; merged on the
    user's word.
+
+Decisions this session: four planned, all the user's, in four replies
+before the wrap. (1) The deliverable and this plan, with its commit;
+(2) the readback in one reply: six units kept, the three plan answers,
+`user` for both seats, 38 entities, the wording with its five readings,
+and intake's commit; (3) the push and the PR, then the merge after CI
+read green; (4) the wrap's commit, its PR and its merge.
+
+As it went. Step 3: the requirements document was written by hand and
+holds no state file, so the draft was written from the pair, never
+built from `answers`. `tools/door.py` ran `check_contract` on it: a
+first rewrite read 66 findings, all CL006, and the second read 0, with
+each `done_means` at zero as signed. Step 4: I2 found nothing standing
+and no stop. The draft went onto the scaffold with `cp`, byte for
+byte, and `validate` read ready-green on the loop's first run once
+`confirmed_by` stood. The rows are r8 in the requirements document and
+r7 in the design document. Step 5, at `84e64c0`: every receipt green,
+and the whole suite at 1058 passed in 194 seconds. Step 6: the first
+CI watch ended `no checks reported`, and the second read `contracts`
+and `test` green. No test changed, and no agent ran.
+
+**Closed.** The deliverable is met: `specs/g1-requirements-spec/contract.yaml`
+stands at ready on main at `fe8bd7b` (PR #104, merged 2026-10-08).
 
 Deferred, not this session:
 - The build, `s1-lint` to `s6-release`, as kit 0.20.0. `s1-lint` opens

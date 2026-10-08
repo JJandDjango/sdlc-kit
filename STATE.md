@@ -2,44 +2,46 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-08 (session 86 end, after the merge: ADR 0038 and
-> G1's terms, 14 ratified and three amended, are on main at `9f2f9dd`,
-> PR #102; G1's intake opens the next session)._
+> _Generated 2026-10-08 (session 87 end, after the merge: G1's contract
+> stands at ready on main at `fe8bd7b`, PR #104; the build opens the
+> next session with `s1-lint`)._
 
 ## Now
 
-- **Session 86 (2026-10-08): ADR 0038 and G1's terms stand, on main at
-  `9f2f9dd`** (PR #102, merged that day on the user's word after CI
-  read green). ADR 0038
-  (`decisions/0038-a-gate-refuses-a-task-and-g1-records-and-declarations-have-homes.md`,
-  `ab38b77`) holds five decisions, each from the signed design: a gate
-  may refuse a task; a gate is active by feature; G1's rules read
-  records in `g1-check`, never in `validate`; G1's records stand in one
-  committed file a feature, `.sdlc/g1/{id}.yaml`; a person writes the
-  two declarations. It amends 0031 for the refusal, and 0031 and 0032
-  for a gate active by feature, where the design names 0031 alone. It
-  closes the deferrals of ADR 0007 and of G1's page.
-- The terms, at `8f9e9ed`. `specs/vocabulary/` holds 89 terms, where it
-  held 75. The 14 of requirements r6 are ratified word for word: 13 of
-  kind `entity`, and Oracle designation a `value-set` of its six
-  values. Three ratified terms took new words, which the user ratified,
-  since no signed text held them. Rule: "or to the records and
-  declarations a gate reads for a feature", with a code "such as
-  `TC003` or `RS201`". Condition: "and, where they read records, from
-  whether everything it needs is present and current", with `G1.2
-  model checking` among its examples. Active gate: "for each feature
-  that file does not list as exempt from it", and "a feature's active
-  ones". Rule keeps "the kit's validator", r6's words for G1's rules.
-  Review is ratified as r6 defines it. The dictionary dropped
-  `component` and `venue`; `venues`, `venue-joins` and `venue-map`
-  stay. The neighbor read of the other 72 terms found none made false.
-- The checks. `vocab-check` reads green at 89 terms, `lang-check`
-  green, the 19 contracts ready-green and `scope-check --base dfab2c6`
-  green. The whole suite read 1058 passed before commit 2 and at the
-  clean commit. No test changed, and no agent ran this session.
-- One step to G1's contract is left:
-  `/sdlc intake docs/features/g1-requirements-spec.md`, which turns the
-  tree's `gates/G0` line `done`.
+- **Session 87 (2026-10-08): G1's contract stands at ready, on main at
+  `fe8bd7b`** (PR #104, merged that day on the user's word after CI
+  read green). Intake under kit 0.19.0 read the pair at r6 and wrote
+  `specs/g1-requirements-spec/contract.yaml` at `84e64c0`: six units,
+  `s1-lint` to `s6-release`, in one line of `depends_on`; 15 checks in
+  15 sketches; six non-goals; 22 scope paths; 38 entities;
+  `confirmed_by: [user]` on each unit. Each `done_means` is the
+  design's, word for word, and each read zero findings. Each document
+  took its `Ready:` row: r8 in the requirements document, r7 in the
+  design document.
+- The wording. The document's own wording measured 91 language
+  findings at requirements r5. A first rewrite, on a draft outside
+  `specs/`, read 66, all CL006, and the contract reads 0. Five readings
+  went to the user, who confirmed each. "Recorded as `doing`" stands
+  for "recorded as started" (SC4.2 and the intent), with "does not yet
+  pass" for "has not passed". A condition "reads `failed`" where the
+  document says a thing "fails" it (SC2.1, SC2.3, SC3.3). The review
+  "covers" for "asks", and "a named human records a signature" for "a
+  named person signs it" (SC1.1, SC1.3). "Its pin" stands for the
+  pinned ruleset and the pinned configuration (SC2.1, SC3.1). The scope
+  leaves out the design's free paths, and the standing line stays in
+  the document only.
+- The receipts, at `84e64c0`. `validate --profile ready` reads
+  ready-green, `vocab-check` green at 89 terms, `lang-check` green and
+  `scope-check --base 04e65c8` green. The tree shows `gates/G0 [done]`,
+  and `g1-requirements-spec [to do]` with G0 `[done]` and G1 `[to do]
+  inactive`. The whole suite read 1058 passed in 194 seconds. No test
+  changed, and no agent ran this session. USAGE's drawing of this
+  feature before intake (`USAGE.md:1640-1655`) is a dated example from
+  here; `s6-release` redraws it.
+- Session 86, in short: ADR 0038 (`ab38b77`) and the terms (`8f9e9ed`:
+  89 terms where the glossary held 75; Rule, Condition and Active gate
+  amended; `component` and `venue` ceded by the dictionary) stand on
+  main at `9f2f9dd` (PR #102). Its Now is at `04e65c8:STATE.md`.
 - Four sentences of the design read stale against r6 and stay, as
   dated records, on the user's word: Risks 7 (no Gherkin block), Links
   out ("at r3"), Interfaces ("6 and 7 are new here"), and the Decisions
@@ -64,8 +66,8 @@
   `tree.md`, `progress.md` and `intake-release.md`, each with change
   sites, pinning tests and design questions by `file:line`. The
   build's drafters read them.
-- The cost the design names: six units over about six sessions, after
-  the terms and intake (the amendment took one session and no agent);
+- The cost the design names: six units over about six sessions (the
+  amendment, the terms and intake took one session each, and no agent);
   3.7 million agent tokens
   at document-split's recorded pace (3,648K over its six units), 4 to 5
   million likely, about 300K more for each lost Two-Key round.
@@ -87,10 +89,10 @@
   The `google_workspace` server failed to connect again (`Connection
   closed`); the cause is not looked into.
 - Carried: kit 0.19.0 stands released, tag `v0.19.0` at `7fe6342`. 20
-  features: 19 with a contract, 18 of them `[done]`;
+  features, each with a contract, 18 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
-  `g1-requirements-spec` before intake, `[doing]`, a pair with both
-  halves signed. Session 85's Now is at `dfab2c6:STATE.md`, with the
+  `g1-requirements-spec` at ready, `[to do]`, with no task started.
+  Session 85's Now is at `dfab2c6:STATE.md`, with the
   amendment in short and the removed test module. Session 84's is at
   `8434a9d:STATE.md`, and session 83's at `8635064:STATE.md`: d6's
   three wording advisories and the second machine's untested plugin
@@ -98,25 +100,28 @@
 
 ## Blockers
 
-- None. Session 86's work is on main at `9f2f9dd` (PR #102). This wrap
-  rides its own PR from branch `session-86-wrap`, and holds `STATE.md`
+- None. Session 87's work is on main at `fe8bd7b` (PR #104). This wrap
+  rides its own PR from branch `session-87-wrap`, and holds `STATE.md`
   and `plan.md` alone.
 
 ## Next actions
 
-Opener: G1's intake, `/sdlc intake
-docs/features/g1-requirements-spec.md`. Its 14 terms stand ratified and
-ADR 0038 is on record, so the contract cites both. The pair holds one
-scenario a check and every check in one unit, both halves signed and
-the design naming r6. Expect about 91 language findings to rewrite in
-the contract's wording (r5's measure: 79 unknown words, 12 sentences
-over the cap); the two CL003 findings went with the ceded words.
-Before `/sdlc:`, check that the installed plugin's `skills/` equal
-`v0.19.0`'s. The method is the standing practice below, "Intake from a
-feature document".
+Opener: G1's build, `s1-lint` first, the first unit of kit 0.20.0. It
+opens with pass zero: USAGE's guide to G1 written under red marks, with
+the red-legend test retired in the same commit
+(`tests/test_document_split_release.py:517-527`), the text and the
+retirement going to the user as one decision. The unit lays the base
+the rest stand on: `taskcontract/g1.py`, the record file, the
+declarations' readers and both commands. Its drafter reads the
+explorers' files in `RECEIPT_g1-requirements-spec-design_2026-10-07/`.
+The design's risk 1 is settled before the test list is approved: a
+live Spectral run on a plain JSON Schema, which needs Spectral
+installed on this machine (prerequisite 8 says Node exists and Spectral
+does not). The methods are the standing practices below: "Pass zero
+for a section a release already shipped", "A code unit's build" and "A
+delegated session".
 
-1. After intake, the build: `s1-lint` first, which opens with pass
-   zero. The pilot's config line, in the engine's session; the engine's
+1. The pilot's config line, in the engine's session; the engine's
    install ref moves to the release that carries G1 (pull, not push).
 
 2. Deferred from 0.18.0's sweep (Two-Key's advisories, rounds 1 to 3),
@@ -546,6 +551,25 @@ feature document".
   words, so the suite read green unchanged, and no page counts the
   terms. `MAP.md` names an ADR beside a component a release built, so
   it waits for the release unit.
+- Intake of a pair written by hand (session 87). The requirements
+  document holds no state file, so the draft contract is written from
+  the pair, outside `specs/`. `tools/door.py <root> <draft> [word ...]`
+  runs `check_contract` on the draft and probes each word after it:
+  one run lists the unknown words, the next probes their substitutes.
+  These read unknown alone: `active` and `inactive` (only "active
+  gate" is a term), `fails`, `failed`, `starts`, `started`, `asks`,
+  `person`, `signs`, `derived`, `installed`, `summary` and `ends`.
+  These are known: `derives`, `install`, `covers`, `human` and
+  `closes`. A status value or a printed word goes in backticks. A
+  plural of a term reads unknown: write "each feature already done, all
+  18". Copy the draft onto the scaffold with `cp`, so the contract is
+  the draft byte for byte. A draft outside the repository validates
+  ready-green with no `confirmed_by`: TC016 showed only once the file
+  stood under `specs/`. The readback is one reply: the decisions
+  counted first, then only the readings that could change what a test
+  pins, with the full text on request. `git diff --no-index --stat`
+  proves the plugin's flow file equal to the repository's. Session 87
+  took four replies from the user and no agent.
 - The form validator on this machine (session 78): put one line,
   `E:/foundations`, in a `foundations.pth` under the scratch venv's
   `Lib/site-packages`, and `pip install tiktoken` there. `python -m
