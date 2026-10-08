@@ -32,8 +32,7 @@ document's revision, both in this mark and in the drift mark of a feature
 with a contract; a feature with a contract shows no halves, and its roll-up
 still reads its units and verdicts but the inactive one (SC3.3, SC4.3).
 
-The fixture repos sit under tmp_path, outside any git repository. The
-kit's own tree on G1 is read in tests/test_document_split_g1_pair.py.
+The fixture repos sit under tmp_path, outside any git repository.
 """
 
 from __future__ import annotations

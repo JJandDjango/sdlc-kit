@@ -3,7 +3,7 @@ id: g1-requirements-spec
 started: 2026-10-07
 phase: output
 next: W1
-requirements_revision: r3
+requirements_revision: r6
 origin: feature
 title: "Failure points found before development starts"
 seats:
@@ -33,11 +33,9 @@ answers:
     - name: Oracle designation
       definition: "how a component's generated inputs are judged: differential, fuzz, property-only, concurrency, soak, or none with a reason."
     - name: Review
-      definition: a person's pass over G1.3's 11 items against a feature document at one revision, signed with the seat and revision.
+      definition: a person's pass over G1.3's 11 items against a feature document, at the revision of each document its contract was derived from, signed with the seat and those revisions.
     - name: Venue
       definition: where and when a gate runs.
-    - name: Ready check
-      definition: one of the 14 questions a feature document answers before intake reads it ready (ADRs 0029 and 0033).
     - name: Two-Key
       definition: the independent verifier's grade of one unit, PASS or FAIL.
   scope:

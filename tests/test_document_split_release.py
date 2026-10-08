@@ -11,8 +11,7 @@ G0 page's title row, the sentences that name a design run's opening, the
 stale message's two letters glossed in each flow that words it, one
 sentence of the tree's docstring, and the two version numbers.
 
-Nothing here reads G1's documents or USAGE's drawing of G1:
-tests/test_document_split_g1_pair.py holds those.
+Nothing here reads G1's documents or USAGE's drawing of G1.
 
 A sentence is matched with each whitespace run folded to one space, and a
 page's quote marks dropped, so a file may wrap its lines; a section is cut
