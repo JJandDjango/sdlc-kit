@@ -2,13 +2,15 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-08 (session 86 end: ADR 0038 stands at `ab38b77`
-> and G1's terms at `8f9e9ed`, 14 ratified and three amended; G1's
-> intake opens the next session)._
+> _Generated 2026-10-08 (session 86 end, after the merge: ADR 0038 and
+> G1's terms, 14 ratified and three amended, are on main at `9f2f9dd`,
+> PR #102; G1's intake opens the next session)._
 
 ## Now
 
-- **Session 86 (2026-10-08): ADR 0038 and G1's terms stand.** ADR 0038
+- **Session 86 (2026-10-08): ADR 0038 and G1's terms stand, on main at
+  `9f2f9dd`** (PR #102, merged that day on the user's word after CI
+  read green). ADR 0038
   (`decisions/0038-a-gate-refuses-a-task-and-g1-records-and-declarations-have-homes.md`,
   `ab38b77`) holds five decisions, each from the signed design: a gate
   may refuse a task; a gate is active by feature; G1's rules read
@@ -96,8 +98,9 @@
 
 ## Blockers
 
-- None. Session 86's commits reach main through one PR from branch
-  `session-86-g1-terms`, merged on the user's word.
+- None. Session 86's work is on main at `9f2f9dd` (PR #102). This wrap
+  rides its own PR from branch `session-86-wrap`, and holds `STATE.md`
+  and `plan.md` alone.
 
 ## Next actions
 
@@ -219,9 +222,16 @@ feature document".
   the interview's materials step reads the file when the idea becomes a
   feature. Before filing it, grep `docs/gates.md` and the gate pages for
   what the kit already holds (session 73).
-- A wrap written before its own PR merges words its Blockers line so it
-  stays true after the merge: sessions 71 and 72 each left a line the
-  next resume had to correct.
+- The wrap follows the merge (the user, 2026-10-08). The work PR merges
+  first, on the user's word after CI. Then `STATE.md`, `plan.md` and the
+  memory index are written on a new branch off main and ride a
+  wrap-only PR, merged on the user's word. So the wrap names the work's
+  merge commit and its PR as facts, and its Blockers line names only the
+  wrap's own branch. A plan's close is two steps: the push, the PR and
+  the merge of the work; then the wrap in its own PR. A wrap committed
+  inside the work PR could not name the merge: sessions 71 and 72 left
+  a line the next resume corrected, session 84's said the PR waited,
+  and session 86's resume read git to learn that PR #101 had merged.
 - Intake from a feature document: ratify its new terms first, in their
   own commit, with any ADR the document's prerequisites name. A term
   whose single-word name or slug equals a dictionary word trips CL003;
@@ -553,9 +563,6 @@ feature document".
   -q` in the background. `lang-check` prints about 130 exempt lines
   before its last one: run it in the background and grep the output for
   `lang-green`.
-- A session that ends at the plan's boundary (session 76): its commits
-  land through the session's PR, and the wrap rides its own PR from a
-  new branch off main.
 - `scope-check` outside Actions needs `--base <sha>`: main's tip.
 - Attribution is off: a commit's final paragraph is `Contract:` alone, and
   a PR body ends at its last sentence.
