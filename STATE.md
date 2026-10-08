@@ -2,22 +2,50 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-07 (session 84 end: G1's design document is signed
-> at r3, at `cb56c87`; the PO seat's amendment of G1's requirements
-> opens the next session)._
+> _Generated 2026-10-08 (session 85 end: G1's requirements document is
+> amended and signed at r6, at `fb67328`, and its design confirmed and
+> signed again, at `c402782`; the terms and ADR 0038 open the next
+> session)._
 
 ## Now
 
-- **Session 84 (2026-10-07): G1's design document is written and
-  signed.** `docs/features/g1-requirements-spec.design.md` holds its
-  twelve sections, signed at r3 by its r4 row, against requirements r3,
-  at `cb56c87`. A design run on kit 0.19.0's flows wrote it from S1 to
-  E7, the user answering in five batches of proposed text; the run
-  pauses at W1. The checks before signing read 3 findings, each on a
-  term copied from the requirements (`component`, `venue`, `ready
-  check`) and each answered under Decisions; Scope covered; ready
-  checks 11 to 15 with no gap. The requirements document keeps every
-  byte.
+- **Session 85 (2026-10-08): G1's requirements document is amended and
+  signed, and its design confirmed.**
+  `docs/features/g1-requirements-spec.md` took the PO seat's amendment
+  by hand, at `fb67328`: r5 is the `Measured:` row (93 findings: CL003
+  2, CL006 79, CL008 12; ready checks 1 to 8 with no gap), r6 the text
+  row, r7 the signature. The design took `r5: Confirmed against
+  requirements r6` and `r6: Signed: solution half` through DESIGN
+  CONFIRM, at `c402782`; its run pauses at W1. The tree reads `document
+  r6 design r5`, with both halves `done`.
+- The amendment, in short. The counts read 18 features done and 15
+  ready checks, and Description's `gates/G0` case is a dated record of
+  kit 0.16.0. The design's four calls stand in the PO seat's words:
+  messages 6 and 7; intake names G1 only where G1 is active for the
+  feature (SC4, SC4.1); the refusal covers a start, and a done on a
+  task, a unit or a contract (SC4.2); a review names one revision for
+  each document of a pair (SC1.1, SC5.3, the Review term). Six checks
+  changed their words: SC1.1, SC1.3, SC4.1, SC4.2, SC5.2 and SC5.3. The
+  Appendix holds 15 Gherkin scenarios, one a check, tagged `derived
+  from r6`. Ready check left the terms to ratify, where 14 remain, and
+  Check maps to its own ratified term. The document took ADR 0037's
+  shape: one seat on the status line and in the Decisions tag, no line
+  between halves, a Notes section.
+- Two of the three steps to G1's intake are done. The third is the
+  terms and ADR 0038 in their own commit, then intake, which turns the
+  tree's `gates/G0` line `done`.
+- Four sentences of the design read stale against r6 and stay, as
+  dated records, on the user's word: Risks 7 (no Gherkin block), Links
+  out ("at r3"), Interfaces ("6 and 7 are new here"), and the Decisions
+  entry that counts Review among four ratified terms to amend. Review
+  was never ratified, and r6's definition names both revisions: intake
+  amends three terms (Rule, Condition, Active gate) and ratifies Review
+  as written.
+- The tests. `tests/test_document_split_g1_pair.py` is gone: its last
+  test held the requirements document's sha256. The session removed the
+  file with `git rm`, since `test-retirer.js` cannot delete one, and two
+  docstrings that named the module lost that sentence. The whole suite
+  reads 1058 passed. No agent ran this session.
 - The design, in short. G1's rules run in a new subcommand, `g1-check`,
   never inside `validate`, with six `RS` codes, each one message.
   `g1-record` runs the repository's pinned tool and writes a committed
@@ -26,26 +54,10 @@
   `.sdlc/config.yaml` are the declarations, each written by a person. A
   `g1.exempt` list keeps the features done inactive. `progress start`
   and `progress done` refuse until G1 passes. Six units, `s1-lint` to
-  `s6-release`, as kit 0.20.0. The 13 shape calls stand in `plan.md`
-  and under the document's Decisions.
-- Three steps lead to G1's intake, which turns the tree's `gates/G0`
-  line `done`. The first is done. The second is the PO seat's amendment
-  of the requirements document: the three stale facts (15 features done
-  where 18 are, 14 ready checks where 15 are, the `gates/G0` line as
-  0.16.0 printed it); the four calls that go past r3 (messages 6 and 7,
-  I9's condition, the refusal on `done` and on a contract's close, a
-  review that names two revisions); the Review and Ready check terms;
-  and one Gherkin scenario for each of the 15 checks. The engineer seat
-  then confirms the design against the new revision and signs again.
-  The third is the terms and ADR 0038 in their own commit, then intake.
-- The tests. Three tests of `tests/test_document_split_g1_pair.py`
-  retired at the signature, through `test-retirer.js` on that module
-  alone: the tree's line, the pane's line and USAGE's drawing of G1's
-  pair. The fourth, which holds the requirements document's sha256,
-  breaks at the PO seat's amendment and retires then. USAGE's drawing
-  of G1 (`USAGE.md:1644`) stays as a dated example with no test behind
-  it, on the user's decision; `s6-release` redraws it. The whole suite
-  reads 1059 passed.
+  `s6-release`, as kit 0.20.0. The 13 shape calls stand under the
+  document's Decisions and in `8434a9d:plan.md`. USAGE's drawing of G1
+  (`USAGE.md:1644`) stays as a dated example with no test behind it, on
+  the user's decision; `s6-release` redraws it.
 - The explorers. Four read-only agents mapped the kit for the design
   (897K tokens). Their files stand in untracked
   `RECEIPT_g1-requirements-spec-design_2026-10-07/`: `rules.md`,
@@ -53,7 +65,8 @@
   sites, pinning tests and design questions by `file:line`. The
   build's drafters read them.
 - The cost the design names: six units over about six sessions, after
-  two to three for the amendment and intake; 3.7 million agent tokens
+  the terms and intake (the amendment took one session and no agent);
+  3.7 million agent tokens
   at document-split's recorded pace (3,648K over its six units), 4 to 5
   million likely, about 300K more for each lost Two-Key round.
 - Two kit gaps found, both parked. A design run's opening fixes no
@@ -67,8 +80,8 @@
   for it, or features not done printed first, is a feature of its own.
 - This machine: the `sdlc` plugin sits at `8635064`, its `skills/`
   equal to `v0.19.0`'s, so `/sdlc:` runs 0.19.0's flows. The whole
-  suite ran under the system Python (3.14.2) for the first time, with
-  no scratch venv: 1059 passed in three minutes. No Python here holds
+  suite runs under the system Python (3.14.2), with no scratch venv:
+  1058 passed in three minutes. No Python here holds
   `prompt_lang`. `uv` 0.12.23 runs by its full path,
   `C:/Users/hyden/AppData/Local/Microsoft/WinGet/Packages/astral-sh.uv_Microsoft.Winget.Source_8wekyb3d8bbwe/uv.exe`.
   The `google_workspace` server failed to connect again (`Connection
@@ -77,40 +90,36 @@
   features: 19 with a contract, 18 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
   `g1-requirements-spec` before intake, `[doing]`, a pair with both
-  halves signed. Session 83's Now is at `8635064:STATE.md`: d6's three
-  wording advisories and the second machine's untested plugin update
-  stand as they read there.
+  halves signed. Session 84's Now is at `8434a9d:STATE.md`, and session
+  83's at `8635064:STATE.md`: d6's three wording advisories and the
+  second machine's untested plugin update stand as they read there.
 
 ## Blockers
 
-- None. `cb56c87` and this file's commit ride one PR from branch
-  `session-84-g1-design`; its merge is on the user's word.
+- None. Session 85's commits reach main through one PR from branch
+  `session-85-g1-amendment`, merged on the user's word.
 
 ## Next actions
 
-Opener: the PO seat's amendment of G1's requirements document, the
-second of three steps to G1's intake. First decide how: the document
-was written by hand and has no state file, so a requirements run starts
-none for it; the standing practice is a hand amendment, a text row and
-a `Signed: request half` row. The amendment carries the list under Now,
-and its Gherkin block needs one scenario for each of the 15 checks. It
-changes the document's bytes, so the last test of
-`tests/test_document_split_g1_pair.py` retires with it. Then the
-engineer seat confirms: `/sdlc:product-specification-interview
-g1-requirements-spec design` runs DESIGN CONFIRM, writes `Confirmed
-against requirements r{m}` and asks for the signature again.
+Opener: G1's intake, the third of three steps. First the terms and ADR
+0038 in their own commit. Requirements r6 holds 14 terms to ratify
+(Failure point, Development, Boundary schema, Hard core, Model, Linter,
+Checker, Pin, Component, Component declaration record, Oracle
+designation, Review, Venue, Two-Key); the dictionary cedes `component`
+and `venue` in that commit (CL003). Three ratified terms are amended:
+Rule and Condition, for rules that read records, and Active gate, for
+a feature's exemption. Review is ratified as r6 defines it, never
+amended. ADR 0038 amends ADR 0031's "shown and never enforced" for the
+refusal and fixes the homes of the records and the declarations. Then
+`/sdlc intake docs/features/g1-requirements-spec.md`: the pair holds
+one scenario a check and every check in one unit, both halves signed
+and the design naming r6. Expect about 91 language findings to rewrite
+in the contract's wording (r5's measure: 79 unknown words, 12 sentences
+over the cap).
 
-1. G1's intake, after the amendment. The terms in their own commit: the
-   new terms, with `component` and `venue` ceded by the dictionary and
-   `ready check` mapped to the ratified term, and amendments to Rule,
-   Condition, Active gate and Review. ADR 0038 rides that commit: it
-   amends ADR 0031's "shown and never enforced" for the refusal and
-   fixes the homes of the records and the declarations. Then `/sdlc
-   intake docs/features/g1-requirements-spec.md`: the pair needs one
-   scenario per check and every check in one unit, or it parks. Then
-   the build, `s1-lint` first, which opens with pass zero. The pilot's
-   config line, in the engine's session; the engine's install ref moves
-   to the release that carries G1 (pull, not push).
+1. After intake, the build: `s1-lint` first, which opens with pass
+   zero. The pilot's config line, in the engine's session; the engine's
+   install ref moves to the release that carries G1 (pull, not push).
 
 2. Deferred from 0.18.0's sweep (Two-Key's advisories, rounds 1 to 3),
    each a change of behavior or a sentence a test pins word for word.
@@ -500,6 +509,24 @@ against requirements r{m}` and asks for the signature again.
   the session quoted two counts wrong. Source a cost from the recorded
   figures and show the basis. Tokens: explorers 897K, retirer 62K; the
   session closed near 40% of a 1M context.
+- A hand amendment of a signed requirements document (session 85).
+  Measure first, with no agent: the tree, the counts, the design's
+  words for each call, ADR 0037's shape, and intake's I2 against the
+  document. Two batches: the changed sentences, before and after, then
+  the Gherkin, where every fact of a scenario comes from its check (the
+  interview's Q15). The checks before signing run through `lang-check
+  --draft` on a scratch state file that a script builds from the
+  document: the statement, the non-goals, the checks and the new terms.
+  Three rows follow: `Measured:`, the text row, `Signed:`; the Gherkin
+  tag names the text row. The text row says what changed, since DESIGN
+  CONFIRM shows it to the engineer seat. Start the design run while the
+  suite runs: DESIGN CONFIRM writes nothing before the seat's answer.
+  Before the seat answers, read the design against the new revision
+  and name each sentence that reads stale. Write the state file's new
+  copy of the terms as the list. Grep `tests/` for a removed module's
+  name: two docstrings named it. Run `lang-check` in the background and
+  grep for `lang-green`: run in the session, its 130 lines land in the
+  context.
 - The form validator on this machine (session 78): put one line,
   `E:/foundations`, in a `foundations.pth` under the scratch venv's
   `Lib/site-packages`, and `pip install tiktoken` there. `python -m
@@ -510,7 +537,7 @@ against requirements r{m}` and asks for the signature again.
   can end `no checks reported`, so watch again.
 - The suite on this machine: since session 81 the system Python 3.14
   holds `textual`, so `python -P -m pytest tests -q` runs under it:
-  session 84 saw it green, 1059 passed in three minutes. A scratch venv
+  session 85 saw it green, 1058 passed in three minutes. A scratch venv
   is needed only for the form validator (session 76): `py -3.14 -m venv <scratch>/venv`, then that venv's
   `python -m pip install "textual>=8.2,<9" "pytest>=8"
   "jsonschema>=4.18" "PyYAML>=6"`, then its `python -P -m pytest tests
@@ -560,10 +587,6 @@ against requirements r{m}` and asks for the signature again.
   tested, and whether that machine holds a combined document with no
   `Ready:` row is not known. Such a document now meets its own message
   there and is split by hand.
-- G1's requirements document was written by hand and has no state
-  file, and its copied term "Ready check" says 14 questions. Does a
-  requirements run take a document it did not start, or does the PO
-  seat amend G1's by hand before its intake?
 - A pair through intake whose design table holds no `Ready:` row prints
   no mark for the design: the `drift-mark` term and USAGE name one
   drift mark for a design, the stale one. Add `design: no "Ready:" row`
