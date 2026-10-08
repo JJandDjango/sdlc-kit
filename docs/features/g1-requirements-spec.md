@@ -4,10 +4,13 @@
 | 2026-09-27 | user | r2: Measured: ADR 0033's checks before signing, on the request half, run by Claude on the user's word: no new term clashes with a ratified term; `component` and `venue` trip CL003, and the dictionary cedes both at intake; lang-check's contract rules find 86 in the text intake copies (76 unknown words, 10 sentences over the cap), each left to intake's rewrite of the contract's wording |
 | 2026-09-27 | user | r3: The request half finished in kit session 58: the terms (Q9), ADR 0033's checks before signing (r2), ready checks 1 to 8 read back with two fixes (message 5 for SC1.2; SC1.1's review tied to the revision its contract was derived from); typed by Claude on the user's word. Signed by the PO seat (user) |
 | 2026-09-28 | user | r4: Signed: request half. The PO seat's r3 signature, restated in the form ADR 0034 fixes; typed by Claude on the user's word |
+| 2026-10-08 | user | r5: Measured: the checks before signing, on the request half: 93 findings (CL003 2, CL006 79, CL008 12); ready checks 1 to 8: 0 OPEN |
+| 2026-10-08 | user | r6: Amended by hand in kit session 85, after the design's signature: the counts of features done (18) and of ready checks (15); the gates/G0 case dated; messages 6 and 7; G1 named at intake only where it is active (SC4, SC4.1); the refusal on done and on a contract's close (SC4.2); a review's two revisions (SC1.1, SC5.3, Review); Ready check and Check mapped to their ratified terms; ADR 0037's shape (one seat in the status line and the Decisions tag, no line between halves, Notes); the Gherkin block, 15 scenarios; typed by Claude on the user's word |
+| 2026-10-08 | user | r7: Signed: request half. The PO seat signs r6 |
 
 # g1-requirements-spec - Failure points found before development starts
 
-`sdlc_development_kit` · seats: PO user, engineer user · contract:
+`sdlc_development_kit` · seat: PO user · contract:
 `g1-requirements-spec`, draft · PR: none · merge SHA: none
 
 ## Statement
@@ -34,12 +37,13 @@ after it ships. Three cases:
 - The pilot's M0 document says in its intent that the engine selects the
   RT-capable device, and in SC3.2 that it prefers one. Both wordings
   stand in the ready document (the engine's `PILOT-NOTES.md`).
-- After project-tree shipped in kit 0.16.0, the pane's top item reads
-  `gates/G0 Planning / Intake [to do] (3 items: 3 to do)`, although G0 is
-  finished on the kit's 15 features done. The document never said what that
-  line's status comes from: it holds only the findings filed against G0,
-  so with none filed it reads `to do` whatever each feature's own G0
-  verdict reads.
+- After project-tree shipped in kit 0.16.0, the pane's top item read
+  `gates/G0 Planning / Intake [to do] (3 items: 3 to do)`, although G0
+  was finished on the kit's 15 features then done (measured 2026-09-27).
+  The document never said what that line's status comes from: it held
+  only the findings filed against G0, so with none filed it read `to do`
+  whatever each feature's own G0 verdict read. Kit 0.17.0 has since made
+  the line a roll-up.
 
 With G1, failure points like these are found before development starts,
 and the document is fixed before any code is written.
@@ -68,8 +72,9 @@ after its G0, with its three conditions `to do`. Intake's last step (I9,
 `skills/sdlc/flows/intake.md:33`) reports the contract ready-green and
 says "Development starts only from green", naming no next step; the pilot
 filed this as `intake-exit-names-no-successor-venue` (2026-09-20, kit
-0.13.0). The feature document's ready checks, 1 to 14, already ask part
-of G1.3's checklist in the interview and at intake (ADRs 0029 and 0033).
+0.13.0). The feature document's ready checks, 1 to 15, already ask part
+of G1.3's checklist in the interview and at intake (ADRs 0029, 0033 and
+0037).
 The pilot's M0 code waits for G1's review (the engine's `plan.md`).
 
 ### Existing behavior touched
@@ -83,9 +88,9 @@ Each entry gets a regression check under Acceptance criteria.
    draft-green otherwise, `failed` when draft-red.
 3. The tree shows each feature's active gates, then the next gate in the
    kit's order marked inactive (project-tree SC2.1).
-4. The feature document's ready checks 1 to 14 are asked in the
-   interview, advisory there, and at intake, hard there (ADRs 0029 and
-   0033).
+4. The feature document's ready checks 1 to 15 are asked in the
+   interview, advisory there, and at intake, hard there (ADRs 0029, 0033
+   and 0037).
 
 ## Success criteria
 
@@ -98,8 +103,9 @@ Each entry gets a regression check under Acceptance criteria.
    changes lints clean, and a feature with none passes.
 3. SC3: Before development starts, every hard core a feature touches has a
    model its checker passes, and a feature with none passes.
-4. SC4: Intake's report names G1 as the next step, and a feature's
-   development starts only once its G1 passes.
+4. SC4: Where G1 is active for a feature, intake's report names G1 as
+   the next step, and the feature's development starts only once its G1
+   passes.
 5. SC5: The tree shows each feature's G1 conditions with their status and
    their diagnostics.
 
@@ -114,11 +120,12 @@ Each entry gets a regression check under Acceptance criteria.
   person signs it.
 - No bundled tools: the kit ships no linter or model checker; Spectral,
   `buf`, TLC and P are the consumer's to install and pin.
-- No retroactive review: the 15 features already done get no G1 review,
+- No retroactive review: the 18 features already done get no G1 review,
   and their G1 reads inactive, as today.
 - Not G2.5: the red run of the acceptance tests stays G2's, though the
   pilot's finding proposed it as intake's next step.
-- Not the tree's `gates/G0` line: its status stays as it reads today.
+- Not the tree's `gates/G0` line: its reading stays as kit 0.17.0
+  computes it.
 
 ## Prerequisites
 
@@ -163,12 +170,12 @@ in that order.
 SC1 The G1.3 review
 
 - SC1.1: verify the review asks each of G1.3's 11 items against the
-  feature's document, and a named person signs it on the revision its
-  contract was derived from
+  feature's documents, and a named person signs it on the revisions its
+  contract was derived from, one for each document of a pair
 - SC1.2: verify each unchecked item shows as a diagnostic under G1.3,
   naming the item and the document's section it concerns, and G1.3 reads
   failed until a later revision's review passes
-- SC1.3: verify ready checks 1 to 14 are still asked in the interview and
+- SC1.3: verify ready checks 1 to 15 are still asked in the interview and
   at intake as today, and the review does not ask them again
 
 SC2 Schema linting
@@ -193,11 +200,12 @@ SC3 Model checking
 
 SC4 G1 before development
 
-- SC4.1: verify intake's report names G1 as the next step, after the
-  contract's path, state, seats and scope summary as today
-- SC4.2: verify no unit's task can be recorded as started while its
-  feature's G1 has not passed, and the refusal prints its message under
-  Error messages
+- SC4.1: verify intake's report names G1 as the next step where G1 is
+  active for the feature, after the contract's path, state, seats and
+  scope summary as today, and ends as today where it is not
+- SC4.2: verify no task can be recorded as started, and no task, unit or
+  contract as done, while its feature's G1 is active and has not passed,
+  and the refusal prints its message under Error messages
 - SC4.3: verify each contract's G0 verdict still reads as the validator
   says: done at ready-green, blocked when draft-green with TC003, to do
   when draft-green otherwise, failed when draft-red
@@ -207,29 +215,30 @@ SC5 The tree
 - SC5.1: verify a feature past G0 shows G1 active, with G1.1, G1.2 and
   G1.3 each taking its status from its own rules, and a condition that is
   not done lists its diagnostics
-- SC5.2: verify the 15 features already done show G1 inactive, as today,
+- SC5.2: verify the 18 features already done show G1 inactive, as today,
   and the tree still marks the next gate after the active ones inactive
 - SC5.3: verify G1's status is the roll-up of its three conditions, and a
-  signed G1.3 review shows its seat and revision
+  signed G1.3 review shows its seat and each revision it names
 
 ### Error messages, verbatim
 
-Five new messages:
+Seven new messages:
 
 1. `G1.1: {tool} is not installed; install it and pin it in the repository` (SC2.3)
 2. `G1.2: hard core {component} has no model` (SC3.3)
 3. `G1.2: {tool} is not installed; install it and pin it in the repository` (SC3.3)
-4. `{unit} cannot start: G1 has not passed for {feature}` (SC4.2)
+4. `{unit} cannot start: G1 has not passed for {feature}` (SC4.2); on a
+   contract's close, `{unit}` is the feature's id
 5. `G1.3: item {n} {item} is unchecked in {section}` (SC1.2), such as
    `G1.3: item 6 Consistent is unchecked in Statement`
+6. `G1.1: {file} does not lint clean: {tool} reports {n}` (SC2.1)
+7. `G1.2: the model of {component} does not pass {tool}` (SC3.1)
 
 Every message the kit prints today stays word for word.
 
----
-
 ## Decisions and open questions
 
-`[Both seats · authored]`
+`[PO seat · authored]`
 
 - Q: The feature's id? A: `g1-requirements-spec`, matching
   `g0-declaration` and the gate's page (decided 2026-09-27).
@@ -260,18 +269,141 @@ Every message the kit prints today stays word for word.
   the 86 language findings in the statement, the non-goals and the checks
   are answered by intake's rewrite of the contract's wording, and this
   document keeps the PO seat's words (r2, decided 2026-09-27).
+- Q: What do a lint that reports faults and a model its checker does not
+  pass print? A: Messages 6 and 7, in the design's words (the design's
+  consult case 1, decided 2026-10-07).
+- Q: Does intake's report always name G1 as the next step? A: No: only
+  where G1 is active for the feature; elsewhere the report ends as today
+  (the design's consult case 1, decided 2026-10-07).
+- Q: What does the refusal cover? A: A task recorded as started, and a
+  task, a unit or a contract recorded as done; on a contract's close,
+  message 4 carries the feature's id in the unit's place (the design's
+  consult case 1, decided 2026-10-07).
+- Q: Which revisions does a review name? A: One for each document its
+  contract was derived from: both of a pair, and one where a feature
+  holds one document (the design's consult case 1, decided 2026-10-07).
+- Q: Which facts of r3 no longer held? A: Three. The kit holds 18
+  features done, where r3 said 15. A feature document answers 15 ready
+  checks, where r3 said 14 (ADR 0037). And the `gates/G0` line is a
+  roll-up since kit 0.17.0, so the gap Q3 named is closed, and the
+  non-goal keeps the line's reading as it is now (decided 2026-10-08).
+- Q: Are Ready check and Check still as r3 mapped them? A: No: both were
+  ratified on 2026-09-30, so Ready check leaves the terms to ratify, and
+  Check maps to its own term (decided 2026-10-08).
+
+## Notes
+
+`[PO seat · authored]`
+
+Written by hand in kit session 58 (2026-09-27), through an interview
+with the user, one question at a time; no interview run wrote it, so it
+holds no state file. Amended by hand in kit session 85 (2026-10-08),
+after the engineer seat signed the design at its r3: the amendment
+carries the five points of the design's consult case 1, the facts of r3
+that no longer held, the two terms ratified since r3, and the Gherkin
+block. Claude typed each on the user's word.
 
 ## Appendix
+
+### Gherkin
+
+`[PO seat · derived from r6]`
+
+```gherkin
+Scenario: SC1.1 A named person signs the review on the contract's revisions
+  Given a feature whose contract was derived from a pair
+  When the review runs
+  Then it asks each of G1.3's 11 items against the feature's documents
+  And a named person signs it on the revisions its contract was derived from, one for each document of the pair
+
+Scenario: SC1.2 An unchecked item shows as a diagnostic under G1.3
+  Given a review that leaves an item unchecked
+  When G1.3 is read
+  Then the item shows as a diagnostic under G1.3, naming the item and the document's section it concerns
+  And G1.3 reads failed until a later revision's review passes
+
+Scenario: SC1.3 The review asks no ready check again
+  Given a feature document that goes through the interview and intake
+  When the review runs
+  Then ready checks 1 to 15 are still asked in the interview and at intake, as today
+  And the review does not ask them again
+
+Scenario: SC2.1 Every changed boundary schema lints under the pinned ruleset
+  Given a feature that adds or changes a JSON Schema, OpenAPI or protobuf file
+  When G1.1 is read
+  Then every such file lints under the repository's pinned ruleset
+  And a warning fails G1.1 as an error does
+
+Scenario: SC2.2 A feature with no boundary schema passes G1.1
+  Given a feature that adds or changes no boundary schema
+  When G1.1 is read
+  Then G1.1 passes without running a linter
+
+Scenario: SC2.3 A linter that is not installed fails G1.1
+  Given a linter the repository has not installed
+  When G1.1 is read
+  Then G1.1 fails with its message under Error messages, rather than passing
+
+Scenario: SC3.1 Every hard core in scope has a model its checker passes
+  Given a hard core in the component declaration record whose paths fall within the feature's scope
+  When G1.2 is read
+  Then the hard core has a model that TLC or P passes under its pinned configuration
+
+Scenario: SC3.2 A feature with no hard core passes G1.2
+  Given a feature whose scope holds no hard core
+  When G1.2 is read
+  Then G1.2 passes without running a checker
+
+Scenario: SC3.3 A hard core with no model, or no installed checker, fails G1.2
+  Given a hard core with no model, or with its checker not installed
+  When G1.2 is read
+  Then G1.2 fails with its message under Error messages
+
+Scenario: SC4.1 Intake's report names G1 where G1 is active
+  Given a contract at intake's report
+  When intake reports
+  Then where G1 is active for the feature, the report names G1 as the next step, after the contract's path, state, seats and scope summary as today
+  And where it is not, the report ends as today
+
+Scenario: SC4.2 No task starts, and nothing is done, before G1 passes
+  Given a feature whose G1 is active and has not passed
+  When a task is recorded as started, or a task, a unit or a contract as done
+  Then the record is refused
+  And the refusal prints its message under Error messages
+
+Scenario: SC4.3 A contract's G0 verdict reads as the validator says
+  Given a contract
+  When its G0 verdict is read
+  Then it reads done at ready-green, blocked when draft-green with TC003, to do when draft-green otherwise, and failed when draft-red
+
+Scenario: SC5.1 A feature past G0 shows G1 active
+  Given a feature past G0
+  When the tree is read
+  Then the feature shows G1 active, with G1.1, G1.2 and G1.3 each taking its status from its own rules
+  And a condition that is not done lists its diagnostics
+
+Scenario: SC5.2 The features already done show G1 inactive
+  Given the 18 features already done
+  When the tree is read
+  Then each shows G1 inactive, as today
+  And the tree still marks the next gate after the active ones inactive
+
+Scenario: SC5.3 G1's status is the roll-up of its three conditions
+  Given a feature with a signed G1.3 review
+  When the tree is read
+  Then G1's status is the roll-up of its three conditions
+  And the review shows its seat and each revision it names
+```
 
 ### Terms
 
 `[PO seat · authored]`
 
-Decided at the interview's Q9 (2026-09-27). Fifteen map to the kit's
-ratified terms: Feature, Feature document, Gate, Active gate, Condition,
-Rule, Diagnostic, Verdict, Finding (the pilot's), Unit
-(`decomposition-unit`), Task, Check (`acceptance-sketch`), Seat
-(`intake-seat`, by its alias), Tree and Status. The rest become terms to
+Decided at the interview's Q9 (2026-09-27), and amended on 2026-10-08.
+Sixteen map to the kit's ratified terms: Feature, Feature document,
+Gate, Active gate, Condition, Rule, Diagnostic, Verdict, Finding (the
+pilot's), Unit (`decomposition-unit`), Task, Check, Seat (`intake-seat`,
+by its alias), Tree, Status and Ready check. The rest become terms to
 ratify at intake.
 
 - Failure point: anything in a feature's requirements, boundary schemas
@@ -295,8 +427,7 @@ ratify at intake.
   differential, fuzz, property-only, concurrency, soak, or none with a
   reason.
 - Review: a person's pass over G1.3's 11 items against a feature
-  document at one revision, signed with the seat and revision.
+  document, at the revision of each document its contract was derived
+  from, signed with the seat and those revisions.
 - Venue: where and when a gate runs.
-- Ready check: one of the 14 questions a feature document answers before
-  intake reads it ready (ADRs 0029 and 0033).
 - Two-Key: the independent verifier's grade of one unit, PASS or FAIL.
