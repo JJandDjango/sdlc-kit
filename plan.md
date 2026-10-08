@@ -1,125 +1,85 @@
-# Plan - Session 86 (2026-10-08) - G1's terms and ADR 0038
+# Plan - Session 87 (2026-10-08) - G1, to a ready contract
 
-**Deliverable:** ADR 0038 and the terms of
-`docs/features/g1-requirements-spec.md` at r6 on main through one PR:
-14 terms ratified, three ratified terms amended, and `component` and
-`venue` ceded by the dictionary.
+**Deliverable:** `specs/g1-requirements-spec/contract.yaml` at ready,
+derived by intake from the pair `docs/features/g1-requirements-spec.md`
+and `docs/features/g1-requirements-spec.design.md` under kit 0.19.0.
 
-This is the first half of step 3 toward G1's intake. The second half,
-`/sdlc intake docs/features/g1-requirements-spec.md`, is the next
-session's, as sessions 76 and 77 split document-split.
+Session 86 met the two prerequisites: ADR 0038 and the 14 terms stand on
+main (PR #102 at `9f2f9dd`), and its wrap merged as PR #103 at
+`04e65c8`. Both halves stand signed at r6, and the design names r6. Two
+things are left before the contract: the language door, then intake.
+
+Approvals: four points stay on the user's word. (1) This plan and its
+commit; (2) the seats' confirmations at intake, one batch, with the
+draft's rewritten sentences shown in chat before and after, and
+intake's commit; (3) the push, the PR and the merge of the work, after
+CI reads green; (4) the wrap's commit, its PR and its merge. The user
+holds both seats.
+
+No code changes this session, so no Two-Key round. The receipts are
+`validate --profile ready`, the tree and the whole suite.
+
+No Workflow is planned, so the cost in agent tokens is none (session
+77's intake of document-split ran none either).
 
 Claude's readings, each told to the user here:
 
-- Two commits, in session 76's order: ADR 0038 first, then the terms,
-  since the three amendments rest on the ADR. Neither carries a
-  `Contract:` trailer: both are spec channel, and the contract these
-  terms serve does not exist yet.
-- The 14 terms take their definitions word for word from r6's Terms
-  block (`docs/features/g1-requirements-spec.md:409`). Claude proposes
-  each term's `kind`.
-- The three amended definitions stand in no signed text. The design
-  names only their reason: Rule and Condition, for rules that read
-  records; Active gate, for a feature's exemption. Claude proposes the
-  words, and the user ratifies them.
-- ADR 0038 holds three decisions, each from the signed design: the
-  refusal amends ADR 0031's "shown and never enforced"
-  (`decisions/0031-the-work-is-one-derived-tree.md:53`); a gate is
-  active by feature; the records stand under `.sdlc/g1/`, and the
-  declarations in `specs/components.yaml` and the `g1` key of
-  `.sdlc/config.yaml`, which closes the deferrals of ADR 0007 and of
-  G1's page.
-- The neighbor read covers the 76 ratified terms against the three
-  amendments and ADR 0038. A definition the ADR makes false is amended
-  in the term commit, on the user's word.
-- The signed pair stays as it is. The design's Decisions entry counts
-  Review among four terms to amend: a dated record, on the user's word
-  of session 85.
-- No Workflow is planned, so the cost in agent tokens is none (session
-  76's two commits ran none either).
+- The contract derives from r6, the newest text revision both seats
+  signed, never from a `Signed:` row.
+- Each `done_means` is copied word for word from the design's Units
+  table (ADR 0036). Six units, `s1-lint` to `s6-release`.
+- The language door rewrites the contract's wording only. The signed
+  pair stays as it is, its four stale design sentences among it.
+- The standing line, `No new authorizations are added`, stays in the
+  document only.
+- After intake, USAGE's drawing of G1 as a feature before intake
+  (`USAGE.md:1644`) reads as a dated example. It stays, on the user's
+  decision; `s6-release` redraws it.
 
-The session boundary, if context runs short: after step 5, where ADR
-0038 stands committed and the terms wait.
+The session boundary, if context runs short: after step 3. The draft
+that reads zero is copied to an untracked file in this root, and intake
+opens the next session.
 
 ## Steps
 
-1. ~~Open.~~ Branch `session-86-g1-terms` from `dfab2c6`; this plan,
-   committed on the user's word (`b3d75bd`).
-2. ~~Measure,~~ in the session, with no agent:
-   - the design's sentences ADR 0038 rests on: the refusal, the
-     exemption, the homes of the records and the declarations;
-   - what ADR 0007 and `docs/gates/G1-requirements-spec.md` defer;
-   - the neighbors of Rule, Condition and Active gate among the 76
-     terms, and every ratified definition ADR 0038 would make false;
-   - every tracked file that quotes one of the three definitions, or
-     counts the terms or the dictionary's words;
-   - CL003 for each of the 14 names and slugs against the dictionary.
-3. ~~Batch 1, ADR 0038:~~ its decisions, one line each, with the full
-   text on request.
-4. ~~Write ADR 0038~~ and its line in the decisions index.
-5. ~~Commit 1,~~ on the user's word: ADR 0038 (`ab38b77`).
-6. ~~Batch 2, the terms:~~ the three amended definitions before and
-   after, any neighbor amendment, the 14 kinds, and the two ceded words.
-   The 14 definitions are r6's, shown on request.
-7. ~~Write~~ the 14 term files, the amendments and the dictionary edit.
-8. ~~The checks:~~ `vocab-check`, `lang-check`, `validate` on every
-   contract, then the whole suite. Any test the terms break is named to
-   the user before it changes.
-9. ~~Commit 2,~~ on the user's word: the terms (`8f9e9ed`). Then the
-   suite at the clean commit and `scope-check --base dfab2c6`.
-10. ~~Close.~~ `STATE.md` regenerated, this plan struck, the memory index
-    updated; the push, the PR and the merge on the user's word, after CI
-    reads green.
-
-Decisions this session: five planned, all the user's. (1) This plan and
-its commit; (2) batch 1, ADR 0038; (3) batch 2, the terms; (4) the two
-commits, the push and the PR; (5) the merge.
-
-As it went: (1) the user approved this plan and its commit, `b3d75bd`.
-(2) Batch 1: the user ratified ADR 0038 as drafted, with five decisions
-where this plan counted three: the rules' own command, the records'
-file and the declarations each took a bullet. The draft stood as an
-untracked file before the batch, so step 4 ran ahead of step 3.
-`decisions/` holds no index, so commit 1 is the one file. The ADR
-amends 0032 beside 0031: "each feature shows its active gates" is
-0032's sentence. (3) Batch 2: the user ratified the three amended
-definitions, the 14 terms with their kinds, and the two ceded words.
-The glossary held 75 terms, where this plan said 76:
-`constraints.yaml` and `dictionary.yaml` are no term. The neighbor read
-of the other 72 found none made false. (4) The user gave the word for
-commit 1 with batch 1's answer, and for commit 2, the wrap, the push
-and the PR once the clean-commit checks read green. (5) The user gave
-the word for the merge after CI read green: PR #102, on main at
-`9f2f9dd`.
-
-Step 8, as it went. `vocab-check` reads green at 89 terms, `lang-check`
-green, and the 19 contracts ready-green. The whole suite, under the
-system Python, read 1058 passed before commit 2 and again at the clean
-commit, where `scope-check --base dfab2c6` reads `scope-green`. No test
-changed, and no agent ran.
-
-**Closed.** The deliverable is met: ADR 0038 and G1's terms are on main
-at `9f2f9dd` (PR #102, merged 2026-10-08).
-
-After the merge. The user named a repeated fault: the wrap was
-committed inside the work PR, before the merge, so `STATE.md` could not
-name it. On the user's word the order is standing practice from here:
-the work PR merges first, then the wrap rides its own PR. This
-session's first wrap, `8ad25bc`, went the old way; a second, on branch
-`session-86-wrap`, records the merge and the practice.
+1. Open. Branch `session-87-g1-intake` from `04e65c8`; this plan,
+   committed on the user's word.
+2. The plugin. Read at resume: the cache holds `863506491ca9`, and
+   `git diff --stat v0.19.0 HEAD -- skills/` prints nothing, so the
+   installed flows are 0.19.0's.
+3. The language door, on a draft. A scratch script builds the lexicon
+   with the 89 ratified terms and runs `check_contract` on a draft
+   contract outside `specs/`, built from the state files' `answers`.
+   Its findings (r5's measure: 79 unknown words, 12 sentences over the
+   cap) are rewritten there in the contract's wording until it reads
+   zero.
+4. Intake. `/sdlc:sdlc intake docs/features/g1-requirements-spec.md`
+   through the installed plugin: I1 the seat roster, I2 the read of
+   both documents (a stop or a park here writes nothing under
+   `specs/`), I3 the scaffold, the seats' confirmations in one batch,
+   I6 the write, I7 the loop to ready-green, and the `Ready:` rows it
+   writes. Then its own commit, with the `Contract:` trailer.
+5. Receipts. `validate --profile ready` on the contract, `vocab-check`,
+   `lang-check`, `scope-check --base 04e65c8`, `taskcontract tree`
+   showing `gates/G0` done and `g1-requirements-spec` with a ready
+   contract, and the whole suite under the system Python, each read
+   from its output.
+6. The work's close. The push, the PR and the merge, on the user's
+   word after CI reads green.
+7. The wrap, after the merge. `STATE.md` regenerated, this plan struck
+   and the memory index updated on a new branch off main, in a
+   wrap-only PR that names the work's merge commit; merged on the
+   user's word.
 
 Deferred, not this session:
-- `/sdlc intake docs/features/g1-requirements-spec.md`, with about 91
-  language findings to rewrite in the contract's wording. USAGE's
-  drawing of G1 as a feature before intake retires there.
-- The build, `s1-lint` first, which opens with pass zero.
+- The build, `s1-lint` to `s6-release`, as kit 0.20.0. `s1-lint` opens
+  with pass zero.
 - The engine's install ref, its pilot config line and M0's code: after
   G1 ships.
 - The `google_workspace` server failed to connect again at this resume.
 - `STATE.md` Next actions 2 to 5 and its open questions, carried.
 
 House rules in force: no pipes or chains in any authored command
-string; commit messages via Write + `git commit -F`; Workflows launched
-by `scriptPath`; a `Contract:` trailer, alone in the final paragraph, on
-every commit that touches a bound path; no tracked file touched while
-an agent runs; never two whole suites at once; no spawn opens a window.
+string; commit messages via Write + `git commit -F`; a `Contract:`
+trailer, alone in the final paragraph, on every commit that touches a
+bound path; never two whole suites at once; no spawn opens a window.
