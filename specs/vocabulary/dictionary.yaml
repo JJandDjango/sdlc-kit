@@ -157,7 +157,6 @@ words:
   - {word: compares, pos: verb}
   - {word: compile, pos: noun}
   - {word: completeness, pos: noun}
-  - {word: component, pos: noun}
   - {word: comprehension, pos: noun}
   - {word: computed, pos: noun}
   - {word: conditions, pos: noun}
@@ -950,7 +949,6 @@ words:
   - {word: variables, pos: noun}
   - {word: variant, pos: noun}
   - {word: vector, pos: noun}
-  - {word: venue, pos: noun}
   - {word: venue-joins, pos: noun}
   - {word: venue-map, pos: noun}
   - {word: venues, pos: noun}
