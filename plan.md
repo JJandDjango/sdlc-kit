@@ -43,9 +43,9 @@ The session boundary, if context runs short: after step 5, where ADR
 
 ## Steps
 
-1. Open. Branch `session-86-g1-terms` from `dfab2c6`; this plan,
-   committed on the user's word.
-2. Measure, in the session, with no agent:
+1. ~~Open.~~ Branch `session-86-g1-terms` from `dfab2c6`; this plan,
+   committed on the user's word (`b3d75bd`).
+2. ~~Measure,~~ in the session, with no agent:
    - the design's sentences ADR 0038 rests on: the refusal, the
      exemption, the homes of the records and the declarations;
    - what ADR 0007 and `docs/gates/G1-requirements-spec.md` defer;
@@ -54,26 +54,51 @@ The session boundary, if context runs short: after step 5, where ADR
    - every tracked file that quotes one of the three definitions, or
      counts the terms or the dictionary's words;
    - CL003 for each of the 14 names and slugs against the dictionary.
-3. Batch 1, ADR 0038: its decisions, one line each, with the full text
-   on request.
-4. Write ADR 0038 and its line in the decisions index.
-5. Commit 1, on the user's word: ADR 0038.
-6. Batch 2, the terms: the three amended definitions before and after,
-   any neighbor amendment, the 14 kinds, and the two ceded words. The 14
-   definitions are r6's, shown on request.
-7. Write the 14 term files, the amendments and the dictionary edit.
-8. The checks: `vocab-check`, `lang-check`, `validate` on every
+3. ~~Batch 1, ADR 0038:~~ its decisions, one line each, with the full
+   text on request.
+4. ~~Write ADR 0038~~ and its line in the decisions index.
+5. ~~Commit 1,~~ on the user's word: ADR 0038 (`ab38b77`).
+6. ~~Batch 2, the terms:~~ the three amended definitions before and
+   after, any neighbor amendment, the 14 kinds, and the two ceded words.
+   The 14 definitions are r6's, shown on request.
+7. ~~Write~~ the 14 term files, the amendments and the dictionary edit.
+8. ~~The checks:~~ `vocab-check`, `lang-check`, `validate` on every
    contract, then the whole suite. Any test the terms break is named to
    the user before it changes.
-9. Commit 2, on the user's word: the terms. Then the suite at the clean
-   commit and `scope-check --base dfab2c6`.
-10. Close. `STATE.md` regenerated, this plan struck, the memory index
+9. ~~Commit 2,~~ on the user's word: the terms (`8f9e9ed`). Then the
+   suite at the clean commit and `scope-check --base dfab2c6`.
+10. ~~Close.~~ `STATE.md` regenerated, this plan struck, the memory index
     updated; the push, the PR and the merge on the user's word, after CI
     reads green.
 
 Decisions this session: five planned, all the user's. (1) This plan and
 its commit; (2) batch 1, ADR 0038; (3) batch 2, the terms; (4) the two
 commits, the push and the PR; (5) the merge.
+
+As it went: (1) the user approved this plan and its commit, `b3d75bd`.
+(2) Batch 1: the user ratified ADR 0038 as drafted, with five decisions
+where this plan counted three: the rules' own command, the records'
+file and the declarations each took a bullet. The draft stood as an
+untracked file before the batch, so step 4 ran ahead of step 3.
+`decisions/` holds no index, so commit 1 is the one file. The ADR
+amends 0032 beside 0031: "each feature shows its active gates" is
+0032's sentence. (3) Batch 2: the user ratified the three amended
+definitions, the 14 terms with their kinds, and the two ceded words.
+The glossary held 75 terms, where this plan said 76:
+`constraints.yaml` and `dictionary.yaml` are no term. The neighbor read
+of the other 72 found none made false. (4) The user gave the word for
+commit 1 with batch 1's answer, and for commit 2, the wrap, the push
+and the PR once the clean-commit checks read green. Decision (5), the
+merge, waits on the user's word after CI.
+
+Step 8, as it went. `vocab-check` reads green at 89 terms, `lang-check`
+green, and the 19 contracts ready-green. The whole suite, under the
+system Python, read 1058 passed before commit 2 and again at the clean
+commit, where `scope-check --base dfab2c6` reads `scope-green`. No test
+changed, and no agent ran.
+
+**Closed.** The deliverable is met but for the merge: ADR 0038 and G1's
+terms stand committed.
 
 Deferred, not this session:
 - `/sdlc intake docs/features/g1-requirements-spec.md`, with about 91
