@@ -9,8 +9,9 @@ term: rule
 name: Rule
 
 definition: >-
-  One test the kit's validator applies to a contract, with a code such
-  as `TC003`. Each rule belongs to one condition.
+  One test the kit's validator applies to a contract, or to the records
+  and declarations a gate reads for a feature, with a code such as
+  `TC003` or `RS201`. Each rule belongs to one condition.
 
 kind: entity
 
@@ -19,3 +20,5 @@ since: 2026-09-25
 
 sources:
   - docs/features/project-tree.md
+  - docs/features/g1-requirements-spec.md
+  - decisions/0038-a-gate-refuses-a-task-and-g1-records-and-declarations-have-homes.md

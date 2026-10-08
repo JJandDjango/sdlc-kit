@@ -1,0 +1,24 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Written before g1-requirements-spec's intake (session 86) from the
+# Terms of docs/features/g1-requirements-spec.md at r6, decided at its
+# Q9 (2026-09-27), with the definition r6 gave it (2026-10-08);
+# ratified by the user 2026-10-08 (class-S flip; the PR merge is the
+# outer record, ADR 0025).
+
+term: review
+
+name: Review
+
+definition: >-
+  A person's pass over G1.3's 11 items against a feature document, at
+  the revision of each document its contract was derived from, signed
+  with the seat and those revisions.
+
+kind: entity
+
+status: ratified
+since: 2026-10-08
+
+sources:
+  - docs/features/g1-requirements-spec.md
+  - decisions/0038-a-gate-refuses-a-task-and-g1-records-and-declarations-have-homes.md

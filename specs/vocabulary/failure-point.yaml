@@ -1,0 +1,21 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Written before g1-requirements-spec's intake (session 86) from the
+# Terms of docs/features/g1-requirements-spec.md at r6, decided at its
+# Q9 (2026-09-27); ratified by the user 2026-10-08 (class-S flip; the
+# PR merge is the outer record, ADR 0025).
+
+term: failure-point
+
+name: Failure point
+
+definition: >-
+  Anything in a feature's requirements, boundary schemas or hard cores'
+  designs that would fail development.
+
+kind: entity
+
+status: ratified
+since: 2026-10-08
+
+sources:
+  - docs/features/g1-requirements-spec.md

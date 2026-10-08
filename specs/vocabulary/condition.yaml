@@ -10,8 +10,9 @@ name: Condition
 
 definition: >-
   One named part of a gate, whose status comes from the rules it owns
-  (G0.1 definition of ready, G0.2 vocabulary coverage, G0.3 unit
-  confirmation).
+  and, where they read records, from whether everything it needs is
+  present and current (G0.1 definition of ready, G0.2 vocabulary
+  coverage, G0.3 unit confirmation, G1.2 model checking).
 
 kind: entity
 
@@ -20,3 +21,5 @@ since: 2026-09-25
 
 sources:
   - docs/features/project-tree.md
+  - docs/features/g1-requirements-spec.md
+  - decisions/0038-a-gate-refuses-a-task-and-g1-records-and-declarations-have-homes.md

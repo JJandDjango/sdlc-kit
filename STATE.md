@@ -2,50 +2,48 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-08 (session 85 end: G1's requirements document is
-> amended and signed at r6, at `fb67328`, and its design confirmed and
-> signed again, at `c402782`; the terms and ADR 0038 open the next
-> session)._
+> _Generated 2026-10-08 (session 86 end: ADR 0038 stands at `ab38b77`
+> and G1's terms at `8f9e9ed`, 14 ratified and three amended; G1's
+> intake opens the next session)._
 
 ## Now
 
-- **Session 85 (2026-10-08): G1's requirements document is amended and
-  signed, and its design confirmed.**
-  `docs/features/g1-requirements-spec.md` took the PO seat's amendment
-  by hand, at `fb67328`: r5 is the `Measured:` row (93 findings: CL003
-  2, CL006 79, CL008 12; ready checks 1 to 8 with no gap), r6 the text
-  row, r7 the signature. The design took `r5: Confirmed against
-  requirements r6` and `r6: Signed: solution half` through DESIGN
-  CONFIRM, at `c402782`; its run pauses at W1. The tree reads `document
-  r6 design r5`, with both halves `done`.
-- The amendment, in short. The counts read 18 features done and 15
-  ready checks, and Description's `gates/G0` case is a dated record of
-  kit 0.16.0. The design's four calls stand in the PO seat's words:
-  messages 6 and 7; intake names G1 only where G1 is active for the
-  feature (SC4, SC4.1); the refusal covers a start, and a done on a
-  task, a unit or a contract (SC4.2); a review names one revision for
-  each document of a pair (SC1.1, SC5.3, the Review term). Six checks
-  changed their words: SC1.1, SC1.3, SC4.1, SC4.2, SC5.2 and SC5.3. The
-  Appendix holds 15 Gherkin scenarios, one a check, tagged `derived
-  from r6`. Ready check left the terms to ratify, where 14 remain, and
-  Check maps to its own ratified term. The document took ADR 0037's
-  shape: one seat on the status line and in the Decisions tag, no line
-  between halves, a Notes section.
-- Two of the three steps to G1's intake are done. The third is the
-  terms and ADR 0038 in their own commit, then intake, which turns the
+- **Session 86 (2026-10-08): ADR 0038 and G1's terms stand.** ADR 0038
+  (`decisions/0038-a-gate-refuses-a-task-and-g1-records-and-declarations-have-homes.md`,
+  `ab38b77`) holds five decisions, each from the signed design: a gate
+  may refuse a task; a gate is active by feature; G1's rules read
+  records in `g1-check`, never in `validate`; G1's records stand in one
+  committed file a feature, `.sdlc/g1/{id}.yaml`; a person writes the
+  two declarations. It amends 0031 for the refusal, and 0031 and 0032
+  for a gate active by feature, where the design names 0031 alone. It
+  closes the deferrals of ADR 0007 and of G1's page.
+- The terms, at `8f9e9ed`. `specs/vocabulary/` holds 89 terms, where it
+  held 75. The 14 of requirements r6 are ratified word for word: 13 of
+  kind `entity`, and Oracle designation a `value-set` of its six
+  values. Three ratified terms took new words, which the user ratified,
+  since no signed text held them. Rule: "or to the records and
+  declarations a gate reads for a feature", with a code "such as
+  `TC003` or `RS201`". Condition: "and, where they read records, from
+  whether everything it needs is present and current", with `G1.2
+  model checking` among its examples. Active gate: "for each feature
+  that file does not list as exempt from it", and "a feature's active
+  ones". Rule keeps "the kit's validator", r6's words for G1's rules.
+  Review is ratified as r6 defines it. The dictionary dropped
+  `component` and `venue`; `venues`, `venue-joins` and `venue-map`
+  stay. The neighbor read of the other 72 terms found none made false.
+- The checks. `vocab-check` reads green at 89 terms, `lang-check`
+  green, the 19 contracts ready-green and `scope-check --base dfab2c6`
+  green. The whole suite read 1058 passed before commit 2 and at the
+  clean commit. No test changed, and no agent ran this session.
+- One step to G1's contract is left:
+  `/sdlc intake docs/features/g1-requirements-spec.md`, which turns the
   tree's `gates/G0` line `done`.
 - Four sentences of the design read stale against r6 and stay, as
   dated records, on the user's word: Risks 7 (no Gherkin block), Links
   out ("at r3"), Interfaces ("6 and 7 are new here"), and the Decisions
   entry that counts Review among four ratified terms to amend. Review
-  was never ratified, and r6's definition names both revisions: intake
-  amends three terms (Rule, Condition, Active gate) and ratifies Review
-  as written.
-- The tests. `tests/test_document_split_g1_pair.py` is gone: its last
-  test held the requirements document's sha256. The session removed the
-  file with `git rm`, since `test-retirer.js` cannot delete one, and two
-  docstrings that named the module lost that sentence. The whole suite
-  reads 1058 passed. No agent ran this session.
+  was never ratified before this session: three terms were amended, and
+  Review was ratified as written.
 - The design, in short. G1's rules run in a new subcommand, `g1-check`,
   never inside `validate`, with six `RS` codes, each one message.
   `g1-record` runs the repository's pinned tool and writes a committed
@@ -90,32 +88,29 @@
   features: 19 with a contract, 18 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
   `g1-requirements-spec` before intake, `[doing]`, a pair with both
-  halves signed. Session 84's Now is at `8434a9d:STATE.md`, and session
-  83's at `8635064:STATE.md`: d6's three wording advisories and the
-  second machine's untested plugin update stand as they read there.
+  halves signed. Session 85's Now is at `dfab2c6:STATE.md`, with the
+  amendment in short and the removed test module. Session 84's is at
+  `8434a9d:STATE.md`, and session 83's at `8635064:STATE.md`: d6's
+  three wording advisories and the second machine's untested plugin
+  update stand as they read there.
 
 ## Blockers
 
-- None. Session 85's commits reach main through one PR from branch
-  `session-85-g1-amendment`, merged on the user's word.
+- None. Session 86's commits reach main through one PR from branch
+  `session-86-g1-terms`, merged on the user's word.
 
 ## Next actions
 
-Opener: G1's intake, the third of three steps. First the terms and ADR
-0038 in their own commit. Requirements r6 holds 14 terms to ratify
-(Failure point, Development, Boundary schema, Hard core, Model, Linter,
-Checker, Pin, Component, Component declaration record, Oracle
-designation, Review, Venue, Two-Key); the dictionary cedes `component`
-and `venue` in that commit (CL003). Three ratified terms are amended:
-Rule and Condition, for rules that read records, and Active gate, for
-a feature's exemption. Review is ratified as r6 defines it, never
-amended. ADR 0038 amends ADR 0031's "shown and never enforced" for the
-refusal and fixes the homes of the records and the declarations. Then
-`/sdlc intake docs/features/g1-requirements-spec.md`: the pair holds
-one scenario a check and every check in one unit, both halves signed
-and the design naming r6. Expect about 91 language findings to rewrite
-in the contract's wording (r5's measure: 79 unknown words, 12 sentences
-over the cap).
+Opener: G1's intake, `/sdlc intake
+docs/features/g1-requirements-spec.md`. Its 14 terms stand ratified and
+ADR 0038 is on record, so the contract cites both. The pair holds one
+scenario a check and every check in one unit, both halves signed and
+the design naming r6. Expect about 91 language findings to rewrite in
+the contract's wording (r5's measure: 79 unknown words, 12 sentences
+over the cap); the two CL003 findings went with the ceded words.
+Before `/sdlc:`, check that the installed plugin's `skills/` equal
+`v0.19.0`'s. The method is the standing practice below, "Intake from a
+feature document".
 
 1. After intake, the build: `s1-lint` first, which opens with pass
    zero. The pilot's config line, in the engine's session; the engine's
@@ -527,6 +522,20 @@ over the cap).
   name: two docstrings named it. Run `lang-check` in the background and
   grep for `lang-green`: run in the session, its 130 lines land in the
   context.
+- The terms and an ADR before intake (session 86). Two commits, the
+  ADR first, since an amended term rests on it. Draft the ADR as an
+  untracked file before its batch, so the user ratifies real text from
+  a list of its decisions. Read each ADR whose sentences the design
+  changes, besides the one it names: 0032 held "each feature shows its
+  active gates". An amended definition can stand in no signed text:
+  propose the words, widen and never narrow, and keep the requirements'
+  words where the design's differ. The neighbor read is one grep of
+  every `definition:` under `specs/vocabulary/`. Two files there are no
+  term, `dictionary.yaml` and `constraints.yaml`: take the count from
+  `vocab-check`. No test pins a definition or counts the dictionary's
+  words, so the suite read green unchanged, and no page counts the
+  terms. `MAP.md` names an ADR beside a component a release built, so
+  it waits for the release unit.
 - The form validator on this machine (session 78): put one line,
   `E:/foundations`, in a `foundations.pth` under the scratch venv's
   `Lib/site-packages`, and `pip install tiktoken` there. `python -m
