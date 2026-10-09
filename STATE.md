@@ -2,46 +2,69 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-08 (session 87 end, after the merge: G1's contract
-> stands at ready on main at `fe8bd7b`, PR #104; the build opens the
-> next session with `s1-lint`)._
+> _Generated 2026-10-08 (session 88 end, after the merge: `s1-lint`
+> stands on main at `2685f7c`, PR #106, Two-Key PASS in round 2; the
+> next session builds `s2-model`)._
 
 ## Now
 
-- **Session 87 (2026-10-08): G1's contract stands at ready, on main at
-  `fe8bd7b`** (PR #104, merged that day on the user's word after CI
-  read green). Intake under kit 0.19.0 read the pair at r6 and wrote
-  `specs/g1-requirements-spec/contract.yaml` at `84e64c0`: six units,
-  `s1-lint` to `s6-release`, in one line of `depends_on`; 15 checks in
-  15 sketches; six non-goals; 22 scope paths; 38 entities;
-  `confirmed_by: [user]` on each unit. Each `done_means` is the
-  design's, word for word, and each read zero findings. Each document
-  took its `Ready:` row: r8 in the requirements document, r7 in the
-  design document.
-- The wording. The document's own wording measured 91 language
-  findings at requirements r5. A first rewrite, on a draft outside
-  `specs/`, read 66, all CL006, and the contract reads 0. Five readings
-  went to the user, who confirmed each. "Recorded as `doing`" stands
-  for "recorded as started" (SC4.2 and the intent), with "does not yet
-  pass" for "has not passed". A condition "reads `failed`" where the
-  document says a thing "fails" it (SC2.1, SC2.3, SC3.3). The review
-  "covers" for "asks", and "a named human records a signature" for "a
-  named person signs it" (SC1.1, SC1.3). "Its pin" stands for the
-  pinned ruleset and the pinned configuration (SC2.1, SC3.1). The scope
-  leaves out the design's free paths, and the standing line stays in
-  the document only.
-- The receipts, at `84e64c0`. `validate --profile ready` reads
-  ready-green, `vocab-check` green at 89 terms, `lang-check` green and
-  `scope-check --base 04e65c8` green. The tree shows `gates/G0 [done]`,
-  and `g1-requirements-spec [to do]` with G0 `[done]` and G1 `[to do]
-  inactive`. The whole suite read 1058 passed in 194 seconds. No test
-  changed, and no agent ran this session. USAGE's drawing of this
-  feature before intake (`USAGE.md:1640-1655`) is a dated example from
-  here; `s6-release` redraws it.
-- Session 86, in short: ADR 0038 (`ab38b77`) and the terms (`8f9e9ed`:
-  89 terms where the glossary held 75; Rule, Condition and Active gate
-  amended; `component` and `venue` ceded by the dictionary) stand on
-  main at `9f2f9dd` (PR #102). Its Now is at `04e65c8:STATE.md`.
+- **Session 88 (2026-10-08): `s1-lint` is built, on main at `2685f7c`**
+  (PR #106, merged that day on the user's word after CI read green).
+  Two-Key PASS in round 2 at `79b4a5b`. Five commits: the plan
+  (`49f25d6`), pass zero (`c3bdacf`), the unit (`65a8339`), the fix
+  (`79b4a5b`) and the callout (`e9cc370`). The tree reads the unit
+  `[done] at 79b4a5b`, and five units stay `[to do]`.
+- What stands. `taskcontract/g1.py` is new. `g1-record lint <id>` finds
+  each boundary schema in the feature's scope, starts the entry's
+  linter once a file under its pin, and appends one record to
+  `.sdlc/g1/<id>.yaml`. `g1-check <id>` reads that record against the
+  files on disk, runs no tool and writes nothing: `RS101` for a linter
+  the record found not installed, `RS102` for a file with an error or a
+  warning. `gates.yaml` lists the six `RS` codes under G1's three
+  conditions, and G1.2 and G1.3 read `to do` until their units.
+  `tests/test_g1_lint.py` holds 50 cases, and the whole suite reads
+  1107 passed. Two tests of `tests/test_tree_conditions.py` were
+  replaced, and USAGE's red-legend test retired. `tree.py`,
+  `progress.py`, `checker.py` and `validate` keep every byte.
+- USAGE holds the whole feature's guide under red marks, `s1-lint` to
+  `s6-release`: "`/sdlc g1`: the G1 venue" in section 4 and "G1 as an
+  active gate" at section 9's end. No later unit needs a pass zero. Its
+  callout says the units land one at a time.
+- Risk 1, settled by a live run under Spectral 6.17.0. With no ruleset
+  Spectral exits 2, and its OpenAPI ruleset gives a plain JSON Schema
+  one `unrecognized-format` warning: a repository writes its own
+  ruleset, as the design's `.spectral.yaml` already says for the kit.
+  Three more facts: Spectral exits 0 on a warning alone unless it
+  starts with `--fail-severity warn`; `--format json` needs `--quiet`,
+  or a clean run prints `[]No results ...` and does not parse; on
+  Windows the tool is `spectral.CMD`, so a bare name does not start and
+  `shutil.which` finds it. The probes and their output stand in
+  untracked `RECEIPT_g1-requirements-spec-s1_2026-10-08/risk1/`, and
+  the live receipt at `79b4a5b` in its `RECEIPT.md`.
+- Two-Key's first round failed `65a8339` on two defects, both read
+  from the code, both fixed in `79b4a5b` with tests that were red
+  first. A `g1.schemas` entry whose `paths` was no list was dropped, so
+  G1.1 read `done` with no record: the declaration is now read whole
+  or refused. A linter not installed, with its pin's file absent too,
+  read `to do`: an absent pin now reads as null on both sides, and
+  `RS101` reports. The developer's own question had named the first
+  edge, and Claude parked it.
+- The readings. The user approved four in USAGE: Spectral needs a
+  ruleset the repository writes; errors and warnings count alike, and
+  what stands below a warning does not; a linter that ends on an error
+  of its own gives no result (exit 2, nothing written); the messages
+  table cites rule codes. One was amended on review: the design's
+  Decisions read a tool's result "By its exit code: 0 passes", so
+  Spectral starts with `--fail-severity warn`, a file is clean only on
+  exit 0, and `{n}` is counted from the report.
+- The cost: 911K agent tokens (drafter 225K; developers 104K, 60K and
+  69K; Two-Key 205K and 247K), where the plan read 0.6 to 0.8 million
+  and about 300K for a lost round.
+- Session 87, in short: the contract stands at ready on main at
+  `fe8bd7b` (PR #104), written by intake at `84e64c0` from the pair at
+  r6: six units in one line of `depends_on`, 15 checks, six non-goals,
+  22 scope paths, 38 entities. Its Now is at `4bec8eb:STATE.md`, with
+  the wording's five readings. Session 86's is at `04e65c8:STATE.md`.
 - Four sentences of the design read stale against r6 and stay, as
   dated records, on the user's word: Risks 7 (no Gherkin block), Links
   out ("at r3"), Interfaces ("6 and 7 are new here"), and the Decisions
@@ -58,7 +81,7 @@
   and `progress done` refuse until G1 passes. Six units, `s1-lint` to
   `s6-release`, as kit 0.20.0. The 13 shape calls stand under the
   document's Decisions and in `8434a9d:plan.md`. USAGE's drawing of G1
-  (`USAGE.md:1644`) stays as a dated example with no test behind it, on
+  (`USAGE.md:1882`) stays as a dated example with no test behind it, on
   the user's decision; `s6-release` redraws it.
 - The explorers. Four read-only agents mapped the kit for the design
   (897K tokens). Their files stand in untracked
@@ -83,15 +106,18 @@
 - This machine: the `sdlc` plugin sits at `8635064`, its `skills/`
   equal to `v0.19.0`'s, so `/sdlc:` runs 0.19.0's flows. The whole
   suite runs under the system Python (3.14.2), with no scratch venv:
-  1058 passed in three minutes. No Python here holds
-  `prompt_lang`. `uv` 0.12.23 runs by its full path,
+  1107 passed in three and a half minutes. Spectral 6.17.0 stands
+  installed since session 88 (`npm install -g
+  @stoplight/spectral-cli@6.17.0`, under Node `v24.10.0`). Whether Java
+  and `tla2tools.jar` stand here is not looked into. No Python here
+  holds `prompt_lang`. `uv` 0.12.23 runs by its full path,
   `C:/Users/hyden/AppData/Local/Microsoft/WinGet/Packages/astral-sh.uv_Microsoft.Winget.Source_8wekyb3d8bbwe/uv.exe`.
   The `google_workspace` server failed to connect again (`Connection
   closed`); the cause is not looked into.
 - Carried: kit 0.19.0 stands released, tag `v0.19.0` at `7fe6342`. 20
   features, each with a contract, 18 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
-  `g1-requirements-spec` at ready, `[to do]`, with no task started.
+  `g1-requirements-spec` in its build, one unit of six done.
   Session 85's Now is at `dfab2c6:STATE.md`, with the
   amendment in short and the removed test module. Session 84's is at
   `8434a9d:STATE.md`, and session 83's at `8635064:STATE.md`: d6's
@@ -100,26 +126,28 @@
 
 ## Blockers
 
-- None. Session 87's work is on main at `fe8bd7b` (PR #104). This wrap
-  rides its own PR from branch `session-87-wrap`, and holds `STATE.md`
+- None. Session 88's work is on main at `2685f7c` (PR #106). This wrap
+  rides its own PR from branch `session-88-wrap`, and holds `STATE.md`
   and `plan.md` alone.
 
 ## Next actions
 
-Opener: G1's build, `s1-lint` first, the first unit of kit 0.20.0. It
-opens with pass zero: USAGE's guide to G1 written under red marks, with
-the red-legend test retired in the same commit
-(`tests/test_document_split_release.py:517-527`), the text and the
-retirement going to the user as one decision. The unit lays the base
-the rest stand on: `taskcontract/g1.py`, the record file, the
-declarations' readers and both commands. Its drafter reads the
-explorers' files in `RECEIPT_g1-requirements-spec-design_2026-10-07/`.
-The design's risk 1 is settled before the test list is approved: a
-live Spectral run on a plain JSON Schema, which needs Spectral
-installed on this machine (prerequisite 8 says Node exists and Spectral
-does not). The methods are the standing practices below: "Pass zero
-for a section a release already shipped", "A code unit's build" and "A
-delegated session".
+Opener: `s2-model`, the second unit of kit 0.20.0. It adds the
+component declaration record (`specs/components.yaml`, under a new
+schema, `taskcontract/schemas/component-declaration.schema.json`, at
+1.0.0), `g1-record model` and G1.2's three rules (`RS201` to `RS203`)
+on `s1-lint`'s base, with checks SC3.1, SC3.2 and SC3.3. USAGE already
+holds its text, red, so the unit opens at the drafter, and its
+Retirements cell reads "none". SC3.1 takes a manual receipt, a live TLC
+run on one passing model and one failing model, which needs Java and
+`tla2tools.jar` on this machine: look for both first, and probe TLC's
+exit codes live before the test list, as session 88 probed Spectral's.
+P gets no live run (the design's risk 2). Before the drafter's brief,
+put the first open question below to the user: `s2-model` builds
+`g1-record model` beside `lint`, so a ruling on two `g1.schemas`
+entries costs least there. The methods are the standing
+practices below: "A code unit that runs an outside tool", "A code
+unit's build" and "A delegated session".
 
 1. The pilot's config line, in the engine's session; the engine's
    install ref moves to the release that carries G1 (pull, not push).
@@ -570,6 +598,31 @@ delegated session".
   pins, with the full text on request. `git diff --no-index --stat`
   proves the plugin's flow file equal to the repository's. Session 87
   took four replies from the user and no agent.
+- A code unit that runs an outside tool (session 88, `s1-lint`). Probe
+  the real tool first, from a scratch script that prints each argv, its
+  exit code and both streams, and save the script with its output in
+  the receipt folder: the drafter reads them as the tool's measured
+  interface. Probe the exit code for each severity, the output with and
+  without each flag, and a start by the bare name from Python: on
+  Windows an npm tool is a `.CMD`, and only `shutil.which` finds it.
+  The tests use a stand-in that runs as a real child process on a PATH
+  each test sets, a `.cmd` beside a Python script on Windows and an
+  executable `sh` script elsewhere, so no test needs the tool and CI on
+  ubuntu passes. `tools/g1_lint_receipt.py <repo> <root> <receipt>`
+  takes the live receipt on a small consumer repository it builds; take
+  it again after a fix commit. `overlay_pkg.py` leaves out a file new
+  in the prototype: copy it with `overlay_files.py`. It also reports a
+  file whose line ends differ; `git diff --stat` on the worktree shows
+  the true changes. Read the design's "Decisions and open questions"
+  before a reading goes to the user: line 417 answered a question the
+  session had put to the user another way. Test each question a
+  developer returns against `done_means`, as a deviation is tested: a
+  path that reaches `done` with no record is a defect, never an edge to
+  park. In a second Two-Key round, name round 1's defects and ask the
+  grader to look for other paths of the same class. A callout over red
+  text says what holds through the whole build, never what is absent
+  today. Session 88's `s1-lint`: drafter 225K, developers 104K, 60K
+  and 69K, Two-Key 205K and 247K, PASS round 2.
 - The form validator on this machine (session 78): put one line,
   `E:/foundations`, in a `foundations.pth` under the scratch venv's
   `Lib/site-packages`, and `pip install tiktoken` there. `python -m
@@ -623,6 +676,46 @@ delegated session".
   remark the user made in confidence.
 
 ## Open questions
+- G1.1, five edges for the engineer seat (session 88; Two-Key's
+  advisories on `79b4a5b`). The first needs a ruling before
+  `s6-release`.
+  - A feature whose schemas stand under two `g1.schemas` entries, as
+    OpenAPI under Spectral beside protobuf under `buf`, is refused by
+    `g1-record lint` (exit 2): the record's drawn shape holds one
+    linter and one pin, and "the last record of a condition counts".
+    Its G1.1 can never read `done`, so once `s5-start` lands it cannot
+    start. One record an entry, each schema read from the last record
+    that lists it, would keep `s1-lint`'s pins; a list of runs in one
+    record would change them.
+  - With the `g1.schemas` key absent, `lint` prints `G1.1: no boundary
+    schema in scope` and exits 0, by the design's letter, while
+    `g1-check` reads G1.1 `to do`. Refuse the call (exit 2), as an
+    unreadable declaration is refused, or leave it?
+  - A pattern such as `./api/*.yaml`, one whose folder differs from
+    the disk in case alone, or one that is absolute or holds `..`
+    matches nothing, so its schema leaves the scope in silence and
+    G1.1 reads `done`. The design's guard is review item 10. Strip a
+    leading `./` and refuse the rest, or leave it?
+  - Six refusal lines carry words no source gives and no test pins,
+    each on stderr with exit 2: `{id}: G1 is not active` on
+    `g1-record`; `{id}: no contract at specs/{id}/contract.yaml`;
+    `{id}: g1.schemas names a linter the kit does not know: {value}`;
+    `{id}: more than one g1.schemas entry is in scope; a record holds
+    one linter and one pin`; `taskcontract g1-record: unreadable
+    record: {path} ({reason})`; `{id}: g1.schemas cannot be read:
+    {reason}`. None stands in USAGE's or the design's exit-2 list.
+    `g1-green: {id}` has no test before `s3-review`.
+  - `buf` has had no live run: its exit code on a violation (100, from
+    memory), its JSON report (one object a line) and where an older
+    release prints its version are read from its reference page and a
+    stand-in.
+- G1, four smaller ones from the same round. An unreadable
+  `.sdlc/config.yaml` reads as empty, so G1 reads not active: how the
+  tree and the refusal read that is `s4-tree`'s and `s5-start`'s. A
+  pattern at the root walks the whole repository, `.git` with it;
+  `s4-tree` measures the print. `tree.py`'s docstrings at lines 288 and
+  655 say `rules:` is G0's alone. `record_lint`'s docstring in `g1.py`
+  wraps badly at "not even for its version".
 - The second machine after `d6`'s merge: its plugin update is not
   tested, and whether that machine holds a combined document with no
   `Ready:` row is not known. Such a document now meets its own message
