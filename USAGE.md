@@ -532,8 +532,8 @@ choice, never a surprise.
 
 > 🔴 **Ratified, not shipped** (contract `specs/g1-requirements-spec/`,
 > [ADR 0038](decisions/0038-a-gate-refuses-a-task-and-g1-records-and-declarations-have-homes.md);
-> kit 0.20.0). Until the release G1 reads `inactive` for every feature,
-> and the kit holds none of the commands below.
+> kit 0.20.0). Until the release the units land one at a time, so the kit
+> holds only part of what this subsection describes.
 
 🔴 G1 finds a failure point before development starts. It holds three
 conditions. G1.1 reads `done` when the linter's record shows each
