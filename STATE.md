@@ -2,18 +2,42 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-08 (session 88 end, after the merge: `s1-lint`
-> stands on main at `2685f7c`, PR #106, Two-Key PASS in round 2; the
-> next session builds `s2-model`)._
+> _Generated 2026-10-09 (session 89 end: a talk session, no unit; the
+> user set "plan approved, then PR review" and the session metrics; the
+> next session builds `s2-model` under that flow)._
 
 ## Now
 
-- **Session 88 (2026-10-08): `s1-lint` is built, on main at `2685f7c`**
-  (PR #106, merged that day on the user's word after CI read green).
-  Two-Key PASS in round 2 at `79b4a5b`. Five commits: the plan
-  (`49f25d6`), pass zero (`c3bdacf`), the unit (`65a8339`), the fix
-  (`79b4a5b`) and the callout (`e9cc370`). The tree reads the unit
-  `[done] at 79b4a5b`, and five units stay `[to do]`.
+- **Session 89 (2026-10-08): a talk session, no unit built.** The user
+  asked whether the gates give better software, meaning more
+  consistent, less buggy, streamlined LLM-driven work. Claude's
+  answer: unproven. The mechanical checks pay (red-first tests, a
+  developer blind to them, Two-Key), and that loop stands untracked on
+  this machine, outside the kit. No product code has passed a gate, and
+  the engine has waited since 2026-09-21. Claude's two recommendations
+  were not taken up: package the build loop first, and ship the
+  engine's M0 through the gates to count what each one catches.
+- The flow the user set, through a nine-question interview: **plan
+  approved, then PR review.** Its terms stand under Standing practice,
+  first entry. It holds for this repository alone; the user's global
+  `CLAUDE.md` carries a one-clause exception.
+- The record: `docs/session-metrics.md` is new, with eight measures, a
+  tripwire, seven baseline rows (sessions 78 to 83 and 88) and a marker
+  row at session 89. Each build session's wrap appends one row. A first
+  look comes after five build rows past the marker, the full review
+  after ten.
+- A correction Claude made in the session: it had said the user approved
+  the `t6` details that lost two Two-Key rounds (session 47).
+  `.sdlc/progress/tree-view.yaml` records that approval `by: claude`, as
+  it does every test list since. The recorded misses are Claude's, and
+  the user's touches fall from about four a build session to two.
+- `plan.md` still holds session 88's closed plan: this session wrote
+  none. Session 90 writes it in the fixed shape.
+- Session 88 (2026-10-08), in short: `s1-lint` is built, on main at
+  `2685f7c` (PR #106), Two-Key PASS in round 2 at `79b4a5b`; its wrap
+  merged at `b442ee0` (PR #107), and its full Now is at
+  `b442ee0:STATE.md`. The tree reads the unit `[done] at 79b4a5b`, and
+  five units stay `[to do]`.
 - What stands. `taskcontract/g1.py` is new. `g1-record lint <id>` finds
   each boundary schema in the feature's scope, starts the entry's
   linter once a file under its pin, and appends one record to
@@ -30,36 +54,11 @@
   `s6-release`: "`/sdlc g1`: the G1 venue" in section 4 and "G1 as an
   active gate" at section 9's end. No later unit needs a pass zero. Its
   callout says the units land one at a time.
-- Risk 1, settled by a live run under Spectral 6.17.0. With no ruleset
-  Spectral exits 2, and its OpenAPI ruleset gives a plain JSON Schema
-  one `unrecognized-format` warning: a repository writes its own
-  ruleset, as the design's `.spectral.yaml` already says for the kit.
-  Three more facts: Spectral exits 0 on a warning alone unless it
-  starts with `--fail-severity warn`; `--format json` needs `--quiet`,
-  or a clean run prints `[]No results ...` and does not parse; on
-  Windows the tool is `spectral.CMD`, so a bare name does not start and
-  `shutil.which` finds it. The probes and their output stand in
-  untracked `RECEIPT_g1-requirements-spec-s1_2026-10-08/risk1/`, and
-  the live receipt at `79b4a5b` in its `RECEIPT.md`.
-- Two-Key's first round failed `65a8339` on two defects, both read
-  from the code, both fixed in `79b4a5b` with tests that were red
-  first. A `g1.schemas` entry whose `paths` was no list was dropped, so
-  G1.1 read `done` with no record: the declaration is now read whole
-  or refused. A linter not installed, with its pin's file absent too,
-  read `to do`: an absent pin now reads as null on both sides, and
-  `RS101` reports. The developer's own question had named the first
-  edge, and Claude parked it.
-- The readings. The user approved four in USAGE: Spectral needs a
-  ruleset the repository writes; errors and warnings count alike, and
-  what stands below a warning does not; a linter that ends on an error
-  of its own gives no result (exit 2, nothing written); the messages
-  table cites rule codes. One was amended on review: the design's
-  Decisions read a tool's result "By its exit code: 0 passes", so
-  Spectral starts with `--fail-severity warn`, a file is clean only on
-  exit 0, and `{n}` is counted from the report.
-- The cost: 911K agent tokens (drafter 225K; developers 104K, 60K and
-  69K; Two-Key 205K and 247K), where the plan read 0.6 to 0.8 million
-  and about 300K for a lost round.
+- Session 88's other facts stand at `b442ee0:STATE.md`: risk 1's
+  finding on Spectral 6.17.0 (its probes in untracked
+  `RECEIPT_g1-requirements-spec-s1_2026-10-08/risk1/`), the two defects
+  of Two-Key's first round, the five readings, and the cost (911K agent
+  tokens against a plan of 0.6 to 0.8 million).
 - Session 87, in short: the contract stands at ready on main at
   `fe8bd7b` (PR #104), written by intake at `84e64c0` from the pair at
   r6: six units in one line of `depends_on`, 15 checks, six non-goals,
@@ -108,8 +107,9 @@
   suite runs under the system Python (3.14.2), with no scratch venv:
   1107 passed in three and a half minutes. Spectral 6.17.0 stands
   installed since session 88 (`npm install -g
-  @stoplight/spectral-cli@6.17.0`, under Node `v24.10.0`). Whether Java
-  and `tla2tools.jar` stand here is not looked into. No Python here
+  @stoplight/spectral-cli@6.17.0`, under Node `v24.10.0`). Java stands
+  here (Temurin 21.0.12.1, read at session 89's resume), and
+  `tla2tools.jar` is not yet looked for. No Python here
   holds `prompt_lang`. `uv` 0.12.23 runs by its full path,
   `C:/Users/hyden/AppData/Local/Microsoft/WinGet/Packages/astral-sh.uv_Microsoft.Winget.Source_8wekyb3d8bbwe/uv.exe`.
   The `google_workspace` server failed to connect again (`Connection
@@ -126,9 +126,10 @@
 
 ## Blockers
 
-- None. Session 88's work is on main at `2685f7c` (PR #106). This wrap
-  rides its own PR from branch `session-88-wrap`, and holds `STATE.md`
-  and `plan.md` alone.
+- None. Session 89 shipped no work PR. This wrap rides its own PR from
+  branch `session-89-wrap`, and holds `STATE.md` and
+  `docs/session-metrics.md`. Claude merges it after green CI, the
+  delegation's first use.
 
 ## Next actions
 
@@ -140,14 +141,17 @@ on `s1-lint`'s base, with checks SC3.1, SC3.2 and SC3.3. USAGE already
 holds its text, red, so the unit opens at the drafter, and its
 Retirements cell reads "none". SC3.1 takes a manual receipt, a live TLC
 run on one passing model and one failing model, which needs Java and
-`tla2tools.jar` on this machine: look for both first, and probe TLC's
-exit codes live before the test list, as session 88 probed Spectral's.
-P gets no live run (the design's risk 2). Before the drafter's brief,
-put the first open question below to the user: `s2-model` builds
-`g1-record model` beside `lint`, so a ruling on two `g1.schemas`
-entries costs least there. The methods are the standing
-practices below: "A code unit that runs an outside tool", "A code
-unit's build" and "A delegated session".
+`tla2tools.jar` on this machine: Java stands here, so look for the jar
+first, and probe TLC's exit codes live before the test list, as
+session 88 probed Spectral's. P gets no live run (the design's risk 2).
+The plan carries the first open question below as a ruling with a
+recommendation: `s2-model` builds `g1-record model` beside `lint`, so a
+ruling on two `g1.schemas` entries costs least there. Read the design's
+Decisions before that recommendation is written. The session runs under
+"Plan approved, then PR review", as its first build, and its wrap
+appends the first row past the marker in `docs/session-metrics.md`. The
+methods are the standing practices below: "A code unit that runs an
+outside tool", "A code unit's build" and "A delegated session".
 
 1. The pilot's config line, in the engine's session; the engine's
    install ref moves to the release that carries G1 (pull, not push).
@@ -227,9 +231,39 @@ unit's build" and "A delegated session".
    the tree names no feature in flight (the user, 2026-10-07); a design
    run's opening fixes no shape for its copy of the terms
    (`opening.md`); the interview's `SKILL.md` reads `$1` as the second
-   word under this harness.
+   word under this harness; `STATE.md` runs past 800 lines against its
+   one-page contract, most of them Standing practice (session 89, the
+   audit's `BUDGET-STATE`).
 
 ## Standing practice
+- Plan approved, then PR review (the user, 2026-10-08, session 89). An
+  approved plan is the only gate before the build, and the user is
+  next needed at the work PR's review. The user holds: the plan's
+  approval; the work PR, which Claude opens after green CI and a
+  Two-Key PASS and merges on the user's word; a ruling that changes a
+  signed contract sentence, a ratified term or an ADR; each seat
+  signature; each release and tag. Claude holds: the unit's test list
+  and commits; USAGE text that only restates the signed design; the
+  commit and push of `plan.md` to the work branch before its approval;
+  the wrap PR's merge after green CI. A reading that surfaces
+  mid-build: Claude builds on its own reading and lists it at the top
+  of the PR body, and stops for the user only when the reading would
+  change a signed contract sentence, a ratified term or an ADR. The
+  plan's fixed shape: the deliverable in one line, the numbered steps,
+  each foreseeable ruling with a recommendation (the approval rules on
+  them), the cost with its basis, and the deferred list; each time it
+  is shown, a GitHub link to `plan.md` on the pushed branch goes with
+  it. The tripwire: a delegated item returns to the user at once on one
+  escaped defect traced to an approval Claude gave, or on two overturns
+  of the same kind at PR review. Where an entry below sends one of
+  Claude's items to the user, this entry governs. Before saying who
+  approved a step, read `.sdlc/progress/<id>.yaml`.
+- Session metrics (session 89). Each build session's wrap appends one
+  row to `docs/session-metrics.md`, by the eight measures the page
+  lists; a session that ships no unit adds none. An escaped defect
+  found later changes the row of the session that shipped it. Raise the
+  first look at the resume after five build rows past session 89's
+  marker, and the full review after ten.
 - At resume, read the pilot's `E:\ImSimProject\engine\STATE.md` beside
   this file: the engine hands work to the kit there, and its REQUESTs land
   untracked in this root.
@@ -258,7 +292,8 @@ unit's build" and "A delegated session".
 - The wrap follows the merge (the user, 2026-10-08). The work PR merges
   first, on the user's word after CI. Then `STATE.md`, `plan.md` and the
   memory index are written on a new branch off main and ride a
-  wrap-only PR, merged on the user's word. So the wrap names the work's
+  wrap-only PR, which Claude merges after green CI (since session 89;
+  before it, on the user's word). So the wrap names the work's
   merge commit and its PR as facts, and its Blockers line names only the
   wrap's own branch. A plan's close is two steps: the push, the PR and
   the merge of the work; then the wrap in its own PR. A wrap committed
@@ -301,9 +336,11 @@ unit's build" and "A delegated session".
   reads the document by I2, edits only what the row names in the
   contract, validates, and writes a new `Ready:` row in I7's exact
   shape. One commit, titled `Intake rN:`, with the `Contract:` trailer.
-- A plan is plan.md's numbered steps, shown in chat for the user's
-  overview. A USAGE refinement never narrows a contract sentence
-  silently: flag any narrowing or reading to the user before approval. A
+- A plan is plan.md in the fixed shape of this section's first entry,
+  shown in chat for the user's overview with its GitHub link. A USAGE
+  refinement never narrows a contract sentence silently: a narrowing
+  stops for the user, and any other reading is listed at the top of the
+  PR body (session 89). A
   release rewrite that simplifies a rule gets checked against the code
   first.
 - A release sweep reads each changed page end to end against the code,
@@ -676,6 +713,12 @@ unit's build" and "A delegated session".
   remark the user made in confidence.
 
 ## Open questions
+- Session 89's delegation stands in this file, in memory and in the
+  user's global `CLAUDE.md`, in no ADR and not in `CONVENTIONS.md`.
+  Record it in either, or wait for the metrics review? Beside it: the
+  delegation rests on Two-Key as the independent check, and its scripts
+  stand untracked on this machine (the `.claude/workflows/` question
+  below).
 - G1.1, five edges for the engineer seat (session 88; Two-Key's
   advisories on `79b4a5b`). The first needs a ruling before
   `s6-release`.
