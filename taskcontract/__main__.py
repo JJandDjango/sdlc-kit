@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from .checker import PROFILES, load_schema, validate_path
+from .g1 import main_g1_check, main_g1_record
 from .graph import main_graph
 from .lang import main_lang_check, main_lang_draft, main_lang_extract
 from .progress import RUNS, main_progress
@@ -141,6 +142,24 @@ def main(argv=None) -> int:
                        help="repo root that holds specs/ and .sdlc/ (default: cwd)")
     scope.add_argument("--json", action="store_true", dest="as_json",
                        help="emit findings in the note+findings envelope")
+    g1_record = sub.add_parser(
+        "g1-record",
+        help="append one G1 record to .sdlc/g1/<id>.yaml, a committed file (ADR 0038)")
+    kinds = g1_record.add_subparsers(dest="kind", required=True)
+    lint = kinds.add_parser(
+        "lint",
+        help="G1.1: run the pinned linter on each boundary schema in the "
+             "feature's scope and record what it reports")
+    lint.add_argument("id", help="the feature's id: its contract's id")
+    g1_check = sub.add_parser(
+        "g1-check",
+        help="G1's verdict for one feature, read from its records and "
+             "declarations; runs no tool and writes nothing (ADR 0038)")
+    g1_check.add_argument("id", help="the feature's id: its contract's id")
+    g1_check.add_argument("--root", type=Path, default=Path("."),
+                          help="repo root that holds specs/ and .sdlc/ (default: cwd)")
+    g1_check.add_argument("--json", action="store_true", dest="as_json",
+                          help="emit findings in the note+findings envelope")
     args = parser.parse_args(argv)
 
     if args.command == "graph":
@@ -157,6 +176,12 @@ def main(argv=None) -> int:
 
     if args.command == "scope-check":
         return main_scope_check(args)
+
+    if args.command == "g1-record":
+        return main_g1_record(args)
+
+    if args.command == "g1-check":
+        return main_g1_check(args)
 
     if args.command == "lang-check":
         if args.draft is not None:
