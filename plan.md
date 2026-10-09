@@ -1,188 +1,154 @@
-# Plan - Session 88 (2026-10-08) - g1-requirements-spec s1
+# Plan - Session 90 (2026-10-09) - g1-requirements-spec s2
 
-**Deliverable:** unit `s1-lint` of `g1-requirements-spec` on one PR,
-with a Two-Key PASS. It is the first unit of kit 0.20.0:
+**Deliverable:** unit `s2-model` of `g1-requirements-spec` on one PR,
+with a Two-Key PASS. It is the second unit of kit 0.20.0.
 
-- `USAGE.md` gains its guide to G1 first, every status mark red (pass
-  zero).
-- The base the other five units stand on: `taskcontract/g1.py`, the
-  record file under `.sdlc/g1/`, the declarations' readers and both
-  commands, `g1-check` and `g1-record`.
-- The unit's `done_means`: with a boundary schema in a feature's scope,
-  G1.1 reads done only when the pinned linter's record shows it clean.
-  Checks SC2.1, SC2.2 and SC2.3.
-- SC2.1 also takes a manual receipt: a live Spectral run on one clean
-  file and one unclean file.
-- Retired: USAGE's red-legend test, at pass zero
-  (`tests/test_document_split_release.py:517-527`). Replaced: the two
-  tests that hold `rules:` to G0's conditions
-  (`tests/test_tree_conditions.py:313-327` and `432-442`), each by one
-  that holds G1's too. Any other older test that fails on the prototype
-  is an amendment or a finding, and each goes to the user.
+What the unit ships:
 
-Session 87 left the contract at ready on main at `fe8bd7b` (PR #104),
-and its wrap merged as PR #105 at `4bec8eb`. Read at this resume: HEAD
-equals `origin/main` at `4bec8eb`, tag `v0.19.0` stands at `7fe6342`,
-the tree holds untracked files only, and the engine's `STATE.md` is
-unchanged since 2026-09-21. Node is `v24.10.0`, and Spectral is not
-installed.
+- The component declaration record's schema,
+  `taskcontract/schemas/component-declaration.schema.json` at 1.0.0,
+  and its reader in `taskcontract/g1.py`.
+- `g1-record model <id>`: it starts the checker of each hard core in
+  scope and appends one G1.2 record.
+- G1.2's three rules in `g1-check`: `RS201` (a hard core has no model),
+  `RS202` (the checker is not installed) and `RS203` (the model does
+  not pass).
+- The unit's `done_means`: with a hard core in a feature's scope, G1.2
+  reads done only when the record shows its model passes the checker.
+  Checks SC3.1, SC3.2 and SC3.3.
+- SC3.1 also takes a manual receipt: a live TLC run on one passing
+  model and one failing model.
+- Retirements: none. An older test that fails on the prototype is an
+  amendment or a finding, listed at the top of the PR body.
 
-The tight spot: the design's risk 1. Spectral may not lint a plain JSON
-Schema file without a ruleset the kit writes, and prerequisite 8 rests
-on it. Step 2 settles it with a live run before any text or test names
-the linter's command. A finding that changes the design is an OPEN and
-a re-intake, never a silent edit.
+Read at this resume: HEAD equals `origin/main` at `8625df9` (PR #108),
+tag `v0.19.0` stands at `7fe6342`, the tree holds untracked files only,
+and the engine's `STATE.md` is unchanged since 2026-09-21. Java is
+Temurin 21.0.12.1. No `tlc` command is on PATH, and no `tla2tools.jar`
+stands where one was looked for (the VS Code extensions).
 
-Approvals split as in sessions 78 to 83: the user approves the USAGE
-text in chat before any drafting; Claude approves the test list and the
-unit's commit on review; the plan's commit, each push, each PR and each
-merge stay on the user's word.
+The flow is "plan approved, then PR review", in its first build. This
+plan's approval decides the three rulings below. After it, the next
+word needed from the user is the work PR's merge. A reading that
+surfaces mid-build is Claude's, listed at the top of the PR body; one
+that would change a signed contract sentence, a ratified term or an ADR
+stops for the user.
 
-The cost in agent tokens: about 0.6 to 0.8 million. The basis is `d4`,
-the last code unit, at 561K (drafter 213K, developers 94K and 75K,
-Two-Key 179K), plus a retirer round, which has run 62K to 159K. A lost
-Two-Key round adds about 300K. This unit lays the base, so its drafter
-may read more than `d4`'s.
+The tight spot: the design's risk 2. TLC is a Java program with no
+command of its own, and it ends on more exit codes than a linter. Step
+2 probes it live before any test names its call: the code for a passing
+model, for a broken invariant, for a deadlock and for an error of its
+own, and where it writes its state files. P gets no live run: its call
+is read from its reference page and held by a stand-in, as `buf`'s was.
 
-Claude's readings, each told to the user here:
+## Rulings
 
-- Risk 1 runs before pass zero. The guide's sentences on the pin and
-  the linter's command rest on its finding.
-- Spectral's install is one on this machine, on the user's word:
-  `npm install -g @stoplight/spectral-cli@6.17.0`, the newest version
-  npm lists today. `s6-release`'s receipt needs it again. The kit ships
-  no linter (the contract's third non-goal).
-- No task is refused this session: `progress start` and `progress done`
-  refuse on G1 only from `s5-start`.
-- USAGE's drawing of this feature before intake (`USAGE.md:1878-1893`
-  since pass zero) stays as a dated example; `s6-release` redraws it.
+1. **A feature with schemas under two `g1.schemas` entries.** It is
+   `STATE.md`'s first open edge: `g1-record lint` refuses such a
+   feature, so its G1.1 can never read done. Recommendation: one record
+   a call that holds each entry's run, each with its own linter and
+   pin. ADR 0038 says "Each call appends one record, and the last
+   record of a condition counts", and the design and USAGE repeat it.
+   This option keeps that sentence true, and the G1.2 record already
+   has the form: one entry a hard core, each with its tool. The other
+   option, one record an entry, keeps `s1-lint`'s shape tests and costs
+   an amending ADR. The build is not this session's. It changes the
+   design's drawing of the record, so it takes a design text row, the
+   engineer seat's signature and a re-intake, in its own session before
+   `s6-release`. This session only shapes the G1.2 record to match.
+2. **How `g1-record model` finds TLC.** Recommendation: by the bare
+   name `tlc` on PATH, as `lint` finds Spectral. A consumer whose
+   install is the jar alone writes a wrapper script of that name. The
+   other option, the kit starting `java` with a jar path from a new
+   config key, adds a key the signed design does not draw. USAGE gains
+   one red sentence that says so.
+3. **TLC on this machine.** Recommendation: `tla2tools.jar` from
+   release v1.7.4 of `tlaplus/tlaplus` (2024-08-05, the newest that is
+   no pre-release), in `C:/Users/hyden/tools/tlaplus/` with a `tlc.cmd`
+   beside it. No global PATH change: the probe and the receipt script
+   set PATH for their own child process.
 
-The session boundary, if context runs short: after step 6. The approved
-list, the prototype and the interface note are copied to an untracked
-folder in this root, and the developer round opens the next session.
+Claude's readings, each told here:
 
-**Closed.** The deliverable is met: `s1-lint` stands on main at
-`2685f7c` (PR #106, merged 2026-10-08), Two-Key PASS in round 2 at
-`79b4a5b`. Pass zero stands at `c3bdacf`, the unit at `65a8339`, the fix
-at `79b4a5b` and the callout at `e9cc370`. The receipts read green at
-`79b4a5b`: SC2.1 at 18 cases, SC2.2 at 4, SC2.3 at 4, the unit's 50
-cases, the whole suite at 1107 passed, `validate --profile ready`, and
-`scope-check` against `4bec8eb`. The live run under Spectral 6.17.0
-holds, saved in `RECEIPT_g1-requirements-spec-s1_2026-10-08/`. One test
-retired at pass zero and two were replaced; the retirer did not run.
-The agents cost 911K tokens (drafter 225K; developers 104K, 60K and
-69K; Two-Key 205K and 247K), where this plan read 0.6 to 0.8 million
-and about 300K for a lost round. The session did not need its
-boundary.
-
-As it went. Step 2: risk 1 held as written. Spectral lints nothing
-with no ruleset (exit 2), and its OpenAPI ruleset gives a plain JSON
-Schema one `unrecognized-format` warning, so a repository writes its
-own; the design already lists the kit's `.spectral.yaml`, and no
-re-intake followed. The run found three more facts: Spectral exits 0 on
-a warning alone unless it starts with `--fail-severity warn`;
-`--format json` needs `--quiet`, or a clean run does not parse; and on
-Windows the tool is `spectral.CMD`, found through `shutil.which`. Step
-6: one amendment on review. The design's Decisions read a tool's result
-"By its exit code: 0 passes", a line Claude had not read when it gave
-the user the reading "never its exit code"; the flag now makes that
-line hold, and the count still comes from the report. Step 10: round 1
-failed `65a8339` on two defects. A `g1.schemas` entry whose `paths` was
-no list was dropped, so G1.1 read done with no record; the developer's
-own question had named the edge, and Claude parked it. A linter not
-installed, with its pin's file absent too, read to do where the design
-says failed. Both were fixed in `79b4a5b` with tests that were red
-first. Step 11: CI read `contracts` and `test` green on the first
-watch.
+- The unit builds the schema and the reader. The kit's own
+  `specs/components.yaml` is a declaration a person writes, and it
+  lands when `s6-release` turns G1 on at the kit.
+- USAGE holds the unit's guide, red, since pass zero. Its marks stay
+  red until `s6-release`.
+- Step 2's finding fixes which of TLC's exit codes read `fail` and
+  which are an error of its own. Lint's edge is the pattern: a tool
+  that ends on its own error gives no result, so `model` prints the
+  tool's lines, writes nothing and exits 2.
 
 ## Steps
 
-1. ~~Open.~~ Branch `session-88-g1-s1-lint` from `4bec8eb`; this plan,
-   committed on the user's word.
-2. ~~Spectral, risk 1.~~ Install Spectral on the user's word. Run it live
-   on a plain JSON Schema, one clean file and one unclean file, with no
-   ruleset and with the one the design names. The finding goes to the
-   user with step 3's text.
-3. ~~Pass zero.~~ Write USAGE's guide to G1, marks red, under its own red
-   subsection, shown in chat before and after. Retire the red-legend
-   test in the same commit. Run the whole suite on the new text first:
-   the text, the readings and the retirement go to the user as one
-   decision. Commit on the user's word.
-4. ~~Draft.~~ `spec-channel-drafter.js` drafts the test list for SC2.1,
-   SC2.2 and SC2.3 with a stand-in linter, proves it red from the repo
+1. Open. Branch `session-90-g1-s2-model` from `8625df9`; this plan,
+   committed and pushed, then shown for approval.
+2. TLC, risk 2. Fetch the jar by ruling 3. A scratch script starts TLC
+   by the bare name from Python on a passing model, a failing one, a
+   deadlock, a model that does not parse and an absent configuration,
+   and prints each argv, its exit code and both streams. The script and
+   its output go to untracked
+   `RECEIPT_g1-requirements-spec-s2_2026-10-09/`.
+3. Draft. `spec-channel-drafter.js` drafts the test list for SC3.1,
+   SC3.2 and SC3.3 with a stand-in checker, proves it red from the repo
    root, and proves it satisfiable on a scratch copy of the
-   `taskcontract` package. It reads the explorers' files in
-   `RECEIPT_g1-requirements-spec-design_2026-10-07/`.
-5. ~~Retire.~~ The session overlays the prototype on a scratch worktree and
-   runs the whole suite there. The two `rules:` tests are replaced.
-   `test-retirer.js` runs only if another older test fails, on the
-   failing modules alone.
-6. ~~Approve the list and prove red.~~ Each fixed detail checked against
-   the contract, the pair, its Constraints, the ratified terms under
-   `specs/vocabulary/` and USAGE's red text; session labels stripped;
-   then `progress run <check> --expect red` for each check, the command
-   run alone first.
-7. ~~Green.~~ `unit-developer.js` from the interface note, handed over as a
-   file outside the drafter's folder. Claude runs the suite after each
-   round and tests any deviation against `done_means`.
-8. ~~Commit.~~ The unit's commit with the `Contract:` trailer; each check
-   green at the clean commit; `validate --profile ready` and
-   `scope-check --base 4bec8eb`.
-9. ~~Manual receipt.~~ A live Spectral run through `g1-record` on one clean
-   file and one unclean file. Its text goes to untracked
-   `RECEIPT_g1-requirements-spec-s1_2026-10-08/`.
-10. ~~Two-Key.~~ `two-key-unit-verifier.js`, with the receipt's text as a
-    focus pointer; `progress done` on PASS.
-11. ~~The work's close.~~ The push, the PR and the merge, on the user's
-    word after CI reads green.
-12. ~~The wrap, after the merge.~~ `STATE.md` regenerated, this plan struck
-    and the memory index updated on a new branch off main, in a
-    wrap-only PR that names the work's merge commit; merged on the
-    user's word.
+   `taskcontract` package. It reads the probe's files and the
+   explorers' `rules.md`.
+4. Overlay. The session overlays the prototype on a scratch worktree
+   and runs the whole suite there. `test-retirer.js` runs only if an
+   older test fails, on the failing modules alone.
+5. Approve the list and prove red (Claude). Each fixed detail is
+   checked against the contract, the pair, its Constraints and
+   Decisions, the ratified terms under `specs/vocabulary/` and USAGE's
+   red text; session labels are stripped; then `progress run <check>
+   --expect red` for each check.
+6. Green. `unit-developer.js` from the interface note, handed over as a
+   file. Claude runs the suite after each round and tests each
+   deviation and each returned question against `done_means`.
+7. Commit (Claude). The unit's commit with the `Contract:` trailer and
+   ruling 2's USAGE sentence; each check green at the clean commit;
+   `validate --profile ready` and `scope-check --base 8625df9`.
+8. Manual receipt. A live TLC run through `g1-record model` on one
+   passing model and one failing model, in a small consumer repository
+   a script builds. Its text goes to the receipt folder.
+9. Two-Key. `two-key-unit-verifier.js`, with the receipt's text as a
+   focus pointer; `progress done` on PASS.
+10. The work's close. The push, then the PR once CI reads green and
+    Two-Key reads PASS, with Claude's readings at the top of its body.
+    The merge is on the user's word.
+11. The wrap, after the merge. `STATE.md` regenerated, this plan
+    struck, the memory index updated and one row appended to
+    `docs/session-metrics.md`, on a new branch off main in a wrap-only
+    PR that Claude merges after green CI.
 
-Steps 1, 2, 11 and 12 sit outside a contract unit, so the tree does not
+Steps 1, 2, 10 and 11 sit outside a contract unit, so the tree does not
 show them.
 
-Decisions this session: six planned. The user's: (1) the deliverable,
-this plan with its commit, and Spectral's install; (2) pass zero's
-USAGE text, with risk 1's finding, the retired test and its commit;
-(3) the push and the PR, then the merge after CI reads green; (4) the
-wrap's commit, its PR and its merge. Claude's, on review: (5) the test
-list, with any amendment; (6) the unit's commit. A seventh only if risk
-1's finding changes the design.
+The session boundary, if context runs short: after step 5. The approved
+list, the prototype and the interface note are copied to the receipt
+folder, and the developer round opens the next session.
 
-As it went: seven, and none from risk 1. The user's: (1) the
-deliverable, this plan with its commit, and Spectral's install; (2)
-pass zero's text with its four readings, the retired test and its
-commit; (3) the callout's sentence with its commit, then the push and
-the PR; (4) the merge, after CI read green; (5) the wrap. Claude's, on
-review: (6) the test list, with the flag's amendment and the two
-replaced tests; (7) the unit's commit, and the fix's after round 1.
+## Cost
 
-Deferred, not this session:
-- `s2-model` to `s6-release` (ships 0.20.0), one unit a session.
-  `s2-model`'s live receipt needs Java and `tla2tools.jar` here.
-- Five edges for the engineer seat, under `STATE.md`'s Open questions:
-  a feature with schemas under two `g1.schemas` entries, to rule before
-  `s6-release`; the `g1.schemas` key absent; a pattern that matches
-  nothing in silence; the words of six refusal lines; and `buf`'s live
-  run.
-- Four smaller ones, there too: an unreadable `.sdlc/config.yaml` reads
-  G1 as not active; a pattern at the root walks `.git`; two docstrings
-  of `tree.py` say `rules:` is G0's alone; one docstring of `g1.py`
-  wraps badly.
+About 0.6 million agent tokens, in a range of 0.55 to 0.7 million. The
+basis is two recorded code units: `d4` at 561K (drafter 213K,
+developers 94K and 75K, Two-Key 179K) and `s1-lint`'s first round at
+594K (drafter 225K, developers 104K and 60K, Two-Key 205K). A lost
+Two-Key round adds about 300K: `s1-lint`'s second cost 316K (developer
+69K, Two-Key 247K). A retirer round, if an older test fails, adds 62K
+to 159K.
+
+## Deferred, not this session
+
+- `s3-review` to `s6-release` (ships 0.20.0), one unit a session.
+- Ruling 1's build: the design's text row, its signature, the re-intake
+  and the change to `lint`, before `s6-release`.
+- G1.1's four other edges and the four smaller ones, under `STATE.md`'s
+  Open questions.
+- A live run of P, and of `buf`.
 - The engine's install ref, its pilot config line and M0's code: after
   G1 ships.
 - The `google_workspace` server failed to connect again at this resume.
-- `test-retirer.js` waits on the whole suite inside its agent; the fix
-  stays parked, and step 5 works around it.
-- `STATE.md` Next actions 2 to 5 and its open questions, carried.
-
-House rules in force: no pipes or chains in any authored command
-string; commit messages via Write + `git commit -F`; Workflows launched
-by `scriptPath`; a `Contract:` trailer, alone in the final paragraph,
-on every commit that touches a bound path; each task recorded through
-`taskcontract progress`, each check's run through `progress run`; no
-tracked file touched while a verifier runs; never two whole suites at
-once; no spawn opens a window; a surprise mid-build is an OPEN and a
-re-intake, never a silent edit.
+- `STATE.md` runs past its one-page budget.
+- `STATE.md` Next actions 2 to 5 and its other open questions, carried.
