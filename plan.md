@@ -157,6 +157,50 @@ TLC's own, and it finds where TLC writes its working files. P gets no
 live run: its call is read from its reference page and held by a
 stand-in, as `buf`'s was.
 
+## Closed
+
+**The deliverable is met.** `s2-model` stands on main at `350162a` (PR
+#109, merged 2026-10-09), Two-Key PASS in round 2 at `3a1c402`. The
+unit stands at `3f6954d`, the fix at `3a1c402`, and four reworded USAGE
+sentences at `21a0312`. The receipts read green at `3a1c402`: SC3.1 at
+61 cases, SC3.2 at 3, SC3.3 at 9, the unit's 109 cases, the whole suite
+at 1216 passed, the contract ready, and the scope check against
+`8625df9`. The live run under TLC 2.19 holds, saved in
+`RECEIPT_g1-requirements-spec-s2_2026-10-09/`. No older test changed,
+and the retirer did not run. The agents cost 965K tokens (drafter 212K;
+developers 115K, 76K, 61K and 59K; Two-Key 236K and 205K), where this
+plan read about 0.6 million and about 300K for a lost round. The
+session did not need its boundary. The three rulings stood as
+recommended.
+
+As it went:
+
+- Step 2. The probe found three facts no source gave. On Windows TLC
+  2.19 does not find a model given by a forward-slash path from the
+  root, so the kit starts it inside the model's folder. Two runs in one
+  second collide on the working folder TLC names from the clock, so
+  each run gets its own. P has no configuration file and needs two
+  calls, compile and then check: the reading built is that P's
+  configuration is a text file of `p check`'s arguments.
+- Step 5. Claude approved the first list, 89 cases, with two
+  amendments: a test that pinned three files by hash was removed, and
+  five cases of an unreadable declaration were added.
+- Step 6. The developer found that `s1-lint`, on main, reads G1.1
+  `done` for a contract whose scope cannot be read. The user counted it
+  as an escaped defect, so the tripwire fired: test-list approval is
+  the user's again. The user then approved three tests added on review.
+- Step 9. Round 1 failed `3f6954d` on the rule for when a hard core is
+  in a feature's scope: a folder written with no trailing slash left
+  the scope, and G1.2 read done with nothing checked. Claude had
+  approved that rule. The fix took two developer rounds and two
+  amendments of the test table, each approved by the user: 15 rows
+  became 32.
+- Step 10. CI read `contracts` and `test` green on the first watch, and
+  the user gave the merge.
+
+Touches between plan approval and PR review: four, where the target is
+0. Each came after the tripwire fired.
+
 ## Rulings
 
 1. **Two linters in one feature.** `g1-record lint` works today for a
@@ -205,43 +249,43 @@ Claude's readings, each told here:
 
 ## Steps
 
-1. Open. Branch `session-90-g1-s2-model` from `8625df9`; this plan,
+1. ~~Open.~~ Branch `session-90-g1-s2-model` from `8625df9`; this plan,
    committed and pushed, then shown for approval.
-2. Probe TLC. Download the jar by ruling 3. A scratch script starts TLC
+2. ~~Probe TLC.~~ Download the jar by ruling 3. A scratch script starts TLC
    by the name `tlc` from Python on a passing model, a failing one, a
    deadlock, a model that does not parse and an absent configuration,
    and prints each call, its exit code and its output. The script and
    its output go to untracked
    `RECEIPT_g1-requirements-spec-s2_2026-10-09/`.
-3. Draft. The drafter (`spec-channel-drafter.js`) writes the test list
+3. ~~Draft.~~ The drafter (`spec-channel-drafter.js`) writes the test list
    for SC3.1, SC3.2 and SC3.3 with a stand-in checker, proves it red
    from the repo root, and proves it can pass on a prototype, a scratch
    copy of the `taskcontract` package. It reads the probe's files and
    the explorers' `rules.md`.
-4. Overlay. The session overlays the prototype on a scratch copy of the
+4. ~~Overlay.~~ The session overlays the prototype on a scratch copy of the
    repository and runs the whole suite there. The retirer
    (`test-retirer.js`) runs only if an older test fails, on the failing
    modules alone.
-5. Approve the list and prove red (Claude). Each fixed detail is
+5. ~~Approve the list and prove red (Claude).~~ Each fixed detail is
    checked against the contract, the pair, its Constraints and
    Decisions, the ratified terms under `specs/vocabulary/` and USAGE's
    red text; then `progress run <check> --expect red` records each
    check's failing run.
-6. Green. The developer (`unit-developer.js`) writes the code from the
+6. ~~Green.~~ The developer (`unit-developer.js`) writes the code from the
    interface note. Claude runs the suite after each round and tests
    each deviation and each question it returns against `done_means`.
-7. Commit (Claude). The unit's commit, with ruling 2's USAGE sentence;
+7. ~~Commit (Claude).~~ The unit's commit, with ruling 2's USAGE sentence;
    each check green at the clean commit; the kit's own contract and
    scope checks green.
-8. Manual receipt. A live TLC run through `g1-record model` on one
+8. ~~Manual receipt.~~ A live TLC run through `g1-record model` on one
    passing model and one failing model, in a small consumer repository
    a script builds. Its text goes to the receipt folder.
-9. Two-Key. The verifier (`two-key-unit-verifier.js`) grades the unit,
+9. ~~Two-Key.~~ The verifier (`two-key-unit-verifier.js`) grades the unit,
    with the receipt's text to read; `progress done` on PASS.
-10. The work's close. The push, then the PR once CI reads green and
+10. ~~The work's close.~~ The push, then the PR once CI reads green and
     Two-Key reads PASS, with Claude's readings at the top of its body.
     The merge is on the user's word.
-11. The wrap, after the merge. `STATE.md` regenerated, this plan
+11. ~~The wrap, after the merge.~~ `STATE.md` regenerated, this plan
     struck, the memory index updated and one row appended to
     `docs/session-metrics.md`, on a new branch off main in a wrap-only
     PR that Claude merges after green CI.
@@ -270,6 +314,12 @@ to 159K.
   and the change to `lint`, before `s6-release`.
 - G1.1's four other open edges and the four smaller ones, under
   `STATE.md`'s Open questions.
+- Added at the close: the fix of G1.1's escaped defect (a contract
+  whose scope cannot be read), with ruling 1's build.
+- Added at the close: a record binds two files of a model, so a file
+  the model includes is not bound. The engineer seat rules.
+- Added at the close: P's first live run, which settles what `p check`
+  returns with no test case named.
 - A live run of P, and of `buf`.
 - The engine (the pilot consumer, `E:\ImSimProject\engine`): its
   install ref, its config line and its first code, after G1 ships.
