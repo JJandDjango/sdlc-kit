@@ -528,6 +528,244 @@ the roster is already ratified and its units already carry answers.
 Install the kit by pinned tag (§7, "Kit → your repo"), so an upgrade is a
 choice, never a surprise.
 
+### `/sdlc g1`: the G1 venue 🔴
+
+> 🔴 **Ratified, not shipped** (contract `specs/g1-requirements-spec/`,
+> [ADR 0038](decisions/0038-a-gate-refuses-a-task-and-g1-records-and-declarations-have-homes.md);
+> kit 0.20.0). Until the release G1 reads `inactive` for every feature,
+> and the kit holds none of the commands below.
+
+🔴 G1 finds a failure point before development starts. It holds three
+conditions. G1.1 reads `done` when the linter's record shows each
+boundary schema in the feature's scope clean under its pin. G1.2 reads
+`done` when each hard core in that scope has a model its checker passes.
+G1.3 reads `done` when a named person signs a review that checks all 11
+of its items, on the revisions the contract was derived from. A
+repository turns G1 on by listing `G1` under `active_gates`, and a
+feature its `g1.exempt` list names keeps G1 `inactive`.
+
+🔴 **The kit ships no linter and no checker.** You install Spectral,
+`buf`, TLC or P, and you commit each one's pin: a linter's ruleset, or a
+model's configuration. Spectral lints no file without a ruleset, and it
+ships none for a plain JSON Schema: under its OpenAPI ruleset a plain
+JSON Schema reports the warning `unrecognized-format`, and G1.1 reads
+`failed`. For JSON Schema files, write the rules they must meet in the
+ruleset you pin.
+
+🔴 **Two declarations, each written by a person.** The `g1` key of
+`.sdlc/config.yaml` lists the exempt features and the boundary schemas,
+each pattern with its linter and its pin:
+
+```yaml
+active_gates:
+  - G0
+  - G1
+g1:
+  exempt:
+    - controlled-language
+  schemas:
+    - paths: [api/*.yaml]
+      linter: spectral
+      pin: .spectral.yaml
+```
+
+🔴 `specs/components.yaml` is the component declaration record: each
+component's paths, whether it is a hard core, and its oracle
+designation.
+
+```yaml
+version: 1
+components:
+  - id: ledger
+    paths: [src/ledger/]
+    hard_core: true
+    oracle: concurrency
+    model: specs/models/ledger.tla
+    model_config: specs/models/ledger.cfg
+    checker: tlc
+  - id: api
+    paths: [src/api/]
+    hard_core: false
+    oracle: none
+    oracle_reason: read-only pass-through, covered by its acceptance tests
+```
+
+🔴 The edges of the two files:
+
+- `exempt` absent means no feature is exempt. An `exempt` id that names
+  no feature prints a problem line in the tree.
+- `schemas: []` and `components: []` each say none.
+- `linter` is `spectral` or `buf`; `checker` is `tlc` or `p`.
+- `oracle` is one of `differential`, `fuzz`, `property-only`,
+  `concurrency`, `soak` and `none`, and `none` needs an `oracle_reason`.
+
+🔴 A schema is in scope when its path matches a `g1.schemas` pattern and
+the contract's `scope`. A hard core is in scope when one of its paths
+and a `scope` entry overlap.
+
+🔴 **`g1-record`, the one writer.** Each call appends one record to
+`.sdlc/g1/<id>.yaml`, a file you commit, and the last record of a
+condition counts.
+
+```
+$ python -m taskcontract g1-record lint apply-discount
+G1.1: api/openapi.yaml lints clean under spectral
+recorded: .sdlc/g1/apply-discount.yaml
+
+$ python -m taskcontract g1-record model apply-discount
+G1.2: the model of ledger passes tlc
+recorded: .sdlc/g1/apply-discount.yaml
+
+$ python -m taskcontract g1-record review apply-discount --by "Ann Lee" --seat po --checked 1,2,3,4,5,7,8,9,10,11 --unchecked 6=Statement
+G1.3: item 6 Consistent is unchecked in Statement
+recorded: .sdlc/g1/apply-discount.yaml
+```
+
+🔴 It exits 0 when the record it wrote reads clean, and 1 when the record
+fails its condition, with the failure's message printed. It exits 2 and
+writes nothing on a call it cannot use: no contract for the id, G1 not
+active for the feature, a review that does not name each of the 11
+items once, or a seat that is no value of the ratified `intake-seat`
+term. Its edges:
+
+- With no boundary schema in scope, `lint` prints `G1.1: no boundary
+  schema in scope`, writes nothing and exits 0.
+- With no hard core in scope, `model` prints `G1.2: no hard core in
+  scope`, writes nothing and exits 0.
+- A tool that is not installed is recorded as such, so the condition
+  reads `failed`; the call prints the `RS101` or the `RS202` message and
+  exits 1.
+- A hard core with no model gets the `RS201` message and no record: the
+  rule reads the declaration.
+- A linter's errors and warnings count alike. What it reports below a
+  warning does not count.
+- A linter that starts and ends on an error of its own, as Spectral does
+  when its pin's file is absent, gives no result: `lint` prints the
+  tool's lines, writes nothing and exits 2, so no record changes.
+
+🔴 **`g1-check`, the verdict.** It reads the records and the
+declarations, runs no tool and writes nothing.
+
+```
+$ python -m taskcontract g1-check apply-discount
+apply-discount: RS201 G1.2: hard core ledger has no model
+apply-discount: G1.1 done, G1.2 failed, G1.3 to do
+
+$ python -m taskcontract g1-check apply-discount
+g1-green: apply-discount
+```
+
+🔴 It exits 0 when G1 reads `done` and 1 when it does not. It exits 2 when
+G1 is not active for the feature, printing `apply-discount: G1 is not
+active`, when the id has no contract, or on a call it cannot use.
+`--root` names the repository, as `tree` has it. `--json` prints a
+`note`, which holds the summary line, and a `findings` array:
+
+```json
+{"note": "G1.1 done, G1.2 failed, G1.3 to do", "findings": [{"feature": "apply-discount", "condition": "G1.2", "rule": "RS201", "message": "G1.2: hard core ledger has no model"}]}
+```
+
+🔴 **The messages.** Six rules, each with one message, and one refusal.
+`{n}` in `RS102` counts errors and warnings alike.
+
+| Rule | Message |
+|---|---|
+| RS101 | `G1.1: {tool} is not installed; install it and pin it in the repository` |
+| RS102 | `G1.1: {file} does not lint clean: {tool} reports {n}` |
+| RS201 | `G1.2: hard core {component} has no model` |
+| RS202 | `G1.2: {tool} is not installed; install it and pin it in the repository` |
+| RS203 | `G1.2: the model of {component} does not pass {tool}` |
+| RS301 | `G1.3: item {n} {item} is unchecked in {section}` |
+| none | `{unit} cannot start: G1 has not passed for {feature}` |
+
+🔴 The last line is a refusal of `progress` and no rule's (§9, "G1 as an
+active gate"). `{item}` is the item's name in
+`taskcontract/data/g1-items.yaml`. `{section}` is a section name of the
+feature's requirements document or design document, as the person names
+it. `{unit}` is the unit's own id, or the feature's id on a contract's
+close.
+
+🔴 **How a condition reads.** Each of the six rules reports `failed`. With
+none reported, a condition reads `done` when everything it needs is
+present and current, else `to do`, and a `to do` lists nothing.
+
+| Condition | Reads `to do` | Reads `done` |
+|---|---|---|
+| G1.1 | `g1.schemas` is absent; or a schema in scope has no lint record that matches its hash and the pin's | no schema is in scope; or every schema in scope is recorded clean |
+| G1.2 | `specs/components.yaml` is absent; or a hard core in scope has a model with no record that matches its hash and its configuration's | no hard core is in scope; or every one is recorded as passing |
+| G1.3 | no review is recorded; or the last review passed on revisions the contract was not derived from | the last review checks all 11 items on the revisions the contract was derived from |
+
+🔴 A review that leaves an item unchecked reads `failed` until a later
+review passes, whatever revision follows. The G1 verdict is the roll-up
+of its three conditions. A record or a declaration that cannot be read
+counts as absent, and the tree prints its problem line.
+
+🔴 **The record.** `.sdlc/g1/apply-discount.yaml`, written by `g1-record`
+alone and committed:
+
+```yaml
+records:
+  - condition: G1.1
+    at: 2026-10-07T14:02:11Z
+    head: 8635064
+    tool: spectral
+    tool_version: 6.11.0
+    installed: true
+    pin: {path: .spectral.yaml, sha256: 9f2c}
+    files:
+      - {path: api/openapi.yaml, sha256: 41d0, reported: 0}
+  - condition: G1.3
+    at: 2026-10-07T14:20:40Z
+    head: 8635064
+    by: Ann Lee
+    seat: po
+    requirements: r5
+    design: r4
+    items:
+      - {n: 1, name: Testable, checked: true}
+      - {n: 6, name: Consistent, checked: false, section: Statement}
+```
+
+🔴 The drawing cuts each hash to four characters and the items to two. A
+G1.2 record holds one entry per hard core: the component, the tool, the
+model's and the configuration's hashes, and `pass` or `fail`. A feature
+whose contract was derived from one document holds no `design` revision
+in its review. The files on disk win over a record: one whose hashes no
+longer match counts as absent.
+
+🔴 **The venue.** `/sdlc g1 <id>` runs after intake and before a unit's
+first task, in seven steps:
+
+| Step | What it does |
+|---|---|
+| R1 | Reads the contract. It stops when the contract is not ready-green, or when G1 is not active for the feature. |
+| R2 | Reads the two declarations. When one is absent it shows the form and stops: a person writes a declaration, never the flow. |
+| R3 | Runs `python -m taskcontract g1-record lint <id>` and shows its lines. |
+| R4 | Runs `python -m taskcontract g1-record model <id>` and shows its lines. |
+| R5 | Asks the person each of G1.3's 11 items, one at a time, in the item's own words. For items 3 and 4 it shows intake's `Ready:` rows as the evidence. For an item left unchecked it asks which section the item concerns. |
+| R6 | Asks the signer's name and seat, then runs `python -m taskcontract g1-record review` on the person's word. An agent may draft a reading of an item; it never answers one and never signs. |
+| R7 | Runs `python -m taskcontract g1-check <id>`, shows its lines and names the next step. |
+
+🔴 R7's report ends on one of two lines:
+
+```
+G1 has passed for apply-discount. Next step: the first unit's approve-tests.
+G1 has not passed for apply-discount. Fix each line above, then run /sdlc g1 apply-discount again.
+```
+
+🔴 The review asks none of ready checks 1 to 15 again: the interview and
+intake ask them, as today.
+
+🔴 **Intake's report.** For a ready-green contract whose feature needs G1,
+the report ends:
+
+```
+Next step: G1. Run /sdlc g1 apply-discount.
+```
+
+🔴 With `G1` absent from `active_gates`, or the feature exempt, the report
+ends as today.
+
 ### `taskcontract new <id>` (or `/sdlc new <id>`)
 Scaffolds the 8-field contract skeleton at
 `specs/<id>/contract.yaml` with inline field guidance. The id must
@@ -1704,6 +1942,61 @@ contract from r3`, after the requirements document's mark. A combined
 document through intake prints byte for byte as before. Before intake
 the tree shows no mark for a stale design: the interview and intake
 report it.
+
+### G1 as an active gate 🔴
+
+> 🔴 **Ratified, not shipped** (contract `specs/g1-requirements-spec/`,
+> [ADR 0038](decisions/0038-a-gate-refuses-a-task-and-g1-records-and-declarations-have-homes.md);
+> kit 0.20.0). Until the release, the subsections above hold as they
+> read.
+
+🔴 G1 is active for a feature when `active_gates` lists `G1` and the
+`g1.exempt` list does not name the feature. Such a feature shows G1
+active, with G2 as the inactive next gate. Each of G1's conditions takes
+its status from its own rules (§4, "`/sdlc g1`: the G1 venue"), and the
+G1 verdict is their roll-up:
+
+```
+  apply-discount/G1 Requirements / Spec [failed]
+    apply-discount/G1/G1.1 Spec/schema linting [done]
+    apply-discount/G1/G1.2 Model checking [failed]
+      - G1.2: hard core ledger has no model
+    apply-discount/G1/G1.3 Criteria completeness + ambiguity review [done] by po at r5, design r4
+  apply-discount/G2 Design / Architecture [to do] inactive
+```
+
+🔴 A condition that is not `done` lists each diagnostic, and a diagnostic
+prints its message whole, its `G1.2:` opening included. A signed review
+shows its seat and each revision it names; on a feature with one
+document it reads `by po at r5`. The repository's line names each
+feature that holds G1:
+
+```
+gates/G1 Requirements / Spec [failed]
+  - apply-discount holds G1 at failed
+```
+
+🔴 An exempt feature prints as today, byte for byte: G0, then G1 `[to do]
+inactive`. A feature before intake that is not exempt shows G1 active
+and `to do`. The tree stays derived at every print: G1's reading stores
+nothing and runs no tool. The pane watches `.sdlc/g1`.
+
+🔴 **The refusal.** `progress start` on a task, and `progress done` on a
+task, a unit or a contract, refuse while the feature's G1 is active and
+not `done`. The line goes to stderr, and the call exits 2 and writes
+nothing:
+
+```
+$ python -m taskcontract progress start apply-discount/u1-rate/approve-tests
+u1-rate cannot start: G1 has not passed for apply-discount
+
+$ python -m taskcontract progress done apply-discount
+apply-discount cannot start: G1 has not passed for apply-discount
+```
+
+🔴 `block` and `run` stay open. A contract's close is refused with the
+feature's id in the unit's place: a close would else mark every task
+done with G1 not passed. An exempt feature is never refused.
 
 ---
 
