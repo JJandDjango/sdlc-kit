@@ -552,11 +552,12 @@ JSON Schema reports the warning `unrecognized-format`, and G1.1 reads
 `failed`. For JSON Schema files, write the rules they must meet in the
 ruleset you pin.
 
-🔴 **The kit finds each tool by its name on PATH**: `spectral`, `buf`,
-`tlc` or `p`. It starts no other program. TLC comes as a jar with no
-command of its own, so where your install is the jar alone, put a script
-named `tlc` on PATH that starts `java -cp <folder>/tla2tools.jar
-tlc2.TLC` with the arguments it gets.
+🔴 **The kit finds each tool by its name**, as your shell finds a
+command: `spectral`, `buf`, `tlc` or `p` on PATH, and on Windows, by
+the system's default, in the repository's root first. It starts no other
+program. TLC comes as a jar with no command of its own, so where your
+install is the jar alone, put a script named `tlc` on PATH that starts
+`java -cp <folder>/tla2tools.jar tlc2.TLC` with the arguments it gets.
 
 🔴 **Two declarations, each written by a person.** The `g1` key of
 `.sdlc/config.yaml` lists the exempt features and the boundary schemas,
@@ -614,9 +615,14 @@ components:
 🔴 A schema is in scope when its path matches a `g1.schemas` pattern and
 the contract's `scope`. A hard core is in scope when one of its paths
 and a `scope` entry overlap. Overlap is read from the two texts alone,
-never from the files on disk, and where a pattern leaves doubt the hard
-core counts as in scope: two folders or patterns overlap when the text
-of one before its first wildcard starts with the other's.
+never from the files on disk, and every doubt counts the hard core in:
+it is out of scope only when the texts show that no path can fall under
+both entries. The text cannot tell a file from a folder, so `src/ledger`
+and `src/ledger/` say the same. A wildcard crosses a slash, and letter
+case is ignored. A path the kit cannot read plainly, such as one with
+`..`, a doubled slash or a drive, counts as in scope. Write each path
+from the repository's root: a second name for one folder, such as a
+link or an absolute path with no drive, is not seen.
 
 🔴 **`g1-record`, the one writer.** Each call appends one record to
 `.sdlc/g1/<id>.yaml`, a file you commit, and the last record of a
@@ -664,14 +670,16 @@ term. Its edges:
   lines, writes nothing and exits 2, so no record changes.
 - `model` starts TLC inside the model's folder, with the model's
   configuration and a working folder of its own outside the repository,
-  which it removes. A run leaves no file in the repository but the
+  which it removes. A TLC run leaves no file in the repository but the
   record.
 - For P the model is the project file (`.pproj`), and its configuration
   is a text file that holds the arguments of `p check`, such as `-tc
   tcTransfer -s 100`. `model` runs `p compile` on the project, then `p
-  check` with those arguments, both inside the project's folder. The
-  kit's P calls come from P's documentation: no live run of P stands
-  behind them yet.
+  check` with those arguments, both inside the project's folder. By P's
+  documentation both calls write there, into the project's output
+  folder and `PCheckerOutput/`: the kit does not move those files, so
+  keep them out of git. The kit's P calls come from P's documentation:
+  no live run of P stands behind them yet.
 - With `specs/components.yaml` absent or unreadable, or with a contract
   whose scope cannot be read, `model` exits 2: it is a call the kit
   cannot use.

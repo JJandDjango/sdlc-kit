@@ -28,8 +28,15 @@ specs/components.yaml is the component declaration record, read under
 schemas/component-declaration.schema.json: one entry the schema refuses
 makes the whole declaration unreadable. A hard core is in scope when one
 of its `paths` and one entry of the contract's `scope` overlap, read from
-the two texts alone and never from the files on disk. It has no model
-when its entry holds no `model` or the model's file is absent.
+the two texts alone and never from the files on disk. It is out of scope
+only when no path could fall under both entries of each such pair: the
+texts cannot tell a file from a folder, and a wildcard crosses a slash,
+so each doubt counts the hard core in. Letter case is ignored, and an
+entry the kit cannot read plainly counts as overlapping: one with a
+doubled slash, a `.` or `..` segment, white space at a segment's end, or
+a drive. A link from one folder to another is not seen, since nothing is
+read from disk. It has no model when its entry
+holds no `model` or the model's file is absent.
 
 `g1-record model <id>` starts the declared checker on the model of each
 hard core in scope and appends one record: for each hard core that has a
@@ -338,36 +345,67 @@ def components(root: Path) -> list[dict] | None:
 
 def hard_cores_in_scope(scope: list[str], entries: list[dict]) -> list[dict]:
     """The hard cores one of whose paths overlaps one entry of the
-    contract's scope, in the declaration's order."""
+    contract's scope, in the declaration's order. A hard core is left out
+    only when no path could fall under both entries, for each such pair.
+    Letter case is ignored, and an entry the kit cannot read plainly
+    counts as overlapping. A link from one folder to another is not seen,
+    since nothing is read from disk."""
     return [entry for entry in entries if entry["hard_core"]
             and any(_overlap(path, held) for path in entry["paths"] for held in scope)]
 
 
 def _overlap(one: str, other: str) -> bool:
-    """Whether two path entries overlap, read from the two texts alone. An
-    entry is open when it names a folder or holds a wildcard, else it is a
-    file. Two open entries overlap when the text of one before its first
-    wildcard starts with the other's; a file and an open entry when
-    `matches` says so; two files when they are equal."""
-    one, other = _entry(one), _entry(other)
-    if not one or not other:
-        return False
-    if _open(one) and _open(other):
-        a, b = _literal(one), _literal(other)
+    """Whether two path entries overlap, read from the two texts alone:
+    they do not only when no path could fall under both. The texts cannot
+    tell a file from a folder, and a wildcard crosses a slash, so each
+    doubt counts as an overlap. An entry the kit cannot read plainly
+    overlaps every entry, the root among them. Letter case is ignored:
+    the two texts are compared casefolded. Two entries with no wildcard
+    overlap when they are equal or one is a folder that holds the other;
+    an entry with none and one with a wildcard when the first starts with
+    the second's text before its first wildcard, or is a folder that
+    holds that text; two with a wildcard when that text of one starts
+    with the other's. A link from one folder to another is not seen,
+    since nothing is read from disk."""
+    one, other = _path(one), _path(other)
+    if not (_plain(one) and _plain(other)):
+        return True
+    one, other = one.casefold(), other.casefold()
+    a, b = _literal(one), _literal(other)
+    if _wild(one) and _wild(other):
         return a.startswith(b) or b.startswith(a)
-    if _open(one):
-        return matches(other, one)
-    if _open(other):
-        return matches(one, other)
-    return one == other
+    if _wild(one):
+        return other.startswith(a) or a.startswith(other + "/")
+    if _wild(other):
+        return one.startswith(b) or b.startswith(one + "/")
+    return one == other or one.startswith(other + "/") or other.startswith(one + "/")
 
 
 def _entry(text: str) -> str:
     return text.strip().replace("\\", "/")
 
 
-def _open(entry: str) -> bool:
-    return entry.endswith("/") or any(c in entry for c in "*?[")
+def _path(text: str) -> str:
+    """The entry as the overlap rule reads it: with no leading `./` or
+    `/` and no trailing `/`, and empty when it names the root."""
+    entry = _entry(text)
+    while entry.startswith(("./", "/")):
+        entry = entry[2:] if entry.startswith("./") else entry[1:]
+    entry = entry.rstrip("/")
+    return "" if entry == "." else entry
+
+
+def _plain(entry: str) -> bool:
+    """Whether the overlap rule can read the entry from its text: it holds
+    no `:`, so no drive, and split on `/` no segment is empty, `.` or
+    `..`, or has white space at either end. The root is not plain."""
+    return ":" not in entry and all(
+        segment not in ("", ".", "..") and segment == segment.strip()
+        for segment in entry.split("/"))
+
+
+def _wild(entry: str) -> bool:
+    return any(c in entry for c in "*?[")
 
 
 def _literal(entry: str) -> str:

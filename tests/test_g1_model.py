@@ -741,22 +741,53 @@ def test_sc3_1_only_a_hard_core_whose_paths_overlap_the_scope_is_checked(repo, c
     ("src/ledger/core.py", "src/ledger/*.py", True),
     ("src/ledger/c*.py", "src/ledger/*.py", True),
     ("src/ledger/core.py", "src/ledger/core.py", True),
+    ("src/ledger/core.py", "src/ledger", True),
+    ("src/ledger/*.py", "src/ledger", True),
+    ("src/ledger", "src/ledger/core.py", True),
+    ("src/ledger/core.py", "./src/ledger/", True),
+    ("./src/ledger/", "src/ledger/core.py", True),
+    ("src/ledger/core.py", "/src/ledger/", True),
+    ("src/a/gen/x.py", "src/*/gen/", True),
+    ("src/ledger/core.py", "src\\ledger\\", True),
+    ("src/ledger/core.py", "lib/../src/ledger/", True),
+    ("src/ledger/core.py", "./", True),
+    ("src/ledger/core.tla", "src/ledger/*.py", True),
+    ("src/ledger/core.py", "src/./ledger/", True),
+    ("src/ledger/core.py", "src//ledger/", True),
+    ("src/ledger/core.py", "Src/Ledger/", True),
+    ("src/ledger/core.py", "C:/work/repo/src/ledger/", True),
+    ("src/ledger/core.py", "src/ledger /", True),
     ("src/api/", "src/ledger/", False),
     ("src/ledger2/", "src/ledger/", False),
     ("src/ledger.py", "src/ledger/", False),
     ("docs/*.md", "src/ledger/", False),
-    ("src/ledger/core.tla", "src/ledger/*.py", False),
     ("src/ledger/core.py", "src/ledger/other.py", False),
+    ("src/ledger2", "src/ledger", False),
+    ("docs/", "src/*/gen/", False),
 ], ids=["a folder under the scope's folder", "the scope's folder under the folder",
         "the scope's file under the folder", "the scope's pattern under the folder",
         "a wildcard before the folder's name", "a pattern under the scope's folder",
         "a pattern that matches the scope's file", "two patterns under one folder",
-        "the same file", "two folders apart", "a folder whose name only starts the same",
-        "a file beside the folder", "a pattern in another folder",
-        "a pattern that does not match the file", "two files"])
+        "the same file", "a folder written with no slash over the scope's file",
+        "a folder written with no slash over the scope's pattern",
+        "the scope's folder written with no slash", "a path that opens with ./",
+        "a scope entry that opens with ./", "a path that opens with a slash",
+        "a folder pattern over the scope's file", "a path with backslashes",
+        "a path that holds ..", "the repository's root",
+        "a pattern beside a name that may be a folder",
+        "a path with a . inside it", "a path with a doubled slash",
+        "a path that differs in letter case alone", "a path with a drive",
+        "a path with a space before a slash",
+        "two folders apart", "a folder whose name only starts the same",
+        "a file beside the folder", "a pattern in another folder", "two files",
+        "two names that only start the same, with no slash",
+        "a folder pattern in another folder"])
 def test_sc3_1_a_hard_core_is_in_scope_when_a_path_and_a_scope_entry_overlap(
         repo, capsys, scope, path, overlap):
-    """Neither side needs a file on disk: G1 reads before development."""
+    """A hard core is out of scope only when no path could fall under both
+    entries. The texts cannot tell a file from a folder, and a wildcard
+    crosses a slash, so each doubt counts the hard core in. Neither side
+    needs a file on disk: G1 reads before development."""
     repo.contract(ID, scope)
     repo.components({**LEDGER, "paths": [path]})
     repo.install("tlc")
