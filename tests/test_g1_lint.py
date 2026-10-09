@@ -172,6 +172,8 @@ def spectral(plan, args, out, err):
             out.write(("\n%d problems\n" % len(rows)).encode("utf-8"))
     if not rows and "--quiet" not in options:
         out.write(b"No results with a severity of 'error' found!\n")
+    if plan.get("exit") is not None:
+        return plan["exit"]
     fail = {"error": 0, "warn": 1, "info": 2, "hint": 3}[
         options.get("--fail-severity", ["error"])[-1]]
     return 1 if any(row["severity"] <= fail for row in rows) else 0
@@ -285,12 +287,14 @@ class Repo:
                             encoding="utf-8", newline="")
             shim.chmod(shim.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
-    def plan(self, rows=None, version="6.17.0", own_error=None, raw=False) -> None:
+    def plan(self, rows=None, version="6.17.0", own_error=None, raw=False,
+             exit_code=None) -> None:
         """What the stand-in answers: `rows` maps a schema's path to a list
-        of [code, severity]; a path it does not name lints clean."""
+        of [code, severity]; a path it does not name lints clean. `exit_code`
+        sets Spectral's exit code whatever its rows say."""
         (self.bin / "plan.json").write_text(json.dumps({
             "root": str(self.root), "rows": rows or {}, "version": version,
-            "own_error": own_error, "raw": raw}), encoding="utf-8")
+            "own_error": own_error, "raw": raw, "exit": exit_code}), encoding="utf-8")
 
     def calls(self) -> list[dict]:
         """Each start of a stand-in, in order: the mark it leaves."""
@@ -595,6 +599,20 @@ def test_sc2_1_a_pin_whose_file_is_absent_gives_no_result(repo, capsys):
     assert code == 1
 
 
+def test_sc2_1_exit_1_with_no_row_at_a_warning_or_above_gives_no_result(repo, capsys):
+    """The exit code reads 0 for a clean file alone. A linter that exits 1
+    and reports nothing at a warning or above gave no result to record."""
+    repo.write("api/openapi.yaml", "openapi: 3.1.0\n")
+    repo.install("spectral")
+    repo.plan(rows={"api/openapi.yaml": [["a-note", INFO]]}, exit_code=1)
+    before = repo.files()
+    code, out, _ = lint(capsys)
+    assert code == 2
+    assert out == ""
+    assert repo.files() == before
+    assert check(repo, capsys)[1].splitlines() == [summary("to do")]
+
+
 def test_sc2_1_a_byte_that_is_not_utf8_in_the_report_does_not_break_the_call(repo, capsys):
     repo.write("api/openapi.yaml", "openapi: 3.1.0\n")
     repo.install("spectral")
@@ -741,6 +759,51 @@ def test_done_means_a_record_file_that_cannot_be_read_counts_as_absent(repo, cap
     code, out, _ = check(repo, capsys)
     assert out.splitlines()[-1] == summary("to do")
     assert not any(" RS" in line for line in out.splitlines())
+    assert code == 1
+
+
+NO_LIST = object()  # g1.schemas written as one string, where a list stands
+
+
+@pytest.mark.parametrize("entry", [
+    {"paths": "api/*.yaml", "linter": "spectral", "pin": ".spectral.yaml"},
+    {"linter": "spectral", "pin": ".spectral.yaml"},
+    {"paths": ["api/*.yaml"], "linter": "spectral"},
+    {"paths": ["api/*.yaml"], "pin": ".spectral.yaml"},
+    "api/*.yaml",
+    NO_LIST,
+], ids=["paths is no list", "no paths", "no pin", "no linter", "an entry is no mapping",
+        "schemas is no list"])
+def test_done_means_a_declaration_that_cannot_be_read_never_reads_done(repo, capsys, entry):
+    """A declaration that cannot be read counts as absent: G1.1 reads to do
+    with the schema on disk, and lint refuses the call."""
+    if entry is NO_LIST:
+        repo.write(".sdlc/config.yaml", yaml.safe_dump(
+            {"active_gates": ["G0", "G1"], "g1": {"schemas": "api/*.yaml"}}, sort_keys=False))
+    else:
+        repo.config(schemas=[entry])
+    repo.write("api/openapi.yaml", "openapi: 3.1.0\n")
+    repo.install("spectral")
+    before = repo.files()
+    code, out, _ = check(repo, capsys)
+    assert out.splitlines() == [summary("to do")]
+    assert code == 1
+    code, out, _ = lint(capsys)
+    assert code == 2
+    assert out == ""
+    assert repo.calls() == []  # no linter started
+    assert repo.files() == before  # and nothing was written
+
+
+def test_done_means_one_entry_that_cannot_be_read_holds_g1_1_at_to_do(repo, capsys):
+    repo.write("api/openapi.yaml", "openapi: 3.1.0\n")
+    repo.install("spectral")
+    assert lint(capsys)[0] == 0
+    assert check(repo, capsys)[1].splitlines() == [summary("done")]
+    repo.config(schemas=[SPECTRAL,
+                         {"paths": "proto/*.proto", "linter": "buf", "pin": "buf.yaml"}])
+    code, out, _ = check(repo, capsys)
+    assert out.splitlines() == [summary("to do")]  # the clean record does not stand in for it
     assert code == 1
 
 
@@ -911,6 +974,28 @@ def test_sc2_3_a_linter_that_is_not_installed_is_recorded_and_fails_g1_1(repo, c
         "findings": [{"feature": ID, "condition": "G1.1", "rule": "RS101",
                       "message": rs101()}]}
     assert code == 1
+
+
+def test_sc2_3_a_linter_that_is_not_installed_fails_g1_1_with_the_pin_absent_too(
+        repo, capsys):
+    """Neither installed nor pinned: the record of a tool that is not
+    installed still counts, so G1.1 reads failed, never to do."""
+    schema = repo.write("api/openapi.yaml", "openapi: 3.1.0\n")
+    (repo.root / ".spectral.yaml").unlink()
+    code, out, _ = lint(capsys)  # PATH holds no spectral
+    assert out.splitlines() == [rs101(), RECORDED]
+    assert code == 1
+    (record,) = repo.records()
+    assert record["installed"] is False
+    assert record["pin"] == {"path": ".spectral.yaml", "sha256": None}
+    assert record["files"] == [
+        {"path": "api/openapi.yaml", "sha256": sha(schema), "reported": None}]
+    code, out, _ = check(repo, capsys)
+    assert out.splitlines() == [f"{ID}: RS101 {rs101()}", summary("failed")]
+    assert code == 1
+    # The pin written after the run: the record no longer matches it.
+    repo.write(".spectral.yaml", "rules: {}\n")
+    assert check(repo, capsys)[1].splitlines() == [summary("to do")]
 
 
 def test_sc2_3_the_record_wins_over_the_readers_path_until_the_next_run(repo, capsys):

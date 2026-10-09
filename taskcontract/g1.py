@@ -10,7 +10,8 @@ G1 is active for a feature when .sdlc/config.yaml lists `G1` under
 pattern with its linter and its pin. A schema is in scope when its path
 from the root matches one pattern of an entry and one entry of `scope` in
 specs/<id>/contract.yaml, each read as `scope_check.matches` reads a scope
-entry.
+entry. A declaration that cannot be read counts as absent for `g1-check`,
+and `g1-record lint` refuses it.
 
 `g1-record lint <id>` starts the entry's linter once for each schema in
 scope and appends one record to .sdlc/g1/<id>.yaml, a committed file: the
@@ -95,7 +96,8 @@ class Finding:
 
 
 class Unreadable(ValueError):
-    """A record file the writer refuses, with the reason it prints."""
+    """A record file or a declaration the writer refuses, with the reason
+    it prints."""
 
 
 def read_config(root: Path) -> dict:
@@ -119,13 +121,28 @@ def is_active(config: dict, feature_id: str) -> bool:
 
 
 def schema_entries(config: dict) -> list[dict] | None:
-    """The `g1.schemas` entries that hold a `paths` list; None when the key
-    is absent, which is not the empty list."""
+    """The `g1.schemas` entries; None when the key is absent, which is not
+    the empty list. Unreadable with the reason when the key holds no list,
+    or one entry is no mapping that holds `paths`, a list of strings,
+    `linter`, a string, and `pin`, a string that is not empty: one such
+    entry makes the whole declaration unreadable."""
     section = config.get("g1")
-    entries = section.get("schemas") if isinstance(section, dict) else None
-    if not isinstance(entries, list):
+    if not isinstance(section, dict) or "schemas" not in section:
         return None
-    return [e for e in entries if isinstance(e, dict) and isinstance(e.get("paths"), list)]
+    entries = section["schemas"]
+    if not isinstance(entries, list):
+        raise Unreadable("it is no list")
+    for n, entry in enumerate(entries, start=1):
+        if not isinstance(entry, dict):
+            raise Unreadable(f"entry {n} is no mapping")
+        paths = entry.get("paths")
+        if not isinstance(paths, list) or not all(isinstance(p, str) for p in paths):
+            raise Unreadable(f"entry {n} holds no list of paths")
+        if not isinstance(entry.get("linter"), str):
+            raise Unreadable(f"entry {n} names no linter")
+        if not isinstance(entry.get("pin"), str) or not entry["pin"]:
+            raise Unreadable(f"entry {n} names no pin")
+    return entries
 
 
 def schemas_in_scope(root: Path, scope: list[str], entries: list[dict]) -> list[Schema]:
@@ -202,15 +219,21 @@ def read_lint(root: Path, feature_id: str, scope: list[str],
               config: dict) -> tuple[str, list[Finding]]:
     """G1.1's status and its findings, in path order.
 
-    `to do` when `g1.schemas` is absent, `done` when no schema is in scope.
-    Else each schema in scope is held against the last G1.1 record: it is
-    matched when the record holds its path with the file's hash as it
-    stands now, the entry's linter, and the entry's pin with the pin's
-    hash as it stands now. A matched schema reports RS101 when the record
-    found the tool not installed, once for the tool, and RS102 when it
-    reported above 0. With no report, one unmatched schema reads `to do`.
+    `to do` when `g1.schemas` is absent or cannot be read, `done` when no
+    schema is in scope. Else each schema in scope is held against the last
+    G1.1 record: it is matched when the record holds its path with the
+    file's hash as it stands now, the entry's linter, and the entry's pin
+    with the pin's hash as it stands now. A pin's file that is absent
+    reads as null on both sides, and null equals null. A matched schema
+    reports RS101 when the record found the tool not installed, once for
+    the tool, and RS102 when it reported above 0; a result whose pin's
+    hash is null is no pinned result, so its schema is unmatched. With no
+    report, one unmatched schema reads `to do`.
     """
-    entries = schema_entries(config)
+    try:
+        entries = schema_entries(config)
+    except Unreadable:
+        entries = None
     if entries is None:
         return TO_DO, []
     schemas = schemas_in_scope(root, scope, entries)
@@ -228,7 +251,7 @@ def read_lint(root: Path, feature_id: str, scope: list[str],
         pin_hash = sha256_of(root / schema.pin) if schema.pin else None
         if (held is None or held.get("sha256") != sha256_of(root / schema.path)
                 or record.get("tool") != schema.linter or pin.get("path") != schema.pin
-                or pin_hash is None or pin.get("sha256") != pin_hash):
+                or pin.get("sha256") != pin_hash):
             unmatched = True
             continue
         count = held.get("reported")
@@ -237,7 +260,7 @@ def read_lint(root: Path, feature_id: str, scope: list[str],
                 missing.add(schema.linter)
                 findings.append(Finding(feature_id, LINT, "RS101",
                                         NOT_INSTALLED.format(tool=schema.linter)))
-        elif not isinstance(count, int) or isinstance(count, bool):
+        elif pin_hash is None or not isinstance(count, int) or isinstance(count, bool):
             unmatched = True
         elif count > 0:
             findings.append(Finding(feature_id, LINT, "RS102", NOT_CLEAN.format(
@@ -286,8 +309,9 @@ def record_lint(root: Path, feature_id: str) -> int:
     or the tool is not installed, 2 when the call is refused or the tool
     ends on an error of its own.
 
-    The contract, the gate, the schemas, the linter's name and the record
-    file are checked in that order before a tool starts, and nothing is
+    The contract, the gate, the declaration, the schemas, the linter's name
+    and the record file are checked in that order before a tool starts,
+    not even for its version, and nothing is
     written before every file has run, so a call that exits 2 writes
     nothing. A tool that did not start is recorded as not installed; one
     that started and ended on its own error gives no result.
@@ -298,7 +322,11 @@ def record_lint(root: Path, feature_id: str) -> int:
     config = read_config(root)
     if not is_active(config, feature_id):
         return _refuse(_not_active(feature_id))
-    schemas = schemas_in_scope(root, scope, schema_entries(config) or [])
+    try:
+        entries = schema_entries(config)
+    except Unreadable as exc:
+        return _refuse(f"{feature_id}: g1.schemas cannot be read: {exc}")
+    schemas = schemas_in_scope(root, scope, entries or [])
     if not schemas:
         print(NO_SCHEMA)
         return 0
@@ -377,7 +405,8 @@ def _start(argv: list[str], root: Path) -> subprocess.CompletedProcess | None:
 
 def _spectral_count(result: subprocess.CompletedProcess) -> int | None:
     """The rows that are an error or a warning; None when Spectral ended on
-    an error of its own or printed no JSON array."""
+    an error of its own, printed no JSON array, or exited 1 with no such
+    row: a file is clean only on exit 0."""
     if result.returncode not in (0, 1):
         return None
     try:
@@ -386,7 +415,8 @@ def _spectral_count(result: subprocess.CompletedProcess) -> int | None:
         return None
     if not isinstance(rows, list):
         return None
-    return sum(1 for row in rows if isinstance(row, dict) and row.get("severity") in COUNTED)
+    count = sum(1 for row in rows if isinstance(row, dict) and row.get("severity") in COUNTED)
+    return None if result.returncode == 1 and count == 0 else count
 
 
 def _buf_count(result: subprocess.CompletedProcess) -> int | None:
