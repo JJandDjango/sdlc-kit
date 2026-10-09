@@ -554,10 +554,12 @@ ruleset you pin.
 
 🔴 **The kit finds each tool by its name**, as your shell finds a
 command: `spectral`, `buf`, `tlc` or `p` on PATH, and on Windows, by
-the system's default, in the repository's root first. It starts no other
-program. TLC comes as a jar with no command of its own, so where your
-install is the jar alone, put a script named `tlc` on PATH that starts
-`java -cp <folder>/tla2tools.jar tlc2.TLC` with the arguments it gets.
+the system's default, in the repository's root first. To run a tool it
+starts that tool alone: it never starts `java` itself. TLC comes as a
+jar with no command of its own, so where your install is the jar alone,
+put a script named `tlc` on PATH that starts `java -cp
+<folder>/tla2tools.jar tlc2.TLC` with the arguments it gets and ends on
+java's exit code, since the exit code is the result.
 
 🔴 **Two declarations, each written by a person.** The `g1` key of
 `.sdlc/config.yaml` lists the exempt features and the boundary schemas,
@@ -615,14 +617,14 @@ components:
 🔴 A schema is in scope when its path matches a `g1.schemas` pattern and
 the contract's `scope`. A hard core is in scope when one of its paths
 and a `scope` entry overlap. Overlap is read from the two texts alone,
-never from the files on disk, and every doubt counts the hard core in:
-it is out of scope only when the texts show that no path can fall under
-both entries. The text cannot tell a file from a folder, so `src/ledger`
-and `src/ledger/` say the same. A wildcard crosses a slash, and letter
-case is ignored. A path the kit cannot read plainly, such as one with
-`..`, a doubled slash or a drive, counts as in scope. Write each path
-from the repository's root: a second name for one folder, such as a
-link or an absolute path with no drive, is not seen.
+never from the files on disk, and a doubt the texts show counts the hard
+core in: it is out of scope only when the texts show that no path can
+fall under both entries. The text cannot tell a file from a folder, so
+`src/ledger` and `src/ledger/` say the same. A wildcard crosses a slash,
+and letter case is ignored. A path the kit cannot read plainly, such as
+one with `..`, a doubled slash or a drive, counts as in scope. Write
+each path from the repository's root: a second name for one folder, such
+as a link or an absolute path with no drive, is not seen.
 
 🔴 **`g1-record`, the one writer.** Each call appends one record to
 `.sdlc/g1/<id>.yaml`, a file you commit, and the last record of a
@@ -678,8 +680,10 @@ term. Its edges:
   check` with those arguments, both inside the project's folder. By P's
   documentation both calls write there, into the project's output
   folder and `PCheckerOutput/`: the kit does not move those files, so
-  keep them out of git. The kit's P calls come from P's documentation:
-  no live run of P stands behind them yet.
+  keep them out of git. Name one test case in the configuration with
+  `-tc`: what `p check` returns when a project holds several and none is
+  named is not yet measured. The kit's P calls come from P's
+  documentation: no live run of P stands behind them yet.
 - With `specs/components.yaml` absent or unreadable, or with a contract
   whose scope cannot be read, `model` exits 2: it is a call the kit
   cannot use.
