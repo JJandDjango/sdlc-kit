@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:sdlc-kit:component-declaration:v1",
+  "version": "1.0.0",
+  "title": "Component declaration record (G1.2 hard cores and oracle designations)",
+  "description": "The component declaration record a person writes at specs/components.yaml (ADR 0038, closing ADR 0007's deferral): each component's paths, whether it is a hard core, its oracle designation, and a hard core's model, the model's configuration and its checker. `components: []` says none. A hard core may stand with no model: it is a readable declaration, and RS201 reports it. One entry this schema refuses makes the whole declaration unreadable, wherever the entry stands. Whether a hard core is in a feature's scope, and whether a model's file is on disk, are Python-side readings: no schema can see a repository.",
+  "type": "object",
+  "required": [
+    "version",
+    "components"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/component"
+      }
+    }
+  },
+  "$defs": {
+    "component": {
+      "type": "object",
+      "required": [
+        "id",
+        "paths",
+        "hard_core",
+        "oracle"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "paths": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "hard_core": {
+          "type": "boolean"
+        },
+        "oracle": {
+          "enum": [
+            "differential",
+            "fuzz",
+            "property-only",
+            "concurrency",
+            "soak",
+            "none"
+          ]
+        },
+        "oracle_reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model_config": {
+          "type": "string",
+          "minLength": 1
+        },
+        "checker": {
+          "enum": [
+            "tlc",
+            "p"
+          ]
+        }
+      },
+      "dependentRequired": {
+        "model": [
+          "model_config",
+          "checker"
+        ]
+      },
+      "if": {
+        "required": [
+          "oracle"
+        ],
+        "properties": {
+          "oracle": {
+            "const": "none"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "oracle_reason"
+        ]
+      }
+    }
+  }
+}
