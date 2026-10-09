@@ -151,6 +151,11 @@ def main(argv=None) -> int:
         help="G1.1: run the pinned linter on each boundary schema in the "
              "feature's scope and record what it reports")
     lint.add_argument("id", help="the feature's id: its contract's id")
+    model = kinds.add_parser(
+        "model",
+        help="G1.2: run the declared checker on the model of each hard core "
+             "in the feature's scope and record whether it passes")
+    model.add_argument("id", help="the feature's id: its contract's id")
     g1_check = sub.add_parser(
         "g1-check",
         help="G1's verdict for one feature, read from its records and "

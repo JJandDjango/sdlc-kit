@@ -552,6 +552,15 @@ JSON Schema reports the warning `unrecognized-format`, and G1.1 reads
 `failed`. For JSON Schema files, write the rules they must meet in the
 ruleset you pin.
 
+🔴 **The kit finds each tool by its name**, as your shell finds a
+command: `spectral`, `buf`, `tlc` or `p` on PATH, and on Windows, by
+the system's default, in the repository's root first. To run a tool it
+starts that tool alone: it never starts `java` itself. TLC comes as a
+jar with no command of its own, so where your install is the jar alone,
+put a script named `tlc` on PATH that starts `java -cp
+<folder>/tla2tools.jar tlc2.TLC` with the arguments it gets and ends on
+java's exit code, since the exit code is the result.
+
 🔴 **Two declarations, each written by a person.** The `g1` key of
 `.sdlc/config.yaml` lists the exempt features and the boundary schemas,
 each pattern with its linter and its pin:
@@ -598,10 +607,24 @@ components:
 - `linter` is `spectral` or `buf`; `checker` is `tlc` or `p`.
 - `oracle` is one of `differential`, `fuzz`, `property-only`,
   `concurrency`, `soak` and `none`, and `none` needs an `oracle_reason`.
+- `specs/components.yaml` opens with `version: 1`. Each component needs
+  `id`, `paths` (one or more), `hard_core` and `oracle`, and a `model`
+  needs `model_config` and `checker` beside it. One entry that does not
+  hold makes the whole file unreadable.
+- A hard core has no model when its entry names none, or when the
+  model's file is absent.
 
 🔴 A schema is in scope when its path matches a `g1.schemas` pattern and
 the contract's `scope`. A hard core is in scope when one of its paths
-and a `scope` entry overlap.
+and a `scope` entry overlap. Overlap is read from the two texts alone,
+never from the files on disk, and a doubt the texts show counts the hard
+core in: it is out of scope only when the texts show that no path can
+fall under both entries. The text cannot tell a file from a folder, so
+`src/ledger` and `src/ledger/` say the same. A wildcard crosses a slash,
+and letter case is ignored. A path the kit cannot read plainly, such as
+one with `..`, a doubled slash or a drive, counts as in scope. Write
+each path from the repository's root: a second name for one folder, such
+as a link or an absolute path with no drive, is not seen.
 
 🔴 **`g1-record`, the one writer.** Each call appends one record to
 `.sdlc/g1/<id>.yaml`, a file you commit, and the last record of a
@@ -642,6 +665,31 @@ term. Its edges:
 - A linter that starts and ends on an error of its own, as Spectral does
   when its pin's file is absent, gives no result: `lint` prints the
   tool's lines, writes nothing and exits 2, so no record changes.
+- A checker's exit code is its result. 0 passes. A code by which the
+  checker says its search found a violation fails: 10 to 14 from TLC, 1
+  from `p check`. Any other code is an error of the checker's own, as
+  TLC gives for a model that does not parse: `model` prints the tool's
+  lines, writes nothing and exits 2, so no record changes.
+- `model` starts TLC inside the model's folder, with the model's
+  configuration and a working folder of its own outside the repository,
+  which it removes. A TLC run leaves no file in the repository but the
+  record.
+- For P the model is the project file (`.pproj`), and its configuration
+  is a text file that holds the arguments of `p check`, such as `-tc
+  tcTransfer -s 100`. `model` runs `p compile` on the project, then `p
+  check` with those arguments, both inside the project's folder. By P's
+  documentation both calls write there, into the project's output
+  folder and `PCheckerOutput/`: the kit does not move those files, so
+  keep them out of git. Name one test case in the configuration with
+  `-tc`: what `p check` returns when a project holds several and none is
+  named is not yet measured. The kit's P calls come from P's
+  documentation: no live run of P stands behind them yet.
+- With `specs/components.yaml` absent or unreadable, or with a contract
+  whose scope cannot be read, `model` exits 2: it is a call the kit
+  cannot use.
+- A record binds two files of a model: the model's and its
+  configuration's. A file the model extends or includes is not bound.
+  After you change one, run `g1-record model` again.
 
 🔴 **`g1-check`, the verdict.** It reads the records and the
 declarations, runs no tool and writes nothing.
