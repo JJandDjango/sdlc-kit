@@ -3,7 +3,9 @@
 Each gate opens into its conditions, the named parts its kit page lists,
 in the page's order. `taskcontract/data/gates.yaml` gives each gate a
 `conditions:` list, each an `id` and a `name`, 57 in all, and G0's three
-conditions a `rules:` list of the validator codes each owns. A name is the
+conditions a `rules:` list of the validator codes each owns. G1's three
+hold a `rules:` list too, the `RS` codes of G1's six rules (contract
+g1-requirements-spec, unit s1-lint). A name is the
 page's heading without its date note and without a last word "check" or
 "join". Under each contract the tree shows each gate in `active_gates`,
 then the first gate after the last active one in the kit's order, marked
@@ -66,6 +68,7 @@ G0_RULES = {
 }
 G1_LINES = [("G1.1", "Spec/schema linting"), ("G1.2", "Model checking"),
             ("G1.3", "Criteria completeness + ambiguity review")]
+RULED = ("G0", "G1")  # the gates whose conditions list the codes each owns
 
 INTENT = ("A fixture contract for the conditions suite; its one unit carries "
           "one sketch line.")
@@ -317,7 +320,7 @@ def test_the_gate_list_gives_each_gate_its_conditions_in_its_pages_order():
         assert isinstance(listed, list), f"{gate['id']} lists no conditions"
         assert [(c["id"], c["name"]) for c in listed] == _page_conditions(gate["page"]), gate["id"]
         for condition in listed:
-            keys = {"id", "name", "rules"} if gate["id"] == "G0" else {"id", "name"}
+            keys = {"id", "name", "rules"} if gate["id"] in RULED else {"id", "name"}
             assert set(condition) == keys, condition
         total += len(listed)
     assert total == 57
@@ -435,11 +438,16 @@ def test_each_code_the_validator_emits_belongs_to_exactly_one_condition():
     assert emitted == _named()  # each code the sources name is one a Violation carries
     owners = Counter(code for gate in _gate_list() for condition in gate.get("conditions", [])
                      for code in condition.get("rules", []))
-    assert set(owners) == emitted  # a new code with no condition fails here
     assert all(count == 1 for count in owners.values()), owners
+    owned = {gate["id"]: {code for condition in gate.get("conditions", [])
+                          for code in condition.get("rules", [])} for gate in _gate_list()}
+    assert owned["G0"] == emitted  # a new code with no condition fails here
+    # G1's codes are its own command's, RSnnn: none is a code the validator emits.
+    assert owned["G1"] and all(re.fullmatch(r"RS\d{3}", code) for code in owned["G1"])
+    assert set(owners) == owned["G0"] | owned["G1"]
     carriers = [c["id"] for gate in _gate_list() for c in gate.get("conditions", [])
                 if "rules" in c]
-    assert carriers == G0_CONDITIONS
+    assert carriers == G0_CONDITIONS + [cid for cid, _ in G1_LINES]
 
 
 # --- SC2.1 the gates under a feature, and each gate's conditions ------------------

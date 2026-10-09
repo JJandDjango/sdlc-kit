@@ -5,9 +5,11 @@
 #
 # Each gate lists its conditions in its page's order: the id and the name of
 # each "###" heading under the page's "## Conditions", the name without its
-# date note and without a last word "check" or "join". G0's three also list
-# the validator codes each owns (`rules:`); every code the validator emits
-# sits in exactly one of them.
+# date note and without a last word "check" or "join". Two gates also list
+# the codes each condition owns (`rules:`), and each code sits in exactly
+# one condition. G0's three list the validator codes: every code the
+# validator emits. G1's three list the `RS` codes of G1's six rules, which
+# ADR 0038 gives to `g1-check`.
 gates:
   - id: G0
     name: Planning / Intake
@@ -27,9 +29,9 @@ gates:
     name: Requirements / Spec
     page: docs/gates/G1-requirements-spec.md
     conditions:
-      - {id: G1.1, name: Spec/schema linting}
-      - {id: G1.2, name: Model checking}
-      - {id: G1.3, name: Criteria completeness + ambiguity review}
+      - {id: G1.1, name: Spec/schema linting, rules: [RS101, RS102]}
+      - {id: G1.2, name: Model checking, rules: [RS201, RS202, RS203]}
+      - {id: G1.3, name: Criteria completeness + ambiguity review, rules: [RS301]}
   - id: G2
     name: Design / Architecture
     page: docs/gates/G2-design-architecture.md

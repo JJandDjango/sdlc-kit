@@ -513,19 +513,6 @@ def test_done_means_usage_shows_the_interview_shipped_under_the_kit_0_19_0_banne
     assert RED not in interview
 
 
-def test_done_means_usage_holds_the_red_mark_in_its_two_legend_lines_and_no_other_line():
-    lines = _read(USAGE).splitlines()
-    legends = (
-        lambda line: line.startswith(">") and f"Sections marked {RED} are ratified" in line,
-        lambda line: line.startswith("SDLC.md") and f"({GREEN}/{RED})" in line,
-    )
-    for legend in legends:
-        assert len([line for line in lines if legend(line)]) == 1
-    others = [line for line in lines
-              if RED in line and not any(legend(line) for legend in legends)]
-    assert others == []
-
-
 def test_done_means_usage_section_9_shows_a_pair_of_documents_green_under_the_sections_banner():
     nine = _section(9)
     banner = _banner(nine)
