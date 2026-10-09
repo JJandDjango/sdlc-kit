@@ -2,37 +2,67 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-09 (session 89 end: a talk session, no unit; the
-> user set "plan approved, then PR review" and the session metrics; the
-> next session builds `s2-model` under that flow)._
+> _Generated 2026-10-09 (session 90 end: `s2-model` is built, on main at
+> `350162a`; the tripwire fired, so the user approves each test list
+> again; the next session builds `s3-review`)._
 
 ## Now
 
-- **Session 89 (2026-10-08): a talk session, no unit built.** The user
-  asked whether the gates give better software, meaning more
-  consistent, less buggy, streamlined LLM-driven work. Claude's
-  answer: unproven. The mechanical checks pay (red-first tests, a
-  developer blind to them, Two-Key), and that loop stands untracked on
-  this machine, outside the kit. No product code has passed a gate, and
-  the engine has waited since 2026-09-21. Claude's two recommendations
-  were not taken up: package the build loop first, and ship the
-  engine's M0 through the gates to count what each one catches.
-- The flow the user set, through a nine-question interview: **plan
-  approved, then PR review.** Its terms stand under Standing practice,
-  first entry. It holds for this repository alone; the user's global
-  `CLAUDE.md` carries a one-clause exception.
-- The record: `docs/session-metrics.md` is new, with eight measures, a
-  tripwire, seven baseline rows (sessions 78 to 83 and 88) and a marker
-  row at session 89. Each build session's wrap appends one row. A first
-  look comes after five build rows past the marker, the full review
-  after ten.
-- A correction Claude made in the session: it had said the user approved
-  the `t6` details that lost two Two-Key rounds (session 47).
-  `.sdlc/progress/tree-view.yaml` records that approval `by: claude`, as
-  it does every test list since. The recorded misses are Claude's, and
-  the user's touches fall from about four a build session to two.
-- `plan.md` still holds session 88's closed plan: this session wrote
-  none. Session 90 writes it in the fixed shape.
+- **Session 90 (2026-10-09): `s2-model` is built**, on main at `350162a`
+  (PR #109), Two-Key PASS in round 2 at `3a1c402`. The unit stands at
+  `3f6954d`, the fix at `3a1c402`, and four reworded USAGE sentences at
+  `21a0312`. The tree reads two units of six done; four stay `[to do]`.
+- What stands. `g1-record model <id>` reads `specs/components.yaml`
+  under a new schema at 1.0.0
+  (`taskcontract/schemas/component-declaration.schema.json`), starts
+  the declared checker for each hard core whose paths overlap the
+  contract's scope, and appends one G1.2 record with one entry a hard
+  core: the tool, the model's and the configuration's hashes, and
+  `pass` or `fail`. `g1-check <id>` takes G1.2 from `RS201` (no model),
+  `RS202` (the checker not installed) and `RS203` (the model does not
+  pass). `tests/test_g1_model.py` holds 109 cases, and the whole suite
+  reads 1216 passed. `tree.py`, `progress.py` and `checker.py` keep
+  every byte. USAGE holds this unit's sentences, red.
+- The plan's three rulings, approved with it. One G1.1 record a call is
+  to hold a result for each `g1.schemas` entry, each with its own
+  linter and pin, so ADR 0038's "the last record of a condition counts"
+  stays true; its build waits for its own session (Next actions). A
+  checker is found by its bare name, `tlc` or `p`. TLC stands on this
+  machine (the bullet "This machine").
+- The tripwire fired. The developer found that `s1-lint`, on main,
+  reads G1.1 `done` for a contract whose YAML cannot be read or that
+  holds no `scope`: `contract_scope` gives the empty list, so no schema
+  counts as in scope. Claude confirmed it with a live run, and the user
+  counted it as an escaped defect of session 88. It traces to a test
+  list Claude approved, so **the user approves each test list again**,
+  shown in chat before the developer starts. G1.2 is built closed
+  against the same path. G1.1's fix waits (Next actions).
+- Round 1 of Two-Key failed `3f6954d` on one rule, when a hard core is
+  in a feature's scope: a folder written with no trailing slash, or
+  with a leading `./`, left the scope, and G1.2 read `done` with
+  nothing checked, while USAGE said the rule erred toward in scope.
+  Claude had approved the rule in the first list. The rule now says out
+  of scope only when the texts show that no path can fall under both
+  entries, and its table grew from 15 rows to 32 on the user's
+  approvals.
+- Claude's readings, each at the top of PR #109's body, none overturned
+  at the merge: how TLC is started; exit 0 passes, TLC's 10 to 14 and
+  `p check`'s 1 fail, and any other code gives no result; P's
+  configuration is a text file of `p check`'s arguments; `RS201` covers
+  a model whose file is absent; the writer refuses an absent or
+  unreadable declaration and a contract whose scope cannot be read; one
+  bad entry makes the declaration unreadable; a G1.2 record holds no
+  tool version.
+- The cost: 965K agent tokens against a plan of about 0.6 million plus
+  about 300K for a lost round (drafter 212K; developers 115K, 76K, 61K
+  and 59K; Two-Key 236K and 205K). Four touches between plan approval
+  and PR review. `docs/session-metrics.md` holds the row, the first
+  past the marker, and session 88's row now reads one escaped defect.
+- The user's other word this session: every plan opens with an Overview
+  and a Terms section, in plain words (Standing practice, first entry).
+- Session 89 (2026-10-08), in short: a talk session, no unit. The user
+  set "plan approved, then PR review" and the session metrics. Its full
+  Now is at `8625df9:STATE.md`.
 - Session 88 (2026-10-08), in short: `s1-lint` is built, on main at
   `2685f7c` (PR #106), Two-Key PASS in round 2 at `79b4a5b`; its wrap
   merged at `b442ee0` (PR #107), and its full Now is at
@@ -105,11 +135,14 @@
 - This machine: the `sdlc` plugin sits at `8635064`, its `skills/`
   equal to `v0.19.0`'s, so `/sdlc:` runs 0.19.0's flows. The whole
   suite runs under the system Python (3.14.2), with no scratch venv:
-  1107 passed in three and a half minutes. Spectral 6.17.0 stands
+  1216 passed in four minutes. Spectral 6.17.0 stands
   installed since session 88 (`npm install -g
   @stoplight/spectral-cli@6.17.0`, under Node `v24.10.0`). Java stands
-  here (Temurin 21.0.12.1, read at session 89's resume), and
-  `tla2tools.jar` is not yet looked for. No Python here
+  here (Temurin 21.0.12.1). TLC 2.19 stands at
+  `C:/Users/hyden/tools/tlaplus/` since session 90: `tla2tools.jar`
+  from release v1.7.4 with a `tlc.cmd` wrapper beside it, off PATH on
+  purpose, so a script that needs it puts that folder first on PATH for
+  its own child. P is not installed. No Python here
   holds `prompt_lang`. `uv` 0.12.23 runs by its full path,
   `C:/Users/hyden/AppData/Local/Microsoft/WinGet/Packages/astral-sh.uv_Microsoft.Winget.Source_8wekyb3d8bbwe/uv.exe`.
   The `google_workspace` server failed to connect again (`Connection
@@ -117,7 +150,7 @@
 - Carried: kit 0.19.0 stands released, tag `v0.19.0` at `7fe6342`. 20
   features, each with a contract, 18 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
-  `g1-requirements-spec` in its build, one unit of six done.
+  `g1-requirements-spec` in its build, two units of six done.
   Session 85's Now is at `dfab2c6:STATE.md`, with the
   amendment in short and the removed test module. Session 84's is at
   `8434a9d:STATE.md`, and session 83's at `8635064:STATE.md`: d6's
@@ -126,32 +159,36 @@
 
 ## Blockers
 
-- None. Session 89 shipped no work PR. This wrap rides its own PR from
-  branch `session-89-wrap`, and holds `STATE.md` and
-  `docs/session-metrics.md`. Claude merges it after green CI, the
-  delegation's first use.
+- None. The work merged as PR #109 at `350162a`. This wrap rides its own
+  PR from branch `session-90-wrap`, and Claude merges it after green
+  CI.
 
 ## Next actions
 
-Opener: `s2-model`, the second unit of kit 0.20.0. It adds the
-component declaration record (`specs/components.yaml`, under a new
-schema, `taskcontract/schemas/component-declaration.schema.json`, at
-1.0.0), `g1-record model` and G1.2's three rules (`RS201` to `RS203`)
-on `s1-lint`'s base, with checks SC3.1, SC3.2 and SC3.3. USAGE already
-holds its text, red, so the unit opens at the drafter, and its
-Retirements cell reads "none". SC3.1 takes a manual receipt, a live TLC
-run on one passing model and one failing model, which needs Java and
-`tla2tools.jar` on this machine: Java stands here, so look for the jar
-first, and probe TLC's exit codes live before the test list, as
-session 88 probed Spectral's. P gets no live run (the design's risk 2).
-The plan carries the first open question below as a ruling with a
-recommendation: `s2-model` builds `g1-record model` beside `lint`, so a
-ruling on two `g1.schemas` entries costs least there. Read the design's
-Decisions before that recommendation is written. The session runs under
-"Plan approved, then PR review", as its first build, and its wrap
-appends the first row past the marker in `docs/session-metrics.md`. The
-methods are the standing practices below: "A code unit that runs an
-outside tool", "A code unit's build" and "A delegated session".
+Opener: `s3-review`, the third unit of kit 0.20.0. It adds G1.3's rule,
+`RS301`; the review record through `g1-record review`; the 11 items as
+`taskcontract/data/g1-items.yaml`; and the venue, the flow
+`skills/sdlc/flows/g1.md` with its lines in `skills/sdlc/SKILL.md`. Its
+checks are SC1.1, SC1.2 and SC1.3, and its Retirements cell reads
+"none". It is a unit with a code half and a prompt half, and each
+prompt file must pass `python -m prompt_lang`, which needs the scratch
+venv below. SC1.1 takes a manual receipt, a live run of `/sdlc g1` on
+an invented feature with a seat answering the 11 items. USAGE holds its
+text, red. The plan opens with an Overview and a Terms section. The
+test list goes to the user in chat before the developer starts, since
+the tripwire fired in session 90; before it goes, Claude tries each
+rule that sorts free text against five hostile inputs. The wrap appends
+the second row past the marker in `docs/session-metrics.md`. The
+methods are the standing practices below: "A unit with a code half and
+a prompt half", "A live run of the interview", "A code unit whose tool
+is a checker" and "A delegated session".
+
+Beside it, in its own session before `s6-release`: the build of
+session 90's first ruling, one G1.1 record a call that holds a result
+for each `g1.schemas` entry (a design text row, the engineer seat's
+signature, a re-intake, then `lint`). The fix of G1.1's escaped defect
+rides it: a contract whose scope cannot be read must read `to do` and
+be refused by `lint`, as G1.2 has it.
 
 1. The pilot's config line, in the engine's session; the engine's
    install ref moves to the release that carries G1 (pull, not push).
@@ -242,16 +279,23 @@ outside tool", "A code unit's build" and "A delegated session".
   approval; the work PR, which Claude opens after green CI and a
   Two-Key PASS and merges on the user's word; a ruling that changes a
   signed contract sentence, a ratified term or an ADR; each seat
-  signature; each release and tag. Claude holds: the unit's test list
-  and commits; USAGE text that only restates the signed design; the
+  signature; each release and tag; and, since the tripwire fired on
+  2026-10-09 (session 90), the unit's test list and each later
+  amendment of it, shown in chat before the developer starts and
+  recorded `--by user`. Claude holds: the unit's commits; USAGE text
+  that only restates the signed design; the
   commit and push of `plan.md` to the work branch before its approval;
   the wrap PR's merge after green CI. A reading that surfaces
   mid-build: Claude builds on its own reading and lists it at the top
   of the PR body, and stops for the user only when the reading would
   change a signed contract sentence, a ratified term or an ADR. The
-  plan's fixed shape: the deliverable in one line, the numbered steps,
-  each foreseeable ruling with a recommendation (the approval rules on
-  them), the cost with its basis, and the deferred list; each time it
+  plan's fixed shape: the deliverable in one line; an Overview in plain
+  words (the project, the feature with its units, the session's unit)
+  and a Terms section for each word the plan uses (the user, session
+  90: the first draft could not be read); the numbered steps, each
+  agent named by its role beside its script; each foreseeable ruling
+  with a recommendation, in plain words (the approval rules on them);
+  the cost with its basis; and the deferred list. Each time it
   is shown, a GitHub link to `plan.md` on the pushed branch goes with
   it. The tripwire: a delegated item returns to the user at once on one
   escaped defect traced to an approval Claude gave, or on two overturns
@@ -660,6 +704,31 @@ outside tool", "A code unit's build" and "A delegated session".
   text says what holds through the whole build, never what is absent
   today. Session 88's `s1-lint`: drafter 225K, developers 104K, 60K
   and 69K, Two-Key 205K and 247K, PASS round 2.
+- A code unit whose tool is a checker (session 90, `s2-model`). The
+  probe takes two runs: the first finds what breaks (TLC did not find a
+  model by a forward-slash path from the root, and two runs in one
+  second collided on its working folder), and the second gives every
+  call its own `-metadir` and reads each exit code. A findings file
+  beside the probes holds three parts: measured; read and not run; the
+  session's readings. The drafter and the developer both read it. A
+  tool with no live run (P) gets its facts from its own repository
+  through `gh search code` and `gh api`, never from memory: memory gave
+  P's exit codes wrong. `tools/g1_model_receipt.py <repo> <root>
+  <receipt> <tool folder>` takes the live receipt, with the tool's
+  folder first on PATH for its own child; run it once before the commit
+  as a rehearsal. Before a rule that sorts free text is approved (file
+  or folder, in or out of scope), try five hostile inputs against it:
+  no trailing slash, a leading `./` or `/`, `..`, letter case, a
+  doubled slash. Make each "cannot tell" land on the safe side, say in
+  USAGE what form the input must take, and stop there: round 1 was lost
+  to a folder written with no slash. A test that pins a file's hash
+  plants a failure in a later unit: drop it and let Two-Key read `git
+  show --stat`. A fix round is narrow: the tests are placed first, on
+  the user's approval, and the note names only the behavior to change.
+  Wording that Two-Key marks as an advisory is fixed in one commit
+  after the PASS, with the suite run again and the PR body saying so.
+  Session 90's `s2-model`: drafter 212K, developers 115K, 76K, 61K and
+  59K, Two-Key 236K and 205K, PASS round 2.
 - The form validator on this machine (session 78): put one line,
   `E:/foundations`, in a `foundations.pth` under the scratch venv's
   `Lib/site-packages`, and `pip install tiktoken` there. `python -m
@@ -719,9 +788,42 @@ outside tool", "A code unit's build" and "A delegated session".
   delegation rests on Two-Key as the independent check, and its scripts
   stand untracked on this machine (the `.claude/workflows/` question
   below).
+- G1.2, for the engineer seat (session 90; PR #109's body names each).
+  - A record binds two files of a model, the model's and its
+    configuration's, as the design draws the entry. A file the model
+    extends or includes is not bound, and a P project's sources never
+    are, so G1.2 can read `done` for text no checker ran on. Hash the
+    model's folder, or a declared list of files? Either changes the
+    record's entry, which is signed design text.
+  - P has had no live run. Its two calls, its configuration as a text
+    file of `p check`'s arguments, and its exit codes (0, 1 and 2, from
+    `ExitCode.cs` at `260da92`) are read, not run. What `p check`
+    returns with several test cases and none named is not measured: if
+    it is 0, a configuration with no `-tc` records a pass with nothing
+    checked. P writes inside the project's folder.
+  - Five refusal lines of `g1-record model` carry words no source
+    gives, beside G1.1's six.
+  - Three paths end either writer on a traceback with exit 1, each
+    writing nothing: a record file that cannot be written, a NUL in a
+    declared path or in a P configuration, and a damaged schema file in
+    the install. `contract_scope` does not catch a contract that is no
+    UTF-8.
+  - On Windows the system finds a tool in the repository's root before
+    PATH by default, so a `tlc.cmd` committed at the root is the one
+    started, and a linter's too. Refuse it, or leave it?
+  - Two components with one `id`, and a `model` path that leaves the
+    repository, are each taken as declared.
+  - Overlap's tail, under USAGE's stated limit: a second name for one
+    folder (a link, an absolute path with no drive, two Unicode forms
+    of a name, a Windows short name) is not seen.
 - G1.1, five edges for the engineer seat (session 88; Two-Key's
   advisories on `79b4a5b`). The first needs a ruling before
   `s6-release`.
+  - Session 90: the first edge below is ruled, one record a call that
+    holds a result for each entry, and its build waits (Next actions).
+    A sixth is an escaped defect: a contract whose YAML cannot be read,
+    or that holds no `scope`, reads G1.1 `done`, and `lint` prints its
+    passing line. Its fix rides the same build.
   - A feature whose schemas stand under two `g1.schemas` entries, as
     OpenAPI under Spectral beside protobuf under `buf`, is refused by
     `g1-record lint` (exit 2): the record's drawn shape holds one
