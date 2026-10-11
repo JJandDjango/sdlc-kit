@@ -156,6 +156,23 @@ def main(argv=None) -> int:
         help="G1.2: run the declared checker on the model of each hard core "
              "in the feature's scope and record whether it passes")
     model.add_argument("id", help="the feature's id: its contract's id")
+    review = kinds.add_parser(
+        "review",
+        help="G1.3: record a named person's answer to each of the 11 review "
+             "items, on the revisions the contract was derived from")
+    review.add_argument("id", help="the feature's id: its contract's id")
+    # each option appends, so the writer sees a repeat and refuses it
+    review.add_argument("--by", action="append", default=[], metavar="NAME",
+                        help="the signer's name; given once")
+    review.add_argument("--seat", action="append", default=[], metavar="SEAT",
+                        help="the signer's seat, a value of the ratified "
+                             "intake-seat term; given once")
+    review.add_argument("--checked", action="append", default=[], metavar="N,N,...",
+                        help="the numbers of the checked items, one list")
+    review.add_argument("--unchecked", action="append", default=[],
+                        metavar="N=SECTION",
+                        help="one unchecked item and the section it concerns "
+                             "(repeatable)")
     g1_check = sub.add_parser(
         "g1-check",
         help="G1's verdict for one feature, read from its records and "

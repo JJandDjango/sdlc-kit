@@ -1,10 +1,11 @@
-"""G1.1's lint record, G1.2's model record, their writers and the G1
-verdict (ADR 0038).
+"""G1.1's lint record, G1.2's model record, G1.3's review record, their
+writers and the G1 verdict (ADR 0038).
 
 Contract: g1-requirements-spec. G1's rules read records, in their own
 command, and no G1 rule reports through `validate`. This module holds the
-writers of a lint record and of a model record, `g1-record lint` and
-`g1-record model`, and the reader, `g1-check`.
+writers of a lint record, of a model record and of a review record,
+`g1-record lint`, `g1-record model` and `g1-record review`, and the
+reader, `g1-check`.
 
 G1 is active for a feature when .sdlc/config.yaml lists `G1` under
 `active_gates` and its `g1.exempt` list does not name the feature. The
@@ -54,18 +55,37 @@ a checker is not installed, 2 on a call it cannot use, when a tool ends
 on an error of its own, and when a configuration cannot be read or
 `tlc`'s working folder cannot be made.
 
+G1.3's 11 items, each a number and a name, stand in data/g1-items.yaml.
+The revision a contract was derived from is read from the first table of
+docs/features/<id>.md, the requirements document, and of
+docs/features/<id>.design.md, the design document, when that file is
+there: the `Ready:` row with the highest N that names a `derived from
+rM` gives it, the lower row winning a tie.
+
+`g1-record review <id>` appends one record of a named person's answers:
+the signer's name and seat, the revision each document's `Ready:` row
+names, and each of the 11 items as checked, or as unchecked with the
+section it concerns. `--by` and `--seat` are each given once, the seat a
+value of the ratified `intake-seat` term, and `--checked` and
+`--unchecked` name each item once between them. Every check comes first,
+so a refused call writes nothing. Exit 0 when the review checks all 11
+items, 1 when it leaves one unchecked, 2 on a call it cannot use: a
+contract whose scope cannot be read, a name that names no person, a seat
+the term does not hold, an item named twice or not at all, or a document
+that names no revision.
+
 `g1-check <id>` reads the declarations, the last G1.1 record, the last
-G1.2 record and the files on disk; it runs no tool and writes nothing.
-The files on disk win: a record whose hashes no longer match counts as
-absent. It reports:
+G1.2 record, the last G1.3 record and the files on disk; it runs no tool
+and writes nothing. The files on disk win: a record whose hashes no
+longer match counts as absent, and so does a review that names other
+revisions than the documents' `Ready:` rows name now. It reports:
 
   RS101  the record found the linter not installed
   RS102  a schema in scope is recorded with one error or warning, or more
   RS201  a hard core in scope has no model
   RS202  the record found the checker not installed
   RS203  the model of a hard core in scope is recorded as not passing
-
-G1.3's rule is not built in this module yet, so it reads `to do`.
+  RS301  the last review leaves an item unchecked
 
 A condition reads `failed` when one of its rules reports, else `done` when
 everything it needs is present and current, else `to do`. Exit 0 when the
@@ -79,6 +99,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -97,9 +118,13 @@ G1_DIR = Path(".sdlc") / "g1"
 COMPONENTS = Path("specs") / "components.yaml"
 COMPONENT_SCHEMA = (Path(__file__).resolve().parent / "schemas"
                     / "component-declaration.schema.json")
+ITEMS_PATH = Path(__file__).resolve().parent / "data" / "g1-items.yaml"
+FEATURES = Path("docs") / "features"
+SEAT_TERM = Path("specs") / "vocabulary" / "intake-seat.yaml"
 GATE = "G1"
 LINT = "G1.1"
 MODEL = "G1.2"
+REVIEW = "G1.3"
 LINTERS = ("spectral", "buf")
 TO_DO, DONE, FAILED = "to do", "done", "failed"
 PASS, FAIL = "pass", "fail"
@@ -119,6 +144,17 @@ NO_MODEL = "G1.2: hard core {component} has no model"
 NO_CHECKER = "G1.2: {tool} is not installed; install it and pin it in the repository"
 NOT_PASSING = "G1.2: the model of {component} does not pass {tool}"
 PASSING = "G1.2: the model of {component} passes {tool}"
+
+UNCHECKED = "G1.3: item {n} {item} is unchecked in {section}"
+ALL_CHECKED = "G1.3: the review checks all {count} items"
+
+# A feature document's revision table, read as `tree.drift` reads it: a
+# pipe after a backslash never splits a cell; a counted row's last cell
+# opens on `r<N>:`, and a `Ready:` row names its `rM` by the first
+# `derived from rM`, the digits ending at a non-word.
+_PIPE = re.compile(r"(?<!\\)\|")
+_REVISION = re.compile(r"r([0-9]+):\s*")
+_DERIVED = re.compile(r"derived from r([0-9]+)(?!\w)")
 
 
 @dataclass(frozen=True)
@@ -493,11 +529,147 @@ def read_model(root: Path, feature_id: str,
     return (TO_DO if unmatched else DONE), []
 
 
+def items() -> dict[int, str]:
+    """G1.3's items from data/g1-items.yaml: each number with its name, in
+    the file's order."""
+    doc = yaml.safe_load(ITEMS_PATH.read_text(encoding="utf-8"))
+    return {entry["n"]: entry["name"] for entry in doc["items"]}
+
+
+def _one_line(value: str) -> bool:
+    """Whether the text holds no line break, at any place, its ends
+    included: `str.splitlines` decides what a line break is."""
+    return not value or value.splitlines() == [value]
+
+
+def _names(value) -> bool:
+    """Whether the value is a text on one line that holds a letter or a
+    digit: blanks, a dash or a zero-width space name no person and no
+    section."""
+    return (isinstance(value, str) and _one_line(value)
+            and any(ch.isalnum() for ch in value))
+
+
+def _ready_revision(path: Path) -> int | None:
+    """The revision the document's contract was derived from, as
+    `tree.drift` reads it: of the first table's `Ready:` rows that name a
+    `derived from rM`, the one with the highest N gives M, the lower row
+    winning a tie. None when the file cannot be read as text, holds no
+    table or holds no such row."""
+    try:
+        lines = path.read_bytes().decode("utf-8-sig").splitlines()
+    except (OSError, UnicodeDecodeError):
+        return None
+    revision, newest, started = None, -1, False
+    for line in lines:
+        row = line.strip()
+        if not row.startswith("|"):
+            if started:  # only the first table is read
+                break
+            continue
+        started = True
+        if row.endswith("|") and not row.endswith("\\|"):
+            row = row[:-1]
+        cells = [cell.strip() for cell in _PIPE.split(row)[1:]]
+        cell = cells[-1] if cells else ""
+        match = _REVISION.match(cell)
+        if match is None or not cell.startswith("Ready:", match.end()):
+            continue
+        derived = _DERIVED.search(cell, match.end())
+        if derived is not None and int(match.group(1)) >= newest:
+            newest, revision = int(match.group(1)), int(derived.group(1))
+    return revision
+
+
+def derived_from(root: Path, feature_id: str) -> dict[str, str]:
+    """The revisions the contract was derived from, each as `r<M>`:
+    `requirements` from docs/features/<id>.md and `design` from
+    docs/features/<id>.design.md, a key the mapping holds only when that
+    file is there. Unreadable with the reason when the requirements
+    document is no file, or a document names no revision."""
+    found: dict[str, str] = {}
+    for key, name in (("requirements", f"{feature_id}.md"),
+                      ("design", f"{feature_id}.design.md")):
+        shown = (FEATURES / name).as_posix()
+        if not (root / FEATURES / name).is_file():
+            if key == "design":
+                continue
+            raise Unreadable(f"no feature document at {shown}")
+        revision = _ready_revision(root / FEATURES / name)
+        if revision is None:
+            raise Unreadable(f'{shown} holds no "Ready:" row that names a revision')
+        found[key] = f"r{revision}"
+    return found
+
+
+def _unchecked(record: dict, names: dict[int, str]) -> list[tuple[int, str]] | None:
+    """The unchecked items of a well-formed review record, each number
+    with its section, ends stripped, by number; None when the record is
+    not well formed. A well-formed record holds `by`, a text that names a
+    person, and `seat`, a text on one line that is not blank; its `items`
+    is a list of one mapping for each item, in any order, whose `n` is an
+    int and no bool, whose `name` is the items file's name for that
+    number and whose `checked` is a bool; each unchecked entry holds
+    `section`, a text that names a section."""
+    seat, entries = record.get("seat"), record.get("items")
+    if not _names(record.get("by")):
+        return None
+    if not (isinstance(seat, str) and seat.strip() and _one_line(seat)):
+        return None
+    if not isinstance(entries, list) or len(entries) != len(names):
+        return None
+    seen: set[int] = set()
+    unchecked: dict[int, str] = {}
+    for entry in entries:
+        if not isinstance(entry, dict):
+            return None
+        n, checked = entry.get("n"), entry.get("checked")
+        if type(n) is not int or n not in names or n in seen:
+            return None
+        seen.add(n)
+        if entry.get("name") != names[n] or type(checked) is not bool:
+            return None
+        if not checked:
+            if not _names(entry.get("section")):
+                return None
+            unchecked[n] = entry["section"].strip()
+    return sorted(unchecked.items())
+
+
+def read_review(root: Path, feature_id: str) -> tuple[str, list[Finding]]:
+    """G1.3's status and its findings, by item number.
+
+    Only the last G1.3 record counts, with no falling back to an earlier
+    one. `to do` when there is none or it is not well formed. A
+    well-formed record that leaves an item unchecked reports RS301 for
+    each, whatever the documents say now. One that checks every item
+    reads `done` only when its `requirements` and its `design` equal, as
+    text, the revisions the documents' `Ready:` rows name now, the
+    `design` key absent on both sides when the feature holds no design
+    document; a document that names no revision reads `to do`. The seat
+    is held against the roster at the call alone.
+    """
+    names = items()
+    record = last_record(root, feature_id, REVIEW)
+    unchecked = _unchecked(record, names) if record is not None else None
+    if unchecked is None:
+        return TO_DO, []
+    if unchecked:
+        return FAILED, [Finding(feature_id, REVIEW, "RS301", UNCHECKED.format(
+            n=n, item=names[n], section=section)) for n, section in unchecked]
+    try:
+        current = derived_from(root, feature_id)
+    except Unreadable:
+        return TO_DO, []
+    held = {key: record[key] for key in ("requirements", "design") if key in record}
+    return (DONE if held == current else TO_DO), []
+
+
 def main_g1_check(args) -> int:
     """`taskcontract g1-check`: the three conditions' statuses, G1.1's
-    findings and then G1.2's. Exit 0 when all three read `done`, 1 when
-    they do not, 2 when the id has no contract or G1 is not active for the
-    feature."""
+    findings, then G1.2's and then G1.3's. Exit 0 when all three read
+    `done`, 1 when they do not, 2 when the id has no contract or G1 is not
+    active for the feature."""
     root, feature_id = Path(args.root), args.id
     scope = contract_scope(root, feature_id)
     if scope is None:
@@ -507,9 +679,9 @@ def main_g1_check(args) -> int:
         return _refuse(_not_active(feature_id))
     lint, findings = read_lint(root, feature_id, scope, config)
     model, reported = read_model(root, feature_id, scope)
-    findings = findings + reported
-    # G1.3's rule is not built yet, so it reads `to do`
-    statuses = {LINT: lint, MODEL: model, "G1.3": TO_DO}
+    review, unchecked = read_review(root, feature_id)
+    findings = findings + reported + unchecked
+    statuses = {LINT: lint, MODEL: model, REVIEW: review}
     note = ", ".join(f"{condition} {status}" for condition, status in statuses.items())
     green = all(status == DONE for status in statuses.values())
     if args.as_json:
@@ -524,10 +696,13 @@ def main_g1_check(args) -> int:
 
 
 def main_g1_record(args) -> int:
-    """`taskcontract g1-record`: `lint` for G1.1 and `model` for G1.2. The
-    working directory is the repository."""
+    """`taskcontract g1-record`: `lint` for G1.1, `model` for G1.2 and
+    `review` for G1.3. The working directory is the repository."""
     if args.kind == "model":
         return record_model(Path("."), args.id)
+    if args.kind == "review":
+        return record_review(Path("."), args.id, args.by, args.seat,
+                             args.checked, args.unchecked)
     return record_lint(Path("."), args.id)
 
 
@@ -817,6 +992,150 @@ def _tool_lines(result: subprocess.CompletedProcess) -> list[str]:
 
 
 CHECKS = {"tlc": _tlc, "p": _p}
+
+
+class Refused(Exception):
+    """A review call the writer cannot use, with the words its one line
+    prints after the feature's id."""
+
+
+def record_review(root: Path, feature_id: str, by: list[str], seat: list[str],
+                  checked: list[str], unchecked: list[str]) -> int:
+    """Append one G1.3 record of a named person's answers: exit 0 when the
+    review checks every item, 1 when it leaves one unchecked, 2 when the
+    call is refused.
+
+    Each option comes as the list of its values, so a repeat is seen. The
+    contract, the gate, the contract's scope, the signer, the seat, the
+    items, the documents' revisions and the record file are checked in
+    that order, and nothing is written before every check has passed, so
+    a call that exits 2 writes nothing. The record holds the revision
+    each document's `Ready:` row names at the call, and no `design` when
+    the feature holds no design document.
+    """
+    try:
+        scope = contract_scope(root, feature_id)
+    except UnicodeDecodeError:  # a contract that is not UTF-8 has no scope to read
+        scope = []
+    if scope is None:
+        return _refuse(_no_contract(feature_id))
+    if not is_active(read_config(root), feature_id):
+        return _refuse(_not_active(feature_id))
+    if not scope:
+        return _refuse(f"{feature_id}: the contract's scope cannot be read at "
+                       f"specs/{feature_id}/contract.yaml")
+    names = items()
+    try:
+        signer = _signer(by)
+        sat = _seat(root, seat)
+        sections = _answers(checked, unchecked, names)
+        revisions = derived_from(root, feature_id)
+    except (Refused, Unreadable) as exc:
+        return _refuse(f"{feature_id}: {exc}")
+    path = root / G1_DIR / f"{feature_id}.yaml"
+    try:
+        doc = _existing(path)
+    except Unreadable as exc:
+        return _refuse(f"{PROG}: unreadable record: "
+                       f"{(G1_DIR / path.name).as_posix()} ({exc})")
+    doc["records"].append({
+        "condition": REVIEW,
+        "at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "head": head_id(root),
+        "by": signer,
+        "seat": sat,
+        **revisions,
+        "items": [{"n": n, "name": name, "checked": n not in sections,
+                   **({"section": sections[n]} if n in sections else {})}
+                  for n, name in names.items()],
+    })
+    _write(path, doc)
+    for n in sorted(sections):
+        print(UNCHECKED.format(n=n, item=names[n], section=sections[n]))
+    if not sections:
+        print(ALL_CHECKED.format(count=len(names)))
+    print(f"recorded: {(G1_DIR / path.name).as_posix()}")
+    return 1 if sections else 0
+
+
+def _once(option: str, values: list[str]) -> str:
+    """The option's one value; Refused when it is absent or repeated, even
+    twice with the same value."""
+    if len(values) != 1:
+        raise Refused(f"{option} is given {len(values)} times; a review takes it once")
+    return values[0]
+
+
+def _signer(by: list[str]) -> str:
+    """The signer's name, outer blanks cut; Refused for a name that holds
+    a line break, or no letter and no digit."""
+    name = _once("--by", by)
+    if not _names(name):
+        raise Refused(f"--by {ascii(name)} names no person")
+    return name.strip()
+
+
+def _seat(root: Path, seat: list[str]) -> str:
+    """The signer's seat as given; Refused when it does not equal, to the
+    letter, one value of the ratified `intake-seat` term. A term's file
+    that is absent, not UTF-8, no YAML mapping or not ratified gives no
+    term. `values` that is no list holds no seat, and neither does a
+    value that is no text; an empty seat is never one."""
+    given = _once("--seat", seat)
+    try:
+        term = yaml.safe_load((root / SEAT_TERM).read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, yaml.YAMLError):
+        term = None
+    if not isinstance(term, dict) or term.get("status") != "ratified":
+        raise Refused(f"no ratified intake-seat term at {SEAT_TERM.as_posix()}")
+    values = term.get("values")
+    seats = [v for v in values if isinstance(v, str)] if isinstance(values, list) else []
+    if not given or not _one_line(given) or given not in seats:
+        raise Refused(f"--seat {ascii(given)} is no value of the ratified "
+                      "intake-seat term")
+    return given
+
+
+def _answers(checked: list[str], unchecked: list[str],
+             names: dict[int, str]) -> dict[int, str]:
+    """Each unchecked item's section by its number, ends stripped; an item
+    the mapping does not hold is checked. Refused unless the two options
+    name every item once between them. `--checked` is one list, cut at
+    each comma, and `--unchecked` one `<n>=<section>` pair, cut at its
+    first `=` alone. An item number is one of the items file's numbers as
+    plain digits, blanks around it aside: no number is parsed, so `01`,
+    `+1` and a fullwidth digit name none. No section is held against a
+    document's headings."""
+    numbers = {str(n): n for n in names}
+    last = max(names)
+    if len(checked) > 1:
+        raise Refused(f"--checked is given {len(checked)} times; a review takes one list")
+    named: list[int] = []
+    sections: dict[int, str] = {}
+    for value in checked:
+        if not _one_line(value):
+            raise Refused(f"--checked {ascii(value)} holds a line break")
+        for element in value.split(","):
+            if element.strip() not in numbers:
+                raise Refused(f"--checked holds {ascii(element)}, which is no item "
+                              f"number from 1 to {last}")
+            named.append(numbers[element.strip()])
+    for pair in unchecked:
+        left, cut, right = pair.partition("=")
+        if not _one_line(pair) or not cut or left.strip() not in numbers:
+            raise Refused(f"--unchecked {ascii(pair)} is no <n>=<section> pair on one "
+                          f"line with an item number from 1 to {last}")
+        if not _names(right):
+            raise Refused(f"--unchecked {ascii(pair)} names no section")
+        named.append(numbers[left.strip()])
+        sections[numbers[left.strip()]] = right.strip()
+    twice = [n for n in names if named.count(n) > 1]
+    absent = [n for n in names if n not in named]
+    if twice or absent:
+        problem = (f"item {twice[0]} is named more than once" if twice
+                   else f"item {absent[0]} is not named")
+        raise Refused(f"{problem}; a review names each of the {len(names)} items once")
+    return sections
 
 
 def _existing(path: Path) -> dict:

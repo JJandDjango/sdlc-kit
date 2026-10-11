@@ -690,6 +690,24 @@ term. Its edges:
 - A record binds two files of a model: the model's and its
   configuration's. A file the model extends or includes is not bound.
   After you change one, run `g1-record model` again.
+- `review` takes `--checked` as one list of item numbers, and
+  `--unchecked` once for each unchecked item, as `<n>=<section>`. So a
+  section's name may hold a comma: `--unchecked 6="Error messages,
+  verbatim"`. With no item unchecked `--unchecked` is absent, and with
+  none checked `--checked` is. When all 11 items are checked it prints
+  `G1.3: the review checks all 11 items` and exits 0.
+- A signer's name and a section each stand on one line and hold a letter
+  or a digit: `review` exits 2 for one that does not, and for `--by`,
+  `--seat` or `--checked` given twice. The seat equals a value of the
+  term to the letter. No section is held against a document's headings.
+- A review names the revisions the contract was derived from, read at
+  the call from each document's `Ready:` row, where intake wrote
+  `derived from rN`. `review` exits 2 for a feature with no feature
+  document, and for a document whose `Ready:` row names no revision, and
+  G1.3 reads `to do`: a feature holds a feature document that intake
+  read before its G1 can pass.
+- With a contract whose scope cannot be read, `review` exits 2, as
+  `model` does.
 
 🔴 **`g1-check`, the verdict.** It reads the records and the
 declarations, runs no tool and writes nothing.

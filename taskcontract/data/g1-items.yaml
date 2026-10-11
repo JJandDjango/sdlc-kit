@@ -1,0 +1,16 @@
+# G1.3's review checklist: each item's number and its name. G1's page,
+# docs/gates/G1-requirements-spec.md, wins: a test holds this list equal to
+# the bold names under "G1.3 review checklist" there, in order. A review
+# record holds each item by both, and message RS301 prints the name.
+items:
+  - {n: 1, name: Testable}
+  - {n: 2, name: Unambiguous}
+  - {n: 3, name: Traceable}
+  - {n: 4, name: Complete over units}
+  - {n: 5, name: Covers the sketch}
+  - {n: 6, name: Consistent}
+  - {n: 7, name: Respects non-goals}
+  - {n: 8, name: Boundary + error paths}
+  - {n: 9, name: Property-spec applicability}
+  - {n: 10, name: Schema presence}
+  - {n: 11, name: Oracle designation answered}
