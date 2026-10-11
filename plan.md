@@ -1,332 +1,328 @@
-# Plan - Session 92 (2026-10-11) - g1-requirements-spec s3
+# Plan - Session 90 (2026-10-09) - g1-requirements-spec s2
 
-```
-Project  SDLC kit: gates that stop agent-written code from degrading a codebase.
-Area     G1, the requirements gate: a feature's failure points are found before its development starts.
-Feature  g1-requirements-spec: the kit computes G1 and refuses a task until G1 passes.
-Unit     s3-review, the third of six: a named person signs a review of 11 items, at a flow the kit runs.
-```
+**Deliverable:** unit `s2-model` of `g1-requirements-spec` on one PR,
+with a Two-Key PASS. It is the second unit of kit 0.20.0.
 
-This plan stands under three pages and repeats none of them:
+## Overview
 
-- the feature page, `docs/features/g1-requirements-spec.md`: what is
-  wanted, and why;
-- the design page, `docs/features/g1-requirements-spec.design.md`: the
-  shape of the solution;
-- the contract, `specs/g1-requirements-spec/contract.yaml`: the signed
-  sentences a build may not change.
+**The project.** `sdlc_development_kit` (the kit) is a set of gates for
+software that AI agents write. A gate is a pass/fail checkpoint between
+two phases of the work: the work goes on only when the gate reads
+green. Each gate turns a human judgment into a written artifact plus a
+mechanical check, so an agent cannot lower the quality of a codebase
+unseen. A repository that uses the kit is a consumer. Release 0.19.0
+computes one gate, G0 (planning and intake: a feature's contract is
+ready to build).
 
-A word the three pages do not define is glossed where it first stands
-and listed in section 10.
+**The feature.** `g1-requirements-spec` adds the second gate, G1. G1
+finds a failure point before development starts, and it has three
+conditions:
 
-## 1. The deliverable
+- G1.1: a linter reads each boundary schema clean.
+- G1.2: a checker passes the model of each hard core.
+- G1.3: a named person signs a review of 11 items.
 
-By the session's end unit `s3-review` stands on main through one PR,
-with a passing independent grade.
-
-## 2. Where this sits
-
-A gate is a pass/fail checkpoint between two phases of the work. G1 is
-the kit's second gate, and it holds three conditions (a condition is
-one named part of a gate). The feature is built as six units, one a
-session, and ships as kit 0.20.0. A unit is one slice of a feature,
-built and graded by itself.
+The feature is built as six units, one a session, and ships as kit
+0.20.0:
 
 | Unit | What it adds | State |
 |---|---|---|
-| `s1-lint` | G1.1: a linter reads each boundary schema clean. Also the base: the record file and both commands | on main (PR #106) |
-| `s2-model` | G1.2: a checker passes the model of each hard core | on main (PR #109) |
-| `s3-review` | G1.3: a named person signs a review of 11 items. Also `/sdlc g1`, the flow where a person runs G1 | this session |
-| `s4-tree` | the tree, the kit's printout of every feature's state, shows G1 | to do |
+| `s1-lint` | G1.1, and the base: the record file and both commands | on main |
+| `s2-model` | G1.2 | this session |
+| `s3-review` | G1.3, and the `/sdlc g1` flow a person runs | to do |
+| `s4-tree` | the tree shows G1 | to do |
 | `s5-start` | no task starts before G1 passes | to do |
-| `s6-release` | the release, and G1 turned on in the kit's own repository | to do |
+| `s6-release` | the release, and G1 turned on at the kit | to do |
 
-What this unit adds:
+**This unit, in plain words.** Some parts of a system are costly to get
+wrong: a defect there comes from concurrency or a protocol, shows late
+and is costly to reverse. The kit calls such a part a hard core. Before
+anyone writes its code, a person writes a model, a formal description
+of its design, and a tool called a checker explores the model for a
+state that breaks one of its rules. After this unit, G1.2 reads done
+for a feature only when a committed record shows that the model of each
+hard core in the feature passed its checker.
 
-- `python -m taskcontract g1-record review <id>`, with the flags
-  `--by`, `--seat`, `--checked` and `--unchecked`. It appends one
-  review record to `.sdlc/g1/<id>.yaml`, the committed file that holds
-  a feature's G1 results. The record holds the signer's name, the seat
-  (the position the signer answers from, such as `po`), the date, the
-  revisions reviewed and each item's answer.
-- G1.3's one rule, `RS301`, in `g1-check`, the command that prints G1's
-  verdict. Its message: `G1.3: item {n} {item} is unchecked in
-  {section}`. G1.3 reads `done` only when the last review checks all 11
-  items on the revisions the contract was derived from.
-- `taskcontract/data/g1-items.yaml`: the 11 items, each a number and a
-  name, held equal by a test to the ratified list at
-  `docs/gates/G1-requirements-spec.md:128`.
-- `skills/sdlc/flows/g1.md`: the venue, `/sdlc g1 <id>`. It is a prompt
-  file that leads a person through seven steps, R1 to R7. With it come
-  four additions to `skills/sdlc/SKILL.md`: the dispatch line, the flow
-  list, one constraint and one criterion.
+## Terms
 
-The design page fixes each of these: Interfaces (line 73), the record's
-drawing (line 220), Sources (line 307), Constraints (line 327) and the
-unit's row (line 351). The unit's done-means sentence, the one sentence
-it must make true: "A seat reads G1.3's 11 items at the venue, and G1.3
-reads done only from a review with a signature." Its checks, the
-contract's testable lines, are SC1.1, SC1.2 and SC1.3
-(`contract.yaml:97-119`). No older test retires.
+The kit's words:
 
-Measured at this resume, on main at `c411702`:
+| Term | Meaning |
+|---|---|
+| Gate | A pass/fail checkpoint between two phases. G0 is planning and intake; G1 is requirements and spec. |
+| Condition | One named part of a gate, such as G1.2. It reads `to do`, `done` or `failed`. |
+| Rule | One test with a code. `RS201`: a hard core has no model. `RS202`: the checker is not installed. `RS203`: the model does not pass. |
+| Feature | One piece of work with its own contract. Here: `g1-requirements-spec`. |
+| Contract | `specs/<id>/contract.yaml`: what the feature must do. It is signed, and the builder may not change it. |
+| Unit | The smallest part of a contract that is verified by itself. Here: `s2-model`. |
+| Check | One testable line of the contract, with an id such as SC3.1. |
+| `done_means` | The one sentence of a unit that says when it is done. |
+| Pair | The feature's requirements document and its design document, under `docs/features/`. Both are signed. |
+| Engineer seat | The role that signs the design. Here it is the user. |
+| Intake, re-intake | Intake writes the contract from the signed pair. A re-intake runs it again after a document changes. |
+| Text row | One line of a document's revision table that records a change to its text. A signature follows it. |
+| ADR | An architecture decision record under `decisions/`. It is never edited: a later ADR amends it. |
+| USAGE | `USAGE.md`, the kit's user guide. A red mark means "described, not shipped yet". |
+| Pass zero | A feature's first step: its guide is written in USAGE, red, before any code. `s1-lint` did it for all six units. |
+| Tree | `python -m taskcontract tree`: the view of each feature, gate and task. |
+| `progress` | The command that records each task's start, its test runs and its end. |
+| `STATE.md` | The file that says what is in flight. It is rewritten at each session's end. |
 
-- G1.3 always reads `to do` today (`taskcontract/g1.py:512`), and
-  `taskcontract/data/gates.yaml:34` already lists `RS301` under it.
-- `skills/sdlc/flows/g1.md` does not exist. `skills/sdlc/SKILL.md`
-  holds 8,576 of the 12,000 characters a prompt file may hold.
-- USAGE (`USAGE.md`, the user guide) holds this unit's text since
-  `s1-lint`, under red marks that mean "described, not shipped"
-  (`USAGE.md:531`; step R5 at line 793). The marks stay red until
-  `s6-release`.
-- The kit's own list of seats holds one value, `user`
-  (`specs/vocabulary/intake-seat.yaml:18`). The code that reads the
-  list stands at `taskcontract/vocabulary.py:317`.
-- Not run at this resume: the whole suite. It read 1216 passed at
-  session 90's close (`STATE.md`).
+This unit's words:
 
-## 3. The steps
+| Term | Meaning |
+|---|---|
+| Component | A part of a consumer's system with its own paths. |
+| Hard core | A component whose defect would come from concurrency or a protocol, show late, and be costly to reverse. All three hold (ADR 0007). |
+| Component declaration record | `specs/components.yaml`, a file a person writes: each component's paths, whether it is a hard core, and a hard core's model and checker. |
+| Model | A formal description of a hard core's design, in TLA+ or P. |
+| Checker | The tool that explores a model: TLC for TLA+, or the P checker. |
+| Boundary schema | A file that fixes the shape of data between two services: JSON Schema, OpenAPI or protobuf. |
+| Linter | The tool that reads a boundary schema for errors: Spectral or `buf`. |
+| Pin | A tool's settings, committed in the repository: a linter's ruleset, or a model's configuration. |
+| `g1.schemas` | The list in `.sdlc/config.yaml` that names the boundary schemas, each pattern with its linter and pin. One item of the list is an entry. |
+| `g1-record` | The command that starts a tool and writes what it found. `g1-record lint` is G1.1's; `g1-record model` is G1.2's, new here. |
+| Record | One result that `g1-record` writes to `.sdlc/g1/<id>.yaml`, a committed file. |
+| `g1-check` | The command that reads the records and prints G1's verdict. It starts no tool. |
 
-The unit has a code half (`taskcontract/`) and a prompt half
-(`skills/sdlc/`). Each agent works on one half, so each reads little.
+The outside tools:
 
-1. **Open (Claude).** Branch `session-92-g1-s3-review` from `c411702`.
-   This plan is committed and pushed, and the build starts. The plan
-   takes no approval (section 4).
-2. **Draft (two drafters, side by side).** A drafter is an agent that
-   writes a unit's tests before any code, proves each one fails today,
-   and proves on a throwaway prototype that they can pass
-   (`.claude/workflows/spec-channel-drafter.js`). One drafts the code
-   half: SC1.1 and SC1.2, on a scratch copy of the `taskcontract`
-   package. One drafts the prompt half: text tests on the flow and on
-   `SKILL.md`, and SC1.3, on a scratch copy of `skills/`.
-3. **Overlay (Claude).** Both prototypes are copied onto a scratch copy
-   of the repository, and the whole suite runs there once. The retirer,
-   an agent that retires the older tests a unit makes false
-   (`.claude/workflows/test-retirer.js`), runs only if an older test
-   fails.
-4. **Check the lists (Claude).** Each fixed detail is read against the
-   contract, both pages, the design's Constraints and Decisions, the
-   ratified terms under `specs/vocabulary/` and USAGE's red text. Each
-   rule that sorts free text (the item numbers, the section, the
-   signer's name, the seat) is tried against five hostile inputs on the
-   prototype.
-5. **Approve the test list (Claude).** The approval is recorded `--by
-   claude`. The lists, each rule's table and what step 4 found are
-   saved in the receipt folder and summed up at the top of the PR body.
-   Then `progress`, the command that records each task, records each
+| Term | Meaning |
+|---|---|
+| TLA+ | A language for writing a model of a design. |
+| TLC | The checker for TLA+. It is a Java program. |
+| `tla2tools.jar` | The one file that holds TLC. A jar is a packaged Java program, started as `java -cp tla2tools.jar tlc2.TLC`. |
+| Java, Temurin | TLC needs Java. Temurin is the name of the free Java build installed here, at version 21. |
+| P | A second modeling language, with its own checker. |
+| Spectral, `buf` | The two linters. Spectral is installed here since session 88. |
+| PATH | The list of folders where the system looks for a command by its name. |
+| Wrapper script | A short script named `tlc` that starts Java with the jar, so that `tlc` works as a command. On Windows it is `tlc.cmd`. |
+| Exit code | The number a program returns when it ends. 0 means success. |
+
+The build's words:
+
+| Term | Meaning |
+|---|---|
+| Drafter | An agent that writes the unit's tests first and proves they fail before any code exists (red). |
+| Stand-in | A small fake tool the tests start in place of TLC, so the suite needs no real checker. |
+| Prototype | The drafter's throwaway code. It proves the tests can pass. |
+| Overlay | The prototype copied onto a scratch copy of the repository, where the whole test suite runs. |
+| Retirer | An agent that retires the older tests a unit makes false. |
+| Developer | An agent that writes the real code. It may not read the tests. |
+| Interface note | What the developer gets in place of the tests: the names and the behavior to build. |
+| Two-Key | The independent verifier's grade of one unit, PASS or FAIL. It runs the tests again by itself. |
+| Receipt | The saved output of a run that proves a claim. A manual receipt comes from a live run of the real tool. |
+| Probe | A scratch script that starts the real tool and prints what it does. |
+| Explorers | Four read-only agents that mapped the kit's code for the design in session 84. Their notes stand in a receipt folder. |
+| Reading | A choice Claude makes where the signed text leaves room. Each is listed at the top of the PR body. |
+| Wrap | The session's closing PR: `STATE.md`, this plan, the memory index and the metrics row. |
+| Agent tokens | The measure of the agents' work, and so of its cost. |
+| `d4` | The fourth unit of an earlier feature, `document-split`. It is a cost basis. |
+
+## What the unit ships
+
+- The schema of the component declaration record,
+  `taskcontract/schemas/component-declaration.schema.json` at 1.0.0,
+  and its reader in `taskcontract/g1.py`.
+- `g1-record model <id>`: it starts the checker of each hard core in
+  scope and appends one G1.2 record.
+- G1.2's three rules in `g1-check`: `RS201`, `RS202` and `RS203`.
+- The unit's `done_means`: with a hard core in a feature's scope, G1.2
+  reads done only when the record shows its model passes the checker.
+  Checks SC3.1, SC3.2 and SC3.3.
+- SC3.1 also takes a manual receipt: a live TLC run on one passing
+  model and one failing model.
+- No older test retires. One that fails on the prototype is an
+  amendment or a finding, listed at the top of the PR body.
+
+Read at this resume: main stands at `8625df9` (PR #108), equal to
+GitHub's, with untracked files only. Tag `v0.19.0` stands at `7fe6342`.
+Java 21 is installed. TLC is not: no `tlc` command is on PATH, and no
+`tla2tools.jar` stands where one was looked for (the VS Code
+extensions).
+
+The flow is "plan approved, then PR review", in its first build. This
+plan's approval decides the three rulings below. After it, the next
+word needed from the user is the work PR's merge. A reading that
+surfaces mid-build is Claude's, listed at the top of the PR body; one
+that would change a signed contract sentence, a ratified term or an ADR
+stops for the user.
+
+The tight spot is the design's second risk. TLC has no command of its
+own, and it ends on more exit codes than a linter. Step 2 probes it
+live before any test names its call. It reads the exit code for a
+passing model, for a broken invariant (a rule the model must always
+keep), for a deadlock (a state with no next step) and for an error of
+TLC's own, and it finds where TLC writes its working files. P gets no
+live run: its call is read from its reference page and held by a
+stand-in, as `buf`'s was.
+
+## Closed
+
+**The deliverable is met.** `s2-model` stands on main at `350162a` (PR
+#109, merged 2026-10-09), Two-Key PASS in round 2 at `3a1c402`. The
+unit stands at `3f6954d`, the fix at `3a1c402`, and four reworded USAGE
+sentences at `21a0312`. The receipts read green at `3a1c402`: SC3.1 at
+61 cases, SC3.2 at 3, SC3.3 at 9, the unit's 109 cases, the whole suite
+at 1216 passed, the contract ready, and the scope check against
+`8625df9`. The live run under TLC 2.19 holds, saved in
+`RECEIPT_g1-requirements-spec-s2_2026-10-09/`. No older test changed,
+and the retirer did not run. The agents cost 965K tokens (drafter 212K;
+developers 115K, 76K, 61K and 59K; Two-Key 236K and 205K), where this
+plan read about 0.6 million and about 300K for a lost round. The
+session did not need its boundary. The three rulings stood as
+recommended.
+
+As it went:
+
+- Step 2. The probe found three facts no source gave. On Windows TLC
+  2.19 does not find a model given by a forward-slash path from the
+  root, so the kit starts it inside the model's folder. Two runs in one
+  second collide on the working folder TLC names from the clock, so
+  each run gets its own. P has no configuration file and needs two
+  calls, compile and then check: the reading built is that P's
+  configuration is a text file of `p check`'s arguments.
+- Step 5. Claude approved the first list, 89 cases, with two
+  amendments: a test that pinned three files by hash was removed, and
+  five cases of an unreadable declaration were added.
+- Step 6. The developer found that `s1-lint`, on main, reads G1.1
+  `done` for a contract whose scope cannot be read. The user counted it
+  as an escaped defect, so the tripwire fired: test-list approval is
+  the user's again. The user then approved three tests added on review.
+- Step 9. Round 1 failed `3f6954d` on the rule for when a hard core is
+  in a feature's scope: a folder written with no trailing slash left
+  the scope, and G1.2 read done with nothing checked. Claude had
+  approved that rule. The fix took two developer rounds and two
+  amendments of the test table, each approved by the user: 15 rows
+  became 32.
+- Step 10. CI read `contracts` and `test` green on the first watch, and
+  the user gave the merge.
+
+Touches between plan approval and PR review: four, where the target is
+0. Each came after the tripwire fired.
+
+## Rulings
+
+1. **Two linters in one feature.** `g1-record lint` works today for a
+   feature whose schemas all stand under one `g1.schemas` entry, with
+   one linter. A feature with two entries, such as OpenAPI files under
+   Spectral beside protobuf files under `buf`, is refused, so its G1.1
+   can never read done. The fix needs a form for the record.
+   Recommendation: each call writes one record that holds a result for
+   each entry, each with its own linter and pin. ADR 0038 says "Each
+   call appends one record, and the last record of a condition counts",
+   and the design and USAGE repeat it. This form keeps that sentence
+   true, and the G1.2 record already has it: one result for each hard
+   core, each with its tool. The other form, one record for each entry,
+   keeps the tests `s1-lint` wrote on the record's shape, and it makes
+   the ADR's sentence false, so it costs an amending ADR. The build is
+   not this session's. Either form changes signed design text, so the
+   build takes a design text row, the engineer seat's signature and a
+   re-intake, in its own session before `s6-release`. This session only
+   gives the G1.2 record the matching form.
+2. **How the kit starts TLC.** TLC comes as a jar with no command of
+   its own. Recommendation: `g1-record model` looks for a command named
+   `tlc` on PATH, as `lint` looks for `spectral`. A consumer whose
+   install is the jar alone writes a wrapper script of that name. The
+   other way, the kit starting `java` with a jar path from a new config
+   key, adds a key the signed design does not draw. USAGE gains one red
+   sentence that tells a consumer so.
+3. **TLC on this machine.** The probe and the manual receipt need a
+   real TLC here. Recommendation: download `tla2tools.jar` from release
+   v1.7.4 of `tlaplus/tlaplus` on GitHub (2024-08-05, the newest that
+   is no pre-release) into `C:/Users/hyden/tools/tlaplus/`, with a
+   `tlc.cmd` wrapper beside it. No system setting changes: the probe
+   and the receipt script add that folder to PATH for their own run
+   only.
+
+Claude's readings, each told here:
+
+- The unit builds the schema and the reader. The kit's own
+  `specs/components.yaml` is a file a person writes, and it lands when
+  `s6-release` turns G1 on at the kit.
+- USAGE holds the unit's guide, red, since pass zero. Its marks stay
+  red until `s6-release`.
+- Step 2's finding fixes which of TLC's exit codes mean "the model
+  fails" and which mean "TLC could not run it". Lint's rule is the
+  pattern: a tool that ends on an error of its own gives no result, so
+  `model` prints the tool's lines, writes nothing and exits 2.
+
+## Steps
+
+1. ~~Open.~~ Branch `session-90-g1-s2-model` from `8625df9`; this plan,
+   committed and pushed, then shown for approval.
+2. ~~Probe TLC.~~ Download the jar by ruling 3. A scratch script starts TLC
+   by the name `tlc` from Python on a passing model, a failing one, a
+   deadlock, a model that does not parse and an absent configuration,
+   and prints each call, its exit code and its output. The script and
+   its output go to untracked
+   `RECEIPT_g1-requirements-spec-s2_2026-10-09/`.
+3. ~~Draft.~~ The drafter (`spec-channel-drafter.js`) writes the test list
+   for SC3.1, SC3.2 and SC3.3 with a stand-in checker, proves it red
+   from the repo root, and proves it can pass on a prototype, a scratch
+   copy of the `taskcontract` package. It reads the probe's files and
+   the explorers' `rules.md`.
+4. ~~Overlay.~~ The session overlays the prototype on a scratch copy of the
+   repository and runs the whole suite there. The retirer
+   (`test-retirer.js`) runs only if an older test fails, on the failing
+   modules alone.
+5. ~~Approve the list and prove red (Claude).~~ Each fixed detail is
+   checked against the contract, the pair, its Constraints and
+   Decisions, the ratified terms under `specs/vocabulary/` and USAGE's
+   red text; then `progress run <check> --expect red` records each
    check's failing run.
-6. **Green (two developers, side by side).** A developer is an agent
-   that writes the real code from an interface note, a page of names
-   and behavior, and never opens the tests
-   (`.claude/workflows/unit-developer.js`). One writes the code half,
-   one the prompt half. Claude then runs the whole suite, and runs the
-   form validator (`python -m prompt_lang`, from a scratch environment)
-   on each prompt file.
-7. **Commit (Claude).** The unit's commit. Each check reads green at
-   the clean commit, and the kit's own contract and scope checks read
-   green.
-8. **Manual receipt (Claude, with a seat agent).** A live run of
-   `/sdlc g1` on an invented feature, in a small repository a script
-   builds outside the kit. A second Claude session runs the flow from
-   the unit's commit, with no window, and an agent answers as the
-   person (`.claude/workflows/live-run-seats.js`). The text is saved in
-   untracked `RECEIPT_g1-requirements-spec-s3_2026-10-11/`.
-9. **Two-Key.** An agent that grades the unit from its own test runs
-   and returns PASS or FAIL
-   (`.claude/workflows/two-key-unit-verifier.js`). It reads the
-   receipt's text. On PASS the unit is recorded done.
-10. **The work's close.** The push, then the PR once CI reads green and
+6. ~~Green.~~ The developer (`unit-developer.js`) writes the code from the
+   interface note. Claude runs the suite after each round and tests
+   each deviation and each question it returns against `done_means`.
+7. ~~Commit (Claude).~~ The unit's commit, with ruling 2's USAGE sentence;
+   each check green at the clean commit; the kit's own contract and
+   scope checks green.
+8. ~~Manual receipt.~~ A live TLC run through `g1-record model` on one
+   passing model and one failing model, in a small consumer repository
+   a script builds. Its text goes to the receipt folder.
+9. ~~Two-Key.~~ The verifier (`two-key-unit-verifier.js`) grades the unit,
+   with the receipt's text to read; `progress done` on PASS.
+10. ~~The work's close.~~ The push, then the PR once CI reads green and
     Two-Key reads PASS, with Claude's readings at the top of its body.
-    The user reviews it and says merge.
-11. **The wrap, after the merge (Claude).** `STATE.md` rewritten, this
-    plan struck, the memory index updated and one row appended to
-    `docs/session-metrics.md`, in a PR of their own that Claude merges
-    after green CI.
+    The merge is on the user's word.
+11. ~~The wrap, after the merge.~~ `STATE.md` regenerated, this plan
+    struck, the memory index updated and one row appended to
+    `docs/session-metrics.md`, on a new branch off main in a wrap-only
+    PR that Claude merges after green CI.
+
+Steps 1, 2, 10 and 11 sit outside a contract unit, so the tree does not
+show them.
 
 The session boundary, if context runs short: after step 5. The approved
-lists, the prototypes and the interface notes are copied to the receipt
-folder, and step 6 opens the next session.
+list, the prototype and the interface note are copied to the receipt
+folder, and the developer round opens the next session.
 
-## 4. Where Claude stops for the user
+## Cost
 
-Once: the work PR (step 10). The merge is the user's word.
+About 0.6 million agent tokens, in a range of 0.55 to 0.7 million. The
+basis is two recorded code units: `d4` at 561K (drafter 213K,
+developers 94K and 75K, Two-Key 179K) and `s1-lint`'s first round at
+594K (drafter 225K, developers 104K and 60K, Two-Key 205K). A lost
+Two-Key round adds about 300K: `s1-lint`'s second cost 316K (developer
+69K, Two-Key 247K). A retirer round, if an older test fails, adds 62K
+to 159K.
 
-The user ruled on 2026-10-11 that the feature page and the design page
-are to hold enough for the build to run to that review with no
-approval: not of this plan, and not of the test list. Before the PR,
-Claude stops on two events only:
+## Deferred, not this session
 
-1. A case the three pages leave open and their purpose cannot settle,
-   or one whose answer would change a signed contract sentence, a
-   ratified term or an ADR (an architecture decision record under
-   `decisions/`).
-2. A discovery during the build that needs the user's decision.
-
-Each such stop is also a finding against the pages: it names what
-their vetting missed.
-
-## 5. Where Claude goes on alone, and by what rule
-
-Alone: everything before the PR. That is the branch and its pushes,
-the agents' briefs, the overlay and each suite run, the hostile inputs,
-the test list's approval and each change to it, the unit's commit, the
-USAGE sentences, the live run, opening the PR, and the wrap's merge.
-
-The rule: where the pages name no case, Claude rules from their
-purpose, builds on that reading, and lists it at the top of the PR
-body, where the user can overturn it. If the reading would change
-signed text, Claude stops.
-
-For an event this plan never names, ask what the unit is for: can G1.3
-read `done` without a named person's signature over all 11 items, on
-the revisions the contract was derived from? If the event opens such a
-path, it is a defect, and it is fixed before the commit. A question or
-a shortcut a developer returns is put to the same test.
-
-## 6. Rulings needed
-
-None: this plan takes no approval. The four cases below are ones the
-design never names. Claude settles each from the pages' purpose, a
-review that binds a named person to named text, and lists it at the top
-of the PR body. Each is also a gap to close when the design is next
-amended.
-
-1. **Several unchecked items.** The design draws one, `--unchecked
-   6=Statement`. A real section name holds a comma ("Error messages,
-   verbatim", `docs/features/g1-requirements-spec.md:224`), so a list
-   split at commas would cut it in two. The reading: `--unchecked` is
-   given once for each unchecked item, and `--checked` stays one list
-   of numbers. The design's drawing reads the same either way. USAGE
-   gains one red sentence.
-2. **An empty section or name.** The design checks no section against
-   the document (its Risks, 10), and the message prints the section on
-   one line. The reading: the command refuses a section or a signer's
-   name that is empty or holds a line break. It exits 2 and writes
-   nothing. Any other text is kept as the person wrote it, with the
-   spaces at its ends cut.
-3. **A feature with no revision to name.** A review names the revisions
-   the contract was derived from, and the kit reads them from each
-   document's `Ready:` row, the row intake writes when it derives the
-   contract. Two cases have none: a feature with no feature document,
-   and a document with no `Ready:` row. The reading: `g1-record review`
-   refuses both, exits 2 and writes nothing, and G1.3 reads `to do`. A
-   review tied to no text proves nothing, and session 90 ruled the same
-   side for G1.2 after a defect escaped. The cost: a feature taken in
-   with no feature document cannot pass G1 until it holds one. The
-   pilot's one feature holds a document, and its `Ready:` rows are of
-   an older form that names no revision (`signed r3`, where the kit
-   reads `derived from r3`), so the pilot needs a new intake before its
-   G1.3 can pass (found in step 4; the tree marks such a row today).
-4. **Who answers in the live run.** The contract says no agent signs a
-   G1.3 review, and step 8's receipt needs a seat that answers the 11
-   items. The reading: an agent plays an invented person in the
-   throwaway repository, as the interview's live runs did. Its record
-   never enters the kit, and the receipt says an agent sat the seat.
-   Two short runs: one checks all 11 and ends on `g1-green`; one leaves
-   item 6 unchecked and ends on the `RS301` line.
-
-Three smaller readings:
-
-- R5 asks each item "in the item's own words", and `g1-items.yaml`
-  holds only a number and a name. The flow file holds the 11 items word
-  for word, and a test holds that copy equal to G1's page.
-- A contract that cannot be read, or that holds no `scope`, is refused
-  by `review`, as `model` refuses it.
-- The refusals of rulings 2 and 3 print lines whose words no signed
-  text gives, as `s1-lint`'s and `s2-model`'s did. Each is listed at
-  the top of the PR body.
-
-## 7. What could go wrong, already ruled
-
-- **Two-Key fails a round.** One narrow fix round: the tests are placed
-  first, tried against the same hostile inputs, and the developer's
-  note names only the behavior to change. Round 2 names round 1's
-  defects and asks for other paths of the same kind. After a third
-  failure Claude stops.
-- **An older test fails on the overlay.** The unit retires none, so it
-  is a finding. If the test pins what this unit must change, it is
-  amended and named at the top of the PR body; else the build is wrong.
-- **A drafter says which way a rule errs.** The claim is tried with
-  hostile inputs before the list is shown. Session 90 lost a round to
-  an untried one.
-- **A prompt file fails the form validator or passes 12,000
-  characters.** Its developer fixes it before the commit. The flow file
-  starts empty, and `SKILL.md` has 3,424 characters free.
-- **The flow signs with no person's word.** In the live run, a flow
-  that runs `g1-record review` before the seat gives a name and says to
-  sign is a defect: a fix commit, and the receipt is taken again.
-- **The record file cannot be read.** It counts as absent (the design,
-  line 183), and `review` refuses to append to it, as `lint` and
-  `model` do.
-- **An agent passes about 400K tokens.** It is stopped and its work
-  split. The two halves keep each agent's reading narrow.
-- **A defect of a unit already on main shows.** Claude confirms it with
-  a live run and names it at the top of the PR body, and the metrics
-  row of the session that shipped it takes it. It is fixed here only if
-  this unit cannot stand without the fix; else it joins section 9.
-  Claude stops only if the fix needs a decision.
-
-## 8. This session's cost, with its basis
-
-About 0.9 million agent tokens, in a range of 0.7 to 1.05 million. The
-basis is the two recorded units that held a code half and a prompt
-half, counted without their retirer, amendment and third developer
-rounds: session 71's at 697K (drafters 147K and 166K, developers 62K
-and 59K, Two-Key 263K) and session 70's at 1,032K (drafters 222K and
-255K, developers 108K and 113K, Two-Key 334K).
-
-- A lost Two-Key round adds about 300K (session 90's cost 325K).
-- A retirer round adds 62K to 159K.
-- The live run's seat agents stand outside the total, as the metrics
-  page counts them: about 65K a run at most, on session 80's 66K and
-  63K for runs of 41 and 36 turns. These runs are shorter, about 15
-  turns each (an estimate).
-
-Touches, the replies Claude needs from the user before the PR review:
-none planned. The target is 0.
-
-## 9. Not in this session
-
-- `s4-tree`, `s5-start` and `s6-release`. So the tree does not print
-  the review yet, and no task is refused yet.
-- Session 90's first ruling (one G1.1 record that holds a result for
-  each `g1.schemas` entry) and the fix of G1.1's escaped defect, in a
-  session of their own before `s6-release`.
-- Checking that a named section exists in the document (the design's
-  Risks, 10).
-- The open edges of G1.1 and G1.2, under `STATE.md`'s Open questions.
-- The kit's own G1 declarations and its `g1.exempt` list: `s6-release`.
-- A live run of `buf` and of P, the two tools never run here.
-- The feature and design pages in the shapes of
-  `NOTES_document-theory_2026-10-10.md`: a feature of its own.
-- The pilot (`E:\ImSimProject\engine`), until G1 ships.
-- The `google_workspace` server, which failed to connect again at this
-  resume.
-
-## 10. Words
-
-| Word | Meaning |
-|---|---|
-| Unit | One slice of a feature, built and graded by itself. |
-| Done means | The one sentence a unit must make true. |
-| Check | One testable line of the contract, with an id such as SC1.1. |
-| Suite | Every test in the kit, run together. |
-| Drafter | An agent that writes a unit's tests first and proves they fail today. |
-| Prototype | The drafter's throwaway code or text. It proves the tests can pass. |
-| Overlay | The prototype copied onto a scratch copy of the repository, where the suite runs. |
-| Retirer | An agent that retires the older tests a unit makes false. |
-| Developer | An agent that writes the real code or prompt text. It may not read the tests. |
-| Interface note | What a developer gets in place of the tests: the names and the behavior to build. |
-| Two-Key | The independent grade of one unit, PASS or FAIL, from the grader's own test runs. |
-| Receipt | The saved output of a run that proves a claim. A manual receipt comes from a live run. |
-| Live run | A second Claude session that runs the real flow, turn by turn, in a throwaway repository. |
-| Seat agent | An agent that answers a live run as the person would. |
-| Hostile input | A value chosen to break a rule: empty, a line break, a comma, a repeat, a wrong case. |
-| Form validator | `python -m prompt_lang`, which checks a prompt file's form. |
-| Reading | A choice Claude makes where the signed text leaves room. Each is listed in the PR body. |
-| Red mark | USAGE's sign for text that is described and not shipped yet. |
-| `progress` | The command that records each task's start, its test runs and its end. |
-| Wrap | The session's closing PR: `STATE.md`, this plan, the memory index and the metrics row. |
-| Touch | One reply Claude needs from the user before the PR review. |
-| Agent tokens | The measure of the agents' work, and so of its cost. |
+- `s3-review` to `s6-release` (ships 0.20.0), one unit a session.
+- Ruling 1's build: the design's text row, its signature, the re-intake
+  and the change to `lint`, before `s6-release`.
+- G1.1's four other open edges and the four smaller ones, under
+  `STATE.md`'s Open questions.
+- Added at the close: the fix of G1.1's escaped defect (a contract
+  whose scope cannot be read), with ruling 1's build.
+- Added at the close: a record binds two files of a model, so a file
+  the model includes is not bound. The engineer seat rules.
+- Added at the close: P's first live run, which settles what `p check`
+  returns with no test case named.
+- A live run of P, and of `buf`.
+- The engine (the pilot consumer, `E:\ImSimProject\engine`): its
+  install ref, its config line and its first code, after G1 ships.
+- The `google_workspace` server failed to connect again at this resume.
+- `STATE.md` runs past its one-page budget.
+- `STATE.md` Next actions 2 to 5 and its other open questions, carried.
