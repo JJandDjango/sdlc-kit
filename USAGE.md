@@ -704,8 +704,8 @@ term. Its edges:
   the call from each document's `Ready:` row, where intake wrote
   `derived from rN`. `review` exits 2 for a feature with no feature
   document, and for a document whose `Ready:` row names no revision, and
-  G1.3 reads `to do`: a feature holds a feature document that intake
-  read before its G1 can pass.
+  G1.3 cannot read `done` there: a feature holds a feature document that
+  intake read before its G1 can pass.
 - With a contract whose scope cannot be read, `review` exits 2, as
   `model` does.
 
