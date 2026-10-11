@@ -21,6 +21,14 @@ contract's id holds no dot, by the schema's pattern, so no valid contract's
 document ends `.design.md`; a contract folder named `x.design` would still
 read docs/features/x.design.md as its own. The tree prints none of their
 other words but a signer, reads no other document and writes no file.
+While `active_gates` lists `G1`, it also reads G1's sources, afresh at
+every print and through the readers `g1-check` calls, so the two give one
+reading: `g1.exempt` and `g1.schemas` from .sdlc/config.yaml,
+specs/components.yaml, and for each contract G1 is active for its record
+file under `.sdlc/g1`, with the files on disk those name and the items
+list the package ships. It stores none of that, in a verdict cache or
+elsewhere, and starts no linter and no checker. With `G1` absent from
+`active_gates` it reads none of them and names none in a problem line.
 
 The gates stand first, at the repository level, each opening first into
 its conditions, the named parts gates.yaml lists in its page's order. A
@@ -36,7 +44,11 @@ requirements document beside it prints nothing. Each shows its verdict at
 every active gate, then its inactive next gate (the first gate in the kit's
 order after the last active one, `G0` when none is active, none after the
 last), each verdict opening into its gate's conditions; then a contract's
-units, each unit's seven tasks and its checks. A feature before intake
+units, each unit's seven tasks and its checks. A feature the `g1.exempt`
+list names, letter for letter, takes `G1` out of its active gates: its
+next gate follows from the others, and its `G1` verdict stands inactive
+at `G1`'s place in the kit's order, so under `G0` and `G1` it prints as
+under `G0` alone. A feature before intake
 shows no unit; after its verdicts come its two halves, `<id>/request` and
 `<id>/solution`, at the level `half`.
 
@@ -58,6 +70,14 @@ owns, and one that is not done carries its rules' messages as its
 diagnostics, the draft profile's when it failed, else the ready profile's.
 A contract the tree cannot read as a mapping reads only its `G0.1` so,
 since the joins behind the other two never ran on it. Warnings never count.
+A contract's active `G1` verdict reads each of its conditions from
+`g1.py`'s reader of it, over the scope `scope_check.contract_scope` gives:
+the status, and under one that failed each finding's message whole as a
+diagnostic, in the reader's order. Its `G1.3` condition that reads done or
+failed names its last review as its evidence: `by <seat>`, then ` at
+<requirements>` and `, design <design>`, each only when the record holds
+it as `r` and digits. The verdict itself rolls up its three conditions,
+with no evidence and no diagnostic of its own.
 A verdict at any other gate, the inactive verdict and their conditions
 read `to do`, as does each verdict of a feature before intake and each of
 its conditions, with no evidence and no diagnostic. A gate item rolls up
@@ -81,7 +101,8 @@ whose `doing` record is latest, else the first `to do` task in the contract
 with the latest record. An approval that holds it reads `waiting on a seat`
 and names its unit's `confirmed_by` seats as its evidence, `seat: <seats>`:
 in order, each once, by the text rule, joined by `, `; none when the field
-is not a list or gives no seat. No other item names a seat.
+is not a list or gives no seat. No other item names a seat but an active
+`G1.3` condition, its review's.
 
 Each item carries its plain name from one source field, unchanged but for
 its whitespace: a contract's `title`, a unit's `done_means`, a check's
@@ -163,9 +184,10 @@ from pathlib import Path
 
 import yaml
 
-from . import checker
+from . import checker, g1
 from .graph import units as unit_rows
 from .progress import Record, head_id, read_progress, run_git
+from .scope_check import contract_scope
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 GATES_PATH = DATA_DIR / "gates.yaml"
@@ -218,6 +240,9 @@ _REVISION = re.compile(r"r([0-9]+):\s*")
 _DERIVED = re.compile(r"derived from r([0-9]+)(?!\w)")
 _NOT_TEXT = ("Ready:", "Measured:", "Signed:", "Parked:")
 _SIGNED = re.compile(r"Signed: (request|solution) half(?!\w)")
+# A revision as a review record's evidence prints it: `r` and ASCII digits,
+# matched whole.
+_NAMED = re.compile(r"r[0-9]+")
 
 
 @dataclass
@@ -285,7 +310,8 @@ class _Reading:
 
 def gate_list() -> list[dict]:
     """The kit's gates in registry order, each an id, a name, a page and its
-    conditions in the page's order, each an id and a name (G0's with rules)."""
+    conditions in the page's order, each an id and a name (G0's and G1's
+    with rules)."""
     return yaml.safe_load(GATES_PATH.read_text(encoding="utf-8"))["gates"]
 
 
@@ -300,7 +326,8 @@ def build(root: Path, cache: dict[str, G0Reading] | None = None
 
     `cache` maps a contract id to its `G0` reading, the verdict's and its
     conditions', kept by the caller between prints; without one, every
-    verdict is read afresh.
+    verdict is read afresh. It holds no `G1` reading: G1 is read at every
+    build, and only while `active_gates` lists it.
     """
     problems: list[str] = []
     gates = {gate["id"]: gate for gate in gate_list()}
@@ -308,16 +335,24 @@ def build(root: Path, cache: dict[str, G0Reading] | None = None
     order = list(gates)
     active = _in_order(active_gates(root, problems), order)
     upcoming = next_gate(active, order)
+    # None while `G1` is not listed: no G1 source is read then.
+    config = g1.read_config(root) if g1.GATE in active else None
     findings = read_findings(root, problems)
     items = _gate_items(order, active, findings, gates)
     read = read_contracts(root, problems)
-    contracts = [_contract_item(root, cid, instance, active, upcoming, gates, tasks)
+    ahead = read_features(root, {cid for cid, _ in read})
+    exempt = {fid for fid in [cid for cid, _ in read] + ahead
+              if config is not None and not g1.is_active(config, fid)}
+    contracts = [_contract_item(root, cid, instance, active, upcoming, gates, tasks,
+                                cid in exempt)
                  for cid, instance in read]
-    derive(root, contracts, read_progress(root, problems), cache)
-    before = [_feature_item(root, fid, active, upcoming, gates)
-              for fid in read_features(root, {cid for cid, _ in read})]
+    derive(root, contracts, read_progress(root, problems), cache, config)
+    before = [_feature_item(root, fid, active, upcoming, gates, fid in exempt)
+              for fid in ahead]
     for feature in before:
         _roll_up(feature)
+    if config is not None:
+        problems += g1_problems(root, config, [cid for cid, _ in read], ahead, exempt)
     # One order for both kinds: a contract's folder name is its id.
     features = sorted(contracts + before, key=lambda item: item.id)
     for item in items:
@@ -452,10 +487,13 @@ def _rows(lines: list[str]):
 
 
 def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]],
-           cache: dict[str, G0Reading] | None = None) -> None:
+           cache: dict[str, G0Reading] | None = None,
+           config: dict | None = None) -> None:
     """Set every status under the contracts, the verdicts' evidence, the G0
-    conditions' diagnostics and the current mark; the gate items and their
-    conditions roll up after, from what this sets."""
+    and G1 conditions' diagnostics and the current mark; the gate items and
+    their conditions roll up after, from what this sets. `config` is
+    .sdlc/config.yaml as `g1.read_config` gives it while `active_gates`
+    lists `G1`; without it no G1 verdict is read."""
     readings: dict[str, _Reading] = {}
     # Each check's last run and each task's own last record, whatever closed
     # it after, and each unit's and contract's latest close.
@@ -486,6 +524,8 @@ def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]],
             current.evidence = f"seat: {', '.join(current.seats)}" if current.seats else None
         current.marks.append(CURRENT)
     _verdicts(root, contracts, {} if cache is None else cache)
+    if config is not None:
+        _g1_verdicts(root, contracts, config)
     for contract in contracts:
         _roll_up(contract, contract.id in own)
         for item in _walk(contract):
@@ -584,6 +624,107 @@ def _verdicts(root: Path, contracts: list[Item], cache: dict[str, G0Reading]) ->
                     reading, rules.get(key, []))
 
 
+def _g1_verdicts(root: Path, contracts: list[Item], config: dict) -> None:
+    """Each active `G1` verdict from the three readers `g1-check` calls,
+    over the scope it reads, so the two cannot differ: each condition its
+    reader's status, one that failed its findings' messages as its
+    diagnostics, each on one line in the reader's order, and `G1.3` its
+    review's evidence when it reads done or failed. The verdict rolls up
+    its conditions. A contract that is not UTF-8 has no scope to read.
+    Nothing is kept between prints, and no tool starts."""
+    for contract in contracts:
+        cid = contract.id
+        verdict = next((item for item in contract.children
+                        if item.level == "verdict" and item.id == f"{cid}/{g1.GATE}"
+                        and INACTIVE not in item.marks), None)
+        if verdict is None:
+            continue
+        try:
+            scope = contract_scope(root, cid) or []
+        except UnicodeDecodeError:
+            scope = []
+        readings = {g1.LINT: g1.read_lint(root, cid, scope, config),
+                    g1.MODEL: g1.read_model(root, cid, scope),
+                    g1.REVIEW: g1.read_review(root, cid)}
+        for condition in verdict.children:
+            key = condition.id.rsplit("/", 1)[-1]
+            if key not in readings:
+                continue
+            condition.status, found = readings[key]
+            if condition.status == FAILED:
+                condition.diagnostics = [" ".join(finding.message.splitlines())
+                                         for finding in found]
+            if key == g1.REVIEW and condition.status in (DONE, FAILED):
+                condition.evidence = review_evidence(g1.last_record(root, cid, g1.REVIEW))
+        verdict.status = _rolled([condition.status for condition in verdict.children])
+
+
+def review_evidence(record: dict | None) -> str | None:
+    """A review record's evidence: `by <seat>`, the seat's ends stripped,
+    then ` at <requirements>` and `, design <design>`, each only when the
+    record holds it as a text of `r` and ASCII digits and nothing else;
+    None when the record names no seat."""
+    seat = record.get("seat") if isinstance(record, dict) else None
+    if not isinstance(seat, str):
+        return None
+    evidence = f"by {seat.strip()}"
+    for key, lead in (("requirements", " at "), (DESIGN, f", {DESIGN} ")):
+        revision = record.get(key)
+        if isinstance(revision, str) and _NAMED.fullmatch(revision):
+            evidence += lead + revision
+    return evidence
+
+
+def _rolled(statuses: list[str]) -> str:
+    """The ratified roll-up of the statuses an item counts: the first of
+    ROLL_UP any reads, else `done` when all read it, else `doing` when one
+    reads `done`, else `to do`."""
+    first = next((status for status in ROLL_UP if status in statuses), None)
+    if first is not None:
+        return first
+    if statuses and all(status == DONE for status in statuses):
+        return DONE
+    return DOING if DONE in statuses else TO_DO
+
+
+def g1_problems(root: Path, config: dict, contracts: list[str], ahead: list[str],
+                exempt: set[str]) -> list[str]:
+    """One line per G1 source that cannot be used, in this order: the
+    `g1.exempt` list when it is no list, else each of its entries that is
+    the id of no contract and of no feature before intake, in the list's
+    order; `g1.schemas`; specs/components.yaml; then, in id order, the
+    record file of each contract G1 is active for. An absent source gives
+    no line, and each unreadable one counts as absent for the statuses, as
+    `g1-check` reads it. Called only while `active_gates` lists `G1`."""
+    problems: list[str] = []
+    section = config.get("g1")
+    if isinstance(section, dict) and "exempt" in section:
+        if not isinstance(section["exempt"], list):
+            problems.append("unreadable g1.exempt: .sdlc/config.yaml (it is no list)")
+        else:
+            known = {*contracts, *ahead}
+            problems += [f"g1.exempt names no feature: {entry}"
+                         for entry in section["exempt"] if str(entry) not in known]
+    try:
+        g1.schema_entries(config)
+    except g1.Unreadable as exc:
+        problems.append(f"unreadable g1.schemas: .sdlc/config.yaml ({exc})")
+    try:
+        g1.components(root)
+    except g1.Unreadable as exc:
+        problems.append(f"unreadable component declaration: "
+                        f"{g1.COMPONENTS.as_posix()} ({exc})")
+    for cid in contracts:
+        if cid in exempt:
+            continue
+        record = g1.G1_DIR / f"{cid}.yaml"
+        try:
+            g1._existing(root / record)
+        except g1.Unreadable as exc:
+            problems.append(f"unreadable record: {record.as_posix()} ({exc})")
+    return problems
+
+
 def run_evidence(record: Record) -> str | None:
     """A green run's evidence: its command, the `HEAD` it ran at, and `dirty`
     when a tracked file differed; each part only when the record has it."""
@@ -652,7 +793,9 @@ def _g0(draft: tuple, ready: tuple) -> str:
 
 
 def condition_rules() -> dict[str, list[str]]:
-    """The validator codes each G0 condition owns, by the condition's id."""
+    """The validator codes each G0 condition owns, by the condition's id.
+    G1's conditions list codes too, `g1-check`'s; a G1 condition takes its
+    findings from its reader, so they are not read here."""
     g0 = next((gate for gate in gate_list() if gate.get("id") == "G0"), None)
     return {condition["id"]: list(condition.get("rules") or [])
             for condition in _conditions(g0)}
@@ -948,12 +1091,13 @@ def _conditions(entry: dict | None) -> list[dict]:
 
 def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str],
                    upcoming: str | None, gates: dict[str, dict],
-                   tasks: dict[str, dict]) -> Item:
+                   tasks: dict[str, dict], exempt: bool = False) -> Item:
     """A contract with its drift marks, its feature doc's and then, for a
     pair, the design document's stale mark: its verdict at each active gate,
     then the upcoming gate's verdict marked `inactive`, each opening into
     its gate's conditions; then its units. An unreadable contract keeps its
-    verdicts and its marks, and shows no unit."""
+    verdicts and its marks, and shows no unit. `exempt` says the `g1.exempt`
+    list names it."""
     doc = f"docs/features/{cid}.md"
     design = root / f"docs/features/{cid}{DESIGN_SUFFIX}"
     source = f"specs/{cid}/contract.yaml"
@@ -965,7 +1109,7 @@ def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str
         if stale not in (None, NO_DOCUMENT, NO_READY):
             marks.append(stale)
     item = Item(cid, "contract", marks=marks,
-                children=_verdict_items(cid, active, upcoming, gates, source),
+                children=_verdict_items(cid, active, upcoming, gates, source, exempt),
                 doc=doc if (root / doc).is_file() else None,
                 name=(text(instance.get("title")) if instance is not None else None) or NO_TITLE,
                 summary=text(instance.get("intent")) if instance is not None else None,
@@ -992,10 +1136,11 @@ def _contract_item(root: Path, cid: str, instance: dict | None, active: list[str
 
 
 def _feature_item(root: Path, fid: str, active: list[str], upcoming: str | None,
-                  gates: dict[str, dict]) -> Item:
+                  gates: dict[str, dict], exempt: bool = False) -> Item:
     """A feature before intake: its plain name from its doc's title line,
     `(no title)` when that gives none, its revision mark, and its verdicts
-    as a contract's, each reading `to do` from no file; then its two halves,
+    as a contract's, each reading `to do` from no file, its `G1` verdict
+    too, whatever its record file holds; then its two halves,
     each `done` by the signature that counts for it, else `to do`. No unit.
     A pair adds the design document's mark after the doc's, `design rN` or
     `design: no revision table`, and reads its solution half from the
@@ -1023,17 +1168,31 @@ def _feature_item(root: Path, fid: str, active: list[str], upcoming: str | None,
                            name=name, source=source,
                            line=signature.line if signature else None))
     return Item(fid, "feature", marks=marks,
-                children=_verdict_items(fid, active, upcoming, gates, None) + halves,
+                children=_verdict_items(fid, active, upcoming, gates, None, exempt) + halves,
                 doc=doc, name=title(lines) or NO_TITLE)
 
 
 def _verdict_items(base: str, active: list[str], upcoming: str | None,
-                   gates: dict[str, dict], source: str | None) -> list[Item]:
+                   gates: dict[str, dict], source: str | None,
+                   exempt: bool = False) -> list[Item]:
     """A feature's verdict at each active gate, then the upcoming gate's
-    marked `inactive`, each opening into its gate's conditions."""
+    marked `inactive`, each opening into its gate's conditions. For a
+    feature the `g1.exempt` list names, `G1` is no active gate: the
+    upcoming gate follows from the others, and where that is not `G1`, its
+    `G1` verdict still stands, marked `inactive`, at `G1`'s place in the
+    kit's order."""
+    order = list(gates)
+    if exempt:
+        active = [gate for gate in active if gate != g1.GATE]
+        upcoming = next_gate(active, order)
     verdicts = [(gate, []) for gate in active]
     if upcoming is not None:
         verdicts.append((upcoming, [INACTIVE]))
+    if exempt and upcoming != g1.GATE:
+        place = order.index(g1.GATE) if g1.GATE in order else len(order)
+        at = next((n for n, (gate, _) in enumerate(verdicts)
+                   if gate in order and order.index(gate) > place), len(verdicts))
+        verdicts.insert(at, (g1.GATE, [INACTIVE]))
     return [Item(f"{base}/{gate}", "verdict", marks=marks,
                  children=_condition_items(f"{base}/{gate}", gates.get(gate)),
                  name=_name(gates.get(gate)), source=source, page=_page(gates.get(gate)))

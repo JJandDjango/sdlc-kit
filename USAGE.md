@@ -2047,6 +2047,29 @@ inactive`. A feature before intake that is not exempt shows G1 active
 and `to do`. The tree stays derived at every print: G1's reading stores
 nothing and runs no tool. The pane watches `.sdlc/g1`.
 
+🔴 G1.3 shows its review when it reads `done` or `failed`: the seat, then
+each revision the record names that reads as `r` and digits. A review
+that does not count shows nothing, as an absent one does. A feature
+before intake reads each G1 condition `to do`, whatever stands under
+`.sdlc/g1/`. An exempt feature's G1 line keeps its `inactive` mark under
+a list that holds a later gate.
+
+🔴 While `active_gates` lists `G1`, the tree prints one problem line for
+each G1 source it cannot read, after its other problem lines. Such a
+source counts as absent, as `g1-check` reads it, and a declaration's
+line prints once a print:
+
+```
+taskcontract tree: unreadable g1.exempt: .sdlc/config.yaml (it is no list)
+taskcontract tree: g1.exempt names no feature: old-feature
+taskcontract tree: unreadable g1.schemas: .sdlc/config.yaml (entry 1 names no pin)
+taskcontract tree: unreadable component declaration: specs/components.yaml (YAML error at line 3)
+taskcontract tree: unreadable record: .sdlc/g1/apply-discount.yaml (not a mapping)
+```
+
+🔴 With `G1` absent from `active_gates` the tree reads no G1 source and
+prints none of these lines.
+
 🔴 **The refusal.** `progress start` on a task, and `progress done` on a
 task, a unit or a contract, refuse while the feature's G1 is active and
 not `done`. The line goes to stderr, and the call exits 2 and writes

@@ -282,7 +282,7 @@ def sha256_of(path: Path) -> str | None:
     """The whole SHA-256 of the file's bytes on disk; None when it cannot be read."""
     try:
         return hashlib.sha256(path.read_bytes()).hexdigest()
-    except OSError:
+    except (OSError, ValueError):  # a path that holds a NUL names no file
         return None
 
 

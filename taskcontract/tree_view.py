@@ -22,7 +22,9 @@ the record's `HEAD`; on a unit or contract done by its close, the close's
 `HEAD`; each with `dirty` when it applies; on a task blocked by its own
 record, `because <reason>`; on the approval that holds the current task,
 `seat: <seats>`, its unit's `confirmed_by` joined by `, `; on a signed
-half, `by <signer> at rN`). Then its links (`depends_on:
+half, `by <signer> at rN`; on an active `G1.3` condition that reads done
+or failed, `by <seat>` and each revision its review names, as `by po at
+r5, design r4`). Then its links (`depends_on:
 <contract>/<unit>` on a unit, `gate: <value>` on a finding), then a
 feature's doc reference (`doc: docs/features/<id>.md`), on a contract with
 a file there and on each feature before intake, and last a contract's
@@ -31,7 +33,8 @@ only when the item has it, after exactly one space. A line break inside a
 part reads as one space, so an item keeps one line.
 Under a condition that is not done, each of its diagnostics prints on a
 line of its own, one level deeper, as `- ` and the validator's message
-without its code; under a gate item or its condition that is not done, as
+without its code, or under a `G1` condition that failed, as `- ` and the
+finding's message whole; under a gate item or its condition that is not done, as
 `- ` and `<feature> holds <id> at <status>`, one per feature holding it
 back. Such a line is not an item and has no id.
 
@@ -74,7 +77,7 @@ from .tree import CURRENT, STATUSES, G0Reading, Item, build
 
 INDENT = "  "
 # The folders the pane lists afresh at every scan, every file under each.
-WATCHED = ("specs", ".sdlc/findings", ".sdlc/progress", "docs/features")
+WATCHED = ("specs", ".sdlc/findings", ".sdlc/progress", ".sdlc/g1", "docs/features")
 CONFIG = ".sdlc/config.yaml"
 VOCABULARY = "specs/vocabulary/"
 
