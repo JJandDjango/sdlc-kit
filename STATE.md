@@ -2,21 +2,55 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-11 (session 92 end: `s3-review` is built and waits
-> in PR #112, open and not merged; the user ended the session with the
-> context over its limit, to talk about the PR next time; the user ruled
-> that no approval stands before the final PR review)._
+> _Generated 2026-10-11 (session 93 end: PR #112 merged on the user's
+> word at `fabe24e`, so `s3-review` stands on main; the user kept all 12
+> readings; the user ruled that a plan stays out of a PR's diff and off
+> main)._
 
 ## Now
 
-- **Session 92 (2026-10-11): `s3-review` is built and waits in PR
-  #112, not merged.** The user's word at the close: "Don't merge yet,
-  just wrap the session and we'll talk about it next time". Branch
+- **Session 93 (2026-10-11): `s3-review` stands on main at `fabe24e`**
+  (PR #112, merged on the user's word after green CI). A talk session,
+  no unit: the talk the user asked for at session 92's close. Three
+  units of six are done; `s4-tree`, `s5-start` and `s6-release` stay
+  `[to do]`.
+- The readings. The user kept all 12 of PR #112's readings. Readings 1
+  to 5 were put one at a time, each with its reason and its cost, and
+  each was kept. The user then kept the rest in one sentence ("I'll
+  keep all of your suggestions"), so readings 6 to 12 were ruled on
+  from the PR body and not read out. Reading 3's cost was named and
+  accepted: a feature with no feature document, or a `Ready:` row that
+  names no revision, cannot pass G1. So the pilot needs a new intake,
+  and `glossary-alias-disjointness`, which holds no feature document
+  and is not exempt, needs one before its build.
+- The user asked what the 11 items are and whether the count is fixed.
+  It is: the same 11 for every feature, in
+  `taskcontract/data/g1-items.yaml`, held equal to G1's page by a test.
+  Claude's inference, in no signed text: an answer is checked or
+  unchecked alone, so an item that does not apply to a feature is
+  answered checked (Open questions, G1.3).
+- **The user's ruling (2026-10-11): a plan stays out of a PR's diff and
+  off main.** The user lost their place in PR #112's diff, where
+  `plan.md` was 630 of 2,845 changed lines and three of five commits,
+  and asked whether teammates would want a plan in a PR. The answer
+  the user accepted: a plan is read before the work, by the person who
+  supervises the session, and a reviewer reads the PR body. So
+  `753c1de` restored main's `plan.md` on the work branch before the
+  merge, the PR body links session 92's plan at `234c9d9`, and this
+  wrap removes `plan.md` from main (Standing practice, second entry).
+- This wrap adds session 92's row to `docs/session-metrics.md`, the
+  second past the marker. Three throwaway folders still wait for the
+  user to delete, since a safety check refused Claude's `rm -rf`:
+  `E:/sdlc_kit_s3run_a`, `E:/sdlc_kit_s3run_b`, `E:/sdlc_kit_s3run_c`.
+
+- **Session 92 (2026-10-11): `s3-review` is built**, on main at
+  `fabe24e` (PR #112) since session 93. Branch
   `session-92-g1-s3-review`: the plan at `d5dcf24`, `4405e19` and
-  `234c9d9`, the unit at `0605acc`, two wording fixes at `5ccd102`.
-  Two-Key PASS in round 1 at `0605acc`, CI green on the PR, the suite
-  at 1599 passed. The local progress record reads the unit done.
-- What stands on that branch, not on main. `g1-record review <id>`
+  `234c9d9`, the unit at `0605acc`, two wording fixes at `5ccd102`, and
+  the plan's removal from the diff at `753c1de`. Two-Key PASS in round
+  1 at `0605acc`, the suite at 1599 passed. The local progress record
+  reads the unit done.
+- What stands. `g1-record review <id>`
   appends one G1.3 record: the signer's name and seat, the revision
   each document's `Ready:` row names, and each of the 11 items as
   checked, or unchecked with its section. `g1-check` takes G1.3 from
@@ -33,8 +67,8 @@
   the session needed no reply after the ruling (Standing practice,
   first entry). The session's first plan asked for four rulings and
   two later stops, and the user declined it.
-- The readings, 12, stand at the top of PR #112's body, none ruled on
-  yet. The one with a cost: a review names the revisions the contract
+- The readings, 12, stand at the top of PR #112's body, each kept at
+  the review (session 93). The one with a cost: a review names the revisions the contract
   was derived from, so a feature with no feature document, or a
   document whose `Ready:` row names no revision, cannot pass G1. The
   pilot's document holds rows of the older form (`signed r3`, where
@@ -56,12 +90,6 @@
 - The cost: 781K agent tokens against a plan of about 0.9 million
   (drafters 232K and 129K; developers 114K and 80K; Two-Key 226K).
   The three seat agents took 173K more, outside the total.
-- Not done at this wrap, each waiting for the merge: `plan.md`'s close
-  (session 92's plan stands on the work branch; main still holds
-  session 90's), the row in `docs/session-metrics.md`, and the memory
-  index's merge line. Three throwaway folders wait for the user to
-  delete, since a safety check refused Claude's `rm -rf`:
-  `E:/sdlc_kit_s3run_a`, `E:/sdlc_kit_s3run_b`, `E:/sdlc_kit_s3run_c`.
 
 - **Session 91 (2026-10-10): a talk session, no unit.** The user asked
   what makes a feature document, a design document and a plan good, so
@@ -231,7 +259,7 @@
 - Carried: kit 0.19.0 stands released, tag `v0.19.0` at `7fe6342`. 20
   features, each with a contract, 18 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
-  `g1-requirements-spec` in its build, two units of six done.
+  `g1-requirements-spec` in its build, three units of six done.
   Session 85's Now is at `dfab2c6:STATE.md`, with the
   amendment in short and the removed test module. Session 84's is at
   `8434a9d:STATE.md`, and session 83's at `8635064:STATE.md`: d6's
@@ -240,30 +268,21 @@
 
 ## Blockers
 
-- PR #112 (`s3-review`) waits for the user's review; it merges on the
-  user's word. This wrap rides its own PR from branch
-  `session-92-wrap`, and Claude merges it after green CI. It touches
-  `STATE.md` alone, so PR #112 merges with no conflict.
+- None. This wrap rides its own PR from branch `session-93-wrap`, and
+  Claude merges it after green CI.
 
 ## Next actions
 
-Opener: the talk on PR #112, which the user asked for at session 92's
-close. Read the PR's body first: its 12 readings, the six cases the
-design never named, and "Know before merging". The user rules on the
-readings and gives or holds the merge. After the merge comes the wrap
-in its own PR: `plan.md`'s close (take session 92's plan from the work
-branch), the second row past the marker in `docs/session-metrics.md`
-(delivered, 1 round, 0 / 0 defects, 0 touches after the ruling, 781K
-tokens, 2 approvals by Claude), the memory index and this file.
-
-Then `s4-tree`, the fourth unit: the tree shows G1 as an active gate
+Opener: `s4-tree`, the fourth unit: the tree shows G1 as an active gate
 with each condition's status, its diagnostics and the review (SC5.1,
 SC5.2, SC5.3). It changes `tree.py`, the kit's most pinned file, and
 retires the sha256 pin at `tests/test_document_split_release.py:483`.
 It can fold `g1.py`'s `Ready:` row reader and `tree.drift`'s into one.
 Its plan takes the plan page's shape and no approval (Standing
 practice, first entry): where the design names no case, Claude rules
-from its purpose and lists the reading at the top of the PR body.
+from its purpose and lists the reading at the top of the PR body. Its
+`plan.md` is committed on the work branch and removed by the branch's
+last commit (Standing practice, second entry).
 
 Beside it, in its own session before `s6-release`: the build of
 session 90's first ruling, one G1.1 record a call that holds a result
@@ -274,6 +293,8 @@ be refused by `lint`, as G1.2 has it.
 
 1. The pilot's config line, in the engine's session; the engine's
    install ref moves to the release that carries G1 (pull, not push).
+   Its feature document needs a new intake before its G1.3 can pass:
+   its `Ready:` rows read `signed r3` (reading 3, kept in session 93).
 
 2. Deferred from 0.18.0's sweep (Two-Key's advisories, rounds 1 to 3),
    each a change of behavior or a sentence a test pins word for word.
@@ -381,6 +402,20 @@ be refused by `lint`, as G1.2 has it.
   "Rulings needed: none", with the readings under it. This entry
   replaces the plan's approval and the 2026-10-09 return of the test
   list in the entry below; that entry's other terms stand.
+- A plan stays out of a PR's diff and off main (the user, 2026-10-11,
+  session 93). `plan.md` is written at the repo root and committed on
+  the work branch at the session's start, so GitHub shows it at its
+  commit. The branch's last commit before the review removes it (`git
+  rm plan.md`), so the PR's diff holds the work alone and main's tree
+  holds no plan. The PR body links the plan by its commit,
+  `https://github.com/JJandDjango/sdlc-kit/blob/<sha>/plan.md`: the
+  link names a commit, so it holds after the branch goes, since the
+  merge commit keeps that commit in history. The wrap copies no plan
+  onto main. The reasons: a plan is read before the work, by the
+  person who supervises the session; a reviewer reads the PR body; and
+  a tracked root plan would conflict between a team's open branches
+  (the last reason is Claude's, accepted by the user). First applied
+  on PR #112 at `753c1de`.
 - A unit with a code half and a prompt half, under no approvals
   (session 92, `s3-review`). Two drafters side by side by `scriptPath`,
   each with its own scratch folder; the prompt drafter's notes say its
@@ -482,8 +517,9 @@ be refused by `lint`, as G1.2 has it.
   feature. Before filing it, grep `docs/gates.md` and the gate pages for
   what the kit already holds (session 73).
 - The wrap follows the merge (the user, 2026-10-08). The work PR merges
-  first, on the user's word after CI. Then `STATE.md`, `plan.md` and the
-  memory index are written on a new branch off main and ride a
+  first, on the user's word after CI. Then `STATE.md` and the memory
+  index (with `plan.md`, until session 93) are written on a new branch
+  off main and ride a
   wrap-only PR, which Claude merges after green CI (since session 89;
   before it, on the user's word). So the wrap names the work's
   merge commit and its PR as facts, and its Blockers line names only the
@@ -930,13 +966,17 @@ be refused by `lint`, as G1.2 has it.
   remark the user made in confidence.
 
 ## Open questions
-- G1.3, for the user at PR #112's review (session 92; the PR's body
-  names each). The 12 readings, first of all whether a feature with no
-  feature document may ever pass G1. Three edges left as they are: a
-  shortened flag (`--check`) is taken; a name or a section may hold a
-  terminal escape; on Windows an id in capitals reaches the same
-  contract. A path `docs/features/<id>.design.md` that is a folder
-  counts as no design document.
+- G1.3 (session 92; PR #112's body names each). The user kept all 12
+  readings at the review (session 93), so a feature with no feature
+  document cannot pass G1. For the design's next text row: the six
+  cases it never named, and a seventh from the review, what a person
+  answers for an item that does not apply to the feature (an answer is
+  checked or unchecked alone today, so such an item is answered
+  checked). Three edges left as they are: a shortened flag (`--check`)
+  is taken; a name or a section may hold a terminal escape; on Windows
+  an id in capitals reaches the same contract. A path
+  `docs/features/<id>.design.md` that is a folder counts as no design
+  document.
 - Session 89's delegation stands in this file, in memory and in the
   user's global `CLAUDE.md`, in no ADR and not in `CONVENTIONS.md`.
   Record it in either, or wait for the metrics review? Beside it: the

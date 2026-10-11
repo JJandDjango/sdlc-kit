@@ -46,6 +46,7 @@ the same kind at PR review.
 | 88 | `g1-requirements-spec/s1-lint` | yes | 2 | 2 / 0 | 1 | | 911: drafter 225, developers 104 + 60 + 69, Two-Key 205 + 247 | 2 / | |
 | 89 | marker: the delegation starts (a talk session, no unit) | | | | | | | | |
 | 90 | `g1-requirements-spec/s2-model` | yes | 2 | 1 / 1 | | 4 | 965: drafter 212, developers 115 + 76 + 61 + 59, Two-Key 236 + 205 | 2 / 0 | 9 / 1 |
+| 92 | `g1-requirements-spec/s3-review` | yes | 1 | 0 / 0 | | 0 | 781: drafters 232 + 129, developers 114 + 80, Two-Key 226 | 2 / 0 | |
 
 ## Notes on the baseline
 
@@ -77,3 +78,10 @@ the same kind at PR review.
 - Session 90's lost round cost 325K tokens: developers 61K and 59K, and
   the second grade at 205K. Its defects count 1 / 1: the rule in the
   code, and one USAGE sentence that claimed more than the rule did.
+- Session 92: no approval stood before the PR review, on the user's
+  ruling of 2026-10-11. The plan took none, and Claude approved both
+  test lists. The touches count from that ruling: the session's first
+  plan asked four rulings and was declined before it. The 12 readings
+  in PR #112's body were each kept at the review, in session 93. The
+  three live runs' seat agents took 173K more, outside the total. The
+  deferred lines were not counted.
