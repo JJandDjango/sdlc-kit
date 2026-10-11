@@ -214,8 +214,10 @@ amended.
    review tied to no text proves nothing, and session 90 ruled the same
    side for G1.2 after a defect escaped. The cost: a feature taken in
    with no feature document cannot pass G1 until it holds one. The
-   pilot's one feature holds a document with a `Ready:` row (read
-   today).
+   pilot's one feature holds a document, and its `Ready:` rows are of
+   an older form that names no revision (`signed r3`, where the kit
+   reads `derived from r3`), so the pilot needs a new intake before its
+   G1.3 can pass (found in step 4; the tree marks such a row today).
 4. **Who answers in the live run.** The contract says no agent signs a
    G1.3 review, and step 8's receipt needs a seat that answers the 11
    items. The reading: an agent plays an invented person in the
