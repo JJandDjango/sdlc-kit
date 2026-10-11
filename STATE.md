@@ -2,12 +2,66 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-10 (session 91 end: a talk session that built no
-> unit; the user and Claude agreed what makes a feature, design or plan
-> document good, and the plan takes a new shape from the next session,
-> which builds `s3-review`)._
+> _Generated 2026-10-11 (session 92 end: `s3-review` is built and waits
+> in PR #112, open and not merged; the user ended the session with the
+> context over its limit, to talk about the PR next time; the user ruled
+> that no approval stands before the final PR review)._
 
 ## Now
+
+- **Session 92 (2026-10-11): `s3-review` is built and waits in PR
+  #112, not merged.** The user's word at the close: "Don't merge yet,
+  just wrap the session and we'll talk about it next time". Branch
+  `session-92-g1-s3-review`: the plan at `d5dcf24`, `4405e19` and
+  `234c9d9`, the unit at `0605acc`, two wording fixes at `5ccd102`.
+  Two-Key PASS in round 1 at `0605acc`, CI green on the PR, the suite
+  at 1599 passed. The local progress record reads the unit done.
+- What stands on that branch, not on main. `g1-record review <id>`
+  appends one G1.3 record: the signer's name and seat, the revision
+  each document's `Ready:` row names, and each of the 11 items as
+  checked, or unchecked with its section. `g1-check` takes G1.3 from
+  `RS301`. `taskcontract/data/g1-items.yaml` holds the 11 items.
+  `skills/sdlc/flows/g1.md` is the venue, `/sdlc g1 {id}`, steps R1 to
+  R7, and `skills/sdlc/SKILL.md` gains four lines.
+  `tests/test_g1_review.py` holds 359 cases and `tests/test_g1_flow.py`
+  24. USAGE gains four red bullets. `tree.py`, `progress.py`,
+  `checker.py` and `intake.md` keep every byte.
+- **The user's ruling (2026-10-11): no approval before the final PR
+  review.** The feature and design documents are to carry a build to
+  that review; a stop before it means their vetting missed something.
+  So the plan took no approval, Claude approved both test lists, and
+  the session needed no reply after the ruling (Standing practice,
+  first entry). The session's first plan asked for four rulings and
+  two later stops, and the user declined it.
+- The readings, 12, stand at the top of PR #112's body, none ruled on
+  yet. The one with a cost: a review names the revisions the contract
+  was derived from, so a feature with no feature document, or a
+  document whose `Ready:` row names no revision, cannot pass G1. The
+  pilot's document holds rows of the older form (`signed r3`, where
+  the kit reads `derived from r3`), so the pilot needs a new intake
+  before its G1.3 can pass. Six cases the signed design never named
+  are listed there too, for its next text row.
+- Two-Key's advisories: two fixed in `5ccd102` (a USAGE bullet's status
+  word; the flow's R6 gave no rule for a quote, a dollar sign or a
+  backtick in a name or a section). Left: `SKILL.md`'s description
+  line does not name `g1` (the release unit's sweep); `g1-check`,
+  `lint` and `model` end on a traceback for a contract that is not
+  UTF-8 (older than this unit).
+- The receipts stand in untracked
+  `RECEIPT_g1-requirements-spec-s3_2026-10-11/`: three live runs of
+  `/sdlc g1` with a seat agent (all 11 checked; item 6 unchecked in a
+  section that holds a comma; at `5ccd102`, two items unchecked with
+  the section `Pricing: $5 "exact", verbatim`, recorded whole), the
+  hostile-input trial, both interface notes, both lists and the grade.
+- The cost: 781K agent tokens against a plan of about 0.9 million
+  (drafters 232K and 129K; developers 114K and 80K; Two-Key 226K).
+  The three seat agents took 173K more, outside the total.
+- Not done at this wrap, each waiting for the merge: `plan.md`'s close
+  (session 92's plan stands on the work branch; main still holds
+  session 90's), the row in `docs/session-metrics.md`, and the memory
+  index's merge line. Three throwaway folders wait for the user to
+  delete, since a safety check refused Claude's `rm -rf`:
+  `E:/sdlc_kit_s3run_a`, `E:/sdlc_kit_s3run_b`, `E:/sdlc_kit_s3run_c`.
 
 - **Session 91 (2026-10-10): a talk session, no unit.** The user asked
   what makes a feature document, a design document and a plan good, so
@@ -186,30 +240,30 @@
 
 ## Blockers
 
-- None. The session shipped no work PR. This wrap rides its own PR from
-  branch `session-91-wrap`, and Claude merges it after green CI.
+- PR #112 (`s3-review`) waits for the user's review; it merges on the
+  user's word. This wrap rides its own PR from branch
+  `session-92-wrap`, and Claude merges it after green CI. It touches
+  `STATE.md` alone, so PR #112 merges with no conflict.
 
 ## Next actions
 
-Opener: `s3-review`, the third unit of kit 0.20.0. It adds G1.3's rule,
-`RS301`; the review record through `g1-record review`; the 11 items as
-`taskcontract/data/g1-items.yaml`; and the venue, the flow
-`skills/sdlc/flows/g1.md` with its lines in `skills/sdlc/SKILL.md`. Its
-checks are SC1.1, SC1.2 and SC1.3, and its Retirements cell reads
-"none". It is a unit with a code half and a prompt half, and each
-prompt file must pass `python -m prompt_lang`, which needs the scratch
-venv below. SC1.1 takes a manual receipt, a live run of `/sdlc g1` on
-an invented feature with a seat answering the 11 items. USAGE holds its
-text, red. The plan is the first written in the plan page's shape
-(`NOTES_document-theory_2026-10-10.md`, "The shapes agreed"), for a
-reader with no context (Standing practice, first entry). The
-test list goes to the user in chat before the developer starts, since
-the tripwire fired in session 90; before it goes, Claude tries each
-rule that sorts free text against five hostile inputs. The wrap appends
-the second row past the marker in `docs/session-metrics.md`. The
-methods are the standing practices below: "A unit with a code half and
-a prompt half", "A live run of the interview", "A code unit whose tool
-is a checker" and "A delegated session".
+Opener: the talk on PR #112, which the user asked for at session 92's
+close. Read the PR's body first: its 12 readings, the six cases the
+design never named, and "Know before merging". The user rules on the
+readings and gives or holds the merge. After the merge comes the wrap
+in its own PR: `plan.md`'s close (take session 92's plan from the work
+branch), the second row past the marker in `docs/session-metrics.md`
+(delivered, 1 round, 0 / 0 defects, 0 touches after the ruling, 781K
+tokens, 2 approvals by Claude), the memory index and this file.
+
+Then `s4-tree`, the fourth unit: the tree shows G1 as an active gate
+with each condition's status, its diagnostics and the review (SC5.1,
+SC5.2, SC5.3). It changes `tree.py`, the kit's most pinned file, and
+retires the sha256 pin at `tests/test_document_split_release.py:483`.
+It can fold `g1.py`'s `Ready:` row reader and `tree.drift`'s into one.
+Its plan takes the plan page's shape and no approval (Standing
+practice, first entry): where the design names no case, Claude rules
+from its purpose and lists the reading at the top of the PR body.
 
 Beside it, in its own session before `s6-release`: the build of
 session 90's first ruling, one G1.1 record a call that holds a result
@@ -307,6 +361,51 @@ be refused by `lint`, as G1.2 has it.
    test labelled SC2.3.
 
 ## Standing practice
+- No approval before the final PR review (the user, 2026-10-11, session
+  92). The signed feature and design documents are the gate. Neither
+  the plan nor the test list takes an approval, and Claude records each
+  `--by claude`. The plan is written in the plan page's shape, pushed,
+  named in one line with its GitHub link, and the build starts. Before
+  the PR Claude stops on two events only: a case the feature document,
+  the design document and the contract leave open that their purpose
+  cannot settle, or whose answer would change a signed contract
+  sentence, a ratified term or an ADR; and a discovery during the build
+  that needs the user's decision. A case the documents never name is
+  ruled from their purpose, built on, and listed at the top of the PR
+  body as a reading, never put to the user as a ruling with a
+  recommendation. It is also listed as a gap for the design's next text
+  row, since the user reads each stop as a failure of the documents'
+  vetting. A defect found in a unit already on main is confirmed, named
+  in the PR body and charged in the metrics, and stops the build only
+  if its fix needs a decision. The plan page's section 6 then reads
+  "Rulings needed: none", with the readings under it. This entry
+  replaces the plan's approval and the 2026-10-09 return of the test
+  list in the entry below; that entry's other terms stand.
+- A unit with a code half and a prompt half, under no approvals
+  (session 92, `s3-review`). Two drafters side by side by `scriptPath`,
+  each with its own scratch folder; the prompt drafter's notes say its
+  prototype is a copy of `skills/`. Both prototypes go onto one scratch
+  worktree for one whole-suite run. Before a developer starts, the
+  session tries each free-text rule on the prototype with inputs the
+  drafter's tables lack, from a scratch `trial.py` kept in the receipt
+  folder: it found a name of one zero-width space read as a signature.
+  A small amendment is the session's: the test, the prototype and the
+  note, then red and green again. Two developers side by side, each
+  told to leave the whole suite to the session and given its note as a
+  file outside the drafters' folder.
+  `tools/g1_review_live.py <workflows> <plugin worktree> <root>
+  <driver folder>` builds a throwaway repository for a live run of
+  `/sdlc g1` and a driver whose second session finds the kit's package
+  through PYTHONPATH; the first message goes from PowerShell, and
+  `live-run-seats.js` takes the first reply as `opening`. A run takes
+  14 to 16 turns and about 58K tokens. After a wording fix to the flow,
+  one run is taken again from the fix commit. `split_journal.py` splits
+  a journal at `\n` alone, since a note that held U+2028 broke
+  `splitlines`. Run pytest with `-rN` when many cases fail: the summary
+  lines passed 30K characters once. A `rm -rf` of a folder under `E:/`
+  is refused by a safety check: leave such a folder to the user.
+  Session 92: drafters 232K and 129K, developers 114K and 80K, Two-Key
+  226K, PASS round 1.
 - Plan approved, then PR review (the user, 2026-10-08, session 89). An
   approved plan is the only gate before the build, and the user is
   next needed at the work PR's review. The user holds: the plan's
@@ -831,6 +930,13 @@ be refused by `lint`, as G1.2 has it.
   remark the user made in confidence.
 
 ## Open questions
+- G1.3, for the user at PR #112's review (session 92; the PR's body
+  names each). The 12 readings, first of all whether a feature with no
+  feature document may ever pass G1. Three edges left as they are: a
+  shortened flag (`--check`) is taken; a name or a section may hold a
+  terminal escape; on Windows an id in capitals reaches the same
+  contract. A path `docs/features/<id>.design.md` that is a folder
+  counts as no design document.
 - Session 89's delegation stands in this file, in memory and in the
   user's global `CLAUDE.md`, in no ADR and not in `CONVENTIONS.md`.
   Record it in either, or wait for the metrics review? Beside it: the
