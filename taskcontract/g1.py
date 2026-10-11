@@ -189,7 +189,7 @@ def read_config(root: Path) -> dict:
     """.sdlc/config.yaml as a mapping; a missing or unreadable file is empty."""
     try:
         doc = yaml.safe_load((root / ".sdlc" / "config.yaml").read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, yaml.YAMLError):
+    except (OSError, ValueError, yaml.YAMLError):  # a date no calendar holds is a ValueError
         return {}
     return doc if isinstance(doc, dict) else {}
 
@@ -305,7 +305,7 @@ def last_record(root: Path, feature_id: str, condition: str) -> dict | None:
     that is absent or cannot be read counts as no record."""
     try:
         doc = yaml.safe_load((root / G1_DIR / f"{feature_id}.yaml").read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, yaml.YAMLError):
+    except (OSError, ValueError, yaml.YAMLError):  # a date no calendar holds is a ValueError
         return None
     records = doc.get("records") if isinstance(doc, dict) else None
     if not isinstance(records, list):
@@ -322,7 +322,8 @@ def read_lint(root: Path, feature_id: str, scope: list[str],
     schema is in scope. Else each schema in scope is held against the last
     G1.1 record: it is matched when the record holds its path with the
     file's hash as it stands now, the entry's linter, and the entry's pin
-    with the pin's hash as it stands now. A pin's file that is absent
+    with the pin's hash as it stands now. A file entry whose path is no
+    text is no recorded file. A pin's file that is absent
     reads as null on both sides, and null equals null. A matched schema
     reports RS101 when the record found the tool not installed, once for
     the tool, and RS102 when it reported above 0; a result whose pin's
@@ -341,7 +342,8 @@ def read_lint(root: Path, feature_id: str, scope: list[str],
     record = last_record(root, feature_id, LINT) or {}
     pin = record.get("pin") if isinstance(record.get("pin"), dict) else {}
     files = record.get("files") if isinstance(record.get("files"), list) else []
-    recorded = {f.get("path"): f for f in files if isinstance(f, dict)}
+    recorded = {f["path"]: f for f in files
+                if isinstance(f, dict) and isinstance(f.get("path"), str)}
     findings: list[Finding] = []
     missing: set[str] = set()  # the tools RS101 has named
     unmatched = False
@@ -382,7 +384,7 @@ def components(root: Path) -> list[dict] | None:
         schema = json.loads(COMPONENT_SCHEMA.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError) as exc:
         raise Unreadable(getattr(exc, "strerror", None) or "cannot be read") from None
-    except yaml.YAMLError as exc:
+    except (yaml.YAMLError, ValueError) as exc:  # a date no calendar holds is a ValueError
         mark = getattr(exc, "problem_mark", None)
         raise Unreadable(f"YAML error at line {mark.line + 1}" if mark is not None
                          else "YAML error") from None
@@ -1162,7 +1164,7 @@ def _existing(path: Path) -> dict:
         doc = yaml.safe_load(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError) as exc:
         raise Unreadable(getattr(exc, "strerror", None) or "cannot be read") from None
-    except yaml.YAMLError as exc:
+    except (yaml.YAMLError, ValueError) as exc:  # a date no calendar holds is a ValueError
         mark = getattr(exc, "problem_mark", None)
         raise Unreadable(f"YAML error at line {mark.line + 1}" if mark is not None
                          else "YAML error") from None

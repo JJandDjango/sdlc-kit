@@ -2057,7 +2057,7 @@ a list that holds a later gate.
 🔴 While `active_gates` lists `G1`, the tree prints one problem line for
 each G1 source it cannot read. Such a source counts as absent, as
 `g1-check` reads it, and a declaration's line prints once a print. The
-five forms, of which one print holds the first or the second and never
+six forms, of which one print holds the first or the second and never
 both:
 
 ```
@@ -2066,7 +2066,12 @@ taskcontract tree: g1.exempt names no feature: old-feature
 taskcontract tree: unreadable g1.schemas: .sdlc/config.yaml (entry 1 names no pin)
 taskcontract tree: unreadable component declaration: specs/components.yaml (YAML error at line 3)
 taskcontract tree: unreadable record: .sdlc/g1/apply-discount.yaml (not a mapping)
+taskcontract tree: unreadable G1 reading: apply-discount/G1/G1.2 (TypeError: unhashable type: 'list')
 ```
+
+🔴 The last form stands for a condition whose reading ended on an error
+of the kit's own. The print goes on, and that condition reads `to do`:
+nothing is proven, so nothing reads `done`.
 
 🔴 With `G1` absent from `active_gates` the tree reads no G1 source and
 prints none of these lines. The pane watches no schema, pin, model or

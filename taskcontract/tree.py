@@ -346,13 +346,14 @@ def build(root: Path, cache: dict[str, G0Reading] | None = None
     contracts = [_contract_item(root, cid, instance, active, upcoming, gates, tasks,
                                 cid in exempt)
                  for cid, instance in read]
-    derive(root, contracts, read_progress(root, problems), cache, config)
+    unread = derive(root, contracts, read_progress(root, problems), cache, config)
     before = [_feature_item(root, fid, active, upcoming, gates, fid in exempt)
               for fid in ahead]
     for feature in before:
         _roll_up(feature)
     if config is not None:
         problems += g1_problems(root, config, [cid for cid, _ in read], ahead, exempt)
+    problems += unread  # after every other line of the print
     # One order for both kinds: a contract's folder name is its id.
     features = sorted(contracts + before, key=lambda item: item.id)
     for item in items:
@@ -488,12 +489,13 @@ def _rows(lines: list[str]):
 
 def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]],
            cache: dict[str, G0Reading] | None = None,
-           config: dict | None = None) -> None:
+           config: dict | None = None) -> list[str]:
     """Set every status under the contracts, the verdicts' evidence, the G0
     and G1 conditions' diagnostics and the current mark; the gate items and
     their conditions roll up after, from what this sets. `config` is
     .sdlc/config.yaml as `g1.read_config` gives it while `active_gates`
-    lists `G1`; without it no G1 verdict is read."""
+    lists `G1`; without it no G1 verdict is read. Returns one line per G1
+    reading that could not be made, as `_g1_verdicts` gives them."""
     readings: dict[str, _Reading] = {}
     # Each check's last run and each task's own last record, whatever closed
     # it after, and each unit's and contract's latest close.
@@ -524,13 +526,13 @@ def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]],
             current.evidence = f"seat: {', '.join(current.seats)}" if current.seats else None
         current.marks.append(CURRENT)
     _verdicts(root, contracts, {} if cache is None else cache)
-    if config is not None:
-        _g1_verdicts(root, contracts, config)
+    unread = _g1_verdicts(root, contracts, config) if config is not None else []
     for contract in contracts:
         _roll_up(contract, contract.id in own)
         for item in _walk(contract):
             if item.level in ("unit", "contract") and item.status == DONE and item.id in own:
                 item.evidence = state_evidence(own[item.id])
+    return unread
 
 
 def _apply(contract: Item, position: int, records: list[Record],
@@ -624,14 +626,20 @@ def _verdicts(root: Path, contracts: list[Item], cache: dict[str, G0Reading]) ->
                     reading, rules.get(key, []))
 
 
-def _g1_verdicts(root: Path, contracts: list[Item], config: dict) -> None:
+def _g1_verdicts(root: Path, contracts: list[Item], config: dict) -> list[str]:
     """Each active `G1` verdict from the three readers `g1-check` calls,
     over the scope it reads, so the two cannot differ: each condition its
     reader's status, one that failed its findings' messages as its
     diagnostics, each on one line in the reader's order, and `G1.3` its
     review's evidence when it reads done or failed. The verdict rolls up
     its conditions. A contract that is not UTF-8 has no scope to read.
-    Nothing is kept between prints, and no tool starts."""
+    Nothing is kept between prints, and no tool starts.
+
+    Each reader is called on its own. One that raises proves nothing, so
+    its condition reads `to do` with no diagnostic and no evidence, the
+    other two keep their readings, and one line is returned for it, in id
+    order and then by condition."""
+    unread: list[tuple[str, str, str]] = []
     for contract in contracts:
         cid = contract.id
         verdict = next((item for item in contract.children
@@ -643,9 +651,17 @@ def _g1_verdicts(root: Path, contracts: list[Item], config: dict) -> None:
             scope = contract_scope(root, cid) or []
         except UnicodeDecodeError:
             scope = []
-        readings = {g1.LINT: g1.read_lint(root, cid, scope, config),
-                    g1.MODEL: g1.read_model(root, cid, scope),
-                    g1.REVIEW: g1.read_review(root, cid)}
+        readers = {g1.LINT: lambda: g1.read_lint(root, cid, scope, config),
+                   g1.MODEL: lambda: g1.read_model(root, cid, scope),
+                   g1.REVIEW: lambda: g1.read_review(root, cid)}
+        readings = {}
+        for key, reader in readers.items():
+            try:
+                readings[key] = reader()
+            except Exception as exc:
+                readings[key] = (TO_DO, [])
+                unread.append((cid, key, f"unreadable G1 reading: {cid}/{g1.GATE}/{key} "
+                                         f"({_ended(exc)})"))
         for condition in verdict.children:
             key = condition.id.rsplit("/", 1)[-1]
             if key not in readings:
@@ -657,6 +673,13 @@ def _g1_verdicts(root: Path, contracts: list[Item], config: dict) -> None:
             if key == g1.REVIEW and condition.status in (DONE, FAILED):
                 condition.evidence = review_evidence(g1.last_record(root, cid, g1.REVIEW))
         verdict.status = _rolled([condition.status for condition in verdict.children])
+    return [line for _, _, line in sorted(unread)]
+
+
+def _ended(exc: Exception) -> str:
+    """What a reader ended on: the exception's class name and its message,
+    a line break in it read as one space."""
+    return f"{type(exc).__name__}: {' '.join(str(exc).splitlines())}"
 
 
 def review_evidence(record: dict | None) -> str | None:
@@ -695,7 +718,9 @@ def g1_problems(root: Path, config: dict, contracts: list[str], ahead: list[str]
     order; `g1.schemas`; specs/components.yaml; then, in id order, the
     record file of each contract G1 is active for. An absent source gives
     no line, and each unreadable one counts as absent for the statuses, as
-    `g1-check` reads it. Called only while `active_gates` lists `G1`."""
+    `g1-check` reads it. A reader that ends on any other exception gives
+    its usual line, with the exception's class name and message as the
+    reason. Called only while `active_gates` lists `G1`."""
     problems: list[str] = []
     section = config.get("g1")
     if isinstance(section, dict) and "exempt" in section:
@@ -709,11 +734,16 @@ def g1_problems(root: Path, config: dict, contracts: list[str], ahead: list[str]
         g1.schema_entries(config)
     except g1.Unreadable as exc:
         problems.append(f"unreadable g1.schemas: .sdlc/config.yaml ({exc})")
+    except Exception as exc:
+        problems.append(f"unreadable g1.schemas: .sdlc/config.yaml ({_ended(exc)})")
     try:
         g1.components(root)
     except g1.Unreadable as exc:
         problems.append(f"unreadable component declaration: "
                         f"{g1.COMPONENTS.as_posix()} ({exc})")
+    except Exception as exc:
+        problems.append(f"unreadable component declaration: "
+                        f"{g1.COMPONENTS.as_posix()} ({_ended(exc)})")
     for cid in contracts:
         if cid in exempt:
             continue
@@ -722,6 +752,8 @@ def g1_problems(root: Path, config: dict, contracts: list[str], ahead: list[str]
             g1._existing(root / record)
         except g1.Unreadable as exc:
             problems.append(f"unreadable record: {record.as_posix()} ({exc})")
+        except Exception as exc:
+            problems.append(f"unreadable record: {record.as_posix()} ({_ended(exc)})")
     return problems
 
 

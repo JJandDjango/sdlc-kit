@@ -977,6 +977,65 @@ def test_done_means_a_declared_path_the_system_refuses_never_stops_the_print(
     agree(repo, capsys, printed)
 
 
+# YAML reads `2026-02-30` as a date, and no calendar holds it: the loader
+# ends on a plain ValueError, which is no YAML error.
+NO_SUCH_DATE = [
+    ("a-record", f".sdlc/g1/{ID}.yaml", "records:\n  - condition: G1.3\n    at: 2026-02-30\n",
+     "G1.3", f"unreadable record: .sdlc/g1/{ID}.yaml (YAML error)"),
+    ("a-component-declaration", COMPONENTS, "version: 1\nsince: 2026-02-30\ncomponents: []\n",
+     "G1.2", f"unreadable component declaration: {COMPONENTS} (YAML error)"),
+]
+
+
+@pytest.mark.parametrize("case, path, text, condition, line", NO_SUCH_DATE,
+                         ids=[row[0] for row in NO_SUCH_DATE])
+def test_done_means_a_date_no_calendar_holds_never_stops_the_print(
+        repo, capsys, case, path, text, condition, line):
+    repo.state(DONE, DONE, DONE)
+    assert show(repo, capsys).conditions() == [DONE, DONE, DONE]
+    repo.write(path, text)
+    # the file cannot be read: it counts as absent, and its one line says so
+    printed = show(repo, capsys)
+    assert printed.tag(f"{ID}/G1/{condition}") == TO_DO
+    assert printed.problems == [PROBLEM + line]
+    agree(repo, capsys, printed)
+
+
+def test_done_means_a_lint_record_whose_path_is_no_text_never_stops_the_print(repo, capsys):
+    repo.state(FAILED, DONE, DONE)
+    assert show(repo, capsys).tag(f"{ID}/G1/G1.1") == FAILED
+    # a list and a mapping where a file's path stands: no file is recorded so
+    repo.records({**repo.lint(), "files": [{"path": ["a"]}, {"path": {"b": 1}}]}, review())
+    printed = show(repo, capsys)
+    assert printed.tag(f"{ID}/G1/G1.1") == TO_DO
+    assert printed.problems == []
+    agree(repo, capsys, printed)
+
+
+READERS = [("read_lint", "G1.1"), ("read_model", "G1.2"), ("read_review", "G1.3")]
+
+
+@pytest.mark.parametrize("reader, condition", READERS, ids=[row[1] for row in READERS])
+def test_done_means_a_reader_that_raises_reads_to_do_with_one_problem_line(
+        repo, capsys, monkeypatch, reader, condition):
+    # Whatever a reader ends on, the print goes on: its condition proves
+    # nothing, so it reads `to do`, and the other two keep their readings.
+    repo.state(DONE, DONE, DONE)
+    assert show(repo, capsys).conditions() == [DONE, DONE, DONE]
+
+    def raises(*args, **kwargs):
+        raise RuntimeError("no such\nreading")
+
+    monkeypatch.setattr(g1, reader, raises)
+    printed = show(repo, capsys)
+    assert printed.conditions() == [TO_DO if key == condition else DONE for key in CONDITIONS]
+    assert printed.row(f"{ID}/G1/{condition}")["line"] == (
+        f"    {ID}/G1/{condition} {CONDITIONS[condition]} [to do]")
+    assert printed.row(f"{ID}/G1")["line"] == f"  {ID}/G1 Requirements / Spec [doing]"
+    assert printed.problems == [
+        f"{PROBLEM}unreadable G1 reading: {ID}/G1/{condition} (RuntimeError: no such reading)"]
+
+
 def test_done_means_absent_declarations_and_records_read_to_do_and_print_no_problem_line(
         repo, capsys):
     # G0 and G1 active, no `g1` key, no specs/components.yaml: first with a record
