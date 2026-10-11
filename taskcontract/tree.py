@@ -703,7 +703,7 @@ def g1_problems(root: Path, config: dict, contracts: list[str], ahead: list[str]
             problems.append("unreadable g1.exempt: .sdlc/config.yaml (it is no list)")
         else:
             known = {*contracts, *ahead}
-            problems += [f"g1.exempt names no feature: {entry}"
+            problems += [f"g1.exempt names no feature: {' '.join(str(entry).splitlines())}"
                          for entry in section["exempt"] if str(entry) not in known]
     try:
         g1.schema_entries(config)

@@ -2055,9 +2055,10 @@ before intake reads each G1 condition `to do`, whatever stands under
 a list that holds a later gate.
 
 🔴 While `active_gates` lists `G1`, the tree prints one problem line for
-each G1 source it cannot read, after its other problem lines. Such a
-source counts as absent, as `g1-check` reads it, and a declaration's
-line prints once a print:
+each G1 source it cannot read. Such a source counts as absent, as
+`g1-check` reads it, and a declaration's line prints once a print. The
+five forms, of which one print holds the first or the second and never
+both:
 
 ```
 taskcontract tree: unreadable g1.exempt: .sdlc/config.yaml (it is no list)
@@ -2068,7 +2069,9 @@ taskcontract tree: unreadable record: .sdlc/g1/apply-discount.yaml (not a mappin
 ```
 
 🔴 With `G1` absent from `active_gates` the tree reads no G1 source and
-prints none of these lines.
+prints none of these lines. The pane watches no schema, pin, model or
+configuration file: after a change to one it shows G1.1 or G1.2 as last
+read, until a file it watches changes.
 
 🔴 **The refusal.** `progress start` on a task, and `progress done` on a
 task, a unit or a contract, refuse while the feature's G1 is active and

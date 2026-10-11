@@ -26,6 +26,7 @@ that reads every G1 condition `to do`.
 from __future__ import annotations
 
 import ast
+import errno
 import hashlib
 import json
 import os
@@ -865,6 +866,12 @@ def test_done_means_each_exempt_id_that_names_no_feature_prints_one_problem_line
     assert printed.row("gates/G1")["diagnostics"] == [f"{ID} holds G1 at to do"]
 
 
+def test_done_means_an_exempt_id_prints_its_problem_line_on_one_line(repo, capsys):
+    # a line break inside the entry reads as one space, as a diagnostic's does
+    repo.config(exempt=["no\nsuch"])
+    assert show(repo, capsys).problems == [f"{PROBLEM}g1.exempt names no feature: no such"]
+
+
 @pytest.mark.parametrize("exempt", [ID, {ID: True}, 5], ids=["a-text", "a-mapping", "a-number"])
 def test_done_means_an_exempt_value_that_is_no_list_exempts_nothing_and_prints_one_line(
         repo, capsys, exempt):
@@ -908,22 +915,64 @@ def test_done_means_a_contract_that_is_not_utf_8_never_stops_the_print(repo, cap
         f"{PROBLEM}unreadable contract: specs/{OTHER}/contract.yaml (cannot be read)"]
 
 
-@pytest.mark.parametrize("condition", ["G1.1", "G1.2"], ids=["a-pin", "a-model-configuration"])
+# One declared path no system call takes. A file named so reads as absent,
+# and a pattern whose folder is named so matches no file, as a pattern that
+# leaves the root matches none.
+NUL_PATHS = [("a-pin", "G1.1", TO_DO), ("a-schema-folder", "G1.1", DONE),
+             ("a-schema-folder-pattern", "G1.1", DONE),
+             ("a-model-configuration", "G1.2", TO_DO)]
+
+
+@pytest.mark.parametrize("case, condition, status", NUL_PATHS, ids=[row[0] for row in NUL_PATHS])
 def test_done_means_a_declared_path_that_holds_a_nul_never_stops_the_print(
-        repo, capsys, condition):
+        repo, capsys, case, condition, status):
     # a control first: the tree reads G1 on this repository
     repo.state(DONE, DONE, DONE)
     assert show(repo, capsys).conditions() == [DONE, DONE, DONE]
-    # then one declared path no system call takes: its file reads as absent,
-    # for the tree and for `g1-check` alike
-    if condition == "G1.1":
+    if case == "a-pin":
         repo.schema_files()
         repo.config(schemas=[{**SPECTRAL, "pin": "a\x00b"}])
+    elif case == "a-schema-folder":
+        repo.config(schemas=[{**SPECTRAL, "paths": ["a\x00b/*.json"]}])
+    elif case == "a-schema-folder-pattern":
+        repo.config(schemas=[{**SPECTRAL, "paths": ["a\x00b/"]}])
     else:
         repo.model_files()
         repo.components({**LEDGER, "model_config": "specs/models/a\x00b.cfg"})
+    # for the tree and for `g1-check` alike
     printed = show(repo, capsys)
-    assert printed.tag(f"{ID}/G1/{condition}") == TO_DO
+    assert printed.tag(f"{ID}/G1/{condition}") == status
+    assert printed.problems == []
+    agree(repo, capsys, printed)
+
+
+REFUSED = "a-name-the-system-refuses"
+REFUSED_PATHS = [("a-schema-file", "G1.1", DONE), ("a-model", "G1.2", FAILED)]
+
+
+@pytest.mark.parametrize("case, condition, status", REFUSED_PATHS,
+                         ids=[row[0] for row in REFUSED_PATHS])
+def test_done_means_a_declared_path_the_system_refuses_never_stops_the_print(
+        repo, capsys, monkeypatch, case, condition, status):
+    # Where the system refuses a path's name, as one too long, a Python
+    # before 3.13 raises OSError from `Path.is_file`. The stand-in refuses
+    # one marked name on every Python.
+    real = Path.is_file
+
+    def is_file(self, *args, **kwargs):
+        if REFUSED in str(self):
+            raise OSError(errno.ENAMETOOLONG, "File name too long")
+        return real(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "is_file", is_file)
+    repo.state(DONE, DONE, DONE)
+    if case == "a-schema-file":
+        repo.config(schemas=[{**SPECTRAL, "paths": [f"api/{REFUSED}.yaml"]}])
+    else:
+        repo.components({**LEDGER, "model": f"specs/models/{REFUSED}.tla"})
+    # a schema file named so is no file on disk, and a model named so is absent
+    printed = show(repo, capsys)
+    assert printed.tag(f"{ID}/G1/{condition}") == status
     assert printed.problems == []
     agree(repo, capsys, printed)
 

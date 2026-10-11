@@ -247,7 +247,8 @@ def schemas_in_scope(root: Path, scope: list[str], entries: list[dict]) -> list[
 def _files(root: Path, pattern: str) -> list[str]:
     """The files under the root that the pattern matches, each as its path
     from the root. The walk starts at the folder the pattern names before
-    its first wildcard; `matches` decides."""
+    its first wildcard; `matches` decides. A pattern whose path the system
+    refuses matches no file."""
     entry = pattern.strip().replace("\\", "/")
     if not entry:
         return []
@@ -256,13 +257,17 @@ def _files(root: Path, pattern: str) -> list[str]:
     else:
         cut = min((entry.index(c) for c in "*?[" if c in entry), default=None)
         if cut is None:
-            return [entry] if _inside(entry) and (root / entry).is_file() else []
+            return [entry] if _inside(entry) and _is_file(root / entry) else []
         base = entry[:cut].rpartition("/")[0]
     if not _inside(base):
         return []
     start = root / base if base else root
+    try:
+        walked = list(os.walk(start))
+    except (OSError, ValueError):  # a folder that holds a NUL names none
+        return []
     paths = []
-    for folder, _, names in os.walk(start):
+    for folder, _, names in walked:
         under = Path(folder).relative_to(start).as_posix()
         parts = [part for part in (base, "" if under == "." else under) if part]
         for name in names:
@@ -276,6 +281,15 @@ def _inside(path: str) -> bool:
     """Whether a path from the root stays under the root."""
     return not Path(path).is_absolute() and not path.startswith("/") \
         and ".." not in path.split("/")
+
+
+def _is_file(path: Path) -> bool:
+    """Whether the path names a file on disk; a path the system refuses
+    names none."""
+    try:
+        return path.is_file()
+    except (OSError, ValueError):  # a name too long, or one that holds a NUL
+        return False
 
 
 def sha256_of(path: Path) -> str | None:
@@ -451,8 +465,9 @@ def _literal(entry: str) -> str:
 
 
 def _has_model(root: Path, core: dict) -> bool:
-    """Whether the hard core's entry holds a `model` whose file is on disk."""
-    return "model" in core and (root / _entry(core["model"])).is_file()
+    """Whether the hard core's entry holds a `model` whose file is on disk;
+    a path the system refuses reads as a file that is absent."""
+    return "model" in core and _is_file(root / _entry(core["model"]))
 
 
 def _pins(root: Path, core: dict) -> dict:
