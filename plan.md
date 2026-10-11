@@ -91,7 +91,8 @@ The unit has a code half (`taskcontract/`) and a prompt half
 (`skills/sdlc/`). Each agent works on one half, so each reads little.
 
 1. **Open (Claude).** Branch `session-92-g1-s3-review` from `c411702`.
-   This plan is committed, pushed and shown for approval.
+   This plan is committed and pushed, and the build starts. The plan
+   takes no approval (section 4).
 2. **Draft (two drafters, side by side).** A drafter is an agent that
    writes a unit's tests before any code, proves each one fails today,
    and proves on a throwaway prototype that they can pass
@@ -110,10 +111,11 @@ The unit has a code half (`taskcontract/`) and a prompt half
    rule that sorts free text (the item numbers, the section, the
    signer's name, the seat) is tried against five hostile inputs on the
    prototype.
-5. **Approve the test list (the user).** Shown in chat: the count
-   first, then each rule with its table and what step 4 found. The
-   approval is recorded `--by user`. Then `progress`, the command that
-   records each task, records each check's failing run.
+5. **Approve the test list (Claude).** The approval is recorded `--by
+   claude`. The lists, each rule's table and what step 4 found are
+   saved in the receipt folder and summed up at the top of the PR body.
+   Then `progress`, the command that records each task, records each
+   check's failing run.
 6. **Green (two developers, side by side).** A developer is an agent
    that writes the real code from an interface note, a page of names
    and behavior, and never opens the tests
@@ -148,26 +150,33 @@ folder, and step 6 opens the next session.
 
 ## 4. Where Claude stops for the user
 
-Three times:
+Once: the work PR (step 10). The merge is the user's word.
 
-1. This plan's approval, which also decides section 6.
-2. The test list, before a developer starts (step 5). Each later change
-   to the list stops again.
-3. The work PR (step 10). The merge is the user's word.
+The user ruled on 2026-10-11 that the feature page and the design page
+are to hold enough for the build to run to that review with no
+approval: not of this plan, and not of the test list. Before the PR,
+Claude stops on two events only:
 
-A fourth stop comes only when a reading would change a signed contract
-sentence, a ratified term or an ADR (an architecture decision record
-under `decisions/`).
+1. A case the three pages leave open and their purpose cannot settle,
+   or one whose answer would change a signed contract sentence, a
+   ratified term or an ADR (an architecture decision record under
+   `decisions/`).
+2. A discovery during the build that needs the user's decision.
+
+Each such stop is also a finding against the pages: it names what
+their vetting missed.
 
 ## 5. Where Claude goes on alone, and by what rule
 
-Alone: the branch and its pushes, the agents' briefs, the overlay and
-each suite run, the hostile inputs, the unit's commit, a USAGE sentence
-that only restates the signed design, the live run, opening the PR, and
-the wrap's merge.
+Alone: everything before the PR. That is the branch and its pushes,
+the agents' briefs, the overlay and each suite run, the hostile inputs,
+the test list's approval and each change to it, the unit's commit, the
+USAGE sentences, the live run, opening the PR, and the wrap's merge.
 
-The rule: Claude builds on its own reading and lists it at the top of
-the PR body. If the reading would change signed text, Claude stops.
+The rule: where the pages name no case, Claude rules from their
+purpose, builds on that reading, and lists it at the top of the PR
+body, where the user can overturn it. If the reading would change
+signed text, Claude stops.
 
 For an event this plan never names, ask what the unit is for: can G1.3
 read `done` without a named person's signature over all 11 items, on
@@ -175,18 +184,24 @@ the revisions the contract was derived from? If the event opens such a
 path, it is a defect, and it is fixed before the commit. A question or
 a shortcut a developer returns is put to the same test.
 
-## 6. Rulings needed with this approval
+## 6. Rulings needed
+
+None: this plan takes no approval. The four cases below are ones the
+design never names. Claude settles each from the pages' purpose, a
+review that binds a named person to named text, and lists it at the top
+of the PR body. Each is also a gap to close when the design is next
+amended.
 
 1. **Several unchecked items.** The design draws one, `--unchecked
    6=Statement`. A real section name holds a comma ("Error messages,
    verbatim", `docs/features/g1-requirements-spec.md:224`), so a list
-   split at commas would cut it in two. Recommended: `--unchecked` is
+   split at commas would cut it in two. The reading: `--unchecked` is
    given once for each unchecked item, and `--checked` stays one list
    of numbers. The design's drawing reads the same either way. USAGE
    gains one red sentence.
 2. **An empty section or name.** The design checks no section against
    the document (its Risks, 10), and the message prints the section on
-   one line. Recommended: the command refuses a section or a signer's
+   one line. The reading: the command refuses a section or a signer's
    name that is empty or holds a line break. It exits 2 and writes
    nothing. Any other text is kept as the person wrote it, with the
    spaces at its ends cut.
@@ -194,7 +209,7 @@ a shortcut a developer returns is put to the same test.
    the contract was derived from, and the kit reads them from each
    document's `Ready:` row, the row intake writes when it derives the
    contract. Two cases have none: a feature with no feature document,
-   and a document with no `Ready:` row. Recommended: `g1-record review`
+   and a document with no `Ready:` row. The reading: `g1-record review`
    refuses both, exits 2 and writes nothing, and G1.3 reads `to do`. A
    review tied to no text proves nothing, and session 90 ruled the same
    side for G1.2 after a defect escaped. The cost: a feature taken in
@@ -203,14 +218,13 @@ a shortcut a developer returns is put to the same test.
    today).
 4. **Who answers in the live run.** The contract says no agent signs a
    G1.3 review, and step 8's receipt needs a seat that answers the 11
-   items. Recommended: an agent plays an invented person in the
+   items. The reading: an agent plays an invented person in the
    throwaway repository, as the interview's live runs did. Its record
    never enters the kit, and the receipt says an agent sat the seat.
    Two short runs: one checks all 11 and ends on `g1-green`; one leaves
-   item 6 unchecked and ends on the `RS301` line. The other way is the
-   user at a second terminal, about 15 answers a run.
+   item 6 unchecked and ends on the `RS301` line.
 
-Claude's readings, told here:
+Three smaller readings:
 
 - R5 asks each item "in the item's own words", and `g1-items.yaml`
   holds only a number and a name. The flow file holds the 11 items word
@@ -224,11 +238,13 @@ Claude's readings, told here:
 ## 7. What could go wrong, already ruled
 
 - **Two-Key fails a round.** One narrow fix round: the tests are placed
-  first, on the user's approval, and the developer's note names only
-  the behavior to change. Round 2 names round 1's defects and asks for
-  other paths of the same kind. After a third failure Claude stops.
+  first, tried against the same hostile inputs, and the developer's
+  note names only the behavior to change. Round 2 names round 1's
+  defects and asks for other paths of the same kind. After a third
+  failure Claude stops.
 - **An older test fails on the overlay.** The unit retires none, so it
-  is a finding. It goes to the user with the test list.
+  is a finding. If the test pins what this unit must change, it is
+  amended and named at the top of the PR body; else the build is wrong.
 - **A drafter says which way a rule errs.** The claim is tried with
   hostile inputs before the list is shown. Session 90 lost a round to
   an untried one.
@@ -244,7 +260,10 @@ Claude's readings, told here:
 - **An agent passes about 400K tokens.** It is stopped and its work
   split. The two halves keep each agent's reading narrow.
 - **A defect of a unit already on main shows.** Claude confirms it with
-  a live run and stops for the user, as in session 90.
+  a live run and names it at the top of the PR body, and the metrics
+  row of the session that shipped it takes it. It is fixed here only if
+  this unit cannot stand without the fix; else it joins section 9.
+  Claude stops only if the fix needs a decision.
 
 ## 8. This session's cost, with its basis
 
@@ -262,9 +281,8 @@ and 59K, Two-Key 263K) and session 70's at 1,032K (drafters 222K and
   63K for runs of 41 and 36 turns. These runs are shorter, about 15
   turns each (an estimate).
 
-Touches, the replies Claude needs between this plan's approval and the
-PR review: one planned, the test list. The target is 0, and the test
-list is the user's since session 90.
+Touches, the replies Claude needs from the user before the PR review:
+none planned. The target is 0.
 
 ## 9. Not in this session
 
@@ -308,5 +326,5 @@ list is the user's since session 90.
 | Red mark | USAGE's sign for text that is described and not shipped yet. |
 | `progress` | The command that records each task's start, its test runs and its end. |
 | Wrap | The session's closing PR: `STATE.md`, this plan, the memory index and the metrics row. |
-| Touch | One reply Claude needs from the user between the plan's approval and the PR review. |
+| Touch | One reply Claude needs from the user before the PR review. |
 | Agent tokens | The measure of the agents' work, and so of its cost. |
