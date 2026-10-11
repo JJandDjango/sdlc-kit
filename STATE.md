@@ -2,12 +2,39 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Generated 2026-10-09 (session 90 end: `s2-model` is built, on main at
-> `350162a`; the tripwire fired, so the user approves each test list
-> again; the next session builds `s3-review`)._
+> _Generated 2026-10-10 (session 91 end: a talk session that built no
+> unit; the user and Claude agreed what makes a feature, design or plan
+> document good, and the plan takes a new shape from the next session,
+> which builds `s3-review`)._
 
 ## Now
 
+- **Session 91 (2026-10-10): a talk session, no unit.** The user asked
+  what makes a feature document, a design document and a plan good, so
+  that a codebase can be understood from its documents alone, at the
+  plan review and at the PR review. The whole of it stands in
+  `NOTES_document-theory_2026-10-10.md`: the definition, the rules,
+  three page shapes each agreed on a filled-in page, the findings of
+  eleven web searches over nine fields, and what stays open.
+- What the user ruled. A document is good when a reader who holds only
+  the documents can judge a case they never name, and reaches the
+  author's verdict for the author's reasons. The reader has no context:
+  a new session of an LLM, a new developer, the user at a review.
+  Design and plan stay separate, a plan is a session's, and the plan is
+  thin: it holds only its session's facts and points to the design for
+  the rest. A header gives the path to the feature (project, area,
+  feature), each line with its purpose. The next session's plan, for
+  `s3-review`, is the first written in the plan page's shape. The
+  feature and design formats stand under ADRs, so their change is a
+  feature of its own, parked (Next actions 5).
+- Measured for the pages' example: the tree prints 1,545 lines here,
+  the features in order of id, and the feature in flight,
+  `g1-requirements-spec`, opens at line 589 as `[waiting on a seat]`,
+  below eight done features. The order is one sort in `build`
+  (`taskcontract/tree.py:322`), and the print, the pane and
+  `progress.py` each take their lines from `build` (read, not run).
+- No commit of code, no unit, no row in `docs/session-metrics.md`.
+  `plan.md` is untouched: it still holds session 90's closed plan.
 - **Session 90 (2026-10-09): `s2-model` is built**, on main at `350162a`
   (PR #109), Two-Key PASS in round 2 at `3a1c402`. The unit stands at
   `3f6954d`, the fix at `3a1c402`, and four reworded USAGE sentences at
@@ -159,9 +186,8 @@
 
 ## Blockers
 
-- None. The work merged as PR #109 at `350162a`. This wrap rides its own
-  PR from branch `session-90-wrap`, and Claude merges it after green
-  CI.
+- None. The session shipped no work PR. This wrap rides its own PR from
+  branch `session-91-wrap`, and Claude merges it after green CI.
 
 ## Next actions
 
@@ -174,7 +200,9 @@ checks are SC1.1, SC1.2 and SC1.3, and its Retirements cell reads
 prompt file must pass `python -m prompt_lang`, which needs the scratch
 venv below. SC1.1 takes a manual receipt, a live run of `/sdlc g1` on
 an invented feature with a seat answering the 11 items. USAGE holds its
-text, red. The plan opens with an Overview and a Terms section. The
+text, red. The plan is the first written in the plan page's shape
+(`NOTES_document-theory_2026-10-10.md`, "The shapes agreed"), for a
+reader with no context (Standing practice, first entry). The
 test list goes to the user in chat before the developer starts, since
 the tripwire fired in session 90; before it goes, Claude tries each
 rule that sorts free text against five hostile inputs. The wrap appends
@@ -270,7 +298,13 @@ be refused by `lint`, as G1.2 has it.
    (`opening.md`); the interview's `SKILL.md` reads `$1` as the second
    word under this harness; `STATE.md` runs past 800 lines against its
    one-page contract, most of them Standing practice (session 89, the
-   audit's `BUDGET-STATE`).
+   audit's `BUDGET-STATE`); the document theory
+   (`NOTES_document-theory_2026-10-10.md`, session 91): the feature and
+   design formats in the shapes agreed there, a feature of its own
+   through the interview, with its open points (an area level in the
+   tree, how the test is sat); that file's example, the tree opening on
+   unfinished work, is the 2026-10-07 idea above, with a question on a
+   test labelled SC2.3.
 
 ## Standing practice
 - Plan approved, then PR review (the user, 2026-10-08, session 89). An
@@ -289,19 +323,34 @@ be refused by `lint`, as G1.2 has it.
   mid-build: Claude builds on its own reading and lists it at the top
   of the PR body, and stops for the user only when the reading would
   change a signed contract sentence, a ratified term or an ADR. The
-  plan's fixed shape: the deliverable in one line; an Overview in plain
-  words (the project, the feature with its units, the session's unit)
-  and a Terms section for each word the plan uses (the user, session
-  90: the first draft could not be read); the numbered steps, each
-  agent named by its role beside its script; each foreseeable ruling
-  with a recommendation, in plain words (the approval rules on them);
-  the cost with its basis; and the deferred list. Each time it
-  is shown, a GitHub link to `plan.md` on the pushed branch goes with
-  it. The tripwire: a delegated item returns to the user at once on one
+  plan's fixed shape, since session 91 (the user, 2026-10-10): the plan
+  page of `NOTES_document-theory_2026-10-10.md`, a header (project,
+  area, feature and unit, each with its purpose in one sentence) and
+  ten sections: the deliverable in one line; where this sits; the
+  numbered steps, each agent named by its role, with a gloss, beside
+  its script; where Claude stops for the user; where Claude goes on
+  alone, and by what rule; each foreseeable ruling with a
+  recommendation, in plain words (the approval rules on them); what
+  could go wrong, already ruled; the session's cost with its basis; the
+  deferred list; and the words. It is written for a reader with no
+  context and holds only its session's facts. The header and "where
+  this sits" do the work of session 90's Overview, and a gloss at each
+  word's first use with the closing list does the work of its Terms
+  (the user, session 90: the first draft could not be read). Each time
+  it is shown, a GitHub link to `plan.md` on the pushed branch goes
+  with it. The tripwire: a delegated item returns to the user at once on one
   escaped defect traced to an approval Claude gave, or on two overturns
   of the same kind at PR review. Where an entry below sends one of
   Claude's items to the user, this entry governs. Before saying who
   approved a step, read `.sdlc/progress/<id>.yaml`.
+- A document's reader has no context (the user, session 91). A feature
+  document, a design document and a plan are each written so that a
+  new session of an LLM or a new developer can judge a case the page
+  never names: the page stands alone, glosses each word at its first
+  use, and names by path what it needs from another page. A new shape
+  or a new word is put to the user on a filled-in page, never as a
+  bare list of sections: the list confused the talk, and each
+  filled-in page was agreed in one reply.
 - Session metrics (session 89). Each build session's wrap appends one
   row to `docs/session-metrics.md`, by the eight measures the page
   lists; a session that ships no unit adds none. An escaped defect
