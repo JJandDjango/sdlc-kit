@@ -43,10 +43,11 @@ the same kind at PR review.
 | 81 | `document-split/d4-tree` | yes | 1 | 0 / 0 | | | 561: drafter 213, developers 94 + 75, Two-Key 179 | 2 / | |
 | 82 | `document-split/d5-intake` | yes | 1 | 0 / 0 | | | 555: drafter 159, retirer 117, developer 78, Two-Key 201 | 2 / | |
 | 83 | `document-split/d6-release` | yes | 1 | 0 / 0 | | | 546: drafter 199, developer 66, Two-Key 281 | 2 / | |
-| 88 | `g1-requirements-spec/s1-lint` | yes | 2 | 2 / 0 | 1 | | 911: drafter 225, developers 104 + 60 + 69, Two-Key 205 + 247 | 2 / | |
+| 88 | `g1-requirements-spec/s1-lint` | yes | 2 | 2 / 0 | 4 | | 911: drafter 225, developers 104 + 60 + 69, Two-Key 205 + 247 | 2 / | |
 | 89 | marker: the delegation starts (a talk session, no unit) | | | | | | | | |
-| 90 | `g1-requirements-spec/s2-model` | yes | 2 | 1 / 1 | | 4 | 965: drafter 212, developers 115 + 76 + 61 + 59, Two-Key 236 + 205 | 2 / 0 | 9 / 1 |
+| 90 | `g1-requirements-spec/s2-model` | yes | 2 | 1 / 1 | 2 | 4 | 965: drafter 212, developers 115 + 76 + 61 + 59, Two-Key 236 + 205 | 2 / 0 | 9 / 1 |
 | 92 | `g1-requirements-spec/s3-review` | yes | 1 | 0 / 0 | | 0 | 781: drafters 232 + 129, developers 114 + 80, Two-Key 226 | 2 / 0 | |
+| 94 + 95 | `g1-requirements-spec/s4-tree` | yes, in session 95 | 4, no PASS: the user waived round 5 | 5 / 1 | | 2 | 1,642: drafter 256, developers 144 + 71 + 102 + 89 + 61, Two-Key 256 + 207 + 242 + 214 | 2 / 0 | |
 
 ## Notes on the baseline
 
@@ -85,3 +86,28 @@ the same kind at PR review.
   in PR #112's body were each kept at the review, in session 93. The
   three live runs' seat agents took 173K more, outside the total. The
   deferred lines were not counted.
+- Sessions 94 and 95 are one build and one row. Session 94 built
+  `s4-tree` and stopped after three failed rounds, as its plan ruled;
+  session 95 shipped it. The unit holds no Two-Key PASS. Rounds 1 to 3
+  each failed on one class, a hand-written text that made G1's reading
+  raise and so stopped the whole tree print: five defects in the code
+  (a NUL in a schema folder; a date no calendar holds, in a record and
+  in the component declaration; a lint record's path as a list; a
+  `g1.exempt` entry Python cannot turn into text). Round 4 found no
+  defect in the code and failed on one USAGE sentence Claude had
+  written: an escape typed into an edit was decoded into its characters.
+  That sentence was fixed and not regraded, and the user waived round 5
+  on 2026-10-12.
+- The two touches of that row: the ruling for a round 4 with one guard
+  at the boundary, and the waiver. The four failed rounds cost 919K of
+  the 1,642K. Session 94's plan read about 0.6 million. The 15 readings
+  in PR #116's body were merged with none overturned, and the deferred
+  lines were not counted.
+- Escaped defects charged by that build, each a traceback in `g1-check`
+  on main for a hand-written text. Session 88 (`s1-lint`) gains three:
+  a NUL in a pin or a schema pattern's folder, a date no calendar holds
+  in a record, and a lint record's path as a list. Session 90
+  (`s2-model`) gains two: a NUL in a model configuration, and that date
+  in `specs/components.yaml`. Each test list was Claude's approval. The
+  user has not said whether these count for the tripwire; PR #116's
+  body named them, and the user merged it.
