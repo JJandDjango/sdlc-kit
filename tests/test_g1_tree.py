@@ -28,6 +28,7 @@ from __future__ import annotations
 import ast
 import errno
 import hashlib
+import io
 import json
 import os
 import re
@@ -1034,6 +1035,166 @@ def test_done_means_a_reader_that_raises_reads_to_do_with_one_problem_line(
     assert printed.row(f"{ID}/G1")["line"] == f"  {ID}/G1 Requirements / Spec [doing]"
     assert printed.problems == [
         f"{PROBLEM}unreadable G1 reading: {ID}/G1/{condition} (RuntimeError: no such reading)"]
+
+
+# --- the boundary: whatever G1's part of a build ends on, the print goes on -----------
+
+# The one line of a build whose G1 part ended on an error: the gate stands
+# where a condition's id stands in a reader's line.
+WHOLE = f"{PROBLEM}unreadable G1 reading: G1 "
+
+# Each place `build` enters G1's code, by the module a stand-in finds it in.
+PLACES = [(g1, "read_config"), (g1, "is_active"), (tree, "contract_scope"),
+          (tree, "review_evidence"), (tree, "g1_problems")]
+
+
+def raises(*args, **kwargs):
+    raise RuntimeError("no such\nreading")
+
+
+class Mute(Exception):
+    """An error whose message cannot be made."""
+
+    def __str__(self):
+        raise ValueError("no text")
+
+
+def mute(*args, **kwargs):
+    raise Mute()
+
+
+@pytest.fixture
+def int_limit():
+    """Python's limit on an integer's text, as it ships: 4300 digits."""
+    if not hasattr(sys, "set_int_max_str_digits"):
+        pytest.skip("this Python sets no limit on an integer's text")
+    held = sys.get_int_max_str_digits()
+    sys.set_int_max_str_digits(4300)
+    yield
+    sys.set_int_max_str_digits(held)
+
+
+@pytest.mark.parametrize("module, name", PLACES, ids=[row[1] for row in PLACES])
+def test_done_means_whatever_g1s_part_of_a_build_ends_on_the_print_goes_on(
+        repo, capsys, monkeypatch, module, name):
+    # the same repository with no G1 source: each condition reads `to do`
+    bare = show(repo, capsys)
+    assert bare.after(f"  {ID}/G1 Requirements / Spec [to do]", 4) == g1_lines(ID, TO_DO)
+    assert bare.problems == []
+    repo.state(DONE, DONE, DONE)
+    assert show(repo, capsys).conditions() == [DONE, DONE, DONE]
+    monkeypatch.setattr(module, name, raises)
+    # nothing is proven for G1, so the tree prints as with no G1 source read,
+    # and one line names what the reading ended on
+    printed = show(repo, capsys)
+    assert printed.out == bare.out
+    assert printed.problems == [WHOLE + "(RuntimeError: no such reading)"]
+
+
+def test_done_means_an_exempt_entry_python_cannot_turn_into_text_never_stops_the_print(
+        repo, capsys, int_limit):
+    bare = show(repo, capsys)
+    repo.state(DONE, DONE, DONE)
+    assert show(repo, capsys).conditions() == [DONE, DONE, DONE]
+    # YAML reads the number, and `str` refuses one past 4300 digits
+    repo.write(CONFIG, "kit: fixture\nactive_gates: [G0, G1]\n"
+                       f"g1:\n  schemas: []\n  exempt: [0x{'F' * 4000}]\n")
+    printed = show(repo, capsys)
+    assert printed.out == bare.out
+    assert len(printed.problems) == 1, printed.problems
+    assert printed.problems[0].startswith(WHOLE + "(ValueError: Exceeds the limit")
+
+
+def test_done_means_a_build_whose_g1_part_ended_on_an_error_reads_no_exemption(
+        repo, capsys, monkeypatch):
+    repo.feature(OLD)
+    bare = show(repo, capsys)
+    assert bare.after(f"  {OLD}/G1 Requirements / Spec [to do]", 4) == g1_lines(OLD, TO_DO)
+    repo.state(DONE, DONE, DONE, exempt=[OLD])
+    assert show(repo, capsys).verdicts(OLD)[1:] == [
+        f"  {OLD}/G1 Requirements / Spec [to do] inactive"]
+    # the list was read before the error, and it still exempts nothing
+    monkeypatch.setattr(tree, "g1_problems", raises)
+    printed = show(repo, capsys)
+    assert printed.out == bare.out
+    assert printed.problems == [WHOLE + "(RuntimeError: no such reading)"]
+
+
+def test_done_means_the_one_line_stands_last_and_no_other_g1_line_is_printed(
+        repo, capsys, monkeypatch):
+    # one source that is not G1's cannot be read: its line, with G1 off
+    _unreadable_sources(repo, ("G0",))
+    repo.write(f".sdlc/progress/{ID}.yaml", "records: [\n")
+    off = show(repo, capsys).problems
+    assert len(off) == 1, off
+    # with G1 on, each of the four G1 sources adds its own
+    _unreadable_sources(repo, ("G0", "G1"))
+    assert len(show(repo, capsys).problems) == 5
+    monkeypatch.setattr(g1, "is_active", raises)
+    assert show(repo, capsys).problems == off + [WHOLE + "(RuntimeError: no such reading)"]
+
+
+@pytest.mark.parametrize("name, subject, conditions", [
+    ("is_active", "G1", [TO_DO, TO_DO, TO_DO]),
+    ("read_lint", f"{ID}/G1/G1.1", [TO_DO, DONE, DONE]),
+], ids=["the-whole-reading", "one-reader"])
+def test_done_means_an_error_whose_message_cannot_be_made_prints_its_class_name_alone(
+        repo, capsys, monkeypatch, name, subject, conditions):
+    repo.state(DONE, DONE, DONE)
+    monkeypatch.setattr(g1, name, mute)
+    printed = show(repo, capsys)
+    assert printed.conditions() == conditions
+    assert printed.problems == [f"{PROBLEM}unreadable G1 reading: {subject} (Mute)"]
+
+
+def test_done_means_an_error_that_is_not_g1s_stands_as_it_stood(repo, capsys, monkeypatch):
+    # the second build reads no G1 source, so an error it ends on is no G1
+    # text's: no problem line claims it
+    repo.state(DONE, DONE, DONE)
+    monkeypatch.setattr(tree, "read_findings", raises)
+    with pytest.raises(RuntimeError, match="no such"):
+        cli(capsys, "tree", "--root", repo.root)
+
+
+# --- the print's own write: a text the output's encoding cannot hold -------------------
+
+OUTSIDE = "価格"     # two characters no Western code page holds
+ESCAPED = "\\u4fa1\\u683c"   # as Python writes them where an encoding refuses them
+
+
+def piped(repo: Repo, monkeypatch, *argv) -> tuple[int, str]:
+    """The print through an output whose encoding holds Western text alone,
+    as a pipe gives it on Windows."""
+    raw = io.BytesIO()
+    out = io.TextIOWrapper(raw, encoding="cp1252", errors="strict", newline="")
+    monkeypatch.setattr(sys, "stdout", out)
+    code = main(["tree", *argv, "--root", str(repo.root)])
+    out.flush()
+    return code, raw.getvalue().decode("cp1252")
+
+
+def test_done_means_a_diagnostic_the_output_cannot_hold_never_stops_the_print(
+        repo, capsys, monkeypatch):
+    repo.records(review({6: OUTSIDE}))
+    printed = show(repo, capsys)
+    assert printed.row(f"{ID}/G1/G1.3")["diagnostics"] == [
+        f"G1.3: item 6 Consistent is unchecked in {OUTSIDE}"]
+    # where the output's encoding refuses the two characters, each goes as
+    # its backslash escape, and every other byte of the print stands
+    code, text = piped(repo, monkeypatch)
+    assert code == 0
+    assert text == printed.out.replace(OUTSIDE, ESCAPED)
+
+
+def test_done_means_the_query_writes_a_name_the_output_cannot_hold_as_its_escape(
+        repo, capsys, monkeypatch):
+    repo.write(f"specs/{ID}/contract.yaml",
+               CONTRACT.format(id=ID).replace("A fixture feature", f"{OUTSIDE} feature"))
+    code, out, err = cli(capsys, "tree", ID, "--root", repo.root)
+    assert code == 0 and OUTSIDE in out, (out, err)
+    code, text = piped(repo, monkeypatch, ID)
+    assert code == 0
+    assert text == out.replace(OUTSIDE, ESCAPED)
 
 
 def test_done_means_absent_declarations_and_records_read_to_do_and_print_no_problem_line(

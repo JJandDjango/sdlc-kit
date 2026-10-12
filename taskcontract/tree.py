@@ -29,6 +29,11 @@ file under `.sdlc/g1`, with the files on disk those name and the items
 list the package ships. It stores none of that, in a verdict cache or
 elsewhere, and starts no linter and no checker. With `G1` absent from
 `active_gates` it reads none of them and names none in a problem line.
+A build that ends on any exception while `G1` is listed is made again,
+whole, with none of G1's sources read: no feature is exempt, each G1
+condition and verdict reads `to do`, and the one G1 problem line, the
+last, is `unreadable G1 reading: G1 (<reason>)`, so no G1 text stops the
+print and nothing unproven reads `done`.
 
 The gates stand first, at the repository level, each opening first into
 its conditions, the named parts gates.yaml lists in its page's order. A
@@ -328,15 +333,45 @@ def build(root: Path, cache: dict[str, G0Reading] | None = None
     conditions', kept by the caller between prints; without one, every
     verdict is read afresh. It holds no `G1` reading: G1 is read at every
     build, and only while `active_gates` lists it.
+
+    While `active_gates` lists `G1`, a build that ends on any exception is
+    made again, whole, as one that reads no G1 source: no feature is
+    exempt, each G1 condition and verdict reads `to do` with no diagnostic
+    and no evidence, and no G1 problem line of the first build stands. One
+    line is then added, last: `unreadable G1 reading: G1 (<reason>)`, the
+    reason as `_ended` gives it for the exception the first build ended
+    on. An exception the second build ends on propagates, as does any
+    while `G1` is not listed, with no second build.
     """
+    listed: list[str] = []
+    try:
+        return _build(root, cache, listed)
+    except Exception as exc:
+        if g1.GATE not in listed:
+            raise
+        ended = exc
+    # Outside the handler: what this build ends on is no G1 text's doing.
+    items, problems = _build(root, cache, None)
+    return items, problems + [f"unreadable G1 reading: {g1.GATE} ({_ended(ended)})"]
+
+
+def _build(root: Path, cache: dict[str, G0Reading] | None,
+           listed: list[str] | None) -> tuple[list[Item], list[str]]:
+    """One build of the tree, as `build` returns it. `listed` takes the
+    active gates as this build read them, for the caller; None makes the
+    build that reads no G1 source: it calls nothing of `g1.py`'s, and
+    neither `_g1_verdicts` nor `g1_problems`."""
     problems: list[str] = []
     gates = {gate["id"]: gate for gate in gate_list()}
     tasks = {task["id"]: task for task in task_list()}
     order = list(gates)
     active = _in_order(active_gates(root, problems), order)
     upcoming = next_gate(active, order)
-    # None while `G1` is not listed: no G1 source is read then.
-    config = g1.read_config(root) if g1.GATE in active else None
+    if listed is not None:
+        listed += active
+    # None while `G1` is not listed, and in the build that reads no G1
+    # source: no G1 source is read then.
+    config = g1.read_config(root) if listed is not None and g1.GATE in active else None
     findings = read_findings(root, problems)
     items = _gate_items(order, active, findings, gates)
     read = read_contracts(root, problems)
@@ -494,7 +529,8 @@ def derive(root: Path, contracts: list[Item], progress: dict[str, list[Record]],
     and G1 conditions' diagnostics and the current mark; the gate items and
     their conditions roll up after, from what this sets. `config` is
     .sdlc/config.yaml as `g1.read_config` gives it while `active_gates`
-    lists `G1`; without it no G1 verdict is read. Returns one line per G1
+    lists `G1`, and None in the build that reads no G1 source; without it
+    no G1 verdict is read, and each keeps `to do`. Returns one line per G1
     reading that could not be made, as `_g1_verdicts` gives them."""
     readings: dict[str, _Reading] = {}
     # Each check's last run and each task's own last record, whatever closed
@@ -638,7 +674,8 @@ def _g1_verdicts(root: Path, contracts: list[Item], config: dict) -> list[str]:
     Each reader is called on its own. One that raises proves nothing, so
     its condition reads `to do` with no diagnostic and no evidence, the
     other two keep their readings, and one line is returned for it, in id
-    order and then by condition."""
+    order and then by condition. Any other call that raises here ends the
+    build, which `build` then makes again with no G1 source."""
     unread: list[tuple[str, str, str]] = []
     for contract in contracts:
         cid = contract.id
@@ -677,9 +714,14 @@ def _g1_verdicts(root: Path, contracts: list[Item], config: dict) -> list[str]:
 
 
 def _ended(exc: Exception) -> str:
-    """What a reader ended on: the exception's class name and its message,
-    a line break in it read as one space."""
-    return f"{type(exc).__name__}: {' '.join(str(exc).splitlines())}"
+    """What a reader or a build ended on: the exception's class name and
+    its message, a line break in it read as one space; the class name
+    alone when the message cannot be made. It never raises."""
+    try:
+        message = " ".join(str(exc).splitlines())
+    except Exception:
+        return type(exc).__name__
+    return f"{type(exc).__name__}: {message}"
 
 
 def review_evidence(record: dict | None) -> str | None:
@@ -720,7 +762,10 @@ def g1_problems(root: Path, config: dict, contracts: list[str], ahead: list[str]
     no line, and each unreadable one counts as absent for the statuses, as
     `g1-check` reads it. A reader that ends on any other exception gives
     its usual line, with the exception's class name and message as the
-    reason. Called only while `active_gates` lists `G1`."""
+    reason. Anything else that raises here ends the build, and none of
+    these lines stands in the one `build` then makes. Called only while
+    `active_gates` lists `G1`, and never in the build that reads no G1
+    source."""
     problems: list[str] = []
     section = config.get("g1")
     if isinstance(section, dict) and "exempt" in section:

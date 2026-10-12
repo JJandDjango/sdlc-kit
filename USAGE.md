@@ -2073,10 +2073,28 @@ taskcontract tree: unreadable G1 reading: apply-discount/G1/G1.2 (TypeError: unh
 of the kit's own. The print goes on, and that condition reads `to do`:
 nothing is proven, so nothing reads `done`.
 
+🔴 An error outside one condition's reading leaves no G1 reading to
+trust, so the gate stands where the condition's id stands:
+
+```
+taskcontract tree: unreadable G1 reading: G1 (RecursionError: maximum recursion depth exceeded)
+```
+
+🔴 The print still goes on, as with no G1 source read: no feature is
+exempt, each G1 condition of each feature reads `to do`, and this line
+is the print's last problem line and its only one for G1. An error whose
+message cannot be made prints its class name alone.
+
+🔴 A character the output's encoding cannot hold prints as its backslash
+escape, in the whole print and in a query, as Python writes it to
+standard error. Through a pipe on Windows a diagnostic that names the
+section `価格` reads `価格`, and the print goes on.
+
 🔴 With `G1` absent from `active_gates` the tree reads no G1 source and
-prints none of these lines. The pane watches no schema, pin, model or
-configuration file: after a change to one it shows G1.1 or G1.2 as last
-read, until a file it watches changes.
+prints none of these lines. The pane watches a schema, a pin, a model or
+a model's configuration file only where it stands under `specs` or
+`docs/features`: after a change to one that stands elsewhere it shows
+G1.1 or G1.2 as last read, until a file it watches changes.
 
 🔴 **The refusal.** `progress start` on a task, and `progress done` on a
 task, a unit or a contract, refuse while the feature's G1 is active and
