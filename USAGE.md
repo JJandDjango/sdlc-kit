@@ -2088,13 +2088,14 @@ message cannot be made prints its class name alone.
 🔴 A character the output's encoding cannot hold prints as its backslash
 escape, in the whole print and in a query, as Python writes it to
 standard error. Through a pipe on Windows a diagnostic that names the
-section `価格` reads `価格`, and the print goes on.
+section `価格` reads `\u4fa1\u683c`, and the print goes on.
 
 🔴 With `G1` absent from `active_gates` the tree reads no G1 source and
 prints none of these lines. The pane watches a schema, a pin, a model or
-a model's configuration file only where it stands under `specs` or
-`docs/features`: after a change to one that stands elsewhere it shows
-G1.1 or G1.2 as last read, until a file it watches changes.
+a model's configuration file only where it stands under a folder it
+watches: `specs`, `docs/features`, `.sdlc/findings`, `.sdlc/progress` or
+`.sdlc/g1`. After a change to one that stands elsewhere it shows G1.1 or
+G1.2 as last read, until a file it watches changes.
 
 🔴 **The refusal.** `progress start` on a task, and `progress done` on a
 task, a unit or a contract, refuse while the feature's G1 is active and
