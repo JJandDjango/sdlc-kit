@@ -2,12 +2,60 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Session 94's block and its lines below were added by hand on
-> 2026-10-11, at 55% of the session's context; the rest stands as
-> session 93 generated it (PR #112 merged on the user's word at
-> `fabe24e`, so `s3-review` stands on main)._
+> _Session 95's block and its lines below were added by hand on
+> 2026-10-12, after PR #116 merged on the user's word at `7fac5a6`.
+> Session 94's block stands as that session wrote it, and the rest as
+> session 93 generated it._
 
 ## Now
+
+- **Session 95 (2026-10-12): `s4-tree` stands on main at `7fac5a6`**
+  (PR #116, merged on the user's word after green CI), **with no
+  Two-Key PASS.** Round 4 failed on one USAGE sentence, and the user
+  waived a fifth round. Four units of six are done; `s5-start` and
+  `s6-release` stay `[to do]`.
+- The user ruled for a round 4 with one guard at the boundary. While
+  `active_gates` lists G1, `build` in `taskcontract/tree.py` now makes
+  a build that ends on any error again, with no G1 source read. No
+  feature is exempt there, each G1 condition reads `to do`, and one
+  line prints last: `unreadable G1 reading: G1 (<class>: <message>)`.
+  The fix stands at `3f54c12`. The session wrote 11 cases for it, ten
+  of them red, and all passed on a throwaway prototype before the
+  developer started.
+- The trial of hostile inputs then found a second cause, outside
+  `build`. A review's section in characters outside the Windows code
+  page stopped the piped print, and the same write fails on main for a
+  contract's title. A second developer run made the print's two writes
+  escape such a character (`tree_view._write`), in the same commit.
+  This went beyond the plan, and it is reading 15 of PR #116's body.
+- Round 4 graded `3f54c12`: all three checks PASS, all eight receipt
+  commands passing, no defect in the guard, and one blocking defect. A
+  USAGE sentence showed two characters where it was to show their
+  backslash escape: Claude had typed the escape into an Edit, and the
+  tool decoded it. `faa8fbd` fixes the sentence, written by a script
+  and read back by its bytes, and takes one advisory. No grader read
+  `faa8fbd`: the user waived round 5 ("Waive it and open the PR").
+- The readings, 15, stand at the top of PR #116's body, and the user
+  merged with none overturned. All 15 are cases for the design's next
+  text row.
+- The suite reads 1710 passed, and `tests/test_g1_tree.py` holds 111
+  cases. The local progress record reads the unit done at `faa8fbd`.
+  Its `two-key` task reads blocked, with the waiver as its reason: that
+  task takes no seat.
+- The cost: 364K agent tokens this session (developers 89K and 61K,
+  Two-Key 214K), and 1,642K for the unit against a plan of about 0.6
+  million. `docs/session-metrics.md` holds one row for sessions 94 and
+  95, and five more escaped defects on the rows of sessions 88 and 90.
+- The user asked whether agent tokens enter the session's context.
+  Measured: 10.6K of 325K, 3.3%. An agent's own count is mostly its
+  fixed start: 50K of the second developer's 60K. The user then opened
+  a talk on the process's cost, with two thoughts: lower effort once
+  the feature and design documents carry the judgments, and another
+  model for the agents. `NOTES_process-cost_2026-10-12.md` holds both,
+  with the measures and Claude's first take (Next actions 5).
+- The receipts stand in untracked
+  `RECEIPT_g1-requirements-spec-s4_2026-10-11/`, and
+  `HANDOFF-session-95.md` there lists this session's files.
 
 - **Session 94 (2026-10-11): `s4-tree` is built and not graded PASS.**
   Nothing merged. The work stands on branch `session-94-g1-s4-tree`,
@@ -309,7 +357,7 @@
 - Carried: kit 0.19.0 stands released, tag `v0.19.0` at `7fe6342`. 20
   features, each with a contract, 18 of them `[done]`;
   `glossary-alias-disjointness` parked by the user, `[to do]`;
-  `g1-requirements-spec` in its build, three units of six done.
+  `g1-requirements-spec` in its build, four units of six done.
   Session 85's Now is at `dfab2c6:STATE.md`, with the
   amendment in short and the removed test module. Session 84's is at
   `8434a9d:STATE.md`, and session 83's at `8635064:STATE.md`: d6's
@@ -318,23 +366,19 @@
 
 ## Blockers
 
-- `s4-tree` waits on the user's ruling: a round 4 of Two-Key with one
-  guard at the boundary, or the unit as it stands (Now, session 94).
-  This wrap rides its own PR from branch `session-94-wrap`, and Claude
-  merges it after green CI.
+- None on the build. This wrap rides its own PR from branch
+  `session-95-wrap`, and Claude merges it after green CI.
 
 ## Next actions
 
-Opener: the user's ruling on `s4-tree`, then its close. The unit is
-built on branch `session-94-g1-s4-tree` at `46d2273`, and Two-Key has
-failed it three times on one class (Now, session 94). With a round 4:
-the tests first, proven red at `46d2273`; one developer round that puts
-G1's whole part of `tree.build` behind one guard; the whole suite;
-Two-Key, asked to grade the guard; then `git rm plan.md` as the
-branch's last commit, the PR, the user's merge, and the wrap with the
-metrics row. The handoff file names each step and each input. The
-session's plan reads at `f23440f:plan.md`. Not folded in this unit:
-`g1.py`'s `Ready:` row reader and `tree.drift`'s.
+Opener: the user's talk on the process's cost
+(`NOTES_process-cost_2026-10-12.md`), then `s5-start`, the fifth unit:
+`progress start` and `progress done` refuse while a feature's G1 is
+active and not `done`. Its plan takes the plan page's shape and no
+approval. Whatever the talk rules for the agents' effort and models
+applies from that unit on. Not folded in `s4-tree`: `g1.py`'s `Ready:`
+row reader and `tree.drift`'s. Session 94's plan reads at
+`f23440f:plan.md` and session 95's at `283d242:plan.md`.
 
 Beside it, in its own session before `s6-release`: the build of
 session 90's first ruling, one G1.1 record a call that holds a result
@@ -434,9 +478,25 @@ be refused by `lint`, as G1.2 has it.
    test labelled SC2.3; a lean Claude Code launch profile, the user's to
    handle and no kit feature (`NOTES_lean-system-prompt_2026-10-11.md`,
    session 94): a replacement system prompt and a trimmed tool set,
-   about 17K fixed tokens against 44K, nothing installed.
+   about 17K fixed tokens against 44K, nothing installed; the process's
+   cost (`NOTES_process-cost_2026-10-12.md`, session 95): lower effort
+   once the documents carry the judgments, another model for the
+   agents, and the 50K fixed start each agent pays before it reads a
+   file.
 
 ## Standing practice
+- Session 95's lessons. An escape typed into an Edit or a Write is
+  decoded: backslash-u text becomes the character before the file is
+  written. Prose that shows an escape is written by a script that
+  builds the backslash with `chr(92)`, and the line is read back by its
+  bytes. It cost Two-Key round 4. The trial of hostile inputs runs to
+  the print's other end too, through a pipe with the output's encoding
+  strict: a build that is whole can still stop at the write. The
+  kit-print hash is taken from one clean worktree at each commit, since
+  the working root's print holds the local progress records and its
+  hash moves with each `progress` call. A failed round is the user's to
+  waive, never Claude's: the plan stops there, and the progress record
+  holds the waiver as the `two-key` task's reason.
 - Session 94's three lessons, each paid for with a Two-Key round or
   with context. Guard a boundary, never the calls behind it: where a
   unit makes old code run in a new place (the tree running `g1-check`'s
@@ -1032,19 +1092,28 @@ be refused by `lint`, as G1.2 has it.
   remark the user made in confidence.
 
 ## Open questions
-- A hand-written file that stops the print or a command (session 94;
-  the handoff file names each with its receipt). On the branch G1's
-  three readers hold their known causes, and the tree holds whatever a
-  reader ends on. Still open, each older than `s4-tree` unless named:
-  with G0 active a contract that is not UTF-8 stops the whole print in
-  the validator's path; `tree._load` and `scope_check.contract_scope`
-  let a plain ValueError from the YAML loader through (an unquoted date
-  no calendar holds); `g1._seat` does too, for the seat term's file;
-  `g1-check` calls its three readers bare; and, new with the unit, a
-  `g1.exempt` entry Python cannot turn into text stops the print in
-  `tree.build` (round 3's defect, not fixed). The open edge of G1.1
-  widens by a case: a schema pattern the system refuses matches no
-  file, so G1.1 can read `done` with nothing linted.
+- A hand-written file that stops the print or a command (sessions 94
+  and 95; the two handoff files name each with its receipt). On main
+  G1's three readers hold their known causes, the tree holds whatever a
+  reader ends on, `tree.build` holds whatever G1's part of a build ends
+  on, and the print writes a character its output cannot hold as its
+  escape. Still open, each older than `s4-tree`: with G0 active a
+  contract that is not UTF-8, or one whose scope holds a number past
+  4300 digits, stops the whole print in the validator's path;
+  `tree._load` and `scope_check.contract_scope` let a plain ValueError
+  from the YAML loader through (an unquoted date no calendar holds);
+  `g1._seat` does too, for the seat term's file; `g1-check` calls its
+  three readers bare; and `g1-check` and the other commands write
+  through `print`, so a text outside the code page stops them through a
+  pipe on Windows. Left from round 4, both advisory: `build`'s
+  docstring says each G1 condition reads `to do` with no diagnostic in
+  the second build, and the repository's G1 line still lists the
+  features that hold it; and an error of another cause that passes
+  before the second build prints under G1's name for that one print. A
+  `g1.exempt` entry that is no text prints whole in its problem line,
+  however long. The open edge of G1.1 widens by a case: a schema
+  pattern the system refuses matches no file, so G1.1 can read `done`
+  with nothing linted.
 - G1.3 (session 92; PR #112's body names each). The user kept all 12
   readings at the review (session 93), so a feature with no feature
   document cannot pass G1. For the design's next text row: the six
