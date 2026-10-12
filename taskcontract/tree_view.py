@@ -22,7 +22,9 @@ the record's `HEAD`; on a unit or contract done by its close, the close's
 `HEAD`; each with `dirty` when it applies; on a task blocked by its own
 record, `because <reason>`; on the approval that holds the current task,
 `seat: <seats>`, its unit's `confirmed_by` joined by `, `; on a signed
-half, `by <signer> at rN`). Then its links (`depends_on:
+half, `by <signer> at rN`; on an active `G1.3` condition that reads done
+or failed, `by <seat>` and each revision its review names, as `by po at
+r5, design r4`). Then its links (`depends_on:
 <contract>/<unit>` on a unit, `gate: <value>` on a finding), then a
 feature's doc reference (`doc: docs/features/<id>.md`), on a contract with
 a file there and on each feature before intake, and last a contract's
@@ -31,9 +33,13 @@ only when the item has it, after exactly one space. A line break inside a
 part reads as one space, so an item keeps one line.
 Under a condition that is not done, each of its diagnostics prints on a
 line of its own, one level deeper, as `- ` and the validator's message
-without its code; under a gate item or its condition that is not done, as
+without its code, or under a `G1` condition that failed, as `- ` and the
+finding's message whole; under a gate item or its condition that is not done, as
 `- ` and `<feature> holds <id> at <status>`, one per feature holding it
 back. Such a line is not an item and has no id.
+A character the output's encoding cannot hold prints as its backslash
+escape, `\\u4fa1` for U+4FA1, in the print and in the query alike, so no
+text stops either; every other character prints as it is.
 
 `taskcontract tree <id>` queries one item: the id matched whole, as the model
 holds it or as the tree prints it, every item with it printed as one block,
@@ -74,7 +80,7 @@ from .tree import CURRENT, STATUSES, G0Reading, Item, build
 
 INDENT = "  "
 # The folders the pane lists afresh at every scan, every file under each.
-WATCHED = ("specs", ".sdlc/findings", ".sdlc/progress", "docs/features")
+WATCHED = ("specs", ".sdlc/findings", ".sdlc/progress", ".sdlc/g1", "docs/features")
 CONFIG = ".sdlc/config.yaml"
 VOCABULARY = "specs/vocabulary/"
 
@@ -225,11 +231,28 @@ def _key(path: Path, root: Path) -> str:
         return path.as_posix()
 
 
+def _write(text: str) -> None:
+    """Write `text` to standard output, as it stands at the call, each
+    character the output's encoding cannot hold as its backslash escape,
+    the way Python writes standard error. An output with no encoding is
+    written to as it is."""
+    out = sys.stdout
+    encoding = getattr(out, "encoding", None)
+    if encoding:
+        try:
+            text = text.encode(encoding, "backslashreplace").decode(encoding)
+        except LookupError:
+            pass  # an encoding Python does not know: the write is the output's own
+    out.write(text)
+
+
 def main_tree(args) -> int:
     """The whole tree on stdout; each unreadable source as one line on stderr.
 
     An unreadable file never stops the print: the rest of the tree is still
     the product, so the command exits 0 and names the file it skipped.
+    Nor does a character the output's encoding cannot hold: the print and
+    the query write it as its backslash escape.
     With `--follow`, the interactive pane instead, or without the pane
     extra one install line and exit 2. With an id, the query: one block
     per item with that id, then the unreadable sources, exit 0; an unknown
@@ -250,13 +273,13 @@ def main_tree(args) -> int:
         return interactive.run(Path(args.root))
     items, problems = build(Path(args.root))
     if node is None:
-        sys.stdout.write(render(items))
+        _write(render(items))
     else:
         found = _matches(items, node)
         if not found:
             print(_no_node(_flat(node)), file=sys.stderr)
             return 2
-        sys.stdout.write("\n".join(block(Path(args.root), item) for item in found))
+        _write("\n".join(block(Path(args.root), item) for item in found))
     for problem in problems:
         print(f"taskcontract tree: {problem}", file=sys.stderr)
     return 0

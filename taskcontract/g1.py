@@ -189,7 +189,7 @@ def read_config(root: Path) -> dict:
     """.sdlc/config.yaml as a mapping; a missing or unreadable file is empty."""
     try:
         doc = yaml.safe_load((root / ".sdlc" / "config.yaml").read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, yaml.YAMLError):
+    except (OSError, ValueError, yaml.YAMLError):  # a date no calendar holds is a ValueError
         return {}
     return doc if isinstance(doc, dict) else {}
 
@@ -247,7 +247,8 @@ def schemas_in_scope(root: Path, scope: list[str], entries: list[dict]) -> list[
 def _files(root: Path, pattern: str) -> list[str]:
     """The files under the root that the pattern matches, each as its path
     from the root. The walk starts at the folder the pattern names before
-    its first wildcard; `matches` decides."""
+    its first wildcard; `matches` decides. A pattern whose path the system
+    refuses matches no file."""
     entry = pattern.strip().replace("\\", "/")
     if not entry:
         return []
@@ -256,13 +257,17 @@ def _files(root: Path, pattern: str) -> list[str]:
     else:
         cut = min((entry.index(c) for c in "*?[" if c in entry), default=None)
         if cut is None:
-            return [entry] if _inside(entry) and (root / entry).is_file() else []
+            return [entry] if _inside(entry) and _is_file(root / entry) else []
         base = entry[:cut].rpartition("/")[0]
     if not _inside(base):
         return []
     start = root / base if base else root
+    try:
+        walked = list(os.walk(start))
+    except (OSError, ValueError):  # a folder that holds a NUL names none
+        return []
     paths = []
-    for folder, _, names in os.walk(start):
+    for folder, _, names in walked:
         under = Path(folder).relative_to(start).as_posix()
         parts = [part for part in (base, "" if under == "." else under) if part]
         for name in names:
@@ -278,11 +283,20 @@ def _inside(path: str) -> bool:
         and ".." not in path.split("/")
 
 
+def _is_file(path: Path) -> bool:
+    """Whether the path names a file on disk; a path the system refuses
+    names none."""
+    try:
+        return path.is_file()
+    except (OSError, ValueError):  # a name too long, or one that holds a NUL
+        return False
+
+
 def sha256_of(path: Path) -> str | None:
     """The whole SHA-256 of the file's bytes on disk; None when it cannot be read."""
     try:
         return hashlib.sha256(path.read_bytes()).hexdigest()
-    except OSError:
+    except (OSError, ValueError):  # a path that holds a NUL names no file
         return None
 
 
@@ -291,7 +305,7 @@ def last_record(root: Path, feature_id: str, condition: str) -> dict | None:
     that is absent or cannot be read counts as no record."""
     try:
         doc = yaml.safe_load((root / G1_DIR / f"{feature_id}.yaml").read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, yaml.YAMLError):
+    except (OSError, ValueError, yaml.YAMLError):  # a date no calendar holds is a ValueError
         return None
     records = doc.get("records") if isinstance(doc, dict) else None
     if not isinstance(records, list):
@@ -308,7 +322,8 @@ def read_lint(root: Path, feature_id: str, scope: list[str],
     schema is in scope. Else each schema in scope is held against the last
     G1.1 record: it is matched when the record holds its path with the
     file's hash as it stands now, the entry's linter, and the entry's pin
-    with the pin's hash as it stands now. A pin's file that is absent
+    with the pin's hash as it stands now. A file entry whose path is no
+    text is no recorded file. A pin's file that is absent
     reads as null on both sides, and null equals null. A matched schema
     reports RS101 when the record found the tool not installed, once for
     the tool, and RS102 when it reported above 0; a result whose pin's
@@ -327,7 +342,8 @@ def read_lint(root: Path, feature_id: str, scope: list[str],
     record = last_record(root, feature_id, LINT) or {}
     pin = record.get("pin") if isinstance(record.get("pin"), dict) else {}
     files = record.get("files") if isinstance(record.get("files"), list) else []
-    recorded = {f.get("path"): f for f in files if isinstance(f, dict)}
+    recorded = {f["path"]: f for f in files
+                if isinstance(f, dict) and isinstance(f.get("path"), str)}
     findings: list[Finding] = []
     missing: set[str] = set()  # the tools RS101 has named
     unmatched = False
@@ -368,7 +384,7 @@ def components(root: Path) -> list[dict] | None:
         schema = json.loads(COMPONENT_SCHEMA.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError) as exc:
         raise Unreadable(getattr(exc, "strerror", None) or "cannot be read") from None
-    except yaml.YAMLError as exc:
+    except (yaml.YAMLError, ValueError) as exc:  # a date no calendar holds is a ValueError
         mark = getattr(exc, "problem_mark", None)
         raise Unreadable(f"YAML error at line {mark.line + 1}" if mark is not None
                          else "YAML error") from None
@@ -451,8 +467,9 @@ def _literal(entry: str) -> str:
 
 
 def _has_model(root: Path, core: dict) -> bool:
-    """Whether the hard core's entry holds a `model` whose file is on disk."""
-    return "model" in core and (root / _entry(core["model"])).is_file()
+    """Whether the hard core's entry holds a `model` whose file is on disk;
+    a path the system refuses reads as a file that is absent."""
+    return "model" in core and _is_file(root / _entry(core["model"]))
 
 
 def _pins(root: Path, core: dict) -> dict:
@@ -1147,7 +1164,7 @@ def _existing(path: Path) -> dict:
         doc = yaml.safe_load(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError) as exc:
         raise Unreadable(getattr(exc, "strerror", None) or "cannot be read") from None
-    except yaml.YAMLError as exc:
+    except (yaml.YAMLError, ValueError) as exc:  # a date no calendar holds is a ValueError
         mark = getattr(exc, "problem_mark", None)
         raise Unreadable(f"YAML error at line {mark.line + 1}" if mark is not None
                          else "YAML error") from None

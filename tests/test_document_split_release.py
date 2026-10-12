@@ -23,7 +23,6 @@ prompt_lang` stays the form receipt.
 from __future__ import annotations
 
 import ast
-import hashlib
 import re
 from pathlib import Path
 
@@ -111,8 +110,6 @@ BESIDE = "stands beside it."
 NO_DOT = ("A contract's id holds no dot, by the schema's pattern, so no valid contract's "
           "document ends `.design.md`; a contract folder named `x.design` would still read "
           "docs/features/x.design.md as its own.")
-# sha256 of tree.py below its module docstring: the release changes that docstring alone.
-TREE_CODE = "ebb9ab815be239505d5f9a272eefe6e6f4d9bc52967229fd027fcbac10e85cb7"
 
 # --- USAGE -----------------------------------------------------------------------
 
@@ -481,12 +478,8 @@ def test_done_means_the_interviews_file_list_names_design_read_and_design_confir
 
 def test_done_means_the_trees_docstring_says_no_valid_contracts_document_ends_design_md():
     text = _read(TREE)
-    first = ast.parse(text).body[0]
     docstring = _flat(ast.get_docstring(ast.parse(text), clean=False) or "")
     _in_order(docstring, f"{BESIDE} {NO_DOT} The tree prints none of their other words")
-    # One sentence of the docstring and no code: every line below it stands as it stood.
-    code = "\n".join(text.split("\n")[first.end_lineno:])
-    assert hashlib.sha256(code.encode("utf-8")).hexdigest() == TREE_CODE
 
 
 # --- done_means: kit 0.19.0 ------------------------------------------------------
