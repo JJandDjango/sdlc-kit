@@ -1360,8 +1360,11 @@ cursor starts on its first line. Marking the current task done moves it on.
 
 ### The seven tasks 🟢
 
-🟢 Every unit follows one task list, shown and never enforced: nothing
-stops a unit that skips a task. Writing the tests and proving red belong
+🟢 Every unit follows one task list, shown and not enforced, but for one
+refusal: while G1 is an active gate for the feature and has not passed,
+`progress` refuses a task's start and a done ("G1 as an active gate",
+at this section's end). Nothing else stops a unit that skips a task.
+Writing the tests and proving red belong
 to the spec channel (G2.5), green to the developer (G3), and each
 approval is a seat's answer. With `U` for the unit's id
 (`<contract>/<unit>`), one command records each task:
