@@ -2,12 +2,46 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Session 95's block and its lines below were added by hand on
-> 2026-10-12, after PR #116 merged on the user's word at `7fac5a6`.
-> Session 94's block stands as that session wrote it, and the rest as
-> session 93 generated it._
+> _Session 96's block and its lines below were added by hand on
+> 2026-10-12, at the close of a talk session. Session 95's block was
+> added by hand the same day, after PR #116 merged on the user's word
+> at `7fac5a6`. Session 94's block stands as that session wrote it, and
+> the rest as session 93 generated it._
 
 ## Now
+
+- **Session 96 (2026-10-12): a talk session, no unit. The user ruled
+  on the process's cost.** The four rulings stand under "Ruled" in
+  `NOTES_process-cost_2026-10-12.md`, with the measures behind them.
+  One: Two-Key's receipts agent, which only runs commands, runs on
+  Haiku 5.5 at `low`. Two: the drafter, the developer and the grader
+  stay on Opus 5.5 at `high`. Three: a build splits into two sessions
+  at the test list, and a session left overnight is not resumed. Four:
+  `s5-start` runs with the session at `high` in place of `xhigh`, as a
+  trial of one unit, with the user's `/usage` reading before and after
+  each session.
+- What the session measured, from the transcripts on this machine. A
+  run's cost is the sum over its requests, since each request sends the
+  whole context again; the "agent tokens" this file records are the
+  context at a run's last request, which is not its cost. Over the six
+  sessions that ran agents since 2026-10-08, weighed as the API prices
+  them: the sessions' own loops 71% and their agents 29%; a session
+  reading its own context again, 39% of the whole; all thinking, 11%.
+  So the two thoughts the user opened with, lower effort and another
+  model for the agents, each reach about a tenth of the cost, and the
+  session's own size and length reach the most.
+- The user is on a subscription, not API billing. The counts are
+  measured, and the weights are the API's: how the plan weighs a cached
+  read is not known (Open questions). A cost is quoted in tokens and
+  shares, never in dollars.
+- Applied, both untracked on this machine: the receipts agent's call in
+  `.claude/workflows/two-key-unit-verifier.js` names
+  `claude-haiku-5-5` and `low`, and no run has tried it;
+  `.claude/workflows/tools/session_cost.py` is new and prints each
+  session and its agents by kind of token. Claude withdrew one part of
+  its first take, a Sonnet developer: one lost Two-Key round costs
+  about what the cheaper model saves in a unit.
+- No commit of code, no unit, no row in `docs/session-metrics.md`.
 
 - **Session 95 (2026-10-12): `s4-tree` stands on main at `7fac5a6`**
   (PR #116, merged on the user's word after green CI), **with no
@@ -367,16 +401,25 @@
 ## Blockers
 
 - None on the build. This wrap rides its own PR from branch
-  `session-95-wrap`, and Claude merges it after green CI.
+  `session-96-wrap`, and Claude merges it after green CI.
 
 ## Next actions
 
-Opener: the user's talk on the process's cost
-(`NOTES_process-cost_2026-10-12.md`), then `s5-start`, the fifth unit:
-`progress start` and `progress done` refuse while a feature's G1 is
-active and not `done`. Its plan takes the plan page's shape and no
-approval. Whatever the talk rules for the agents' effort and models
-applies from that unit on. Not folded in `s4-tree`: `g1.py`'s `Ready:`
+Opener: `s5-start`, the fifth unit: `progress start` and `progress
+done` refuse while a feature's G1 is active and not `done`. Its plan
+takes the plan page's shape and no approval. It is built under session
+96's rulings (`NOTES_process-cost_2026-10-12.md`, "Ruled"). The build
+is two sessions, each with the session at `high`, which the user sets
+at its start, and each with the user's `/usage` reading at its start
+and its end. The first session writes the plan, runs the drafter, and
+ends once the test list is approved and recorded, with a handoff file
+in the receipt folder. The second runs the developer and Two-Key,
+whose receipts agent runs on Haiku 5.5 at `low` for the first time: if
+the launch refuses the model's name or the agent returns nothing, the
+two options come out of the call and the round runs as before. At the
+unit's wrap, `.claude/workflows/tools/session_cost.py` measures both
+sessions against session 92's row (183 requests, 61,137K tokens read,
+101K thinking). Not folded in `s4-tree`: `g1.py`'s `Ready:`
 row reader and `tree.drift`'s. Session 94's plan reads at
 `f23440f:plan.md` and session 95's at `283d242:plan.md`.
 
@@ -479,12 +522,26 @@ be refused by `lint`, as G1.2 has it.
    handle and no kit feature (`NOTES_lean-system-prompt_2026-10-11.md`,
    session 94): a replacement system prompt and a trimmed tool set,
    about 17K fixed tokens against 44K, nothing installed; the process's
-   cost (`NOTES_process-cost_2026-10-12.md`, session 95): lower effort
-   once the documents carry the judgments, another model for the
-   agents, and the 50K fixed start each agent pays before it reads a
-   file.
+   cost, what session 96 left parked
+   (`NOTES_process-cost_2026-10-12.md`): a custom agent type with a
+   smaller start than the 50K each agent pays before it reads a file,
+   and Gemma for a narrow check with no tools, called from a script.
 
 ## Standing practice
+- The process's cost (the user, 2026-10-12, session 96). A build is
+  two sessions, split once the test list is approved and recorded: the
+  first hands over by a file in the receipt folder, and the second
+  starts from it. A session left overnight is not resumed, since its
+  cache has expired and the resume writes the whole context again: a
+  new session starts from the handoff file. Two-Key's receipts agent
+  runs on Haiku 5.5 at `low`; the drafter, the developer and the
+  grader stay on Opus 5.5 at `high`. A cost is quoted in tokens by
+  kind and in shares, never in dollars, since the user is on a
+  subscription. From the measure, Claude's own practice: each request
+  sends the whole context again, so tool calls that do not depend on
+  each other go out in one turn, bulk reading goes to an agent, and a
+  long result lands in a file. `tools/session_cost.py` measures a
+  session and its agents, and a build's wrap runs it.
 - Session 95's lessons. An escape typed into an Edit or a Write is
   decoded: backslash-u text becomes the character before the file is
   written. Prose that shows an escape is written by a script that
@@ -1092,6 +1149,11 @@ be refused by `lint`, as G1.2 has it.
   remark the user made in confidence.
 
 ## Open questions
+- How does the user's subscription weigh a cached read against a fresh
+  token (session 96)? The shares of the process's cost rest on the
+  API's weights. The `/usage` readings of `s5-start`'s two sessions are
+  the first measure. Beside it, not run: Haiku 5.5 as the receipts
+  agent, under the name `claude-haiku-5-5`.
 - A hand-written file that stops the print or a command (sessions 94
   and 95; the two handoff files name each with its receipt). On main
   G1's three readers hold their known causes, the tree holds whatever a
