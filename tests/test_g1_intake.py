@@ -4,8 +4,9 @@ is a prompt, so the specification is the behavior: the suite holds the one
 line step I9 gains, word for word, its place after the four parts of the
 report that stand today, its condition (a ready-green contract whose
 feature has G1 as an active gate), the two ways out and the parked case
-that end the report as today, the kit's own reading the step learns the
-fact from, and the form and budget the flow file keeps.
+that end the report as today, the one file the step reads the fact from
+with no fifth command (the design's Sources row and its constraint 11), and
+the form and budget the flow file keeps.
 """
 
 from __future__ import annotations
@@ -25,9 +26,11 @@ TODAY = ("I9. REPORT the contract path, its state (ready-green, or parked-draft 
 PARTS = ["the contract path", "its state", "the seats recorded", "a one-line scope summary"]
 LINE = "Next step: G1. Run /sdlc g1 {id}."
 ENDS_ON = "the report ends on this line, verbatim: `" + LINE + "`"
-CHECK = "`g1-check {id}`"
-HOW = CHECK + " as I1 runs `vocab-list`"
-NOT_ACTIVE = "`{id}: G1 is not active`"
+CONFIG = "`.sdlc/config.yaml`"
+READS = "READ " + CONFIG
+NOT_LISTED = "`G1` absent from `active_gates`"
+EXEMPT = "{id} under `g1.exempt`"
+NEEDS = "the feature needs G1"
 AS_TODAY = "the report ends as today"
 COMMANDS = {"vocab-list", "new", "graph", "validate"}
 
@@ -121,22 +124,18 @@ def test_ruling_2_every_word_i9_holds_today_stays_in_order_and_i9_stays_the_last
 
 def test_sc4_1_i9_names_g1_only_for_a_ready_green_contract_whose_feature_has_g1_active():
     added = _added(_step(_read(FLOW), "I9"))
-    assert CHECK in added, "I9 does not learn whether G1 is active"
-    _in_order(added, "For a ready-green contract", CHECK, "G1 is active", ENDS_ON)
-    # Both results of the verdict mean the gate is active: passed or not, the
-    # venue is the next step.
-    before = added[:added.index(ENDS_ON)]
-    assert re.search(r"exit 0 or (exit )?1 means G1 is active", before), before
+    assert READS in added, "I9 does not learn whether the feature needs G1"
+    _in_order(added, "For a ready-green contract", READS, NEEDS, ENDS_ON)
+    # The line's own clause holds no second condition: needing G1 is enough,
+    # passed or not, for the venue to be the next step.
+    assert "else " + NEEDS + ", and " + ENDS_ON in added
 
 
 def test_sc4_1_the_report_closes_as_today_where_g1_is_not_listed_or_the_feature_is_exempt():
     added = _added(_step(_read(FLOW), "I9"))
-    assert NOT_ACTIVE in added, "I9 does not name the reading that G1 is not active"
-    _in_order(added, CHECK, "exit 2", NOT_ACTIVE, AS_TODAY)
-    out = added[added.index(NOT_ACTIVE):]
-    out = out[:out.index(AS_TODAY)]
-    # Both ways out are named, between the kit's line and the close.
-    assert "not listed" in out and "exempt" in out, out
+    assert NOT_LISTED in added, "I9 does not name the case that G1 is not listed"
+    # Both ways out are named, in the design's words, before the close.
+    _in_order(added, READS, NOT_LISTED, ", or " + EXEMPT, AS_TODAY, NEEDS)
     assert "STOP" not in added  # no way out stops the report: it ends as it ended
 
 
@@ -145,8 +144,8 @@ def test_sc4_1_a_parked_contracts_report_closes_as_today():
     assert LINE in added
     assert AS_TODAY + ", as a parked contract's report does" in added
     assert added.count("ends as today") == 1
-    # The kit's reading is asked for a ready-green contract alone.
-    _in_order(added, "ready-green", CHECK, "parked")
+    # The file is read for a ready-green contract alone.
+    _in_order(added, "ready-green", READS, "parked")
 
 
 def test_design_i9_gains_one_sentence_that_closes_on_the_g1_line():
@@ -158,37 +157,35 @@ def test_design_i9_gains_one_sentence_that_closes_on_the_g1_line():
     assert added.endswith(f"`{LINE}`")
 
 
-# --- the kit's own reading (ruling 3, reading 7) ----------------------------
+# --- the fact's one source (the design's Sources row) -----------------------
 
-def test_reading_7_i9_learns_the_fact_from_the_kits_g1_check_in_one_bash_call():
+def test_design_sources_i9_reads_the_fact_from_the_config_file_and_names_it_once():
+    text = _read(FLOW)
+    i9 = _step(text, "I9")
+    assert READS in _added(i9), "I9 does not name the file the fact is read from"
+    # The design's Sources row: `G1` under `active_gates`, and the `g1.exempt`
+    # list. Each is named once in the flow, in I9 alone.
+    for source in (".sdlc/config.yaml", "active_gates", "g1.exempt"):
+        assert text.count(source) == 1 and source in i9, source
+
+
+# --- no fifth command (the design's constraint 11) --------------------------
+
+def test_design_constraint_11_i9_runs_no_command_and_intake_keeps_its_four():
     text = _read(FLOW)
     added = _added(_step(text, "I9"))
-    assert HOW in added, "I9 does not say how the kit's reading is run"
-    assert "RUN the kit's " + HOW + ", one Bash call" in added
-    # One reading, asked once, and in I9 alone.
-    assert text.count("g1-check") == 1
-    assert "tree" not in added and "g1-record" not in text
-
-
-def test_reading_7_intake_never_reads_the_config_for_whether_g1_is_active():
-    text = _read(FLOW)
-    assert CHECK in _step(text, "I9")
-    for source in (".sdlc/", "config.yaml", "active_gates", "g1.exempt", "g1:"):
-        assert source not in text, f"the flow names {source!r}: the kit reads it, never intake"
-
-
-def test_reading_7_the_g1_check_is_named_bare_so_intake_keeps_its_four_commands():
-    text = _read(FLOW)
-    added = _added(_step(text, "I9"))
-    assert CHECK in added
+    assert LINE in added
+    # No fifth command in letter: no `python -m` in the new words, and the
+    # flow's four stand as they stood.
     assert "python -m" not in added
     assert set(re.findall(r"python -m taskcontract ([a-z-]+)", text)) == COMMANDS
     commands = re.findall(r"`(python -m [^`]*)`", text)
     commands += re.findall(r"^\s+(python -m .*)$", text, re.MULTILINE)
     assert len(commands) == 4
-    # The call is one segment as the step words it.
-    for held in re.findall(r"`([^`]*)`", added):
-        assert not re.search(r"[|;&<>]", held), held
+    # And none in substance: the new words run nothing, by any name.
+    for word in ("RUN", "Bash", "taskcontract", "g1-check", "g1-record", "tree", "exit "):
+        assert word not in added, f"I9's new words hold {word!r}: the step runs no command"
+    assert "g1-check" not in text and "g1-record" not in text
 
 
 # --- form and size (ruling 4) -----------------------------------------------
