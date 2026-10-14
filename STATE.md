@@ -2,13 +2,64 @@
 
 > **Contract** - one question: *what is in flight right now?*
 > <=1 page - regenerate at every session end - disposable, always safe to overwrite.
-> _Session 96's block and its lines below were added by hand on
+> _The block of sessions 97 and 98 was added by hand on 2026-10-14,
+> after PR #119 merged on the user's word at `3ad3941`. Session 96's
+> block and its lines below were added by hand on
 > 2026-10-12, at the close of a talk session. Session 95's block was
 > added by hand the same day, after PR #116 merged on the user's word
 > at `7fac5a6`. Session 94's block stands as that session wrote it, and
 > the rest as session 93 generated it._
 
 ## Now
+
+- **Sessions 97 and 98 (2026-10-12 to 2026-10-14): `s5-start` stands
+  on main at `3ad3941`** (PR #119, merged on the user's word after green
+  CI), **Two-Key PASS in round 2 at `4256dcc`.** The first build split
+  in two at the test list, under session 96's ruling: session 97 wrote
+  the plan (`be5562b`) and both lists, session 98 built and shipped.
+  Five units of six are done; `s6-release` stays `[to do]`.
+- What stands. `progress start` and `progress done` (a task, a unit or
+  a contract) refuse while the feature's G1 is active and not `done`:
+  `{unit} cannot start: G1 has not passed for {feature}` on stderr,
+  exit 2, nothing written. The refusal reads the `<feature>/G1` verdict
+  from the tree's own build (`progress._g1_holds`). `block` and `run`
+  stay open. Intake's I9 reads `.sdlc/config.yaml` for a ready-green
+  contract and ends on `Next step: G1. Run /sdlc g1 {id}.` where the
+  feature needs G1. USAGE's "The seven tasks" and `tasks.yaml`'s header
+  name the one refusal. `tests/test_g1_start.py` holds 28 cases and
+  `tests/test_g1_intake.py` 11; the suite reads 1749 passed.
+- Round 1 failed `39a79d0` on one defect, in a reading Claude approved
+  in session 97's test list: I9 ran `g1-check`, named bare so the pins
+  on intake's four `python -m` commands passed, against the design's
+  constraint 11 ("no fifth `python -m taskcontract` command"). The
+  design's Sources row gives the config as the fact's home. `4256dcc`
+  reads it and runs nothing; the list's three cases on `g1-check` gave
+  way to two, one holding the constraint in substance.
+- The receipts agent on Haiku 5.5 at `low`, first trial: in round 1 it
+  returned all six receipts and started a second whole suite by
+  mistake; in round 2 it returned with two of six commands still
+  running. The round's receipts were taken again on Opus 5.5 at `high`
+  (`two-key-unit-verifier.js` now takes `receiptsModel` and
+  `receiptsEffort`, Haiku by default).
+- The readings, 12, stand at the top of PR #119's body; the user merged
+  with none overturned. Two cost something: an exempt feature is
+  refused in the tree's second build (reading 5), and I9 can differ
+  from the refusal where the config cannot be trusted (reading 7). Both
+  are cases for the design's next text row.
+- Receipts in untracked `RECEIPT_g1-requirements-spec-s5_2026-10-12/`:
+  `RECEIPT.md` (four live intake runs, two a commit, built by
+  `intake_live.py` there from a plain request; the refusal on the same
+  repositories; the trial, 62 of 70 agree as on the prototype),
+  `HANDOFF.md`, `pr-body.md`, `USAGE-readings.md`. Four throwaway
+  folders wait for the user to delete: `E:/sdlc_kit_s5run_a` to `_d`.
+- The cost: 1,157K agent tokens against a plan of about 0.8 million
+  plus 300K for a lost round (drafters 187K and 156K; developers 96K and
+  65K; Two-Key 239K, 203K and 211K). Measured by
+  `tools/session_cost.py` against session 92 at `xhigh`: the two
+  sessions at `high` took 124 requests against 183, read 22,564K tokens
+  from the cache against 61,137K, and thought 26K against 101K; their
+  agents read 18,138K against 11,656K. The `/usage` readings stand in
+  `USAGE-readings.md`.
 
 - **Session 96 (2026-10-12): a talk session, no unit. The user ruled
   on the process's cost.** The four rulings stand under "Ruled" in
@@ -401,34 +452,25 @@
 ## Blockers
 
 - None on the build. This wrap rides its own PR from branch
-  `session-96-wrap`, and Claude merges it after green CI.
+  `session-98-wrap`, and Claude merges it after green CI.
 
 ## Next actions
 
-Opener: `s5-start`, the fifth unit: `progress start` and `progress
-done` refuse while a feature's G1 is active and not `done`. Its plan
-takes the plan page's shape and no approval. It is built under session
-96's rulings (`NOTES_process-cost_2026-10-12.md`, "Ruled"). The build
-is two sessions, each with the session at `high`, which the user sets
-at its start, and each with the user's `/usage` reading at its start
-and its end. The first session writes the plan, runs the drafter, and
-ends once the test list is approved and recorded, with a handoff file
-in the receipt folder. The second runs the developer and Two-Key,
-whose receipts agent runs on Haiku 5.5 at `low` for the first time: if
-the launch refuses the model's name or the agent returns nothing, the
-two options come out of the call and the round runs as before. At the
-unit's wrap, `.claude/workflows/tools/session_cost.py` measures both
-sessions against session 92's row (183 requests, 61,137K tokens read,
-101K thinking). Not folded in `s4-tree`: `g1.py`'s `Ready:`
-row reader and `tree.drift`'s. Session 94's plan reads at
-`f23440f:plan.md` and session 95's at `283d242:plan.md`.
-
-Beside it, in its own session before `s6-release`: the build of
-session 90's first ruling, one G1.1 record a call that holds a result
-for each `g1.schemas` entry (a design text row, the engineer seat's
+Opener: the build of session 90's first ruling, in its own session
+before `s6-release`: one G1.1 record a call that holds a result for
+each `g1.schemas` entry (a design text row, the engineer seat's
 signature, a re-intake, then `lint`). The fix of G1.1's escaped defect
 rides it: a contract whose scope cannot be read must read `to do` and
-be refused by `lint`, as G1.2 has it.
+be refused by `lint`, as G1.2 has it. The same design text row can
+carry the readings of PRs #116 and #119 that cost something (Open
+questions, G1). Then `s6-release`, the sixth unit, kit 0.20.0: its
+sweep turns USAGE's G1 guide green, adds the G1 line to the green list
+of refused `progress` lines (`USAGE.md:1412`), and redraws
+`USAGE.md:1882`. Both builds keep session 96's rulings: two sessions
+split at the test list, the session at `high`, `/usage` at each start
+and end. The Haiku receipts agent is the user's to rule on again
+(Open questions). Not folded in `s4-tree`: `g1.py`'s `Ready:` row
+reader and `tree.drift`'s; `progress._target` has one caller left.
 
 1. The pilot's config line, in the engine's session; the engine's
    install ref moves to the release that carries G1 (pull, not push).
@@ -542,6 +584,17 @@ be refused by `lint`, as G1.2 has it.
   each other go out in one turn, bulk reading goes to an agent, and a
   long result lands in a file. `tools/session_cost.py` measures a
   session and its agents, and a build's wrap runs it.
+- Session 98's lessons. A reading rules only where the signed pages are
+  silent: before one goes into a test list, read it against the
+  design's Constraints and Sources, not only its Decisions. Round 1 was
+  lost to a reading that broke constraint 11 while the pins held its
+  letter. A pin on a word's absence (`python -m`) is passed by a bare
+  name: pin the behavior the constraint forbids. A live intake run that
+  reaches I9 needs no saved pair: `intake_live.py` in the s5 receipt
+  folder builds a repository with a seat roster and no contract, and a
+  plain request with the plan answers in it takes two turns. Take a
+  computed PASS whole only when every receipt command reports: the Haiku
+  receipts agent returned one round with two commands running.
 - Session 95's lessons. An escape typed into an Edit or a Write is
   decoded: backslash-u text becomes the character before the file is
   written. Prose that shows an escape is written by a script that
@@ -1152,8 +1205,18 @@ be refused by `lint`, as G1.2 has it.
 - How does the user's subscription weigh a cached read against a fresh
   token (session 96)? The shares of the process's cost rest on the
   API's weights. The `/usage` readings of `s5-start`'s two sessions are
-  the first measure. Beside it, not run: Haiku 5.5 as the receipts
-  agent, under the name `claude-haiku-5-5`.
+  the first measure (`USAGE-readings.md` in the s5 receipt folder).
+- Keep Haiku 5.5 as the receipts agent (session 98)? It ran under the
+  name `claude-haiku-5-5` at about a tenth of Opus's API weight, and in
+  two rounds it once started a second whole suite and once returned
+  with two commands still running, so its round was taken again on
+  Opus. The default stays Haiku until the user rules.
+- G1, two readings of PR #119 that cost something, for the design's
+  next text row: in the tree's second build an exempt feature is
+  refused, where ADR 0038 and the design say an exempt feature is never
+  refused; and I9 reads the config as a person would, so where the
+  config cannot be trusted the report can end as today while `progress`
+  refuses every task.
 - A hand-written file that stops the print or a command (sessions 94
   and 95; the two handoff files name each with its receipt). On main
   G1's three readers hold their known causes, the tree holds whatever a
