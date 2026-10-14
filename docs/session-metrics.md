@@ -48,6 +48,7 @@ the same kind at PR review.
 | 90 | `g1-requirements-spec/s2-model` | yes | 2 | 1 / 1 | 2 | 4 | 965: drafter 212, developers 115 + 76 + 61 + 59, Two-Key 236 + 205 | 2 / 0 | 9 / 1 |
 | 92 | `g1-requirements-spec/s3-review` | yes | 1 | 0 / 0 | | 0 | 781: drafters 232 + 129, developers 114 + 80, Two-Key 226 | 2 / 0 | |
 | 94 + 95 | `g1-requirements-spec/s4-tree` | yes, in session 95 | 4, no PASS: the user waived round 5 | 5 / 1 | | 2 | 1,642: drafter 256, developers 144 + 71 + 102 + 89 + 61, Two-Key 256 + 207 + 242 + 214 | 2 / 0 | |
+| 97 + 98 | `g1-requirements-spec/s5-start` | yes, in session 98 | 2 | 1 / 0 | | 0 | 1,157: drafters 187 + 156, developers 96 + 65, Two-Key 239 + 203 + 211 | 2 / 0 | |
 
 ## Notes on the baseline
 
@@ -111,3 +112,14 @@ the same kind at PR review.
   in `specs/components.yaml`. Each test list was Claude's approval. The
   user has not said whether these count for the tripwire; PR #116's
   body named them, and the user merged it.
+- Sessions 97 and 98 are one build and one row, the first split at the
+  test list on the user's ruling of 2026-10-12. Round 1's defect sat in
+  the prompt half's behavior, counted as code: I9 ran a fifth kit
+  command against the design's constraint 11, on a reading Claude
+  approved in the test list. Two-Key caught it before the merge, so it
+  did not escape. Round 2's receipts ran twice: the Haiku receipts agent
+  returned with two commands still running, and the receipts were taken
+  again on Opus (211K of the Two-Key total). The 12 readings in PR
+  #119's body were merged with none overturned. The user's `/usage`
+  readings at each session's start and end were no touch, and the
+  deferred lines were not counted.
