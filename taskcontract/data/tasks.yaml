@@ -1,7 +1,9 @@
 # The task list every unit follows (ADR 0031): the key, the one-line name,
 # and the kit page that defines the task, in order. `taskcontract tree`
-# shows the tasks under each unit; nothing enforces them, and nothing blocks
-# a unit that skips one. USAGE section 9 gives the command that records each.
+# shows the tasks under each unit; nothing enforces their order, and nothing
+# blocks a unit that skips one. One refusal stands before a task's start and
+# before a done (ADR 0038): the feature's G1, where it is an active gate and
+# has not passed. USAGE section 9 gives the command that records each.
 tasks:
   - id: approve-tests
     name: Approve the test list

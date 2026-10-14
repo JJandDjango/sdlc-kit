@@ -22,7 +22,11 @@ A malformed file is dropped whole, its good records too, with one line
 naming it: its contract then reads as having no progress. A writer never
 touches a malformed file: it refuses before it writes, and before `run`
 starts the command. Every check a writer makes comes first, so a refused
-call writes nothing.
+call writes nothing. A task writer checks the id, its kind, the feature's
+G1, the options and the progress file, in that order: while G1 is an active
+gate for the feature and its verdict in the tree does not read `done`,
+`start` and `done` refuse with `<unit> cannot start: G1 has not passed for
+<feature>`, and `block` and `run` stay open.
 """
 
 from __future__ import annotations
@@ -48,6 +52,7 @@ KINDS = {"none": "gate"}
 # The state each task writer records.
 ACTIONS = {"start": "doing", "done": "done", "block": "blocked"}
 CLOSES = ("unit", "contract")  # the levels a `done` closes
+G1 = "G1"  # the gate whose verdict a `start` and a `done` wait on
 
 # A time of day must follow the date: a bare date is no instant.
 _TIMED = re.compile(r"^\d{4}-\d{2}-\d{2}[Tt ]\d")
@@ -216,13 +221,16 @@ def record_state(root: Path, action: str, item_id: str,
 
     `start` and `block` take a task; `done` takes a task, or closes a unit
     or a contract with one record naming it. An approval's `done` names its
-    seat in `by`, and a `block` its `reason`. The id, its kind, the options
-    and the contract's progress file are checked in that order before
-    anything is written, so a refused call writes nothing.
+    seat in `by`, and a `block` its `reason`. The id, its kind, the
+    feature's G1, the options and the contract's progress file are checked
+    in that order before anything is written, so a refused call writes
+    nothing. G1 refuses a `start` and a `done` only, and it is read from the
+    one tree built here, the build that answers the id.
     """
-    from .tree import APPROVALS  # tree imports this module
+    from .tree import APPROVALS, build  # tree imports this module
 
-    target = _target(root, item_id)
+    items, _ = build(root)
+    target = _find(items, item_id)
     if target is None:
         return _refuse(_no_node(item_id))
     if action == "done" and target.level not in ("task", *CLOSES):
@@ -231,6 +239,11 @@ def record_state(root: Path, action: str, item_id: str,
     if action != "done" and target.level != "task":
         return _refuse(f"{PROG}: '{item_id}' is a {_kind(target)}, not a task - "
                        f"{action} takes a task id")
+    if action != "block" and _g1_holds(items, item_id):
+        feature, _, rest = item_id.partition("/")
+        # A contract's close names the feature in the unit's place.
+        unit = rest.split("/", 1)[0] or feature
+        return _refuse(f"{unit} cannot start: {G1} has not passed for {feature}")
     approval = target.level == "task" and item_id.rsplit("/", 1)[-1] in APPROVALS
     if action == "done" and approval and not (by or "").strip():
         return _refuse(f"{PROG}: '{item_id}' is an approval - done needs --by <seat>")
@@ -266,7 +279,23 @@ def _target(root: Path, item_id: str):
     from .tree import build  # tree imports this module
 
     items, _ = build(root)
+    return _find(items, item_id)
+
+
+def _find(items, item_id: str):
+    """The item with this id in a built tree, or None."""
     return next((item for item in _every(items) if item.id == item_id), None)
+
+
+def _g1_holds(items, item_id: str) -> bool:
+    """Whether G1 has not passed for the feature the id opens on, as the
+    built tree reads it: its `G1` verdict stands with no `inactive` mark
+    and a status other than `done`. No G1 source is read here."""
+    from .tree import DONE, INACTIVE  # tree imports this module
+
+    verdict = _find(items, f"{item_id.split('/', 1)[0]}/{G1}")
+    return (verdict is not None and verdict.level == "verdict"
+            and INACTIVE not in verdict.marks and verdict.status != DONE)
 
 
 def _kind(item) -> str:

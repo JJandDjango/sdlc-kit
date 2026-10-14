@@ -37,5 +37,5 @@ I7. LOOP - one Bash call per iteration:
 
 I8. PARKED CASE - if a dependency is blocked in fact: set {status: blocked, blocked_by}, VERIFY `--profile draft` passes, then REPORT the contract as PARKED with the named blocker and REFUSE the development handoff - `ready` is the entry gate. A feature document gets no `Parked:` row here: a parked document has no contract, and this contract stands at draft.
 
-I9. REPORT the contract path, its state (ready-green, or parked-draft + blocker), the seats recorded, and a one-line scope summary. Development starts only from green.
+I9. REPORT the contract path, its state (ready-green, or parked-draft + blocker), the seats recorded, and a one-line scope summary. Development starts only from green. For a ready-green contract, READ `.sdlc/config.yaml`: with `G1` absent from `active_gates`, or {id} under `g1.exempt`, the report ends as today, as a parked contract's report does; else the feature needs G1, and the report ends on this line, verbatim: `Next step: G1. Run /sdlc g1 {id}.`
 </instructions>
