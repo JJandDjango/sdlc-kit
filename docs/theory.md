@@ -1,13 +1,13 @@
 # Theory - sdlc_development_kit
 
-> **Contract** - one question: *why does this exist, and what must stay true?*
-> <=1 page - update when purpose or invariants change - hand-edited, rare.
+Why this exists and what must stay true. Moved from the retired `THEORY.md` at
+the Cairn 2.0 migration; [ARCHITECTURE.md](../ARCHITECTURE.md) carries the
+intent and a one-line form of each invariant.
 
 ## Intent
 An SDLC gate architecture for automated LLM development - spec-first gates plus static enforcement so agent-written code cannot degrade the codebase, and bug classes are systematically closed at the earliest decidable point.
 
 ## Invariants
-<!-- What must stay true no matter what changes below. The load-bearing constraints. -->
 - **Spec-first gates** are authored before and independently of the implementation,
   mechanically checkable, and **immutable to the implementer** - enforced by path
   checks in CI/Verifier diffs, never by prompt instructions.
@@ -32,7 +32,6 @@ An SDLC gate architecture for automated LLM development - spec-first gates plus 
   cheap - that is the one place human attention concentrates.
 
 ## Success criteria
-<!-- How you'll know it's working. -->
 - A pilot repo runs agent-driven development with structural degradation held flat
   by ratchets, architecture tests, and analyzers - measured, not asserted.
 - Residual defects concentrate only in spec-relative classes, and each escape
@@ -41,7 +40,6 @@ An SDLC gate architecture for automated LLM development - spec-first gates plus 
   alone, without human interpretation.
 
 ## Non-goals
-<!-- What this explicitly does NOT try to do - the anti-scope that stops drift. -->
 - **Not** eliminating all bugs by static analysis - settled: Rice's theorem makes
   general semantic correctness undecidable; analyzers are heuristic.
 - **Not** a generic linter/detector collection - gates are selected against the
