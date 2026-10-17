@@ -49,6 +49,7 @@ the same kind at PR review.
 | 92 | `g1-requirements-spec/s3-review` | yes | 1 | 0 / 0 | | 0 | 781: drafters 232 + 129, developers 114 + 80, Two-Key 226 | 2 / 0 | |
 | 94 + 95 | `g1-requirements-spec/s4-tree` | yes, in session 95 | 4, no PASS: the user waived round 5 | 5 / 1 | | 2 | 1,642: drafter 256, developers 144 + 71 + 102 + 89 + 61, Two-Key 256 + 207 + 242 + 214 | 2 / 0 | |
 | 97 + 98 | `g1-requirements-spec/s5-start` | yes, in session 98 | 2 | 1 / 0 | | 0 | 1,157: drafters 187 + 156, developers 96 + 65, Two-Key 239 + 203 + 211 | 2 / 0 | |
+| 101 + 102 | `g1-requirements-spec/s1-lint`, the G1.1 record fix | yes, in session 102 | 1 | 0 / 0 | | 0 | 631: drafter 353, developer 93, Two-Key 185 | 2 / | 1 / 4 |
 
 ## Notes on the baseline
 
@@ -123,3 +124,17 @@ the same kind at PR review.
   #119's body were merged with none overturned. The user's `/usage`
   readings at each session's start and end were no touch, and the
   deferred lines were not counted.
+- Sessions 101 and 102 are one build and one row, split at the test list
+  as session 96 ruled; the fix reopened a done unit. The drafter took
+  353K tokens against a plan of 200K, which came from `d4`'s smaller
+  list. Round 1 passed with five advisories and no blocking defect: two
+  pages stale until the later commits, the `lint` guard on a contract
+  that is not UTF-8 or holds an impossible date has no test, and the
+  commit message counted four tree tests where the diff edits the helper
+  and two bodies. The Haiku receipts agent's first three-file call hit
+  its 120 s limit and ran again in the foreground (155 s); no round was
+  taken again. Eighteen older tests that pinned the flat record were
+  amended and tried on the prototype first. No `/usage` readings were
+  taken, on the user's ruling of 2026-10-17. The deferred count is one
+  line added (the untested guard) and four closed (two edges, one
+  refusal line, one docstring wrap).

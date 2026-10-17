@@ -7,31 +7,24 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
 
 ## Next
 
-1. Build session 90's first ruling in its own session: one G1.1 record a call
-   that holds a result for each `g1.schemas` entry, with the fix of G1.1's
-   escaped defect (a contract whose scope cannot be read reads `to do` and
-   `lint` refuses it). Detail: Next actions, the opener below. Part one
-   is done (session 101, branch `session-101-g1-1-record`): the design's
-   rows r8 to r11 are signed and the test list stands placed and red.
-   Part two reads `RECEIPT_g1-requirements-spec-s1fix_2026-10-17/HANDOFF.md`.
+1. [x] Build session 90's first ruling: one G1.1 record a call that holds a
+   run for each `g1.schemas` entry, with the fix of G1.1's escaped defect
+   (a contract whose scope cannot be read reads `to do` and `lint` refuses
+   it). Built in sessions 101 and 102 on the branch
+   `session-101-g1-1-record`, Two-Key PASS in round 1; the PR waits for
+   the user's review.
 2. Build `s6-release`, the sixth G1 unit and kit 0.20.0, in its own session.
    Detail: the same opener.
 
 ## Next actions
 
-Opener: the build of session 90's first ruling, in its own session
-before `s6-release`: one G1.1 record a call that holds a result for
-each `g1.schemas` entry (a design text row, the engineer seat's
-signature, a re-intake, then `lint`). The fix of G1.1's escaped defect
-rides it: a contract whose scope cannot be read must read `to do` and
-be refused by `lint`, as G1.2 has it. The same design text row can
-carry the readings of PRs #116 and #119 that cost something (Open
-questions, G1). Then `s6-release`, the sixth unit, kit 0.20.0: its
-sweep turns USAGE's G1 guide green, adds the G1 line to the green list
-of refused `progress` lines (`USAGE.md:1412`), and redraws
-`USAGE.md:1882`. Both builds keep session 96's rulings: two sessions
-split at the test list, the session at `high`, `/usage` at each start
-and end. The Haiku receipts agent is the user's to rule on again
+Opener: `s6-release`, the sixth unit, kit 0.20.0, in its own session:
+its sweep turns USAGE's G1 guide green, adds the G1 line to the green
+list of refused `progress` lines (`USAGE.md:1413`), and redraws
+`USAGE.md:1883`. It keeps session 96's rulings: two sessions split at
+the test list, the session at `high`. The readings of PRs #116 and #119
+that cost something (Open questions, G1) still wait for a design text
+row. The Haiku receipts agent is the user's to rule on again
 (Open questions). Not folded in `s4-tree`: `g1.py`'s `Ready:` row
 reader and `tree.drift`'s; `progress._target` has one caller left.
 
@@ -158,7 +151,9 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
   contract that is not UTF-8, or one whose scope holds a number past
   4300 digits, stops the whole print in the validator's path;
   `tree._load` and `scope_check.contract_scope` let a plain ValueError
-  from the YAML loader through (an unquoted date no calendar holds);
+  from the YAML loader through (an unquoted date no calendar holds;
+  since session 102 `g1-record lint` catches it and refuses the
+  contract, with no test that feeds it one);
   `g1._seat` does too, for the seat term's file; `g1-check` calls its
   three readers bare; and `g1-check` and the other commands write
   through `print`, so a text outside the code page stops them through a
@@ -216,22 +211,11 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
   - Overlap's tail, under USAGE's stated limit: a second name for one
     folder (a link, an absolute path with no drive, two Unicode forms
     of a name, a Windows short name) is not seen.
-- G1.1, five edges for the engineer seat (session 88; Two-Key's
-  advisories on `79b4a5b`). The first needs a ruling before
-  `s6-release`.
-  - Session 90: the first edge below is ruled, one record a call that
-    holds a result for each entry, and its build waits (Next actions).
-    A sixth is an escaped defect: a contract whose YAML cannot be read,
-    or that holds no `scope`, reads G1.1 `done`, and `lint` prints its
-    passing line. Its fix rides the same build.
-  - A feature whose schemas stand under two `g1.schemas` entries, as
-    OpenAPI under Spectral beside protobuf under `buf`, is refused by
-    `g1-record lint` (exit 2): the record's drawn shape holds one
-    linter and one pin, and "the last record of a condition counts".
-    Its G1.1 can never read `done`, so once `s5-start` lands it cannot
-    start. One record an entry, each schema read from the last record
-    that lists it, would keep `s1-lint`'s pins; a list of runs in one
-    record would change them.
+- G1.1, four edges for the engineer seat (session 88; Two-Key's
+  advisories on `79b4a5b`). Session 102 closed two others: a feature
+  whose schemas stand under two `g1.schemas` entries now gets one record
+  that holds a run for each, and a contract whose scope cannot be read
+  reads G1.1 `to do`, which `lint` refuses.
   - With the `g1.schemas` key absent, `lint` prints `G1.1: no boundary
     schema in scope` and exits 0, by the design's letter, while
     `g1-check` reads G1.1 `to do`. Refuse the call (exit 2), as an
@@ -241,26 +225,23 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     matches nothing, so its schema leaves the scope in silence and
     G1.1 reads `done`. The design's guard is review item 10. Strip a
     leading `./` and refuse the rest, or leave it?
-  - Six refusal lines carry words no source gives and no test pins,
+  - Five refusal lines carry words no source gives and no test pins,
     each on stderr with exit 2: `{id}: G1 is not active` on
     `g1-record`; `{id}: no contract at specs/{id}/contract.yaml`;
     `{id}: g1.schemas names a linter the kit does not know: {value}`;
-    `{id}: more than one g1.schemas entry is in scope; a record holds
-    one linter and one pin`; `taskcontract g1-record: unreadable
-    record: {path} ({reason})`; `{id}: g1.schemas cannot be read:
-    {reason}`. None stands in USAGE's or the design's exit-2 list.
+    `taskcontract g1-record: unreadable record: {path} ({reason})`;
+    `{id}: g1.schemas cannot be read: {reason}`. None stands in USAGE's or the design's exit-2 list.
     `g1-green: {id}` has no test before `s3-review`.
   - `buf` has had no live run: its exit code on a violation (100, from
     memory), its JSON report (one object a line) and where an older
     release prints its version are read from its reference page and a
     stand-in.
-- G1, four smaller ones from the same round. An unreadable
+- G1, three smaller ones from the same round. An unreadable
   `.sdlc/config.yaml` reads as empty, so G1 reads not active: how the
   tree and the refusal read that is `s4-tree`'s and `s5-start`'s. A
   pattern at the root walks the whole repository, `.git` with it;
   `s4-tree` measures the print. `tree.py`'s docstrings at lines 288 and
-  655 say `rules:` is G0's alone. `record_lint`'s docstring in `g1.py`
-  wraps badly at "not even for its version".
+  655 say `rules:` is G0's alone.
 - The second machine after `d6`'s merge: its plugin update is not
   tested, and whether that machine holds a combined document with no
   `Ready:` row is not known. Such a document now meets its own message
