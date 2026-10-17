@@ -4,14 +4,10 @@
 code cannot degrade the codebase.**
 
 A gate is a human judgment converted into a text artifact plus a
-mechanical check. This kit is a gate architecture for automated LLM
-development: 54 conditions across eleven lifecycle gates (G0 planning
-through G10 retirement) plus two cross-cutting lifecycles (PL-DOC
-documentation, PL-PIPE pipeline integrity), each with an exact,
-loopable pass condition an agent can drive to green from its
-diagnostics alone. Specs are authored before and independently of the
-implementation and stay immutable to the implementer; every escaped
-defect becomes a new acceptance criterion.
+mechanical check. The kit holds 54 conditions across eleven lifecycle
+gates (G0 planning through G10 retirement), each with an exact pass
+condition an agent can drive to green from its diagnostics alone. The
+principles are in [ARCHITECTURE.md](ARCHITECTURE.md).
 
 > **Want to use it? → [USAGE.md](USAGE.md)** — install → initialize a
 > repo → author task contracts → keep the gates honest.
@@ -32,67 +28,13 @@ defect becomes a new acceptance criterion.
 
 ## Install
 
-### As a Claude Code skill (simplest)
-Copy the skill into your Claude Code skills directory, then run `/sdlc`:
-
-```bash
-cp -r skills/sdlc ~/.claude/skills/sdlc            # macOS / Linux
-```
-```powershell
-Copy-Item -Recurse skills\sdlc $HOME\.claude\skills\sdlc   # Windows
-```
-
-### As a Claude Code plugin
-
 ```
 /plugin marketplace add JJandDjango/sdlc-kit
 /plugin install sdlc@sdlc-kit
 ```
 
-Pick one channel — plugin users should not also keep a skills-dir copy
-(see [USAGE.md](USAGE.md) §2).
-
-### The validator (target repos consume this via pip)
-
-```bash
-pip install git+https://github.com/JJandDjango/sdlc-kit.git
-```
-
-## How it works
-
-`/sdlc` interviews you — target directory, greenfield vs brownfield,
-stack — then renders the gate spine into your repo **without ever
-overwriting** an existing file: a gate status page (`SDLC.md`), the
-`.sdlc/` config and ledgers, the protected `specs/` root for immutable
-task contracts, and a CI job that validates every contract. Day 2:
-`/sdlc intake` turns a raw request into a validated contract before
-any code is written; `/sdlc audit` reports gate health without writing
-anything.
-
-Pairs with [Cairn](https://github.com/JJandDjango/cairn) — run
-`/cairn` first for the documentation spine, then `/sdlc` for the gate
-spine. Neither requires the other.
-
-## Layout
-
-```
-skills/sdlc/          # the /sdlc skill: SKILL.md + init.py + audit.py + templates/
-taskcontract/         # pip-installable validator (+ contract scaffolding)
-taskcontract/schemas/ # task-contract JSON Schema (draft + ready profiles)
-docs/                 # gate registry, taxonomy, catalog, per-gate deep pages
-decisions/            # ADRs 0001+ — the why, append-only
-tests/                # validator + skill regression suite
-```
-
-## Principle
-
-Earliest decidable point: cost determines cadence, never rigor.
-Engineering effort pushes bug classes *up* the detectability ladder
-(correct-by-construction > statically decidable > approximable >
-dynamic > spec-relative) rather than accumulating detectors at the
-bottom. The enforcement layer is the highest-privilege artifact set —
-it gets its own approval channel and its own regression suite. See
-[ARCHITECTURE.md](ARCHITECTURE.md).
+The skills-dir copy and the pip-installed validator: [USAGE.md](USAGE.md) §2.
+Pairs with [Cairn](https://github.com/JJandDjango/cairn) for the docs spine.
 
 ## License
 
