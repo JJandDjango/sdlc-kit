@@ -26,7 +26,8 @@ _HERE = Path(__file__).resolve().parent.parent
 ROOT = _HERE if (_HERE / "skills" / "sdlc").is_dir() else Path.cwd()
 USAGE = ROOT / "USAGE.md"
 CHANGELOG = ROOT / "CHANGELOG.md"
-MAP = ROOT / "MAP.md"
+# The component rows moved from MAP.md to docs/components.md at the Cairn 2.0 migration.
+MAP = ROOT / "docs" / "components.md"
 PYPROJECT = ROOT / "pyproject.toml"
 INIT = ROOT / "skills" / "sdlc" / "init.py"
 
@@ -166,6 +167,6 @@ def test_sc5_2_the_map_row_names_the_document_its_signed_and_parked_rows_and_fou
     for name in ("`docs/features/<id>.md`", "`Signed:` row", "`Parked:` row"):
         assert name in row
     for adr in ("0028", "0029", "0033", "0036"):
-        assert re.search(rf"\]\(decisions/{adr}-[a-z0-9-]+\.md\)", row), (
+        assert re.search(rf"\]\(\.\./decisions/{adr}-[a-z0-9-]+\.md\)", row), (
             f"the row links no decisions/{adr}")
     assert "an advisory readiness check" not in row

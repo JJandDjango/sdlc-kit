@@ -199,7 +199,7 @@ def test_g4_12_named_in_registry_deep_page_constraints_and_conventions():
     assert "### G4.12 Scope check" in deep and "SC001" in deep
     constraints = (ROOT / "specs" / "vocabulary" / "constraints.yaml").read_text(encoding="utf-8")
     assert "id: g4-12-scope-check" in constraints
-    conventions = (ROOT / "CONVENTIONS.md").read_text(encoding="utf-8")
+    conventions = (ROOT / "docs" / "conventions" / "house-rules.md").read_text(encoding="utf-8")
     assert "**Commits name their contract.**" in conventions
 
 
