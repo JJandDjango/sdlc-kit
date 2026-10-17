@@ -7,15 +7,19 @@ active_gates:
 # Gates join this list as the kit's activation program builds their
 # enforcement: https://github.com/JJandDjango/sdlc-kit/blob/main/docs/gates.md
 scope_check:
-  # The seed list plus NOTES_*.md: the kit's working design notes precede
-  # any contract, like REQUEST_*.md and decisions/. A list here replaces
-  # the seed, so every default is repeated.
+  # The seed list plus NOTES_*.md and the Cairn 2.0 pages (ARCHITECTURE.md,
+  # CONTRIBUTING.md): the kit's working design notes precede any contract,
+  # like REQUEST_*.md and decisions/. The 1.x pages stay listed because the
+  # migration's commit deletes them, and a deleted path counts as touched. A
+  # list here replaces the seed, so every default is repeated.
   free_paths:
     - THEORY.md
     - MAP.md
     - STATE.md
     - CONVENTIONS.md
     - DOCS-SYSTEM.md
+    - ARCHITECTURE.md
+    - CONTRIBUTING.md
     - decisions/
     - docs/
     - plan.md

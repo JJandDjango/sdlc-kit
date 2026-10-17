@@ -1,12 +1,8 @@
-# Conventions - sdlc_development_kit
+# House rules - sdlc_development_kit
 
-> **Contract** - one question: *how do we do things here?*
-> <=1 page - update when a rule is adopted / revised / retired - hand-edited,
-> significant entries link their ADR.
-
-<!-- An index, not an essay: one line per rule (bold name + statement, ADR link
-     when significant). Detail overflows to docs/conventions/ pages. Inferred
-     entries carry "(inferred - confirm)" - confirm them and delete the tag. -->
+The full wording of each rule, moved from the retired `CONVENTIONS.md` at the
+Cairn 2.0 migration. [CONTRIBUTING.md](../../CONTRIBUTING.md) carries the
+one-line form. `[[NNNN-title]]` names an ADR in [decisions/](../../decisions/).
 
 - **Decisions get recorded.** A choice a future you would question gets an ADR
   ([[0001-record-architecture-decisions]]).
@@ -51,6 +47,3 @@
   free register where prose is deliberated (THEORY, ADRs, docs
   literature, conversation). Raw human requests are never
   lexicon-policed ([[0022-controlled-language-shape]]).
-<!-- Example code rule - adapt or delete:
-- **Match the idiom.** New code follows the touched layer's dominant pattern.
--->

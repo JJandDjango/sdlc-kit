@@ -32,7 +32,8 @@ _HERE = Path(__file__).resolve().parent.parent
 ROOT = _HERE if (_HERE / "skills" / "sdlc").is_dir() else Path.cwd()
 USAGE = ROOT / "USAGE.md"
 CHANGELOG = ROOT / "CHANGELOG.md"
-MAP = ROOT / "MAP.md"
+# The component rows moved from MAP.md to docs/components.md at the Cairn 2.0 migration.
+MAP = ROOT / "docs" / "components.md"
 G0_PAGE = ROOT / "docs" / "gates" / "G0-planning-intake.md"
 PYPROJECT = ROOT / "pyproject.toml"
 INIT = ROOT / "skills" / "sdlc" / "init.py"
@@ -301,7 +302,7 @@ def _combined_read(i2: str) -> str:
 def _map_row(name: str) -> str:
     rows = [line for line in _read(MAP).splitlines() if line.startswith(f"| {name} |")]
     assert len(rows) == 1, f"{len(rows)} rows of the map open on {name!r}"
-    return rows[0].rstrip()
+    return rows[0].rstrip().replace("](../decisions/", "](decisions/")
 
 
 def _prompt_shape(path: Path) -> str:

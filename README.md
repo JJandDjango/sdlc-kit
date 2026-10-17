@@ -92,7 +92,7 @@ Engineering effort pushes bug classes *up* the detectability ladder
 dynamic > spec-relative) rather than accumulating detectors at the
 bottom. The enforcement layer is the highest-privilege artifact set —
 it gets its own approval channel and its own regression suite. See
-[THEORY.md](THEORY.md).
+[ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## License
 
