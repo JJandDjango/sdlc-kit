@@ -10,7 +10,10 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
 1. Build session 90's first ruling in its own session: one G1.1 record a call
    that holds a result for each `g1.schemas` entry, with the fix of G1.1's
    escaped defect (a contract whose scope cannot be read reads `to do` and
-   `lint` refuses it). Detail: Next actions, the opener below.
+   `lint` refuses it). Detail: Next actions, the opener below. Part one
+   is done (session 101, branch `session-101-g1-1-record`): the design's
+   rows r8 to r11 are signed and the test list stands placed and red.
+   Part two reads `RECEIPT_g1-requirements-spec-s1fix_2026-10-17/HANDOFF.md`.
 2. Build `s6-release`, the sixth G1 unit and kit 0.20.0, in its own session.
    Detail: the same opener.
 
