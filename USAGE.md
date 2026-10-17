@@ -757,7 +757,7 @@ present and current, else `to do`, and a `to do` lists nothing.
 
 | Condition | Reads `to do` | Reads `done` |
 |---|---|---|
-| G1.1 | `g1.schemas` is absent; or a schema in scope has no lint record that matches its hash and the pin's | no schema is in scope; or every schema in scope is recorded clean |
+| G1.1 | `g1.schemas` is absent; or the contract's scope cannot be read or holds no entry; or a schema in scope has no lint record that matches its hash and the pin's | no schema is in scope; or every schema in scope is recorded clean |
 | G1.2 | `specs/components.yaml` is absent; or a hard core in scope has a model with no record that matches its hash and its configuration's | no hard core is in scope; or every one is recorded as passing |
 | G1.3 | no review is recorded; or the last review passed on revisions the contract was not derived from | the last review checks all 11 items on the revisions the contract was derived from |
 
@@ -774,12 +774,13 @@ records:
   - condition: G1.1
     at: 2026-10-07T14:02:11Z
     head: 8635064
-    tool: spectral
-    tool_version: 6.11.0
-    installed: true
-    pin: {path: .spectral.yaml, sha256: 9f2c}
-    files:
-      - {path: api/openapi.yaml, sha256: 41d0, reported: 0}
+    runs:
+      - tool: spectral
+        tool_version: 6.11.0
+        installed: true
+        pin: {path: .spectral.yaml, sha256: 9f2c}
+        files:
+          - {path: api/openapi.yaml, sha256: 41d0, reported: 0}
   - condition: G1.3
     at: 2026-10-07T14:20:40Z
     head: 8635064
