@@ -394,17 +394,18 @@ def test_sc2_1_the_record_holds_the_drawings_keys_and_the_whole_hashes(repo, cap
     text = (repo.root / RECORD).read_text(encoding="utf-8")
     assert list(yaml.safe_load(text)) == ["records"]
     (record,) = repo.records()
-    assert list(record) == ["condition", "at", "head", "tool", "tool_version",
-                            "installed", "pin", "files"]
+    assert list(record) == ["condition", "at", "head", "runs"]
     assert record["condition"] == "G1.1"
-    assert record["tool"] == "spectral"
-    assert record["tool_version"] == "6.99.1"  # read from the tool's own --version
-    assert record["installed"] is True
-    assert record["pin"] == {"path": ".spectral.yaml",
-                             "sha256": sha(repo.root / ".spectral.yaml")}
-    assert record["files"] == [{"path": "api/openapi.yaml", "sha256": sha(schema),
-                                "reported": 0}]
-    assert len(record["pin"]["sha256"]) == 64
+    (run,) = record["runs"]
+    assert list(run) == ["tool", "tool_version", "installed", "pin", "files"]
+    assert run["tool"] == "spectral"
+    assert run["tool_version"] == "6.99.1"  # read from the tool's own --version
+    assert run["installed"] is True
+    assert run["pin"] == {"path": ".spectral.yaml",
+                          "sha256": sha(repo.root / ".spectral.yaml")}
+    assert run["files"] == [{"path": "api/openapi.yaml", "sha256": sha(schema),
+                             "reported": 0}]
+    assert len(run["pin"]["sha256"]) == 64
     assert re.search(r"\bat: ['\"]?\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z['\"]?\s", text)
     assert record["head"] == "no commit"  # no git on this PATH, as progress records it
     # A committed file: the folder holds the record and nothing beside it.
@@ -464,7 +465,7 @@ def test_sc2_1_only_a_file_that_matches_a_pattern_and_the_scope_is_linted(repo, 
     code, out, _ = lint(capsys)
     assert out.splitlines() == [clean("api/openapi.yaml"), RECORDED]
     assert code == 0
-    assert [f["path"] for f in repo.records()[-1]["files"]] == ["api/openapi.yaml"]
+    assert [f["path"] for f in repo.records()[-1]["runs"][0]["files"]] == ["api/openapi.yaml"]
     assert [call["argv"][1] for call in repo.lints()] == ["api/openapi.yaml"]
     assert check(repo, capsys)[1].splitlines() == [summary("done")]
 
@@ -494,7 +495,7 @@ def test_sc2_1_a_warning_alone_fails_g1_1_as_an_error_does(repo, capsys):
     code, out, _ = lint(capsys)
     assert out.splitlines() == [rs102("api/openapi.yaml", 1), RECORDED]
     assert code == 1
-    assert repo.records()[-1]["files"] == [
+    assert repo.records()[-1]["runs"][0]["files"] == [
         {"path": "api/openapi.yaml", "sha256": sha(schema), "reported": 1}]
     code, out, _ = check(repo, capsys)
     assert out.splitlines() == [f"{ID}: RS102 {rs102('api/openapi.yaml', 1)}",
@@ -511,7 +512,7 @@ def test_sc2_1_an_error_fails_g1_1_and_n_counts_errors_and_warnings_alike(repo, 
     code, out, _ = lint(capsys)
     assert out.splitlines() == [rs102("api/openapi.yaml", 2), RECORDED]
     assert code == 1
-    assert repo.records()[-1]["files"][0]["reported"] == 2
+    assert repo.records()[-1]["runs"][0]["files"][0]["reported"] == 2
     code, out, _ = check(repo, capsys)
     assert out.splitlines() == [f"{ID}: RS102 {rs102('api/openapi.yaml', 2)}",
                                 summary("failed")]
@@ -525,7 +526,7 @@ def test_sc2_1_what_the_linter_reports_below_a_warning_is_recorded_clean(repo, c
     code, out, _ = lint(capsys)
     assert out.splitlines() == [clean("api/openapi.yaml"), RECORDED]
     assert code == 0
-    assert repo.records()[-1]["files"][0]["reported"] == 0
+    assert repo.records()[-1]["runs"][0]["files"][0]["reported"] == 0
     assert check(repo, capsys)[1].splitlines() == [summary("done")]
 
 
@@ -541,7 +542,8 @@ def test_sc2_1_several_files_print_and_record_by_path_each_with_its_count(repo, 
                                 rs102("api/c.yaml", 1), RECORDED]
     assert code == 1
     assert len(repo.records()) == 1  # one call, one record
-    assert [(f["path"], f["reported"]) for f in repo.records()[0]["files"]] == [
+    assert [(f["path"], f["reported"])
+            for f in repo.records()[0]["runs"][0]["files"]] == [
         ("api/a.yaml", 0), ("api/b.yaml", 2), ("api/c.yaml", 1)]
     code, out, _ = check(repo, capsys)
     assert out.splitlines() == [f"{ID}: RS102 {rs102('api/b.yaml', 2)}",
@@ -620,7 +622,7 @@ def test_sc2_1_a_byte_that_is_not_utf8_in_the_report_does_not_break_the_call(rep
     code, out, _ = lint(capsys)
     assert out.splitlines() == [rs102("api/openapi.yaml", 1), RECORDED]
     assert code == 1
-    assert repo.records()[-1]["files"][0]["reported"] == 1
+    assert repo.records()[-1]["runs"][0]["files"][0]["reported"] == 1
 
 
 def test_sc2_1_a_byte_that_is_not_utf8_in_the_tools_own_error_does_not_break_the_call(
@@ -645,11 +647,11 @@ def test_sc2_1_buf_lints_a_protobuf_file_and_the_lines_name_buf(repo, capsys):
     code, out, _ = lint(capsys)
     assert out.splitlines() == [clean("proto/discount.proto", "buf"), RECORDED]
     assert code == 0
-    record = repo.records()[-1]
-    assert (record["tool"], record["installed"]) == ("buf", True)
-    assert record["pin"] == {"path": "buf.yaml", "sha256": sha(pin)}
-    assert record["files"] == [{"path": "proto/discount.proto", "sha256": sha(schema),
-                                "reported": 0}]
+    (run,) = repo.records()[-1]["runs"]
+    assert (run["tool"], run["installed"]) == ("buf", True)
+    assert run["pin"] == {"path": "buf.yaml", "sha256": sha(pin)}
+    assert run["files"] == [{"path": "proto/discount.proto", "sha256": sha(schema),
+                             "reported": 0}]
     assert {call["tool"] for call in repo.calls()} == {"buf"}
     assert check(repo, capsys)[1].splitlines() == [summary("done")]
 
@@ -665,7 +667,7 @@ def test_sc2_1_buf_reporting_on_a_protobuf_file_fails_g1_1_with_its_count(repo, 
     code, out, _ = lint(capsys)
     assert out.splitlines() == [rs102("proto/discount.proto", 2, "buf"), RECORDED]
     assert code == 1
-    assert repo.records()[-1]["files"][0]["reported"] == 2
+    assert repo.records()[-1]["runs"][0]["files"][0]["reported"] == 2
     code, out, _ = check(repo, capsys)
     assert out.splitlines() == [f"{ID}: RS102 {rs102('proto/discount.proto', 2, 'buf')}",
                                 summary("failed")]
@@ -739,11 +741,11 @@ def test_done_means_each_call_appends_one_record_and_the_last_one_counts(repo, c
     assert lint(capsys)[0] == 0
     repo.plan(rows={"api/openapi.yaml": [["schema-has-a-title", WARNING]]})
     assert lint(capsys)[0] == 1
-    assert [r["files"][0]["reported"] for r in repo.records()] == [0, 1]
+    assert [r["runs"][0]["files"][0]["reported"] for r in repo.records()] == [0, 1]
     assert check(repo, capsys)[1].splitlines()[-1] == summary("failed")
     repo.plan()
     assert lint(capsys)[0] == 0
-    assert [r["files"][0]["reported"] for r in repo.records()] == [0, 1, 0]
+    assert [r["runs"][0]["files"][0]["reported"] for r in repo.records()] == [0, 1, 0]
     assert [r["condition"] for r in repo.records()] == ["G1.1"] * 3
     code, out, _ = check(repo, capsys)
     assert out.splitlines() == [summary("done")]
@@ -955,14 +957,15 @@ def test_sc2_3_a_linter_that_is_not_installed_is_recorded_and_fails_g1_1(repo, c
     assert out.splitlines() == [rs101(), RECORDED]  # one line for the tool, not one a file
     assert code == 1
     (record,) = repo.records()
-    assert list(record) == ["condition", "at", "head", "tool", "tool_version",
-                            "installed", "pin", "files"]
-    assert (record["condition"], record["tool"]) == ("G1.1", "spectral")
-    assert record["installed"] is False
-    assert record["tool_version"] is None
-    assert record["pin"] == {"path": ".spectral.yaml",
-                             "sha256": sha(repo.root / ".spectral.yaml")}
-    assert record["files"] == [
+    assert list(record) == ["condition", "at", "head", "runs"]
+    (run,) = record["runs"]
+    assert list(run) == ["tool", "tool_version", "installed", "pin", "files"]
+    assert (record["condition"], run["tool"]) == ("G1.1", "spectral")
+    assert run["installed"] is False
+    assert run["tool_version"] is None
+    assert run["pin"] == {"path": ".spectral.yaml",
+                          "sha256": sha(repo.root / ".spectral.yaml")}
+    assert run["files"] == [
         {"path": "api/a.yaml", "sha256": sha(a), "reported": None},
         {"path": "api/b.yaml", "sha256": sha(b), "reported": None}]
     code, out, _ = check(repo, capsys)
@@ -986,9 +989,10 @@ def test_sc2_3_a_linter_that_is_not_installed_fails_g1_1_with_the_pin_absent_too
     assert out.splitlines() == [rs101(), RECORDED]
     assert code == 1
     (record,) = repo.records()
-    assert record["installed"] is False
-    assert record["pin"] == {"path": ".spectral.yaml", "sha256": None}
-    assert record["files"] == [
+    (run,) = record["runs"]
+    assert run["installed"] is False
+    assert run["pin"] == {"path": ".spectral.yaml", "sha256": None}
+    assert run["files"] == [
         {"path": "api/openapi.yaml", "sha256": sha(schema), "reported": None}]
     code, out, _ = check(repo, capsys)
     assert out.splitlines() == [f"{ID}: RS101 {rs101()}", summary("failed")]
@@ -1008,7 +1012,7 @@ def test_sc2_3_the_record_wins_over_the_readers_path_until_the_next_run(repo, ca
     code, out, _ = lint(capsys)
     assert out.splitlines() == [clean("api/openapi.yaml"), RECORDED]
     assert code == 0
-    assert [r["installed"] for r in repo.records()] == [False, True]
+    assert [r["runs"][0]["installed"] for r in repo.records()] == [False, True]
     assert check(repo, capsys)[1].splitlines() == [summary("done")]
 
 
@@ -1021,7 +1025,8 @@ def test_sc2_3_buf_that_is_not_installed_fails_g1_1_with_its_own_name(repo, caps
     code, out, _ = lint(capsys)
     assert out.splitlines() == [rs101("buf"), RECORDED]
     assert code == 1
-    assert (repo.records()[-1]["tool"], repo.records()[-1]["installed"]) == ("buf", False)
+    (run,) = repo.records()[-1]["runs"]
+    assert (run["tool"], run["installed"]) == ("buf", False)
     assert repo.calls() == []
     code, out, _ = check(repo, capsys)
     assert out.splitlines() == [f"{ID}: RS101 {rs101('buf')}", summary("failed")]

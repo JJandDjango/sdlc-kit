@@ -255,11 +255,12 @@ class Repo:
     def lint(self, reported: int | None = 2, installed: bool = True) -> dict:
         """A G1.1 record that matches the schema and the pin as they stand."""
         return {"condition": "G1.1", "at": "2026-10-07T14:02:11Z", "head": "8635064",
-                "tool": "spectral", "tool_version": "6.17.0" if installed else None,
-                "installed": installed,
-                "pin": {"path": PIN, "sha256": self.sha(PIN)},
-                "files": [{"path": SCHEMA, "sha256": self.sha(SCHEMA),
-                           "reported": reported if installed else None}]}
+                "runs": [{"tool": "spectral",
+                          "tool_version": "6.17.0" if installed else None,
+                          "installed": installed,
+                          "pin": {"path": PIN, "sha256": self.sha(PIN)},
+                          "files": [{"path": SCHEMA, "sha256": self.sha(SCHEMA),
+                                     "reported": reported if installed else None}]}]}
 
     def model_files(self) -> None:
         self.write(MODEL, "---- MODULE ledger ----\n====\n")
@@ -443,8 +444,8 @@ def test_sc5_1_a_condition_that_is_not_done_lists_each_diagnostic_whole(repo, ca
     repo.schema_files()
     repo.write("api/orders.yaml", "openapi: 3.1.0\n")
     lint = repo.lint(reported=2)
-    lint["files"].append({"path": "api/orders.yaml", "sha256": repo.sha("api/orders.yaml"),
-                          "reported": 1})
+    lint["runs"][0]["files"].append(
+        {"path": "api/orders.yaml", "sha256": repo.sha("api/orders.yaml"), "reported": 1})
     repo.components(LEDGER, {**LEDGER, "id": "pricing", "paths": ["src/pricing/"]})
     repo.records(lint, review({6: "Statement", 9: "Success criteria"}))
     printed = show(repo, capsys)
@@ -1006,7 +1007,9 @@ def test_done_means_a_lint_record_whose_path_is_no_text_never_stops_the_print(re
     repo.state(FAILED, DONE, DONE)
     assert show(repo, capsys).tag(f"{ID}/G1/G1.1") == FAILED
     # a list and a mapping where a file's path stands: no file is recorded so
-    repo.records({**repo.lint(), "files": [{"path": ["a"]}, {"path": {"b": 1}}]}, review())
+    bad = repo.lint()
+    bad["runs"][0]["files"] = [{"path": ["a"]}, {"path": {"b": 1}}]
+    repo.records(bad, review())
     printed = show(repo, capsys)
     assert printed.tag(f"{ID}/G1/G1.1") == TO_DO
     assert printed.problems == []

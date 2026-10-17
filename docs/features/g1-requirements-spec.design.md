@@ -7,6 +7,10 @@
 | 2026-10-08 | user | r5: Confirmed against requirements r6 |
 | 2026-10-08 | user | r6: Signed: solution half. The engineer seat signs r5 |
 | 2026-10-08 | intake | r7: Ready: contract `g1-requirements-spec` validates ready-green, derived from r5, against requirements r6; the engineer seat (user) signed the solution half at r5 (r6) |
+| 2026-10-17 | user | r8: Measured: the checks before signing, on the solution half's amendment: 14 findings (CL014 14), each a copied term ratified since r2 and none in the amended text; Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
+| 2026-10-17 | user | r9: Amended by hand in kit session 101, after the signature and intake: G1.1's record holds a `runs` list, one run for each `g1.schemas` entry with a schema in scope (Interfaces: the record file and its edges); a tool not installed is recorded for its own run; a contract whose scope cannot be read or holds no entry reads G1.1 `to do` and `lint` refuses it (Interfaces: the edges and How a condition reads); three answers under Decisions; typed by Claude on the user's word |
+| 2026-10-17 | user | r10: Signed: solution half. The engineer seat signs r9 |
+| 2026-10-17 | intake | r11: Ready: contract `g1-requirements-spec` validates ready-green, derived from r9, against requirements r6; the engineer seat (user) signed the solution half at r9 (r10) |
 
 # g1-requirements-spec - Failure points found before development starts
 
@@ -121,7 +125,8 @@ term. Its edges:
 
 - With no boundary schema in scope, `lint` prints `G1.1: no boundary schema in scope`, writes nothing and exits 0.
 - With no hard core in scope, `model` prints `G1.2: no hard core in scope`, writes nothing and exits 0.
-- A tool that is not installed is recorded as such, so the condition reads `failed`; the call prints message 1 or 3 and exits 1.
+- A tool that is not installed is recorded as such for its own run, and the other runs stand, so the condition reads `failed`; the call prints message 1 or 3 and exits 1.
+- A contract whose scope cannot be read, or holds no entry, is a call `lint` cannot use: it exits 2 and writes nothing, as `model` and `review` have it.
 - A hard core with no model gets message 2 and no record: the rule reads the declaration.
 
 **`g1-check`, the verdict.** It reads the records and the declarations,
@@ -171,7 +176,7 @@ present and current, else `to do`, and a `to do` lists nothing.
 
 | Condition | Reads `to do` | Reads `done` |
 | :-- | :-- | :-- |
-| G1.1 | `g1.schemas` is absent; or a schema in scope has no lint record that matches its hash and the pin's | no schema is in scope; or every schema in scope is recorded clean |
+| G1.1 | `g1.schemas` is absent; or the contract's scope cannot be read or holds no entry; or a schema in scope has no lint record that matches its hash and the pin's | no schema is in scope; or every schema in scope is recorded clean |
 | G1.2 | `specs/components.yaml` is absent; or a hard core in scope has a model with no record that matches its hash and its configuration's | no hard core is in scope; or every one is recorded as passing |
 | G1.3 | no review is recorded; or the last review passed on revisions the contract was not derived from | the last review checks all 11 items on the revisions the contract was derived from |
 
@@ -225,12 +230,13 @@ records:
   - condition: G1.1
     at: 2026-10-07T14:02:11Z
     head: 8635064
-    tool: spectral
-    tool_version: 6.11.0
-    installed: true
-    pin: {path: .spectral.yaml, sha256: 9f2c}
-    files:
-      - {path: api/openapi.yaml, sha256: 41d0, reported: 0}
+    runs:
+      - tool: spectral
+        tool_version: 6.11.0
+        installed: true
+        pin: {path: .spectral.yaml, sha256: 9f2c}
+        files:
+          - {path: api/openapi.yaml, sha256: 41d0, reported: 0}
   - condition: G1.3
     at: 2026-10-07T14:20:40Z
     head: 8635064
@@ -250,6 +256,7 @@ The edges of the three files:
 - `schemas: []` and `components: []` each say none.
 - `linter` is `spectral` or `buf`; `checker` is `tlc` or `p`.
 - `oracle` is one of `differential`, `fuzz`, `property-only`, `concurrency`, `soak` and `none`, and `none` needs an `oracle_reason`.
+- A G1.1 record holds one run for each `g1.schemas` entry with a schema in scope, in the entry's order: the tool, its version, whether it is installed, the pin, and each file's hash with the count the tool reported. An entry with no schema in scope has no run. A record that holds `tool`, `pin` and `files` on the record itself counts as absent.
 - A G1.2 record holds one entry per hard core: the component, the tool, the model's and the configuration's hashes, and `pass` or `fail`.
 - A feature whose contract was derived from one document holds no `design` revision in its review.
 
@@ -430,6 +437,9 @@ A shape call's number is its place among that session's 13.
 - Q: Which ratified terms does this design change? A: Four, each amended at intake: Rule and Condition, for rules that read records; Active gate, for a feature's exemption; Review, for a pair's two revisions.
 - Q: Which ADR carries this design? A: ADR 0038, written at intake: it amends ADR 0031's "shown and never enforced" for the refusal, and fixes the homes of the records and the declarations, which closes the deferrals of ADR 0007 and of G1's page.
 - Q: What of the tests that pin this feature's own pair? A: Three tests of `tests/test_document_split_g1_pair.py` retire at this design's signature (shape call 13). The fourth, which holds the requirements document's hash, retires with the PO seat's amendment.
+- Q: How does one G1.1 record hold the results of several linters? A: A call lints every `g1.schemas` entry with a schema in scope and appends one record whose `runs` list holds one run for each entry. The reader holds each schema to the run of its own entry. The engineer seat ruled it on 2026-10-09 (kit session 90) and the text row of 2026-10-17 (kit session 101) carries it.
+- Q: What does G1.1 read for a contract whose scope cannot be read? A: `to do`, as G1.2 does, and `lint` refuses the call with exit 2. Kit session 88's `s1-lint` read `done` there: an escaped defect, fixed by the same text row.
+- Q: Do the checks before signing read green for the text row of 2026-10-17? A: No, and each finding is answered: 14 CL014 findings, one for each term the state file copies from the requirements document. The user ratified all 14 word for word in kit session 86 (`8f9e9ed`), so each maps to its ratified term, and none stands in the amended text.
 
 ## Traceability
 

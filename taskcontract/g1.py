@@ -16,14 +16,17 @@ specs/<id>/contract.yaml, each read as `scope_check.matches` reads a scope
 entry. A declaration that cannot be read counts as absent for `g1-check`,
 and `g1-record lint` refuses it.
 
-`g1-record lint <id>` starts the entry's linter once for each schema in
-scope and appends one record to .sdlc/g1/<id>.yaml, a committed file: the
-tool, its version, the pin's hash, and each file's hash beside the number
-of errors and warnings the tool reported. Every check it makes comes
-first, so a refused call writes nothing and starts no tool. Exit 0 when
-the record reads clean or no schema is in scope, 1 when a file does not
-lint clean or the tool is not installed, 2 on a call it cannot use and
-when the tool ends on an error of its own.
+`g1-record lint <id>` makes one run for each `g1.schemas` entry that has a
+schema in scope, in the declaration's order, and appends one record to
+.sdlc/g1/<id>.yaml, a committed file. A run starts the entry's linter once
+for each of its schemas; the record holds a list of the runs, each with
+the tool, its version, the pin's hash, and each file's hash beside the
+number of errors and warnings the tool reported. Every check it makes
+comes first, so a refused call writes nothing and starts no tool. Exit 0
+when every run reads clean or no schema is in scope, 1 when a file does
+not lint clean or a tool is not installed, 2 on a call it cannot use,
+including a contract whose scope cannot be read, and when a tool ends on
+an error of its own.
 
 specs/components.yaml is the component declaration record, read under
 schemas/component-declaration.schema.json: one entry the schema refuses
@@ -314,49 +317,68 @@ def last_record(root: Path, feature_id: str, condition: str) -> dict | None:
                  if isinstance(r, dict) and r.get("condition") == condition), None)
 
 
+def _matching_run(runs: list, schema: Schema, pin_hash: str | None,
+                  file_hash: str | None) -> tuple[dict, dict] | None:
+    """The first run that holds the schema's result, with its file entry:
+    the run's tool is the entry's linter, its pin the entry's pin with the
+    hash given, and its `files` an entry for the schema's path with the
+    hash given. An item of any other shape holds no result."""
+    for run in runs:
+        if not isinstance(run, dict) or run.get("tool") != schema.linter:
+            continue
+        pin, files = run.get("pin"), run.get("files")
+        if not isinstance(pin, dict) or not isinstance(files, list):
+            continue
+        if pin.get("path") != schema.pin or pin.get("sha256") != pin_hash:
+            continue
+        for held in files:
+            if (isinstance(held, dict) and isinstance(held.get("path"), str)
+                    and held["path"] == schema.path and held.get("sha256") == file_hash):
+                return run, held
+    return None
+
+
 def read_lint(root: Path, feature_id: str, scope: list[str],
               config: dict) -> tuple[str, list[Finding]]:
     """G1.1's status and its findings, in path order.
 
-    `to do` when `g1.schemas` is absent or cannot be read, `done` when no
-    schema is in scope. Else each schema in scope is held against the last
-    G1.1 record: it is matched when the record holds its path with the
-    file's hash as it stands now, the entry's linter, and the entry's pin
-    with the pin's hash as it stands now. A file entry whose path is no
-    text is no recorded file. A pin's file that is absent
-    reads as null on both sides, and null equals null. A matched schema
-    reports RS101 when the record found the tool not installed, once for
-    the tool, and RS102 when it reported above 0; a result whose pin's
-    hash is null is no pinned result, so its schema is unmatched. With no
-    report, one unmatched schema reads `to do`.
+    `to do` when `g1.schemas` is absent or cannot be read, or the scope is
+    empty because the contract's cannot be read; `done` when no schema is
+    in scope. Else each schema in scope is held against the runs of the
+    last G1.1 record: it is matched by the first run, in any order, that
+    holds the entry's linter and the entry's pin with the pin's hash as it
+    stands now, and a file entry with the schema's path and the file's hash
+    as it stands now. A file entry whose path is no text, a run that is no
+    mapping, and a record with no `runs` list hold no result. A pin's file
+    that is absent reads as null on both sides, and null equals null. A
+    matched schema reports RS101 when its run found the tool not
+    installed, once for the tool, and RS102 when it reported above 0; a
+    result whose pin's hash is null is no pinned result, so its schema is
+    unmatched. With no report, one unmatched schema reads `to do`.
     """
     try:
         entries = schema_entries(config)
     except Unreadable:
         entries = None
-    if entries is None:
+    if entries is None or not scope:
         return TO_DO, []
     schemas = schemas_in_scope(root, scope, entries)
     if not schemas:
         return DONE, []
     record = last_record(root, feature_id, LINT) or {}
-    pin = record.get("pin") if isinstance(record.get("pin"), dict) else {}
-    files = record.get("files") if isinstance(record.get("files"), list) else []
-    recorded = {f["path"]: f for f in files
-                if isinstance(f, dict) and isinstance(f.get("path"), str)}
+    runs = record.get("runs") if isinstance(record.get("runs"), list) else []
     findings: list[Finding] = []
     missing: set[str] = set()  # the tools RS101 has named
     unmatched = False
     for schema in schemas:
-        held = recorded.get(schema.path)
         pin_hash = sha256_of(root / schema.pin) if schema.pin else None
-        if (held is None or held.get("sha256") != sha256_of(root / schema.path)
-                or record.get("tool") != schema.linter or pin.get("path") != schema.pin
-                or pin.get("sha256") != pin_hash):
+        found = _matching_run(runs, schema, pin_hash, sha256_of(root / schema.path))
+        if found is None:
             unmatched = True
             continue
+        run, held = found
         count = held.get("reported")
-        if record.get("installed") is False:
+        if run.get("installed") is False:
             if schema.linter not in missing:
                 missing.add(schema.linter)
                 findings.append(Finding(feature_id, LINT, "RS101",
@@ -724,24 +746,32 @@ def main_g1_record(args) -> int:
 
 
 def record_lint(root: Path, feature_id: str) -> int:
-    """Lint each schema in scope and append one G1.1 record: exit 0 when
-    every file lints clean or no schema is in scope, 1 when a file does not
-    or the tool is not installed, 2 when the call is refused or the tool
-    ends on an error of its own.
+    """Run each linter the schemas in scope call for and append one G1.1
+    record: exit 0 when every file lints clean or no schema is in scope, 1
+    when a file does not or a tool is not installed, 2 when the call is
+    refused or a tool ends on an error of its own.
 
-    The contract, the gate, the declaration, the schemas, the linter's name
-    and the record file are checked in that order before a tool starts,
-    not even for its version, and nothing is
-    written before every file has run, so a call that exits 2 writes
-    nothing. A tool that did not start is recorded as not installed; one
-    that started and ended on its own error gives no result.
+    The contract, the gate, the contract's scope, the declaration, the
+    schemas, the linters' names and the record file are checked in that
+    order before a tool starts, not even for its version, and nothing is
+    printed or written before every run has finished, so a call that exits
+    2 writes nothing. One run is made for each `g1.schemas` entry that has
+    a schema in scope, in the declaration's order. A tool that did not
+    start is recorded as not installed for that run alone; one that
+    started and ended on its own error gives no result for the call.
     """
-    scope = contract_scope(root, feature_id)
+    try:
+        scope = contract_scope(root, feature_id)
+    except ValueError:  # a contract that is not UTF-8, or holds a date no calendar holds
+        scope = []
     if scope is None:
         return _refuse(_no_contract(feature_id))
     config = read_config(root)
     if not is_active(config, feature_id):
         return _refuse(_not_active(feature_id))
+    if not scope:
+        return _refuse(f"{feature_id}: the contract's scope cannot be read at "
+                       f"specs/{feature_id}/contract.yaml")
     try:
         entries = schema_entries(config)
     except Unreadable as exc:
@@ -750,57 +780,79 @@ def record_lint(root: Path, feature_id: str) -> int:
     if not schemas:
         print(NO_SCHEMA)
         return 0
-    if len({schema.entry for schema in schemas}) > 1:
-        return _refuse(f"{feature_id}: more than one g1.schemas entry is in scope; "
-                       "a record holds one linter and one pin")
-    tool, pin = schemas[0].linter, schemas[0].pin
-    if tool not in LINTERS:
-        return _refuse(f"{feature_id}: g1.schemas names a linter the kit does not know: {tool}")
+    runs = [[schema for schema in schemas if schema.entry == n]
+            for n in sorted({schema.entry for schema in schemas})]
+    unknown = next((run[0].linter for run in runs if run[0].linter not in LINTERS), None)
+    if unknown is not None:
+        return _refuse(f"{feature_id}: g1.schemas names a linter the kit does not know: {unknown}")
     path = root / G1_DIR / f"{feature_id}.yaml"
     try:
         doc = _existing(path)
     except Unreadable as exc:
         return _refuse(f"{PROG}: unreadable record: "
                        f"{(G1_DIR / path.name).as_posix()} ({exc})")
-    version, counts = None, None
-    program = shutil.which(tool)
-    started = _start([program, "--version"], root) if program is not None else None
-    if started is not None:
-        version, counts = started.stdout.strip(), []
-        for schema in schemas:
-            result = _start(_argv(program, tool, schema.path, pin), root)
-            if result is None:  # the tool did not start: recorded as not installed
-                version, counts = None, None
-                break
-            count = COUNTS[tool](result)
-            if count is None:
-                for text in (result.stderr, result.stdout):
-                    if text and text.strip():
-                        print(text.rstrip("\n"), file=sys.stderr)
-                return 2
-            counts.append(count)
-    installed = counts is not None
+    held, results = [], []
+    for run in runs:
+        tool, pin = run[0].linter, run[0].pin
+        try:
+            result = _lint_run(root, tool, pin, run)
+        except NoResult as exc:
+            for text in exc.args:
+                print(text, file=sys.stderr)
+            return 2
+        results.append(result)
+        held.append({
+            "tool": tool,
+            "tool_version": result[0] if result else None,
+            "installed": result is not None,
+            "pin": {"path": pin, "sha256": sha256_of(root / pin) if pin else None},
+            "files": [{"path": schema.path, "sha256": sha256_of(root / schema.path),
+                       "reported": result[1][n] if result else None}
+                      for n, schema in enumerate(run)],
+        })
     doc["records"].append({
         "condition": LINT,
         "at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "head": head_id(root),
-        "tool": tool,
-        "tool_version": version,
-        "installed": installed,
-        "pin": {"path": pin, "sha256": sha256_of(root / pin) if pin else None},
-        "files": [{"path": schema.path, "sha256": sha256_of(root / schema.path),
-                   "reported": counts[n] if installed else None}
-                  for n, schema in enumerate(schemas)],
+        "runs": held,
     })
     _write(path, doc)
-    if not installed:
-        print(NOT_INSTALLED.format(tool=tool))
-    else:
-        for schema, count in zip(schemas, counts):
+    named: set[str] = set()  # the tools the not-installed line has named
+    for run, result in zip(runs, results):
+        tool = run[0].linter
+        if result is None:
+            if tool not in named:
+                named.add(tool)
+                print(NOT_INSTALLED.format(tool=tool))
+            continue
+        for schema, count in zip(run, result[1]):
             line = CLEAN if count == 0 else NOT_CLEAN
             print(line.format(file=schema.path, tool=tool, n=count))
     print(f"recorded: {(G1_DIR / path.name).as_posix()}")
-    return 0 if installed and not any(counts) else 1
+    green = all(result is not None and not any(result[1]) for result in results)
+    return 0 if green else 1
+
+
+def _lint_run(root: Path, tool: str, pin: str,
+              run: list[Schema]) -> tuple[str, list[int]] | None:
+    """One run: the tool's version and the count for each file of the run,
+    in path order. None when the tool is not found or did not start, with
+    no more file linted. NoResult with the tool's text when the tool
+    started and ended on an error of its own."""
+    program = shutil.which(tool)
+    started = _start([program, "--version"], root) if program is not None else None
+    if started is None:
+        return None
+    counts = []
+    for schema in run:
+        result = _start(_argv(program, tool, schema.path, pin), root)
+        if result is None:  # the tool did not start: recorded as not installed
+            return None
+        count = COUNTS[tool](result)
+        if count is None:
+            raise NoResult(*_tool_lines(result))
+        counts.append(count)
+    return started.stdout.strip(), counts
 
 
 def _argv(program: str, tool: str, file: str, pin: str) -> list[str]:
