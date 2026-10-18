@@ -50,6 +50,7 @@ the same kind at PR review.
 | 94 + 95 | `g1-requirements-spec/s4-tree` | yes, in session 95 | 4, no PASS: the user waived round 5 | 5 / 1 | | 2 | 1,642: drafter 256, developers 144 + 71 + 102 + 89 + 61, Two-Key 256 + 207 + 242 + 214 | 2 / 0 | |
 | 97 + 98 | `g1-requirements-spec/s5-start` | yes, in session 98 | 2 | 1 / 0 | | 0 | 1,157: drafters 187 + 156, developers 96 + 65, Two-Key 239 + 203 + 211 | 2 / 0 | |
 | 101 + 102 | `g1-requirements-spec/s1-lint`, the G1.1 record fix | yes, in session 102 | 1 | 0 / 0 | | 0 | 631: drafter 353, developer 93, Two-Key 185 | 2 / | 1 / 4 |
+| 103 + 104 | `g1-requirements-spec/s6-release` | yes, in session 104 | 2 | 0 / 1 | | 0 | 730: drafter 299, Two-Key 220 + 211 | 2 / | 1 / 0 |
 
 ## Notes on the baseline
 
@@ -138,3 +139,16 @@ the same kind at PR review.
   taken, on the user's ruling of 2026-10-17. The deferred count is one
   line added (the untested guard) and four closed (two edges, one
   refusal line, one docstring wrap).
+- Sessions 103 and 104 are one build and one row, split at the test list.
+  The drafter took 299K tokens against a plan of 200K, and no developer
+  ran: the unit changes no code. Round 1 failed on one USAGE sentence the
+  release left false (the kit computes no condition at any gate after G0,
+  with G1 computed), found by the sweep; the fix was that sentence and one
+  test, and a second round (211K of the 431K for both). Two of round 1's
+  three reasons were Claude's: two `g1-check` receipts that exit 1 and 2 by
+  design counted as failed receipts, so round 2 dropped them. Round 2
+  passed with five advisories. The receipts ran in three parts, since the
+  whole suite takes 607 s against the 600 s foreground cap; the Haiku
+  receipts agent's results matched the session's own in both rounds. No
+  `/usage` readings were taken. The deferred count is one line added (the
+  sweep's advisories) and none closed.

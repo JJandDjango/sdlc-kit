@@ -13,14 +13,14 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
    it). Built in sessions 101 and 102 on the branch
    `session-101-g1-1-record`, Two-Key PASS in round 1; the PR waits for
    the user's review.
-2. Build `s6-release`, the sixth G1 unit and kit 0.20.0. Part one is done
-   (session 103): the tests stand placed red on the branch
-   `session-103-g1-s6-release` (`aaa980b`, not merged) and the release text is
-   written. Part two, in its own session: read
-   `RECEIPT_g1-requirements-spec-s6_2026-10-17/HANDOFF.md`, type the release
-   files, grade with Two-Key, open the PR. The PR review and the `v0.20.0` tag
-   are the user's. Detail: the same opener.
-3. Build `prove.py` and `receipts.py`, scripts that run tests and print only the
+2. [x] Build `s6-release`, the sixth G1 unit and kit 0.20.0. Built in sessions
+   103 and 104 on the branch `session-103-g1-s6-release`, Two-Key PASS in
+   round 2; the PR waits for the user's review, and the `v0.20.0` tag is the
+   user's.
+3. After the user merges and tags `v0.20.0`: run USAGE's `uv` line against the
+   tag with `python -P`, and open the self-pin PR (`.github/workflows/sdlc.yml:20`
+   and `USAGE.md:1011` to `v0.20.0`); the wrap rides that PR.
+4. Build `prove.py` and `receipts.py`, scripts that run tests and print only the
    minimum an agent needs (a standing practice, the user, session 103).
    `prove.py` is the drafter's copy, red, green and mutation loop; `receipts.py`
    is Two-Key's receipts, run by the session with no agent. In their own short
@@ -28,14 +28,12 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
 
 ## Next actions
 
-Opener: `s6-release`, the sixth unit, kit 0.20.0, in its own session:
-its sweep turns USAGE's G1 guide green, adds the G1 line to the green
-list of refused `progress` lines (`USAGE.md:1413`), and redraws
-`USAGE.md:1883`. It keeps session 96's rulings: two sessions split at
-the test list, the session at `high`. The readings of PRs #116 and #119
-that cost something (Open questions, G1) still wait for a design text
-row. The Haiku receipts agent is the user's to rule on again
-(Open questions). Not folded in `s4-tree`: `g1.py`'s `Ready:` row
+Opener: Next 3, the self-pin PR, once the user has tagged `v0.20.0`;
+until then Next 4, `prove.py`. The readings of PRs #116 and #119 that
+cost something (Open questions, G1) still wait for a design text row.
+The Haiku receipts agent is the user's to rule on again (Open
+questions); its receipts matched the session's own in both
+`s6-release` rounds. Not folded in `s4-tree`: `g1.py`'s `Ready:` row
 reader and `tree.drift`'s; `progress._target` has one caller left.
 
 1. The pilot's config line, in the engine's session; the engine's
@@ -134,6 +132,16 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
    (`NOTES_process-cost_2026-10-12.md`): a custom agent type with a
    smaller start than the 50K each agent pays before it reads a file,
    and Gemma for a narrow check with no tools, called from a script.
+6. Deferred from `s6-release`'s sweep (Two-Key's advisories, session 104):
+   `docs/gates.md`'s registry count lines (near line 98) say nothing of
+   G1's three conditions, now `enforced` here; `README.md`'s "What ships
+   today" omits the G1 venue and the `progress` refusal (it omits the tree
+   and the vocabulary layer too, so it predates the unit); `USAGE.md:1275`
+   ("An active gate the kit cannot compute yet reads `to do`") is vacuous
+   now that both active gates compute; `docs/operators.md`'s deferred
+   trigger says "a person signs each" beside venue rows that name
+   `sdlc-spec` as the author (the release text's delta 14, pinned by a
+   test).
 
 ## Open questions
 
