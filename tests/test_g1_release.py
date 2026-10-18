@@ -611,6 +611,16 @@ def test_done_means_usage_line_that_says_intake_writes_the_record_reads_kit_0_20
     assert "kit 0.19.0 has no step that writes the Record" not in _flat(_read(USAGE))
 
 
+def test_done_means_usage_says_the_kit_computes_no_condition_from_g2_on_and_reads_g1s_from_its_records():
+    sentence = _paragraph(_subsection(_section(9), "Gates and their conditions"),
+                          "the kit computes none of them yet")
+    assert "conditions at every other gate" not in sentence
+    assert ("A feature's conditions at G2 to G10 read `to do`: the kit computes none of them "
+            "yet.") in sentence
+    assert ("G1's conditions read from its records where G1 is active for the feature (\"G1 as "
+            "an active gate\", below) and `to do` where it is inactive.") in sentence
+
+
 # --- done_means: the kit's own declarations -----------------------------------------------
 
 def test_done_means_the_kits_config_lists_g1_under_active_gates_beside_g0():

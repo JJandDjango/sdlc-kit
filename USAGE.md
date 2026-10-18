@@ -1556,8 +1556,10 @@ conditions: `failed` when one reads `failed`, else `blocked` when one reads
 `blocked`, `done` when all three read `done`, and `to do` otherwise. A
 contract the tree cannot read as a mapping, one it names on stderr as an
 `unreadable contract`, reads `failed` at G0.1 and `to do` at G0.2 and
-G0.3, since their joins read nothing from it. A feature's conditions at
-every other gate read `to do`: the kit computes none of them yet.
+G0.3, since their joins read nothing from it. A feature's conditions at G2
+to G10 read `to do`: the kit computes none of them yet. G1's conditions
+read from its records where G1 is active for the feature ("G1 as an
+active gate", below) and `to do` where it is inactive.
 
 🟢 A condition that is not `done` lists what its rules report, one line
 under it per diagnostic: `- `, then the validator's message without its
