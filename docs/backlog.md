@@ -15,11 +15,12 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
    the user's review.
 2. [x] Build `s6-release`, the sixth G1 unit and kit 0.20.0. Built in sessions
    103 and 104 on the branch `session-103-g1-s6-release`, Two-Key PASS in
-   round 2; the PR waits for the user's review, and the `v0.20.0` tag is the
-   user's.
-3. After the user merges and tags `v0.20.0`: run USAGE's `uv` line against the
+   round 2; merged as PR #124 at `fb411c9`, and the user tagged `v0.20.0` there.
+3. [x] After the user merges and tags `v0.20.0`: run USAGE's `uv` line against the
    tag with `python -P`, and open the self-pin PR (`.github/workflows/sdlc.yml:20`
-   and `USAGE.md:1011` to `v0.20.0`); the wrap rides that PR.
+   and `USAGE.md:1011` to `v0.20.0`); the wrap rides that PR. Session 104: the
+   install from the tag read 0.20.0 and `ready-green`; the self-pin PR waits for
+   the user's review.
 4. Build `prove.py` and `receipts.py`, scripts that run tests and print only the
    minimum an agent needs (a standing practice, the user, session 103).
    `prove.py` is the drafter's copy, red, green and mutation loop; `receipts.py`
@@ -28,8 +29,7 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
 
 ## Next actions
 
-Opener: Next 3, the self-pin PR, once the user has tagged `v0.20.0`;
-until then Next 4, `prove.py`. The readings of PRs #116 and #119 that
+Opener: Next 4, `prove.py`. The readings of PRs #116 and #119 that
 cost something (Open questions, G1) still wait for a design text row.
 The Haiku receipts agent is the user's to rule on again (Open
 questions); its receipts matched the session's own in both
