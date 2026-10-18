@@ -9,6 +9,50 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.20.0 - 2026-10-18 (tag `v0.20.0`)
+
+- **G1.1 reads the linter's record** (`g1-requirements-spec`, ADR 0038, unit
+  `s1-lint`). `python -m taskcontract g1-record lint <id>` runs the linter each
+  `g1.schemas` entry names, Spectral or `buf`, on the schemas in the feature's
+  scope and writes one record that holds a run for each entry; `g1-check <id>`
+  prints each condition's status. G1.1 reads `done` when the record shows each
+  schema clean under its pin, and `to do` where the contract's scope cannot be
+  read. Delta note: the kit ships no linter; install one and commit its pin.
+- **G1.2 reads the model checker's record** (`g1-requirements-spec`, unit
+  `s2-model`). `g1-record model <id>` runs each hard core's checker, TLC or P,
+  under the model's pinned configuration and writes the record; G1.2 reads `done`
+  when each hard core in the feature's scope has a model its checker passes. The
+  hard cores are the components `specs/components.yaml` declares, which
+  `taskcontract/schemas/component-declaration.schema.json` at version 1.0.0
+  validates. Delta note: the kit ships no checker; install TLC or P, and a person
+  writes `specs/components.yaml`.
+- **A person signs G1.3 at the venue** (`g1-requirements-spec`, unit
+  `s3-review`). `/sdlc g1 <id>` runs after intake: it lints, checks the models and
+  asks a person each of G1.3's 11 items, one at a time. `g1-record review` writes
+  the review only on that person's name, seat and word, and G1.3 reads `done` when
+  the review checks all 11 items on the revisions the contract was derived from.
+  Delta note: an agent never answers an item.
+- **The tree shows G1** (`g1-requirements-spec`, unit `s4-tree`). Where G1 is
+  active for a feature the tree shows G1 with each condition's status and each
+  diagnostic, and G1.3 with its seat and its revisions; the pane watches
+  `.sdlc/g1`. Delta note: a feature the `g1.exempt` list names, and a repository
+  with `G1` absent from `active_gates`, print as 0.19.0 prints them.
+- **No task starts before G1 passes** (`g1-requirements-spec`, ADR 0038, unit
+  `s5-start`). Where G1 is active for a feature, intake's report for a ready
+  contract ends on `Next step: G1. Run /sdlc g1 {id}.`, and `progress start` and
+  `progress done` refuse while G1 does not read `done`, with exit 2 and one line on
+  stderr; `block` and `run` stay open. Delta note: ADR 0038 amends ADR 0031's
+  "shown and never enforced" for this refusal.
+- **G1 is on at the kit and written down** (`g1-requirements-spec`, unit
+  `s6-release`). `.sdlc/config.yaml` lists `G1` and holds the `g1` key: the
+  features closed at this release and this one stand on `g1.exempt`, and
+  `taskcontract/schemas/*.json` lint under `.spectral.yaml`.
+  `specs/components.yaml` declares no component. `USAGE.md` reads green
+  throughout. Kit `0.19.0` -> `0.20.0`; the contract schema stays at `1.5.0`.
+  Delta note: a repository born from `/sdlc init` keeps G0 alone; to turn G1 on,
+  list `G1` under `active_gates`, write the `g1` key and `specs/components.yaml`,
+  and pin the install ref to the tag.
+
 ## 0.19.0 - 2026-10-07 (tag `v0.19.0`)
 
 - **A requirements run writes the requirements document**

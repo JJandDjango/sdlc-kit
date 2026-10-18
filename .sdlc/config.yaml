@@ -4,6 +4,32 @@ adoption: brownfield  # greenfield | brownfield
 stack: python  # free text; selects the tooling profile at activation
 active_gates:
   - G0  # contract conformance - CI backstop; /sdlc intake is the venue
+  - G1  # requirements and spec - /sdlc g1 is the venue; progress refuses a task until it passes
+g1:
+  exempt:
+    - controlled-language
+    - distribution-reconciliation
+    - document-split
+    - dotnet-profile-g0
+    - dotnet-profile-g3
+    - dotnet-profile-g4
+    - feature-document
+    - g0-declaration
+    - g1-requirements-spec
+    - intake-seats
+    - operator-layer
+    - pane-view
+    - playbook-guardrails
+    - project-tree
+    - spec-interview
+    - tree-first-level
+    - tree-view
+    - unit-dag
+    - vocabulary-layer
+  schemas:
+    - paths: [taskcontract/schemas/*.json]
+      linter: spectral
+      pin: .spectral.yaml
 # Gates join this list as the kit's activation program builds their
 # enforcement: https://github.com/JJandDjango/sdlc-kit/blob/main/docs/gates.md
 scope_check:

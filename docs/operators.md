@@ -31,7 +31,7 @@ agents: the persona is the shape, the gate binding is the profile.
 |---|---|---|---|
 | `sdlc-developer` | G3 inner loop; G4 local preflight | implementation + unit tests only ([0010](../decisions/0010-write-surface-immutability.md)) | 🟢 0.8.0 |
 | `sdlc-verifier` | cross-cutting - subject checks + zero-trust re-runs | none - writes nothing | 🟢 0.8.0 |
-| `sdlc-spec` | G0-G2 authoring venues | spec artifacts | ⚪ registered - ships at the first bound G1/G2 authoring surface; `/sdlc intake` is the live G0 flow today |
+| `sdlc-spec` | G0-G2 authoring venues | spec artifacts | ⚪ registered - ships at the first bound G2 authoring surface; /sdlc intake and /sdlc g1 are the live flows today |
 | `sdlc-qa` | G4-G7 execution; G8-G10 config ownership | committed configs (class E) | ⚪ registered - ships at the first consumer G5-G7 pipeline |
 
 Human seats never delegate: G1.3 criteria review, G6.1/G6.2 (the
@@ -121,7 +121,7 @@ artifacts - PL-PIPE scopes agent prompts - and each header names it.
 | Gate | Operator | Agent venue | Today |
 |---|---|---|---|
 | G0 intake | `sdlc-spec` (⚪) | conversation flow (`/sdlc intake`) | 🟢 venue live ([0016](../decisions/0016-distribution-before-activation.md)); def registered |
-| G1 requirements | `sdlc-spec` authors; G1.3 human | conversation flow + human sign-off | ⚪ unbound |
+| G1 requirements | `sdlc-spec` authors; G1.3 human | conversation flow + human sign-off | 🟢 venue live (/sdlc g1, kit 0.20.0, [0038](../decisions/0038-a-gate-refuses-a-task-and-g1-records-and-declarations-have-homes.md)); def registered |
 | G2 design | `sdlc-spec` authors; G2.3 human | conversation flow + human sign-off | ⚪ unbound |
 | G3 implementation | `sdlc-developer` | local inner loop (profile commands) | 🟢 0.8.0 - dotnet bindings; python has no G3 battery |
 | G4 pre-merge CI | QA result-scoped; Verifier subject checks | **local preflight**; CI authoritative, agentless | 🟢 0.8.0 - preflight bindings + verifier re-runs |
@@ -174,8 +174,9 @@ targets.
 
 ## ⚪ Deferred, triggers on record
 
-- **`sdlc-spec` def** - trigger: first bound G1/G2 authoring
-  surface (`/sdlc intake` already carries G0 live).
+- **`sdlc-spec` def** - trigger: first bound G2 authoring surface
+  (/sdlc intake carries G0 live and /sdlc g1 carries G1: a person signs each,
+  so neither is an agent's authoring surface).
 - **`sdlc-qa` def** - trigger: first consumer G5-G7 pipeline.
 - **PL-PIPE.3 eval harness** - its own arc; the defs name the
   obligation (five invariant families per persona) so the debt

@@ -1,0 +1,16 @@
+# The kit's pinned G1.1 ruleset for the schemas under taskcontract/schemas/.
+rules:
+  schema-names-its-dialect:
+    description: A boundary schema names its dialect.
+    given: $
+    severity: error
+    then:
+      field: $schema
+      function: truthy
+  schema-has-a-title:
+    description: A boundary schema has a title.
+    given: $
+    severity: warn
+    then:
+      field: title
+      function: truthy
