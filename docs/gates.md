@@ -144,6 +144,7 @@ start against an unlinted or ambiguous spec.
 (two-channel principle; mechanism is open question Q5).
 **Closes:** requirements misinterpretation (ODC function).
 **Deep page:** [gates/G1-requirements-spec.md](gates/G1-requirements-spec.md) - G1.1, G1.2, G1.3 all `specified`; G1.2's designation criteria ratified in [0007](../decisions/0007-hard-core-designation-criteria.md).
+Enforcement shipped in kit 0.20.0 ([0038](../decisions/0038-a-gate-refuses-a-task-and-g1-records-and-declarations-have-homes.md)): the venue is `/sdlc g1`, and `enforced` flips per target at first live use, here with the 0.20.0 release.
 
 | ID | Condition | Kind | Check | Tooling | Open |
 |---|---|---|---|---|---|

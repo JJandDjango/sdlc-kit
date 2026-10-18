@@ -1,0 +1,3 @@
+# The kit holds no hard core, so it declares no component (G1.2 has no model to check here).
+version: 1
+components: []

@@ -18,7 +18,8 @@
 | Gate | What it checks here | Status |
 |---|---|---|
 | G0 planning/intake | contract exists and validates `ready` | 🟢 CI backstop live; venue live once `/sdlc intake` is in use |
-| G1-G10 + PL-DOC + PL-PIPE | see the kit registry | 🔴 aspirational - enforcement lands via the kit's activation program |
+| G1 requirements/spec | boundary schemas lint clean, hard cores model-check, a named person signs the review | 🟢 live here since kit 0.20.0: `/sdlc g1` is the venue, and `progress` refuses a task until G1 passes |
+| G2-G10 + PL-DOC + PL-PIPE | see the kit registry | 🔴 aspirational - enforcement lands via the kit's activation program |
 
 Registry and per-gate deep pages: https://github.com/JJandDjango/sdlc-kit/blob/main/docs/gates.md
 

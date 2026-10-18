@@ -82,7 +82,7 @@ authors the spec half of every downstream (e)-class closure
   content is enforcement-layer material - PL-PIPE governs changes to it.
 - **Parameters:** the pinned ruleset configs - procedure-bound (whatever the
   repo pins); no open question.
-- **Lifecycle:** `specified` (strictness ratified 2026-07-23).
+- **Lifecycle:** `specified` (strictness ratified 2026-07-23); `enforced` here since kit 0.20.0.
 
 ### G1.2 Model checking
 
@@ -104,10 +104,10 @@ authors the spec half of every downstream (e)-class closure
   protocol shaped, (ii) invisible until (d)-time or later, and (iii)
   costly-irreversible in production (data loss, safety, money movement) -
   all three prongs must hold. Procedure-bound like G1.1's pinned rulesets;
-  the per-component set is decided at spec time, its recording venue
-  deferred to the enforcement pass.
+  the per-component set is decided at spec time and recorded in
+  specs/components.yaml ([0038](../../decisions/0038-a-gate-refuses-a-task-and-g1-records-and-declarations-have-homes.md)).
 - **Lifecycle:** `specified` (designation criteria ratified 2026-07-23,
-  [0007](../../decisions/0007-hard-core-designation-criteria.md)).
+  [0007](../../decisions/0007-hard-core-designation-criteria.md)); `enforced` here since kit 0.20.0.
 
 ### G1.3 Criteria completeness + ambiguity review
 
@@ -120,10 +120,11 @@ authors the spec half of every downstream (e)-class closure
   specs declarative so the judgment stays cheap.
 - **Loopability:** not claimed (human condition); the checklist makes the
   judgment structured and its findings actionable.
-- **Tooling:** the review checklist (specified below; the operational
-  artifact - form, storage, sign-off record - is enforcement-pass work).
+- **Tooling:** the review checklist (specified below); the operational
+  artifact is the signed review in .sdlc/g1/<id>.yaml, written by
+  g1-record review at the venue /sdlc g1 ([0038](../../decisions/0038-a-gate-refuses-a-task-and-g1-records-and-declarations-have-homes.md)).
 - **Parameters:** the checklist content - PROPOSED.
-- **Lifecycle:** `specified` (checklist ratified 2026-07-23).
+- **Lifecycle:** `specified` (checklist ratified 2026-07-23); `enforced` here since kit 0.20.0.
 
 ### G1.3 review checklist (spec) - ratified 2026-07-23
 
