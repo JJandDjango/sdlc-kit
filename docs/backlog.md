@@ -13,8 +13,18 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
    it). Built in sessions 101 and 102 on the branch
    `session-101-g1-1-record`, Two-Key PASS in round 1; the PR waits for
    the user's review.
-2. Build `s6-release`, the sixth G1 unit and kit 0.20.0, in its own session.
-   Detail: the same opener.
+2. Build `s6-release`, the sixth G1 unit and kit 0.20.0. Part one is done
+   (session 103): the tests stand placed red on the branch
+   `session-103-g1-s6-release` (`aaa980b`, not merged) and the release text is
+   written. Part two, in its own session: read
+   `RECEIPT_g1-requirements-spec-s6_2026-10-17/HANDOFF.md`, type the release
+   files, grade with Two-Key, open the PR. The PR review and the `v0.20.0` tag
+   are the user's. Detail: the same opener.
+3. Build `prove.py` and `receipts.py`, scripts that run tests and print only the
+   minimum an agent needs (a standing practice, the user, session 103).
+   `prove.py` is the drafter's copy, red, green and mutation loop; `receipts.py`
+   is Two-Key's receipts, run by the session with no agent. In their own short
+   session, `prove.py` first.
 
 ## Next actions
 
