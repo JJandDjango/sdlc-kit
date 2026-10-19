@@ -19,6 +19,16 @@ session are the house rules in [CONTRIBUTING.md](../../CONTRIBUTING.md).
   each other go out in one turn, bulk reading goes to an agent, and a
   long result lands in a file. `tools/session_cost.py` measures a
   session and its agents, and a build's wrap runs it.
+- Test-runner scripts (the user, 2026-10-18, session 103). A script
+  runs the tests and prints only the summary, the failing ids and the
+  first assertion line of each; the full log goes to a file. An agent
+  never copies, mutates, runs and restores by hand: the `s6-release`
+  drafter took 299K tokens and 124 tool calls, mostly that plumbing.
+  `prove.py` (in untracked `.claude/workflows/tools/`, built in
+  session 105, signed list and readings in [prove-py.md](prove-py.md))
+  is the drafter's red, green and mutation proof, and the drafter's
+  brief names it. `receipts.py`, Two-Key's receipts run by the session
+  with no agent, comes next.
 - Session 98's lessons. A reading rules only where the signed pages are
   silent: before one goes into a test list, read it against the
   design's Constraints and Sources, not only its Decisions. Round 1 was

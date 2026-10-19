@@ -21,15 +21,19 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
    and `USAGE.md:1011` to `v0.20.0`); the wrap rides that PR. Session 104: the
    install from the tag read 0.20.0 and `ready-green`; the self-pin PR waits for
    the user's review.
-4. Build `prove.py` and `receipts.py`, scripts that run tests and print only the
-   minimum an agent needs (a standing practice, the user, session 103).
-   `prove.py` is the drafter's copy, red, green and mutation loop; `receipts.py`
-   is Two-Key's receipts, run by the session with no agent. In their own short
-   session, `prove.py` first.
+4. [x] Build `prove.py`, the drafter's copy, red, green and mutation loop, a
+   script that prints only the minimum an agent needs (a standing practice, the
+   user, session 103). Built in session 105 on the branch `session-105-prove-py`
+   against ten signed items (`docs/conventions/prove-py.md`), with an 18-test
+   self-test; it lives in the untracked `.claude/workflows/tools/`; the PR waits
+   for the user's review.
+5. Build `receipts.py`, Two-Key's receipts, run by the session with no agent,
+   printing only the minimum an agent needs. In its own short session, with a
+   feature list signed first.
 
 ## Next actions
 
-Opener: Next 4, `prove.py`. The readings of PRs #116 and #119 that
+Opener: Next 5, `receipts.py`. The readings of PRs #116 and #119 that
 cost something (Open questions, G1) still wait for a design text row.
 The Haiku receipts agent is the user's to rule on again (Open
 questions); its receipts matched the session's own in both
