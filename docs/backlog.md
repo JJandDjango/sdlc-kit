@@ -35,7 +35,9 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
    takes its JSON as `receiptsResult`; the PR waits for the user's review.
 6. Use `prove.py` and `receipts.py` on the next unit's build, then compare the
    drafter with `s6-release`'s 299K tokens and 124 calls and the receipts with
-   the agent's 54K-token start. Turn both pages' 🟡 marks 🟢 on that run.
+   the agent's 54K-token start. Turn both pages' 🟡 marks 🟢 on that run, then
+   delete the receipts agent's path in `two-key-unit-verifier.js` (item 9
+   kept it until a real round used the script).
 
 ## Next actions
 
