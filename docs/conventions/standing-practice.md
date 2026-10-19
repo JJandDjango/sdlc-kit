@@ -27,8 +27,12 @@ session are the house rules in [CONTRIBUTING.md](../../CONTRIBUTING.md).
   `prove.py` (in untracked `.claude/workflows/tools/`, built in
   session 105, signed list and readings in [prove-py.md](prove-py.md))
   is the drafter's red, green and mutation proof, and the drafter's
-  brief names it. `receipts.py`, Two-Key's receipts run by the session
-  with no agent, comes next.
+  brief names it. `receipts.py` (same folder, built in session 106, signed
+  list and readings in [receipts-py.md](receipts-py.md)) runs Two-Key's
+  receipts in the session with no agent; its JSON goes to the workflow as
+  `receiptsResult`, and the receipts agent runs only when none is given.
+  Run it with `run_in_background`, since the whole suite outlasts the
+  foreground cap, and put a Monitor on `OUT/progress.json`.
 - Session 98's lessons. A reading rules only where the signed pages are
   silent: before one goes into a test list, read it against the
   design's Constraints and Sources, not only its Decisions. Round 1 was

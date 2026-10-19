@@ -27,17 +27,24 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
    against ten signed items (`docs/conventions/prove-py.md`), with an 18-test
    self-test; it lives in the untracked `.claude/workflows/tools/`; the PR waits
    for the user's review.
-5. Build `receipts.py`, Two-Key's receipts, run by the session with no agent,
-   printing only the minimum an agent needs. In its own short session, with a
-   feature list signed first.
+5. [x] Build `receipts.py`, Two-Key's receipts, run by the session with no
+   agent, printing only the minimum an agent needs. Built in session 106 on the
+   branch `session-106-receipts-py` against ten signed items
+   (`docs/conventions/receipts-py.md`), with a 24-test self-test; it lives in
+   the untracked `.claude/workflows/tools/`, and `two-key-unit-verifier.js`
+   takes its JSON as `receiptsResult`; the PR waits for the user's review.
+6. Use `prove.py` and `receipts.py` on the next unit's build, then compare the
+   drafter with `s6-release`'s 299K tokens and 124 calls and the receipts with
+   the agent's 54K-token start. Turn both pages' 🟡 marks 🟢 on that run.
 
 ## Next actions
 
-Opener: Next 5, `receipts.py`. The readings of PRs #116 and #119 that
-cost something (Open questions, G1) still wait for a design text row.
-The Haiku receipts agent is the user's to rule on again (Open
-questions); its receipts matched the session's own in both
-`s6-release` rounds. Not folded in `s4-tree`: `g1.py`'s `Ready:` row
+Opener: Next 6, the first real use of `prove.py` and `receipts.py`. The
+readings of PRs #116 and #119 that cost something (Open questions, G1)
+still wait for a design text row. The Haiku receipts agent is the user's
+to rule on again (Open questions); its receipts matched the session's own
+in both `s6-release` rounds. `receipts.py` makes the ruling moot once a
+real round passes it a `receiptsResult`. Not folded in `s4-tree`: `g1.py`'s `Ready:` row
 reader and `tree.drift`'s; `progress._target` has one caller left.
 
 1. The pilot's config line, in the engine's session; the engine's
