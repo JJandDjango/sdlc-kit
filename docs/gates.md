@@ -102,7 +102,9 @@ specification layer is complete
 counted 54; G0.2 ([0017](../decisions/0017-vocabulary-layer.md)),
 G0.3 ([0025](../decisions/0025-intake-seats.md)), and G4.12
 ([0027](../decisions/0027-playbook-crosswalk-and-closures.md)) joined
-after it, all three `enforced` in this repo.
+after it, all three `enforced` in this repo. G1.1 through G1.3, counted at
+the close-out, became `enforced` here with kit 0.20.0
+([0038](../decisions/0038-a-gate-refuses-a-task-and-g1-records-and-declarations-have-homes.md)).
 
 ---
 

@@ -145,16 +145,9 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
    (`NOTES_process-cost_2026-10-12.md`): a custom agent type with a
    smaller start than the 50K each agent pays before it reads a file,
    and Gemma for a narrow check with no tools, called from a script.
-6. Deferred from `s6-release`'s sweep (Two-Key's advisories, session 104):
-   `docs/gates.md`'s registry count lines (near line 98) say nothing of
-   G1's three conditions, now `enforced` here; `README.md`'s "What ships
-   today" omits the G1 venue and the `progress` refusal (it omits the tree
-   and the vocabulary layer too, so it predates the unit); `USAGE.md:1275`
-   ("An active gate the kit cannot compute yet reads `to do`") is vacuous
-   now that both active gates compute; `docs/operators.md`'s deferred
-   trigger says "a person signs each" beside venue rows that name
-   `sdlc-spec` as the author (the release text's delta 14, pinned by a
-   test).
+6. Left by session 107's sweep of `s6-release`'s advisories: `README.md`'s
+   "What ships today" omits the tree and the vocabulary layer, and its
+   "54 specified conditions" row reads 57 in `docs/gates.md`.
 
 ## Open questions
 
