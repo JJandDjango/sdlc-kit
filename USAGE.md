@@ -1272,8 +1272,7 @@ status, so it shows its `kind`.
   `failed`. A test that passes before its code exists shows `failed`.
 - 🟢 A contract's `G0` verdict comes from the validator: `done` at
   ready-green, `blocked` when draft-green with `TC003`, `to do` when
-  draft-green otherwise, `failed` when draft-red. An active gate the kit
-  cannot compute yet reads `to do`.
+  draft-green otherwise, `failed` when draft-red.
 - 🟢 A unit or a feature takes the first of `failed`, `waiting on a
   seat`, `blocked` and `doing` that any child has. It reads `done` only
   when every child reads `done`, and `to do` when nothing under it has

@@ -22,6 +22,8 @@ principles are in [ARCHITECTURE.md](ARCHITECTURE.md).
 | `taskcontract new <id>` — contract skeleton (F11) | 🟢 |
 | `/sdlc intake` — the G0 venue: request → contract → validate to green (F10) | 🟢 |
 | `/sdlc audit` — report-only gate-health check, exit 0/1/2 | 🟢 |
+| `/sdlc g1`: the G1 venue, schema lint, model check and criteria review kept as records that `g1-check` reads (kit 0.20.0) | 🟢 |
+| `taskcontract progress` refuses a task's start and done while its feature's G1 has not passed (kit 0.20.0) | 🟢 |
 | Plugin-marketplace install | 🟢 |
 
 🟢 shipped · 🟡 partial · 🔴 not yet
