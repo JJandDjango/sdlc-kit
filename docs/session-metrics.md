@@ -51,6 +51,7 @@ the same kind at PR review.
 | 97 + 98 | `g1-requirements-spec/s5-start` | yes, in session 98 | 2 | 1 / 0 | | 0 | 1,157: drafters 187 + 156, developers 96 + 65, Two-Key 239 + 203 + 211 | 2 / 0 | |
 | 101 + 102 | `g1-requirements-spec/s1-lint`, the G1.1 record fix | yes, in session 102 | 1 | 0 / 0 | | 0 | 631: drafter 353, developer 93, Two-Key 185 | 2 / | 1 / 4 |
 | 103 + 104 | `g1-requirements-spec/s6-release` | yes, in session 104 | 2 | 0 / 1 | | 0 | 730: drafter 299, Two-Key 220 + 211 | 2 / | 1 / 0 |
+| 112 + 113 | `small-session-flow/w1-session-size` | yes, in session 113 | 1 | 0 / 0 | | 2 | 295: drafter 129, developer 70, Two-Key 96 | 2 / | 1 / 1 |
 
 ## Notes on the baseline
 
@@ -152,3 +153,14 @@ the same kind at PR review.
   receipts agent's results matched the session's own in both rounds. No
   `/usage` readings were taken. The deferred count is one line added (the
   sweep's advisories) and none closed.
+- Sessions 112 and 113 are one build and one row, split at the test list
+  (231K of context), and the first build on `prove.py` and `receipts.py`.
+  The drafter took 129K tokens and 32 calls against `s6-release`'s 299K
+  and 124. `receipts.py` ran the whole suite once in the background (2017
+  passed, 453 s) with no agent, so Two-Key was its grader alone. Round 1
+  passed with five advisories. The two touches: the user's G1.3
+  signature, a review the plan missed, and part two's go-ahead at the
+  resume. The live receipt's headless session (Sonnet 5.5, 367K of
+  context) stands outside the total. The deferred count is one line added
+  (the round's advisories) and one closed (the Haiku receipts agent's
+  question).

@@ -33,6 +33,7 @@ flowchart LR
 | Folder | Purpose |
 |---|---|
 | [skills/](skills/) | The `sdlc` skill and the interview skill |
+| [hooks/](hooks/) | The plugin's hooks: the session-size message |
 | [taskcontract/](taskcontract/) | The validator and work tree (pip package) |
 | [specs/](specs/) | Task contracts and the vocabulary |
 | [agents/](agents/) | Two-Key personas: developer, verifier |
