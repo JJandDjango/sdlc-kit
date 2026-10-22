@@ -1,0 +1,136 @@
+schema: spec-interview-state/2
+id: small-session-flow
+started: 2026-10-21
+phase: complete
+next: null
+answers:
+  origin: feature
+  origin_note: "User plans each step of the flow to be a node in a workflow; ultimately nodes can be swapped in and out at user discretion. Settled at Non-goals: swapping is a later feature."
+  title: Workflow Nodes
+  seats:
+    po: Johnathan Hyden
+  statement:
+    source: material
+    text: "As the human developer, I want each step of the kit's flow to run as a workflow node with its own agent model, effort and operators, so that every session ends with one reviewed deliverable inside 400K tokens and the next session starts primed on where it stopped."
+    confirmed: true
+  description:
+    source: material
+    confirmed: true
+    text:
+      - "Feature document: Opus at high or xhigh. The user and the PO team review; open questions get answered."
+      - "Design document: Opus at high or xhigh. It produces the plan and task list; the user reviews."
+      - "Execution: Sonnet at high. The orchestrator launches one subagent per task. A failed verifier sends Dev or QA back, up to 3 rounds. It ends in a draft PR for the user."
+      - "Self PR review: agents plus the user's judgment, before final review."
+      - "Operators apply to execution only (Sonnet at high): Developer (code and unit tests, cannot see functional tests), QA (functional tests, cannot see code or unit tests), Dev verifier, QA verifier, Orchestrator (asks the user on a question or repeated failure). The two document stages use seats: the PO seat for the requirements document, the engineer seat for the design document."
+      - "Sessions: one small deliverable, under 200K tokens ideal and 400K hard. Closing saves notes through Cairn; the next session primes from them."
+      - "Workflow file: one committed .md file in mermaid form. The diagram holds the order and hand-offs of the nodes; a table beside it holds each node's agent model, effort, and operator or seat."
+  background:
+    source: material
+    basis: "the session's review of the kit, confirmed by the user"
+    text: "The kit already splits the Dev and QA channels, and the 2026-10-12 process-cost ruling puts the drafter, developer and grader on Opus. Why now: a session that grows past 400K tokens raises cost and hallucination risk, and the user plans to make each step a workflow node so that nodes can later be swapped at the user's discretion."
+    confirmed: true
+  existing_behavior:
+    confirmed: true
+    carried_by: {model_inherit: [SC2.1], workflows_effort: [SC2.1, SC2.2], interview_skill: [SC2.1, SC2.2], session_boundary: [SC3.1]}
+    moved_to_execution_team: ["the 5-loop caps (agents/sdlc-developer.md:72, agents/sdlc-verifier.md:62)", "the Opus 5.5 ruling (NOTES_process-cost_2026-10-12.md:110)"]
+    entries:
+      - text: "Both agents use model: inherit."
+        source: "agents/sdlc-developer.md:5, agents/sdlc-verifier.md:5"
+      - text: "The workflows set effort high and no agent model; the receipts step runs Haiku at low."
+        source: ".claude/workflows/spec-channel-drafter.js:98, unit-developer.js:45, test-retirer.js:73, two-key-unit-verifier.js:139-140"
+      - text: "The interview skill pins no agent model or effort."
+        source: "skills/product-specification-interview/ (no match for either)"
+      - text: "The session boundary is named before 40% of the context, and an agent is stopped past about 400K tokens; CONTRIBUTING.md states neither."
+        source: "docs/conventions/standing-practice.md:65, :282"
+  success_criteria:
+    source: material
+    confirmed: true
+    items:
+      - {id: SC1, text: "The four stages are nodes of one committed .md workflow file in mermaid form, each node carrying its agent model, effort, and operator or seat, and each stage starts from the files the previous node left."}
+      - {id: SC2, text: "Each node runs at the agent model and effort its row in the workflow file's settings table states."}
+      - {id: SC3, text: "A session stays under 400K tokens, with 200K the target."}
+      - {id: SC4, text: "A session closes with Cairn notes, and the next one starts primed from them."}
+  non_goals:
+    - "No new authorizations are added."
+    - "No mechanism substitutes one node for another against a node contract (what a node reads and writes). A later feature adds it, after a second version of a node exists."
+    - "The execution team (orchestrator, QA agent, verifiers, retry cap, draft PR, self-review) is a second document."
+    - "No operators for the two document stages; they use seats."
+  out_of_scope: []
+  checks:
+    - {id: SC1.1, text: "verify the workflow file holds one mermaid flowchart with exactly four nodes, one per stage."}
+    - {id: SC1.2, text: "verify each node in the diagram has one settings row naming its agent model, effort, and operator or seat."}
+    - {id: SC1.3, text: "verify each edge of the diagram carries a label naming the file handed to the next node."}
+    - {id: SC2.1, text: "verify that changing a node's agent model in its row changes the agent model that node runs at, with no other file edited."}
+    - {id: SC2.2, text: "verify changing a node's effort in its row changes the effort that node runs at, with no other file edited."}
+    - {id: SC2.3, text: "verify that a node whose row lacks an agent model or an effort does not start."}
+    - {id: SC3.1, text: "verify CONTRIBUTING.md states the session's one deliverable, 200K-token target and 400K-token limit, and docs/conventions/standing-practice.md still names the 40% boundary."}
+    - {id: SC3.2, text: "verify the session shows a warning when its context passes 200K tokens."}
+    - {id: SC3.3, text: "verify the session is told to close when its context passes 400K tokens."}
+    - {id: SC4.1, text: "verify that at close the notes name the session's last done work and the next deliverable."}
+    - {id: SC4.2, text: "verify that a new session's first /cairn status names that same next deliverable."}
+  error_messages:
+    - {check: SC2.3, text: "Node {id} did not start: its row in the workflow file has no {agent model or effort}."}
+    - {check: SC3.2, text: "This session has passed 200K tokens, the target. Finish the deliverable and close."}
+    - {check: SC3.3, text: "This session has passed 400K tokens, the limit. Save the notes and close now."}
+  gherkin:
+    - {check: SC1.1, name: "The workflow file holds one flowchart of four nodes", given: "the workflow file", when: "its mermaid diagrams are read", then: "it holds one flowchart with exactly four nodes, one per stage", status: accepted}
+    - {check: SC1.2, name: "Each node has one settings row", given: "the diagram's nodes", when: "each is looked up in the settings table", then: "each has one row naming its agent model, effort, and operator or seat", status: changed}
+    - {check: SC1.3, name: "Each edge names the file it hands over", given: "the diagram", when: "its edges are read", then: "each edge carries a label naming the file handed to the next node", status: accepted}
+    - {check: SC2.1, name: "A changed agent model takes effect from the row", given: "a node's row", when: "its agent model is changed and no other file is edited", then: "the node runs at the changed agent model", status: accepted}
+    - {check: SC2.2, name: "A changed effort takes effect from the row", given: "a node's row", when: "its effort is changed and no other file is edited", then: "the node runs at the changed effort", status: accepted}
+    - {check: SC2.3, name: "A node with an incomplete row does not start", given: "a node whose row lacks an agent model or an effort", when: "the node is asked to start", then: "it does not start", status: accepted}
+    - {check: SC3.1, name: "The session size is stated and the 40% boundary stands", given: "CONTRIBUTING.md and docs/conventions/standing-practice.md", when: "they are read", then: "CONTRIBUTING.md states the session's one deliverable, the 200K-token target and the 400K-token limit, and docs/conventions/standing-practice.md still names the 40% boundary", status: changed}
+    - {check: SC3.2, name: "A session warns at 200K tokens", given: "a session", when: "its context passes 200K tokens", then: "it shows a warning", status: accepted}
+    - {check: SC3.3, name: "A session is told to close at 400K tokens", given: "a session", when: "its context passes 400K tokens", then: "it is told to close", status: accepted}
+    - {check: SC4.1, name: "A closing session's notes name what is done and what is next", given: "a session that is closing", when: "its notes are written", then: "they name the last done work and the next deliverable", status: accepted}
+    - {check: SC4.2, name: "The next session's first status names the same deliverable", given: "a new session after that close", when: "/cairn status first runs", then: "it names that same next deliverable", status: accepted}
+  split:
+    document: "Execution team"
+    criteria:
+      - "A task's third failed round escalates to the user."
+      - "Dev cannot see functional tests, and QA cannot see code or unit tests."
+      - "Execution ends in a draft PR."
+  prerequisites:
+    confirmed: true
+    items:
+      - {item: "/cairn status works for session notes.", exists: true}
+      - {item: "Changes to agent definitions pass the enforcement-layer approval channel.", exists: true}
+  decisions:
+    source: material
+    text:
+      - "Execution runs on Sonnet at high (user ruling 2026-10-21)."
+      - "Retry cap is 3 rounds per task; the 5 loops inside one check stay (user ruling 2026-10-21)."
+      - "Cairn carries the session notes (user ruling 2026-10-21)."
+      - "Operators apply to execution only; the document stages use seats (user ruling 2026-10-21)."
+      - "The execution team (the third failed round escalating to the user, the Dev/QA wall, the draft PR) moves to a second document, Execution team (user ruling 2026-10-21)."
+      - "The workflow is one committed .md file in mermaid form: the diagram holds order and hand-offs, and a table beside it, keyed by node id, holds each node's agent model, effort, and operator or seat. That table is the one place for stage settings (user ruling 2026-10-21)."
+      - "Swapping nodes is out of this feature; a later feature adds it, after a second version of a node exists (user ruling 2026-10-21)."
+  terms_mapped: {seat: intake-seat, operator: operator}
+  terms:
+      - {name: Stage, definition: "One of the four steps of the flow: feature document, design document, execution, and self PR review."}
+      - {name: Node, definition: "A stage's place in the workflow file's diagram."}
+      - {name: Workflow file, definition: "The committed .md file whose mermaid diagram holds the nodes' order and hand-offs and whose settings table holds each node's agent model, effort, and operator or seat."}
+      - {name: Agent model, definition: "The language model an agent runs on, such as Opus or Sonnet. It is not the ratified term model, a formal description of a hard core's design."}
+      - {name: Round, definition: "One attempt by an operator, followed by its verifier's grade."}
+open: []
+history:
+  - at: 2026-10-21
+    event: id confirmed
+  - at: 2026-10-21
+    event: origin recorded (new feature)
+  - at: 2026-10-21
+    event: title recorded (Workflow Nodes)
+  - at: 2026-10-21
+    event: PO seat recorded (Johnathan Hyden)
+  - at: 2026-10-21
+    event: materials confirmed (pasted flow text, plan.md, node note), operators-only-in-execution change applied
+  - at: 2026-10-21
+    event: opening complete, document written as r1
+  - at: 2026-10-21
+    event: terms recorded; model renamed agent model and role renamed operator; Seat and Operator map to ratified terms
+  - at: 2026-10-22
+    event: checks revisited (SC3.4 folded into SC3.1, three sentences trimmed); checks before signing run again, 0 OPEN
+  - at: 2026-10-22
+    event: request half signed
+  - at: 2026-10-22
+    event: output complete
