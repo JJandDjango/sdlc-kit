@@ -42,21 +42,29 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
    on ready check 12, the design was signed again at r13 (r14), five terms and
    15 dictionary words were ratified, and the contract validates ready-green;
    the PR waits for the user's review.
-8. Use `prove.py` and `receipts.py` on the next unit's build, `w1-session-size`
+8. [x] Use `prove.py` and `receipts.py` on the next unit's build, `w1-session-size`
    (small-session-flow's first unit), then compare the
    drafter with `s6-release`'s 299K tokens and 124 calls and the receipts with
    the agent's 54K-token start. Turn both pages' 🟡 marks 🟢 on that run, then
    delete the receipts agent's path in `two-key-unit-verifier.js` (item 9
-   kept it until a real round used the script).
+   kept it until a real round used the script). Sessions 112 and 113 on the
+   branch `session-112-w1-session-size`: the drafter took 129K tokens and 32
+   calls; `receipts.py` ran the whole suite once in the background (2017
+   passed, 453 s) with no agent, so Two-Key's grader ran alone at 96K and
+   passed in round 1. Both pages read 🟢, the agent's path is gone, and the
+   PR waits for the user's review.
+9. Build `w4-session-notes`, small-session-flow's second unit in build
+   order: the close rule in `CONTRIBUTING.md` puts the next deliverable
+   first in this list, and the next session's first `/cairn status` names
+   it.
 
 ## Next actions
 
-Opener: Next 6, the first real use of `prove.py` and `receipts.py`. The
+Opener: Next 9, `w4-session-notes`. The
 readings of PRs #116 and #119 that cost something (Open questions, G1)
-still wait for a design text row. The Haiku receipts agent is the user's
-to rule on again (Open questions); its receipts matched the session's own
-in both `s6-release` rounds. `receipts.py` makes the ruling moot once a
-real round passes it a `receiptsResult`. Not folded in `s4-tree`: `g1.py`'s `Ready:` row
+still wait for a design text row. The Haiku receipts agent's question
+closed with Next 8: Two-Key now takes its receipts from `receipts.py`
+alone. Not folded in `s4-tree`: `g1.py`'s `Ready:` row
 reader and `tree.drift`'s; `progress._target` has one caller left.
 
 1. The pilot's config line, in the engine's session; the engine's
@@ -158,6 +166,12 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
 6. Left by session 107's sweep of `s6-release`'s advisories: `README.md`'s
    "What ships today" omits the tree and the vocabulary layer, and its
    "54 specified conditions" row reads 57 in `docs/gates.md`.
+7. `w1-session-size`'s Two-Key advisories (session 113): the hook looks
+   for `.sdlc/workflow.md` in the event's `cwd`, so it goes silent once a
+   session's `cwd` moves to a subfolder; `hooks.json` runs bare `python`,
+   which exits non-zero on a machine without it; `main()` leaves the
+   stdout write unguarded; ADR 0039's "only this repository holds one"
+   waits for w2.
 
 ## Open questions
 
@@ -165,11 +179,6 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
   token (session 96)? The shares of the process's cost rest on the
   API's weights. The `/usage` readings of `s5-start`'s two sessions are
   the first measure (`USAGE-readings.md` in the s5 receipt folder).
-- Keep Haiku 5.5 as the receipts agent (session 98)? It ran under the
-  name `claude-haiku-5-5` at about a tenth of Opus's API weight, and in
-  two rounds it once started a second whole suite and once returned
-  with two commands still running, so its round was taken again on
-  Opus. The default stays Haiku until the user rules.
 - G1, two readings of PR #119 that cost something, for the design's
   next text row: in the tree's second build an exempt feature is
   refused, where ADR 0038 and the design say an exempt feature is never

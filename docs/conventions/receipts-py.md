@@ -16,16 +16,16 @@ and prints the minimum.
 
 | # | Feature | Status |
 | :-: | :-- | :-: |
-| 1 | **Command**: `python receipts.py --repo DIR --receipts FILE --out DIR` prints one compact JSON object in the shape `two-key-unit-verifier.js` already reads (`head`, `branch`, `working_tree_clean_of_tracked_changes`, `commands[]`, `notes`). Exit 0 only when every command exits 0. | 🟡 |
-| 2 | **Repo state**: before any command, reports the short HEAD sha, the branch, and whether a tracked file is modified (untracked files ignored). | 🟡 |
-| 3 | **Receipts file**: a JSON list of argv lists, run one at a time from the repo root with no shell, so no pipe, redirect or chain can enter a receipt. | 🟡 |
-| 4 | **Real exit codes**: each is the process's own, never inferred. A command that never starts reads 254 (the kit's "spawn failed before launch" sentinel). One past its timeout is killed and reads 124, with `timeout` in `key_output`. | 🟡 |
-| 5 | **Key output**: a pytest command gives its summary line plus each failing id with its first assertion line. Any other command gives its last non-empty line. The full log goes to `DIR/logs/<n>.log`, and the JSON names its path. | 🟡 |
-| 6 | **Watchdog**: writes `DIR/alive` at launch and updates `DIR/progress.json` after each command, so the session follows a long run with a Monitor. Stderr goes to `DIR/logs/`. | 🟡 |
-| 7 | **Harness hygiene**: sets `PYTHONUTF8`, decodes with `errors="replace"`, opens no window. `--timeout SECONDS` per command, default 1800 (the whole suite took 607 s). | 🟡 |
-| 8 | **Self-test**: `test_receipts.py` beside it, on a toy git repo: all pass, one non-zero, a timeout, a start failure, a trimmed pytest summary, a modified tracked file seen, an untracked file ignored. | 🟡 |
-| 9 | **Two-Key wiring**: the workflow takes the script's JSON as `receiptsResult` and then skips the receipts agent, so the grader runs alone. Without it the agent runs as today until a real round uses the script. | 🟡 |
-| 10 | **Home**: `.claude/workflows/tools/receipts.py`, untracked like the other tools. The PR carries docs only: the feature page, a `standing-practice.md` line and the backlog row. The self-test run goes in the PR body. | 🟡 |
+| 1 | **Command**: `python receipts.py --repo DIR --receipts FILE --out DIR` prints one compact JSON object in the shape `two-key-unit-verifier.js` already reads (`head`, `branch`, `working_tree_clean_of_tracked_changes`, `commands[]`, `notes`). Exit 0 only when every command exits 0. | 🟢 |
+| 2 | **Repo state**: before any command, reports the short HEAD sha, the branch, and whether a tracked file is modified (untracked files ignored). | 🟢 |
+| 3 | **Receipts file**: a JSON list of argv lists, run one at a time from the repo root with no shell, so no pipe, redirect or chain can enter a receipt. | 🟢 |
+| 4 | **Real exit codes**: each is the process's own, never inferred. A command that never starts reads 254 (the kit's "spawn failed before launch" sentinel). One past its timeout is killed and reads 124, with `timeout` in `key_output`. | 🟢 |
+| 5 | **Key output**: a pytest command gives its summary line plus each failing id with its first assertion line. Any other command gives its last non-empty line. The full log goes to `DIR/logs/<n>.log`, and the JSON names its path. | 🟢 |
+| 6 | **Watchdog**: writes `DIR/alive` at launch and updates `DIR/progress.json` after each command, so the session follows a long run with a Monitor. Stderr goes to `DIR/logs/`. | 🟢 |
+| 7 | **Harness hygiene**: sets `PYTHONUTF8`, decodes with `errors="replace"`, opens no window. `--timeout SECONDS` per command, default 1800 (the whole suite took 607 s). | 🟢 |
+| 8 | **Self-test**: `test_receipts.py` beside it, on a toy git repo: all pass, one non-zero, a timeout, a start failure, a trimmed pytest summary, a modified tracked file seen, an untracked file ignored. | 🟢 |
+| 9 | **Two-Key wiring**: the workflow takes the script's JSON as `receiptsResult` and then skips the receipts agent, so the grader runs alone. Without it the agent runs as today until a real round uses the script. | 🟢 |
+| 10 | **Home**: `.claude/workflows/tools/receipts.py`, untracked like the other tools. The PR carries docs only: the feature page, a `standing-practice.md` line and the backlog row. The self-test run goes in the PR body. | 🟢 |
 
 ## Readings the build chose where the list was silent
 
