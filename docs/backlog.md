@@ -33,7 +33,13 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
    (`docs/conventions/receipts-py.md`), with a 24-test self-test; it lives in
    the untracked `.claude/workflows/tools/`, and `two-key-unit-verifier.js`
    takes its JSON as `receiptsResult`; the PR waits for the user's review.
-6. Use `prove.py` and `receipts.py` on the next unit's build, then compare the
+6. [x] Write small-session-flow's two documents. The requirements are signed at
+   r5 (session 109, branch `session-109-flow-feature-doc`, PR #130), the design
+   at r5 (session 110, branch `session-110-flow-design-doc`, stacked on it).
+7. Run `/sdlc intake docs/features/small-session-flow.md`: intake closes the
+   design node and derives `specs/small-session-flow/contract.yaml`.
+8. Use `prove.py` and `receipts.py` on the next unit's build, `w1-session-size`
+   (small-session-flow's first unit), then compare the
    drafter with `s6-release`'s 299K tokens and 124 calls and the receipts with
    the agent's 54K-token start. Turn both pages' 🟡 marks 🟢 on that run, then
    delete the receipts agent's path in `two-key-unit-verifier.js` (item 9
