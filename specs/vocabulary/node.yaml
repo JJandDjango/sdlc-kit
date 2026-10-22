@@ -1,0 +1,20 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Written at small-session-flow's intake (session 111) from the Terms of
+# docs/features/small-session-flow.md at r4, decided at its Q14
+# (2026-10-21); ratified by the user 2026-10-22 (class-S flip; the PR
+# merge is the outer record, ADR 0025).
+
+term: node
+
+name: Node
+
+definition: >-
+  A stage's place in the workflow file's diagram.
+
+kind: entity
+
+status: ratified
+since: 2026-10-22
+
+sources:
+  - docs/features/small-session-flow.md

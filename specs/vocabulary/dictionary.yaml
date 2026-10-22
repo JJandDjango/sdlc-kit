@@ -55,6 +55,7 @@ words:
   - {word: arc, pos: noun}
   - {word: arch, pos: noun}
   - {word: architecture, pos: noun}
+  - {word: arguments, pos: noun}
   - {word: array, pos: noun}
   - {word: arrives, pos: noun}
   - {word: artifact, pos: noun}
@@ -142,6 +143,7 @@ words:
   - {word: clause, pos: noun}
   - {word: clauses, pos: noun}
   - {word: clean, pos: noun}
+  - {word: close, pos: verb}
   - {word: closed, pos: verb}
   - {word: closes, pos: verb}
   - {word: closing, pos: noun}
@@ -216,6 +218,7 @@ words:
   - {word: defs, pos: noun}
   - {word: deliberated, pos: noun}
   - {word: deliberately, pos: noun}
+  - {word: deliverable, pos: noun}
   - {word: delta, pos: noun}
   - {word: delta-note, pos: noun}
   - {word: deltas, pos: noun}
@@ -268,9 +271,11 @@ words:
   - {word: drops, pos: verb}
   - {word: duplicates, pos: noun}
   - {word: echo, pos: noun}
+  - {word: edge, pos: noun}
   - {word: edit, pos: verb}
   - {word: edited, pos: verb}
   - {word: editorconfig, pos: noun}
+  - {word: effort, pos: noun}
   - {word: emits, pos: verb}
   - {word: emitting, pos: verb}
   - {word: empty, pos: noun}
@@ -351,6 +356,7 @@ words:
   - {word: floating, pos: noun}
   - {word: floor, pos: noun}
   - {word: flow, pos: noun}
+  - {word: flowchart, pos: noun}
   - {word: flows, pos: noun}
   - {word: follow-up, pos: noun}
   - {word: forbid, pos: noun}
@@ -363,6 +369,7 @@ words:
   - {word: forms, pos: noun}
   - {word: forward, pos: noun}
   - {word: foundations-repo, pos: noun}
+  - {word: four-node, pos: modifier}
   - {word: four-vector, pos: noun}
   - {word: frequencies, pos: noun}
   - {word: freshly, pos: noun}
@@ -472,6 +479,7 @@ words:
   - {word: lexicon, pos: noun}
   - {word: license, pos: noun}
   - {word: like, pos: noun}
+  - {word: limit, pos: noun}
   - {word: line, pos: noun}
   - {word: lines, pos: noun}
   - {word: links, pos: noun}
@@ -521,6 +529,7 @@ words:
   - {word: merge-queue, pos: noun}
   - {word: merge-target, pos: noun}
   - {word: merges, pos: verb}
+  - {word: message, pos: noun}
   - {word: migration, pos: noun}
   - {word: migration-notes, pos: noun}
   - {word: missing, pos: noun}
@@ -650,6 +659,7 @@ words:
   - {word: pull-model, pos: noun}
   - {word: push, pos: noun}
   - {word: push-main, pos: noun}
+  - {word: puts, pos: verb}
   - {word: pypi, pos: noun}
   - {word: pyproject, pos: noun}
   - {word: pytest, pos: noun}
@@ -673,6 +683,7 @@ words:
   - {word: re-scoped, pos: noun}
   - {word: read, pos: verb}
   - {word: read-only, pos: noun}
+  - {word: reader, pos: noun}
   - {word: reads, pos: verb}
   - {word: ready, pos: noun}
   - {word: ready-green, pos: noun}
@@ -690,6 +701,7 @@ words:
   - {word: ref, pos: noun}
   - {word: reference, pos: noun}
   - {word: refs, pos: noun}
+  - {word: refuses, pos: verb}
   - {word: regime, pos: noun}
   - {word: region, pos: noun}
   - {word: register, pos: verb}
@@ -837,6 +849,7 @@ words:
   - {word: standalone, pos: noun}
   - {word: standing, pos: noun}
   - {word: stands, pos: noun}
+  - {word: starts, pos: verb}
   - {word: state, pos: verb}
   - {word: stated, pos: verb}
   - {word: states, pos: verb}
@@ -899,6 +912,7 @@ words:
   - {word: theirs, pos: noun}
   - {word: themselves, pos: noun}
   - {word: thirteen, pos: noun}
+  - {word: threshold, pos: noun}
   - {word: thresholds, pos: noun}
   - {word: tiers, pos: noun}
   - {word: time, pos: noun}
@@ -953,6 +967,7 @@ words:
   - {word: venue-map, pos: noun}
   - {word: venues, pos: noun}
   - {word: verb, pos: noun}
+  - {word: verbatim, pos: modifier}
   - {word: verdict-contract, pos: noun}
   - {word: verdicts, pos: noun}
   - {word: verifier, pos: noun}

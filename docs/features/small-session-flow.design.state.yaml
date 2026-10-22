@@ -19,6 +19,7 @@ answers:
     - {path: USAGE.md, note: "the command"}
     - {path: docs/components.md, note: "the command"}
     - {path: tests/, note: "one file each for the reader, node, and the hook"}
+    - {path: decisions/, note: "one ADR records the plugin hook and the node command, drafted with w1"}
     - {path: .claude/workflows/*.js, note: "untracked, this machine only: pinned effort gives way to the row's values as arguments"}
   out_of_scope:
     - "agents/sdlc-developer.md and agents/sdlc-verifier.md keep model: inherit: no enforcement-layer change."
@@ -45,6 +46,10 @@ answers:
       - {when: "context past 400K", text: "This session has passed 400K tokens, the limit. Save the notes and close now.", shown: "once a session, to user and agent"}
       - {when: "one step passes both 200K and 400K", text: "only the 400K message shows"}
       - {when: "no claude on the path", text: "Node {id} did not start: no claude command on the path.", exit: 1}
+      - {when: "reader: a node with no row", text: "Node {id} has no row in the settings table of .sdlc/workflow.md.", exit: 1}
+      - {when: "reader: a row with no node", text: "Row {id} in the settings table of .sdlc/workflow.md has no node in the diagram.", exit: 1}
+      - {when: "reader: an edge with no label", text: "The edge from {a} to {b} in .sdlc/workflow.md names no file.", exit: 1}
+      - {when: "reader: several faults at once", text: "each on its own line, diagram faults first, then table faults, each in file order"}
     contributing_lines:
       - "A session ships one deliverable. Its context targets 200K tokens and stops at 400K."
       - "At close, the next deliverable goes first in `docs/backlog.md`'s Next."
@@ -72,7 +77,7 @@ answers:
       tests: "SC3.1 automated; SC3.2, SC3.3 automated on fixture transcripts, and a manual receipt: the hook's message in a live session past 200K"
       retirements: none
     - id: w2-workflow-file
-      checks: "SC1.1, SC1.2, SC1.3, SC2.3"
+      checks: "SC1.1+SC1.3, SC1.2, SC2.3"
       done_means: "`.sdlc/workflow.md` holds one four-node flowchart, with a named file on each edge and one settings row per node. The reader refuses a node whose row lacks an agent model or an effort, with SC2.3's message."
       tests: "SC1.1, SC1.2, SC1.3, SC2.3 automated, on the real file and on fixtures"
       retirements: none
@@ -167,5 +172,23 @@ history:
     event: "checks before signing run again (r3): 18 findings (CL006 18), answered; 0 OPEN, not stale"
   - at: 2026-10-22
     event: solution half signed
+  - at: 2026-10-22
+    event: output complete
+  - at: 2026-10-22
+    event: "intake parked the pair (r6): ready check 12, the reader's three refusals undrawn"
+  - at: 2026-10-22
+    event: went back to Interfaces; the reader's three refusals drawn (r7)
+  - at: 2026-10-22
+    event: "checks before signing run again (r8): 18 findings (CL006 18), answered; 0 OPEN, not stale"
+  - at: 2026-10-22
+    event: solution half signed (r10 signs r9)
+  - at: 2026-10-22
+    event: output complete
+  - at: 2026-10-22
+    event: "went back to Scope and Units at intake's I4: decisions/ added; w2 pairs SC1.1+SC1.3 (r11)"
+  - at: 2026-10-22
+    event: "checks before signing run again (r12): 18 findings (CL006 18), answered; 0 OPEN, not stale"
+  - at: 2026-10-22
+    event: solution half signed (r14 signs r13)
   - at: 2026-10-22
     event: output complete

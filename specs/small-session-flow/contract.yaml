@@ -1,0 +1,137 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: small-session-flow
+
+title: Workflow Nodes
+
+intent: >-
+  Today no file holds the steps of the kit's flow. Each step runs at the
+  agent model and effort of the session that starts it. No rule holds a
+  session to one deliverable or to a limit. After this task one
+  committed workflow file, `.sdlc/workflow.md`, holds each stage of the
+  flow as a node. A `mermaid` flowchart in the file holds the order of
+  each node, and each edge names the file that goes to the next node. A
+  table in the file holds the agent model, effort, and operator or seat
+  of each node. `python -m taskcontract node <id>` starts a session at
+  the agent model and effort of the row of that node, and rejects a node
+  whose row lacks either. A session ships one deliverable. A hook shows a
+  warning when the context of a session passes 200K, and a notice to
+  close when the context passes 400K. At close the next deliverable goes
+  first in the Next list of `docs/backlog.md`, and the first
+  `/cairn status` of the next session names it.
+
+scope:
+  - .sdlc/workflow.md
+  - taskcontract/workflow.py
+  - taskcontract/__main__.py
+  - hooks/hooks.json
+  - hooks/context_size.py
+  - CONTRIBUTING.md
+  - USAGE.md
+  - docs/components.md
+  - tests/
+  - decisions/
+  - .claude/workflows/*.js
+
+non_goals:
+  - No agent, operator or seat gets a new write surface.
+  - No node can replace another against a node contract, which names what
+    a node reads and writes. A later feature adds that, after another
+    version of a node exists.
+  - Not the `Execution team` doc, which holds the `orchestrator`, the QA
+    agent, each verifier and the cap on each round. The same doc holds the
+    draft PR and the check of that PR by agents and the user.
+  - No operator for either doc stage; a seat holds each.
+
+decomposition:
+  - unit: w1-session-size
+    id: w1-session-size
+    confirmed_by: [user]
+    done_means: >-
+      `CONTRIBUTING.md` states the one deliverable, the 200K target and
+      the 400K limit. The plugin hook shows each message verbatim once a
+      session when the context passes its threshold.
+    acceptance_sketch:
+      - >-
+        verify `CONTRIBUTING.md` states the one deliverable of a session,
+        the 200K target and the 400K limit. Verify
+        `docs/conventions/standing-practice.md` still names the 40% line
+        (SC3.1)
+      - >-
+        verify the session shows a warning when its context passes 200K.
+        Verify the session gets a notice to close when its context passes
+        400K (SC3.2, SC3.3)
+  - unit: w4-session-notes
+    id: w4-session-notes
+    depends_on: [w1-session-size]
+    confirmed_by: [user]
+    done_means: >-
+      The close rule in `CONTRIBUTING.md` puts the next deliverable first
+      in the Next list of `docs/backlog.md`, and the next session's first
+      `/cairn status` names it.
+    acceptance_sketch:
+      - >-
+        verify that at close the notes name the last done work of the
+        session and the next deliverable (SC4.1)
+      - >-
+        verify that the first `/cairn status` of a new session names that
+        same next deliverable (SC4.2)
+  - unit: w2-workflow-file
+    id: w2-workflow-file
+    depends_on: [w4-session-notes]
+    confirmed_by: [user]
+    done_means: >-
+      `.sdlc/workflow.md` holds one four-node flowchart, with a named file
+      on each edge and one settings row per node. The reader refuses a
+      node whose row lacks an agent model or an effort, with SC2.3's
+      message.
+    acceptance_sketch:
+      - >-
+        verify the workflow file holds one `mermaid` flowchart with one
+        node for each stage and no other node. Verify each edge of the
+        flowchart names the file that goes to the next node (SC1.1, SC1.3)
+      - >-
+        verify each node in the flowchart has one settings row that names
+        its agent model, effort, and operator or seat (SC1.2)
+      - >-
+        verify that a node whose row lacks an agent model or an effort
+        starts no session (SC2.3)
+  - unit: w3-node-start
+    id: w3-node-start
+    depends_on: [w2-workflow-file]
+    confirmed_by: [user]
+    done_means: >-
+      `python -m taskcontract node <id>` starts `claude` at the row's
+      agent model and effort, and the workflow scripts take both as
+      arguments.
+    acceptance_sketch:
+      - >-
+        verify a change to the agent model in the row of a node changes
+        the agent model the node runs at. Verify the same for the effort.
+        Verify no other file is edited for either change (SC2.1, SC2.2)
+
+dependencies: []
+
+entities:
+  - feature
+  - feature-document
+  - pair
+  - requirements-document
+  - design-document
+  - intake
+  - task-contract
+  - decomposition-unit
+  - success-criterion
+  - check
+  - progress-record
+  - operator
+  - intake-seat
+  - stage
+  - node
+  - workflow-file
+  - agent-model
+
+provenance:
+  origin: human-request
+  ref: docs/features/small-session-flow.md
