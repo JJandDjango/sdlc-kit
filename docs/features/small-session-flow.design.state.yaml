@@ -1,0 +1,171 @@
+schema: spec-interview-state/2
+id: small-session-flow
+started: 2026-10-22
+phase: complete
+next: null
+requirements_revision: r4
+origin: feature
+title: Workflow Nodes
+seats:
+  engineer: Johnathan Hyden
+answers:
+  scope:
+    - {path: .sdlc/workflow.md, note: "new: the workflow file, diagram and settings table"}
+    - {path: taskcontract/workflow.py, note: "new: read and check the rows"}
+    - {path: taskcontract/__main__.py, note: "python -m taskcontract node <id> starts claude --model M --effort E"}
+    - {path: hooks/hooks.json, note: "new, plugin hooks"}
+    - {path: hooks/context_size.py, note: "new: the 200K and 400K messages"}
+    - {path: CONTRIBUTING.md, note: "session size; close rule for docs/backlog.md's Next"}
+    - {path: USAGE.md, note: "the command"}
+    - {path: docs/components.md, note: "the command"}
+    - {path: tests/, note: "one file each for the reader, node, and the hook"}
+    - {path: .claude/workflows/*.js, note: "untracked, this machine only: pinned effort gives way to the row's values as arguments"}
+  out_of_scope:
+    - "agents/sdlc-developer.md and agents/sdlc-verifier.md keep model: inherit: no enforcement-layer change."
+    - "skills/: neither skill changes; the sdlc scaffold does not lay the workflow file into other repos."
+    - "docs/conventions/standing-practice.md keeps its 40% boundary (SC3.1)."
+    - ".sdlc/config.yaml: the retry cap goes with the Execution team document."
+    - "specs/ (intake writes it) and Cairn's status.py, read as it stands."
+  interfaces:
+    workflow_file: .sdlc/workflow.md
+    edges:
+      - {from: feature, to: design, file: "docs/features/{id}.md"}
+      - {from: design, to: execution, file: "specs/{id}/contract.yaml"}
+      - {from: execution, to: review, file: ".sdlc/progress/{id}.yaml"}
+    rows:
+      - {node: feature, agent_model: opus, effort: xhigh, operator_or_seat: PO seat}
+      - {node: design, agent_model: opus, effort: xhigh, operator_or_seat: engineer seat}
+      - {node: execution, agent_model: sonnet, effort: high, operator_or_seat: "Developer, QA, Dev verifier, QA verifier, Orchestrator"}
+      - {node: review, agent_model: opus, effort: high, operator_or_seat: engineer seat}
+    command: "python -m taskcontract node <id> [--print]: prints 'Node <id>: claude --model M --effort E', then starts it unless --print"
+    messages:
+      - {when: "row lacks a value", text: "Node {id} did not start: its row in the workflow file has no {agent model or effort}.", exit: 1}
+      - {when: "no such node", text: "No node {id} in .sdlc/workflow.md. Nodes: feature, design, execution, review.", exit: 1}
+      - {when: "context past 200K", text: "This session has passed 200K tokens, the target. Finish the deliverable and close.", shown: "once a session, to user and agent"}
+      - {when: "context past 400K", text: "This session has passed 400K tokens, the limit. Save the notes and close now.", shown: "once a session, to user and agent"}
+      - {when: "one step passes both 200K and 400K", text: "only the 400K message shows"}
+      - {when: "no claude on the path", text: "Node {id} did not start: no claude command on the path.", exit: 1}
+    contributing_lines:
+      - "A session ships one deliverable. Its context targets 200K tokens and stops at 400K."
+      - "At close, the next deliverable goes first in `docs/backlog.md`'s Next."
+  sources:
+    - {fact: "A node's agent model and effort", read_from: "the settings table in .sdlc/workflow.md", when_two_disagree: "the table wins over /model and over any value pinned in a workflow script"}
+    - {fact: "The nodes and their order", read_from: "the mermaid diagram in .sdlc/workflow.md", when_two_disagree: "a node with no row, or a row with no node, fails the reader; neither wins"}
+    - {fact: "The session's context size", read_from: "the hook's transcript_path: the newest assistant message's input, cache-write and cache-read tokens, summed", when_two_disagree: "the transcript wins over /context"}
+    - {fact: "The 200K and 400K thresholds", read_from: "constants in hooks/context_size.py", when_two_disagree: "a test fails when CONTRIBUTING.md names other numbers"}
+    - {fact: "The next deliverable", read_from: "the first item of docs/backlog.md's Next (cairn.plan)", when_two_disagree: "the backlog wins over plan.md's deferred list"}
+    - {fact: "The file each edge hands over", read_from: "the edge's label in the mermaid diagram", when_two_disagree: "the label wins; the reader fails an edge with no label"}
+    - {fact: "The session's last done work", read_from: "git log and merged PRs, through /cairn status", when_two_disagree: "git wins over any note written by hand"}
+  constraints:
+    - "The hook never blocks: it exits 0 and only adds a message; on an error it prints nothing."
+    - "The hook reads the transcript backward and stops at the newest assistant message; it finishes in under 500 ms on a 50 MB transcript."
+    - "The hook keeps its once-a-session marker in the temp directory, keyed by session id; it writes nothing in the repo."
+    - "node finds claude through shutil.which and starts it from an argument list, with no shell, in the same terminal; it opens no new window."
+    - "Subprocess output is decoded with encoding=utf-8, errors=replace."
+    - "The reader adds no dependency to taskcontract."
+    - "No file but .sdlc/workflow.md holds a node's agent model or effort; the workflow scripts take both as arguments."
+    - "The hook stays silent in a repo with no .sdlc/workflow.md (added at S8)."
+  units:
+    - id: w1-session-size
+      checks: "SC3.1, SC3.2+SC3.3"
+      done_means: "`CONTRIBUTING.md` states the one deliverable, the 200K target and the 400K limit. The plugin hook shows each message verbatim once a session when the context passes its threshold."
+      tests: "SC3.1 automated; SC3.2, SC3.3 automated on fixture transcripts, and a manual receipt: the hook's message in a live session past 200K"
+      retirements: none
+    - id: w2-workflow-file
+      checks: "SC1.1, SC1.2, SC1.3, SC2.3"
+      done_means: "`.sdlc/workflow.md` holds one four-node flowchart, with a named file on each edge and one settings row per node. The reader refuses a node whose row lacks an agent model or an effort, with SC2.3's message."
+      tests: "SC1.1, SC1.2, SC1.3, SC2.3 automated, on the real file and on fixtures"
+      retirements: none
+    - id: w3-node-start
+      checks: "SC2.1+SC2.2"
+      done_means: "`python -m taskcontract node <id>` starts `claude` at the row's agent model and effort, and the workflow scripts take both as arguments."
+      tests: "SC2.1, SC2.2 automated through --print with only the row changed; a manual receipt: a session started by node design"
+      retirements: "the pinned effort: 'high' in four workflow scripts; no tests pin it"
+    - id: w4-session-notes
+      checks: "SC4.1, SC4.2"
+      done_means: "The close rule in `CONTRIBUTING.md` puts the next deliverable first in the Next list of `docs/backlog.md`, and the next session's first `/cairn status` names it."
+      tests: "SC4.1 a manual receipt at a session's close; SC4.2 a manual receipt at the next session's start"
+      retirements: none
+  order: "w1-session-size, w4-session-notes, w2-workflow-file, w3-node-start: one unit a session. The two session rules come first because they govern every later build session; w4's SC4.2 receipt lands at the start of w2's session. w3 comes last because node reads w2's reader."
+  risks_and_cost:
+    risks:
+      - "The hook reads Claude Code's transcript format, no public contract; fixture tests pin the fields, w1's live receipt checks it once."
+      - "Plugin hooks run in every repo with the plugin enabled; constraint 8 keeps the hook silent without .sdlc/workflow.md."
+      - "The aliases opus and sonnet follow new releases; a row may name a full model id."
+      - "w3's workflow-script change is untracked, unseen by the PR and Two-Key; w3's manual receipt covers it."
+      - "On Windows, Python starting an interactive claude can mishandle the terminal or Ctrl+C; w3's receipt tests it, --print is the fallback."
+      - "SC4.2 rests on Cairn's status.py, outside the kit; the receipt at each session's start catches a break."
+    cost: "Agent tokens, from docs/session-metrics.md: one-round units took 546K to 781K, so w1, w2, w3 about 1.65M to 2.34M; w4 Two-Key only, about 200K to 300K; total about 1.9M to 2.6M; each failed round adds 200K to 325K."
+  cases:
+    - {case: "An ambiguity in the requirements", answer: yes, asked: "Johnathan Hyden, PO and engineer seat, at S3", decided: "The review row runs Opus at high; high or xhigh becomes xhigh; the execution-to-review edge names .sdlc/progress/{id}.yaml."}
+    - {case: "More than one solution", answer: yes, asked: "Johnathan Hyden, at S1 and S3", decided: "The file lives in .sdlc/; settings reach a node through claude --model --effort; intake closes the design node."}
+    - {case: "A solution unconventional to the codebase", answer: yes, asked: "Johnathan Hyden, at S1 and S8", decided: "The kit's first plugin hooks, and a command that starts an interactive session."}
+    - {case: "A change to a public contract", answer: yes, asked: "Johnathan Hyden, at S3", decided: "A new taskcontract command, node, and a new file format, .sdlc/workflow.md; no existing contract changes."}
+  links_out:
+    - "docs/features/small-session-flow.md: the requirements, r4, signed at r5; PR #130 carries it."
+    - "docs/conventions/standing-practice.md:65, :282: the 40% boundary and the ~400K agent stop."
+    - "NOTES_process-cost_2026-10-12.md: the process-cost ruling this flow's agent models revisit."
+    - "docs/session-metrics.md: the basis of the cost."
+    - "docs/operators.md: the enforcement-layer approval channel (class E), which this design does not use."
+    - "The Execution team document, not yet written: the retry cap, QA, the verifiers and the draft PR."
+  notes:
+    - "Claude drafted each section from requirements r4 and a read of the files it names; the engineer seat confirmed each. There was no other material."
+    - "The hook reaches a session only through the installed plugin; this machine's sits at 8635064, so w1's live receipt runs after a plugin update, or with claude --plugin-dir ."
+    - "The requirements' two open questions (whether the QA verifier runs through prove.py, and whether an ADR records the Sonnet ruling) stay with the Execution team document."
+  decisions:
+    - {q: "Where does the workflow file live?", a: ".sdlc/workflow.md, in this repo; no other repo gets it."}
+    - {q: "How do the settings reach a node?", a: "At session start, through claude --model M --effort E; the agents keep model: inherit."}
+    - {q: "Where does intake run?", a: "It closes the design node, so execution starts from specs/{id}/contract.yaml."}
+    - {q: "What do the review row and the document rows run at?", a: "Review: Opus at high; both document rows: xhigh."}
+    - {q: "How do the token messages ship?", a: "As a plugin hook, silent in a repo with no workflow file."}
+    - {q: "What happens to the untracked workflow scripts?", a: "Their change stays local until the workflows are tracked."}
+    - {q: "In what order are the units built?", a: "w1, w4, w2, w3."}
+    - {q: "Does an ADR record the plugin hook and the node command?", a: "Yes: one ADR, drafted with w1 for the user's approval."}
+  terms:
+      - {name: Stage, definition: "One of the four steps of the flow: feature document, design document, execution, and self PR review."}
+      - {name: Node, definition: "A stage's place in the workflow file's diagram."}
+      - {name: Workflow file, definition: "The committed .md file whose mermaid diagram holds the nodes' order and hand-offs and whose settings table holds each node's agent model, effort, and operator or seat."}
+      - {name: Agent model, definition: "The language model an agent runs on, such as Opus or Sonnet. It is not the ratified term model, a formal description of a hard core's design."}
+      - {name: Round, definition: "One attempt by an operator, followed by its verifier's grade."}
+open: []
+history:
+  - at: 2026-10-22
+    event: id confirmed; requirements r4 read (signed at r5)
+  - at: 2026-10-22
+    event: engineer seat recorded (Johnathan Hyden)
+  - at: 2026-10-22
+    event: materials none; opening complete, document written as r1
+  - at: 2026-10-22
+    event: S1 scope confirmed (10 paths; workflows kept, local only)
+  - at: 2026-10-22
+    event: S2 out of scope confirmed (no PO refusals; 5 places untouched)
+  - at: 2026-10-22
+    event: S3 interfaces confirmed (diagram, four rows, node command, four messages)
+  - at: 2026-10-22
+    event: S4 sources confirmed (five facts)
+  - at: 2026-10-22
+    event: S5 constraints confirmed (seven)
+  - at: 2026-10-22
+    event: S6 units confirmed (four units, 11 checks, each once)
+  - at: 2026-10-22
+    event: S7 order confirmed (w1, w4, w2, w3)
+  - at: 2026-10-22
+    event: S8 risks and cost confirmed (six risks; constraint 8 added)
+  - at: 2026-10-22
+    event: S9 consult cases answered (four yes)
+  - at: 2026-10-22
+    event: S10 decisions confirmed (eight, 0 OPEN; the ADR decided yes)
+  - at: 2026-10-22
+    event: S11 links out confirmed (six)
+  - at: 2026-10-22
+    event: S12 notes confirmed (three); solution half written
+  - at: 2026-10-22
+    event: "checks before signing run (r2): 21 findings, 6 OPEN, scope check skipped, not stale"
+  - at: 2026-10-22
+    event: went back to Sources, Interfaces and Units; six OPEN closed
+  - at: 2026-10-22
+    event: "checks before signing run again (r3): 18 findings (CL006 18), answered; 0 OPEN, not stale"
+  - at: 2026-10-22
+    event: solution half signed
+  - at: 2026-10-22
+    event: output complete
