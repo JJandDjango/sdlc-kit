@@ -5,6 +5,16 @@
 | 2026-10-22 | Johnathan Hyden | r3: Measured: the checks before signing, on the solution half: 18 findings (CL006 18); Scope against the release unit's paths: no release unit, check skipped; ready checks 11 to 15: 0 OPEN |
 | 2026-10-22 | Johnathan Hyden | r4: The solution half finished: 12 sections written, 0 OPEN |
 | 2026-10-22 | Johnathan Hyden | r5: Signed: solution half. The engineer seat signs r4 |
+| 2026-10-22 | intake | r6: Parked: Ready check 12: the reader's refusals of a node with no row, a row with no node, and an edge with no label have no drawn message. |
+| 2026-10-22 | Johnathan Hyden | r7: Interfaces: the reader's three refusals drawn (a node with no row, a row with no node, an edge with no label) |
+| 2026-10-22 | Johnathan Hyden | r8: Measured: the checks before signing, on the solution half: 18 findings (CL006 18); Scope against the release unit's paths: no release unit, check skipped; ready checks 11 to 15: 0 OPEN |
+| 2026-10-22 | Johnathan Hyden | r9: The solution half finished: 12 sections written, 0 OPEN |
+| 2026-10-22 | Johnathan Hyden | r10: Signed: solution half. The engineer seat signs r9 |
+| 2026-10-22 | Johnathan Hyden | r11: Scope: `decisions/` added for the ADR. Units: w2 pairs SC1.1+SC1.3 in one sketch entry |
+| 2026-10-22 | Johnathan Hyden | r12: Measured: the checks before signing, on the solution half: 18 findings (CL006 18); Scope against the release unit's paths: no release unit, check skipped; ready checks 11 to 15: 0 OPEN |
+| 2026-10-22 | Johnathan Hyden | r13: The solution half finished: 12 sections written, 0 OPEN |
+| 2026-10-22 | Johnathan Hyden | r14: Signed: solution half. The engineer seat signs r13 |
+| 2026-10-22 | intake | r15: Ready: contract `small-session-flow` validates ready-green, derived from r13, against requirements r4; the engineer seat (Johnathan Hyden) signed the solution half at r13 (r14) |
 
 # small-session-flow - Workflow Nodes
 
@@ -21,6 +31,7 @@
 - `hooks/hooks.json` and `hooks/context_size.py` (new, plugin hooks): the 200K and 400K messages.
 - `CONTRIBUTING.md`: the session size and the close rule for `docs/backlog.md`'s Next; `USAGE.md` and `docs/components.md` describe the command.
 - `tests/`: one test file each for the reader, `node`, and the hook.
+- `decisions/`: one ADR records the plugin hook and the `node` command, drafted with w1.
 - `.claude/workflows/*.js` (untracked, this machine only): the pinned `effort: 'high'` gives way to the row's values, passed in as arguments.
 
 ### Out of scope
@@ -68,6 +79,13 @@ The hook shows each message once a session, to the user and to the agent:
 - One step that passes both 200K and 400K: only the 400K message shows.
 - `node` with no `claude` on the path: `Node {id} did not start: no claude command on the path.` Exit 1.
 
+The reader refuses a file that breaks the diagram or the table. Each refusal exits 1, and `node` starts nothing:
+
+- A node with no row: `Node {id} has no row in the settings table of .sdlc/workflow.md.`
+- A row with no node: `Row {id} in the settings table of .sdlc/workflow.md has no node in the diagram.`
+- An edge with no label: `The edge from {a} to {b} in .sdlc/workflow.md names no file.`
+- Several faults at once: each on its own line, diagram faults first, then table faults, each in file order.
+
 The lines `CONTRIBUTING.md` gains:
 
 ```
@@ -103,7 +121,7 @@ At close, the next deliverable goes first in `docs/backlog.md`'s Next.
 | Unit | Checks | Done means | Tests by check id and kind | Retirements |
 | :-- | :-- | :-- | :-- | :-- |
 | w1-session-size | SC3.1, SC3.2+SC3.3 | `CONTRIBUTING.md` states the one deliverable, the 200K target and the 400K limit. The plugin hook shows each message verbatim once a session when the context passes its threshold. | SC3.1 automated; SC3.2, SC3.3 automated on fixture transcripts, and a manual receipt: the hook's message in a live session past 200K | none |
-| w2-workflow-file | SC1.1, SC1.2, SC1.3, SC2.3 | `.sdlc/workflow.md` holds one four-node flowchart, with a named file on each edge and one settings row per node. The reader refuses a node whose row lacks an agent model or an effort, with SC2.3's message. | SC1.1, SC1.2, SC1.3, SC2.3 automated, on the real file and on fixtures | none |
+| w2-workflow-file | SC1.1+SC1.3, SC1.2, SC2.3 | `.sdlc/workflow.md` holds one four-node flowchart, with a named file on each edge and one settings row per node. The reader refuses a node whose row lacks an agent model or an effort, with SC2.3's message. | SC1.1, SC1.2, SC1.3, SC2.3 automated, on the real file and on fixtures | none |
 | w3-node-start | SC2.1+SC2.2 | `python -m taskcontract node <id>` starts `claude` at the row's agent model and effort, and the workflow scripts take both as arguments. | SC2.1, SC2.2 automated through `--print` with only the row changed; a manual receipt: a session started by `node design` | the pinned `effort: 'high'` in four workflow scripts; no tests pin it |
 | w4-session-notes | SC4.1, SC4.2 | The close rule in `CONTRIBUTING.md` puts the next deliverable first in the Next list of `docs/backlog.md`, and the next session's first `/cairn status` names it. | SC4.1 a manual receipt at a session's close; SC4.2 a manual receipt at the next session's start | none |
 
