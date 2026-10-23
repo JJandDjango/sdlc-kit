@@ -54,6 +54,7 @@ the same kind at PR review.
 | 112 + 113 | `small-session-flow/w1-session-size` | yes, in session 113 | 1 | 0 / 0 | | 2 | 295: drafter 129, developer 70, Two-Key 96 | 2 / | 1 / 1 |
 | 114 | `small-session-flow/w4-session-notes` | yes | 1 | 0 / 0 | | 0 | 93: Two-Key 93 | 2 / | 0 / 0 |
 | 115 | `small-session-flow/w2-workflow-file` | yes | 1 | 0 / 0 | | 0 | 270: drafter 106, developer 70, Two-Key 94 | 2 / | 1 / 0 |
+| 116 | `small-session-flow/w3-node-start` | yes | 1 | 0 / 0 | | 0 | 297: drafter 126, developer 70, Two-Key 101 | 2 / | 2 / 1 |
 
 ## Notes on the baseline
 
@@ -181,4 +182,16 @@ the same kind at PR review.
   and `receipts.py` ran the whole suite once (2050 passed, 429 s). Round 1
   passed with four advisories: one goes to Next 11 (w3 rules the line for
   a missing workflow file), the other three are the one deferred line
+  added.
+- Session 116 built the feature's last unit in one session, with no
+  split at the test list. The drafter took 126K tokens and 29 calls, the
+  developer 70K and 14. Two-Key's grader was the first agent to run at a
+  row's values (the execution row's `sonnet` and `high`, passed into the
+  changed script): 101K tokens, 27 calls, 75 s. The whole suite ran
+  three times at about 465 s each: on the prototype, then `receipts.py`
+  before the unit commit (a sequencing slip, run again at the commit).
+  Round 1 passed with three advisories: `USAGE.md` and
+  `docs/components.md` never describe `node` (Next 12, with an unguarded
+  `Popen` for the design's next text row), and the Ctrl+C note follows
+  the plan's reading. Next 11 closed; Next 12 and 13 are the two lines
   added.

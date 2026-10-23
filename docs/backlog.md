@@ -71,16 +71,31 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     the drafter took 106K tokens, the developer 70K, Two-Key's grader 94K;
     PASS in round 1, and the PR waits for the user's review. The SC4.2
     receipt is `sc4_2-second-status.txt` in w4's folder.
-11. Build `w3-node-start`, small-session-flow's fourth and last unit:
+11. [x] Build `w3-node-start`, small-session-flow's fourth and last unit:
     `python -m taskcontract node <id>` starts `claude` at the row's agent
     model and effort, read through w2's `settings()`, and the workflow
-    scripts take both as arguments. w2's reader raises `FileNotFoundError`
-    for a missing `.sdlc/workflow.md`, and the design draws no line for
-    it: w3's `node` needs one before it can exit 1 there.
+    scripts take both as arguments. Session 116 on the branch
+    `session-116-w3-node-start`, in one session: tests red at `b4f1436`,
+    unit at `95308e7`; the user ruled the missing-file line at the start
+    (`Node {id} did not start: no workflow file at .sdlc/workflow.md.`).
+    The four workflow scripts (untracked) now take `model` and `effort`,
+    and the session passes the execution row's (`sonnet`, `high`); the
+    receipts are in `RECEIPT_small-session-flow-w3_2026-10-23/`. Two-Key
+    PASS in round 1, and the PR waits for the user's review.
+12. Describe `node` in `USAGE.md` and `docs/components.md`: the design's
+    Scope names both, and no unit's done means carried them (w3's Two-Key
+    advisory). Two gaps go with it to the design's next text row: the
+    missing-file line, and `node` ending in a traceback when the path
+    `shutil.which` found cannot be run (an `OSError` from `Popen`).
+13. Make the whole suite faster: it runs 2085 tests one at a time in
+    about 460 s, most of Two-Key's time and every build's. Measure with
+    `--durations=25` first, then try `pytest-xdist` (not installed) in a
+    scratch worktree, then adopt it in `receipts.py` if the suite stays
+    green (the user's question, session 116).
 
 ## Next actions
 
-Opener: Next 11, `w3-node-start`. The
+Opener: Next 12, `node` in USAGE. The
 readings of PRs #116 and #119 that cost something (Open questions, G1)
 still wait for a design text row. The Haiku receipts agent's question
 closed with Next 8: Two-Key now takes its receipts from `receipts.py`
