@@ -45,7 +45,7 @@ import pytest
 import yaml
 
 import taskcontract
-from conftest import write_seat_roster
+from conftest import usage_text, write_seat_roster
 from taskcontract import checker, graph, vocabulary
 from taskcontract.__main__ import main
 
@@ -736,7 +736,7 @@ def test_sc2_3_the_g0_verdict_agrees_with_its_conditions(tmp_path, capsys):
 # --- the USAGE section -------------------------------------------------------------
 
 def _section_nine():
-    text = USAGE.read_text(encoding="utf-8")
+    text = usage_text(USAGE)
     start = text.index("\n## 9. ")
     return text[start:text.index("\n## 10. ", start)]
 

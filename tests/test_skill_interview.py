@@ -15,6 +15,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from conftest import usage_text
+
 ROOT = Path(__file__).parent.parent
 SKILL_DIR = ROOT / "skills" / "product-specification-interview"
 FLOWS = SKILL_DIR / "flows"
@@ -121,7 +123,7 @@ def test_bash_call_commands_are_chain_free():
 
 
 def test_usage_and_changelog_name_the_skill():
-    usage = _text(ROOT / "USAGE.md")
+    usage = usage_text(ROOT / "USAGE.md")
     assert "/sdlc:product-specification-interview" in usage
     assert usage.index("/sdlc:product-specification-interview") < usage.index(
         "### `/sdlc intake`")

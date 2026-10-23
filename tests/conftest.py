@@ -8,6 +8,9 @@ seeds is the roster every other test seeds.
 Also the pane suites' two line helpers (tests/test_tree_pane.py and
 tests/test_pane_view.py) and the item-line pattern they read: one copy, so
 the cut and the short id both suites expect are the same.
+
+Also the USAGE reader: `USAGE.md` is an index of pages under docs/usage/,
+and a suite that reads USAGE reads the index and its pages as one text.
 """
 
 from __future__ import annotations
@@ -44,6 +47,17 @@ def write_seat_roster(root, status="ratified", values=("user",)):
         "since": "2026-08-26",
     }, sort_keys=False), encoding="utf-8")
     return path
+
+
+def usage_text(index):
+    """USAGE as one text: the index at `index`, then each page it links under
+    docs/usage/, in the index's order. Each page is a run of the old sections
+    cut whole, so a section or a subsection reads as it did on one page."""
+    index = Path(index)
+    text = index.read_text(encoding="utf-8")
+    pages = dict.fromkeys(re.findall(r"\]\((docs/usage/[\w-]+\.md)\)", text))
+    return "\n".join([text, *((index.parent / page).read_text(encoding="utf-8")
+                              for page in pages)])
 
 
 def cut_lines(lines, width):

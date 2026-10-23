@@ -35,7 +35,7 @@ import pytest
 import yaml
 from jsonschema import Draft202012Validator
 
-from conftest import write_seat_roster
+from conftest import usage_text, write_seat_roster
 
 _HERE = Path(__file__).resolve().parent.parent
 # Beside a tree that holds the skill, read that tree; a copy run from any
@@ -126,11 +126,11 @@ G1_VENUE = "`/sdlc g1`: the G1 venue"
 G1_GATE = "G1 as an active gate"
 VENUE_BANNER = (
     f"{GREEN} **Shipped** (kit 0.20.0, contract `specs/g1-requirements-spec/`, "
-    f"[ADR 0038]({ADR_0038})). A kit before 0.20.0 has no G1: it has no `g1-check`, no "
+    f"[ADR 0038](../../{ADR_0038})). A kit before 0.20.0 has no G1: it has no `g1-check`, no "
     "`g1-record` and no `/sdlc g1`.")
 GATE_BANNER = (
     f"{GREEN} **Shipped** (kit 0.20.0, contract `specs/g1-requirements-spec/`, "
-    f"[ADR 0038]({ADR_0038})). A repository that does not list `G1` under `active_gates` "
+    f"[ADR 0038](../../{ADR_0038})). A repository that does not list `G1` under `active_gates` "
     "reads the subsections above as they read.")
 VENUE_LEADS = 22   # the paragraphs of the venue subsection that opened on a red mark
 GATE_LEADS = 12    # the same for the active-gate subsection
@@ -257,7 +257,7 @@ def _cut(text: str, opening: str, stop: str) -> str:
 
 def _section(number: int) -> str:
     """One numbered section of USAGE, up to the next numbered section."""
-    return _cut(_read(USAGE), f"## {number}. ", r"^## \d+\. ")
+    return _cut(usage_text(USAGE), f"## {number}. ", r"^## \d+\. ")
 
 
 def _subsection(section: str, name: str) -> str:
@@ -537,7 +537,7 @@ def test_done_means_usage_section_9_shows_g1_as_an_active_gate_green_under_the_s
 
 
 def test_done_means_usage_keeps_a_red_mark_on_its_two_legend_lines_and_nowhere_else():
-    marked = [line for line in _read(USAGE).splitlines() if RED in line]
+    marked = [line for line in usage_text(USAGE).splitlines() if RED in line]
     assert len(marked) == 2, marked
     # The page's own legend, and the line of the file listing that explains the marks.
     assert f"Sections marked {RED} are ratified but not" in marked[0]
@@ -608,7 +608,7 @@ def test_done_means_usages_drawing_of_a_feature_before_intake_is_what_the_tree_p
 def test_done_means_usage_line_that_says_intake_writes_the_record_reads_kit_0_20_0():
     interview = _subsection(_section(4), "`/sdlc:product-specification-interview`")
     assert RECORD_SENTENCE in _paragraph(interview, "The Record reads")
-    assert "kit 0.19.0 has no step that writes the Record" not in _flat(_read(USAGE))
+    assert "kit 0.19.0 has no step that writes the Record" not in _flat(usage_text(USAGE))
 
 
 def test_done_means_usage_says_the_kit_computes_no_condition_from_g2_on_and_reads_g1s_from_its_records():
