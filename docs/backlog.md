@@ -82,11 +82,16 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     and the session passes the execution row's (`sonnet`, `high`); the
     receipts are in `RECEIPT_small-session-flow-w3_2026-10-23/`. Two-Key
     PASS in round 1, and the PR waits for the user's review.
-12. Describe `node` in `USAGE.md` and `docs/components.md`: the design's
+12. [x] Describe `node` in `USAGE.md` and `docs/components.md`: the design's
     Scope names both, and no unit's done means carried them (w3's Two-Key
     advisory). Two gaps go with it to the design's next text row: the
     missing-file line, and `node` ending in a traceback when the path
     `shutil.which` found cannot be run (an `OSError` from `Popen`).
+    Session 117 on the branch `session-117-node-usage`: a subsection at
+    the end of USAGE section 4 and a "workflow nodes" row, each quoted
+    line checked against `node`'s live output; no Two-Key round, since no
+    code changed; both gaps stand in Open questions, and the PR waits for
+    the user's review.
 13. Make the whole suite faster: it runs 2085 tests one at a time in
     about 460 s, most of Two-Key's time and every build's. Measure with
     `--durations=25` first, then try `pytest-xdist` (not installed) in a
@@ -95,7 +100,7 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
 
 ## Next actions
 
-Opener: Next 12, `node` in USAGE. The
+Opener: Next 13, the faster suite. The
 readings of PRs #116 and #119 that cost something (Open questions, G1)
 still wait for a design text row. The Haiku receipts agent's question
 closed with Next 8: Two-Key now takes its receipts from `receipts.py`
@@ -216,6 +221,13 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
 
 ## Open questions
 
+- small-session-flow, two gaps for the design's next text row (w3's
+  Two-Key advisories, recorded in session 117). The missing-file line,
+  `Node {id} did not start: no workflow file at .sdlc/workflow.md.`,
+  which the user ruled in session 116 and `USAGE.md` states, stands in
+  no design text. And `node` ends on a Python traceback when the
+  `claude` that `shutil.which` found cannot be run (`Popen` raises
+  `OSError`); the design draws no line for it.
 - How does the user's subscription weigh a cached read against a fresh
   token (session 96)? The shares of the process's cost rest on the
   API's weights. The `/usage` readings of `s5-start`'s two sessions are
