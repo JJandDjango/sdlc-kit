@@ -60,16 +60,27 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
    at `354ae76`, this item's tick as the rule's first close, and both
    receipts in `RECEIPT_small-session-flow-w4_2026-10-22/`; Two-Key PASS
    in round 1, and the PR waits for the user's review.
-10. Build `w2-workflow-file`, small-session-flow's third unit in build
+10. [x] Build `w2-workflow-file`, small-session-flow's third unit in build
     order: `.sdlc/workflow.md` holds one four-node flowchart, with a named
     file on each edge and one settings row per node, and the reader
     refuses a node whose row lacks an agent model or an effort. The
     session's first `/cairn status` is w4's second SC4.2 receipt: save it
-    to w4's receipt folder.
+    to w4's receipt folder. Session 115 on the branch
+    `session-115-w2-workflow-file`, in one session: tests red at
+    `292e2ce`, unit at `b2c68df` (the file and `taskcontract/workflow.py`);
+    the drafter took 106K tokens, the developer 70K, Two-Key's grader 94K;
+    PASS in round 1, and the PR waits for the user's review. The SC4.2
+    receipt is `sc4_2-second-status.txt` in w4's folder.
+11. Build `w3-node-start`, small-session-flow's fourth and last unit:
+    `python -m taskcontract node <id>` starts `claude` at the row's agent
+    model and effort, read through w2's `settings()`, and the workflow
+    scripts take both as arguments. w2's reader raises `FileNotFoundError`
+    for a missing `.sdlc/workflow.md`, and the design draws no line for
+    it: w3's `node` needs one before it can exit 1 there.
 
 ## Next actions
 
-Opener: Next 10, `w2-workflow-file`. The
+Opener: Next 11, `w3-node-start`. The
 readings of PRs #116 and #119 that cost something (Open questions, G1)
 still wait for a design text row. The Haiku receipts agent's question
 closed with Next 8: Two-Key now takes its receipts from `receipts.py`
@@ -180,7 +191,13 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
    session's `cwd` moves to a subfolder; `hooks.json` runs bare `python`,
    which exits non-zero on a machine without it; `main()` leaves the
    stdout write unguarded; ADR 0039's "only this repository holds one"
-   waits for w2.
+   holds since w2 (session 115).
+
+8. `w2-workflow-file`'s Two-Key advisories (session 115): the reader
+   skips a diagram line it cannot parse (`ghost(Ghost)`, `a --- b`), so a
+   node in another shape escapes every check; a second row for one node
+   is ignored with no refusal; the table reader takes the line after the
+   header as its separator, whatever it holds. None touches the real file.
 
 ## Open questions
 
