@@ -53,6 +53,7 @@ the same kind at PR review.
 | 103 + 104 | `g1-requirements-spec/s6-release` | yes, in session 104 | 2 | 0 / 1 | | 0 | 730: drafter 299, Two-Key 220 + 211 | 2 / | 1 / 0 |
 | 112 + 113 | `small-session-flow/w1-session-size` | yes, in session 113 | 1 | 0 / 0 | | 2 | 295: drafter 129, developer 70, Two-Key 96 | 2 / | 1 / 1 |
 | 114 | `small-session-flow/w4-session-notes` | yes | 1 | 0 / 0 | | 0 | 93: Two-Key 93 | 2 / | 0 / 0 |
+| 115 | `small-session-flow/w2-workflow-file` | yes | 1 | 0 / 0 | | 0 | 270: drafter 106, developer 70, Two-Key 94 | 2 / | 1 / 0 |
 
 ## Notes on the baseline
 
@@ -174,3 +175,10 @@ the same kind at PR review.
   session start, is backlog Next 10's opener. The SC4.2 headless session
   (Haiku 5.5, 102K tokens over two turns) stands outside the total, as
   w1's live receipt did.
+- Session 115 built a unit with code in one session, from one command of
+  the user's, with no split at the test list. The drafter took 106K
+  tokens and 19 calls (w1's 129K and 32), the developer 70K and 12 calls,
+  and `receipts.py` ran the whole suite once (2050 passed, 429 s). Round 1
+  passed with four advisories: one goes to Next 11 (w3 rules the line for
+  a missing workflow file), the other three are the one deferred line
+  added.
