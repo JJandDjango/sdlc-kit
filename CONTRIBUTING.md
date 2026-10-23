@@ -13,6 +13,7 @@ Install `textual>=8.2,<9`, `pytest>=8`, `jsonschema>=4.18` and `PyYAML>=6`, then
 - A handoff mid-work stays in that work's own folder, never a top-level file.
 - Two-Key: a unit is done only when the verifier, re-running the tests, grades PASS.
 - A session ships one deliverable. Its context targets 200K tokens and stops at 400K.
+- At close, the next deliverable goes first in `docs/backlog.md`'s Next.
 
 ## Delegation
 - The signed feature and design documents are the gate: no approval before the final PR review. Claude commits units and records approvals `--by claude`.
