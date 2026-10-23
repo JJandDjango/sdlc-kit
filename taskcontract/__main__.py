@@ -18,6 +18,7 @@ from .suppression_audit import main_audit
 from .tree_view import main_tree
 from .vocabulary import (VOCAB_DIR, list_terms, load_glossary_schema,
                          registry_size, scaffold_term, validate_vocab_root)
+from .workflow import main_node
 
 
 def main(argv=None) -> int:
@@ -91,6 +92,16 @@ def main(argv=None) -> int:
                            "running the config's tree.notify once each time the current "
                            "task arrives at an approval, never again on a redraw at the "
                            "same task; Ctrl-C exits")
+    node = sub.add_parser(
+        "node",
+        help="start one node's claude session with the agent model and effort "
+             "its row in .sdlc/workflow.md names")
+    node.add_argument("node_id", metavar="id",
+                      help="the node's id, as the workflow file's diagram names it")
+    node.add_argument("--print", action="store_true",
+                      help="print the line and start nothing")
+    node.add_argument("--root", type=Path, default=Path("."),
+                      help="repo root that holds .sdlc/ (default: cwd)")
     progress = sub.add_parser(
         "progress",
         help="record the work's progress under .sdlc/progress/ (ADR 0031)")
@@ -189,6 +200,9 @@ def main(argv=None) -> int:
 
     if args.command == "tree":
         return main_tree(args)
+
+    if args.command == "node":
+        return main_node(args)
 
     if args.command == "progress":
         return main_progress(args)
