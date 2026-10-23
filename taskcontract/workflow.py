@@ -10,6 +10,9 @@ whichever node it asks for. A row
 that lacks a value is not structural: it stops only `settings` for that
 node, and reads elsewhere as "".
 
+`main_node` is the `node` command: it starts one node's claude session with
+the model and effort its row names.
+
 Standard library only (the design's constraint 6): the file is markdown,
 parsed by line, never through a markdown or mermaid library.
 """
@@ -17,6 +20,9 @@ parsed by line, never through a markdown or mermaid library.
 from __future__ import annotations
 
 import re
+import shutil
+import subprocess
+import sys
 from pathlib import Path
 from typing import NamedTuple
 
@@ -236,3 +242,44 @@ def settings(root: Path, node_id: str) -> Settings:
                              f"Nodes: {', '.join(workflow.nodes)}."])
     row = workflow.rows[node_id]
     return Settings(row.agent_model, row.effort)
+
+
+def main_node(args) -> int:
+    """`taskcontract node <id>`: print a node's claude line, then start it.
+
+    The session starts in this terminal from an argument list, with no shell
+    and no new window (the design's constraint 4). `--print` stops after the
+    line and never looks for `claude`. Every refusal goes to stderr, exit 1.
+    """
+    node_id = args.node_id
+    claude = None
+    if not args.print:
+        claude = shutil.which("claude")
+        if claude is None:
+            print(f"Node {node_id} did not start: no claude command on the path.",
+                  file=sys.stderr)
+            return 1
+    if not (Path(args.root) / WORKFLOW_FILE).is_file():
+        print(f"Node {node_id} did not start: no workflow file at {WORKFLOW_FILE}.",
+              file=sys.stderr)
+        return 1
+    try:
+        found = settings(args.root, node_id)
+    except WorkflowError as err:
+        for line in err.lines:
+            print(line, file=sys.stderr)
+        return 1
+    print(f"Node {node_id}: claude --model {found.agent_model} "
+          f"--effort {found.effort}")
+    sys.stdout.flush()
+    if args.print:
+        return 0
+    process = subprocess.Popen([claude, "--model", found.agent_model,
+                                "--effort", found.effort])
+    # A Ctrl+C reaches claude too; wait on, so it neither kills claude nor
+    # leaves a traceback here.
+    while True:
+        try:
+            return process.wait()
+        except KeyboardInterrupt:
+            continue
