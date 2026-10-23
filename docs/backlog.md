@@ -53,14 +53,23 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
    passed, 453 s) with no agent, so Two-Key's grader ran alone at 96K and
    passed in round 1. Both pages read 🟢, the agent's path is gone, and the
    PR waits for the user's review.
-9. Build `w4-session-notes`, small-session-flow's second unit in build
+9. [x] Build `w4-session-notes`, small-session-flow's second unit in build
    order: the close rule in `CONTRIBUTING.md` puts the next deliverable
    first in this list, and the next session's first `/cairn status` names
-   it.
+   it. Session 114 on the branch `session-114-w4-session-notes`: the line
+   at `354ae76`, this item's tick as the rule's first close, and both
+   receipts in `RECEIPT_small-session-flow-w4_2026-10-22/`; Two-Key PASS
+   in round 1, and the PR waits for the user's review.
+10. Build `w2-workflow-file`, small-session-flow's third unit in build
+    order: `.sdlc/workflow.md` holds one four-node flowchart, with a named
+    file on each edge and one settings row per node, and the reader
+    refuses a node whose row lacks an agent model or an effort. The
+    session's first `/cairn status` is w4's second SC4.2 receipt: save it
+    to w4's receipt folder.
 
 ## Next actions
 
-Opener: Next 9, `w4-session-notes`. The
+Opener: Next 10, `w2-workflow-file`. The
 readings of PRs #116 and #119 that cost something (Open questions, G1)
 still wait for a design text row. The Haiku receipts agent's question
 closed with Next 8: Two-Key now takes its receipts from `receipts.py`
