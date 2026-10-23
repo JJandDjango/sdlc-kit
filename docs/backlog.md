@@ -58,14 +58,14 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
    first in this list, and the next session's first `/cairn status` names
    it. Session 114 on the branch `session-114-w4-session-notes`: the line
    at `354ae76`, this item's tick as the rule's first close, and both
-   receipts in `RECEIPT_small-session-flow-w4_2026-10-22/`; the PR waits
-   for the user's review.
+   receipts in `RECEIPT_small-session-flow-w4_2026-10-22/`; Two-Key PASS
+   in round 1, and the PR waits for the user's review.
 10. Build `w2-workflow-file`, small-session-flow's third unit in build
-   order: `.sdlc/workflow.md` holds one four-node flowchart, with a named
-   file on each edge and one settings row per node, and the reader refuses
-   a node whose row lacks an agent model or an effort. The session's first
-   `/cairn status` is w4's second SC4.2 receipt: save it to w4's receipt
-   folder.
+    order: `.sdlc/workflow.md` holds one four-node flowchart, with a named
+    file on each edge and one settings row per node, and the reader
+    refuses a node whose row lacks an agent model or an effort. The
+    session's first `/cairn status` is w4's second SC4.2 receipt: save it
+    to w4's receipt folder.
 
 ## Next actions
 

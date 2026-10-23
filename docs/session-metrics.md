@@ -52,6 +52,7 @@ the same kind at PR review.
 | 101 + 102 | `g1-requirements-spec/s1-lint`, the G1.1 record fix | yes, in session 102 | 1 | 0 / 0 | | 0 | 631: drafter 353, developer 93, Two-Key 185 | 2 / | 1 / 4 |
 | 103 + 104 | `g1-requirements-spec/s6-release` | yes, in session 104 | 2 | 0 / 1 | | 0 | 730: drafter 299, Two-Key 220 + 211 | 2 / | 1 / 0 |
 | 112 + 113 | `small-session-flow/w1-session-size` | yes, in session 113 | 1 | 0 / 0 | | 2 | 295: drafter 129, developer 70, Two-Key 96 | 2 / | 1 / 1 |
+| 114 | `small-session-flow/w4-session-notes` | yes | 1 | 0 / 0 | | 0 | 93: Two-Key 93 | 2 / | 0 / 0 |
 
 ## Notes on the baseline
 
@@ -164,3 +165,12 @@ the same kind at PR review.
   context) stands outside the total. The deferred count is one line added
   (the round's advisories) and one closed (the Haiku receipts agent's
   question).
+- Session 114 built the first unit with no automated test, so no drafter
+  or developer ran. Its two checks are manual receipts, each a script
+  whose exit reads `status.py`'s output, recorded through `progress run`;
+  `write-tests` and `prove-red` stay unrecorded. Round 1 passed with
+  three advisories: the wrap fixed one (a list indent), the PR's opening
+  makes another true, and the design's own SC4.2 receipt, at w2's
+  session start, is backlog Next 10's opener. The SC4.2 headless session
+  (Haiku 5.5, 102K tokens over two turns) stands outside the total, as
+  w1's live receipt did.
