@@ -1,8 +1,8 @@
 schema: spec-interview-state/2
 id: small-session-flow
 started: 2026-10-22
-phase: complete
-next: null
+phase: solution
+next: E6
 requirements_revision: r4
 origin: feature
 title: Workflow Nodes
@@ -21,6 +21,8 @@ answers:
     - {path: tests/, note: "one file each for the reader, node, and the hook"}
     - {path: decisions/, note: "one ADR records the plugin hook and the node command, drafted with w1"}
     - {path: .claude/workflows/*.js, note: "untracked, this machine only: pinned effort gives way to the row's values as arguments"}
+    - {path: .github/workflows/ci.yml, note: "CI's test job runs the whole suite on pytest-xdist workers, pytest -q -n auto (backlog Next 14)"}
+    - {path: pyproject.toml, note: "the test extra gains pytest-xdist>=3"}
   out_of_scope:
     - "agents/sdlc-developer.md and agents/sdlc-verifier.md keep model: inherit: no enforcement-layer change."
     - "skills/: neither skill changes; the sdlc scaffold does not lay the workflow file into other repos."
@@ -192,3 +194,7 @@ history:
     event: solution half signed (r14 signs r13)
   - at: 2026-10-22
     event: output complete
+  - at: 2026-10-23
+    event: "went back to Scope: .github/workflows/ci.yml and pyproject.toml added (r16)"
+  - at: 2026-10-23
+    event: "checks before signing run again (r17): 5 findings (CL014 5), answered; 0 OPEN, not stale"
