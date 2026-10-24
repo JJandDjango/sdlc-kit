@@ -620,7 +620,8 @@ session are the house rules in [CONTRIBUTING.md](../../CONTRIBUTING.md).
   a PR body ends at its last sentence.
 - Release shape: PR, merge commit, annotated tag at the merge, then the
   self-pin through its own PR, which the wrap rides. Run USAGE's `uv` line
-  against the new tag with `python -P`. main's ruleset requires a PR for
+  (`docs/usage/restricted-environments.md`) against the new tag with
+  `python -P`. main's ruleset requires a PR for
   every change.
 - The interview in this repo (session 74): before `/sdlc:`, list
   `C:/Users/hyden/.claude/plugins/cache/sdlc-kit/sdlc` and check it

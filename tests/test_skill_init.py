@@ -9,6 +9,8 @@ from pathlib import Path
 
 import pytest
 
+from conftest import usage_text
+
 ANSWERS = {"project_name": "demo", "adoption": "greenfield", "stack": "python"}
 
 FULL_PAYLOAD = {
@@ -415,7 +417,7 @@ def test_managed_profile_is_a_reference_never_rendered(tmp_path, skill_init):
     assert not any("managed" in name for name in mapped)
     created, _, _ = skill_init.render_all(ANSWERS, _templates(skill_init), tmp_path, "2026-09-18")
     assert not any("managed" in p.name for p in created)
-    usage = (Path(skill_init.__file__).parent.parent.parent / "USAGE.md").read_text(encoding="utf-8")
+    usage = usage_text(Path(skill_init.__file__).parent.parent.parent / "USAGE.md")
     assert "reference/managed-settings.json" in usage
     for token in ("ProgramData", "/etc/claude-code/", "Library/Application"):
         assert token in usage, token  # the three drop paths

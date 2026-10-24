@@ -20,6 +20,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from conftest import usage_text
+
 _HERE = Path(__file__).resolve().parent.parent
 # Beside a tree that holds the skill, read that tree; a copy run from any
 # other folder reads the tree pytest was started in.
@@ -59,7 +61,7 @@ def _cut(text: str, opening: str, stop: str) -> str:
 
 def _section(number: int) -> str:
     """One numbered section of USAGE, up to the next numbered section."""
-    return _cut(_read(USAGE), f"## {number}. ", r"^## \d+\. ")
+    return _cut(usage_text(USAGE), f"## {number}. ", r"^## \d+\. ")
 
 
 def _subsection(section: str, name: str) -> str:
@@ -119,7 +121,7 @@ def test_done_means_the_kit_version_is_0_18_0_or_later():
 def test_sc5_2_section_8_asks_the_engineer_seat_to_keep_or_change_the_three():
     paragraph = _paragraph(_section(8), "When the raw request is a feature document")
     assert paragraph == SECTION_8
-    assert "asks the seats to keep or change them" not in _flat(_read(USAGE))
+    assert "asks the seats to keep or change them" not in _flat(usage_text(USAGE))
 
 
 def test_sc5_2_section_9_shows_a_parked_document_green_and_counts_no_parked_row():

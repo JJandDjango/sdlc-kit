@@ -37,14 +37,14 @@ flowchart LR
 | [taskcontract/](taskcontract/) | The validator and work tree (pip package) |
 | [specs/](specs/) | Task contracts and the vocabulary |
 | [agents/](agents/) | Two-Key personas: developer, verifier |
-| [docs/](docs/) | Gates, taxonomy, features, conventions |
+| [docs/](docs/) | Gates, taxonomy, features, conventions, USAGE's pages |
 | [decisions/](decisions/) | ADRs, append-only |
 | [tests/](tests/) | The regression suite |
 
 ## Where things live
 | Kind of fact | Home |
 |---|---|
-| Use and install | [README.md](README.md), [USAGE.md](USAGE.md) |
+| Use and install | [README.md](README.md), [USAGE.md](USAGE.md) (an index of [docs/usage/](docs/usage/)) |
 | Intent, invariants, folders | This file |
 | What each piece does | [docs/components.md](docs/components.md) |
 | How work is done | [CONTRIBUTING.md](CONTRIBUTING.md) |

@@ -26,6 +26,8 @@ import ast
 import re
 from pathlib import Path
 
+from conftest import usage_text
+
 _HERE = Path(__file__).resolve().parent.parent
 # Beside a tree that holds the skill, read that tree; a copy run from any
 # other folder reads the tree pytest was started in.
@@ -118,10 +120,10 @@ INTERVIEW_HEADING = ("### `/sdlc:product-specification-interview` — writing th
                      f"document {GREEN}")
 INTERVIEW_BANNER = (
     f"{GREEN} **Shipped** (kit 0.19.0, "
-    "[ADR 0029](decisions/0029-feature-document-format-and-done.md) as ADRs 0033 to 0037 "
-    "amend it, contract `specs/document-split/`). Kit 0.18.0's interview wrote one combined "
-    "document, both halves in one file at `docs/features/<id>.md`: this page at tag "
-    "`v0.18.0` is its guide.")
+    "[ADR 0029](../../decisions/0029-feature-document-format-and-done.md) as ADRs 0033 to "
+    "0037 amend it, contract `specs/document-split/`). Kit 0.18.0's interview wrote one "
+    "combined document, both halves in one file at `docs/features/<id>.md`: `USAGE.md` at "
+    "tag `v0.18.0` is its guide.")
 USAGE_STOPS = [
     "docs/features/x.md is a combined document with no Ready: row. Intake reads a pair.",
     "docs/features/x.md is a combined document through intake. Its contract stands.",
@@ -137,9 +139,10 @@ USAGE_COMBINED = (
     "row: it stays unchanged, and its contract validates as before.")
 SECTION_9_BANNER_END = (
     "\"Revisions and halves\"; kit 0.18.0, "
-    "[ADR 0036](decisions/0036-the-appendix-names-the-contract-and-a-unit-row-holds-done.md), "
-    "contract `specs/feature-document/`, \"A parked document\"; kit 0.19.0, "
-    "[ADR 0037](decisions/0037-a-feature-document-is-a-pair-and-each-document-has-one-seat.md), "
+    "[ADR 0036](../../decisions/0036-the-appendix-names-the-contract-and-a-unit-row-holds-"
+    "done.md), contract `specs/feature-document/`, \"A parked document\"; kit 0.19.0, "
+    "[ADR 0037](../../decisions/0037-a-feature-document-is-a-pair-and-each-document-has-one-"
+    "seat.md), "
     "contract `specs/document-split/`, \"A pair of documents\").")
 PAIR_PARAGRAPHS = (
     f"{GREEN} The tree shows a pair before intake as one feature.",
@@ -226,7 +229,7 @@ def _cut(text: str, opening: str, stop: str) -> str:
 
 def _section(number: int) -> str:
     """One numbered section of USAGE, up to the next numbered section."""
-    return _cut(_read(USAGE), f"## {number}. ", r"^## \d+\. ")
+    return _cut(usage_text(USAGE), f"## {number}. ", r"^## \d+\. ")
 
 
 def _subsection(section: str, name: str) -> str:
@@ -533,13 +536,13 @@ def test_done_means_usage_names_a_design_document_as_no_feature_before_intake():
 def test_done_means_usage_says_intake_adds_a_ready_row_to_each_documents_table():
     drift = _subsection(_section(9), "Drift from the feature document")
     assert _paragraph(drift, "When the request is a feature document") == READY_ROW_PARAGRAPH
-    assert "intake adds one row to its revision table" not in _flat(_read(USAGE))
+    assert "intake adds one row to its revision table" not in _flat(usage_text(USAGE))
 
 
 def test_done_means_usage_says_intake_writes_a_parked_row_in_each_table_of_a_pair():
     parked = _subsection(_section(9), "A parked document")
     assert _paragraphs(parked)[1] == PARKED_PARAGRAPH
-    assert "when it parks a document" not in _flat(_read(USAGE))
+    assert "when it parks a document" not in _flat(usage_text(USAGE))
 
 
 # --- done_means: the changelog, the map and the G0 page --------------------------

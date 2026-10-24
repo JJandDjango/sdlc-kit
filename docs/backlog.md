@@ -92,13 +92,19 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     line checked against `node`'s live output; no Two-Key round, since no
     code changed; both gaps stand in Open questions, and the PR waits for
     the user's review.
-13. Trim what sessions load (the user, session 117). Cut each
+13. [x] Trim what sessions load (the user, session 117). Cut each
     `MEMORY.md` entry to its one-line hook: the index loads every
     session, about 4.5K tokens. Split `USAGE.md` (2,193 lines, about 27K
     tokens) into a short index plus one page per feature under `docs/`,
     so a reader loads only the feature at hand, as the gate pages do.
     The backlog stays as it is: a session searches it, never reads it
-    whole.
+    whole. Session 118 on the branch `session-118-usage-split`:
+    `MEMORY.md` went from 17.6K to 9.6K characters, all 66 entries kept;
+    `USAGE.md` is a 42-line index of 14 pages under `docs/usage/`, cut
+    whole at sections and subsections, and the tests read the index and
+    its pages joined (`tests/conftest.py`'s `usage_text`). Left out:
+    "§N" references as links, and a page for each task in `tasks.yaml`.
+    The PR waits for the user's review.
 14. Make the whole suite faster: it runs 2085 tests one at a time in
     about 460 s, most of Two-Key's time and every build's. Measure with
     `--durations=25` first, then try `pytest-xdist` (not installed) in a
@@ -107,7 +113,7 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
 
 ## Next actions
 
-Opener: Next 13, trim what sessions load. The
+Opener: Next 14, the faster suite. The
 readings of PRs #116 and #119 that cost something (Open questions, G1)
 still wait for a design text row. The Haiku receipts agent's question
 closed with Next 8: Two-Key now takes its receipts from `receipts.py`

@@ -35,7 +35,7 @@ principles are in [ARCHITECTURE.md](ARCHITECTURE.md).
 /plugin install sdlc@sdlc-kit
 ```
 
-The skills-dir copy and the pip-installed validator: [USAGE.md](USAGE.md) §2.
+The skills-dir copy and the pip-installed validator: [install and initialize](docs/usage/install.md).
 Pairs with [Cairn](https://github.com/JJandDjango/cairn) for the docs spine.
 
 ## License
