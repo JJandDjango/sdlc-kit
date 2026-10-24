@@ -105,15 +105,27 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     its pages joined (`tests/conftest.py`'s `usage_text`). Left out:
     "§N" references as links, and a page for each task in `tasks.yaml`.
     The PR waits for the user's review.
-14. Make the whole suite faster: it runs 2085 tests one at a time in
+14. [x] Make the whole suite faster: it runs 2085 tests one at a time in
     about 460 s, most of Two-Key's time and every build's. Measure with
     `--durations=25` first, then try `pytest-xdist` (not installed) in a
     scratch worktree, then adopt it in `receipts.py` if the suite stays
-    green (the user's question, session 116).
+    green (the user's question, session 116). Session 119 on the branch
+    `session-119-faster-suite`: serial, 453 s, the slowest test 12.1 s,
+    and at `-n auto` 64 s, both under the session's Python 3.13; in a
+    scratch worktree on 3.14, three runs at `-n auto` passed all 2085 in
+    62 to 69 s and one at `-n 4` (CI's worker count) in 148 s. The setup
+    line, standing practice, the receipts example and the three agent
+    briefs run `-n auto`; a one-file run stays serial. Left out: CI on
+    workers, since `ci.yml` sits in no contract's scope and
+    `pyproject.toml` not in `small-session-flow`'s, so `scope-check`
+    fails them under it (the user's ruling: a contract home or a scope
+    line); speeding up the slowest tests; `prove.py`. The PR waits for
+    the user's review.
 
 ## Next actions
 
-Opener: Next 14, the faster suite. The
+Opener: no Next item is open; the user names the next. CI on
+workers waits on a scope ruling (Next 14's Left out). The
 readings of PRs #116 and #119 that cost something (Open questions, G1)
 still wait for a design text row. The Haiku receipts agent's question
 closed with Next 8: Two-Key now takes its receipts from `receipts.py`
