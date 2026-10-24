@@ -3,7 +3,7 @@
 Read this before working or committing.
 
 ## Set up and test
-Install `textual>=8.2,<9`, `pytest>=8`, `jsonschema>=4.18` and `PyYAML>=6`, then run `python -P -m pytest tests -q` (3 to 6 minutes). CI runs on every PR.
+Install `textual>=8.2,<9`, `pytest>=8`, `pytest-xdist>=3`, `jsonschema>=4.18` and `PyYAML>=6`, then run `python -P -m pytest tests -q -n auto` (about a minute on 16 CPUs; 8 minutes one at a time). CI runs on every PR.
 
 ## Workflow
 - Every change is a PR; main's ruleset requires one.

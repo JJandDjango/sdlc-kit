@@ -31,8 +31,11 @@ session are the house rules in [CONTRIBUTING.md](../../CONTRIBUTING.md).
   list and readings in [receipts-py.md](receipts-py.md)) runs Two-Key's
   receipts in the session with no agent; its JSON goes to the workflow as
   `receiptsResult`, and the receipts agent runs only when none is given.
-  Run it with `run_in_background`, since the whole suite outlasts the
-  foreground cap, and put a Monitor on `OUT/progress.json`.
+  The whole suite runs on workers, `python -P -m pytest tests -q -n
+  auto` (session 119: 2085 tests in about 70 s, 453 s one at a time);
+  a one-file run stays serial. Run `receipts.py` with
+  `run_in_background` and put a Monitor on `OUT/progress.json`, since a
+  receipts list can still outlast the foreground cap.
 - Session 98's lessons. A reading rules only where the signed pages are
   silent: before one goes into a test list, read it against the
   design's Constraints and Sources, not only its Decisions. Round 1 was
@@ -602,17 +605,19 @@ session are the house rules in [CONTRIBUTING.md](../../CONTRIBUTING.md).
   `E:/foundations`, in a `foundations.pth` under the scratch venv's
   `Lib/site-packages`, and `pip install tiktoken` there. `python -m
   prompt_lang` takes one path, and a folder works.
-- The whole suite runs 3 to 6 minutes; a local model holding RAM can get
-  a background run killed for memory. A PR's CI waits through `gh pr
+- The whole suite runs about a minute at `-n auto`, 8 minutes one at a
+  time; a local model holding RAM can get a background run killed for
+  memory. A PR's CI waits through `gh pr
   checks <n> --watch` in the background; started right after a push it
   can end `no checks reported`, so watch again.
-- The suite on this machine: since session 81 the system Python 3.14
-  holds `textual`, so `python -P -m pytest tests -q` runs under it:
-  session 85 saw it green, 1058 passed in three minutes. A scratch venv
+- The suite on this machine: a session's `python` is miniconda's 3.13
+  (`E:\miniconda3`, first on PATH), which holds `textual` and, since
+  session 119, `pytest-xdist` 3.8.0, so `python -P -m pytest tests -q
+  -n auto` runs under it. A scratch venv
   is needed only for the form validator (session 76): `py -3.14 -m venv <scratch>/venv`, then that venv's
-  `python -m pip install "textual>=8.2,<9" "pytest>=8"
+  `python -m pip install "textual>=8.2,<9" "pytest>=8" "pytest-xdist>=3"
   "jsonschema>=4.18" "PyYAML>=6"`, then its `python -P -m pytest tests
-  -q` in the background. `lang-check` prints about 130 exempt lines
+  -q -n auto` in the background. `lang-check` prints about 130 exempt lines
   before its last one: run it in the background and grep the output for
   `lang-green`.
 - `scope-check` outside Actions needs `--base <sha>`: main's tip.
