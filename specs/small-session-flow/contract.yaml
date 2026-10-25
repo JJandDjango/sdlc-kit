@@ -33,6 +33,8 @@ scope:
   - tests/
   - decisions/
   - .claude/workflows/*.js
+  - .github/workflows/ci.yml
+  - pyproject.toml
 
 non_goals:
   - No agent, operator or seat gets a new write surface.

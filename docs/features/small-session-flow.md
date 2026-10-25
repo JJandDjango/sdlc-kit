@@ -7,6 +7,7 @@
 | 2026-10-22 | Johnathan Hyden | r5: Signed: request half. The PO seat signs r4 |
 | 2026-10-22 | intake | r6: Parked: Ready check 12: the reader's refusals of a node with no row, a row with no node, and an edge with no label have no drawn message. |
 | 2026-10-22 | intake | r7: Ready: contract `small-session-flow` validates ready-green, derived from r4; the PO seat (Johnathan Hyden) signed the request half at r4 (r5) |
+| 2026-10-25 | intake | r8: Ready: contract `small-session-flow` validates ready-green, derived from r4; the PO seat (Johnathan Hyden) signed the request half at r4 (r5) |
 
 # small-session-flow - Workflow Nodes
 

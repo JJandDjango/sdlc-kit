@@ -1,8 +1,8 @@
 schema: spec-interview-state/2
 id: small-session-flow
 started: 2026-10-22
-phase: solution
-next: E6
+phase: complete
+next: null
 requirements_revision: r4
 origin: feature
 title: Workflow Nodes
@@ -198,3 +198,7 @@ history:
     event: "went back to Scope: .github/workflows/ci.yml and pyproject.toml added (r16)"
   - at: 2026-10-23
     event: "checks before signing run again (r17): 5 findings (CL014 5), answered; 0 OPEN, not stale"
+  - at: 2026-10-24
+    event: solution half signed (r19 signs r18)
+  - at: 2026-10-24
+    event: output complete
