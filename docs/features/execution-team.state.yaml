@@ -1,0 +1,148 @@
+schema: spec-interview-state/2
+id: execution-team
+started: 2026-10-25
+phase: complete
+next: null
+answers:
+  origin: feature
+  title: Standard Development Workflow
+  seats:
+    po: Johnathan Hyden
+  materials:
+    - ".sdlc/workflow.md"
+    - "docs/features/small-session-flow.md (Description, Decisions and open questions, Notes, Terms)"
+    - ".claude/workflows/ (spec-channel-drafter.js, unit-developer.js, two-key-unit-verifier.js, test-retirer.js, live-run-seats.js)"
+    - "E:/ImSimProject/engine (.sdlc/config.yaml stack cpp, test.bat, .sdlc/findings/no-cpp-tooling-profile.yaml)"
+  statement:
+    source: material
+    confirmed: true
+    text: "As the human developer, I want the execution node's team to ship with the kit and run in any consumer repo, so that ImSimEngine builds its units with the same workflow the kit uses."
+  description:
+    source: material
+    confirmed: true
+    text:
+      - "Execution runs at the agent model and effort of `.sdlc/workflow.md`'s execution row (Sonnet at high). The Orchestrator launches one subagent per task, a task being one of the seven steps every unit follows (`taskcontract/data/tasks.yaml`): QA for write-tests and prove-red, the Developer for green, a verifier for two-key."
+      - "Developer: code and unit tests; cannot see the functional tests."
+      - "QA: functional tests; it reads the code's public interface but no implementation body and no unit test (user, 2026-10-25, at Q11: QA needs an existing function's signature)."
+      - "Dev verifier and QA verifier: each grades its own channel's work."
+      - "A failed verifier sends Dev or QA back, up to 3 rounds. The third failed round, or a question, goes to the user through the Orchestrator."
+      - "It ends in a draft PR for the user."
+      - "A consumer declares its own test command, and the team runs that command where the kit's runs pytest (the engine: `test.bat`). This answers the engine's finding `no-cpp-tooling-profile`."
+  background:
+    source: material
+    confirmed: true
+    text: "The kit's sessions run this team today through five workflows: `spec-channel-drafter` (QA's tests), `unit-developer`, `two-key-unit-verifier`, `test-retirer` and `live-run-seats`. They stand untracked in `.claude/workflows/`, exist only on this machine, and call pytest directly or through `prove.py` and `receipts.py`. Why now: the engine (ImSimEngine) needs the team to continue its M0 units. It has no workflows, and its stack is `cpp`, which has no tooling profile (its finding `no-cpp-tooling-profile`); it tests through `test.bat`. History: small-session-flow ruled the execution team out of its scope and into this second document (2026-10-21; `docs/features/small-session-flow.md`, Non-goals and Decisions and open questions)."
+  existing_behavior:
+    source: material
+    confirmed: true
+    text:
+      - "The shipped agents `sdlc-developer` and `sdlc-verifier` ride the plugin with `model: inherit`. The developer binds the stack profile's `g3` and `g4-preflight` commands; a profile with no `commands:` block binds nothing (`docs/operators.md:147-156`)."
+      - "Four workflows require `model` and `effort` arguments, read from the execution row (`.claude/workflows/spec-channel-drafter.js:11-16`, `unit-developer.js:11-16`, `test-retirer.js:11-16`, `two-key-unit-verifier.js:57-62`)."
+      - "The drafter, developer and retirer run `python -P -m pytest tests -q -n auto` (`spec-channel-drafter.js:78`, `unit-developer.js:40`, `test-retirer.js:66`); the grader's verdict reads `receipts.py`'s exit codes (`two-key-unit-verifier.js:106-108`)."
+      - "`sdlc-spec` and `sdlc-qa` are registered, not shipped (`docs/operators.md:34-35`)."
+      - "`python -m taskcontract node execution` starts `claude` at the execution row's settings, the session the Orchestrator runs in (`docs/usage/node.md:15-20`)."
+      - "The Dev/QA wall holds on one side today: `sdlc-developer` must not read acceptance-test source (`docs/operators.md:103-106`)."
+  success_criteria:
+    source: material
+    confirmed: true
+    text:
+      - "SC1: The team installs with the kit, with no hand copy."
+      - "SC2: The team builds a unit in a repo whose stack is not Python, through that repo's own test command."
+      - "SC3: The Developer reads no functional test, and QA reads no implementation body or unit test."
+      - "SC4: A failed verifier sends work back up to 3 rounds; the third failure or a question reaches the user."
+      - "SC5: Each build ends in a draft PR."
+  checks:
+    - {id: SC1.1, text: "verify that after the plugin's install or update, a consumer session can start each team member with no file copied by hand, and `sdlc-spec` and `sdlc-qa` stay registered and unshipped."}
+    - {id: SC1.2, text: "verify that every file the team runs is tracked in the kit and ships in the plugin, and none stands only under the untracked `.claude/workflows/`."}
+    - {id: SC1.3, text: "verify that each team member runs at the execution row's agent model and effort."}
+    - {id: SC2.1, text: "verify that the team runs the consumer's declared test command for prove-red, green and two-key, and calls pytest only where it is declared (the kit's own builds)."}
+    - {id: SC2.2, text: "verify that in a fixture repo whose declared test command is a batch file, one unit runs from write-tests to two-key and ends green."}
+    - {id: SC2.3, text: "verify that a consumer with no declared test command starts no task and is told which declaration is missing."}
+    - {id: SC3.1, text: "verify that the Developer's tool calls read no functional test file."}
+    - {id: SC3.2, text: "verify that QA's tool calls read no implementation body and no unit test file."}
+    - {id: SC4.1, text: "verify that a verifier's FAIL sends the task back to its channel with the failure's reasons, and the next round starts from them."}
+    - {id: SC4.2, text: "verify that a third failed round stops the run, puts the failures before the user, and starts no fourth round."}
+    - {id: SC4.3, text: "verify that an operator's question stops its task and reaches the user through the Orchestrator."}
+    - {id: SC5.1, text: "verify that a run whose last task passes opens a draft PR on the unit's branch, and never marks it ready or merges it."}
+    - {id: SC5.2, text: "verify that a run that stops on a third failure or a question opens no PR."}
+  gherkin:
+    - {check: SC1.1, name: "Each team member starts after the plugin's install", given: "a consumer repo with the kit's plugin installed or updated, and no file copied by hand", when: "a session starts each team member", then: "each one starts, and sdlc-spec and sdlc-qa stay registered and unshipped", status: accepted}
+    - {check: SC1.2, name: "Every file the team runs ships in the plugin", given: "the kit's tracked files and its plugin", when: "the files the team runs are listed", then: "each is tracked and ships in the plugin, and none stands only under .claude/workflows/", status: accepted}
+    - {check: SC1.3, name: "Each team member runs at the execution row's settings", given: "the execution row's agent model and effort", when: "each team member runs", then: "it runs at that agent model and effort", status: accepted}
+    - {check: SC2.1, name: "The team runs the declared test command", given: "a consumer with a declared test command", when: "the team runs prove-red, green and two-key", then: "each runs the declared command, and pytest runs only where it is declared", status: accepted}
+    - {check: SC2.2, name: "A batch-file repo builds one unit", given: "a fixture repo whose declared test command is a batch file", when: "the team runs one unit from write-tests to two-key", then: "the unit ends green", status: accepted}
+    - {check: SC2.3, name: "No declared test command starts no task", given: "a consumer with no declared test command", when: "the team is asked to start a task", then: "no task starts, and it prints \"Task {task} did not start: the repository declares no test command.\"", status: accepted}
+    - {check: SC3.1, name: "The Developer reads no functional test", given: "a unit with functional tests", when: "the Developer runs its task", then: "its tool calls read no functional test file", status: accepted}
+    - {check: SC3.2, name: "QA reads no implementation body or unit test", given: "a unit with code and unit tests", when: "QA runs its tasks", then: "its tool calls read no implementation body and no unit test file", status: accepted}
+    - {check: SC4.1, name: "A FAIL sends the task back with its reasons", given: "a task whose verifier grades FAIL", when: "the round ends", then: "the task goes back to its channel with the failure's reasons, and the next round starts from them", status: accepted}
+    - {check: SC4.2, name: "A third failed round stops the run", given: "a task that has failed two rounds", when: "its third round fails", then: "the run prints \"Task {task} failed 3 rounds. The run stops here; the failures follow.\" and the failures, and no fourth round starts", status: accepted}
+    - {check: SC4.3, name: "A question stops its task", given: "an operator running a task", when: "it asks a question", then: "its task stops, and the Orchestrator prints \"Task {task} stopped on a question from {operator}: {question}\"", status: accepted}
+    - {check: SC5.1, name: "A passing run opens a draft PR", given: "a run whose last task passes", when: "the run ends", then: "a draft PR opens on the unit's branch, and it is neither marked ready nor merged", status: accepted}
+    - {check: SC5.2, name: "A stopped run opens no PR", given: "a run that stops on a third failure or a question", when: "the run ends", then: "no PR opens", status: accepted}
+  error_messages:
+    - {check: SC2.3, text: "Task {task} did not start: the repository declares no test command."}
+    - {check: SC4.2, text: "Task {task} failed 3 rounds. The run stops here; the failures follow."}
+    - {check: SC4.3, text: "Task {task} stopped on a question from {operator}: {question}"}
+  regression_checks: {"1": [SC1.3, SC2.1], "2": [SC1.3], "3": [SC2.1], "4": [SC1.1], "5": [SC1.3], "6": [SC3.1]}
+  non_goals:
+    - "No new authorizations are added."
+    - "No mechanism substitutes one node for another."
+    - "No full `cpp` tooling profile (format, lint, strict compile): the team needs only a declared test command."
+    - "No G4 to G7 role for the registered `sdlc-qa` operator: this feature's QA writes functional tests only."
+    - "No agents for the feature and design nodes: they keep their seats."
+    - "No run of several units at once: one unit at a time."
+    - "No merge: a run stops at the draft PR, and the user merges."
+  out_of_scope:
+    - "The engine's repo (E:/ImSimProject/engine): the kit ships, and the engine pulls a release."
+  prerequisites:
+    source: material
+    confirmed: true
+    text:
+      - "The execution row of `.sdlc/workflow.md` and `python -m taskcontract node execution --print` (exist)."
+      - "Changes to agent definitions pass the enforcement-layer approval channel (exists; class E, `docs/operators.md`)."
+    moved: "A way for a consumer to declare its build and test commands moved into the feature's Description (user, 2026-10-25)."
+  decisions:
+    source: material
+    confirmed: true
+    text:
+      - "Execution runs on Sonnet at high (user ruling 2026-10-21, carried from small-session-flow)."
+      - "Retry cap is 3 rounds per task; the 5 loops inside one check stay (user ruling 2026-10-21, carried)."
+      - "Operators apply to execution only; the document stages use seats (user ruling 2026-10-21, carried)."
+      - "Open: whether the QA verifier runs mostly through `prove.py` (recommended, not ratified)."
+      - "Open: whether the Sonnet ruling supersedes the 2026-10-12 process-cost ruling in an ADR."
+  notes:
+    source: material
+    confirmed: true
+    text: "Carried from small-session-flow: the existing behavior of the 5-loop caps (`agents/sdlc-developer.md:72`, `agents/sdlc-verifier.md:62`) and of the Opus 5.5 ruling (`NOTES_process-cost_2026-10-12.md:110`)."
+  terms:
+    - {name: Operator, amends: operator, definition: "The roster of four (spec, developer, qa, verifier) gains a fifth, the Orchestrator."}
+    - {name: Orchestrator, definition: "The operator that runs a unit's tasks: it launches one subagent per task, sends a failed task back to its channel, and puts a third failed round or a question before the user."}
+    - {name: Dev verifier, definition: "The verifier convened on the Developer's work."}
+    - {name: QA verifier, definition: "The verifier convened on QA's work."}
+    - {name: Functional test, definition: "A test QA writes that checks a unit's behavior through its public interface."}
+    - {name: Unit test, definition: "A test the Developer writes beside the code it checks."}
+    - {name: Public interface, definition: "The names, parameters, return types, commands and options a test calls, without any implementation body."}
+    - {name: Test command, definition: "The command a repository declares to run its tests (the kit: pytest on workers; the engine: `test.bat`)."}
+  terms_used_as_ratified: [task, round, node, agent-model, workflow-file, intake-seat, two-key, operator]
+open: []
+history:
+  - at: 2026-10-25
+    event: id confirmed
+  - at: 2026-10-25
+    event: origin recorded (new feature)
+  - at: 2026-10-25
+    event: title recorded (Standard Development Workflow)
+  - at: 2026-10-25
+    event: PO seat recorded (Johnathan Hyden)
+  - at: 2026-10-25
+    event: materials confirmed (workflow file, small-session-flow's document, the five workflows, the engine's stack), all sections confirmed
+  - at: 2026-10-25
+    event: opening complete, document written as r1
+  - at: 2026-10-25
+    event: terms recorded; QA reads the public interface (Q11); prerequisite 3 moved into the Description
+  - at: 2026-10-25
+    event: checks before signing run (r2), 49 language findings, 0 OPEN
+  - at: 2026-10-25
+    event: request half signed
+  - at: 2026-10-25
+    event: output complete

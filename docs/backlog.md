@@ -131,6 +131,18 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     from 3m30s to 1m58s; locally 2085 passed in 68.5 s at `-n auto`.
     `test_pane.py`'s exact `test` extra list gained the same pin. The PR
     waits for the user's review.
+16. Write execution-team's design document:
+    `/sdlc:product-specification-interview execution-team design`, the
+    user as engineer seat. The user's priority (session 121): the
+    execution team in place for the engine's M0 work first, then G1's
+    open edges (Open questions). The requirements document
+    (`docs/features/execution-team.md`, "Standard Development Workflow")
+    is signed at r3 (r4), 0 OPEN, 49 language findings for intake's
+    door. Session 121 on the branch `session-121-execution-team`. For
+    the design: how QA gets an existing function's signature without its
+    body (C++ headers split them, a Python file does not); where a
+    consumer declares its test command; the five workflows and
+    `prove.py` and `receipts.py` call pytest today.
 
 ## Next actions
 
