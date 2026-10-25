@@ -660,7 +660,7 @@ def test_sc4_1_pyproject_gains_the_pane_extra_and_the_test_extra_pins_textual():
     project = tomllib.loads((KIT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
     extras = project.get("optional-dependencies", {})
     assert extras.get("pane") == [TEXTUAL_PIN]
-    assert extras.get("test") == ["pytest>=8", TEXTUAL_PIN]
+    assert extras.get("test") == ["pytest>=8", "pytest-xdist>=3", TEXTUAL_PIN]
     assert not any("textual" in dependency.lower() for dependency in project["dependencies"])
 
 
