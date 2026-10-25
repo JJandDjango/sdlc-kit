@@ -135,16 +135,23 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
 ## Next actions
 
 Opener: no Next item is open; the user names the next. The
-readings of PRs #116 and #119 that cost something (Open questions, G1)
+engine's M0 passed G1 and its unit 1 ran G2.5 by hand (`d2dafba`),
+so the user's 2026-10-20 hold on G2's venue and G1's open edges is
+lifted. The readings of PRs #116 and #119 that cost something (Open questions, G1)
 still wait for a design text row. The Haiku receipts agent's question
 closed with Next 8: Two-Key now takes its receipts from `receipts.py`
 alone. Not folded in `s4-tree`: `g1.py`'s `Ready:` row
 reader and `tree.drift`'s; `progress._target` has one caller left.
 
-1. The pilot's config line, in the engine's session; the engine's
+1. [x] The pilot's config line, in the engine's session; the engine's
    install ref moves to the release that carries G1 (pull, not push).
    Its feature document needs a new intake before its G1.3 can pass:
    its `Ready:` rows read `signed r3` (reading 3, kept in session 93).
+   Done in the engine's own sessions, found in session 121: its CI pin
+   moved to `v0.20.0` at `6d0c999` (2026-10-18), `G1` joined
+   `active_gates` at `7fecf43`, intake wrote r9 from the request half at
+   r7, and G1.3 passed all 11 items, signed by the engineer seat on
+   requirements r7 and design r7, at `1da34dd` (2026-10-20).
 
 2. Deferred from 0.18.0's sweep (Two-Key's advisories, rounds 1 to 3),
    each a change of behavior or a sentence a test pins word for word.
