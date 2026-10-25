@@ -14,5 +14,5 @@ jobs:
         with:
           python-version: "3.13"
       - run: pip install -e ".[test]"
-      - run: pytest -q
+      - run: pytest -q -n auto
       - run: python -m taskcontract validate tests/fixtures/valid/g0-enforcement-pass.yaml

@@ -15,6 +15,11 @@
 | 2026-10-22 | Johnathan Hyden | r13: The solution half finished: 12 sections written, 0 OPEN |
 | 2026-10-22 | Johnathan Hyden | r14: Signed: solution half. The engineer seat signs r13 |
 | 2026-10-22 | intake | r15: Ready: contract `small-session-flow` validates ready-green, derived from r13, against requirements r4; the engineer seat (Johnathan Hyden) signed the solution half at r13 (r14) |
+| 2026-10-23 | Johnathan Hyden | r16: Scope: `.github/workflows/ci.yml` and `pyproject.toml` added: CI runs the whole suite on pytest-xdist workers. Units: the draft check's CL014 findings answered |
+| 2026-10-23 | Johnathan Hyden | r17: Measured: the checks before signing, on the solution half: 5 findings (CL014 5); Scope against the release unit's paths: no release unit, check skipped; ready checks 11 to 15: 0 OPEN |
+| 2026-10-24 | Johnathan Hyden | r18: The solution half finished: 12 sections written, 0 OPEN |
+| 2026-10-24 | Johnathan Hyden | r19: Signed: solution half. The engineer seat signs r18 |
+| 2026-10-25 | intake | r20: Ready: contract `small-session-flow` validates ready-green, derived from r18, against requirements r4; the engineer seat (Johnathan Hyden) signed the solution half at r18 (r19) |
 
 # small-session-flow - Workflow Nodes
 
@@ -33,6 +38,8 @@
 - `tests/`: one test file each for the reader, `node`, and the hook.
 - `decisions/`: one ADR records the plugin hook and the `node` command, drafted with w1.
 - `.claude/workflows/*.js` (untracked, this machine only): the pinned `effort: 'high'` gives way to the row's values, passed in as arguments.
+- `.github/workflows/ci.yml`: CI's test job runs the whole suite on pytest-xdist workers, `pytest -q -n auto` (backlog Next 14).
+- `pyproject.toml`: the `test` extra gains `pytest-xdist>=3`.
 
 ### Out of scope
 
@@ -126,6 +133,8 @@ At close, the next deliverable goes first in `docs/backlog.md`'s Next.
 | w4-session-notes | SC4.1, SC4.2 | The close rule in `CONTRIBUTING.md` puts the next deliverable first in the Next list of `docs/backlog.md`, and the next session's first `/cairn status` names it. | SC4.1 a manual receipt at a session's close; SC4.2 a manual receipt at the next session's start | none |
 
 The draft check's CL006 words in the done means go to intake's full lane as dictionary candidates: deliverable, limit, message, verbatim, threshold, four-node, flowchart, edge, reader, refuses, effort, starts, arguments, close, puts.
+
+The draft check's CL014 findings on Stage, Node, Workflow file, Agent model and Round name the terms intake ratified from this pair at r15: each term matches itself, so none is mapped or renamed.
 
 ### Order
 

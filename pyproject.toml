@@ -17,7 +17,7 @@ Homepage = "https://github.com/JJandDjango/sdlc-kit"
 
 [project.optional-dependencies]
 pane = ["textual>=8.2,<9"]
-test = ["pytest>=8", "textual>=8.2,<9"]
+test = ["pytest>=8", "pytest-xdist>=3", "textual>=8.2,<9"]
 
 [tool.setuptools]
 packages = ["taskcontract"]

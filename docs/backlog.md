@@ -121,11 +121,20 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     fails them under it (the user's ruling: a contract home or a scope
     line); speeding up the slowest tests; `prove.py`. The PR waits for
     the user's review.
+15. [x] Run CI's suite on workers (Next 14's Left out). The design's r16
+    put `.github/workflows/ci.yml` and `pyproject.toml` in Scope, r19
+    signed it, and session 120's intake brought both into the contract
+    (`bc8f9b2`). CI's test job runs `pytest -q -n auto`, and the `test`
+    extra gains `pytest-xdist>=3`. Session 120 on the branch
+    `session-119-ci-workers`: CI's pytest step went from 199 s serial
+    (main's run at `1c5a102`) to 100 s on 4 workers, and the test job
+    from 3m30s to 1m58s; locally 2085 passed in 68.5 s at `-n auto`.
+    `test_pane.py`'s exact `test` extra list gained the same pin. The PR
+    waits for the user's review.
 
 ## Next actions
 
-Opener: no Next item is open; the user names the next. CI on
-workers waits on a scope ruling (Next 14's Left out). The
+Opener: no Next item is open; the user names the next. The
 readings of PRs #116 and #119 that cost something (Open questions, G1)
 still wait for a design text row. The Haiku receipts agent's question
 closed with Next 8: Two-Key now takes its receipts from `receipts.py`
