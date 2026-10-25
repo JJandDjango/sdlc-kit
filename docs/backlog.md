@@ -121,6 +121,11 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     fails them under it (the user's ruling: a contract home or a scope
     line); speeding up the slowest tests; `prove.py`. The PR waits for
     the user's review.
+15. [ ] Run CI's suite on workers (Next 14's Left out). The design's r16
+    put `.github/workflows/ci.yml` and `pyproject.toml` in Scope, r19
+    signed it, and session 120's intake brought both into the contract
+    (`bc8f9b2`). CI's test job runs `pytest -q -n auto`, and the `test`
+    extra gains `pytest-xdist>=3`.
 
 ## Next actions
 
