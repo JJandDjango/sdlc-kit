@@ -84,6 +84,7 @@ words:
   - {word: base-layer, pos: noun}
   - {word: base-plus-overlay, pos: noun}
   - {word: base-shadow, pos: noun}
+  - {word: batch-file, pos: modifier}
   - {word: battery, pos: noun}
   - {word: battery-cwe, pos: noun}
   - {word: becomes, pos: noun}
@@ -96,6 +97,7 @@ words:
   - {word: bindings, pos: noun}
   - {word: binds, pos: verb}
   - {word: block, pos: noun}
+  - {word: bodies, pos: noun}
   - {word: born, pos: noun}
   - {word: bound, pos: verb}
   - {word: bounded, pos: noun}
@@ -282,6 +284,7 @@ words:
   - {word: empty-dotnet-overlay, pos: noun}
   - {word: enable, pos: noun}
   - {word: enablement, pos: noun}
+  - {word: ends, pos: verb}
   - {word: enforcement, pos: noun}
   - {word: enforces, pos: verb}
   - {word: engine, pos: noun}
@@ -330,6 +333,7 @@ words:
   - {word: f-item, pos: noun}
   - {word: fact, pos: noun}
   - {word: failure, pos: noun}
+  - {word: failures, pos: noun}
   - {word: fallback, pos: noun}
   - {word: 'false', pos: noun}
   - {word: family, pos: noun}
@@ -523,6 +527,7 @@ words:
   - {word: meaning, pos: noun}
   - {word: mechanical, pos: noun}
   - {word: mechanism, pos: noun}
+  - {word: member, pos: noun}
   - {word: merely, pos: noun}
   - {word: merge, pos: verb}
   - {word: merge-gate-workflow, pos: noun}
@@ -563,6 +568,7 @@ words:
   - {word: obligation, pos: noun}
   - {word: one-diff, pos: noun}
   - {word: open, pos: verb}
+  - {word: opens, pos: verb}
   - {word: operate, pos: noun}
   - {word: operates, pos: noun}
   - {word: operator-defs, pos: noun}
@@ -653,6 +659,7 @@ words:
   - {word: prose, pos: noun}
   - {word: protection, pos: noun}
   - {word: protocol, pos: noun}
+  - {word: prototype, pos: noun}
   - {word: provenance, pos: noun}
   - {word: publish, pos: noun}
   - {word: pull, pos: noun}
@@ -689,6 +696,7 @@ words:
   - {word: ready-green, pos: noun}
   - {word: real, pos: noun}
   - {word: reality, pos: noun}
+  - {word: reasons, pos: noun}
   - {word: reconcile, pos: noun}
   - {word: reconciliation, pos: noun}
   - {word: record, pos: verb}
@@ -732,6 +740,7 @@ words:
   - {word: reported, pos: verb}
   - {word: reports, pos: noun}
   - {word: repos, pos: noun}
+  - {word: repository, pos: noun}
   - {word: requests, pos: noun}
   - {word: required, pos: noun}
   - {word: required-up-to-date, pos: noun}
@@ -816,6 +825,7 @@ words:
   - {word: ships, pos: verb}
   - {word: shops, pos: noun}
   - {word: shows, pos: verb}
+  - {word: signatures, pos: noun}
   - {word: silent, pos: noun}
   - {word: silently, pos: noun}
   - {word: single, pos: noun}
@@ -860,6 +870,7 @@ words:
   - {word: step-env, pos: noun}
   - {word: steps, pos: noun}
   - {word: stock, pos: noun}
+  - {word: stop, pos: verb}
   - {word: stops, pos: noun}
   - {word: stored, pos: noun}
   - {word: story, pos: noun}
@@ -899,6 +910,7 @@ words:
   - {word: targets, pos: noun}
   - {word: taskcontract, pos: noun}
   - {word: taxonomy, pos: noun}
+  - {word: team, pos: noun}
   - {word: template, pos: noun}
   - {word: templates, pos: noun}
   - {word: term, pos: noun}
@@ -918,6 +930,7 @@ words:
   - {word: time, pos: noun}
   - {word: today, pos: noun}
   - {word: tolerance, pos: noun}
+  - {word: tool, pos: noun}
   - {word: tooled, pos: noun}
   - {word: tooling, pos: noun}
   - {word: tooling-profiles, pos: noun}
@@ -1008,6 +1021,7 @@ words:
   - {word: wrapper, pos: noun}
   - {word: write, pos: verb}
   - {word: write-surface, pos: noun}
+  - {word: write-tests, pos: noun}
   - {word: writes, pos: verb}
   - {word: writing, pos: verb}
   - {word: yields, pos: noun}

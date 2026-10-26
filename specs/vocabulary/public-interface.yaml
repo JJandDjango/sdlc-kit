@@ -1,0 +1,21 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Written at execution-team's intake (session 123) from the Terms of
+# docs/features/execution-team.md at r3, decided at its Q14
+# (2026-10-25); ratified by the user 2026-10-25 (class-S flip; the PR
+# merge is the outer record, ADR 0025).
+
+term: public-interface
+
+name: Public interface
+
+definition: >-
+  The names, parameters, return types, commands and options a test
+  calls, without any implementation body.
+
+kind: entity
+
+status: ratified
+since: 2026-10-25
+
+sources:
+  - docs/features/execution-team.md
