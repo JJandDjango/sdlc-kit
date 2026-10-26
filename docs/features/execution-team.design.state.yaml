@@ -1,0 +1,238 @@
+schema: spec-interview-state/2
+id: execution-team
+started: 2026-10-25
+phase: complete
+next: null
+requirements_revision: r3
+origin: feature
+title: Standard Development Workflow
+answers:
+  scope:
+    - "workflows/ (new, tracked, at the plugin root): drafter, developer, verifier and retirer workflows moved from .claude/workflows/"
+    - "workflows/tools/prove.py and receipts.py: moved, run the declared test command; test_prove.py and test_receipts.py move to tests/"
+    - "skills/sdlc/ (SKILL.md, flows/execute.md): the Orchestrator as /sdlc execute {contract} {unit}"
+    - "taskcontract/: the test command from .sdlc/config.yaml; python -m taskcontract interface {file}"
+    - ".sdlc/config.yaml: the kit's own test command"
+    - "tests/: the team's tests and a batch-file fixture repo (SC2.2)"
+    - "docs/usage/ (new page), USAGE.md, docs/operators.md, CHANGELOG.md"
+    - "hooks/ (hooks.json, a new hook script): the wall (added at S3 part 1)"
+    - "The release unit's (e6, kit 0.21.0): pyproject.toml, skills/sdlc/init.py (KIT_VERSION), .github/workflows/sdlc.yml (added at E2)"
+    - "decisions/: e4's ADR (Decisions 2) (added at r13)"
+    - "ARCHITECTURE.md: the folder map gains a workflows/ row, and its hooks/ row gains the wall (added at r13)"
+    - "docs/conventions/prove-py.md and docs/conventions/receipts-py.md: both scripts move to workflows/tools/ and run the declared test command (added at r13)"
+  units_cl006_answer: "The draft check's CL006 words in the done means go to intake's full lane as dictionary candidates: repository, prototype, signatures, bodies, tool, team, member, reasons, failures, stop, opens, batch-file, write-tests, ends."
+  units:
+    - {id: e1-declaration, checks: [SC2.3], done_means: "A repository declares `test:` and `wall:`, the kit declares its own, and a task with no `test.command` prints SC2.3's message.", tests: ["SC2.3: automated"], retirements: none}
+    - {id: e2-scripts, checks: [SC2.1], done_means: "`prove.py` and `receipts.py` ship under `workflows/tools/` and run the declared test command, pytest only where it is declared, with no prototype.", tests: ["SC2.1: automated, on a pytest fixture and a batch-file fixture"], retirements: "prove.py's prototype (setup's package copy, prove_green, PACKAGE) and the tests in test_prove.py that pin it"}
+    - {id: e3-wall, checks: ["SC3.1+SC3.2"], done_means: "`python -m taskcontract interface` prints signatures without bodies, and the hook refuses each tool call across the wall during a task.", tests: ["SC3.1: automated", "SC3.2: automated"], retirements: none}
+    - {id: e4-team, checks: [SC1.1, SC1.2, SC1.3], done_means: "The team ships in the plugin, and each team member starts in a consumer session at the execution row's settings.", tests: ["SC1.1: automated, and a manual receipt (a consumer session starts each team member)", "SC1.2: automated", "SC1.3: automated"], retirements: "the untracked copies under .claude/workflows/ (no test pins them)"}
+    - {id: e5-rounds, checks: [SC4.1, "SC4.2+SC4.3", "SC5.1+SC5.2"], done_means: "A FAIL returns its reasons, three failures or a question stop the run, and a pass opens a draft PR.", tests: ["SC4.1, SC4.2, SC4.3, SC5.1, SC5.2: automated"], retirements: none}
+    - {id: e6-batch-run, release: "0.21.0", checks: [SC2.2], done_means: "In a batch-file fixture repository, one unit runs from write-tests to two-key and ends green, and kit 0.21.0 ships.", tests: ["SC2.2: manual receipt (the run's lines and the fixture's green)"], retirements: none, paths: [pyproject.toml, skills/sdlc/init.py, .github/workflows/sdlc.yml]}
+  cases:
+    - {case: "1. An ambiguity in the requirements", answer: "yes", asked: "Johnathan Hyden, the engineer seat (also the PO seat), at S3 part 2", decided: "The requirements name no holder for approve-tests and approve-commit: the QA verifier holds approve-tests; receipts.py's exit 0 holds approve-commit."}
+    - {case: "2. More than one solution", answer: "yes", asked: "Johnathan Hyden, the engineer seat, at S3", decided: "The test command lives in .sdlc/config.yaml, not a cpp tooling profile (a non-goal); QA's proof uses mutations at two-key, not a prototype (SC3.2 forbids it); a hook holds the wall, not a prompt alone."}
+    - {case: "3. A solution unconventional to the codebase", answer: "yes", asked: "Johnathan Hyden, the engineer seat, at S1 and S3 part 1", decided: "workflows/ is a new plugin folder, launched by path, beside agents/, skills/ and hooks/ (an ADR proposed at S10); the kit writes a runtime file under .git/ (.git/sdlc-task.json) for the first time."}
+    - {case: "4. A change to a public contract: routes, a gateway definition, events, a schema", answer: "yes", asked: "Johnathan Hyden, the engineer seat, at S3", decided: "A consumer's .sdlc/config.yaml gains test: and wall: (additive; a config with no test: is refused only when it starts a task); the plugin's hooks.json gains a PreToolUse hook (it refuses nothing while no task runs); the term operator gains the Orchestrator (waits for intake)."}
+  order: "e1, e2, e3, e4, e5, e6, one at a time: e1 first (every later unit reads the declaration); e2 (the scripts run it); e3 before the team ships (no member runs without its wall); e4 then e5 (the team, then its rounds and PR); e6 last (the live batch-file run needs all five)."
+  interfaces_parts:
+    drawings_added_at_E6:
+      confirmed: true
+      text: "Drawn: prove.py's JSON at prove-red and at two-key (mutations caught and not caught; not applied; exits); task.py's start, fail, stop --question and end, with each print and exit; a run that stops on a third failure and on a question, no PR line."
+    scripts:
+      confirmed: true
+      text: "prove.py --scratch DIR --test PATH [--at REV] [--mutations FILE]: exports REV, places the draft, runs test.build then test.file (or test.command); red_ok by junitxml for pytest, else exit 1; no prototype (SC3.2); mutations at two-key by the QA verifier on the commit's export; JSON drops green, proto_imported, package. receipts.py: argv[0] naming a repo file resolves there; non-pytest key output is the last line. Two-key takes the Dev verifier and the QA verifier; at least 5 agents a unit."
+    run_output:
+      confirmed: true
+      text: "`/sdlc execute {contract} {unit}` prints a header line, then one line per task: `Task {task}: {operator}, round {n}: {result}`, then `Draft PR: #{n} {url}`. Mapping: QA writes tests; the QA verifier holds approve-tests and prove-red; the Developer green; receipts.py's exit 0 holds approve-commit; the Orchestrator commits; the Dev verifier grades two-key. `python -m taskcontract interface {file}` prints public signatures and docstrings, no body; a non-Python file exits 2: `No interface for {file}: only a .py file has one.`"
+    declaration:
+      confirmed: true
+      text: "`.sdlc/config.yaml` gains `test:` (command, file with {file}, optional build; argv lists) and `wall:` (functional, unit, code, interface globs). No test.command: the SC2.3 message. A PreToolUse hook enforces the wall while `.git/sdlc-task.json` names the running task and operator: `Task {task}: {operator} reads no {kind}: {path}` (the article dropped at r7)."
+    gaps_drawn_r9:
+      confirmed: true
+      text: "After r8's E6: `/sdlc execute` refuses a unit the contract lacks and a contract that is not ready-green, before any task, with no PR; task.py's start takes --unit and runs progress start (its G1 refusal printed, no task file, exit 1, the run stops with no PR); end runs progress done (approvals --by qa-verifier or receipts); end --run prints nothing and exits 0."
+    gaps_drawn_r7:
+      confirmed: true
+      text: "After intake's r6 park: the hook's three refusals drawn (Developer: a functional test; QA: a unit test, an implementation body); interface's missing file and unparseable .py, each exit 2; task.py's fail on rounds 1 and 2 (removes the task file, prints nothing, exit 0, count kept in .git/sdlc-rounds.json), start while a task runs (`Task {task} did not start: task {running} is running.`, exit 1), end --run removes both files."
+  seats:
+    engineer: Johnathan Hyden
+  materials:
+    - "docs/features/execution-team.md (r3)"
+    - ".claude/workflows/ (spec-channel-drafter.js, unit-developer.js, two-key-unit-verifier.js, test-retirer.js, live-run-seats.js)"
+    - ".claude/workflows/tools/prove.py, receipts.py"
+    - "agents/sdlc-developer.md, agents/sdlc-verifier.md, docs/operators.md"
+    - "E:/ImSimProject/engine (.sdlc/config.yaml, test.bat, tests/, src/)"
+  out_of_scope:
+    source: material
+    confirmed: true
+    text:
+      - "The engine's repository (`E:/ImSimProject/engine`): the kit ships, and the engine pulls a release."
+      - "The registrations of `sdlc-spec` and `sdlc-qa`: both stay registered and unshipped (`docs/operators.md:34-35`)."
+      - "`skills/sdlc/templates/profiles/`: no `cpp` profile is added."
+      - "`.sdlc/workflow.md`: the execution row already reads `sonnet`, `high` and the five operators."
+      - "`agents/sdlc-developer.md` and `agents/sdlc-verifier.md`: unchanged, `model: inherit` kept; the team runs through the workflows' own prompts."
+      - "`live-run-seats` and the other session tools in `.claude/workflows/`: they stay untracked and do not ship."
+    po_refusals_shown: ["The engine's repo (E:/ImSimProject/engine): a place we will not touch"]
+  interfaces:
+    source: material
+    confirmed: true
+    text:
+      - "`python -m taskcontract node execution --print` prints `Node execution: claude --model sonnet --effort high`."
+      - "The three error messages of the requirements document, verbatim: SC2.3, SC4.2 and SC4.3."
+      - "`prove.py` and `receipts.py` keep their JSON stdout and their exit codes (0, 1, 2 and 254; `receipts.py` adds 124)."
+  sources:
+    source: material
+    confirmed: true
+    rows:
+      - {fact: "Agent model and effort", read_from: "The execution row of `.sdlc/workflow.md`", when_two_disagree: "The row: no other file holds either (`docs/usage/node.md:6-13`)"}
+      - {fact: "The task list", read_from: "`taskcontract/data/tasks.yaml`", when_two_disagree: "(one source)"}
+      - {fact: "A unit's sketches and done means", read_from: "`specs/{id}/contract.yaml`", when_two_disagree: "The contract"}
+      - {fact: "The test command", read_from: "`.sdlc/config.yaml`, its `test:` block", when_two_disagree: "The declaration; pytest runs only where it is declared"}
+      - {fact: "The wall's paths", read_from: "`.sdlc/config.yaml`, its `wall:` block", when_two_disagree: "The declaration"}
+      - {fact: "The running task, its operator and its round", read_from: "`.git/sdlc-task.json`, written by `task.py start`", when_two_disagree: "The file; with no file no task runs, and the hook refuses nothing"}
+      - {fact: "A task's failed rounds", read_from: "`.git/sdlc-rounds.json`, written by `task.py fail` for one unit's run", when_two_disagree: "The rounds file: `start` takes its round from it"}
+      - {fact: "A Python file's interface", read_from: "`python -m taskcontract interface`, from the code at HEAD", when_two_disagree: "The code"}
+      - {fact: "The Two-Key verdict", read_from: "`receipts.py`'s exit codes, never its `ok` field (`two-key-unit-verifier.js:102-108`), then both verifiers' grades", when_two_disagree: "The exit code: no grade overrides a non-zero exit"}
+      - {fact: "The draft PR's branch", read_from: "The current git branch", when_two_disagree: "Git"}
+      - {fact: "Which operators ship", read_from: "The plugin's `agents/` folder", when_two_disagree: "`agents/`: a roster line in `docs/operators.md` that disagrees is a defect on that page"}
+      - {fact: "Whether a file the team runs ships", read_from: "`git ls-files` (the plugin ships the tracked tree)", when_two_disagree: "Git"}
+      - {fact: "A failure's reasons", read_from: "The verifier's result: its reasons, failed sketches, blocking defects or uncaught mutations", when_two_disagree: "The result: the Orchestrator passes it whole to the next round"}
+      - {fact: "An operator's question", read_from: "The `questions` field of the task's workflow result", when_two_disagree: "The result: a non-empty list stops the task"}
+  constraints:
+    source: material
+    confirmed: true
+    text:
+      - "Every shell call is one segment: no pipes, chains or redirects."
+      - "A spawned process opens no window."
+      - "Tests run in the foreground with a set timeout; no task polls an output file."
+      - "No new dependency."
+      - "The Developer writes implementation and unit tests only (ADR 0010); contracts are read-only to every operator."
+      - "Agent definitions are class E: a change passes the enforcement-layer approval channel."
+      - "Each check loops at most 5 times, and each task runs at most 3 rounds."
+      - "The wall is enforced by the hook, never by a prompt alone: the Developer reads no functional test; QA reads no implementation body and no unit test."
+      - "One unit runs at a time: `.git/sdlc-task.json` holds one task."
+      - "A run never marks its PR ready and never merges it."
+      - "Each commit the Orchestrator makes carries the `Contract:` and `Theory:` trailers the grader checks."
+      - "Nothing is copied into a consumer: the team runs from `${CLAUDE_PLUGIN_ROOT}`."
+  risks_and_cost:
+    source: material
+    confirmed: true
+    text:
+      - "A plugin may not load workflows: today they load only from `.claude/workflows/`, which is untracked. Answer: `/sdlc execute` launches each by its path under `${CLAUDE_PLUGIN_ROOT}`; e4's manual receipt proves it."
+      - "`prove.py` hard-wires the `taskcontract` package and pytest's junitxml (`prove.py:40`, `prove.py:262`); a batch-file runner gives neither. e2 removes both."
+      - "`test.bat` builds and runs every test, with no way to select one: a red proof sees one exit code, not one result per test. Answer: `test.file` runs one test file."
+      - "Cost: at least 5 agents a unit at Sonnet high, each starting near 54K tokens; each retry round adds to it."
+      - "A workflow's agents fire the session's hooks: measured 2026-10-25, a session hook refused a workflow agent's piped Bash call (`RECEIPT_execution-team-design_2026-10-25/hook_probe.md`). The plugin's own hook is not yet measured: e3 opens with the same probe on it, before it builds anything else."
+      - "A Bash call can read a walled file without naming it (a glob, a script). The hook matches walled paths and globs over walled folders; an indirect read can still pass."
+      - "In the engine, each mutation rebuilds and runs the whole suite: 4 mutations cost 4 full builds, time not yet measured."
+      - "The build's cost: six build sessions, one a unit; e6 adds a live run of the whole team."
+  decisions:
+    source: material
+    confirmed: true
+    text:
+      - {q: "Does the QA verifier run through `prove.py`?", a: "Yes: the red proof at prove-red and the mutations at two-key."}
+      - {q: "Does the Sonnet ruling supersede the 2026-10-12 process-cost ruling in an ADR?", a: "Yes: one ADR, written in e4, with the plugin's new workflows/ folder (case 3)."}
+      - {q: "How does QA get an existing function's signature without its body?", a: "C++: the .h files wall.interface lists; Python: python -m taskcontract interface."}
+      - {q: "Where does a consumer declare its test command?", a: "`.sdlc/config.yaml`, its `test:` block."}
+      - {q: "How do `prove.py` and `receipts.py` stop assuming pytest?", a: "Both run the declared commands, and read results per test only when the command is pytest."}
+      - {q: "Who holds approve-tests and approve-commit when a run stops for the user only at the draft PR?", a: "The QA verifier holds approve-tests; receipts.py's exit 0 holds approve-commit."}
+      - {q: "How does QA prove its tests can pass without reading a body?", a: "No prototype; the QA verifier's mutations at two-key."}
+      - {q: "Does a workflow's agent fire the session's hooks?", a: "Yes, measured 2026-10-25: a session hook refused a workflow agent's piped Bash call (Risks and cost 5). e3 opens with the same probe on the plugin's hook."}
+      - {q: "Does the run record each task through `taskcontract progress`, as the kit's own builds do?", a: "Yes, through `task.py` (Interfaces 10): `start` runs `progress start` and `end` runs `progress done`, so G1's refusal (ADR 0038) stops a run before its first task. Built in e5 with `task.py`'s other messages."}
+  links_out:
+    source: material
+    confirmed: true
+    text:
+      - "`docs/features/execution-team.md` (requirements r3) and `docs/features/small-session-flow.md`"
+      - "`docs/operators.md`, `docs/usage/node.md` and `.sdlc/workflow.md`"
+      - "ADR 0010, ADR 0021, ADR 0031 and ADR 0039 (`decisions/`)"
+      - "The engine's finding `no-cpp-tooling-profile` (`E:/ImSimProject/engine/.sdlc/findings/no-cpp-tooling-profile.yaml`)"
+      - "`NOTES_process-cost_2026-10-12.md`"
+      - "`docs/distribution.md`: the plugin's channels, which the new `workflows/` folder joins (Consult case 3)"
+      - "`taskcontract/data/tasks.yaml`: the seven tasks a run reports"
+      - "`hooks/hooks.json`: the kit's shipped hooks, which the wall's hook joins (ADR 0039)"
+  notes:
+    source: material
+    confirmed: true
+    text:
+      - "The engine splits signatures from bodies: `src/*.h` and `src/*.cpp`."
+      - "The engine's functional tests are `tests\\run_*.bat`; its unit tests build into `imsim_tests.exe`."
+      - "`live-run-seats` serves the interview's receipts, not a build."
+      - "Each team member is a workflow's own agent, not a shipped agent definition, so `sdlc-qa` stays unshipped (SC1.1)."
+      - "After the release, the engine adds its own `test:` and `wall:` blocks in its own repository; the kit never writes them there."
+  terms:
+    - {name: Operator, amends: operator, definition: "The roster of four (spec, developer, qa, verifier) gains a fifth, the Orchestrator."}
+    - {name: Orchestrator, definition: "The operator that runs a unit's tasks: it launches one subagent per task, sends a failed task back to its channel, and puts a third failed round or a question before the user."}
+    - {name: Dev verifier, definition: "The verifier convened on the Developer's work."}
+    - {name: QA verifier, definition: "The verifier convened on QA's work."}
+    - {name: Functional test, definition: "A test QA writes that checks a unit's behavior through its public interface."}
+    - {name: Unit test, definition: "A test the Developer writes beside the code it checks."}
+    - {name: Public interface, definition: "The names, parameters, return types, commands and options a test calls, without any implementation body."}
+    - {name: Test command, definition: "The command a repository declares to run its tests (the kit: pytest on workers; the engine: `test.bat`)."}
+open: []
+history:
+  - at: 2026-10-25
+    event: design read (requirements r3, signed at r4); id confirmed
+  - at: 2026-10-25
+    event: engineer seat recorded (Johnathan Hyden)
+  - at: 2026-10-25
+    event: materials confirmed (seven sections; Scope, Units, Order and Consult cases silent)
+  - at: 2026-10-25
+    event: opening complete, document written as r1
+  - at: 2026-10-25
+    event: S1 scope confirmed (seven places)
+  - at: 2026-10-25
+    event: S2 out of scope confirmed (six places; the PO's refusal is a place)
+  - at: 2026-10-25
+    event: S3 part 1 confirmed (declaration, wall, hook); hooks/ joins Scope
+  - at: 2026-10-25
+    event: S3 part 2 confirmed (run output, task mapping, interface command)
+  - at: 2026-10-25
+    event: S3 part 3 confirmed (no prototype, mutations at two-key, prove.py and receipts.py shapes); Interfaces written; Risks item 4 reads 5 agents
+  - at: 2026-10-25
+    event: S4 sources confirmed (nine rows)
+  - at: 2026-10-25
+    event: S5 constraints confirmed (twelve)
+  - at: 2026-10-25
+    event: S6 units confirmed (e1 to e6, 13 checks each in one unit); task.py joins Interfaces item 4 and Scope item 2
+  - at: 2026-10-25
+    event: S7 order confirmed (e1 to e6)
+  - at: 2026-10-25
+    event: S8 risks and cost confirmed (eight)
+  - at: 2026-10-25
+    event: S9 consult cases answered (four, each yes)
+  - at: 2026-10-25
+    event: S10 decisions confirmed (seven decided, one OPEN for e3's probe)
+  - at: 2026-10-25
+    event: S11 links out confirmed (eight lines)
+  - at: 2026-10-25
+    event: S12 notes confirmed (five); solution flow complete
+  - at: 2026-10-25
+    event: E2 the seat names e6 the release unit (kit 0.21.0); its three paths join Scope; E1 runs again on the changed done means
+  - at: 2026-10-25
+    event: E1 to E5 run (r2 Measured; 27 findings; Scope covered; 9 OPEN; no stale block, design names r3 and requirements stand at r3)
+  - at: 2026-10-25
+    event: E6 went back to S4 (four rows), S3 (three drawings), S6 (five done means cut to 20 words, CL006 answered); E1 to E5 run again (r3 Measured; 16 findings, CL006 16; Scope covered; 0 OPEN)
+  - at: 2026-10-25
+    event: solution half signed (r4 text row, r5 Signed)
+  - at: 2026-10-25
+    event: output complete (Google Docs form skipped)
+  - at: 2026-10-25
+    event: "way back after intake's r6 park (session 123): S3 interfaces (the hook's three refusals, interface's two refusals, task.py's rounds file and start refusal), S4 sources (rounds file row), S6 units (e5 pairs SC4.2+SC4.3 and SC5.1+SC5.2), S8 risk 5 and S10 decision 8 (the hook probe measured); r7 text row; next E1"
+  - at: 2026-10-25
+    event: "E1 to E5 run (r8 Measured; 16 findings, CL006 16; Scope covered; 2 OPEN under ready check 12, and Decisions 9 OPEN on progress records)"
+  - at: 2026-10-25
+    event: "E6 went back to S3 (execute's two refusals; task.py start --unit, progress start and done, end --run's exit) and S10 (decision 9 decided yes); r9 text row; next E1"
+  - at: 2026-10-25
+    event: "E1 to E5 run (r10 Measured; 16 findings, CL006 16; Scope covered; 0 OPEN)"
+  - at: 2026-10-25
+    event: solution half signed (r11 text row, r12 Signed)
+  - at: 2026-10-25
+    event: output complete (Google Docs form skipped, as at r5)
+  - at: 2026-10-25
+    event: "way back to S1 at intake's scope check: decisions/, ARCHITECTURE.md, docs/conventions/prove-py.md and receipts-py.md join Scope; r13 text row"
+  - at: 2026-10-25
+    event: "E1 to E5 run (r14 Measured; 16 findings, CL006 16; Scope covered; 0 OPEN)"
+  - at: 2026-10-25
+    event: solution half signed (r15 text row, r16 Signed)
+  - at: 2026-10-25
+    event: output complete (Google Docs form skipped)

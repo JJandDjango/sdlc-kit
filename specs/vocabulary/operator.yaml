@@ -6,7 +6,7 @@ term: operator
 
 name: Operator
 
-definition: An agent persona that convenes at one or more gates to drive their checks green - four in the roster (spec, developer, qa, verifier), each with a fixed write surface and a context manifest; per-gate behavior lives in venue bindings inside the def, never in per-gate files. Human principals are seats, not operators - their conditions take agent assist at most, suggestions never verdicts.
+definition: An agent persona that convenes at one or more gates to drive their checks green - five in the roster (spec, developer, qa, verifier, orchestrator), each with a fixed write surface and a context manifest; per-gate behavior lives in venue bindings inside the def, never in per-gate files. Human principals are seats, not operators - their conditions take agent assist at most, suggestions never verdicts.
 
 kind: entity
 
@@ -15,3 +15,4 @@ since: 2026-07-31
 
 sources:
   - docs/operators.md
+  - docs/features/execution-team.md
