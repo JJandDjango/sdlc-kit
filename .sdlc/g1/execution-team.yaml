@@ -1,0 +1,68 @@
+records:
+- condition: G1.1
+  at: '2026-10-26T02:52:44Z'
+  head: 7b92e64
+  runs:
+  - tool: spectral
+    tool_version: 6.17.0
+    installed: true
+    pin:
+      path: .spectral.yaml
+      sha256: 1e91cf141bd1e3155a667f6cb05d888a4abb7de202da3f55919d395289617fd1
+    files:
+    - path: taskcontract/schemas/component-declaration.schema.json
+      sha256: 15bbcd61df6546902d01722fbb8815b0f0a54254e33eced975847159f3ebde00
+      reported: 0
+    - path: taskcontract/schemas/constraint-registry.schema.json
+      sha256: b70da2cabdbc897683d5c2ea01c79f5fc543ee709e02a24a877f50b42a44ea82
+      reported: 0
+    - path: taskcontract/schemas/dictionary.schema.json
+      sha256: d34dc1a97f73aa303295d876c0417fc3a433ae3ad3444eb09674802265e33d8d
+      reported: 0
+    - path: taskcontract/schemas/glossary-term.schema.json
+      sha256: ab2299e8c7124af59527805edde8a0b46e1546ea2f72c021e656a992432171da
+      reported: 0
+    - path: taskcontract/schemas/task-contract.schema.json
+      sha256: 8976ddfb30e27c0a90ba931b154e3499ff8ad702c8cabb3325a7390eafff6a8c
+      reported: 0
+- condition: G1.3
+  at: '2026-10-26T03:08:05Z'
+  head: 7b92e64
+  by: Johnathan Hyden
+  seat: user
+  requirements: r3
+  design: r15
+  items:
+  - n: 1
+    name: Testable
+    checked: true
+  - n: 2
+    name: Unambiguous
+    checked: true
+  - n: 3
+    name: Traceable
+    checked: true
+  - n: 4
+    name: Complete over units
+    checked: true
+  - n: 5
+    name: Covers the sketch
+    checked: true
+  - n: 6
+    name: Consistent
+    checked: true
+  - n: 7
+    name: Respects non-goals
+    checked: true
+  - n: 8
+    name: Boundary + error paths
+    checked: true
+  - n: 9
+    name: Property-spec applicability
+    checked: true
+  - n: 10
+    name: Schema presence
+    checked: true
+  - n: 11
+    name: Oracle designation answered
+    checked: true
