@@ -131,7 +131,7 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     from 3m30s to 1m58s; locally 2085 passed in 68.5 s at `-n auto`.
     `test_pane.py`'s exact `test` extra list gained the same pin. The PR
     waits for the user's review.
-16. Write execution-team's design document:
+16. [x] Write execution-team's design document:
     `/sdlc:product-specification-interview execution-team design`, the
     user as engineer seat. The user's priority (session 121): the
     execution team in place for the engine's M0 work first, then G1's
@@ -142,7 +142,19 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     the design: how QA gets an existing function's signature without its
     body (C++ headers split them, a Python file does not); where a
     consumer declares its test command; the five workflows and
-    `prove.py` and `receipts.py` call pytest today.
+    `prove.py` and `receipts.py` call pytest today. Session 122 on the
+    same branch: `docs/features/execution-team.design.md` signed at r4
+    (r5), against requirements r3; 16 language findings (CL006 16) for
+    intake's door. Answers: `.sdlc/config.yaml` gains `test:` and
+    `wall:`; QA reads `.h` files or `python -m taskcontract interface`;
+    a plugin hook holds the wall; QA writes no prototype, and the QA
+    verifier's mutations run at two-key. Six units, e1 to e6; e6 ships
+    kit 0.21.0. One OPEN: whether a workflow's agent fires the session's
+    hooks, which the probe that opens e3 answers.
+17. Intake execution-team: `/sdlc intake docs/features/execution-team.md`,
+    the pair signed (requirements r3, design r4). Intake ratifies seven
+    new terms and the `operator` amendment, and takes the 65 language
+    findings (49 and 16) at its door. Then build e1 to e6 in order.
 
 ## Next actions
 
