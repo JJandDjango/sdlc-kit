@@ -151,10 +151,28 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     verifier's mutations run at two-key. Six units, e1 to e6; e6 ships
     kit 0.21.0. One OPEN: whether a workflow's agent fires the session's
     hooks, which the probe that opens e3 answers.
-17. Intake execution-team: `/sdlc intake docs/features/execution-team.md`,
+17. [x] Intake execution-team: `/sdlc intake docs/features/execution-team.md`,
     the pair signed (requirements r3, design r4). Intake ratifies seven
     new terms and the `operator` amendment, and takes the 65 language
     findings (49 and 16) at its door. Then build e1 to e6 in order.
+    Session 123 on the same branch: the first run parked the pair
+    (requirements r5, design r6) on the design's OPEN mark and four
+    outputs with no drawing, and e5's five checks had no `+` pair. A
+    one-agent workflow probe answered the OPEN: a session's PreToolUse
+    hook refused the agent's piped Bash call
+    (`RECEIPT_execution-team-design_2026-10-25/hook_probe.md`). The design
+    run drew the outputs, paired e5's checks, added `task.py`'s rounds
+    file and its `taskcontract progress` calls (r7, r9), then four Scope
+    paths (r13); signed at r15 (r16). Seven terms ratified, `operator`
+    amended, 14 dictionary words (`fd8a70f`). Contract ready-green
+    (`7b92e64`; Ready rows r6 and r17); G1 passed, the review signed with
+    11 items checked. The PR waits for the user's review.
+18. Build `e1-declaration`, the first execution-team unit, once PR #142
+    merges: a repository declares `test:` and `wall:` in
+    `.sdlc/config.yaml`, the kit declares its own, and `task.py start`
+    with no `test.command` prints SC2.3's message. G1 reads green, so
+    `progress start` is not refused. Then e2 to e6 in order; e3 opens with
+    the hook probe on the plugin's own hook.
 
 ## Next actions
 
@@ -276,6 +294,13 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
    node in another shape escapes every check; a second row for one node
    is ignored with no refusal; the table reader takes the line after the
    header as its separator, whatever it holds. None touches the real file.
+
+9. A watched `node` session (the user's question, session 123):
+   `taskcontract node` starts an interactive `claude` with no prompt, no
+   log and none of the spawn watchdog's three marks
+   (`docs/usage/node.md:15-27`), so no session can watch one it starts.
+   Parked: execution-team's e4 and e5 give the session the Orchestrator
+   seat through workflows, which report progress and notify at their end.
 
 ## Open questions
 
