@@ -5,6 +5,7 @@
 | 2026-10-25 | Johnathan Hyden | r3: The request half finished: 11 sections written, 0 OPEN |
 | 2026-10-25 | Johnathan Hyden | r4: Signed: request half. The PO seat signs r3 |
 | 2026-10-25 | intake | r5: Parked: Decisions and open questions 8: OPEN: does a workflow's agent fire the session's hooks? The probe that opens e3 answers it. Ready check 12: the hook's refusal is drawn for the Developer only; QA's refusals of a unit test and of an implementation body have no drawn line. Ready check 12: `python -m taskcontract interface` on a missing file or a `.py` file that does not parse has no drawn output. Ready check 12: `task.py fail` on a first or second failed round has no drawn output or exit code. Ready check 12: `task.py start` while `.git/sdlc-task.json` holds a task (Constraint 9) has no drawn refusal. |
+| 2026-10-25 | intake | r6: Ready: contract `execution-team` validates ready-green, derived from r3; the PO seat (Johnathan Hyden) signed the request half at r3 (r4) |
 
 # execution-team - Standard Development Workflow
 

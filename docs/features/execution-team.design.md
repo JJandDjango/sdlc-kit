@@ -16,6 +16,7 @@
 | 2026-10-25 | Johnathan Hyden | r14: Measured: the checks before signing, on the solution half: 16 findings (CL006 16); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
 | 2026-10-25 | Johnathan Hyden | r15: The solution half finished: 12 sections written, 0 OPEN |
 | 2026-10-25 | Johnathan Hyden | r16: Signed: solution half. The engineer seat signs r15 |
+| 2026-10-25 | intake | r17: Ready: contract `execution-team` validates ready-green, derived from r15, against requirements r3; the engineer seat (Johnathan Hyden) signed the solution half at r15 (r16) |
 
 # execution-team - Standard Development Workflow
 

@@ -1,0 +1,177 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: execution-team
+
+title: Standard Development Workflow
+
+intent: >-
+  Today five workflow files run each task of a unit. The files stand only
+  in a local path that git does not hold, and each runs `pytest`. After
+  this task the team ships in the plugin and runs in any consumer
+  repository. The Orchestrator runs each task of a unit through one agent,
+  at the agent model and effort of the execution row. QA writes each
+  functional test, and the Developer writes the code and each unit test.
+  The Dev verifier and the QA verifier each hold the verdict on one
+  channel. A hook holds the wall: the Developer reads no functional test,
+  and QA reads no implementation bodies and no unit test. Each task runs
+  the test command that the repository declares. A FAIL returns the task
+  to its channel with its reasons. After a 3rd FAIL or a question the run
+  stops and puts the failures before the user. A run ends in a draft PR
+  when each task passes.
+
+scope:
+  - workflows/
+  - skills/sdlc/SKILL.md
+  - skills/sdlc/flows/execute.md
+  - taskcontract/
+  - .sdlc/config.yaml
+  - tests/
+  - docs/usage/
+  - USAGE.md
+  - docs/operators.md
+  - CHANGELOG.md
+  - hooks/
+  - pyproject.toml
+  - skills/sdlc/init.py
+  - .github/workflows/sdlc.yml
+  - decisions/
+  - ARCHITECTURE.md
+  - docs/conventions/prove-py.md
+  - docs/conventions/receipts-py.md
+
+non_goals:
+  - No node replaces another node.
+  - No full `cpp` tooling profile; the team needs only a declared test
+    command.
+  - No gate from G4 to G7 for the `sdlc-qa` operator; QA in this task
+    writes only functional test files.
+  - No agent for the feature node or the design node; a seat holds each.
+  - No run of two units at a time.
+  - No merge; a run stops at the draft PR, and the user merges it.
+
+decomposition:
+  - unit: e1-declaration
+    id: e1-declaration
+    confirmed_by: [user]
+    done_means: >-
+      A repository declares `test:` and `wall:`, the kit declares its own,
+      and a task with no `test.command` prints SC2.3's message.
+    acceptance_sketch:
+      - >-
+        verify that a repository with no declared test command starts no
+        task, and its message names the missing `test.command` (SC2.3)
+  - unit: e2-scripts
+    id: e2-scripts
+    depends_on: [e1-declaration]
+    confirmed_by: [user]
+    done_means: >-
+      `prove.py` and `receipts.py` ship under `workflows/tools/` and run the
+      declared test command, pytest only where it is declared, with no
+      prototype.
+    acceptance_sketch:
+      - >-
+        verify that the team runs the declared test command for
+        `prove-red`, `green` and `two-key`, and runs `pytest` only where it
+        is declared (SC2.1)
+  - unit: e3-wall
+    id: e3-wall
+    depends_on: [e2-scripts]
+    confirmed_by: [user]
+    done_means: >-
+      `python -m taskcontract interface` prints signatures without bodies,
+      and the hook refuses each tool call across the wall during a task.
+    acceptance_sketch:
+      - >-
+        verify that no tool call of the Developer reads a functional test
+        file. Verify that no tool call of QA reads implementation bodies or
+        a unit test file (SC3.1, SC3.2)
+  - unit: e4-team
+    id: e4-team
+    depends_on: [e3-wall]
+    confirmed_by: [user]
+    done_means: >-
+      The team ships in the plugin, and each team member starts in a
+      consumer session at the execution row's settings.
+    acceptance_sketch:
+      - >-
+        verify that after a plugin install or update, a consumer session
+        starts each team member. Verify that no file is copied by hand.
+        Verify that `sdlc-spec` and `sdlc-qa` are registered and the plugin
+        ships neither (SC1.1)
+      - >-
+        verify that git holds each file the team runs, and the plugin ships
+        it. Verify that none stands only under `.claude/workflows/` (SC1.2)
+      - >-
+        verify that each team member runs at the agent model and effort of
+        the execution row (SC1.3)
+  - unit: e5-rounds
+    id: e5-rounds
+    depends_on: [e4-team]
+    confirmed_by: [user]
+    done_means: >-
+      A FAIL returns its reasons, three failures or a question stop the
+      run, and a pass opens a draft PR.
+    acceptance_sketch:
+      - >-
+        verify that a FAIL from a verifier returns the task to its channel
+        with its reasons. Verify that the next round starts from those
+        reasons (SC4.1)
+      - >-
+        verify that a 3rd FAIL of a task stops the run, puts the failures
+        before the user, and starts no 4th round. Verify that a question
+        from an operator stops its task and goes to the user through the
+        Orchestrator (SC4.2, SC4.3)
+      - >-
+        verify that a run whose last task passes opens a draft PR on the
+        branch of the unit. Verify that the run never marks the PR ready
+        and never merges it. Verify that a run that stops on a 3rd FAIL or
+        a question opens no PR (SC5.1, SC5.2)
+  - unit: e6-batch-run
+    id: e6-batch-run
+    depends_on: [e5-rounds]
+    confirmed_by: [user]
+    done_means: >-
+      In a batch-file fixture repository, one unit runs from write-tests to
+      two-key and ends green, and kit 0.21.0 ships.
+    acceptance_sketch:
+      - >-
+        verify that one unit runs from write-tests to two-key and ends green
+        in a batch-file fixture repository (SC2.2)
+
+dependencies: []
+
+entities:
+  - feature
+  - feature-document
+  - pair
+  - requirements-document
+  - design-document
+  - intake
+  - task-contract
+  - decomposition-unit
+  - success-criterion
+  - check
+  - task
+  - round
+  - two-key
+  - operator
+  - intake-seat
+  - node
+  - workflow-file
+  - agent-model
+  - consumer
+  - tooling-profile
+  - progress-record
+  - release-unit
+  - orchestrator
+  - dev-verifier
+  - qa-verifier
+  - functional-test
+  - unit-test
+  - public-interface
+  - test-command
+
+provenance:
+  origin: human-request
+  ref: docs/features/execution-team.md
