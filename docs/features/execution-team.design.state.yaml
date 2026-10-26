@@ -23,7 +23,7 @@ answers:
     - {id: e2-scripts, checks: [SC2.1], done_means: "`prove.py` and `receipts.py` ship under `workflows/tools/` and run the declared test command, pytest only where it is declared, with no prototype.", tests: ["SC2.1: automated, on a pytest fixture and a batch-file fixture"], retirements: "prove.py's prototype (setup's package copy, prove_green, PACKAGE) and the tests in test_prove.py that pin it"}
     - {id: e3-wall, checks: ["SC3.1+SC3.2"], done_means: "`python -m taskcontract interface` prints signatures without bodies, and the hook refuses each tool call across the wall during a task.", tests: ["SC3.1: automated", "SC3.2: automated"], retirements: none}
     - {id: e4-team, checks: [SC1.1, SC1.2, SC1.3], done_means: "The team ships in the plugin, and each team member starts in a consumer session at the execution row's settings.", tests: ["SC1.1: automated, and a manual receipt (a consumer session starts each team member)", "SC1.2: automated", "SC1.3: automated"], retirements: "the untracked copies under .claude/workflows/ (no test pins them)"}
-    - {id: e5-rounds, checks: [SC4.1, SC4.2, SC4.3, SC5.1, SC5.2], done_means: "A FAIL returns its reasons, three failures or a question stop the run, and a pass opens a draft PR.", tests: ["SC4.1, SC4.2, SC4.3, SC5.1, SC5.2: automated"], retirements: none}
+    - {id: e5-rounds, checks: [SC4.1, "SC4.2+SC4.3", "SC5.1+SC5.2"], done_means: "A FAIL returns its reasons, three failures or a question stop the run, and a pass opens a draft PR.", tests: ["SC4.1, SC4.2, SC4.3, SC5.1, SC5.2: automated"], retirements: none}
     - {id: e6-batch-run, release: "0.21.0", checks: [SC2.2], done_means: "In a batch-file fixture repository, one unit runs from write-tests to two-key and ends green, and kit 0.21.0 ships.", tests: ["SC2.2: manual receipt (the run's lines and the fixture's green)"], retirements: none, paths: [pyproject.toml, skills/sdlc/init.py, .github/workflows/sdlc.yml]}
   cases:
     - {case: "1. An ambiguity in the requirements", answer: "yes", asked: "Johnathan Hyden, the engineer seat (also the PO seat), at S3 part 2", decided: "The requirements name no holder for approve-tests and approve-commit: the QA verifier holds approve-tests; receipts.py's exit 0 holds approve-commit."}
@@ -43,7 +43,13 @@ answers:
       text: "`/sdlc execute {contract} {unit}` prints a header line, then one line per task: `Task {task}: {operator}, round {n}: {result}`, then `Draft PR: #{n} {url}`. Mapping: QA writes tests; the QA verifier holds approve-tests and prove-red; the Developer green; receipts.py's exit 0 holds approve-commit; the Orchestrator commits; the Dev verifier grades two-key. `python -m taskcontract interface {file}` prints public signatures and docstrings, no body; a non-Python file exits 2: `No interface for {file}: only a .py file has one.`"
     declaration:
       confirmed: true
-      text: "`.sdlc/config.yaml` gains `test:` (command, file with {file}, optional build; argv lists) and `wall:` (functional, unit, code, interface globs). No test.command: the SC2.3 message. A PreToolUse hook enforces the wall while `.git/sdlc-task.json` names the running task and operator: `Task {task}: the {operator} reads no {kind}: {path}`."
+      text: "`.sdlc/config.yaml` gains `test:` (command, file with {file}, optional build; argv lists) and `wall:` (functional, unit, code, interface globs). No test.command: the SC2.3 message. A PreToolUse hook enforces the wall while `.git/sdlc-task.json` names the running task and operator: `Task {task}: {operator} reads no {kind}: {path}` (the article dropped at r7)."
+    gaps_drawn_r9:
+      confirmed: true
+      text: "After r8's E6: `/sdlc execute` refuses a unit the contract lacks and a contract that is not ready-green, before any task, with no PR; task.py's start takes --unit and runs progress start (its G1 refusal printed, no task file, exit 1, the run stops with no PR); end runs progress done (approvals --by qa-verifier or receipts); end --run prints nothing and exits 0."
+    gaps_drawn_r7:
+      confirmed: true
+      text: "After intake's r6 park: the hook's three refusals drawn (Developer: a functional test; QA: a unit test, an implementation body); interface's missing file and unparseable .py, each exit 2; task.py's fail on rounds 1 and 2 (removes the task file, prints nothing, exit 0, count kept in .git/sdlc-rounds.json), start while a task runs (`Task {task} did not start: task {running} is running.`, exit 1), end --run removes both files."
   seats:
     engineer: Johnathan Hyden
   materials:
@@ -79,7 +85,8 @@ answers:
       - {fact: "A unit's sketches and done means", read_from: "`specs/{id}/contract.yaml`", when_two_disagree: "The contract"}
       - {fact: "The test command", read_from: "`.sdlc/config.yaml`, its `test:` block", when_two_disagree: "The declaration; pytest runs only where it is declared"}
       - {fact: "The wall's paths", read_from: "`.sdlc/config.yaml`, its `wall:` block", when_two_disagree: "The declaration"}
-      - {fact: "The running task, its operator and its round", read_from: "`.git/sdlc-task.json`, written by `/sdlc execute`", when_two_disagree: "The file; with no file no task runs, and the hook refuses nothing"}
+      - {fact: "The running task, its operator and its round", read_from: "`.git/sdlc-task.json`, written by `task.py start`", when_two_disagree: "The file; with no file no task runs, and the hook refuses nothing"}
+      - {fact: "A task's failed rounds", read_from: "`.git/sdlc-rounds.json`, written by `task.py fail` for one unit's run", when_two_disagree: "The rounds file: `start` takes its round from it"}
       - {fact: "A Python file's interface", read_from: "`python -m taskcontract interface`, from the code at HEAD", when_two_disagree: "The code"}
       - {fact: "The Two-Key verdict", read_from: "`receipts.py`'s exit codes, never its `ok` field (`two-key-unit-verifier.js:102-108`), then both verifiers' grades", when_two_disagree: "The exit code: no grade overrides a non-zero exit"}
       - {fact: "The draft PR's branch", read_from: "The current git branch", when_two_disagree: "Git"}
@@ -111,7 +118,7 @@ answers:
       - "`prove.py` hard-wires the `taskcontract` package and pytest's junitxml (`prove.py:40`, `prove.py:262`); a batch-file runner gives neither. e2 removes both."
       - "`test.bat` builds and runs every test, with no way to select one: a red proof sees one exit code, not one result per test. Answer: `test.file` runs one test file."
       - "Cost: at least 5 agents a unit at Sonnet high, each starting near 54K tokens; each retry round adds to it."
-      - "The highest risk: a workflow's agents may not fire the session's hooks. Then the wall is prompt-only and SC3 fails. e3 opens with a probe that proves an agent's tool call reaches the hook, before it builds anything else."
+      - "A workflow's agents fire the session's hooks: measured 2026-10-25, a session hook refused a workflow agent's piped Bash call (`RECEIPT_execution-team-design_2026-10-25/hook_probe.md`). The plugin's own hook is not yet measured: e3 opens with the same probe on it, before it builds anything else."
       - "A Bash call can read a walled file without naming it (a glob, a script). The hook matches walled paths and globs over walled folders; an indirect read can still pass."
       - "In the engine, each mutation rebuilds and runs the whole suite: 4 mutations cost 4 full builds, time not yet measured."
       - "The build's cost: six build sessions, one a unit; e6 adds a live run of the whole team."
@@ -126,7 +133,8 @@ answers:
       - {q: "How do `prove.py` and `receipts.py` stop assuming pytest?", a: "Both run the declared commands, and read results per test only when the command is pytest."}
       - {q: "Who holds approve-tests and approve-commit when a run stops for the user only at the draft PR?", a: "The QA verifier holds approve-tests; receipts.py's exit 0 holds approve-commit."}
       - {q: "How does QA prove its tests can pass without reading a body?", a: "No prototype; the QA verifier's mutations at two-key."}
-      - {q: "Does a workflow's agent fire the session's hooks?", a: OPEN}
+      - {q: "Does a workflow's agent fire the session's hooks?", a: "Yes, measured 2026-10-25: a session hook refused a workflow agent's piped Bash call (Risks and cost 5). e3 opens with the same probe on the plugin's hook."}
+      - {q: "Does the run record each task through `taskcontract progress`, as the kit's own builds do?", a: "Yes, through `task.py` (Interfaces 10): `start` runs `progress start` and `end` runs `progress done`, so G1's refusal (ADR 0038) stops a run before its first task. Built in e5 with `task.py`'s other messages."}
   links_out:
     source: material
     confirmed: true
@@ -157,8 +165,7 @@ answers:
     - {name: Unit test, definition: "A test the Developer writes beside the code it checks."}
     - {name: Public interface, definition: "The names, parameters, return types, commands and options a test calls, without any implementation body."}
     - {name: Test command, definition: "The command a repository declares to run its tests (the kit: pytest on workers; the engine: `test.bat`)."}
-open:
-  - "Does a workflow's agent fire the session's hooks? (the probe that opens e3 answers it)"
+open: []
 history:
   - at: 2026-10-25
     event: design read (requirements r3, signed at r4); id confirmed
@@ -206,3 +213,15 @@ history:
     event: solution half signed (r4 text row, r5 Signed)
   - at: 2026-10-25
     event: output complete (Google Docs form skipped)
+  - at: 2026-10-25
+    event: "way back after intake's r6 park (session 123): S3 interfaces (the hook's three refusals, interface's two refusals, task.py's rounds file and start refusal), S4 sources (rounds file row), S6 units (e5 pairs SC4.2+SC4.3 and SC5.1+SC5.2), S8 risk 5 and S10 decision 8 (the hook probe measured); r7 text row; next E1"
+  - at: 2026-10-25
+    event: "E1 to E5 run (r8 Measured; 16 findings, CL006 16; Scope covered; 2 OPEN under ready check 12, and Decisions 9 OPEN on progress records)"
+  - at: 2026-10-25
+    event: "E6 went back to S3 (execute's two refusals; task.py start --unit, progress start and done, end --run's exit) and S10 (decision 9 decided yes); r9 text row; next E1"
+  - at: 2026-10-25
+    event: "E1 to E5 run (r10 Measured; 16 findings, CL006 16; Scope covered; 0 OPEN)"
+  - at: 2026-10-25
+    event: solution half signed (r11 text row, r12 Signed)
+  - at: 2026-10-25
+    event: output complete (Google Docs form skipped, as at r5)

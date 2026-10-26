@@ -5,6 +5,13 @@
 | 2026-10-25 | Johnathan Hyden | r3: Measured: the checks before signing, on the solution half: 16 findings (CL006 16); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
 | 2026-10-25 | Johnathan Hyden | r4: The solution half finished: 12 sections written, 1 OPEN |
 | 2026-10-25 | Johnathan Hyden | r5: Signed: solution half. The engineer seat signs r4 |
+| 2026-10-25 | intake | r6: Parked: Decisions and open questions 8: OPEN: does a workflow's agent fire the session's hooks? The probe that opens e3 answers it. Ready check 12: the hook's refusal is drawn for the Developer only; QA's refusals of a unit test and of an implementation body have no drawn line. Ready check 12: `python -m taskcontract interface` on a missing file or a `.py` file that does not parse has no drawn output. Ready check 12: `task.py fail` on a first or second failed round has no drawn output or exit code. Ready check 12: `task.py start` while `.git/sdlc-task.json` holds a task (Constraint 9) has no drawn refusal. |
+| 2026-10-25 | Johnathan Hyden | r7: Interfaces: the hook's three refusals drawn, `interface`'s missing and unparseable files, `task.py`'s rounds file, `fail` on rounds 1 and 2 and `start` while a task runs. Sources: the rounds file's row. Units: e5 pairs SC4.2 + SC4.3 and SC5.1 + SC5.2. Risks and cost 5, Decisions 8: the hook probe measured, decided yes |
+| 2026-10-25 | Johnathan Hyden | r8: Measured: the checks before signing, on the solution half: 16 findings (CL006 16); Scope against the release unit's paths: covered; ready checks 11 to 15: 2 OPEN |
+| 2026-10-25 | Johnathan Hyden | r9: Interfaces: `/sdlc execute`'s two refusals drawn (no such unit, a contract not ready-green); `task.py start` takes `--unit` and runs `progress start`, its G1 refusal drawn; `end` runs `progress done`; `end --run` prints nothing and exits 0. Decisions 9: the run records each task through `taskcontract progress`, decided yes |
+| 2026-10-25 | Johnathan Hyden | r10: Measured: the checks before signing, on the solution half: 16 findings (CL006 16); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
+| 2026-10-25 | Johnathan Hyden | r11: The solution half finished: 12 sections written, 0 OPEN |
+| 2026-10-25 | Johnathan Hyden | r12: Signed: solution half. The engineer seat signs r11 |
 
 # execution-team - Standard Development Workflow
 
@@ -62,7 +69,9 @@ The kit's own declares its pytest commands and `functional: [tests/]`. With no `
 4. The wall. Before each task, `/sdlc execute` runs `workflows/tools/task.py`, which writes `.git/sdlc-task.json` with the task, its operator and its round (never committed), counts the rounds, and prints SC2.3's and SC4.2's messages. A PreToolUse hook in the plugin's `hooks/hooks.json` refuses each tool call that crosses the wall, a Bash call naming a walled path among them:
 
 ```
-Task green: the Developer reads no functional test: tests/run_command_line.bat
+Task green: Developer reads no functional test: tests/run_command_line.bat
+Task write-tests: QA reads no unit test: tests/test_command_line.cpp
+Task write-tests: QA reads no implementation body: src/command_line.cpp
 ```
 
 5. `/sdlc execute {contract} {unit}`, run in the session `python -m taskcontract node execution` starts. A run with one failed round:
@@ -84,7 +93,7 @@ Task two-key: QA verifier, round 2: PASS (mutations: 4 of 4 caught)
 Draft PR: #12 https://github.com/{owner}/{repo}/pull/12
 ```
 
-QA writes the tests; the QA verifier holds approve-tests and prove-red; the Developer holds green; `receipts.py`'s exit 0 holds approve-commit; the Orchestrator commits; two-key takes both verifiers. A run that stops on SC4.2's or SC4.3's message opens no PR. A unit takes at least 5 agents.
+QA writes the tests; the QA verifier holds approve-tests and prove-red; the Developer holds green; `receipts.py`'s exit 0 holds approve-commit; the Orchestrator commits; two-key takes both verifiers. A run that stops on SC4.2's or SC4.3's message opens no PR. A unit takes at least 5 agents. Two refusals stop a run before any task and open no PR: `Execution did not start: no unit {unit} in specs/{contract}/contract.yaml.` and `Execution did not start: specs/{contract}/contract.yaml is not ready-green.`
 
 6. `python -m taskcontract interface {file}` prints each public name's signature and docstring, and no body:
 
@@ -96,7 +105,7 @@ def settings(root: Path, node_id: str) -> Settings:
     """One node's agent model and effort, read from the settings table. ..."""
 ```
 
-A file that is not Python exits 2: `No interface for {file}: only a .py file has one.`
+A file that is not Python exits 2: `No interface for {file}: only a .py file has one.` A missing file exits 2: `No interface for {file}: no such file.` A `.py` file that does not parse exits 2: `No interface for {file}: line {n} does not parse: {message}.`
 
 7. `prove.py --scratch DIR --test PATH [--at REV] [--mutations FILE]` exports REV (default HEAD), places the draft at PATH, and runs `test.build`, then `test.file` (or `test.command` when no `file` is declared). `red_ok`: for a pytest command, every test fails on an assertion (junitxml, as today); for another command, the run exits 1. QA writes no prototype: QA reads no implementation body (SC3.2). The mutations run at two-key, on an export of the commit, written by the QA verifier; a mutation no test catches fails QA's channel, its reason naming the behavior, never the code. The JSON drops `green`, `proto_imported` and `package`.
 8. `receipts.py` keeps its options. An `argv[0]` naming a file in the repository (`test.bat`) resolves there; a command other than pytest keeps its last line as its key output (`test: ok`).
@@ -120,11 +129,11 @@ A mutation whose `old` text matches no place, or several, reads `{"name":...,"ap
 10. `workflows/tools/task.py`, one command a task step:
 
 ```
-$ python workflows/tools/task.py start --task green --operator developer
+$ python workflows/tools/task.py start --unit execution-team/u1 --task green --operator developer
 Task green: Developer, round 2
 ```
 
-`start` writes `.git/sdlc-task.json` (`{"task":"green","operator":"developer","round":2}`) and exits 0; with no `test.command` it prints SC2.3's message, writes nothing and exits 1. `fail --task green` counts the failed round; the third prints SC4.2's message, removes the file and exits 1. `stop --task green --operator developer --question "{question}"` prints SC4.3's message, removes the file and exits 1. `end` removes the file, prints nothing and exits 0.
+`start` runs `taskcontract progress start` for its task, writes `.git/sdlc-task.json` (`{"task":"green","operator":"developer","round":2}`) and exits 0; when `progress start` refuses, it prints the kit's own line (`{unit} cannot start: G1 has not passed for {feature}`), writes no task file and exits 1, and the run stops with no PR; with no `test.command` it prints SC2.3's message, writes nothing and exits 1; while the file names a task it prints `Task {task} did not start: task {running} is running.`, writes nothing and exits 1. `fail --task green` counts the failed round in `.git/sdlc-rounds.json`: on a first or second failed round it removes the task file, prints nothing and exits 0, and the next `start --task green` prints round 2, then round 3; the third prints SC4.2's message, removes both files and exits 1. `stop --task green --operator developer --question "{question}"` prints SC4.3's message, removes both files and exits 1. `end` runs `taskcontract progress done` for its task (an approval `--by` its holder: `qa-verifier` or `receipts`), removes the task file, prints nothing and exits 0; `end --run`, after the draft PR, removes both files, prints nothing and exits 0. Between tasks no task file stands, so the hook never walls the Orchestrator's own steps.
 
 11. A run that stops. On a third failed round, the failures follow one line a round, and no PR line prints:
 
@@ -154,7 +163,8 @@ No endpoint table: the feature has no HTTP surface.
 | A unit's sketches and done means | `specs/{id}/contract.yaml` | The contract |
 | The test command | `.sdlc/config.yaml`, its `test:` block | The declaration; pytest runs only where it is declared |
 | The wall's paths | `.sdlc/config.yaml`, its `wall:` block | The declaration |
-| The running task, its operator and its round | `.git/sdlc-task.json`, written by `/sdlc execute` | The file; with no file no task runs, and the hook refuses nothing |
+| The running task, its operator and its round | `.git/sdlc-task.json`, written by `task.py start` | The file; with no file no task runs, and the hook refuses nothing |
+| A task's failed rounds | `.git/sdlc-rounds.json`, written by `task.py fail` for one unit's run | The rounds file: `start` takes its round from it |
 | A Python file's interface | `python -m taskcontract interface`, from the code at HEAD | The code |
 | The Two-Key verdict | `receipts.py`'s exit codes, never its `ok` field (`two-key-unit-verifier.js:102-108`), then both verifiers' grades | The exit code: no grade overrides a non-zero exit |
 | The draft PR's branch | The current git branch | Git |
@@ -186,7 +196,7 @@ No endpoint table: the feature has no HTTP surface.
 | e2-scripts | SC2.1 | `prove.py` and `receipts.py` ship under `workflows/tools/` and run the declared test command, pytest only where it is declared, with no prototype. | SC2.1: automated, on a pytest fixture and a batch-file fixture | `prove.py`'s prototype (`setup`'s package copy, `prove_green`, `PACKAGE`) and the tests in `test_prove.py` that pin it |
 | e3-wall | SC3.1 + SC3.2 | `python -m taskcontract interface` prints signatures without bodies, and the hook refuses each tool call across the wall during a task. | SC3.1, SC3.2: automated, the hook fed tool calls | none |
 | e4-team | SC1.1, SC1.2, SC1.3 | The team ships in the plugin, and each team member starts in a consumer session at the execution row's settings. | SC1.1: automated, and a manual receipt (a consumer session starts each team member); SC1.2, SC1.3: automated | the untracked copies under `.claude/workflows/` (no test pins them) |
-| e5-rounds | SC4.1, SC4.2, SC4.3, SC5.1, SC5.2 | A FAIL returns its reasons, three failures or a question stop the run, and a pass opens a draft PR. | SC4.1, SC4.2, SC4.3, SC5.1, SC5.2: automated (`task.py`'s rounds and messages; the flow's one PR command is `gh pr create --draft`) | none |
+| e5-rounds | SC4.1, SC4.2 + SC4.3, SC5.1 + SC5.2 | A FAIL returns its reasons, three failures or a question stop the run, and a pass opens a draft PR. | SC4.1, SC4.2, SC4.3, SC5.1, SC5.2: automated (`task.py`'s rounds and messages; the flow's one PR command is `gh pr create --draft`) | none |
 | e6-batch-run | SC2.2 | In a batch-file fixture repository, one unit runs from write-tests to two-key and ends green, and kit 0.21.0 ships. | SC2.2: manual receipt (the run's lines and the fixture's green) | none |
 
 e6 is the release unit: it ships kit 0.21.0 through `pyproject.toml`, `skills/sdlc/init.py` (`KIT_VERSION`) and `.github/workflows/sdlc.yml`, since the engine pulls only a release. The usage page is written in e1 with every marker red; each unit turns its own markers green as it ships.
@@ -211,7 +221,7 @@ e1, e2, e3, e4, e5, e6, one at a time; each unit uses what the one before made:
 2. `prove.py` hard-wires the `taskcontract` package and pytest's junitxml (`prove.py:40`, `prove.py:262`); a batch-file runner gives neither. e2 removes both.
 3. `test.bat` builds and runs every test, with no way to select one: a red proof sees one exit code, not one result per test. Answer: `test.file` runs one test file.
 4. Cost: at least 5 agents a unit at Sonnet high, each starting near 54K tokens; each retry round adds to it.
-5. The highest risk: a workflow's agents may not fire the session's hooks. Then the wall is prompt-only and SC3 fails. e3 opens with a probe that proves an agent's tool call reaches the hook, before it builds anything else.
+5. A workflow's agents fire the session's hooks: measured 2026-10-25, a session hook refused a workflow agent's piped Bash call (`RECEIPT_execution-team-design_2026-10-25/hook_probe.md`). The plugin's own hook is not yet measured: e3 opens with the same probe on it, before it builds anything else.
 6. A Bash call can read a walled file without naming it (a glob, a script). The hook matches walled paths and globs over walled folders; an indirect read can still pass.
 7. In the engine, each mutation rebuilds and runs the whole suite: 4 mutations cost 4 full builds, time not yet measured.
 8. The build's cost: six build sessions, one a unit; e6 adds a live run of the whole team.
@@ -238,7 +248,8 @@ e1, e2, e3, e4, e5, e6, one at a time; each unit uses what the one before made:
 5. How do `prove.py` and `receipts.py` stop assuming pytest? Decided: both run the declared commands, and read results per test only when the command is pytest.
 6. Who holds the tasks approve-tests and approve-commit (`taskcontract/data/tasks.yaml`) when a run stops for the user only at the draft PR? Decided: the QA verifier holds approve-tests; `receipts.py`'s exit 0 holds approve-commit.
 7. How does QA prove its tests can pass without reading a body? Decided: QA writes no prototype; the QA verifier's mutations at two-key prove the tests catch broken behavior.
-8. OPEN: does a workflow's agent fire the session's hooks? The probe that opens e3 answers it.
+8. Does a workflow's agent fire the session's hooks? Decided: yes, measured 2026-10-25: a session hook refused a workflow agent's piped Bash call (Risks and cost 5). e3 opens with the same probe on the plugin's hook.
+9. Does the run record each task through `taskcontract progress`, as the kit's own builds do? Decided: yes, through `task.py` (Interfaces 10): `start` runs `progress start` and `end` runs `progress done`, so G1's refusal (ADR 0038) stops a run before its first task. Built in e5 with `task.py`'s other messages.
 
 ## Traceability
 
