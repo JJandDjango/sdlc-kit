@@ -302,6 +302,16 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
    Parked: execution-team's e4 and e5 give the session the Orchestrator
    seat through workflows, which report progress and notify at their end.
 
+10. Four enforcement gaps, found against Dave Kiss's talk "Eulogy for the
+    Software Engineer" (session 124), in no feature yet: the
+    `protect-main` ruleset requires a PR but no status check, so a red
+    `ci` or `sdlc` run still merges; no CI job runs the declared test
+    command before a merge (G4.11, named only in
+    `.github/workflows/sdlc.yml:31-33`; e1 declares the command); the kit
+    has no root `CLAUDE.md`, so no session loads `README.md`,
+    `ARCHITECTURE.md` or the ADRs; no hook checks the `Theory:` trailer
+    here, and none of the eight commits before session 124 carries one.
+
 ## Open questions
 
 - small-session-flow, two gaps for the design's next text row (w3's
