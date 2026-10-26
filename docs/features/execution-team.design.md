@@ -12,6 +12,10 @@
 | 2026-10-25 | Johnathan Hyden | r10: Measured: the checks before signing, on the solution half: 16 findings (CL006 16); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
 | 2026-10-25 | Johnathan Hyden | r11: The solution half finished: 12 sections written, 0 OPEN |
 | 2026-10-25 | Johnathan Hyden | r12: Signed: solution half. The engineer seat signs r11 |
+| 2026-10-25 | Johnathan Hyden | r13: Scope: `decisions/` (e4's ADR), `ARCHITECTURE.md` (the folder map's `workflows/` and `hooks/` rows), `docs/conventions/prove-py.md` and `docs/conventions/receipts-py.md` added: the feature makes their sentences false |
+| 2026-10-25 | Johnathan Hyden | r14: Measured: the checks before signing, on the solution half: 16 findings (CL006 16); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
+| 2026-10-25 | Johnathan Hyden | r15: The solution half finished: 12 sections written, 0 OPEN |
+| 2026-10-25 | Johnathan Hyden | r16: Signed: solution half. The engineer seat signs r15 |
 
 # execution-team - Standard Development Workflow
 
@@ -32,6 +36,9 @@
 7. `docs/usage/` (a new page), `USAGE.md`, `docs/operators.md` (the roster gains the Orchestrator and the two verifiers) and `CHANGELOG.md`.
 8. `hooks/` (`hooks.json` and a new hook script): the wall, a PreToolUse hook that refuses a tool call crossing it while a task runs.
 9. The release unit's (e6, kit 0.21.0): `pyproject.toml`, `skills/sdlc/init.py` (`KIT_VERSION`) and `.github/workflows/sdlc.yml`.
+10. `decisions/`: e4's ADR (Decisions 2).
+11. `ARCHITECTURE.md`: the folder map gains a `workflows/` row, and its `hooks/` row gains the wall.
+12. `docs/conventions/prove-py.md` and `docs/conventions/receipts-py.md`: both scripts move to `workflows/tools/` and run the declared test command.
 
 ### Out of scope
 

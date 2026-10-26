@@ -17,6 +17,9 @@ answers:
     - "docs/usage/ (new page), USAGE.md, docs/operators.md, CHANGELOG.md"
     - "hooks/ (hooks.json, a new hook script): the wall (added at S3 part 1)"
     - "The release unit's (e6, kit 0.21.0): pyproject.toml, skills/sdlc/init.py (KIT_VERSION), .github/workflows/sdlc.yml (added at E2)"
+    - "decisions/: e4's ADR (Decisions 2) (added at r13)"
+    - "ARCHITECTURE.md: the folder map gains a workflows/ row, and its hooks/ row gains the wall (added at r13)"
+    - "docs/conventions/prove-py.md and docs/conventions/receipts-py.md: both scripts move to workflows/tools/ and run the declared test command (added at r13)"
   units_cl006_answer: "The draft check's CL006 words in the done means go to intake's full lane as dictionary candidates: repository, prototype, signatures, bodies, tool, team, member, reasons, failures, stop, opens, batch-file, write-tests, ends."
   units:
     - {id: e1-declaration, checks: [SC2.3], done_means: "A repository declares `test:` and `wall:`, the kit declares its own, and a task with no `test.command` prints SC2.3's message.", tests: ["SC2.3: automated"], retirements: none}
@@ -225,3 +228,11 @@ history:
     event: solution half signed (r11 text row, r12 Signed)
   - at: 2026-10-25
     event: output complete (Google Docs form skipped, as at r5)
+  - at: 2026-10-25
+    event: "way back to S1 at intake's scope check: decisions/, ARCHITECTURE.md, docs/conventions/prove-py.md and receipts-py.md join Scope; r13 text row"
+  - at: 2026-10-25
+    event: "E1 to E5 run (r14 Measured; 16 findings, CL006 16; Scope covered; 0 OPEN)"
+  - at: 2026-10-25
+    event: solution half signed (r15 text row, r16 Signed)
+  - at: 2026-10-25
+    event: output complete (Google Docs form skipped)
