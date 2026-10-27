@@ -35,7 +35,7 @@ flowchart LR
 | [skills/](skills/) | The `sdlc` skill and the interview skill |
 | [hooks/](hooks/) | The plugin's hooks: the session-size message |
 | [taskcontract/](taskcontract/) | The validator and work tree (pip package) |
-| [workflows/](workflows/) | The execution team's scripts: `tools/task.py` starts a task |
+| [workflows/](workflows/) | The execution team's scripts: `tools/task.py` starts a task; `tools/prove.py` and `tools/receipts.py` run the declared test command |
 | [specs/](specs/) | Task contracts and the vocabulary |
 | [agents/](agents/) | Two-Key personas: developer, verifier |
 | [docs/](docs/) | Gates, taxonomy, features, conventions, USAGE's pages |
