@@ -5,9 +5,12 @@ usage: receipts.py --repo DIR --receipts FILE --out DIR [--timeout SECONDS]
 FILE is a JSON list of argv lists, e.g. the whole suite on workers:
 [["python", "-P", "-m", "pytest", "tests", "-q", "-n", "auto"]].
 No shell runs, so a pipe, a redirect or a chain cannot enter a receipt, and a
-glob is not expanded: name the folder. The commands run one at a time from DIR
-(the repository root), each hidden, with PYTHONUTF8 set and stdin closed.
-Before the first one the script reads the repository's state from git.
+glob is not expanded: name the folder. The commands run one at a time from the
+--repo folder (the repository root), whatever the caller's directory, each
+hidden, with PYTHONUTF8 set and stdin closed. An argv[0] that is a relative
+path naming a file under --repo (`test.bat`, `test.sh`) runs that file, ahead
+of a program of the same name on PATH; the record's `command` stays as
+declared. Before the first one the script reads the repository's state from git.
 
 stdout is one compact JSON object, also written to OUT/result.json:
   ok, out, head, branch, working_tree_clean_of_tracked_changes,
@@ -165,12 +168,24 @@ def key_output(argv: list[str], text: str, code: int, timed_out: bool, timeout: 
     return pytest_key(lines) if is_pytest(argv) else clip(lines[-1])
 
 
+def program(first: str, repo: Path) -> str | None:
+    """The program to start for `first`: a file under the repo, else PATH's."""
+    if not Path(first).is_absolute():
+        try:
+            local = (repo / first).resolve()
+            if local.is_file() and local.is_relative_to(repo):
+                return str(local)
+        except (OSError, ValueError):
+            pass
+    return shutil.which(first)
+
+
 def run_command(argv: list[str], n: int, repo: Path, logs: Path, timeout: int) -> dict:
     """Run one receipt; return its record. A command that fails to start reads 254."""
     log = logs / f"{n}.log"
     record = {"command": shlex.join(argv), "exit_code": SPAWN_FAILED, "key_output": "",
               "log": f"logs/{n}.log", "seconds": 0.0}
-    exe = shutil.which(argv[0])
+    exe = program(argv[0], repo)
     if exe is None:
         log.write_text(f"not found on PATH: {argv[0]}\n", encoding="utf-8")
         return {**record, "key_output": clip(f"not found on PATH: {argv[0]}")}
