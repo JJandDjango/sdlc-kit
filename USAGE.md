@@ -32,6 +32,7 @@ that order.
 | 4 | [G1](docs/usage/g1.md) | `/sdlc g1`, the G1 venue |
 | 4 | [Contract tools](docs/usage/contract-tools.md) | `taskcontract new`, `/sdlc audit`, the session hook, `scope-check`, `.sdlc/REVIEW.md` |
 | 4 | [Nodes](docs/usage/node.md) | `taskcontract node <id>`: a node's session at its row's settings |
+| 4 | [The execution team](docs/usage/the-team.md) | `/sdlc execute`, the declaration, the wall, rounds and the draft PR (🔴) |
 | 5 | [Vocabulary](docs/usage/vocabulary.md) | executable shared language |
 | 6 | [A worked example](docs/usage/worked-example.md) | a greenfield run end to end |
 | 7 | [Restricted environments](docs/usage/restricted-environments.md) | the one-way membrane |
