@@ -2,8 +2,10 @@
 
 run: python -m pytest tests/test_prove.py -q --tb=line
 
-Each test builds a toy repo and a scratch folder under tmp_path and runs
-prove.py with the toy repo as the working directory, as the drafter does.
+Each test builds a toy git repository (the toy package and a .sdlc/config.yaml
+declaring the pytest test command) and a scratch folder under tmp_path, and runs
+prove.py with the toy repository as the working directory, as the drafter does.
+The draft sits at scratch/draft/tests/test_toy.py.
 The environment lacks PYTHONUTF8 on purpose: prove.py sets it itself.
 """
 
@@ -20,8 +22,13 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+import yaml
 
 PROVE = Path(__file__).resolve().parents[1] / "workflows" / "tools" / "prove.py"
+
+TEST = "tests/test_toy.py"
+CONFIG = {"test": {"command": [sys.executable, "-m", "pytest", "tests", "-q"],
+                   "file": [sys.executable, "-m", "pytest", "{file}", "-q"]}}
 
 OLD = 'def greet(name):\n    return "hello"\n'
 NEW = 'def greet(name):\n    return "hello " + name\n'
@@ -47,19 +54,43 @@ def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def put(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(text.encode("utf-8"))
+
+
+def git(repo: Path, *args: str) -> str:
+    done = subprocess.run(
+        ["git", "-c", "user.name=t", "-c", "user.email=t@example.com", "-c", "core.autocrlf=false",
+         "-c", "commit.gpgsign=false", *args],
+        cwd=repo, capture_output=True, encoding="utf-8", errors="replace", timeout=60)
+    assert done.returncode == 0, done.stderr
+    return done.stdout.strip()
+
+
+def commit(repo: Path) -> None:
+    git(repo, "add", "-A")
+    git(repo, "commit", "-q", "--no-verify", "-m", "c")
+
+
 @pytest.fixture
 def world(tmp_path):
     repo = tmp_path / "repo"
-    (repo / "taskcontract").mkdir(parents=True)
-    (repo / "taskcontract" / "__init__.py").write_text(OLD + UNUSED, encoding="utf-8")
+    repo.mkdir()
+    git(repo, "init", "-q")
+    put(repo / ".gitattributes", "* -text\n")
+    put(repo / ".sdlc" / "config.yaml", yaml.safe_dump(CONFIG))
+    package = repo / "taskcontract" / "__init__.py"
+    put(package, OLD + UNUSED)
+    commit(repo)
     scratch = tmp_path / "scratch"
-    (scratch / "red").mkdir(parents=True)
-    (scratch / "red" / "test_toy.py").write_text(DRAFT, encoding="utf-8")
-    proto = scratch / "proto" / "taskcontract" / "__init__.py"
-    return SimpleNamespace(repo=repo, scratch=scratch, proto=proto)
+    draft = scratch / "draft" / "tests" / "test_toy.py"
+    put(draft, DRAFT)
+    return SimpleNamespace(repo=repo, scratch=scratch, draft=draft, package=package,
+                           exported=scratch / "export" / "taskcontract" / "__init__.py")
 
 
-def prove(world, *args, test="test_toy.py"):
+def prove(world, *args, test=TEST):
     env = {k: v for k, v in os.environ.items() if k != "PYTHONUTF8"}
     done = subprocess.run(
         [sys.executable, str(PROVE), "--scratch", str(world.scratch), "--test", test, *args],
@@ -72,14 +103,14 @@ def prove(world, *args, test="test_toy.py"):
 
 def mutations(world, *items):
     path = world.scratch / "mutations.json"
-    path.write_text(json.dumps(list(items)), encoding="utf-8")
+    put(path, json.dumps(list(items)))
     return ["--mutations", str(path)]
 
 
 def fixed(world):
-    """Run once so proto exists, then do what the drafter does: make it pass."""
-    prove(world)
-    world.proto.write_text(NEW + UNUSED, encoding="utf-8")
+    """Do what the drafter does: commit the new code, so the draft passes at HEAD."""
+    put(world.package, NEW + UNUSED)
+    commit(world.repo)
 
 
 @pytest.fixture
@@ -90,39 +121,8 @@ def prove_mod():
     return mod
 
 
-def test_first_run_copies_the_package_and_reports_red_ok_green_not(world):
-    run = prove(world, *mutations(
-        world, {"name": "drop-space", "file": "taskcontract/__init__.py",
-                "old": '"hello"', "new": '"hullo"'}))
-    assert world.proto.is_file()
-    assert run.out["red"]["red_ok"] is True
-    assert run.out["green"]["green_ok"] is False
-    assert run.out["mutations"].startswith("skipped")
-    assert world.proto.read_text(encoding="utf-8") == OLD + UNUSED
-    assert run.code == 1
-
-
-def test_a_rerun_keeps_the_drafters_proto_edits_and_exits_zero(world):
+def test_caught_mutations_exit_zero_and_leave_the_export_byte_for_byte(world):
     fixed(world)
-    run = prove(world)
-    assert world.proto.read_text(encoding="utf-8") == NEW + UNUSED
-    assert run.out["green"]["green_ok"] is True
-    assert run.code == 0
-
-
-def test_green_names_the_proto_package_and_red_the_repo_package(world):
-    fixed(world)
-    run = prove(world)
-    assert run.out["green"]["package"] == "proto/taskcontract/__init__.py"
-    assert (world.scratch / run.out["green"]["package"]).resolve() == world.proto.resolve()
-    assert run.out["green"]["proto_imported"] is True
-    assert (world.scratch / run.out["red"]["package"]).resolve() == (
-        world.repo / "taskcontract" / "__init__.py").resolve()
-
-
-def test_caught_mutations_exit_zero_and_leave_proto_byte_for_byte(world):
-    fixed(world)
-    before = digest(world.proto)
     run = prove(world, *mutations(
         world,
         {"name": "drop-space", "file": "taskcontract/__init__.py",
@@ -133,59 +133,22 @@ def test_caught_mutations_exit_zero_and_leave_proto_byte_for_byte(world):
     assert [m["name"] for m in caught] == ["drop-space", "same-size"]
     assert "test_sc1_1_greets_by_name" in caught[0]["caught_by"]
     assert "test_sc1_1_greets_by_name" in caught[1]["caught_by"]
-    assert digest(world.proto) == before
+    assert digest(world.exported) == digest(world.package)
     assert run.code == 0
 
 
-def test_an_uncaught_mutation_reads_not_caught_and_exits_one(world):
+def test_a_mutation_path_outside_the_export_is_refused(world):
     fixed(world)
-    before = digest(world.proto)
+    before = digest(world.draft)
     run = prove(world, *mutations(
-        world, {"name": "unused", "file": "taskcontract/__init__.py",
-                "old": "return 1", "new": "return 2"}))
-    assert run.out["mutations"][0]["caught_by"] == "not caught"
-    assert digest(world.proto) == before
-    assert run.code == 1
-
-
-def test_a_mutation_matching_zero_or_many_places_is_refused_untouched(world):
-    fixed(world)
-    before = digest(world.proto)
-    run = prove(world, *mutations(
-        world,
-        {"name": "none", "file": "taskcontract/__init__.py", "old": "no such text", "new": "x"},
-        {"name": "many", "file": "taskcontract/__init__.py", "old": "return", "new": "yield"}))
-    refused = run.out["mutations"]
-    assert [m["applied"] for m in refused] == [False, False]
-    assert "matches 0" in refused[0]["error"] and "matches 2" in refused[1]["error"]
-    assert digest(world.proto) == before
-    assert run.code == 1
-
-
-def test_a_mutation_path_outside_proto_is_refused(world):
-    fixed(world)
-    draft = world.scratch / "red" / "test_toy.py"
-    before = digest(draft)
-    run = prove(world, *mutations(
-        world, {"name": "escape", "file": "../red/test_toy.py", "old": "import", "new": "mport"}))
+        world, {"name": "escape", "file": "../draft/tests/test_toy.py", "old": "import", "new": "mport"}))
     assert run.out["mutations"][0]["applied"] is False
-    assert digest(draft) == before
-    assert run.code == 1
-
-
-def test_red_is_not_ok_when_a_test_passes_before_the_code_exists(world):
-    (world.scratch / "red" / "test_toy.py").write_text(
-        DRAFT + "\n\ndef test_sc1_9_passes_today():\n    assert taskcontract.unused() == 1\n",
-        encoding="utf-8")
-    run = prove(world)
-    assert run.out["red"]["red_ok"] is False
-    assert run.out["red"]["passed"] == ["test_sc1_9_passes_today"]
+    assert digest(world.draft) == before
     assert run.code == 1
 
 
 def test_red_is_not_ok_on_a_collection_error(world):
-    (world.scratch / "red" / "test_toy.py").write_text(
-        "import taskcontract.nope\n\n\ndef test_sc1_1_x():\n    assert True\n", encoding="utf-8")
+    put(world.draft, "import taskcontract.nope\n\n\ndef test_sc1_1_x():\n    assert True\n")
     run = prove(world)
     assert run.out["red"]["red_ok"] is False
     assert run.out["red"]["not_assertion"][0]["kind"] == "error"
@@ -193,8 +156,7 @@ def test_red_is_not_ok_on_a_collection_error(world):
 
 
 def test_red_is_not_ok_when_a_test_fails_on_an_exception_not_an_assertion(world):
-    (world.scratch / "red" / "test_toy.py").write_text(
-        "import taskcontract\n\n\ndef test_sc1_1_x():\n    taskcontract.nope()\n", encoding="utf-8")
+    put(world.draft, "import taskcontract\n\n\ndef test_sc1_1_x():\n    taskcontract.nope()\n")
     run = prove(world)
     assert run.out["red"]["red_ok"] is False
     bad = run.out["red"]["not_assertion"]
@@ -202,97 +164,102 @@ def test_red_is_not_ok_when_a_test_fails_on_an_exception_not_an_assertion(world)
     assert "nope" in bad[0]["line"]
 
 
-def test_green_lists_each_failing_id_with_its_first_assertion_line_in_utf8(world):
+def test_red_lists_a_failing_line_decoded_as_utf8(world):
+    put(world.draft, DRAFT + '\n\ndef test_sc1_4_raises():\n    raise ValueError("zoé")\n')
     run = prove(world)
-    failing = {f["id"]: f["line"] for f in run.out["green"]["failing"]}
-    assert set(failing) == {"test_sc1_1_greets_by_name",
-                            "test_sc1_2_greets_an_empty_name_with_a_space",
-                            "test_sc1_3_keeps_accents"}
-    assert "zoé" in failing["test_sc1_3_keeps_accents"]
-    assert run.out["green"]["summary"].startswith("3 failed")
+    bad = run.out["red"]["not_assertion"]
+    assert [(b["id"], b["kind"]) for b in bad] == [("test_sc1_4_raises", "ValueError")]
+    assert "zoé" in bad[0]["line"]
+    assert run.out["red"]["summary"].startswith("4 failed")
 
 
 def test_stdout_is_one_compact_json_line_and_logs_hold_the_full_output(world):
+    red = prove(world)
+    assert red.text.count("\n") <= 1
+    assert json.dumps(red.out, separators=(",", ":"), ensure_ascii=False) == red.text.strip()
+    assert red.out["scratch"] == str(world.scratch.resolve())
+    assert red.out["red"]["log"] == "logs/red.log"
+    assert "3 failed" in (world.scratch / red.out["red"]["log"]).read_text(encoding="utf-8")
     fixed(world)
-    run = prove(world)
+    run = prove(world, *mutations(
+        world, {"name": "drop-space", "file": "taskcontract/__init__.py",
+                "old": '"hello " + name', "new": '"hello" + name'}))
     assert run.text.count("\n") <= 1
     assert json.dumps(run.out, separators=(",", ":"), ensure_ascii=False) == run.text.strip()
-    assert run.out["scratch"] == str(world.scratch.resolve())
-    for key, tail in (("red", "3 failed"), ("green", "3 passed")):
-        assert run.out[key]["log"] == f"logs/{key}.log"
-        assert tail in (world.scratch / run.out[key]["log"]).read_text(encoding="utf-8")
+    assert "3 passed" in (world.scratch / "logs" / "baseline.log").read_text(encoding="utf-8")
+    log = run.out["mutations"][0]["log"]
+    assert log == "logs/mutation-1.log"
+    assert "failed" in (world.scratch / log).read_text(encoding="utf-8")
 
 
 def test_a_run_leaves_the_repo_tree_as_it_found_it(world):
     fixed(world)
-    before = sorted(p.relative_to(world.repo).as_posix() for p in world.repo.rglob("*"))
+
+    def tree():
+        return sorted(p.relative_to(world.repo).as_posix() for p in world.repo.rglob("*")
+                      if ".git" not in p.relative_to(world.repo).parts)
+
+    before = tree()
     prove(world)
-    assert sorted(p.relative_to(world.repo).as_posix() for p in world.repo.rglob("*")) == before
+    prove(world, *mutations(
+        world, {"name": "drop-space", "file": "taskcontract/__init__.py",
+                "old": '"hello " + name', "new": '"hello" + name'}))
+    assert tree() == before
+    assert git(world.repo, "status", "--porcelain", "--untracked-files=all") == ""
 
 
 def test_a_hung_test_is_killed_at_the_timeout_and_exits_one(world):
-    (world.scratch / "red" / "test_toy.py").write_text(
-        "import time\n\n\ndef test_sc9_1_hangs():\n    time.sleep(60)\n", encoding="utf-8")
+    put(world.draft, "import time\n\n\ndef test_sc9_1_hangs():\n    time.sleep(60)\n")
     start = time.monotonic()
     run = prove(world, "--timeout", "3")
     assert time.monotonic() - start < 40
-    assert run.out["red"]["timeout"] is True
+    assert run.out["red"]["red_ok"] is False
+    assert run.out["red"]["summary"] == "timeout after 3s"
     assert run.code == 1
 
 
 def test_usage_errors_exit_two(world):
-    missing = prove(world, test="test_absent.py")
-    assert missing.code == 2
-    assert "test_absent.py" in missing.err
-    (world.scratch / "bad.json").write_text("{not json", encoding="utf-8")
+    put(world.scratch / "bad.json", "{not json")
     bad = prove(world, "--mutations", str(world.scratch / "bad.json"))
     assert bad.code == 2
+    assert "cannot read the mutations file" in bad.err
 
 
-def test_a_crash_mid_mutation_still_restores_proto(world, prove_mod, monkeypatch, capsys):
+def test_a_crash_mid_mutation_still_restores_the_file(world, prove_mod, monkeypatch):
     fixed(world)
-    before = digest(world.proto)
+    before = digest(world.package)
     monkeypatch.chdir(world.repo)
-    real = prove_mod.run_pytest
+    real = subprocess.run
     calls = []
 
-    def crashing(*args, **kwargs):
+    def crashing(argv, *args, **kwargs):
+        if argv[0] == "git":
+            return real(argv, *args, **kwargs)
         calls.append(1)
-        if len(calls) == 3:
-            assert digest(world.proto) != before
+        if len(calls) == 2:
+            assert digest(world.exported) != before
             raise RuntimeError("boom")
-        return real(*args, **kwargs)
+        return real(argv, *args, **kwargs)
 
-    monkeypatch.setattr(prove_mod, "run_pytest", crashing)
-    argv = ["--scratch", str(world.scratch), "--test", "test_toy.py",
+    monkeypatch.setattr(prove_mod.subprocess, "run", crashing)
+    argv = ["--scratch", str(world.scratch), "--test", TEST,
             *mutations(world, {"name": "drop-space", "file": "taskcontract/__init__.py",
                                "old": '"hello " + name', "new": '"hello" + name'})]
     with pytest.raises(RuntimeError):
         prove_mod.main(argv)
-    assert digest(world.proto) == before
-    assert not (world.scratch / "logs" / "journal.json").exists()
-
-
-def test_a_journal_left_by_a_killed_run_is_restored_before_anything_runs(world):
-    fixed(world)
-    logs = world.scratch / "logs"
-    logs.mkdir(parents=True, exist_ok=True)
-    (logs / "orig.bin").write_bytes((NEW + UNUSED).encode("utf-8"))
-    (logs / "journal.json").write_text(json.dumps({"file": "taskcontract/__init__.py"}), encoding="utf-8")
-    world.proto.write_text(OLD + UNUSED, encoding="utf-8")
-    run = prove(world)
-    assert run.out["recovered"] == ["taskcontract/__init__.py"]
-    assert world.proto.read_text(encoding="utf-8") == NEW + UNUSED
-    assert run.out["green"]["green_ok"] is True
-    assert not (logs / "journal.json").exists()
+    assert len(calls) == 2
+    assert digest(world.exported) == before
 
 
 def test_a_pytest_that_never_starts_exits_254(world, prove_mod, monkeypatch):
     monkeypatch.chdir(world.repo)
+    real = subprocess.run
 
-    def no_python(*args, **kwargs):
+    def no_python(argv, *args, **kwargs):
+        if argv[0] == "git":
+            return real(argv, *args, **kwargs)
         raise FileNotFoundError("no interpreter")
 
     monkeypatch.setattr(prove_mod.subprocess, "run", no_python)
-    code = prove_mod.main(["--scratch", str(world.scratch), "--test", "test_toy.py"])
+    code = prove_mod.main(["--scratch", str(world.scratch), "--test", TEST])
     assert code == 254
