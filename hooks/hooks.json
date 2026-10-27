@@ -1,6 +1,17 @@
 {
-  "description": "Tell the session once when its context passes 200K and 400K tokens (CONTRIBUTING.md).",
+  "description": "Hold the execution team's wall while a task runs; tell the session once when its context passes 200K and 400K tokens (CONTRIBUTING.md).",
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write|NotebookEdit|Grep|Glob|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/wall.py\""
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "*",
