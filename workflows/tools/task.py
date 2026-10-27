@@ -10,11 +10,10 @@ stderr, writes nothing and exits 1; `progress start`'s own line prints as it
 gave it. On acceptance `start` writes `sdlc-task.json` into the git folder,
 the running task, its operator and its round, and prints `Task {task}:
 {Operator}, round 1`. It exits 2 on a usage error. The round is always 1
-here: the count of failed rounds is the next command's.
+here: no command counts failed rounds yet.
 
 The script imports the `taskcontract` that sits beside it, whichever package
-of that name the environment holds. It needs the standard library, PyYAML
-and the kit's own modules only.
+of that name the environment holds.
 """
 
 from __future__ import annotations

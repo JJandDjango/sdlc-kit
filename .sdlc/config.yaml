@@ -58,7 +58,7 @@ scope_check:
 tree:
   # The herdr hook (E:/herdr-sdlc): flags the pane's seat in herdr's sidebar.
   notify: python E:/herdr-sdlc/herdr_seat.py
-# What a task runs and the paths its wall guards (the execution team, execution-team design).
+# The execution team's declaration (execution-team design): the test command and the wall's paths.
 test:
   command: [python, -P, -m, pytest, tests, -q, -n, auto]
   file: [python, -P, -m, pytest, "{file}", -q]

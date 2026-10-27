@@ -1,11 +1,10 @@
 """The test declaration: the `test:` block of `.sdlc/config.yaml`.
 
-A repository declares how its tests run as argv lists, since `receipts.py`
-runs no shell: `command` (the whole suite), `file` (one test file, its path
-from the repo root in place of `{file}`) and `build` (runs before `file`).
-`read_test` returns the three lists, or None when the repository declares no
-test command. The `wall:` block beside it is not read here: the wall's hook
-reads it.
+A repository declares how its tests run, each command an argv list to run
+with no shell: `command` (the whole suite), `file` (one test file, its path
+from the repo root in place of `{file}`) and `build` (to run before
+`file`). `read_test` returns the three lists, or None when the repository
+declares no test command. The `wall:` block beside it is not read here.
 """
 
 from __future__ import annotations

@@ -14,8 +14,10 @@ sides, and every task runs the test command the repository declares.
 #### The declaration 🟢
 
 🟢 A repository declares its test command and its wall in
-`.sdlc/config.yaml`. Each command is an argument list, run with no shell.
-A consumer whose suite is a batch file declares:
+`.sdlc/config.yaml`, each command an argument list. A consumer whose
+suite is a batch file declares (the comments say what each entry is
+for; the scripts that run the commands and the hook that holds the wall
+ship in the sections marked red below):
 
 ```yaml
 test:
@@ -37,8 +39,9 @@ strings counts as none; `file` and `build` read as empty when absent.
 #### Starting a task: `task.py start` 🟢
 
 🟢 `workflows/tools/task.py start` opens one task step (`/sdlc execute`
-calls it for each task once that ships, below): it writes the task file, `sdlc-task.json` in the repository's git folder
-(never committed), and prints the task's line:
+calls it for each task once that ships, below): it writes the task
+file, `sdlc-task.json` in the repository's git folder (never
+committed), and prints the task's line:
 
 ```
 $ python workflows/tools/task.py start --unit execution-team/e1-declaration --task green --operator developer
