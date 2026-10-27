@@ -55,6 +55,7 @@ the same kind at PR review.
 | 114 | `small-session-flow/w4-session-notes` | yes | 1 | 0 / 0 | | 0 | 93: Two-Key 93 | 2 / | 0 / 0 |
 | 115 | `small-session-flow/w2-workflow-file` | yes | 1 | 0 / 0 | | 0 | 270: drafter 106, developer 70, Two-Key 94 | 2 / | 1 / 0 |
 | 116 | `small-session-flow/w3-node-start` | yes | 1 | 0 / 0 | | 0 | 297: drafter 126, developer 70, Two-Key 101 | 2 / | 2 / 1 |
+| 124 | `execution-team/e1-declaration` | yes | 3 | 0 / 2 | | 0 | 507: drafter 131, developer 75, Two-Key 301 (95, 108, 98) | 2 / | 0 / 0 |
 
 ## Notes on the baseline
 
@@ -195,3 +196,19 @@ the same kind at PR review.
   `Popen` for the design's next text row), and the Ctrl+C note follows
   the plan's reading. Next 11 closed; Next 12 and 13 are the two lines
   added.
+- Session 124 built execution-team's first unit in one session, its
+  context peaking at 303K (over the 200K target). The drafter took 131K
+  tokens and 36 calls, the developer 75K and 27. Both failed Two-Key
+  rounds were one wording defect on one sentence: `task.py`'s docstring
+  listed its outside dependencies "only". Claude's hand fix of round 1
+  named PyYAML and missed jsonschema, which reaches the script through
+  `g1`; round 2's grader proved it by blocking the package. The second
+  fix dropped the list and swept every line that stated a later unit's
+  work as present. The lesson: a fix to a factual claim is checked
+  against the code, as the claim was. The prototype's whole-suite run
+  found `test_g1_release.py` pinning 0.20.0's state (no red mark
+  anywhere in USAGE), which refused the page the design writes red in
+  e1. The count now leaves out that page, a reading from both documents'
+  purpose. It is not charged as an escaped defect, since it held when it
+  shipped. The deferred list added and closed nothing: its four lines
+  sit in later units.

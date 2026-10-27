@@ -167,12 +167,26 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     amended, 14 dictionary words (`fd8a70f`). Contract ready-green
     (`7b92e64`; Ready rows r6 and r17); G1 passed, the review signed with
     11 items checked. The PR waits for the user's review.
-18. Build `e1-declaration`, the first execution-team unit, once PR #142
+18. [x] Build `e1-declaration`, the first execution-team unit, once PR #142
     merges: a repository declares `test:` and `wall:` in
     `.sdlc/config.yaml`, the kit declares its own, and `task.py start`
-    with no `test.command` prints SC2.3's message. G1 reads green, so
-    `progress start` is not refused. Then e2 to e6 in order; e3 opens with
-    the hook probe on the plugin's own hook.
+    with no `test.command` prints SC2.3's message. Session 124 on the
+    branch `session-124-e1-declaration`, in one session: the usage page
+    `docs/usage/the-team.md` written red at `59e875d`, tests red at
+    `951ab4a`, unit at `2741265` (`taskcontract/declaration.py`,
+    `workflows/tools/task.py start`). `test_g1_release.py`'s red-mark
+    count, which pinned 0.20.0's state, leaves out the team's page
+    (`bfa860e`). Two-Key PASS in round 3: rounds 1 and 2 failed on one
+    docstring's dependency claim (fixes `c609110`, `f6fcdc5`). The PR
+    waits for the user's review.
+19. Build `e2-scripts`, the second execution-team unit, once e1's PR
+    merges: `prove.py` and `receipts.py` move to `workflows/tools/` with
+    their tests, and run the declared test command through e1's
+    `read_test`, pytest only where it is declared, with no prototype.
+    Retirements: `prove.py`'s prototype and the `test_prove.py` tests that
+    pin it. Then e3 to e6 in order; e3 opens with the hook probe on the
+    plugin's own hook, and e5 rewrites `task.py`'s "no command counts
+    failed rounds yet" and the page's "until the rounds file ships".
 
 ## Next actions
 
@@ -301,6 +315,16 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
    (`docs/usage/node.md:15-27`), so no session can watch one it starts.
    Parked: execution-team's e4 and e5 give the session the Orchestrator
    seat through workflows, which report progress and notify at their end.
+
+10. Four enforcement gaps, found against Dave Kiss's talk "Eulogy for the
+    Software Engineer" (session 124), in no feature yet: the
+    `protect-main` ruleset requires a PR but no status check, so a red
+    `ci` or `sdlc` run still merges; no CI job runs the declared test
+    command before a merge (G4.11, named only in
+    `.github/workflows/sdlc.yml:31-33`; e1 declares the command); the kit
+    has no root `CLAUDE.md`, so no session loads `README.md`,
+    `ARCHITECTURE.md` or the ADRs; no hook checks the `Theory:` trailer
+    here, and none of the eight commits before session 124 carries one.
 
 ## Open questions
 

@@ -537,7 +537,11 @@ def test_done_means_usage_section_9_shows_g1_as_an_active_gate_green_under_the_s
 
 
 def test_done_means_usage_keeps_a_red_mark_on_its_two_legend_lines_and_nowhere_else():
-    marked = [line for line in usage_text(USAGE).splitlines() if RED in line]
+    # The execution team's page is written red before its units ship
+    # (execution-team's design, Units), so its marks stay out of this count.
+    team = (ROOT / "docs" / "usage" / "the-team.md").read_text(encoding="utf-8")
+    marked = [line for line in usage_text(USAGE).replace(team, "").splitlines()
+              if RED in line]
     assert len(marked) == 2, marked
     # The page's own legend, and the line of the file listing that explains the marks.
     assert f"Sections marked {RED} are ratified but not" in marked[0]
