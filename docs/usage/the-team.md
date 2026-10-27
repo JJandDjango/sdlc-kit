@@ -11,9 +11,9 @@ the code and each unit test; the QA verifier and the Dev verifier each
 hold the verdict on one channel. A hook holds the wall between the two
 sides, and every task runs the test command the repository declares.
 
-#### The declaration 🔴
+#### The declaration 🟢
 
-🔴 A repository declares its test command and its wall in
+🟢 A repository declares its test command and its wall in
 `.sdlc/config.yaml`. Each command is an argument list, run with no shell.
 A consumer whose suite is a batch file declares:
 
@@ -29,13 +29,14 @@ wall:
   interface: [src/*.h]           # the interface QA reads whole
 ```
 
-🔴 The kit declares its own: its pytest commands and
+🟢 The kit declares its own: its pytest commands and
 `functional: [tests/]`. `/sdlc init` writes neither block; a consumer
-writes its own.
+writes its own. A `command` that is not a non-empty list of non-empty
+strings counts as none; `file` and `build` read as empty when absent.
 
-#### Starting a task: `task.py start` 🔴
+#### Starting a task: `task.py start` 🟢
 
-🔴 Each task step starts with `workflows/tools/task.py start`, which
+🟢 Each task step starts with `workflows/tools/task.py start`, which
 writes the task file, `sdlc-task.json` in the repository's git folder
 (never committed), and prints the task's line:
 
@@ -44,13 +45,23 @@ $ python workflows/tools/task.py start --unit execution-team/e1-declaration --ta
 Task green: Developer, round 1
 ```
 
-🔴 With no `test.command` it starts no task: it prints
-`Task {task} did not start: the repository declares no test command.`,
-writes nothing and exits 1. While a task runs, another start prints
-`Task {task} did not start: task {running} is running.` When G1 has not
-passed for the feature, `taskcontract progress start` refuses, its line
-prints (`{unit} cannot start: G1 has not passed for {feature}`), and no
-task file is written.
+🟢 `--task` is one of the seven task ids; `--operator` is one of `qa`,
+`qa-verifier`, `developer`, `dev-verifier`, `receipts` and
+`orchestrator`, printed as QA, QA verifier, Developer, Dev verifier,
+receipts and Orchestrator; `--root` names the repository (default `.`).
+Any other value is a usage error, exit 2. The task file sits in the
+folder `git rev-parse --absolute-git-dir` names: `.git/` in a clone, the
+worktree's own folder in a linked worktree. The round reads 1 until the
+rounds file ships.
+
+🟢 Each refusal goes to stderr, exits 1 and writes nothing, checked in
+this order:
+
+- No `test.command`: `Task {task} did not start: the repository declares no test command.`
+- No git repository: `Task {task} did not start: no git repository at {root}.`
+- A running task: `Task {task} did not start: task {running} is running.`
+- `taskcontract progress start` refuses: its own line prints as it gave
+  it, such as `{unit} cannot start: G1 has not passed for {feature}`.
 
 #### The scripts run the declared command 🔴
 
