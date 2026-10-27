@@ -189,15 +189,27 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     retirements and eleven amendments at `a030f55`, unit at `c91634b`,
     docs at `7835e42`. Two-Key PASS in round 1. The PR waits for the
     user's review.
-20. Build `e3-wall`, the third execution-team unit, once e2's PR merges:
-    `python -m taskcontract interface` prints a Python file's signatures
-    without bodies, and a PreToolUse hook in the plugin refuses each tool
-    call across the wall while a task runs. e3 opens with the hook probe
-    on the plugin's own hook (the 2026-10-25 probe measured a
-    user-settings hook only). Then e4 to e6 in order; e4 points the
-    team's workflows at `workflows/tools/` and retires the untracked
-    copies, and e5 rewrites `task.py`'s "no command counts failed rounds
-    yet" and the page's "until the rounds file ships".
+20. [x] Build `e3-wall`, the third execution-team unit: `python -m
+    taskcontract interface` prints a Python file's signatures without
+    bodies, and a PreToolUse hook in the plugin refuses each tool call
+    across the wall while a task runs. Session 126 on the branch
+    `session-126-e3-wall`, stacked on e2's branch while PR #144 is open,
+    in one session. The probe came first: a plugin's PreToolUse hook
+    refuses a workflow agent's call by exit 2
+    (`RECEIPT_execution-team-e3_2026-10-27/hook_probe.md`). Tests red at
+    `a62fdbb` (`tests/test_wall.py`), unit at `618a356` (`hooks/wall.py`,
+    `taskcontract/interface.py`, `read_wall`), docs at `c77ccdb`. Two-Key
+    PASS in round 1. The PR waits for the user's review.
+21. Build `e4-team`, the fourth execution-team unit, once e3's PR merges:
+    the team ships in the plugin's `workflows/` folder, and each member
+    starts in a consumer session at the execution row's settings (SC1.1
+    to SC1.3). e4 points the team's workflows at `workflows/tools/`,
+    retires the untracked copies, writes the design's one ADR (the
+    `workflows/` folder and the Sonnet ruling), which also replaces ADR
+    0039's "a plugin hook never blocks", and adds the roster lines to
+    `docs/operators.md`. Then e5 and e6 in order; e5 rewrites `task.py`'s
+    "no command counts failed rounds yet" and the page's "until the
+    rounds file ships".
 
 ## Next actions
 
@@ -345,6 +357,13 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     `--mutations` with an empty list passes with no mutation run, so
     the QA verifier must give at least one; `tarfile`'s `filter="data"`
     needs Python 3.10.12 or later, under `requires-python >=3.10`.
+    `e3-wall`'s (session 126): the hook splits a Bash command into words
+    only, so a walled path glued to a shell operator (`cat
+    tests/run_a.bat;`) is one word that misses a glob entry (folder
+    entries still hold); on Windows a Git Bash path (`/e/repo/tests/...`)
+    resolves outside the root and passes. Both stand on the usage page
+    among the calls that can still pass. ADR 0039 says "a plugin hook
+    never blocks", false since `hooks/wall.py` (e4's ADR, Next 21).
 
 ## Open questions
 

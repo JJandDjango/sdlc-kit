@@ -111,7 +111,9 @@ path a Read, Edit, Write or NotebookEdit names, a Grep's `path` and
 `glob`, a Glob's `path` and `pattern`, and each word of a Bash command.
 A folder entry ends in `/`; any other entry is a glob. A call that
 reads a walled file without naming it, such as a Grep over the whole
-repository, can still pass.
+repository, can still pass, and so can a Bash path glued to a shell
+operator (`cat tests/run_a.bat;`) under a glob entry, or a Git Bash
+path on Windows (`/e/repo/tests/run_a.bat`).
 
 🟢 `python -m taskcontract interface {file}` prints each public
 function's and class's signature with its docstring's first line, and
