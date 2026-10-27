@@ -13,8 +13,8 @@ the running task, its operator and its round, and prints `Task {task}:
 here: the count of failed rounds is the next command's.
 
 The script imports the `taskcontract` that sits beside it, whichever package
-of that name the environment holds. Standard library and the kit's own
-modules only.
+of that name the environment holds. It needs the standard library, PyYAML
+and the kit's own modules only.
 """
 
 from __future__ import annotations

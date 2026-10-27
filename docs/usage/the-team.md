@@ -36,8 +36,8 @@ strings counts as none; `file` and `build` read as empty when absent.
 
 #### Starting a task: `task.py start` 🟢
 
-🟢 Each task step starts with `workflows/tools/task.py start`, which
-writes the task file, `sdlc-task.json` in the repository's git folder
+🟢 `workflows/tools/task.py start` opens one task step (`/sdlc execute`
+calls it for each task once that ships, below): it writes the task file, `sdlc-task.json` in the repository's git folder
 (never committed), and prints the task's line:
 
 ```
