@@ -33,6 +33,14 @@ agents: the persona is the shape, the gate binding is the profile.
 | `sdlc-verifier` | cross-cutting - subject checks + zero-trust re-runs | none - writes nothing | 🟢 0.8.0 |
 | `sdlc-spec` | G0-G2 authoring venues | spec artifacts | ⚪ registered - ships at the first bound G2 authoring surface; /sdlc intake and /sdlc g1 are the live flows today |
 | `sdlc-qa` | G4-G7 execution; G8-G10 config ownership | committed configs (class E) | ⚪ registered - ships at the first consumer G5-G7 pipeline |
+| Orchestrator | the execution node - runs each task of a unit | places QA's draft after prove-red; makes the commit task's one commit | 🟢 built (e4-team) - the session itself, running `/sdlc execute` (`skills/sdlc/flows/execute.md`) |
+| QA verifier | the execution node - approve-tests, prove-red, two-key's mutations | none - writes nothing | 🟢 built (e4-team) - the workflow `workflows/qa-verifier.js` |
+| Dev verifier | the execution node - two-key's grade | none - writes nothing | 🟢 built (e4-team) - the workflow `workflows/dev-verifier.js` |
+
+The execution team's QA and Developer run through the workflows
+`workflows/qa.js` and `workflows/developer.js`, not the `sdlc-qa` or
+`sdlc-developer` definitions; each member starts at the execution row's
+model and effort ([0040](../decisions/0040-the-team-ships-in-the-plugins-workflows-folder-and-runs-at-its-rows-settings.md)).
 
 Human seats never delegate: G1.3 criteria review, G6.1/G6.2 (the
 human principal), G8.3 (the operations principal), PL-PIPE.1 (the
