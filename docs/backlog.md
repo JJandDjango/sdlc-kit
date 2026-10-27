@@ -179,14 +179,25 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     (`bfa860e`). Two-Key PASS in round 3: rounds 1 and 2 failed on one
     docstring's dependency claim (fixes `c609110`, `f6fcdc5`). The PR
     waits for the user's review.
-19. Build `e2-scripts`, the second execution-team unit, once e1's PR
+19. [x] Build `e2-scripts`, the second execution-team unit, once e1's PR
     merges: `prove.py` and `receipts.py` move to `workflows/tools/` with
     their tests, and run the declared test command through e1's
     `read_test`, pytest only where it is declared, with no prototype.
-    Retirements: `prove.py`'s prototype and the `test_prove.py` tests that
-    pin it. Then e3 to e6 in order; e3 opens with the hook probe on the
-    plugin's own hook, and e5 rewrites `task.py`'s "no command counts
-    failed rounds yet" and the page's "until the rounds file ships".
+    Session 125 on the branch `session-125-e2-scripts`, in one session:
+    the move at `362de21`, tests red at `82d4484`
+    (`tests/test_declared_command.py`), `test_prove.py`'s seven
+    retirements and eleven amendments at `a030f55`, unit at `c91634b`,
+    docs at `7835e42`. Two-Key PASS in round 1. The PR waits for the
+    user's review.
+20. Build `e3-wall`, the third execution-team unit, once e2's PR merges:
+    `python -m taskcontract interface` prints a Python file's signatures
+    without bodies, and a PreToolUse hook in the plugin refuses each tool
+    call across the wall while a task runs. e3 opens with the hook probe
+    on the plugin's own hook (the 2026-10-25 probe measured a
+    user-settings hook only). Then e4 to e6 in order; e4 points the
+    team's workflows at `workflows/tools/` and retires the untracked
+    copies, and e5 rewrites `task.py`'s "no command counts failed rounds
+    yet" and the page's "until the rounds file ships".
 
 ## Next actions
 
@@ -325,6 +336,15 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     has no root `CLAUDE.md`, so no session loads `README.md`,
     `ARCHITECTURE.md` or the ADRs; no hook checks the `Theory:` trailer
     here, and none of the eight commits before session 124 carries one.
+
+11. `e2-scripts`' Two-Key advisories (session 125), for e4 to e6: on
+    Windows `prove.py`'s timeout kills only the direct child, so a
+    `test.bat` that starts a hung program may outlast it (`receipts.py`
+    kills the tree; e6's batch run meets this first); a build that
+    cannot start names the test command in its 254 line;
+    `--mutations` with an empty list passes with no mutation run, so
+    the QA verifier must give at least one; `tarfile`'s `filter="data"`
+    needs Python 3.10.12 or later, under `requires-python >=3.10`.
 
 ## Open questions
 
