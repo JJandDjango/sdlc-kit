@@ -56,6 +56,7 @@ the same kind at PR review.
 | 115 | `small-session-flow/w2-workflow-file` | yes | 1 | 0 / 0 | | 0 | 270: drafter 106, developer 70, Two-Key 94 | 2 / | 1 / 0 |
 | 116 | `small-session-flow/w3-node-start` | yes | 1 | 0 / 0 | | 0 | 297: drafter 126, developer 70, Two-Key 101 | 2 / | 2 / 1 |
 | 124 | `execution-team/e1-declaration` | yes | 3 | 0 / 2 | | 0 | 507: drafter 131, developer 75, Two-Key 301 (95, 108, 98) | 2 / | 0 / 0 |
+| 125 | `execution-team/e2-scripts` | yes | 1 | 0 / 0 | | 0 | 499: drafter 152, retirer 103, developer 98, Two-Key 146 | 2 / | 1 / 0 |
 
 ## Notes on the baseline
 

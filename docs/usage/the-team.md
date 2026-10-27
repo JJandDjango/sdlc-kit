@@ -16,8 +16,8 @@ sides, and every task runs the test command the repository declares.
 🟢 A repository declares its test command and its wall in
 `.sdlc/config.yaml`, each command an argument list. A consumer whose
 suite is a batch file declares (the comments say what each entry is
-for; the scripts that run the commands and the hook that holds the wall
-ship in the sections marked red below):
+for; the hook that holds the wall ships in the section marked red
+below):
 
 ```yaml
 test:
@@ -66,12 +66,32 @@ this order:
 - `taskcontract progress start` refuses: its own line prints as it gave
   it, such as `{unit} cannot start: G1 has not passed for {feature}`.
 
-#### The scripts run the declared command 🔴
+#### The scripts run the declared command 🟢
 
-🔴 `prove.py` and `receipts.py` ship under `workflows/tools/` and run the
+🟢 `prove.py` and `receipts.py` ship under `workflows/tools/` and run the
 declared command for prove-red, green and two-key; pytest runs only where
-it is declared. QA writes no prototype: the QA verifier's mutations run at
-two-key, on an export of the commit.
+it is declared. Run from the repository root:
+
+```
+$ python workflows/tools/prove.py --scratch DIR --test tests/run_command_line.bat
+{"ok":true,"scratch":"<DIR>","red":{"summary":"test: FAILED","red_ok":true,"log":"logs/red.log"}}
+```
+
+🟢 `prove.py` exports REV (`--at`, default HEAD) into `DIR/export/`
+afresh each run, copies the draft from `DIR/draft/PATH` when one sits
+there (else the committed file at PATH runs), and runs `test.build`,
+then `test.file` with `{file}` as PATH, or `test.command` when no `file`
+is declared. Without `--mutations` it proves red: a pytest command's
+tests each fail on an assertion, any other command exits 1. With
+`--mutations FILE` it proves the mutations instead: the unmutated export
+must pass, then each mutation must make the run fail (`caught_by` lists
+test ids for pytest, PATH otherwise). It has no prototype. Exit 0 holds,
+1 a check failed, 2 usage, 254 the test command never started.
+
+🟢 `receipts.py` keeps its options and JSON. An `argv[0]` naming a file
+in the repository (`test.bat`) runs that file ahead of a program on
+PATH, and a command other than pytest reports its last line
+(`test: ok`).
 
 #### The wall 🔴
 

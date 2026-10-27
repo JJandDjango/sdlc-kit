@@ -7,6 +7,14 @@ the tests and prints only what an agent needs), recorded in
 tests) and run once on a real receipts list at the kit's root (session 106);
 🟢 a real Two-Key round took its receipts from it.
 
+Since execution-team's `e2-scripts` (session 125, 2026-10-27) the script is
+tracked at `workflows/tools/receipts.py` and ships in the plugin, its
+self-test at `tests/test_receipts.py` (design Interface 8). Its options and
+JSON are unchanged; an `argv[0]` naming a file in the repository
+(`test.bat`) runs that file ahead of a program on PATH, so a repository's
+declared test command can be a receipt. The untracked session copy in
+`.claude/workflows/tools/` stays until e4 retires it.
+
 Two-Key's receipts are the check commands it re-runs independently at the
 unit's commit. Today `two-key-unit-verifier.js` hands them to a Haiku 5.5
 agent, which pays a fixed start of about 54K tokens, infers exit codes from
@@ -23,9 +31,9 @@ and prints the minimum.
 | 5 | **Key output**: a pytest command gives its summary line plus each failing id with its first assertion line. Any other command gives its last non-empty line. The full log goes to `DIR/logs/<n>.log`, and the JSON names its path. | 🟢 |
 | 6 | **Watchdog**: writes `DIR/alive` at launch and updates `DIR/progress.json` after each command, so the session follows a long run with a Monitor. Stderr goes to `DIR/logs/`. | 🟢 |
 | 7 | **Harness hygiene**: sets `PYTHONUTF8`, decodes with `errors="replace"`, opens no window. `--timeout SECONDS` per command, default 1800 (the whole suite took 607 s). | 🟢 |
-| 8 | **Self-test**: `test_receipts.py` beside it, on a toy git repo: all pass, one non-zero, a timeout, a start failure, a trimmed pytest summary, a modified tracked file seen, an untracked file ignored. | 🟢 |
+| 8 | **Self-test**: `test_receipts.py` beside it (since `e2-scripts`, `tests/test_receipts.py`), on a toy git repo: all pass, one non-zero, a timeout, a start failure, a trimmed pytest summary, a modified tracked file seen, an untracked file ignored. | 🟢 |
 | 9 | **Two-Key wiring**: the workflow takes the script's JSON as `receiptsResult` and then skips the receipts agent, so the grader runs alone. Without it the agent runs as today until a real round uses the script. | 🟢 |
-| 10 | **Home**: `.claude/workflows/tools/receipts.py`, untracked like the other tools. The PR carries docs only: the feature page, a `standing-practice.md` line and the backlog row. The self-test run goes in the PR body. | 🟢 |
+| 10 | **Home**: `.claude/workflows/tools/receipts.py`, untracked like the other tools. The PR carries docs only: the feature page, a `standing-practice.md` line and the backlog row. The self-test run goes in the PR body. Since `e2-scripts`: `workflows/tools/receipts.py`, tracked and shipped. | 🟢 |
 
 ## Readings the build chose where the list was silent
 
