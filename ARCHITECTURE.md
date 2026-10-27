@@ -33,7 +33,7 @@ flowchart LR
 | Folder | Purpose |
 |---|---|
 | [skills/](skills/) | The `sdlc` skill and the interview skill |
-| [hooks/](hooks/) | The plugin's hooks: the session-size message |
+| [hooks/](hooks/) | The plugin's hooks: the session-size message; the execution team's wall (`wall.py`), which refuses a tool call across `.sdlc/config.yaml`'s `wall:` while a task runs |
 | [taskcontract/](taskcontract/) | The validator and work tree (pip package) |
 | [workflows/](workflows/) | The execution team's scripts: `tools/task.py` starts a task; `tools/prove.py` and `tools/receipts.py` run the declared test command |
 | [specs/](specs/) | Task contracts and the vocabulary |

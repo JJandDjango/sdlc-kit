@@ -16,7 +16,7 @@ sides, and every task runs the test command the repository declares.
 🟢 A repository declares its test command and its wall in
 `.sdlc/config.yaml`, each command an argument list. A consumer whose
 suite is a batch file declares (the comments say what each entry is
-for; the hook that holds the wall ships in the section marked red
+for; the hook that holds the wall is in [The wall](#the-wall-)
 below):
 
 ```yaml
@@ -93,9 +93,9 @@ in the repository (`test.bat`) runs that file ahead of a program on
 PATH, and a command other than pytest reports its last line
 (`test: ok`).
 
-#### The wall 🔴
+#### The wall 🟢
 
-🔴 While a task runs, a PreToolUse hook in the plugin refuses each tool
+🟢 While a task runs, a PreToolUse hook in the plugin refuses each tool
 call that crosses the wall, a Bash call naming a walled path among them:
 
 ```
@@ -104,10 +104,21 @@ Task write-tests: QA reads no unit test: tests/test_command_line.cpp
 Task write-tests: QA reads no implementation body: src/command_line.cpp
 ```
 
-🔴 `python -m taskcontract interface {file}` prints a Python file's
-signatures and docstrings, with no body, for QA (in C++, QA reads the
-`.h` files). Between tasks no task file stands, and the hook refuses
-nothing.
+🟢 The Developer stands behind `functional`; QA stands behind `unit` and
+`code`, with the files `interface` lists open to it. The two verifiers,
+`receipts` and the Orchestrator are not walled. The hook checks the
+path a Read, Edit, Write or NotebookEdit names, a Grep's `path` and
+`glob`, a Glob's `path` and `pattern`, and each word of a Bash command.
+A folder entry ends in `/`; any other entry is a glob. A call that
+reads a walled file without naming it, such as a Grep over the whole
+repository, can still pass.
+
+🟢 `python -m taskcontract interface {file}` prints each public
+function's and class's signature with its docstring's first line, and
+no body, for QA (in C++, QA reads the `.h` files); QA may run it on a
+code file. A file that is not Python, a missing file and one that does
+not parse each exit 2 with one line. Between tasks no task file stands,
+and the hook refuses nothing.
 
 #### Running a unit: `/sdlc execute {contract} {unit}` 🔴
 
