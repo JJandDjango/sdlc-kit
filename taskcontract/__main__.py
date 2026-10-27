@@ -10,6 +10,7 @@ from pathlib import Path
 from .checker import PROFILES, load_schema, validate_path
 from .g1 import main_g1_check, main_g1_record
 from .graph import main_graph
+from .interface import main_interface
 from .lang import main_lang_check, main_lang_draft, main_lang_extract
 from .progress import RUNS, main_progress
 from .scaffold import scaffold
@@ -80,6 +81,11 @@ def main(argv=None) -> int:
         "graph",
         help="render one contract's unit dependency graph as Mermaid (ADR 0024)")
     graph.add_argument("file", help="contract file (YAML or JSON)")
+    interface = sub.add_parser(
+        "interface",
+        help="print a Python file's public signatures with no bodies: what a "
+             "seat may read of code it is walled from")
+    interface.add_argument("file", help="the .py file, from the cwd or absolute")
     tree = sub.add_parser(
         "tree",
         help="print the work as one tree, derived from the repo's files at each run (ADR 0031)")
@@ -197,6 +203,9 @@ def main(argv=None) -> int:
 
     if args.command == "graph":
         return main_graph(args)
+
+    if args.command == "interface":
+        return main_interface(args)
 
     if args.command == "tree":
         return main_tree(args)
