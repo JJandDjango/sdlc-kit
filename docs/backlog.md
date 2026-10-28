@@ -226,6 +226,20 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     two-key in a batch-file fixture repository, ending green, on e5's
     flow, and kit 0.21.0. Read Next actions 13 and 14 first: the run
     meets both.
+24. Restart a stopped run in a fresh session (the user, session 130).
+    `task.py stop` and a third failed round remove the task file and the
+    rounds file, so a stopped run keeps no state; session 129 went on by
+    `--resume`, and the headless session's starting context grew from 45K
+    to 281K tokens over eight runs (31.0M cache reads). The feature: a
+    stop writes a stop record (unit, task, round counts, the question or
+    the FAIL reasons), and `/sdlc execute` reads it, the progress records
+    and the branch, takes the user's ruling and starts at the stopped
+    task, near a first launch's 45K. It ships in `/sdlc execute`, not a
+    personal skill. Left out: a member that waits on the parent, since a
+    headless session kills a waiting workflow after 10 minutes and keeps
+    its whole context. Starts as a feature document once e6 ships 0.21.0;
+    if e6 stops first, restart it by hand with a fresh launch and a short
+    prompt.
 
 ## Next actions
 
