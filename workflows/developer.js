@@ -30,19 +30,17 @@ const DEV_SCHEMA = {
   properties: {
     files_changed: { type: 'array', items: { type: 'string' } },
     summary: { type: 'string', description: 'what changed, file by file, in a few lines' },
-    unit_tests: { type: 'string', description: 'the last line of the one-file run, verbatim' },
-    suite: { type: 'string', description: 'the last line of the whole-suite run, verbatim' },
+    suite: { type: 'string', description: 'the last line of the whole command\'s run, verbatim' },
     deviations: { type: 'array', items: { type: 'string' }, description: 'each place the code departs from the interface note, and why; empty if none' },
     questions: { type: 'array', items: { type: 'string' }, description: 'anything the note and the sources left undecided; empty if none' },
   },
-  required: ['files_changed', 'summary', 'unit_tests', 'suite', 'deviations', 'questions'],
+  required: ['files_changed', 'summary', 'suite', 'deviations', 'questions'],
 }
 
 const list = xs => xs.map((x, i) => `${i + 1}. ${x}`).join('\n')
 
 const functional = (a.wall && a.wall.functional && a.wall.functional.length ? a.wall.functional : []).join(' ') || 'none declared'
 const whole = a.test.command.join(' ')
-const oneFile = (a.test.file || a.test.command).map(t => t.split('{file}').join(a.testFile)).join(' ')
 const build = a.test.build ? a.test.build.join(' ') : 'none declared'
 
 const prompt = `You are the developer (G3) for unit "${a.unit}" of contract "${a.contract}", in the repository at ${a.repo}, on branch ${a.branch}. The spec channel has placed the unit's tests at ${a.testFile}, and they fail today. Make them pass by changing the code, working from the interface note below.
@@ -52,13 +50,13 @@ Rules:
 - Change only these files: ${a.files.join(', ')}. Create a file only when it is on that list; create no other.
 - Change no git state: no add, commit, stash, checkout, reset, or branch.
 - Every shell call is a single command: no pipes, no &&, no ;, no redirects. Run separate commands as separate calls.
-- Run every test call in the foreground and set the Bash tool's timeout yourself: 120000 for one test file, 600000 for several files or the whole suite. Never use run_in_background, and never read a task's output file to wait for it.
+- Run every test call in the foreground and set the Bash tool's timeout yourself: 600000. Never use run_in_background, and never read a task's output file to wait for it.
+- Never run one test file alone: the wall hook refuses any command that names a path behind the functional wall. Run the build, when declared, then the whole command.
 - No new dependency. Match the surrounding code: its comment density, naming and idiom, and its docstrings' register.
 
 The repository's declared test commands, each an argv joined by single spaces:
-- the whole suite: ${whole}
-- the unit's test file: ${oneFile}
-- the build, which runs before the unit's test file: ${build}
+- the whole command: ${whole}
+- the build, which runs before the whole command: ${build}
 
 Read first:
 ${list(a.sources)}
@@ -66,7 +64,7 @@ ${list(a.sources)}
 The interface note (the tests assume exactly this):
 ${a.interface}
 
-Done means: ${oneFile} passes whole, and ${whole} passes whole. Run both from the repository root, then return the structured result.`
+Done means: ${whole} passes whole. Run it from the repository root, then return the structured result.`
 
 phase('Green')
 const dev = await agent(prompt, { label: `green:${a.unit}`, phase: 'Green', schema: DEV_SCHEMA, model: a.model, effort: a.effort })
@@ -74,5 +72,5 @@ if (!dev) {
   log(`${a.unit}: the developer returned nothing`)
   return { unit: a.unit, dev: null, error: 'the developer returned nothing', questions: [] }
 }
-log(`${a.unit}: ${dev.unit_tests}; suite: ${dev.suite}; ${dev.deviations.length} deviation(s)`)
+log(`${a.unit}: suite: ${dev.suite}; ${dev.deviations.length} deviation(s)`)
 return { unit: a.unit, dev, questions: dev.questions || [] }
