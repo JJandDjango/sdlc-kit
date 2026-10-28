@@ -15,7 +15,7 @@ declared. Before the first one the script reads the repository's state from git.
 stdout is one compact JSON object, also written to OUT/result.json:
   ok, out, head, branch, working_tree_clean_of_tracked_changes,
   commands: [{command, exit_code, key_output, log, seconds}], notes?
-That is the shape two-key-unit-verifier.js reads as its receipts result.
+That is the shape workflows/dev-verifier.js reads as its receiptsResult.
 exit_code is the process's own. 254 means the command never started; 124 means
 it passed --timeout and was killed with its children. key_output is, for a
 pytest command, the summary line and each failing id with its first assertion

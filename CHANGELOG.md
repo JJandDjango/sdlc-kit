@@ -21,8 +21,9 @@ Two house rules, enforced in review:
   consumer writes its own.
 - **The scripts run the declared command** (`execution-team`, unit
   `e2-scripts`). `prove.py` and `receipts.py` move to `workflows/tools/` and run
-  `test.command` and `test.file` from the repository root, pytest only where it
-  is declared, with no prototype. Delta note: a consumer's suite need not be
+  the declared `test.command` and `test.file` (`receipts.py` from the
+  repository root, `prove.py` from an export of it), pytest only where it is
+  declared, with no prototype. Delta note: a consumer's suite need not be
   pytest.
 - **The wall** (`execution-team`, unit `e3-wall`). While a task runs, a
   PreToolUse hook in the plugin (`hooks/wall.py`) refuses each tool call that

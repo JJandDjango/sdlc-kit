@@ -4,8 +4,9 @@
 > design [execution-team.design.md](../features/execution-team.design.md);
 > [ADR 0040](../../decisions/0040-the-team-ships-in-the-plugins-workflows-folder-and-runs-at-its-rows-settings.md)).
 > A kit before 0.21.0 has no team: no `test:` or `wall:` declaration, no
-> wall and no `/sdlc execute`. One gap stays red: the hook refuses a
-> declared command that names a walled folder ([The wall](#the-wall-)).
+> wall and no `/sdlc execute`. [The wall](#the-wall-) states two known
+> gaps: the hook refuses a declared command that names a walled folder
+> (red), and it walls the Orchestrator's calls as the running member's.
 
 The execution node runs each task of a unit through one agent, at the
 agent model and effort of the execution row in `.sdlc/workflow.md`
