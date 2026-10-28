@@ -11,14 +11,16 @@ Since execution-team's `e2-scripts` (session 125, 2026-10-27) the script is
 tracked at `workflows/tools/prove.py`, ships in the plugin and runs the test
 command the repository declares, with no prototype (design Interfaces 7 and
 9, [the team's page](../usage/the-team.md)). Items 1 to 5, 7, 8 and 10 read
-as that unit changed them. The untracked session copy in
-`.claude/workflows/tools/` keeps the old behavior until e4 retires it.
+as that unit changed them. `e4-team` retired the untracked session copy in
+`.claude/workflows/tools/`.
 
-The drafter of a unit's test list proves three things by hand: the list is red
-against the repo, green against a prototype, and each pinned behavior is caught
-by a one-line mutation. Session 103's `s6-release` drafter spent 299K tokens and
-124 tool calls, mostly copying, mutating, running and restoring. `prove.py` does
-that plumbing and prints the minimum.
+Before the script, the drafter of a unit's test list proved three things by
+hand: the list was red against the repo, green against a prototype, and each
+pinned behavior was caught by a one-line mutation. Session 103's `s6-release`
+drafter spent 299K tokens and 124 tool calls, mostly copying, mutating, running
+and restoring. `prove.py` does that plumbing and prints the minimum. Since
+`e2-scripts` no prototype runs: QA and the QA verifier prove red, and the QA
+verifier proves the mutations.
 
 | # | Feature | Status |
 | :-: | :-- | :-: |
@@ -30,7 +32,7 @@ that plumbing and prints the minimum.
 | 6 | **Compact output**: each run prints the summary line, failing ids and first assertion line only. The full log goes to `DIR/logs/<run>.log`, and the JSON names its path. | 🟢 |
 | 7 | **Harness hygiene**: sets `PYTHONUTF8` and decodes with `errors="replace"`. Default timeout is 600 s a run, with no popup window and stderr in `DIR/logs/`. Exit codes: 0 all hold, 1 a check failed, 2 usage, 254 the test command never started. | 🟢 |
 | 8 | **Self-test**: `tests/test_prove.py` on a toy package, and `tests/test_declared_command.py` on a pytest fixture and a batch-file fixture. | 🟢 |
-| 9 | **Drafter wiring**: the `spec-channel-drafter.js` brief names this one command in place of its red, prototype and mutation recipe. It names the untracked session copy; e4 points the team at this script. | 🟢 |
+| 9 | **Team wiring**: QA's and the QA verifier's workflows (`workflows/qa.js`, `workflows/qa-verifier.js`, since `e4-team`) name this one command for the red proof and the mutation proof. The `spec-channel-drafter.js` brief that first named it retired in `e4-team`. | 🟢 |
 | 10 | **Home**: `workflows/tools/prove.py`, tracked and shipped in the plugin. | 🟢 |
 
 ## Readings the build chose where the list was silent

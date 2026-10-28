@@ -40,9 +40,10 @@ Two house rules, enforced in review:
   consumer; ADR 0040 amends ADR 0039's "a plugin hook never blocks" for the wall.
 - **Rounds, stops and the draft PR** (`execution-team`, unit `e5-rounds`). A
   FAIL returns its task to its channel with its reasons, up to three rounds,
-  counted in `sdlc-rounds.json` by `task.py fail`; a third FAIL, an error or a
-  question stops the run through `task.py stop`, with no PR. A run whose last
-  task passes pushes the unit's branch and opens a draft PR with
+  each counted in `sdlc-rounds.json` by `task.py fail`. The run stops with no
+  PR when `task.py fail` exits 1 on a task's third failed round, or when a
+  member returns an error or a question, recorded by `task.py stop`. A run
+  whose last task passes pushes the unit's branch and opens a draft PR with
   `gh pr create --draft`; it never marks the PR ready and never merges it. Delta
   note: with no GitHub remote the run ends after two-key with no Draft PR line.
 - **A batch-file repository builds one unit** (`execution-team`, unit

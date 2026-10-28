@@ -4,7 +4,8 @@
 > design [execution-team.design.md](../features/execution-team.design.md);
 > [ADR 0040](../../decisions/0040-the-team-ships-in-the-plugins-workflows-folder-and-runs-at-its-rows-settings.md)).
 > A kit before 0.21.0 has no team: no `test:` or `wall:` declaration, no
-> wall and no `/sdlc execute`.
+> wall and no `/sdlc execute`. One gap stays red: the hook refuses a
+> declared command that names a walled folder ([The wall](#the-wall-)).
 
 The execution node runs each task of a unit through one agent, at the
 agent model and effort of the execution row in `.sdlc/workflow.md`
@@ -111,7 +112,11 @@ Task write-tests: QA reads no implementation body: src/command_line.cpp
 
 🟢 The Developer stands behind `functional`; QA stands behind `unit` and
 `code`, with the files `interface` lists open to it. The two verifiers,
-`receipts` and the Orchestrator are not walled. The hook checks the
+`receipts` and the Orchestrator stand behind no list of their own, but
+the hook reads only the operator the task file names: while a member's
+task runs, every call in the session meets that member's wall, the
+Orchestrator's own among them (its `Glob **/*` during write-tests gives
+`Task write-tests: QA reads no implementation body: **/*`). The hook checks the
 path a Read, Edit, Write or NotebookEdit names, a Grep's `path` and
 `glob`, a Glob's `path` and `pattern`, and each word of a Bash command.
 A folder entry ends in `/`; any other entry is a glob. A call that
