@@ -17,8 +17,9 @@ that the root is a git repository and that no task is running, then runs
 stderr, writes nothing and exits 1; `progress start`'s own line prints as it
 gave it. On acceptance `start` writes `sdlc-task.json` into the git folder,
 the running task, its operator and its round, and prints `Task {task}:
-{Operator}, round {n}`: n is one more than the task's failed rounds in the
-rounds file, `sdlc-rounds.json`, which holds one unit's failed reasons a task.
+{Operator}, round {n}`: n is one more than the failed rounds of the task's
+channel (write-tests or green) in the rounds file, `sdlc-rounds.json`, which
+holds one unit's failed reasons a task; the task's own, when higher.
 
 `end` runs `taskcontract progress done` for the task and removes the task
 file; when `progress done` refuses, its line prints as it gave it and the
@@ -64,6 +65,15 @@ OPERATORS = {
     "dev-verifier": "Dev verifier",
     "receipts": "receipts",
     "orchestrator": "Orchestrator",
+}
+# The task whose failed rounds a task shares: a QA-channel check returns to
+# write-tests, a Developer-channel check to green.
+CHANNELS = {
+    "approve-tests": "write-tests",
+    "prove-red": "write-tests",
+    "approve-commit": "green",
+    "commit": "green",
+    "two-key": "green",
 }
 
 
@@ -199,7 +209,8 @@ def start(args: argparse.Namespace) -> int:
     held, _ = read_rounds(rounds_path)
     if held is not None and held != args.unit:
         remove(rounds_path)  # another unit's counts end here
-    number = len(failed_reasons(rounds_path, args.unit, task)) + 1
+    number = 1 + max(len(failed_reasons(rounds_path, args.unit, name))
+                     for name in (task, CHANNELS.get(task, task)))
     path.write_text(json.dumps({"task": task, "operator": args.operator, "round": number}),
                     encoding="utf-8")
     print(f"Task {task}: {OPERATORS[args.operator]}, round {number}")

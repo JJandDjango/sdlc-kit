@@ -54,8 +54,11 @@ Task green: Developer, round 1
 receipts and Orchestrator; `--root` names the repository (default `.`).
 Any other value is a usage error, exit 2. The task file sits in the
 folder `git rev-parse --absolute-git-dir` names: `.git/` in a clone, the
-worktree's own folder in a linked worktree. The round is one more than the
-task's failed rounds in the rounds file (below): 1 when it holds none.
+worktree's own folder in a linked worktree. A task's round is its channel's
+round: one more than the failed rounds in the rounds file (below) of
+write-tests, for approve-tests and prove-red, or of green, for
+approve-commit, commit and two-key; the task's own count, when higher.
+It is 1 when the file holds none.
 
 🟢 Each refusal goes to stderr, exits 1 and writes nothing, checked in
 this order:
@@ -152,15 +155,12 @@ Task approve-commit: receipts, round 1: exit 0
 Task commit: Orchestrator: 3f2a1bc
 Task two-key: Dev verifier, round 1: FAIL (2 sketches failed)
 Task green: Developer, round 2: done
-Task approve-commit: receipts, round 1: exit 0
+Task approve-commit: receipts, round 2: exit 0
 Task commit: Orchestrator: 9c04e7d
-Task two-key: Dev verifier, round 1: PASS
-Task two-key: QA verifier, round 1: PASS (mutations: 4 of 4 caught)
+Task two-key: Dev verifier, round 2: PASS
+Task two-key: QA verifier, round 2: PASS (mutations: 4 of 4 caught)
 Draft PR: #12 https://github.com/{owner}/{repo}/pull/12
 ```
-
-Each task counts its own failed rounds, so only the channel's task, here
-`green`, carries the higher round: the later tasks print round 1.
 
 🟢 Two refusals stop a run before any task and open no PR:
 `Execution did not start: no unit {unit} in specs/{contract}/contract.yaml.`
@@ -184,8 +184,8 @@ line (`no reason given` when none):
 
 ```
 Task green failed 3 rounds. The run stops here; the failures follow.
-  Round 1: 2 sketches failed: SC5.1, SC5.2
-  Round 2: 1 sketch failed: SC5.2
+  Round 1: 2 sketches failed: SC5.1 (src/command_line.cpp:41), SC5.2 (src/command_line.cpp:58)
+  Round 2: 1 sketch failed: SC5.2 (src/command_line.cpp:58)
   Round 3: no reason given
 ```
 
@@ -201,8 +201,10 @@ refuses, its line goes to stderr, the task file stays and `end` exits 1.
 `task.py end --run` removes both files, after the draft PR. A task's
 failed rounds survive its `end`.
 
-🟢 A run whose last task passes opens a draft PR on the unit's branch with
-`gh pr create --draft`. It never marks the PR ready and never merges it:
+🟢 A run whose last task passes pushes the unit's branch with
+`git push -u origin {branch}`, then opens a draft PR on it with
+`gh pr create --draft`. When either exits non-zero the run shows its
+output and ends with no Draft PR line. It never marks the PR ready and never merges it:
 the user does.
 
 #### A batch-file repository 🔴
