@@ -532,8 +532,11 @@ def test_reading4_no_workflow_file_names_pytest_and_three_take_the_declared_comm
     for member in ("qa", "developer", "test-retirer"):
         assert "a.test.command" in member_text(member), member
     for member in ("qa", "developer"):
-        text = member_text(member)
-        assert "a.test.file" in text and "a.test.build" in text, member
+        assert "a.test.build" in member_text(member), member
+    # test.file is prove-red's (design, the declaration): QA proves its draft with it,
+    # and the Developer, walled from the functional tests, runs the whole command only.
+    assert "a.test.file" in member_text("qa")
+    assert "a.test.file" not in member_text("developer")
 
 
 @needs_node
@@ -545,7 +548,8 @@ def test_reading4_qa_developer_and_retirer_name_the_declared_commands_in_their_p
     qa = run_member(tmp_path, "qa", ARGS["qa"])["calls"][0]["prompt"]
     assert "run-one.bat {file}" in qa and "build.bat" in qa
     developer = run_member(tmp_path, "developer", ARGS["developer"])["calls"][0]["prompt"]
-    assert f"run-one.bat {TEST_FILE}" in developer and "build.bat" in developer
+    assert "build.bat" in developer
+    assert "run-one.bat" not in developer
     assert "{file}" not in developer
 
 
