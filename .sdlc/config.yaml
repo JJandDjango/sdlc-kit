@@ -60,7 +60,9 @@ tree:
   notify: python E:/herdr-sdlc/herdr_seat.py
 # The execution team's declaration (execution-team design): the test command and the wall's paths.
 test:
-  command: [python, -P, -m, pytest, tests, -q, -n, auto]
+  # no `tests` word: the wall refuses a Bash word under `functional`, and
+  # pyproject.toml's testpaths already names the folder
+  command: [python, -P, -m, pytest, -q, -n, auto]
   file: [python, -P, -m, pytest, "{file}", -q]
 wall:
   functional: [tests/]
