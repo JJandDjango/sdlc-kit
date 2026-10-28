@@ -58,7 +58,8 @@ the same kind at PR review.
 | 124 | `execution-team/e1-declaration` | yes | 3 | 0 / 2 | | 0 | 507: drafter 131, developer 75, Two-Key 301 (95, 108, 98) | 2 / | 0 / 0 |
 | 125 | `execution-team/e2-scripts` | yes | 1 | 0 / 0 | | 0 | 499: drafter 152, retirer 103, developer 98, Two-Key 146 | 2 / | 1 / 0 |
 | 126 | `execution-team/e3-wall` | yes | 1 | 0 / 0 | | 0 | 493: probe 117 (Haiku, two runs), drafter 195, developer 78, Two-Key 103 | 2 / | 1 / 0 |
-| 127 + 128 | `execution-team/e4-team` | yes, in session 128 | 1 | 0 / 0 | | 0 | 805: probe 205 (Haiku), drafter 280, developer 184 (127, fix 57), Two-Key 136 | 2 / | 1 / 0 |
+| 127 + 128 | `execution-team/e4-team` | yes, in session 128 | 1 | 0 / 0 | 1 | 0 | 805: probe 205 (Haiku), drafter 280, developer 184 (127, fix 57), Two-Key 136 | 2 / | 1 / 0 |
+| 129 | `execution-team/e5-rounds`, built by the shipped team | yes | 4 | 3 / 0 | | 1 | 1,846: QA 396 (three rounds), QA verifier 597 (approve-tests 412, prove-red 38, two-key 68 killed + 85 + 101), Developer 311 (four runs, one killed), Dev verifier 435 (four rounds) | 7 readings / | 2 / 1 |
 
 ## Notes on the baseline
 
@@ -226,4 +227,18 @@ the same kind at PR review.
   receipt's three headless Haiku runs (6,501K, of which 5,859K cache
   reads, against a plan of 300K to 400K) stand outside the total, as
   w1's did. The deferred count is one line added (Next actions 12, the
-  wall at a task's end, for e5) and none closed.
+  wall at a task's end, for e5) and none closed. Its Escaped cell reads 1
+  since session 129: the wall refuses the Developer's run of a declared
+  command that names a walled folder (Next actions 13).
+- Session 129 is the first unit the shipped team built, on e4's
+  one-round flow, so the session resumed a headless Sonnet Orchestrator
+  for each round. Rounds counts the two-key task's four runs: the Dev
+  verifier failed rounds 1 and 2 (the round shown after a failed round,
+  then the reasons' detail), and the QA verifier failed round 3 on three
+  uncaught mutations. The QA channel took four rounds, the fourth on the
+  user's waiver of the cap, which is the one touch. The 7 readings are
+  the PR body's items 2 to 7 and 9. Agents took 1,846K against a plan
+  of about 1M; the headless Orchestrator read 31.0M from cache (347K
+  output) against a plan of 3M to 6M, since each resume re-reads its
+  whole context. The deferred count is two lines added (Next actions
+  13 and 14) and one closed (12).

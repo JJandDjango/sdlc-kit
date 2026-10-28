@@ -39,7 +39,7 @@ strings counts as none; `file` and `build` read as empty when absent.
 #### Starting a task: `task.py start` 🟢
 
 🟢 `workflows/tools/task.py start` opens one task step (`/sdlc execute`
-calls it for each task once that ships, below): it writes the task
+calls it for each task, below): it writes the task
 file, `sdlc-task.json` in the repository's git folder (never
 committed), and prints the task's line:
 
@@ -117,6 +117,12 @@ reads a walled file without naming it, such as a Grep over the whole
 repository, can still pass, and so can a Bash path glued to a shell
 operator (`cat tests/run_a.bat;`) under a glob entry, or a Git Bash
 path on Windows (`/e/repo/tests/run_a.bat`).
+
+🔴 The hook also refuses the Developer's run of a declared `test.command`
+that names a walled folder (`pytest tests` beside `functional: [tests/]`),
+though green runs that command. Until the hook passes the declared
+commands, declare the command without the folder, as the kit does
+(`python -P -m pytest -q -n auto`, with pytest's `testpaths`).
 
 🟢 `python -m taskcontract interface {file}` prints each public
 function's and class's signature with its docstring's first line, and

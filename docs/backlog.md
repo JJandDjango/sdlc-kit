@@ -211,11 +211,21 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     Developer running its walled test file: fixed at `0433749` (tests)
     and `551066b`. Two-Key PASS in round 1. The untracked copies moved
     to the receipt folder's `retired/`.
-22. Build `e5-rounds`, the fifth execution-team unit: `task.py end`,
-    `fail` and `stop`, the rounds file and the draft PR, built by the
-    shipped team (`/sdlc execute`). It rules Next actions 12 (the wall
-    at a task's end) and rewrites `task.py`'s "no command counts failed
-    rounds yet" and the page's "until the rounds file ships". Then e6.
+22. [x] Build `e5-rounds`, the fifth execution-team unit: `task.py end`,
+    `fail` and `stop`, the rounds file and the draft PR. Session 129 on
+    `session-129-e5-rounds`, the first unit the shipped team built:
+    `/kit-e5:sdlc execute` in a headless Sonnet session, the plugin from
+    a worktree of main, so the run used e4's one-round flow and the
+    session resumed it for each round. Before the run, `60c52b7` (the
+    kit's test command names no walled folder, Next actions 13) and
+    `a697403` (e4's one-round pins retired). Unit `0e90241`, rounds
+    `1505170`, `dfa091a` and `d90e938`. The QA channel took four rounds,
+    the fourth on the user's waiver of the cap; green took three. Two-Key
+    PASS on `d90e938`. QA's tests ruled Next actions 12.
+23. Build `e6-batch-run`, the release unit: one unit from write-tests to
+    two-key in a batch-file fixture repository, ending green, on e5's
+    flow, and kit 0.21.0. Read Next actions 13 and 14 first: the run
+    meets both.
 
 ## Next actions
 
@@ -377,8 +387,31 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     session's own `progress done greet/greeting/write-tests`, since the
     task file still named QA. e4's flow removes the task file after
     `progress done`; e5's `task.py end --unit {contract}/{unit}` meets
-    the same hook. e5 rules it: end the task file before any command
-    that names the task, or have the hook pass the kit's task commands.
+    the same hook. Closed by e5 (session 129): the flow removes the task
+    file before each `task.py end`, `fail` and `stop`, as QA's tests pin.
+13. The wall refuses the Developer's run of a declared `test.command`
+    that names a walled folder: probe (session 129) `python -P -m pytest
+    tests -q -n auto` under `functional: [tests/]` gives `Task green:
+    Developer reads no functional test: tests`. A defect of e3 with e4
+    (e4's receipt ran `pytest -q`). The kit's declaration dropped the
+    word at `60c52b7`; every consumer whose command names its functional
+    folder still meets it. Session 129's reading: the hook passes the
+    declared `test.command` and `test.build` word for word.
+14. `e5-rounds`' Two-Key advisories and questions (session 129), for e6:
+    the flow passes verifier text to Bash in double quotes (`--reason
+    "{reasons}"`, `--question "{question}"`), so backticks, `$` and quotes
+    in a reason run or break the call (a file would not); after a
+    QA-channel FAIL at two-key, prove-red cannot prove red against code
+    already green (session 129 ran it at the unit's base by hand; the
+    QA verifier takes no `--at`); a QA verifier question at two-key
+    reports "from Dev verifier"; the rounds file outlives an abandoned
+    run; `gh pr create` has no failure path past a non-zero exit; the
+    stop sample's join (`: ` and `, `) differs from the flow's `; `; the
+    design's e5 row reads "Retirements: none" and names
+    `gh pr create --draft` alone (the flow pushes first). A headless
+    `claude -p` session kills a background workflow after 10 minutes of
+    waiting (the QA verifier's two-key, 22:18 to 22:28), so the
+    parent session ran that member twice.
 
 ## Open questions
 
