@@ -247,6 +247,138 @@ def test_sc4_1_the_rounds_belong_to_one_unit(tmp_path):
     assert not task_file(root).exists()
 
 
+def test_sc4_1_a_fail_for_another_unit_starts_from_none_and_keeps_none_of_the_first_units(
+        tmp_path):
+    root = make_repo(tmp_path)
+    failed_rounds(tmp_path, root, "green", ["u1 green a", "u1 green b"])
+    failed_rounds(tmp_path, root, "write-tests", ["u1 tests a", "u1 tests b"])
+    # No start of the second unit before its first fail: the fail alone drops the first
+    # unit's rounds. Kept, the green count would be 3 and this fail would stop the run.
+    assert fail(tmp_path, root, "green", "u2 green a", unit=UNIT2) == (0, "", "")
+    # The first unit's write-tests failures are gone too, not only the green ones.
+    assert start(tmp_path, root, "write-tests", "qa", unit=UNIT2) == (
+        0, STARTED.format(task="write-tests", operator="QA", round=1), "")
+    task_file(root).unlink()
+    assert start(tmp_path, root, "green", unit=UNIT2) == (
+        0, STARTED.format(task="green", operator="Developer", round=2), "")
+    task_file(root).unlink()
+    assert fail(tmp_path, root, "green", "u2 green b", unit=UNIT2) == (0, "", "")
+    # The third failed round of the second unit lists its own three reasons and no other.
+    assert fail(tmp_path, root, "green", "u2 green c", unit=UNIT2) == (
+        1, STOPPED.format(task="green") + "  Round 1: u2 green a\n  Round 2: u2 green b\n"
+                                           "  Round 3: u2 green c\n", "")
+
+
+def test_sc4_1_a_fail_for_another_task_of_another_unit_leaves_no_failed_round_to_the_first(
+        tmp_path):
+    root = make_repo(tmp_path)
+    failed_rounds(tmp_path, root, "green", ["u1 green a", "u1 green b"])
+    # A different task, a different unit: nothing of the first unit's green rounds stays.
+    assert fail(tmp_path, root, "write-tests", "u2 tests a", unit=UNIT2) == (0, "", "")
+    assert start(tmp_path, root, "green", unit=UNIT2) == (
+        0, STARTED.format(task="green", operator="Developer", round=1), "")
+    task_file(root).unlink()
+    # The rounds file holds one unit's run: back on the first unit, its rounds are gone.
+    assert start(tmp_path, root, "green", unit=UNIT) == (
+        0, STARTED.format(task="green", operator="Developer", round=1), "")
+    task_file(root).unlink()
+    assert fail(tmp_path, root, "green", "u1 green c", unit=UNIT) == (0, "", "")
+    assert fail(tmp_path, root, "green", "u1 green d", unit=UNIT) == (0, "", "")
+    assert fail(tmp_path, root, "green", "u1 green e", unit=UNIT) == (
+        1, STOPPED.format(task="green") + "  Round 1: u1 green c\n  Round 2: u1 green d\n"
+                                           "  Round 3: u1 green e\n", "")
+
+
+# --- SC4.1: a task's round is its channel's -------------------------------------------
+
+# The channel's peers: a FAIL returns to its channel's task (green or write-tests), and
+# each task after it in the channel starts at the round the channel is on.
+PEERS = [
+    ("green", "two-key", "dev-verifier", "Dev verifier"),
+    ("green", "approve-commit", "receipts", "receipts"),
+    ("green", "commit", "orchestrator", "Orchestrator"),
+    ("write-tests", "approve-tests", "qa-verifier", "QA verifier"),
+    ("write-tests", "prove-red", "qa-verifier", "QA verifier"),
+]
+
+
+@pytest.mark.parametrize("channel, peer, operator, printed", PEERS,
+                         ids=[f"{c}-then-{p}" for c, p, _, _ in PEERS])
+def test_sc4_1_after_a_fail_on_the_channel_its_peer_starts_at_round_2_then_round_3(
+        tmp_path, channel, peer, operator, printed):
+    root = make_repo(tmp_path)
+    assert fail(tmp_path, root, channel, REASONS_3[0]) == (0, "", "")
+    assert start(tmp_path, root, peer, operator) == (
+        0, STARTED.format(task=peer, operator=printed, round=2), "")
+    assert task_json(root) == {"task": peer, "operator": operator, "round": 2}
+    task_file(root).unlink()
+    assert fail(tmp_path, root, channel, REASONS_3[1]) == (0, "", "")
+    assert start(tmp_path, root, peer, operator) == (
+        0, STARTED.format(task=peer, operator=printed, round=3), "")
+    assert task_json(root) == {"task": peer, "operator": operator, "round": 3}
+
+
+@pytest.mark.parametrize("channel, peer, operator, printed", PEERS,
+                         ids=[f"{c}-then-{p}" for c, p, _, _ in PEERS])
+def test_sc4_1_a_peer_starts_at_round_1_after_a_fail_on_the_other_channel(
+        tmp_path, channel, peer, operator, printed):
+    root = make_repo(tmp_path)
+    other = "write-tests" if channel == "green" else "green"
+    assert fail(tmp_path, root, other, REASONS_3[0]) == (0, "", "")
+    assert start(tmp_path, root, peer, operator) == (
+        0, STARTED.format(task=peer, operator=printed, round=1), "")
+
+
+def test_sc4_1_a_task_starts_one_past_the_larger_of_its_own_failed_rounds_and_its_channels(
+        tmp_path):
+    root = make_repo(tmp_path)
+    failed_rounds(tmp_path, root, "green", [None])
+    failed_rounds(tmp_path, root, "two-key", [None, None])
+    # Its own two failed rounds outweigh the channel's one: round 3, not 2 and not 4.
+    assert start(tmp_path, root, "two-key", "dev-verifier") == (
+        0, STARTED.format(task="two-key", operator="Dev verifier", round=3), "")
+    task_file(root).unlink()
+    # The channel's one failed round counts for a peer that has none of its own.
+    assert start(tmp_path, root, "approve-commit", "receipts") == (
+        0, STARTED.format(task="approve-commit", operator="receipts", round=2), "")
+
+
+def test_sc4_1_a_run_with_a_two_key_fail_goes_round_2_in_each_task_of_the_green_channel(
+        tmp_path):
+    """The design's sample run: the Dev verifier FAILs round 1, the FAIL goes back to the
+    channel `green`, and green, approve-commit, commit and two-key each print round 2."""
+    root = make_repo(tmp_path)
+    rows = [("write-tests", "qa", "QA", ""), ("approve-tests", "qa-verifier", "QA verifier",
+                                              "qa-verifier"),
+            ("prove-red", "qa-verifier", "QA verifier", ""),
+            ("green", "developer", "Developer", ""),
+            ("approve-commit", "receipts", "receipts", "receipts"),
+            ("commit", "orchestrator", "Orchestrator", "")]
+    for task, operator, printed, holder in rows:
+        assert start(tmp_path, root, task, operator) == (
+            0, STARTED.format(task=task, operator=printed, round=1), "")
+        assert end(tmp_path, root, task, by=holder or None) == (0, "", "")
+    assert start(tmp_path, root, "two-key", "dev-verifier") == (
+        0, STARTED.format(task="two-key", operator="Dev verifier", round=1), "")
+    task_file(root).unlink()
+    assert fail(tmp_path, root, "green", REASONS_3[0]) == (0, "", "")
+    for task, operator, printed, holder in rows[3:]:
+        assert start(tmp_path, root, task, operator) == (
+            0, STARTED.format(task=task, operator=printed, round=2), "")
+        assert end(tmp_path, root, task, by=holder or None) == (0, "", "")
+    assert start(tmp_path, root, "two-key", "dev-verifier") == (
+        0, STARTED.format(task="two-key", operator="Dev verifier", round=2), "")
+    task_file(root).unlink()
+    # The second FAIL is the channel's second failed round; the third stops the run.
+    assert fail(tmp_path, root, "green", REASONS_3[1]) == (0, "", "")
+    assert start(tmp_path, root, "green", "developer")[1] == STARTED.format(
+        task="green", operator="Developer", round=3)
+    task_file(root).unlink()
+    assert fail(tmp_path, root, "green", REASONS_3[2]) == (
+        1, STOPPED.format(task="green") + "".join(
+            f"  Round {n}: {reason}\n" for n, reason in enumerate(REASONS_3, 1)), "")
+
+
 @pytest.mark.parametrize("text", ["", "not json", "[]", "{}", "\"green\"", "{\"rounds\": 3}"],
                          ids=["empty", "not-json", "list", "empty-object", "string", "number"])
 def test_sc4_1_a_rounds_file_that_holds_no_counts_is_replaced_by_the_next_fail(tmp_path, text):
@@ -323,8 +455,8 @@ MEMBERS = {
                    "files": ["src/a.cpp"], "sources": ["s1"], "interface": "NOTE-TEXT",
                    "test": TEST, "wall": WALL}, DEV),
 }
-FAILURE_REASONS = ["2 sketches failed: SC5.1 (src/command_line.cpp:41)",
-                   "the test list pins no exit code for --frames 0"]
+FAILURE_REASONS = ["2 sketches failed; SC5.1 (src/command_line.cpp:41 exits 0, expected 2)",
+                   "1 blocking defect; frames 0 is not refused (src/command_line.cpp:58)"]
 
 
 def first_prompt(tmp_path: Path, member: str, **extra) -> str:
@@ -626,6 +758,8 @@ def test_sc5_1_the_flow_runs_one_gh_command_and_it_opens_a_draft_pr_on_the_units
     assert len(found) == 1, found
     assert found[0].startswith("gh pr create --draft"), found[0]
     assert "--head {branch}" in found[0], found[0]
+    # The unit's branch: the flow holds {branch} from git, never a fixed name.
+    assert "`git branch --show-current` as {branch}" in flow()
     # Never ready, never merged: no other gh command, and no flag that does either.
     assert not re.search(r"--ready|--merge|--auto|--no-draft", found[0])
     assert "Draft PR: #{number} {url}" in flow()
@@ -639,6 +773,59 @@ def test_sc5_1_the_pr_opens_after_the_last_task_ends_and_before_the_run_ends():
     assert text.count(f"{TASKPY} end --run") == 1, "the flow ends the run once"
     pr = text.index("`gh pr create --draft")
     assert text.rindex(last) < pr < text.index(f"{TASKPY} end --run")
+
+
+PUSH = "git push -u origin {branch}"
+
+
+def test_sc5_1_the_flow_pushes_the_units_branch_once_and_before_it_opens_the_draft_pr():
+    text = flow()
+    pushes = [(at, c) for at, c in spans(text) if c.startswith("git push")]
+    assert pushes and [c for _, c in pushes] == [PUSH], pushes
+    last = f"{TASKPY} end --unit {{contract}}/{{unit}} --task two-key"
+    push, pr = pushes[0][0], text.index("`gh pr create --draft")
+    assert text.rindex(last) < push < pr, "the push follows two-key's end and precedes the PR"
+    # Between the push and the PR command stands no other command of the flow.
+    assert not [c for at, c in spans(text) if push < at < pr]
+    # Never forced: the push only sends the branch the PR opens on.
+    assert not re.search(r"--force|--delete|--mirror", text)
+    assert "Draft PR: #{number} {url}" in text and text.index("Draft PR: #{number}") > pr
+
+
+def test_sc5_1_either_the_push_or_gh_exiting_non_zero_shows_the_output_and_no_draft_pr_line():
+    text = flow()
+    assert "`gh pr create --draft" in text, "the flow opens no draft PR"
+    assert f"{TASKPY} end --run" in text, "the flow never ends the run"
+    pr = text.index("`gh pr create --draft")
+    after = text[pr:text.index(f"{TASKPY} end --run")]
+    sentence = re.search(r"[^.\n]*either[^.\n]*non-zero[^.\n]*", after)
+    assert sentence, after
+    assert re.search(r"SHOW[^.]*output[^.]*no Draft PR line", sentence[0]), sentence[0]
+    # The only place the Draft PR line is printed is the one after a push and a PR that
+    # both exited 0.
+    assert text.count("Draft PR: #{number} {url}") == 1
+
+
+def test_sc4_1_the_reasons_hold_each_failed_sketch_with_its_evidence_and_each_defect_with_its_line():
+    text = flow()
+    rule = [line for line in text.split("\n") if "`failedSketches`" in line]
+    assert len(rule) == 1, "one line of the rounds rule names the result's detail"
+    detail = re.search(
+        r"HOLD the `reasons`[^\n]*?\{reasons\}[^\n]*?`failedSketches`[^\n]*?"
+        r"`\{sketch\} \(\{evidence\}\)`[^\n]*?`blocking`[^\n]*?"
+        r"`\{description\} \(\{file\}:\{line\}\)`", rule[0])
+    assert detail, rule[0]
+    # The detail is joined with the reasons into the one {reasons}, which the fail command
+    # passes whole.
+    assert "joined by `; `" in rule[0][detail.end():], rule[0][detail.end():]
+
+
+def test_sc4_1_a_failed_approve_commit_returns_to_the_green_channel():
+    text = flow()
+    rule = [line for line in text.split("\n") if "task approve-commit" in line
+            and "When the code is not 0" in line]
+    assert len(rule) == 1, rule
+    assert re.search(r"When the code is not 0[^.]*\{channel\} as `green`", rule[0]), rule[0]
 
 
 @pytest.mark.parametrize("verb", ["fail", "stop"])
