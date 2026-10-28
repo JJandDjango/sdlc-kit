@@ -1,7 +1,10 @@
 @echo off
 rem The declared test command: runs every tests\test_*.bat, or the one file
 rem named as the first argument. A test file exits 0 when its check holds.
+rem Windows' own commands first: under Git Bash, GNU find and sort come
+rem first on PATH, and `find /c` walks the whole C: drive.
 setlocal
+set "PATH=%SystemRoot%\System32;%PATH%"
 if "%~1"=="" goto all
 set ONE=%~1
 set ONE=%ONE:/=\%
