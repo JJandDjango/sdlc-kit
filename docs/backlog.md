@@ -232,12 +232,17 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     round 1, both verifiers PASS, 8 of 8 mutations caught. Two-Key PASS
     in round 3: round 1 failed on five stale statements, three from the
     release sweep (fixed `ad4b076`), round 2 on `receipts.py`'s
-    docstring (`1dfec56`).
-25. After the user merges and tags `v0.21.0`: the self-pin PR, moving
+    docstring (`1dfec56`). Merged as PR #148 at `0fa7441`, and tagged
+    `v0.21.0` there on the user's word (session 132).
+25. [x] After the user merges and tags `v0.21.0`: the self-pin PR, moving
     `.github/workflows/sdlc.yml:20` and
     `docs/usage/restricted-environments.md:40` to `v0.21.0`, as PR #125
     did for 0.20.0. Then tell the engine its pull is ready, with the
-    PATH rule of Next actions 15.
+    PATH rule of Next actions 15. Session 132 on `session-132-self-pin`:
+    the `uv` line, run against the tag with `python -P`, installs
+    `sdlc-taskcontract 0.21.0` and reads `specs/execution-team` ready-green;
+    the suite passes (2545). The engine's note went to the user that
+    session, to carry to the engine's own session.
 24. Restart a stopped run in a fresh session (the user, session 130).
     `task.py stop` and a third failed round remove the task file and the
     rounds file, so a stopped run keeps no state; session 129 went on by
