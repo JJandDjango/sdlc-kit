@@ -135,6 +135,11 @@ neither starts no agent.
 the task's line and its reasons, removes the task file and stops the
 run, with no PR.
 
+🔴 A contract whose id starts a walled path (contract `greet` beside
+`wall.code: [greet/]`) stops at write-tests today: the wall refuses the
+session's `progress done greet/...` while QA's task file stands. Unit
+e5 rules it (backlog, Next actions 12).
+
 🔴 A run with one failed round, once rounds and the draft PR ship:
 
 ```

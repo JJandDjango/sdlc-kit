@@ -200,16 +200,22 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     `a62fdbb` (`tests/test_wall.py`), unit at `618a356` (`hooks/wall.py`,
     `taskcontract/interface.py`, `read_wall`), docs at `c77ccdb`. Two-Key
     PASS in round 1. The PR waits for the user's review.
-21. Build `e4-team`, the fourth execution-team unit, once e3's PR merges:
-    the team ships in the plugin's `workflows/` folder, and each member
-    starts in a consumer session at the execution row's settings (SC1.1
-    to SC1.3). e4 points the team's workflows at `workflows/tools/`,
-    retires the untracked copies, writes the design's one ADR (the
-    `workflows/` folder and the Sonnet ruling), which also replaces ADR
-    0039's "a plugin hook never blocks", and adds the roster lines to
-    `docs/operators.md`. Then e5 and e6 in order; e5 rewrites `task.py`'s
-    "no command counts failed rounds yet" and the page's "until the
-    rounds file ships".
+21. [x] Build `e4-team`, the fourth execution-team unit: the team ships
+    in the plugin's `workflows/` folder, one workflow per member, started
+    by `/sdlc execute` (`skills/sdlc/flows/execute.md`) as
+    `{plugin}:{operator}` at the execution row's settings. Sessions 127
+    and 128 on `session-127-e4-team`, split at the test list. Tests red
+    at `7f3bc40`, unit `23ca13f`, docs and ADR 0040 `b6e04c8`. The
+    manual receipt (`RECEIPT_execution-team-e4_2026-10-27/team_start.md`)
+    ran every task at Haiku in a scratch consumer and found the
+    Developer running its walled test file: fixed at `0433749` (tests)
+    and `551066b`. Two-Key PASS in round 1. The untracked copies moved
+    to the receipt folder's `retired/`.
+22. Build `e5-rounds`, the fifth execution-team unit: `task.py end`,
+    `fail` and `stop`, the rounds file and the draft PR, built by the
+    shipped team (`/sdlc execute`). It rules Next actions 12 (the wall
+    at a task's end) and rewrites `task.py`'s "no command counts failed
+    rounds yet" and the page's "until the rounds file ships". Then e6.
 
 ## Next actions
 
@@ -362,8 +368,8 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     tests/run_a.bat;`) is one word that misses a glob entry (folder
     entries still hold); on Windows a Git Bash path (`/e/repo/tests/...`)
     resolves outside the root and passes. Both stand on the usage page
-    among the calls that can still pass. ADR 0039 says "a plugin hook
-    never blocks", false since `hooks/wall.py` (e4's ADR, Next 21).
+    among the calls that can still pass. ADR 0040 (e4) amends ADR
+    0039's "a plugin hook never blocks" for `hooks/wall.py`.
 12. For e5: the wall refuses the end of a walled task when the contract's
     id starts a walled path. e4's manual receipt
     (`RECEIPT_execution-team-e4_2026-10-27/team_start.md`, run A): with
