@@ -24,6 +24,7 @@ principles are in [ARCHITECTURE.md](ARCHITECTURE.md).
 | `/sdlc audit` — report-only gate-health check, exit 0/1/2 | 🟢 |
 | `/sdlc g1`: the G1 venue, schema lint, model check and criteria review kept as records that `g1-check` reads (kit 0.20.0) | 🟢 |
 | `taskcontract progress` refuses a task's start and done while its feature's G1 has not passed (kit 0.20.0) | 🟢 |
+| `/sdlc execute`: the execution team builds one unit of a ready contract from its tests to a draft PR, behind a wall, on the repository's declared test command (kit 0.21.0) | 🟢 |
 | Plugin-marketplace install | 🟢 |
 
 🟢 shipped · 🟡 partial · 🔴 not yet
