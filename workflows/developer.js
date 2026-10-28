@@ -43,6 +43,12 @@ const functional = (a.wall && a.wall.functional && a.wall.functional.length ? a.
 const whole = a.test.command.join(' ')
 const build = a.test.build ? a.test.build.join(' ') : 'none declared'
 
+// The reasons of the last failed round, a list or one bare string; none in round 1.
+const reasons = (a.reasons == null ? [] : [].concat(a.reasons)).filter(r => typeof r === 'string' && r !== '')
+const retry = reasons.length
+  ? `\nThe last round failed, for these reasons. Fix each one:\n${list(reasons)}\n`
+  : ''
+
 const prompt = `You are the developer (G3) for unit "${a.unit}" of contract "${a.contract}", in the repository at ${a.repo}, on branch ${a.branch}. The spec channel has placed the unit's tests at ${a.testFile}, and they fail today. Make them pass by changing the code, working from the interface note below.
 
 Rules:
@@ -63,7 +69,7 @@ ${list(a.sources)}
 
 The interface note (the tests assume exactly this):
 ${a.interface}
-
+${retry}
 Done means: ${whole} passes whole. Run it from the repository root, then return the structured result.`
 
 phase('Green')

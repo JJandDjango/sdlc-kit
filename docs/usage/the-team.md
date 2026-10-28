@@ -54,8 +54,8 @@ Task green: Developer, round 1
 receipts and Orchestrator; `--root` names the repository (default `.`).
 Any other value is a usage error, exit 2. The task file sits in the
 folder `git rev-parse --absolute-git-dir` names: `.git/` in a clone, the
-worktree's own folder in a linked worktree. The round reads 1 until the
-rounds file ships.
+worktree's own folder in a linked worktree. The round is one more than the
+task's failed rounds in the rounds file (below): 1 when it holds none.
 
 🟢 Each refusal goes to stderr, exits 1 and writes nothing, checked in
 this order:
@@ -131,16 +131,16 @@ its plugin name, `sdlc:qa` and so on (under `--plugin-dir`, the plugin
 folder's name), and passes it the row's model and effort; a member given
 neither starts no agent.
 
-🟢 Each task runs one round today. A FAIL, an error or a question shows
-the task's line and its reasons, removes the task file and stops the
+🟢 A FAIL returns its task to its channel for another round (below). An
+error, a question or a third failed round shows its output and stops the
 run, with no PR.
 
-🔴 A contract whose id starts a walled path (contract `greet` beside
-`wall.code: [greet/]`) stops at write-tests today: the wall refuses the
-session's `progress done greet/...` while QA's task file stands. Unit
-e5 rules it (backlog, Next actions 12).
+🟢 A contract whose id starts a walled path (contract `greet` beside
+`wall.code: [greet/]`) runs: the flow removes the task file before each
+`task.py end`, `fail` and `stop`, since the wall refuses a command that
+names a walled contract id while the task file stands.
 
-🔴 A run with one failed round, once rounds and the draft PR ship:
+🟢 A run with one failed round:
 
 ```
 Execution: execution-team unit u1, sonnet at high, test command: test.bat
@@ -163,17 +163,44 @@ Draft PR: #12 https://github.com/{owner}/{repo}/pull/12
 `Execution did not start: no unit {unit} in specs/{contract}/contract.yaml.`
 and `Execution did not start: specs/{contract}/contract.yaml is not ready-green.`
 
-#### Rounds, stops and the draft PR 🔴
+#### Rounds, stops and the draft PR 🟢
 
-🔴 A FAIL returns the task to its channel with its reasons, and the next
-round starts from them. A task runs at most 3 rounds: the third failure
-stops the run, prints
-`Task {task} failed 3 rounds. The run stops here; the failures follow.`
-and one line a round, and opens no PR. A question from an operator stops
-its task: `Task {task} stopped on a question from {operator}: {question}`.
+🟢 A FAIL returns the task to its channel with its reasons, and the next
+round starts from them: a QA-channel FAIL (approve-tests, prove-red or
+the QA verifier's two-key) to the next write-tests round, a
+Developer-channel FAIL (the Dev verifier, or receipts' non-zero exit) to
+the next green round. The reasons reach only that channel's member, in
+its `reasons` arg, and reset to none once the check that failed passes.
 
-🔴 A run whose last task passes opens a draft PR on the unit's branch. It
-never marks the PR ready and never merges it: the user does.
+🟢 `task.py fail --unit {contract}/{unit} --task {write-tests|green}
+[--reason TEXT]` counts one failed round of the task in `sdlc-rounds.json`
+(in the git folder, for one unit at a time) and removes the task file. A
+first or second failure prints nothing and exits 0. The third removes
+both files, exits 1 and prints, one line a round, each reason on one
+line (`no reason given` when none):
+
+```
+Task green failed 3 rounds. The run stops here; the failures follow.
+  Round 1: 2 sketches failed: SC5.1, SC5.2
+  Round 2: 1 sketch failed: SC5.2
+  Round 3: no reason given
+```
+
+🟢 `task.py stop --task {task} --operator {operator} --question TEXT`
+removes both files and exits 1, printing
+`Task {task} stopped on a question from {Operator}: {question}`; it needs
+no git repository and writes no progress record.
+
+🟢 `task.py end --unit {contract}/{unit} --task {task} [--by SEAT]` runs
+`taskcontract progress done` for the task (an approval takes its holder in
+`--by`) and removes the task file; it prints nothing. When `progress done`
+refuses, its line goes to stderr, the task file stays and `end` exits 1.
+`task.py end --run` removes both files, after the draft PR. A task's
+failed rounds survive its `end`.
+
+🟢 A run whose last task passes opens a draft PR on the unit's branch with
+`gh pr create --draft`. It never marks the PR ready and never merges it:
+the user does.
 
 #### A batch-file repository 🔴
 
