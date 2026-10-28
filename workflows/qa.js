@@ -64,6 +64,12 @@ const paths = key => (wall[key] || []).join(' ') || 'none declared'
 const oneFile = a.test.file ? a.test.file.join(' ') : 'none declared'
 const build = a.test.build ? a.test.build.join(' ') : 'none declared'
 
+// The reasons of the last failed round, a list or one bare string; none in round 1.
+const reasons = (a.reasons == null ? [] : [].concat(a.reasons)).filter(r => typeof r === 'string' && r !== '')
+const retry = reasons.length
+  ? `\nThe last round failed, for these reasons. The new list must fix each one:\n${list(reasons)}\n`
+  : ''
+
 const prompt = `You are the spec channel (G2.5) for unit "${a.unit}" of contract "${a.contract}", in the repository at ${a.repo}. You write the unit's tests. A separate developer agent writes the code later from your interface note alone, and never reads your tests, so the note must carry every name, option, printed line and exit code the tests depend on.
 
 Rules:
@@ -80,7 +86,7 @@ The repository's declared test commands, each an argv joined by single spaces:
 
 Read first, in this order:
 ${list(a.sources)}
-
+${retry}
 The list must pin:
 - each acceptance_sketch line of unit ${a.unit}, and each sentence of its done_means;
 - these rulings and readings, and these advisories carried from earlier rounds:

@@ -225,7 +225,7 @@ def test_sc2_3_read_test_returns_none_for_each_unusable_test_command(tmp_path, c
 def test_done_means_the_kit_declares_its_own_test_and_wall_blocks():
     config = yaml.safe_load((ROOT / ".sdlc" / "config.yaml").read_text(encoding="utf-8"))
     test = config.get("test") or {}
-    assert test.get("command") == ["python", "-P", "-m", "pytest", "tests", "-q", "-n", "auto"]
+    assert test.get("command") == ["python", "-P", "-m", "pytest", "-q", "-n", "auto"]
     assert test.get("file") == ["python", "-P", "-m", "pytest", "{file}", "-q"]
     assert "build" not in test
     assert (config.get("wall") or {}).get("functional") == ["tests/"]

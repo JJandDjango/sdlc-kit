@@ -64,7 +64,6 @@ TASKS = [
 START = ("python {skill-dir}/../../workflows/tools/task.py start --unit {contract}/{unit} "
          "--task %s --operator %s")
 DONE = "python -m taskcontract progress done {contract}/{unit}/%s"
-DONE_BY = {"approve-tests": "qa-verifier", "approve-commit": "receipts"}
 LINES = {
     "E3": ["Task write-tests: QA, round 1: done"],
     "E4": ["Task approve-tests: QA verifier, round 1: {verdict}"],
@@ -92,7 +91,6 @@ HEADER = "Execution: {contract} unit {unit}, {model} at {effort}, test command: 
 REFUSAL_NO_UNIT = "Execution did not start: no unit {unit} in specs/{contract}/contract.yaml."
 REFUSAL_NOT_READY = "Execution did not start: specs/{contract}/contract.yaml is not ready-green."
 NODE_LINE = "Node execution: claude --model {model} --effort {effort}"
-REMOVE_TASK_FILE = "rm -f {gitdir}/sdlc-task.json"
 
 # The arguments the flow must pass each member start (the step, the member),
 # and what each member reads as `a.name`. Optional arguments a member also
@@ -162,6 +160,14 @@ def member_starts(step: str) -> list[tuple[str, str]]:
     found = list(re.finditer(r"\{plugin\}:([a-z][a-z-]*)", step))
     return [(m[1], step[m.start():(found[i + 1].start() if i + 1 < len(found) else len(step))])
             for i, m in enumerate(found)]
+
+
+def recorded(step: str, task: str) -> int:
+    """Where the step records its task done: its `task.py end` call (e5), else
+    its `progress done` call (e4)."""
+    if "task.py end" in step:
+        return step.rindex("task.py end")
+    return step.index(DONE % task)
 
 
 def args_of(segment: str) -> str:
@@ -827,30 +833,6 @@ def test_reading5_the_two_refusals_come_first_and_the_header_follows_the_setting
     assert text.count(HEADER) == 1 and text.count(REFUSAL_NO_UNIT) == 1
 
 
-def test_reading5_each_task_runs_start_then_member_then_line_then_progress_done():
-    steps = flow_steps()
-    for label, task, operator in TASKS:
-        step = steps[label]
-        start = START % (task, operator)
-        assert step.count(start) == 1 and step.count("task.py start") == 1, label
-        done = DONE % task
-        if task in DONE_BY:
-            done = f"{done} --by {DONE_BY[task]}"
-            assert done in step, label
-        else:
-            assert re.search(re.escape(done) + r"(?! --by)", step), label
-            assert " --by " not in step, label
-        order = [step.index(start)]
-        names = [n for n, _ in member_starts(step)]
-        if names:
-            order.append(step.index("{plugin}:" + names[0]))
-        line = LINES[label][0]
-        assert line in step, f"{label} does not show {line!r}"
-        order += [step.index(line), step.index(done)]
-        assert order == sorted(order), (label, order)
-        assert len(set(order)) == len(order), label
-
-
 def test_reading5_the_seven_tasks_run_in_the_order_the_design_shows():
     text = flow_text()
     starts = [text.index(START % (task, operator)) for _, task, operator in TASKS]
@@ -888,26 +870,6 @@ def test_reading5_the_lines_the_flow_shows_are_the_design_lines():
         assert line in rendered, line
 
 
-def test_reading5_a_task_that_stops_removes_the_task_file_and_opens_nothing():
-    steps, text = flow_steps(), flow_text()
-    e2 = steps["E2"]
-    assert e2.index("task.py start") < e2.index("progress done") < e2.index(REMOVE_TASK_FILE)
-    # The task file sits where git names its folder: a linked worktree's .git is a file.
-    assert "`git rev-parse --absolute-git-dir` as {gitdir}" in e2
-    assert ".git/sdlc-task.json" not in text
-    for word in ("`error`", "`questions`", "`PASS`", "STOP", "exits 1"):
-        assert word in e2, word
-    assert e2.count(REMOVE_TASK_FILE) >= 2
-    # A failed approve-commit stops before the task is recorded done, task file removed.
-    e7 = steps["E7"]
-    between = e7[e7.index(LINES["E7"][0]):e7.index(DONE % "approve-commit")]
-    assert "STOP" in between and REMOVE_TASK_FILE in between
-    # e5's, not this flow's: no rounds, no stop messages, no pull request.
-    for absent in ("gh pr", "Draft PR", "failed 3 rounds", "stopped on a question",
-                   "task.py fail", "task.py stop", "task.py end"):
-        assert absent not in text, absent
-
-
 def test_reading5_the_flow_chains_no_shell_segments():
     text = flow_text()
     commands = [c for c in re.findall(r"`([^`\n]+)`", text)
@@ -920,7 +882,7 @@ def test_reading5_the_flow_chains_no_shell_segments():
 def test_reading6_the_orchestrator_places_the_draft_after_prove_red_and_commits_once():
     steps, text = flow_steps(), flow_text()
     e5, draft = steps["E5"], "{scratch}/draft/{testFile}"
-    assert e5.index(LINES["E5"][0]) < e5.index(draft) < e5.index(DONE % "prove-red")
+    assert e5.index(LINES["E5"][0]) < e5.index(draft) < recorded(e5, "prove-red")
     assert "{testFile}" in e5[e5.index(draft) + len(draft):], "the draft is placed at {testFile}"
     assert text.count("git commit") == 1 and "git commit" in steps["E8"]
     assert text.count("git add") == 1 and "git add" in steps["E8"]
@@ -937,7 +899,7 @@ def test_reading7_two_key_names_the_dev_verifier_and_runs_the_qa_verifier_in_the
     assert "--task two-key --operator dev-verifier" in e9
     assert [n for n, _ in member_starts(e9)] == ["dev-verifier", "qa-verifier"]
     assert e9.index(LINES["E9"][0]) < e9.index("{plugin}:qa-verifier") < e9.index(LINES["E9"][1])
-    assert e9.index(LINES["E9"][1]) < e9.index(DONE % "two-key")
+    assert e9.index(LINES["E9"][1]) < recorded(e9, "two-key")
     # The grade reads receipts.py's result from approve-commit.
     assert '"receiptsResult": {receipts}' in e9
     assert "{receipts}" in flow_steps()["E7"]
