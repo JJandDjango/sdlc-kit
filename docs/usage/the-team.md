@@ -122,11 +122,25 @@ code file. A file that is not Python, a missing file and one that does
 not parse each exit 2 with one line. Between tasks no task file stands,
 and the hook refuses nothing.
 
-#### Running a unit: `/sdlc execute {contract} {unit}` 🔴
+#### Running a unit: `/sdlc execute {contract} {unit}` 🟡
 
-🔴 Run in the session `python -m taskcontract node execution` starts. The
+🟢 Run in the session `python -m taskcontract node execution` starts. The
 team ships in the plugin's `workflows/` folder and runs from the plugin
-root: nothing is copied into a consumer. A run with one failed round:
+root: nothing is copied into a consumer. The flow starts each member by
+its plugin name, `sdlc:qa` and so on (under `--plugin-dir`, the plugin
+folder's name), and passes it the row's model and effort; a member given
+neither starts no agent.
+
+🟢 Each task runs one round today. A FAIL, an error or a question shows
+the task's line and its reasons, removes the task file and stops the
+run, with no PR.
+
+🔴 A contract whose id starts a walled path (contract `greet` beside
+`wall.code: [greet/]`) stops at write-tests today: the wall refuses the
+session's `progress done greet/...` while QA's task file stands. Unit
+e5 rules it (backlog, Next actions 12).
+
+🔴 A run with one failed round, once rounds and the draft PR ship:
 
 ```
 Execution: execution-team unit u1, sonnet at high, test command: test.bat
@@ -145,7 +159,7 @@ Task two-key: QA verifier, round 2: PASS (mutations: 4 of 4 caught)
 Draft PR: #12 https://github.com/{owner}/{repo}/pull/12
 ```
 
-🔴 Two refusals stop a run before any task and open no PR:
+🟢 Two refusals stop a run before any task and open no PR:
 `Execution did not start: no unit {unit} in specs/{contract}/contract.yaml.`
 and `Execution did not start: specs/{contract}/contract.yaml is not ready-green.`
 

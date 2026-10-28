@@ -28,6 +28,7 @@ holds the engines, templates, and flows:
 Flows live beside this file, one PromptLang file per subcommand (ADR
 0025): init.md, new.md, intake.md, vocab.md, lang.md, audit.md,
 g1.md,
+execute.md,
 update.md. This file dispatches; the flow file executes. The
 constraints and criteria here bind inside every flow.
 
@@ -64,6 +65,7 @@ is the live container, deliberately empty until its G3 slice
    - `new` - LOAD {skill-dir}/flows/new.md and EXECUTE the New flow (N1-N2); the second argument is the task id.
    - `intake` - LOAD {skill-dir}/flows/intake.md and EXECUTE the Intake flow (I1-I9); remaining text is the raw request, when given.
    - `g1` - LOAD {skill-dir}/flows/g1.md and EXECUTE the G1 flow (R1-R7); the second argument is the feature's id.
+   - `execute` - LOAD {skill-dir}/flows/execute.md and EXECUTE the Execute flow (E1-E9); the second argument is the contract's id, the third the unit's id.
    - `vocab` - LOAD {skill-dir}/flows/vocab.md and sub-dispatch on the next argument: none - the List flow (L1); `add` - the Add flow (VA1-VA2), third argument is the term slug; `extract` - the Extract flow (X1-X4), remaining text names the surfaces, when given.
    - `lang` - LOAD {skill-dir}/flows/lang.md and sub-dispatch on the next argument: none - the Lang Check flow (LC1); `extract` - the Lang Extract flow (LX1).
    Otherwise (no args, or a scaffold / `init` intent) LOAD {skill-dir}/flows/init.md and EXECUTE the Init interview, steps 1-6.

@@ -12,7 +12,8 @@ session are the house rules in [CONTRIBUTING.md](../../CONTRIBUTING.md).
   cache has expired and the resume writes the whole context again: a
   new session starts from the handoff file. Two-Key's receipts agent
   runs on Haiku 5.5 at `low`; the drafter, the developer and the
-  grader stay on Opus 5.5 at `high`. A cost is quoted in tokens by
+  grader run at the execution row's settings, Sonnet at `high`, which
+  replaced this ruling's Opus 5.5 (ADR 0040). A cost is quoted in tokens by
   kind and in shares, never in dollars, since the user is on a
   subscription. From the measure, Claude's own practice: each request
   sends the whole context again, so tool calls that do not depend on
@@ -24,11 +25,13 @@ session are the house rules in [CONTRIBUTING.md](../../CONTRIBUTING.md).
   first assertion line of each; the full log goes to a file. An agent
   never copies, mutates, runs and restores by hand: the `s6-release`
   drafter took 299K tokens and 124 tool calls, mostly that plumbing.
-  `prove.py` (in untracked `.claude/workflows/tools/`, built in
-  session 105, signed list and readings in [prove-py.md](prove-py.md))
-  is the drafter's red, green and mutation proof, and the drafter's
-  brief names it. `receipts.py` (same folder, built in session 106, signed
-  list and readings in [receipts-py.md](receipts-py.md)) runs Two-Key's
+  `prove.py` (now `workflows/tools/prove.py`; built in untracked
+  `.claude/workflows/tools/` in session 105, signed list and readings in
+  [prove-py.md](prove-py.md)) is the drafter's red, green and mutation
+  proof, and the drafter's brief names it. `receipts.py` (now
+  `workflows/tools/receipts.py`; built in the same untracked folder in
+  session 106, signed list and readings in
+  [receipts-py.md](receipts-py.md)) runs Two-Key's
   receipts in the session with no agent; its JSON goes to the workflow as
   `receiptsResult`, and the receipts agent runs only when none is given.
   The whole suite runs on workers, `python -P -m pytest tests -q -n
@@ -280,8 +283,12 @@ session are the house rules in [CONTRIBUTING.md](../../CONTRIBUTING.md).
   unit that writes no tests skips write-tests and prove-red.
 - A REQUEST is untracked, so git cannot restore it: copy it to the
   scratchpad before a revision edits it.
-- A delegated session: one Workflow per step, launched by `scriptPath`
-  from `.claude/workflows/`. Keep each agent's reading narrow (the user
+- A delegated session: one Workflow per step. From e5 on, a unit is
+  built by `/sdlc execute`, whose members ship in the tracked
+  `workflows/` and start as `sdlc:{operator}` (under `--plugin-dir`, the
+  plugin folder's name) at the execution row's settings (ADR 0040);
+  `.claude/workflows/` keeps only this repository's session tools,
+  launched by `scriptPath`. Keep each agent's reading narrow (the user
   stops an agent past about 400K tokens). `test-retirer.js` takes
   `overlay` (the prototype's changed files) when no name goes. The release
   unit's Two-Key runs with `sweep: true`. Every Two-Key receipt must exit

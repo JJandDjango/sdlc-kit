@@ -58,6 +58,7 @@ the same kind at PR review.
 | 124 | `execution-team/e1-declaration` | yes | 3 | 0 / 2 | | 0 | 507: drafter 131, developer 75, Two-Key 301 (95, 108, 98) | 2 / | 0 / 0 |
 | 125 | `execution-team/e2-scripts` | yes | 1 | 0 / 0 | | 0 | 499: drafter 152, retirer 103, developer 98, Two-Key 146 | 2 / | 1 / 0 |
 | 126 | `execution-team/e3-wall` | yes | 1 | 0 / 0 | | 0 | 493: probe 117 (Haiku, two runs), drafter 195, developer 78, Two-Key 103 | 2 / | 1 / 0 |
+| 127 + 128 | `execution-team/e4-team` | yes, in session 128 | 1 | 0 / 0 | | 0 | 805: probe 205 (Haiku), drafter 280, developer 184 (127, fix 57), Two-Key 136 | 2 / | 1 / 0 |
 
 ## Notes on the baseline
 
@@ -214,3 +215,15 @@ the same kind at PR review.
   purpose. It is not charged as an escaped defect, since it held when it
   shipped. The deferred list added and closed nothing: its four lines
   sit in later units.
+- Sessions 127 and 128 are one build and one row, split at the test list
+  (session 127 passed its 200K target). The drafter took 280K tokens and
+  89 calls against a plan of 150K to 250K. The manual receipt, the first
+  run of `/sdlc execute` in a consumer, found a defect before Two-Key:
+  the Developer ran its test file alone, a path behind its own wall, so
+  the hook refused it. The fix was a test amendment and a 57K developer
+  round; it is not counted, since no Two-Key round failed on it. Round 1
+  passed with three advisories; the wrap fixed two wording ones. The
+  receipt's three headless Haiku runs (6,501K, of which 5,859K cache
+  reads, against a plan of 300K to 400K) stand outside the total, as
+  w1's did. The deferred count is one line added (Next actions 12, the
+  wall at a task's end, for e5) and none closed.
