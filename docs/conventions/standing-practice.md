@@ -27,13 +27,15 @@ session are the house rules in [CONTRIBUTING.md](../../CONTRIBUTING.md).
   drafter took 299K tokens and 124 tool calls, mostly that plumbing.
   `prove.py` (now `workflows/tools/prove.py`; built in untracked
   `.claude/workflows/tools/` in session 105, signed list and readings in
-  [prove-py.md](prove-py.md)) is the drafter's red, green and mutation
-  proof, and the drafter's brief names it. `receipts.py` (now
+  [prove-py.md](prove-py.md)) is QA's red proof and the QA verifier's red
+  and mutation proof, and their workflows name it; the green proof retired
+  in `e2-scripts`. `receipts.py` (now
   `workflows/tools/receipts.py`; built in the same untracked folder in
   session 106, signed list and readings in
   [receipts-py.md](receipts-py.md)) runs Two-Key's
-  receipts in the session with no agent; its JSON goes to the workflow as
-  `receiptsResult`, and the receipts agent runs only when none is given.
+  receipts in the session with no agent: `/sdlc execute` runs it at
+  approve-commit, and its JSON goes to the Dev verifier as the required
+  `receiptsResult`.
   The whole suite runs on workers, `python -P -m pytest tests -q -n
   auto` (session 119: 2085 tests in about 70 s, 453 s one at a time);
   a one-file run stays serial. Run `receipts.py` with

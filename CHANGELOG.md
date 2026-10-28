@@ -9,6 +9,52 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.21.0 - 2026-10-28 (tag `v0.21.0`)
+
+- **A repository declares its test command and its wall** (`execution-team`,
+  unit `e1-declaration`). `.sdlc/config.yaml` gains `test:` (`command`, `file`
+  and `build`, each an argument list) and `wall:` (`functional`, `unit`, `code`
+  and `interface`); the kit declares its own. `workflows/tools/task.py start`
+  opens one task and writes the task file `sdlc-task.json` in the git folder;
+  with no `test.command` it prints `Task {task} did not start: the repository
+  declares no test command.` Delta note: `/sdlc init` writes neither block; a
+  consumer writes its own.
+- **The scripts run the declared command** (`execution-team`, unit
+  `e2-scripts`). `prove.py` and `receipts.py` move to `workflows/tools/` and run
+  the declared `test.command` and `test.file` (`receipts.py` from the
+  repository root, `prove.py` from an export of it), pytest only where it is
+  declared, with no prototype. Delta note: a consumer's suite need not be
+  pytest.
+- **The wall** (`execution-team`, unit `e3-wall`). While a task runs, a
+  PreToolUse hook in the plugin (`hooks/wall.py`) refuses each tool call that
+  crosses the wall: the Developer reads no functional test, and QA reads no unit
+  test and no implementation body. `python -m taskcontract interface {file}`
+  prints a Python file's signatures without their bodies, for QA. Delta note: the
+  hook also refuses a declared `test.command` that names a walled folder, so
+  declare the command without the folder.
+- **The team ships in the plugin** (`execution-team`, ADR 0040, unit
+  `e4-team`). Each member is a workflow in the plugin's `workflows/` folder,
+  started by `/sdlc execute {contract} {unit}` (`skills/sdlc/flows/execute.md`)
+  as `{plugin}:{operator}` at the execution row's model and effort in
+  `.sdlc/workflow.md`. The flow runs a unit's seven tasks, write-tests to
+  two-key, and shows one line a task. Delta note: nothing is copied into a
+  consumer; ADR 0040 amends ADR 0039's "a plugin hook never blocks" for the wall.
+- **Rounds, stops and the draft PR** (`execution-team`, unit `e5-rounds`). A
+  FAIL returns its task to its channel with its reasons, up to three rounds,
+  each counted in `sdlc-rounds.json` by `task.py fail`. The run stops with no
+  PR when `task.py fail` exits 1 on a task's third failed round, or when a
+  member returns an error or a question, recorded by `task.py stop`. A run
+  whose last task passes pushes the unit's branch and opens a draft PR with
+  `gh pr create --draft`; it never marks the PR ready and never merges it. Delta
+  note: with no GitHub remote the run ends after two-key with no Draft PR line.
+- **A batch-file repository builds one unit** (`execution-team`, unit
+  `e6-batch-run`). In a copy of `tests/fixtures/batch-repo/`, a repository whose
+  declared `test.command` is `[test.bat]`, the shipped team ran one unit from
+  write-tests to two-key and ended green (a manual receipt). Kit `0.20.0` ->
+  `0.21.0`; the contract schema stays at `1.5.0`. Delta note: to run the team,
+  pull this release and declare `test:` and `wall:`; on Windows a batch suite
+  that calls `find` or `sort` puts System32 first on its own PATH.
+
 ## 0.20.0 - 2026-10-18 (tag `v0.20.0`)
 
 - **G1.1 reads the linter's record** (`g1-requirements-spec`, ADR 0038, unit

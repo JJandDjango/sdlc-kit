@@ -474,13 +474,15 @@ def _entry() -> tuple[str, str]:
     text = _read(CHANGELOG)
     headings = [line.rstrip() for line in text.splitlines() if line.startswith("## ")]
     assert headings, "the changelog holds no release"
-    match = RELEASE_HEADING.match(headings[0])
-    assert match, f"the newest entry heads {headings[0]!r}"
-    assert headings[1].startswith("## 0.19.0 "), headings[1]
-    return match.group(1), _cut(text, headings[0], r"^## ")
+    # a later release stands above 0.20.0's entry, so find it where it stands
+    found = [i for i, heading in enumerate(headings) if RELEASE_HEADING.match(heading)]
+    assert found, "no entry heads 0.20.0"
+    at = found[0]
+    assert at + 1 < len(headings) and headings[at + 1].startswith("## 0.19.0 "), headings[at:]
+    return RELEASE_HEADING.match(headings[at]).group(1), _cut(text, headings[at], r"^## ")
 
 
-def test_done_means_the_changelogs_newest_entry_heads_0_20_0_with_an_iso_date_above_0_19_0():
+def test_done_means_the_changelogs_0_20_0_entry_has_an_iso_date_above_0_19_0():
     date, entry = _entry()
     datetime.date.fromisoformat(date)
     text = _read(CHANGELOG)

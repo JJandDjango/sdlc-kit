@@ -1,0 +1,17 @@
+# The e6 fixture repository (execution-team, SC2.2): a repository whose
+# declared test command is a batch file. Copied out and run, never run here.
+kit: fixture
+active_gates:
+  - G0
+  - G1
+g1:
+  exempt:
+    - greet
+test:
+  command: [test.bat]
+  file: [test.bat, "{file}"]
+wall:
+  functional: [tests/]
+  unit: []
+  code: [src/]
+  interface: []

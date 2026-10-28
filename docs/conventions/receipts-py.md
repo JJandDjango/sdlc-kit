@@ -12,19 +12,21 @@ tracked at `workflows/tools/receipts.py` and ships in the plugin, its
 self-test at `tests/test_receipts.py` (design Interface 8). Its options and
 JSON are unchanged; an `argv[0]` naming a file in the repository
 (`test.bat`) runs that file ahead of a program on PATH, so a repository's
-declared test command can be a receipt. The untracked session copy in
-`.claude/workflows/tools/` stays until e4 retires it.
+declared test command can be a receipt. `e4-team` retired the untracked
+session copy in `.claude/workflows/tools/`.
 
 Two-Key's receipts are the check commands it re-runs independently at the
-unit's commit. Today `two-key-unit-verifier.js` hands them to a Haiku 5.5
-agent, which pays a fixed start of about 54K tokens, infers exit codes from
-pass lines instead of reading them, and once returned with two commands still
-running. `receipts.py` runs the same commands in the session, with no agent,
-and prints the minimum.
+unit's commit. Before the script, `two-key-unit-verifier.js` handed them to a
+Haiku 5.5 agent, which paid a fixed start of about 54K tokens, inferred exit
+codes from pass lines instead of reading them, and once returned with two
+commands still running. `receipts.py` runs the same commands in the session,
+with no agent, and prints the minimum. Since `e4-team`, `/sdlc execute` runs
+it at approve-commit and the Dev verifier (`workflows/dev-verifier.js`)
+grades on its JSON.
 
 | # | Feature | Status |
 | :-: | :-- | :-: |
-| 1 | **Command**: `python receipts.py --repo DIR --receipts FILE --out DIR` prints one compact JSON object in the shape `two-key-unit-verifier.js` already reads (`head`, `branch`, `working_tree_clean_of_tracked_changes`, `commands[]`, `notes`). Exit 0 only when every command exits 0. | 🟢 |
+| 1 | **Command**: `python receipts.py --repo DIR --receipts FILE --out DIR` prints one compact JSON object in the shape the Dev verifier reads as `receiptsResult` (`head`, `branch`, `working_tree_clean_of_tracked_changes`, `commands[]`, `notes`). Exit 0 only when every command exits 0. | 🟢 |
 | 2 | **Repo state**: before any command, reports the short HEAD sha, the branch, and whether a tracked file is modified (untracked files ignored). | 🟢 |
 | 3 | **Receipts file**: a JSON list of argv lists, run one at a time from the repo root with no shell, so no pipe, redirect or chain can enter a receipt. | 🟢 |
 | 4 | **Real exit codes**: each is the process's own, never inferred. A command that never starts reads 254 (the kit's "spawn failed before launch" sentinel). One past its timeout is killed and reads 124, with `timeout` in `key_output`. | 🟢 |
@@ -32,7 +34,7 @@ and prints the minimum.
 | 6 | **Watchdog**: writes `DIR/alive` at launch and updates `DIR/progress.json` after each command, so the session follows a long run with a Monitor. Stderr goes to `DIR/logs/`. | 🟢 |
 | 7 | **Harness hygiene**: sets `PYTHONUTF8`, decodes with `errors="replace"`, opens no window. `--timeout SECONDS` per command, default 1800 (the whole suite took 607 s). | 🟢 |
 | 8 | **Self-test**: `test_receipts.py` beside it (since `e2-scripts`, `tests/test_receipts.py`), on a toy git repo: all pass, one non-zero, a timeout, a start failure, a trimmed pytest summary, a modified tracked file seen, an untracked file ignored. | 🟢 |
-| 9 | **Two-Key wiring**: the workflow takes the script's JSON as `receiptsResult` and then skips the receipts agent, so the grader runs alone. Without it the agent runs as today until a real round uses the script. | 🟢 |
+| 9 | **Two-Key wiring**: the Dev verifier takes the script's JSON as `receiptsResult`, a required argument, and grades alone. The receipts agent retired with `two-key-unit-verifier.js` in `e4-team`. | 🟢 |
 | 10 | **Home**: `.claude/workflows/tools/receipts.py`, untracked like the other tools. The PR carries docs only: the feature page, a `standing-practice.md` line and the backlog row. The self-test run goes in the PR body. Since `e2-scripts`: `workflows/tools/receipts.py`, tracked and shipped. | 🟢 |
 
 ## Readings the build chose where the list was silent
@@ -52,7 +54,8 @@ and prints the minimum.
   non-pytest command's last line may come from stderr.
 - Item 6: `progress.json` is also written before each command, with a
   `running` entry, and once more at the end with `finished: true`.
-- Item 9: `receiptsResult` arrives inline in `args`, since a workflow script
+- Item 9, as built in `two-key-unit-verifier.js` (retired in `e4-team`):
+  `receiptsResult` arrives inline in `args`, since a workflow script
   cannot read files. A result with no commands, or a non-integer exit code,
   reads INCOMPLETE. The return value names its source in `receiptsFrom`, and
   `receipts` (the command strings) is not required when a result is given.

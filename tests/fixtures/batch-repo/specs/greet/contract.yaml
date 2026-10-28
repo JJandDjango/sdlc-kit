@@ -1,0 +1,23 @@
+id: greet
+title: A greeting
+intent: A greeting command for the fixture repository, written as a batch file, with
+  a scope of its own and enough words to pass the door of the ready profile.
+scope:
+- src/
+- tests/
+non_goals:
+- nothing beyond the scope
+decomposition:
+- unit: the greeting
+  id: greeting
+  confirmed_by:
+  - po
+  done_means: greet prints Hello, then the name, then an exclamation mark, and with
+    no name it prints its usage line and exits 2
+  acceptance_sketch:
+  - greet with the name Ann prints Hello, Ann! (SC1.1)
+  - 'greet with no name prints usage: greet NAME and exits 2 (SC1.2)'
+dependencies: []
+entities: []
+provenance:
+  origin: human-request

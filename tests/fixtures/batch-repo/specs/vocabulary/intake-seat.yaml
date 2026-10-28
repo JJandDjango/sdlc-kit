@@ -1,0 +1,9 @@
+term: intake-seat
+name: Intake seat
+definition: A human position that answers for a decomposition unit at intake.
+kind: value-set
+values:
+- po
+- engineer
+status: ratified
+since: '2026-08-26'

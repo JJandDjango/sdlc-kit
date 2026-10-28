@@ -60,6 +60,7 @@ the same kind at PR review.
 | 126 | `execution-team/e3-wall` | yes | 1 | 0 / 0 | | 0 | 493: probe 117 (Haiku, two runs), drafter 195, developer 78, Two-Key 103 | 2 / | 1 / 0 |
 | 127 + 128 | `execution-team/e4-team` | yes, in session 128 | 1 | 0 / 0 | 1 | 0 | 805: probe 205 (Haiku), drafter 280, developer 184 (127, fix 57), Two-Key 136 | 2 / | 1 / 0 |
 | 129 | `execution-team/e5-rounds`, built by the shipped team | yes | 4 | 3 / 0 | | 1 | 1,846: QA 396 (three rounds), QA verifier 597 (approve-tests 412, prove-red 38, two-key 68 killed + 85 + 101), Developer 311 (four runs, one killed), Dev verifier 435 (four rounds) | 7 readings / | 2 / 1 |
+| 131 | `execution-team/e6-batch-run`, the release, its receipt run by the shipped team | yes | 3 | 0 / 6 | | 0 | 755: the receipt's members 267 (run 1 QA 40 killed; run 2 QA 45, QA verifier 107 over three tasks, Developer 35, Dev verifier 40), the kit's Dev verifier 488 (141, 170, 177) | 6 readings / | 2 / 1 |
 
 ## Notes on the baseline
 

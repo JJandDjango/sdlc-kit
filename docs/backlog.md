@@ -222,10 +222,22 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     `1505170`, `dfa091a` and `d90e938`. The QA channel took four rounds,
     the fourth on the user's waiver of the cap; green took three. Two-Key
     PASS on `d90e938`. QA's tests ruled Next actions 12.
-23. Build `e6-batch-run`, the release unit: one unit from write-tests to
+23. [x] Build `e6-batch-run`, the release unit: one unit from write-tests to
     two-key in a batch-file fixture repository, ending green, on e5's
-    flow, and kit 0.21.0. Read Next actions 13 and 14 first: the run
-    meets both.
+    flow, and kit 0.21.0. Session 131 on `session-131-e6-batch-run`: the
+    fixture `tests/fixtures/batch-repo/` at `2839daf` (`test.command:
+    [test.bat]`), its PATH fix `acf7d29`, the release `5f3dad8`. The
+    receipt (`RECEIPT_execution-team-e6_2026-10-28/batch_run.md`): run 1
+    stopped when GNU `find` walked the C: drive; run 2 ran every task in
+    round 1, both verifiers PASS, 8 of 8 mutations caught. Two-Key PASS
+    in round 3: round 1 failed on five stale statements, three from the
+    release sweep (fixed `ad4b076`), round 2 on `receipts.py`'s
+    docstring (`1dfec56`).
+25. After the user merges and tags `v0.21.0`: the self-pin PR, moving
+    `.github/workflows/sdlc.yml:20` and
+    `docs/usage/restricted-environments.md:40` to `v0.21.0`, as PR #125
+    did for 0.20.0. Then tell the engine its pull is ready, with the
+    PATH rule of Next actions 15.
 24. Restart a stopped run in a fresh session (the user, session 130).
     `task.py stop` and a third failed round remove the task file and the
     rounds file, so a stopped run keeps no state; session 129 went on by
@@ -433,6 +445,23 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     `claude -p` session kills a background workflow after 10 minutes of
     waiting (the QA verifier's two-key, 22:18 to 22:28), so the
     parent session ran that member twice.
+15. `e6-batch-run`'s findings (session 131): while a task file stands,
+    the wall refuses the Orchestrator's own calls as the running
+    member's (`Glob **/*` during write-tests, refused as QA's), since
+    `hooks/wall.py` reads only the task file's operator; the usage page
+    now says so, and the design never drew it. The flow records tasks,
+    never a check, so after a green run the tree reads the unit `doing`
+    and its checks `to do`. On Windows the team's Git Bash puts GNU
+    `find` and `sort` before System32's, so a batch suite must put
+    System32 first itself (the engine's `test.bat` before its first team
+    run). The Dev verifier's advisories on the fixture: a name holding
+    `&` or `^` breaks `greet.bat`; its prompt points at feature-document
+    sections a consumer's document may not have. Its round 3 advisories
+    on the release: `standing-practice.md:13-14` still says Two-Key's
+    receipts agent runs on Haiku; the changelog's e2 bullet says
+    `receipts.py` runs `test.file`, though it runs the receipts file's
+    lists; its e4 bullet and `ARCHITECTURE.md:38` say each member is a
+    workflow, though the Orchestrator and `receipts` are not.
 
 ## Open questions
 

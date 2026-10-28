@@ -1,8 +1,12 @@
-### The execution team: `/sdlc execute` 🔴
+### The execution team: `/sdlc execute` 🟢
 
-> 🔴 **Not shipped** (contract `specs/execution-team/`, units e1 to e6;
-> design [execution-team.design.md](../features/execution-team.design.md)).
-> Each unit turns its own markers green as it ships; e6 ships kit 0.21.0.
+> 🟢 **Shipped** (kit 0.21.0, contract `specs/execution-team/`, units e1 to e6;
+> design [execution-team.design.md](../features/execution-team.design.md);
+> [ADR 0040](../../decisions/0040-the-team-ships-in-the-plugins-workflows-folder-and-runs-at-its-rows-settings.md)).
+> A kit before 0.21.0 has no team: no `test:` or `wall:` declaration, no
+> wall and no `/sdlc execute`. [The wall](#the-wall-) states two known
+> gaps: the hook refuses a declared command that names a walled folder
+> (red), and it walls the Orchestrator's calls as the running member's.
 
 The execution node runs each task of a unit through one agent, at the
 agent model and effort of the execution row in `.sdlc/workflow.md`
@@ -109,7 +113,11 @@ Task write-tests: QA reads no implementation body: src/command_line.cpp
 
 🟢 The Developer stands behind `functional`; QA stands behind `unit` and
 `code`, with the files `interface` lists open to it. The two verifiers,
-`receipts` and the Orchestrator are not walled. The hook checks the
+`receipts` and the Orchestrator stand behind no list of their own, but
+the hook reads only the operator the task file names: while a member's
+task runs, every call in the session meets that member's wall, the
+Orchestrator's own among them (its `Glob **/*` during write-tests gives
+`Task write-tests: QA reads no implementation body: **/*`). The hook checks the
 path a Read, Edit, Write or NotebookEdit names, a Grep's `path` and
 `glob`, a Glob's `path` and `pattern`, and each word of a Bash command.
 A folder entry ends in `/`; any other entry is a glob. A call that
@@ -131,7 +139,7 @@ code file. A file that is not Python, a missing file and one that does
 not parse each exit 2 with one line. Between tasks no task file stands,
 and the hook refuses nothing.
 
-#### Running a unit: `/sdlc execute {contract} {unit}` 🟡
+#### Running a unit: `/sdlc execute {contract} {unit}` 🟢
 
 🟢 Run in the session `python -m taskcontract node execution` starts. The
 team ships in the plugin's `workflows/` folder and runs from the plugin
@@ -213,7 +221,31 @@ failed rounds survive its `end`.
 output and ends with no Draft PR line. It never marks the PR ready and never merges it:
 the user does.
 
-#### A batch-file repository 🔴
+#### A batch-file repository 🟢
 
-🔴 In a fixture repository whose test command is a batch file, one unit
-runs from write-tests to two-key and ends green.
+🟢 In a fixture repository whose test command is a batch file, one unit
+runs from write-tests to two-key and ends green. The kit keeps one at
+`tests/fixtures/batch-repo/`: `test.command: [test.bat]`, `test.file:
+[test.bat, "{file}"]` and the wall `functional: [tests/]`, `code: [src/]`.
+In a copy of it, the team ran every task in round 1:
+
+```
+Execution: greet unit greeting, sonnet at high, test command: test.bat
+Task write-tests: QA, round 1: done
+Task approve-tests: QA verifier, round 1: PASS
+Task prove-red: QA verifier, round 1: PASS
+Task green: Developer, round 1: done
+Task approve-commit: receipts, round 1: exit 0
+Task commit: Orchestrator: e79311c
+Task two-key: Dev verifier, round 1: PASS
+Task two-key: QA verifier, round 1: PASS (mutations: 8 of 8 caught)
+```
+
+🟢 On Windows the team's Bash is Git Bash, whose PATH puts GNU `find`
+and `sort` before Windows' own. A batch suite that calls them puts
+System32 first itself, as the fixture's `test.bat` does; without it,
+`find /c` walks the whole C: drive and the run hangs:
+
+```bat
+set "PATH=%SystemRoot%\System32;%PATH%"
+```
