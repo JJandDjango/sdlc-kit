@@ -364,6 +364,15 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     resolves outside the root and passes. Both stand on the usage page
     among the calls that can still pass. ADR 0039 says "a plugin hook
     never blocks", false since `hooks/wall.py` (e4's ADR, Next 21).
+12. For e5: the wall refuses the end of a walled task when the contract's
+    id starts a walled path. e4's manual receipt
+    (`RECEIPT_execution-team-e4_2026-10-27/team_start.md`, run A): with
+    `wall.code: [greet/]` and contract `greet`, the hook refused the
+    session's own `progress done greet/greeting/write-tests`, since the
+    task file still named QA. e4's flow removes the task file after
+    `progress done`; e5's `task.py end --unit {contract}/{unit}` meets
+    the same hook. e5 rules it: end the task file before any command
+    that names the task, or have the hook pass the kit's task commands.
 
 ## Open questions
 
