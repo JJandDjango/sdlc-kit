@@ -9,6 +9,11 @@ implementation body. QA may still read a code file's interface: an entry
 under `wall.interface`, or the file `python -m taskcontract interface` is run
 on.
 
+The hook passes two kinds of call. A call whose event has no `agent_id`, or a
+null one, is the session's own (the Orchestrator's), and only a workflow
+member's call is held. A Bash call whose words equal the declared
+`test.command`, or `test.build`, word for word, is the task's own test run.
+
 A refusal prints one line on stderr and exits 2. Every other case exits 0
 with nothing printed, and so does any error: the hook never raises. It reads
 no config, and imports nothing from taskcontract, until a task file is found.
@@ -58,6 +63,13 @@ def named_strings(tool: str, tool_input: dict) -> list[tuple[str, bool]]:
         return [(value, False) for value in values if isinstance(value, str)]
     if tool != "Bash":
         return []
+    words = bash_words(tool_input)
+    return [(w, i >= 3 and words[i - 3:i] == INTERFACE_CALL) for i, w in enumerate(words)]
+
+
+def bash_words(tool_input: dict) -> list[str]:
+    """The words of a Bash call's command, each `--opt=value` cut to its value;
+    empty when the command is no string."""
     command = tool_input.get("command")
     if not isinstance(command, str):
         return []
@@ -67,8 +79,7 @@ def named_strings(tool: str, tool_input: dict) -> list[tuple[str, bool]]:
         words = shlex.split(command)
     except ValueError:  # an unclosed quote
         words = command.split()
-    words = [w.split("=", 1)[1] if w.startswith("-") and "=" in w else w for w in words]
-    return [(w, i >= 3 and words[i - 3:i] == INTERFACE_CALL) for i, w in enumerate(words)]
+    return [w.split("=", 1)[1] if w.startswith("-") and "=" in w else w for w in words]
 
 
 def relative(word: str, root: Path) -> str | None:
@@ -140,14 +151,21 @@ def respond(data: bytes) -> str | None:
     root = Path(top)
     # the taskcontract beside the hook, ahead of any other package of that name
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from taskcontract.declaration import read_wall
+    from taskcontract.declaration import read_test, read_wall
     wall = read_wall(root)
     if wall is None:
+        return None
+    if event.get("agent_id") is None:  # the session's own call, the Orchestrator's
         return None
     tool_input = event.get("tool_input")
     tool = event.get("tool_name")
     if not isinstance(tool_input, dict) or not isinstance(tool, str):
         return None
+    if tool == "Bash":
+        declared = read_test(root)
+        words = bash_words(tool_input)
+        if declared is not None and words and words in (declared.command, declared.build):
+            return None
     for word, exempt in named_strings(tool, tool_input):
         path = relative(word, root)
         if path is None:

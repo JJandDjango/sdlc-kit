@@ -9,6 +9,27 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.21.1 - 2026-10-28 (tag `v0.21.1`)
+
+- **The wall passes the session's own calls and the declared test command**
+  (`execution-team`, unit `e3-wall`). `hooks/wall.py` holds only a call whose
+  event carries an `agent_id`, a workflow member's, so the Orchestrator's own
+  calls pass while a member's task runs. A Bash call whose words equal the
+  declared `test.command` or `test.build` passes, though it names a walled
+  folder. Delta note: a consumer may declare its command with its tests
+  folder; the kit's own does again.
+- **The flow's rounds, stops and end** (`execution-team`, units `e5-rounds`
+  and `e4-team`). The flow passes a FAIL's reasons and a question to `task.py`
+  in single quotes, so a backtick or `$` in them no longer runs. Prove-red
+  after a QA-channel FAIL at two-key runs at the unit's base commit
+  (`prove.py --at`). A question from the QA verifier at two-key names the QA
+  verifier. A FAIL's reasons join as the design's stop sample draws them. A
+  green run closes its unit (`taskcontract progress done {contract}/{unit}`),
+  so the tree reads it done. The Dev verifier reads a feature document's
+  "Error messages, verbatim" and "Constraints" sections where it has them.
+  Kit `0.21.0` -> `0.21.1`; the contract schema stays at `1.5.0`. Delta note:
+  pull this release before a repository's first team run.
+
 ## 0.21.0 - 2026-10-28 (tag `v0.21.0`)
 
 - **A repository declares its test command and its wall** (`execution-team`,
@@ -20,10 +41,11 @@ Two house rules, enforced in review:
   declares no test command.` Delta note: `/sdlc init` writes neither block; a
   consumer writes its own.
 - **The scripts run the declared command** (`execution-team`, unit
-  `e2-scripts`). `prove.py` and `receipts.py` move to `workflows/tools/` and run
-  the declared `test.command` and `test.file` (`receipts.py` from the
-  repository root, `prove.py` from an export of it), pytest only where it is
-  declared, with no prototype. Delta note: a consumer's suite need not be
+  `e2-scripts`). `prove.py` and `receipts.py` move to `workflows/tools/`.
+  `prove.py` runs the declared `test.file` (or `test.command`) from an export
+  of the repository; `receipts.py` runs each argument list of its receipts
+  file from the repository root. Pytest only where it is declared, with no
+  prototype. Delta note: a consumer's suite need not be
   pytest.
 - **The wall** (`execution-team`, unit `e3-wall`). While a task runs, a
   PreToolUse hook in the plugin (`hooks/wall.py`) refuses each tool call that
@@ -31,14 +53,18 @@ Two house rules, enforced in review:
   test and no implementation body. `python -m taskcontract interface {file}`
   prints a Python file's signatures without their bodies, for QA. Delta note: the
   hook also refuses a declared `test.command` that names a walled folder, so
-  declare the command without the folder.
+  declare the command without the folder (lifted in 0.21.1, whose hook passes
+  the declared command).
 - **The team ships in the plugin** (`execution-team`, ADR 0040, unit
-  `e4-team`). Each member is a workflow in the plugin's `workflows/` folder,
-  started by `/sdlc execute {contract} {unit}` (`skills/sdlc/flows/execute.md`)
-  as `{plugin}:{operator}` at the execution row's model and effort in
-  `.sdlc/workflow.md`. The flow runs a unit's seven tasks, write-tests to
-  two-key, and shows one line a task. Delta note: nothing is copied into a
-  consumer; ADR 0040 amends ADR 0039's "a plugin hook never blocks" for the wall.
+  `e4-team`). The four members (QA, the QA verifier, the Developer and the Dev
+  verifier) are workflows in the plugin's `workflows/` folder, started by
+  `/sdlc execute {contract} {unit}` (`skills/sdlc/flows/execute.md`) as
+  `{plugin}:{operator}` at the execution row's model and effort in
+  `.sdlc/workflow.md`; the Orchestrator is the session running the flow, and
+  `receipts.py` holds approve-commit. The flow runs a unit's seven tasks,
+  write-tests to two-key, and shows one line a task. Delta note: nothing is
+  copied into a consumer; ADR 0040 amends ADR 0039's "a plugin hook never
+  blocks" for the wall.
 - **Rounds, stops and the draft PR** (`execution-team`, unit `e5-rounds`). A
   FAIL returns its task to its channel with its reasons, up to three rounds,
   each counted in `sdlc-rounds.json` by `task.py fail`. The run stops with no

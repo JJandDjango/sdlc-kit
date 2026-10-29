@@ -90,7 +90,7 @@ const sweepRule = a.sweep === true
 
 const reads = [
   `${a.contractPath}: find the unit with id "${a.unit}". Its done_means and its acceptance_sketch lines are what you grade. Read the contract's scope and non_goals too.`,
-  `${a.requestPath}: the feature document. The check ids in parentheses at the end of a sketch (for example SC5.3) point at the checks under "Acceptance criteria"; read those checks, the "Error messages, verbatim" section, and the "Constraints" section.`,
+  `${a.requestPath}: the feature document. The check ids in parentheses at the end of a sketch (for example SC5.3) point at the checks under "Acceptance criteria"; read those checks. Where the document has them, read the "Error messages, verbatim" section and the "Constraints" section too.`,
   ...(a.designPath ? [`${a.designPath}: the design document, for the interfaces and rulings this work implements.`] : []),
   'Each commit listed above, by its own sha: git show --stat <sha> ; git show <sha> ; git show -s --format=%B <sha> (three separate calls per commit).',
 ]

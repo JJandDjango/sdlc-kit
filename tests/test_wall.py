@@ -99,7 +99,10 @@ def run_hook(stdin: str, tmp_path: Path, env: dict | None = None):
 
 
 def event(cwd, tool: str, tool_input: dict) -> str:
+    """A member's event: a workflow agent's call carries `agent_id` and `agent_type`,
+    and the session's own carries neither."""
     return json.dumps({"session_id": "s", "cwd": str(cwd), "permission_mode": "auto",
+                       "agent_id": "a1", "agent_type": "workflow-subagent",
                        "hook_event_name": "PreToolUse", "tool_name": tool,
                        "tool_input": tool_input, "tool_use_id": "toolu_1"})
 

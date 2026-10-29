@@ -10,8 +10,8 @@ session are the house rules in [CONTRIBUTING.md](../../CONTRIBUTING.md).
   first hands over by a file in the receipt folder, and the second
   starts from it. A session left overnight is not resumed, since its
   cache has expired and the resume writes the whole context again: a
-  new session starts from the handoff file. Two-Key's receipts agent
-  runs on Haiku 5.5 at `low`; the drafter, the developer and the
+  new session starts from the handoff file. Two-Key's receipts run
+  as a script, `receipts.py`, with no agent; the drafter, the developer and the
   grader run at the execution row's settings, Sonnet at `high`, which
   replaced this ruling's Opus 5.5 (ADR 0040). A cost is quoted in tokens by
   kind and in shares, never in dollars, since the user is on a
