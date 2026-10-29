@@ -37,5 +37,5 @@ required to install it) runs the validator in an ephemeral
 environment:
 
 ```bash
-uv run --no-project --with "sdlc-taskcontract @ git+https://github.com/JJandDjango/sdlc-kit.git@v0.21.0" python -m taskcontract validate specs/<task-id>/contract.yaml --profile ready
+uv run --no-project --with "sdlc-taskcontract @ git+https://github.com/JJandDjango/sdlc-kit.git@v0.21.1" python -m taskcontract validate specs/<task-id>/contract.yaml --profile ready
 ```
