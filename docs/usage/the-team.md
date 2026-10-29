@@ -221,6 +221,9 @@ refuses, its line goes to stderr, the task file stays and `end` exits 1.
 `task.py end --run` removes both files, after the draft PR. A task's
 failed rounds survive its `end`.
 
+🟢 A green run closes the unit with `taskcontract progress done
+{contract}/{unit}`, so the tree reads it done.
+
 🟢 A run whose last task passes pushes the unit's branch with
 `git push -u origin {branch}`, then opens a draft PR on it with
 `gh pr create --draft`. When either exits non-zero the run shows its

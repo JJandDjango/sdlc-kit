@@ -732,9 +732,10 @@ CHANNEL_OF = [("qa-verifier", "approve-tests", "write-tests"),
               ("qa-verifier", "prove-red", "write-tests"),
               ("dev-verifier", "two-key", "green"),
               ("qa-verifier", "two-key", "write-tests")]
-FAIL_SPAN = f'{TASKPY} fail --unit {{contract}}/{{unit}} --task {{channel}} --reason "{{reasons}}"'
+# Single quotes, so shell characters in a reason never run (tests/test_flow_fixes.py).
+FAIL_SPAN = f"{TASKPY} fail --unit {{contract}}/{{unit}} --task {{channel}} --reason '{{reasons}}'"
 STOP_SPAN = (f'{TASKPY} stop --task {{task}} --operator {{operator}} '
-             '--question "{question}"')
+             "--question '{question}'")
 
 
 def member_segments(text: str) -> list[tuple[str, str, str]]:
@@ -815,9 +816,8 @@ def test_sc4_1_the_reasons_hold_each_failed_sketch_with_its_evidence_and_each_de
         r"`\{sketch\} \(\{evidence\}\)`[^\n]*?`blocking`[^\n]*?"
         r"`\{description\} \(\{file\}:\{line\}\)`", rule[0])
     assert detail, rule[0]
-    # The detail is joined with the reasons into the one {reasons}, which the fail command
-    # passes whole.
-    assert "joined by `; `" in rule[0][detail.end():], rule[0][detail.end():]
+    # How the reasons and the detail join, as the design's stop sample draws them, is
+    # pinned by tests/test_flow_fixes.py.
 
 
 def test_sc4_1_a_failed_approve_commit_returns_to_the_green_channel():
@@ -934,7 +934,10 @@ def test_sc4_1_the_flow_passes_the_reasons_to_the_member_of_the_next_round(name)
 def test_sc5_1_the_flow_ends_each_task_through_task_py_end_and_no_longer_calls_progress_done():
     text = flow()
     commands = [c for _, c in spans(text)]
-    assert not [c for c in commands if c.startswith("python -m taskcontract progress done")]
+    # The unit's close after two-key is the one direct call (tests/test_flow_fixes.py).
+    close = "python -m taskcontract progress done {contract}/{unit}"
+    assert not [c for c in commands
+                if c.startswith("python -m taskcontract progress done") and c != close]
     ends = [c for _, c in task_spans(text, "end") if " --run" not in c]
     for task in TASKS:
         prefix = f"{TASKPY} end --unit {{contract}}/{{unit}} --task {task}"

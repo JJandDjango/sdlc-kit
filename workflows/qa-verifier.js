@@ -112,6 +112,10 @@ const RULES = [
 
 const prove = a.task === 'approve-tests' ? '' : `python ${a.pluginRoot}/workflows/tools/prove.py --scratch ${a.scratch} --test ${a.testFile}`
 
+// prove-red exports the commit the session began on, given as `at`; without it, HEAD.
+const redAt = typeof a.at === 'string' && a.at !== ''
+const redCommand = redAt ? `${prove} --at ${a.at}` : prove
+
 const PROMPTS = {
   'approve-tests': () => `${RULES}
 
@@ -132,8 +136,8 @@ Do not run the tests: prove-red is the next task. Be strict: if you are unsure a
   'prove-red': () => `${RULES}
 
 Prove the placed draft red. From the repository root run this one command, once:
-${prove}
-It exports HEAD, places the draft from ${a.scratch}/draft/${a.testFile}, runs the build and the test command, and prints one JSON line. Report the command, its exit code as the shell gave it, the JSON line verbatim as output, and red.summary as red_summary. Do not fix the draft and do not run anything else: the verdict is computed from the exit code.`,
+${redCommand}
+It exports ${redAt ? a.at : 'HEAD'}, places the draft from ${a.scratch}/draft/${a.testFile}, runs the build and the test command, and prints one JSON line. Report the command, its exit code as the shell gave it, the JSON line verbatim as output, and red.summary as red_summary. Do not fix the draft and do not run anything else: the verdict is computed from the exit code.`,
 
   'two-key': () => `${RULES}
 
