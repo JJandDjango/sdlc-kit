@@ -20,10 +20,11 @@ Two house rules, enforced in review:
   declares no test command.` Delta note: `/sdlc init` writes neither block; a
   consumer writes its own.
 - **The scripts run the declared command** (`execution-team`, unit
-  `e2-scripts`). `prove.py` and `receipts.py` move to `workflows/tools/` and run
-  the declared `test.command` and `test.file` (`receipts.py` from the
-  repository root, `prove.py` from an export of it), pytest only where it is
-  declared, with no prototype. Delta note: a consumer's suite need not be
+  `e2-scripts`). `prove.py` and `receipts.py` move to `workflows/tools/`.
+  `prove.py` runs the declared `test.file` (or `test.command`) from an export
+  of the repository; `receipts.py` runs each argument list of its receipts
+  file from the repository root. Pytest only where it is declared, with no
+  prototype. Delta note: a consumer's suite need not be
   pytest.
 - **The wall** (`execution-team`, unit `e3-wall`). While a task runs, a
   PreToolUse hook in the plugin (`hooks/wall.py`) refuses each tool call that
@@ -33,10 +34,12 @@ Two house rules, enforced in review:
   hook also refuses a declared `test.command` that names a walled folder, so
   declare the command without the folder.
 - **The team ships in the plugin** (`execution-team`, ADR 0040, unit
-  `e4-team`). Each member is a workflow in the plugin's `workflows/` folder,
-  started by `/sdlc execute {contract} {unit}` (`skills/sdlc/flows/execute.md`)
-  as `{plugin}:{operator}` at the execution row's model and effort in
-  `.sdlc/workflow.md`. The flow runs a unit's seven tasks, write-tests to
+  `e4-team`). The four members (QA, the QA verifier, the Developer and the Dev
+  verifier) are workflows in the plugin's `workflows/` folder, started by
+  `/sdlc execute {contract} {unit}` (`skills/sdlc/flows/execute.md`) as
+  `{plugin}:{operator}` at the execution row's model and effort in
+  `.sdlc/workflow.md`; the Orchestrator is the session running the flow, and
+  `receipts.py` holds approve-commit. The flow runs a unit's seven tasks, write-tests to
   two-key, and shows one line a task. Delta note: nothing is copied into a
   consumer; ADR 0040 amends ADR 0039's "a plugin hook never blocks" for the wall.
 - **Rounds, stops and the draft PR** (`execution-team`, unit `e5-rounds`). A
