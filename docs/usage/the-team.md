@@ -135,7 +135,10 @@ path on Windows (`/e/repo/tests/run_a.bat`).
 spaces do not matter), though it names a walled folder (`pytest tests`
 beside `functional: [tests/]`). Any other call is checked as above: one
 more or fewer word, a different case, an operator glued to a word or a
-chain is held, and so is `test.file`. The kit declares
+chain is held, and so is `test.file`. The hook cuts each `--opt=value`
+word of the call to its value before it compares, so a declared word of
+that form never matches: declare such an option as two words where the
+tool takes them (`--rootdir`, `tests`). The kit declares
 `python -P -m pytest tests -q -n auto`.
 
 🟢 `python -m taskcontract interface {file}` prints each public
@@ -159,9 +162,9 @@ error, a question or a third failed round shows its output and stops the
 run, with no PR.
 
 🟢 A contract whose id starts a walled path (contract `greet` beside
-`wall.code: [greet/]`) runs: the flow removes the task file before each
-`task.py end`, `fail` and `stop`, since the wall refuses a command that
-names a walled contract id while the task file stands.
+`wall.code: [greet/]`) runs: the Orchestrator's `task.py end`, `fail`
+and `stop` carry no `agent_id`, so the wall passes them. The flow still
+removes the task file before each, as kit 0.21.0 needed.
 
 🟢 A run with one failed round:
 
