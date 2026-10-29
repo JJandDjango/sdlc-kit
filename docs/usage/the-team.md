@@ -4,9 +4,12 @@
 > design [execution-team.design.md](../features/execution-team.design.md);
 > [ADR 0040](../../decisions/0040-the-team-ships-in-the-plugins-workflows-folder-and-runs-at-its-rows-settings.md)).
 > A kit before 0.21.0 has no team: no `test:` or `wall:` declaration, no
-> wall and no `/sdlc execute`. [The wall](#the-wall-) states two known
-> gaps: the hook refuses a declared command that names a walled folder
-> (red), and it walls the Orchestrator's calls as the running member's.
+> wall and no `/sdlc execute`. Kit 0.21.0 had two gaps in [the wall](#the-wall-):
+> the hook refused a declared command that names a walled folder, and it
+> walled the Orchestrator's calls as the running member's. Kit 0.21.1 fixes
+> both: the hook passes a Bash call equal to a declared `test.command` or
+> `test.build`, word for word, and any call with no `agent_id` (the
+> session's own, the Orchestrator's).
 
 The execution node runs each task of a unit through one agent, at the
 agent model and effort of the execution row in `.sdlc/workflow.md`
@@ -113,11 +116,12 @@ Task write-tests: QA reads no implementation body: src/command_line.cpp
 
 🟢 The Developer stands behind `functional`; QA stands behind `unit` and
 `code`, with the files `interface` lists open to it. The two verifiers,
-`receipts` and the Orchestrator stand behind no list of their own, but
-the hook reads only the operator the task file names: while a member's
-task runs, every call in the session meets that member's wall, the
-Orchestrator's own among them (its `Glob **/*` during write-tests gives
-`Task write-tests: QA reads no implementation body: **/*`). The hook checks the
+`receipts` and the Orchestrator stand behind no list of their own. The
+hook holds only a call whose event carries an `agent_id` (a workflow
+member's); a call with no `agent_id`, or a null one, is the session's
+own, the Orchestrator's, and passes. `agent_id` is the hook's one sign of
+a member: a Claude Code that stopped sending it would let every call
+through. The hook checks the
 path a Read, Edit, Write or NotebookEdit names, a Grep's `path` and
 `glob`, a Glob's `path` and `pattern`, and each word of a Bash command.
 A folder entry ends in `/`; any other entry is a glob. A call that
@@ -126,11 +130,13 @@ repository, can still pass, and so can a Bash path glued to a shell
 operator (`cat tests/run_a.bat;`) under a glob entry, or a Git Bash
 path on Windows (`/e/repo/tests/run_a.bat`).
 
-🔴 The hook also refuses the Developer's run of a declared `test.command`
-that names a walled folder (`pytest tests` beside `functional: [tests/]`),
-though green runs that command. Until the hook passes the declared
-commands, declare the command without the folder, as the kit does
-(`python -P -m pytest -q -n auto`, with pytest's `testpaths`).
+🟢 The hook passes a Bash call whose words equal the declared
+`test.command` or `test.build`, element for element (quotes and extra
+spaces do not matter), though it names a walled folder (`pytest tests`
+beside `functional: [tests/]`). Any other call is checked as above: one
+more or fewer word, a different case, an operator glued to a word or a
+chain is held, and so is `test.file`. The kit declares
+`python -P -m pytest tests -q -n auto`.
 
 🟢 `python -m taskcontract interface {file}` prints each public
 function's and class's signature with its docstring's first line, and
