@@ -53,15 +53,16 @@ Two house rules, enforced in review:
   test and no implementation body. `python -m taskcontract interface {file}`
   prints a Python file's signatures without their bodies, for QA. Delta note: the
   hook also refuses a declared `test.command` that names a walled folder, so
-  declare the command without the folder.
+  declare the command without the folder (lifted in 0.21.1, whose hook passes
+  the declared command).
 - **The team ships in the plugin** (`execution-team`, ADR 0040, unit
   `e4-team`). The four members (QA, the QA verifier, the Developer and the Dev
   verifier) are workflows in the plugin's `workflows/` folder, started by
   `/sdlc execute {contract} {unit}` (`skills/sdlc/flows/execute.md`) as
   `{plugin}:{operator}` at the execution row's model and effort in
   `.sdlc/workflow.md`; the Orchestrator is the session running the flow, and
-  `receipts.py` holds approve-commit. The flow runs a unit's seven tasks, write-tests to
-  two-key, and shows one line a task. Delta note: nothing is copied into a
+  `receipts.py` holds approve-commit. The flow runs a unit's seven tasks,
+  write-tests to two-key, and shows one line a task. Delta note: nothing is copied into a
   consumer; ADR 0040 amends ADR 0039's "a plugin hook never blocks" for the wall.
 - **Rounds, stops and the draft PR** (`execution-team`, unit `e5-rounds`). A
   FAIL returns its task to its channel with its reasons, up to three rounds,
