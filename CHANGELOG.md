@@ -62,8 +62,9 @@ Two house rules, enforced in review:
   `{plugin}:{operator}` at the execution row's model and effort in
   `.sdlc/workflow.md`; the Orchestrator is the session running the flow, and
   `receipts.py` holds approve-commit. The flow runs a unit's seven tasks,
-  write-tests to two-key, and shows one line a task. Delta note: nothing is copied into a
-  consumer; ADR 0040 amends ADR 0039's "a plugin hook never blocks" for the wall.
+  write-tests to two-key, and shows one line a task. Delta note: nothing is
+  copied into a consumer; ADR 0040 amends ADR 0039's "a plugin hook never
+  blocks" for the wall.
 - **Rounds, stops and the draft PR** (`execution-team`, unit `e5-rounds`). A
   FAIL returns its task to its channel with its reasons, up to three rounds,
   each counted in `sdlc-rounds.json` by `task.py fail`. The run stops with no
