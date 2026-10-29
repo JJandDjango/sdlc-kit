@@ -9,6 +9,27 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.21.1 - 2026-10-28 (tag `v0.21.1`)
+
+- **The wall passes the session's own calls and the declared test command**
+  (`execution-team`, unit `e3-wall`). `hooks/wall.py` holds only a call whose
+  event carries an `agent_id`, a workflow member's, so the Orchestrator's own
+  calls pass while a member's task runs. A Bash call whose words equal the
+  declared `test.command` or `test.build` passes, though it names a walled
+  folder. Delta note: a consumer may declare its command with its tests
+  folder; the kit's own does again.
+- **The flow's rounds, stops and end** (`execution-team`, units `e5-rounds`
+  and `e4-team`). The flow passes a FAIL's reasons and a question to `task.py`
+  in single quotes, so a backtick or `$` in them no longer runs. Prove-red
+  after a QA-channel FAIL at two-key runs at the unit's base commit
+  (`prove.py --at`). A question from the QA verifier at two-key names the QA
+  verifier. A FAIL's reasons join as the design's stop sample draws them. A
+  green run closes its unit (`taskcontract progress done {contract}/{unit}`),
+  so the tree reads it done. The Dev verifier reads a feature document's
+  "Error messages, verbatim" and "Constraints" sections where it has them.
+  Kit `0.21.0` -> `0.21.1`; the contract schema stays at `1.5.0`. Delta note:
+  pull this release before a repository's first team run.
+
 ## 0.21.0 - 2026-10-28 (tag `v0.21.0`)
 
 - **A repository declares its test command and its wall** (`execution-team`,
