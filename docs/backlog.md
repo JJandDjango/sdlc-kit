@@ -243,6 +243,21 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     `sdlc-taskcontract 0.21.0` and reads `specs/execution-team` ready-green;
     the suite passes (2545). The engine's note went to the user that
     session, to carry to the engine's own session.
+26. [x] Fix the team's defects in Next actions 13 to 15 (the user,
+    session 133), as kit 0.21.1. Session 133 on `session-133-team-fixes`:
+    a headless probe showed the session's own call reaches a plugin hook
+    with no `agent_id` and a member's with one
+    (`RECEIPT_execution-team-fixes_2026-10-28/hook_probe.md`). e3-wall
+    `a4d5e44` and `548150f` (Two-Key PASS in round 2), e5-rounds with
+    e4-team `b7beb4c` (PASS in round 1), their wording `be14743`, the
+    release `255892d`, `b28ecdf`, `ee0fd67` and `99ea0a7` (PASS in round
+    2, with the sweep). execution-team's units and contract are closed in
+    this machine's `.sdlc/progress/`, which git ignores.
+27. After the user merges and tags `v0.21.1`: the self-pin PR, moving
+    `.github/workflows/sdlc.yml:20` and
+    `docs/usage/restricted-environments.md:40` to `v0.21.1`, as Next 25
+    did for 0.21.0. Then tell the engine its pull is ready: the wall now
+    passes its declared command and the Orchestrator's own calls.
 24. Restart a stopped run in a fresh session (the user, session 130).
     `task.py stop` and a third failed round remove the task file and the
     rounds file, so a stopped run keeps no state; session 129 went on by
@@ -434,7 +449,9 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     (e4's receipt ran `pytest -q`). The kit's declaration dropped the
     word at `60c52b7`; every consumer whose command names its functional
     folder still meets it. Session 129's reading: the hook passes the
-    declared `test.command` and `test.build` word for word.
+    declared `test.command` and `test.build` word for word. Closed by
+    session 133 (`a4d5e44`, kit 0.21.1): it does, and the kit's command
+    names `tests` again.
 14. `e5-rounds`' Two-Key advisories and questions (session 129), for e6:
     the flow passes verifier text to Bash in double quotes (`--reason
     "{reasons}"`, `--question "{question}"`), so backticks, `$` and quotes
@@ -449,7 +466,14 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     `gh pr create --draft` alone (the flow pushes first). A headless
     `claude -p` session kills a background workflow after 10 minutes of
     waiting (the QA verifier's two-key, 22:18 to 22:28), so the
-    parent session ran that member twice.
+    parent session ran that member twice. Session 133 (`b7beb4c`, kit
+    0.21.1) closed the quoting (single quotes), prove-red after a
+    two-key FAIL (it runs at the run's base, `--at`), the question's
+    name (`qa-verifier`) and the join (the stop sample's); the
+    `gh pr create` failure path was closed already (E9). Still open: the
+    rounds file after an abandoned run (Next 24 decides what a stopped
+    run keeps); the design's e5 row text (a signed document, no behavior
+    turns on it); the 10-minute kill (Claude Code's limit).
 15. `e6-batch-run`'s findings (session 131): while a task file stands,
     the wall refuses the Orchestrator's own calls as the running
     member's (`Glob **/*` during write-tests, refused as QA's), since
@@ -466,7 +490,22 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     receipts agent runs on Haiku; the changelog's e2 bullet says
     `receipts.py` runs `test.file`, though it runs the receipts file's
     lists; its e4 bullet and `ARCHITECTURE.md:38` say each member is a
-    workflow, though the Orchestrator and `receipts` are not.
+    workflow, though the Orchestrator and `receipts` are not. Session 133
+    (kit 0.21.1) closed the Orchestrator's refusal (the hook holds only a
+    call with an `agent_id`, `a4d5e44`), the tree after a green run (the
+    flow closes the unit, `b7beb4c`), the Dev verifier's sections
+    (`b7beb4c`) and the three stale pages (`255892d`, `7e51796`). Still
+    open: the engine's `test.bat` puts System32 first (the engine's
+    repository); `&` or `^` in the fixture's name (no consumer runs it).
+16. Session 133's Two-Key advisories, in no unit yet: the hook cuts each
+    `--opt=value` word to its value before it compares with the declared
+    commands, so a declared word of that form never matches (the usage
+    page states the limit); the flow's `"reasons": {reasons}` arg is a
+    joined string the Orchestrator must put in JSON quotes, and the flow
+    never says so; the unit's close (`progress done {contract}/{unit}`)
+    has no failure path; the hook runs `git` (once, twice while a task
+    runs) for each of the session's own calls before it reads
+    `agent_id`, which could pass them first.
 
 ## Open questions
 
