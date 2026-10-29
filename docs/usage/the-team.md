@@ -121,9 +121,9 @@ hook holds only a call whose event carries an `agent_id` (a workflow
 member's); a call with no `agent_id`, or a null one, is the session's
 own, the Orchestrator's, and passes. `agent_id` is the hook's one sign of
 a member: a Claude Code that stopped sending it would let every call
-through. The hook checks the
-path a Read, Edit, Write or NotebookEdit names, a Grep's `path` and
-`glob`, a Glob's `path` and `pattern`, and each word of a Bash command.
+through. The hook checks the path a Read, Edit, Write or NotebookEdit
+names, a Grep's `path` and `glob`, a Glob's `path` and `pattern`, and
+each word of a Bash command.
 A folder entry ends in `/`; any other entry is a glob. A call that
 reads a walled file without naming it, such as a Grep over the whole
 repository, can still pass, and so can a Bash path glued to a shell
@@ -164,7 +164,8 @@ run, with no PR.
 🟢 A contract whose id starts a walled path (contract `greet` beside
 `wall.code: [greet/]`) runs: the Orchestrator's `task.py end`, `fail`
 and `stop` carry no `agent_id`, so the wall passes them. The flow still
-removes the task file before each, as kit 0.21.0 needed.
+removes the task file before each, as kit 0.21.0 needed: a safety step,
+so no task file outlives its task.
 
 🟢 A run with one failed round:
 
