@@ -32,10 +32,10 @@ flowchart LR
 ## Folder map
 | Folder | Purpose |
 |---|---|
-| [skills/](skills/) | The `sdlc` skill and the interview skill |
-| [hooks/](hooks/) | The plugin's hooks: the session-size message; the execution team's wall (`wall.py`), which refuses a tool call across `.sdlc/config.yaml`'s `wall:` while a task runs |
+| [skills/](skills/) | The `sdlc` and interview skills |
+| [hooks/](hooks/) | The plugin's hooks: the session-size message; the team's wall (`wall.py`), which keeps members out of `.sdlc/config.yaml`'s `wall:` while a task runs |
 | [taskcontract/](taskcontract/) | The validator and work tree (pip package) |
-| [workflows/](workflows/) | The execution team's four members, one workflow each, which `/sdlc execute` starts (the Orchestrator is the session itself); `tools/` holds `task.py`, `prove.py`, `receipts.py` |
+| [workflows/](workflows/) | The execution team's four members, one workflow each, which `/sdlc execute` starts (the session is the Orchestrator); `tools/`: `task.py`, `prove.py`, `receipts.py` |
 | [specs/](specs/) | Task contracts and the vocabulary |
 | [agents/](agents/) | Two-Key personas: developer, verifier |
 | [docs/](docs/) | Gates, taxonomy, features, conventions, USAGE's pages |

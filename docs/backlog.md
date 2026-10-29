@@ -252,12 +252,19 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     e4-team `b7beb4c` (PASS in round 1), their wording `be14743`, the
     release `255892d`, `b28ecdf`, `ee0fd67` and `99ea0a7` (PASS in round
     2, with the sweep). execution-team's units and contract are closed in
-    this machine's `.sdlc/progress/`, which git ignores.
-27. After the user merges and tags `v0.21.1`: the self-pin PR, moving
+    this machine's `.sdlc/progress/`, which git ignores. Merged as PR
+    #150 at `ac0f228`, and tagged `v0.21.1` there on the user's word.
+27. [x] After the user merges and tags `v0.21.1`: the self-pin PR, moving
     `.github/workflows/sdlc.yml:20` and
     `docs/usage/restricted-environments.md:40` to `v0.21.1`, as Next 25
     did for 0.21.0. Then tell the engine its pull is ready: the wall now
     passes its declared command and the Orchestrator's own calls.
+    Session 134 on `session-134-self-pin`: the `uv` line, run against
+    the tag with `python -P`, installs `sdlc-taskcontract 0.21.1` and
+    reads `specs/execution-team` ready-green; the suite passes (2594).
+    `ARCHITECTURE.md` drops to Cairn's 3072-byte budget (#150's
+    `workflows/` row put it at 3100). The engine's note went to the user
+    that session, to carry to the engine's own session.
 24. Restart a stopped run in a fresh session (the user, session 130).
     `task.py stop` and a third failed round remove the task file and the
     rounds file, so a stopped run keeps no state; session 129 went on by
