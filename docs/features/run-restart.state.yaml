@@ -1,0 +1,106 @@
+schema: spec-interview-state/2
+id: run-restart
+started: 2026-10-29
+phase: complete
+next: null
+answers:
+  statement:
+    text: "As the human developer, I want a stopped team run to start again in a fresh session at the task where it stopped, so that the restart begins near a first launch's 45K tokens of context instead of carrying the stopped session's whole context."
+    confirmed: true
+  origin: feature
+  title: Restart a stopped run in a fresh session
+  seats:
+    po: Johnathan Hyden
+  background:
+    source: material
+    basis: "docs/backlog.md:268-281 (Next 24, the user, session 130); checked against workflows/tools/task.py:242-246"
+    text: "`task.py stop` and a third failed round remove the task file and the rounds file, so a stopped run keeps no state. Session 129 went on by `--resume`, and the headless session's starting context grew from 45K to 281K tokens over eight runs (31.0M cache reads)."
+    confirmed: true
+  existing_behavior:
+    - text: "`task.py stop` removes the task file and the rounds file."
+      source: "workflows/tools/task.py:242-246"
+    - text: "A task's third failed round, `task.py fail`, removes both files and exits 1."
+      source: "workflows/tools/task.py:220-235"
+    - text: "`/sdlc execute` always starts a unit at the write-tests task, round 1."
+      source: "skills/sdlc/flows/execute.md:25-34"
+    - text: "The run holds QA's interface note, its draft and the base commit only in the session (and the draft in its scratch folder), so a fresh session has none of them; the Developer's green task reads the note."
+      source: "skills/sdlc/flows/execute.md:25, 34, 46"
+  description:
+    source: material
+    text: "A stop writes a stop record: the unit, the task, the round counts, and the question or the FAIL reasons. `/sdlc execute` reads the stop record, the progress records and the branch, shows the stop, and asks the user for an answer, the ruling for every stop (a member's question or error, a task's third failed round, a task `task.py start` refused). The run then starts at the stopped task, with the answer handed to it. After a third failed round, the user first judges why the task failed: an answer enough to restart gives the task three fresh rounds; otherwise the run does not restart, and the design may need revisiting. A run abandoned mid-task (the session killed, crashed or out of context) writes no stop record. `/sdlc execute` finds it from what the run left, shows what it found, and on the user's word starts again at the task that was running."
+    probed: true
+    amended_at: "Q9: the user put abandoned runs in this feature"
+    confirmed: true
+  success_criteria:
+    - {id: SC1, text: "Every stop (a member's question or error, a third failed round, a refused task start) leaves a stop record naming the unit, the task, the round counts, and the question or the FAIL reasons."}
+    - {id: SC2, text: "A restart in a fresh session starts at the stopped task with the user's answer, and redoes no task the run finished before the stop."}
+    - {id: SC3, text: "After a third failed round, an answer the user rules enough gives the task three fresh rounds; one the user rules not enough starts nothing."}
+    - {id: SC4, text: "A restart's starting context is at most 50K tokens (a first launch's is near 45K).", source: material, quantified: "near 45K -> at most 50K, the user"}
+    - {id: SC5, text: "A run abandoned mid-task restarts in a fresh session at the task that was running, on the user's word.", added_at: Q9}
+  non_goals:
+    - "No new authorizations are added."
+    - "A member that waits on the parent, since a headless session kills a waiting workflow after 10 minutes and keeps its whole context. (material)"
+    - "A restart without the user's answer: the run never relaunches itself in a loop."
+    - "A restart on another machine or another branch than the one the run stopped on."
+  checks:
+    - {id: SC1.1, text: "verify that a member's question or error, or a task start `task.py start` refuses, stops the run with a stop record naming the unit, the task, the round counts and the question, error or refusal.", changed_at: P6}
+    - {id: SC1.2, text: "verify that a task's third failed round leaves a stop record naming the unit, the task, the round counts and each round's FAIL reasons."}
+    - {id: SC1.3, text: "verify that after any stop the run ends with no PR and no task file left, so the wall holds no call.", regression_for: ["task.py stop removes the task file and the rounds file", "a task's third failed round removes both files and exits 1"]}
+    - {id: SC2.1, text: "verify that after a stop at the green task, a restart in a fresh session starts at green with QA's interface note and test file, and runs no earlier task again.", changed_at: P6, regression_for: ["the run holds QA's note, draft and base commit only in the session"]}
+    - {id: SC2.2, text: "verify that the restarted task's member receives the user's answer together with the stop record's question or FAIL reasons."}
+    - {id: SC2.3, text: "verify that a restart on a branch other than the run's starts nothing and shows the wrong-branch message.", added_at: Q12}
+    - {id: SC3.1, text: "verify that after a third failed round, an answer the user rules enough restarts the task at round 1."}
+    - {id: SC3.2, text: "verify that a task restarted this way stops again only after three more failed rounds."}
+    - {id: SC3.3, text: "verify that an answer the user rules not enough starts no task and leaves the stop record in place."}
+    - {id: SC4.1, text: "verify that a restart's first turn in a fresh headless session holds at most 50K tokens of context."}
+    - {id: SC4.2, text: "verify that a restart reads no transcript of the stopped session: only the stop record, the progress records and the branch."}
+    - {id: SC4.3, text: "verify that the fourth restart of one unit still starts at most 50K tokens, so restarts do not grow the context the way session 129's eight `--resume` runs did."}
+    - {id: SC5.1, text: "verify that after a session dies mid-task, `/sdlc execute` finds the abandoned run, shows the unit and the task that was running, and starts nothing before the user's word."}
+    - {id: SC5.2, text: "verify that on the user's word the restart starts at the task that was running and redoes no task the run finished before it."}
+    - {id: SC5.3, text: "verify that with no stop record and no abandoned run, `/sdlc execute` starts the unit at write-tests, round 1, as today.", regression_for: ["/sdlc execute always starts a unit at write-tests, round 1"]}
+  error_messages:
+    - {check: SC2.2, text: "Execution stopped: {contract} unit {unit}, task {task}, round {n} of 3: {question or reasons}. Your answer?"}
+    - {check: SC3.3, text: "Execution did not restart: {contract} unit {unit} stays stopped at {task}. The design may need revisiting."}
+    - {check: SC5.1, text: "Execution was abandoned: {contract} unit {unit}, task {task}, round {n}. Restart at {task}?"}
+    - {check: SC2.3, text: "Execution did not restart: the run stopped on branch {branch}; this session is on {current}."}
+  gherkin:
+    - {check: SC1.1, name: "A question, an error or a refused start stops the run with a record", given: "a run of a unit at a task", when: "the task's member returns a question or an error, or task.py start refuses to open the task", then: ["the run stops", "a stop record names the unit, the task, the round counts and the question, error or refusal"], status: accepted}
+    - {check: SC1.2, name: "A third failed round leaves a stop record", given: "a run whose task has failed two rounds", when: "the task fails its third round", then: ["a stop record names the unit, the task, the round counts and each round's FAIL reasons"], status: accepted}
+    - {check: SC1.3, name: "A stop leaves no PR and no task file", given: "a run of a unit", when: "the run stops", then: ["the run opens no PR", "no task file is left, so the wall holds no call"], status: accepted}
+    - {check: SC2.1, name: "A restart at green hands over QA's work and redoes no earlier task", given: "a run stopped at the green task", when: "a restart runs in a fresh session", then: ["the run starts at green", "the Developer receives QA's interface note and test file from the stopped run", "no earlier task runs again"], status: accepted}
+    - {check: SC2.2, name: "The restarted member receives the answer and the stop", given: "a stopped run and its stop record", when: ["the restart shows \"Execution stopped: {contract} unit {unit}, task {task}, round {n} of 3: {question or reasons}. Your answer?\"", "the user answers"], then: ["the restarted task's member receives the user's answer and the stop record's question or FAIL reasons"], status: accepted}
+    - {check: SC2.3, name: "A restart on another branch starts nothing", given: "a run stopped on branch {branch}", when: "a restart runs on branch {current}", then: ["no task starts", "the session shows \"Execution did not restart: the run stopped on branch {branch}; this session is on {current}.\""], status: accepted}
+    - {check: SC3.1, name: "An answer ruled enough restarts the task at round 1", given: "a task stopped after its third failed round", when: "the user rules the answer enough", then: ["the task restarts at round 1"], status: accepted}
+    - {check: SC3.2, name: "A restarted task stops again only after three more failed rounds", given: "a task restarted at round 1 after a third failed round", when: ["the task fails two fresh rounds", "the third fresh round fails"], then: ["the run goes on to a third fresh round", "the run stops"], status: accepted}
+    - {check: SC3.3, name: "An answer ruled not enough starts nothing", given: "a task stopped after its third failed round", when: "the user rules the answer not enough", then: ["no task starts", "the stop record stays in place", "the session shows \"Execution did not restart: {contract} unit {unit} stays stopped at {task}. The design may need revisiting.\""], status: accepted}
+    - {check: SC4.1, name: "A restart starts at most 50K tokens", given: "a stopped run", when: "a restart runs in a fresh headless session", then: ["its first turn holds at most 50K tokens of context"], status: accepted}
+    - {check: SC4.2, name: "A restart reads no transcript of the stopped session", given: "a stopped run and the stopped session's transcript", when: "a restart runs", then: ["it reads the stop record, the progress records and the branch", "it reads no transcript of the stopped session"], status: accepted}
+    - {check: SC4.3, name: "The fourth restart still starts at most 50K tokens", given: "a unit restarted three times", when: "it restarts a fourth time", then: ["the restart's first turn holds at most 50K tokens of context"], status: accepted}
+    - {check: SC5.1, name: "An abandoned run is shown and waits for the user's word", given: "a run whose session died mid-task, with no stop record", when: "/sdlc execute runs for the unit in a fresh session", then: ["the session shows \"Execution was abandoned: {contract} unit {unit}, task {task}, round {n}. Restart at {task}?\"", "no task starts before the user's word"], status: accepted}
+    - {check: SC5.2, name: "On the user's word, the abandoned task starts again", given: "an abandoned run shown to the user", when: "the user gives the word", then: ["the restart starts at the task that was running", "no task the run finished before it runs again"], status: accepted}
+    - {check: SC5.3, name: "A unit with nothing to restart starts as today", given: "a unit with no stop record and no abandoned run", when: "/sdlc execute runs", then: ["the unit starts at write-tests, round 1"], status: accepted}
+  out_of_scope:
+    - "The design document and the design run: the restart never edits or starts them. When the user's answer is not enough, the restart stops and the user starts the design run."
+  prerequisites:
+    - {item: "e6 shipped the team in 0.21.0 (0.21.1 is current)", exists: true, source: material}
+  decisions:
+    source: material
+    text: "It ships in `/sdlc execute`, not as a personal skill."
+    confirmed: true
+  terms:
+    - {name: team run, definition: "one `/sdlc execute` of one unit by the execution team, from its first task until it passes or stops.", renamed_at: "P6, from run (CL003)"}
+    - {name: stopped run, definition: "a team run that ended short of a pass: a member's question or error, a task's third failed round, or a task start `task.py start` refuses.", renamed_at: "P6, from stop (CL003)"}
+    - {name: stop record, definition: "the file a stop writes so a fresh session can start where the run stopped.", source: material}
+    - {name: abandoned run, definition: "a team run whose session ended mid-task with no stop written: killed, crashed or out of context."}
+    - {name: restart, definition: "an `/sdlc execute` in a fresh session that starts a stopped or abandoned run again at the task where it ended."}
+open: []
+history:
+  - {at: "2026-10-29", event: id confirmed}
+  - {at: "2026-10-29", event: origin recorded}
+  - {at: "2026-10-29", event: title recorded}
+  - {at: "2026-10-29", event: seats recorded}
+  - {at: "2026-10-29", event: "materials confirmed: backlog Next 24, eight items"}
+  - {at: "2026-10-29", event: "opening complete, document written as r1"}
+  - {at: "2026-10-30", event: "checks before signing: r2 (2 OPEN), back to Q11, Q14 and Q15, r3 (0 OPEN)"}
+  - {at: "2026-10-30", event: request half signed}
+  - {at: "2026-10-30", event: "output complete: Google Docs form declined (the user wants a real Google Doc link, not pasted text)"}

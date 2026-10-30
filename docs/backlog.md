@@ -278,7 +278,12 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     headless session kills a waiting workflow after 10 minutes and keeps
     its whole context. Starts as a feature document once e6 ships 0.21.0;
     if e6 stops first, restart it by hand with a fresh launch and a short
-    prompt.
+    prompt. Session 135: the requirements document
+    `docs/features/run-restart.md` is signed by the PO seat at r4 (r5):
+    five criteria, 15 checks, 0 OPEN. Abandoned runs (a session that dies
+    mid-task) are in; a stopped task's third FAIL restarts with three
+    fresh rounds only on an answer the user rules enough. Next: the design
+    run, `/sdlc:product-specification-interview run-restart design`.
 
 ## Next actions
 
@@ -513,6 +518,12 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     has no failure path; the hook runs `git` (once, twice while a task
     runs) for each of the session's own calls before it reads
     `agent_id`, which could pass them first.
+17. The interview's W1 (`skills/product-specification-interview/flows/output.md`)
+    offers the Google Docs form as Markdown to paste; the user (session
+    135) wants a link to a real Google Doc, or no question at all. The
+    route exists: the styled-rendering prototype writes a .docx, and the
+    Workspace connector's `import_to_google_doc` takes it from
+    `~/.workspace-mcp/attachments` by a `file:///` URL (sessions 32, 50).
 
 ## Open questions
 
