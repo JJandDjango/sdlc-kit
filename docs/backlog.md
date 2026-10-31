@@ -282,8 +282,16 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     `docs/features/run-restart.md` is signed by the PO seat at r4 (r5):
     five criteria, 15 checks, 0 OPEN. Abandoned runs (a session that dies
     mid-task) are in; a stopped task's third FAIL restarts with three
-    fresh rounds only on an answer the user rules enough. Next: the design
-    run, `/sdlc:product-specification-interview run-restart design`.
+    fresh rounds only on an answer the user rules enough. Session 136: the
+    design run wrote `docs/features/run-restart.design.md` at r1 against
+    requirements r4, S1 to S4 confirmed (scope, out of scope, interfaces,
+    sources): one record folder a unit under the git folder, a new
+    `task.py restart`, `--answer` and `--enough` on `/sdlc execute`. It
+    paused at S5 with its candidate unanswered; the candidate found
+    `execute.md` at 11,785 of its 12,000-character ceiling, so the
+    restart's steps go in a new `flows/restart.md`. Next: resume the
+    design run, `/sdlc:product-specification-interview run-restart
+    design`, at S5.
 
 ## Next actions
 
