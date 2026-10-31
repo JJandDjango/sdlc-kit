@@ -18,6 +18,7 @@ class: E
 style: restricted choice, never unnatural construction
 
 words:
+  - {word: abandoned, pos: verb}
   - {word: absence, pos: noun}
   - {word: absence-of-dictionary, pos: noun}
   - {word: absent, pos: noun}
@@ -272,6 +273,7 @@ words:
   - {word: drifted, pos: noun}
   - {word: drops, pos: verb}
   - {word: duplicates, pos: noun}
+  - {word: earlier, pos: modifier}
   - {word: echo, pos: noun}
   - {word: edge, pos: noun}
   - {word: edit, pos: verb}
@@ -362,6 +364,7 @@ words:
   - {word: flow, pos: noun}
   - {word: flowchart, pos: noun}
   - {word: flows, pos: noun}
+  - {word: folder, pos: noun}
   - {word: follow-up, pos: noun}
   - {word: forbid, pos: noun}
   - {word: forbids, pos: noun}
@@ -375,7 +378,9 @@ words:
   - {word: foundations-repo, pos: noun}
   - {word: four-node, pos: modifier}
   - {word: four-vector, pos: noun}
+  - {word: fourth, pos: modifier}
   - {word: frequencies, pos: noun}
+  - {word: fresh, pos: modifier}
   - {word: freshly, pos: noun}
   - {word: frontmatter, pos: noun}
   - {word: frozen, pos: noun}
@@ -410,6 +415,7 @@ words:
   - {word: harness, pos: noun}
   - {word: harvested, pos: verb}
   - {word: header, pos: noun}
+  - {word: headless, pos: modifier}
   - {word: history, pos: noun}
   - {word: hold, pos: verb}
   - {word: holding, pos: verb}
@@ -454,6 +460,7 @@ words:
   - {word: joins, pos: noun}
   - {word: judgment, pos: noun}
   - {word: keep, pos: verb}
+  - {word: keeps, pos: verb}
   - {word: kept, pos: verb}
   - {word: keyed, pos: noun}
   - {word: kind, pos: noun}
@@ -477,6 +484,7 @@ words:
   - {word: layer, pos: noun}
   - {word: layout, pos: noun}
   - {word: leaves, pos: verb}
+  - {word: leftover, pos: modifier}
   - {word: legacy-red, pos: noun}
   - {word: legitimate, pos: noun}
   - {word: lever, pos: noun}
@@ -709,6 +717,8 @@ words:
   - {word: ref, pos: noun}
   - {word: reference, pos: noun}
   - {word: refs, pos: noun}
+  - {word: refusal, pos: noun}
+  - {word: refused, pos: verb}
   - {word: refuses, pos: verb}
   - {word: regime, pos: noun}
   - {word: region, pos: noun}
@@ -727,6 +737,7 @@ words:
   - {word: remainder, pos: noun}
   - {word: remaining, pos: noun}
   - {word: remains, pos: noun}
+  - {word: removes, pos: verb}
   - {word: render, pos: verb}
   - {word: rendered, pos: verb}
   - {word: renders, pos: verb}
@@ -750,6 +761,7 @@ words:
   - {word: resolved, pos: verb}
   - {word: resolves, pos: verb}
   - {word: resolving, pos: verb}
+  - {word: restarts, pos: verb}
   - {word: restore, pos: noun}
   - {word: retroactive, pos: noun}
   - {word: retroactively, pos: noun}
@@ -764,6 +776,7 @@ words:
   - {word: roadmap, pos: noun}
   - {word: root, pos: noun}
   - {word: roster, pos: noun}
+  - {word: rounds, pos: noun}
   - {word: routing, pos: noun}
   - {word: row, pos: noun}
   - {word: rows, pos: noun}
@@ -859,6 +872,7 @@ words:
   - {word: standalone, pos: noun}
   - {word: standing, pos: noun}
   - {word: stands, pos: noun}
+  - {word: start, pos: verb}
   - {word: starts, pos: verb}
   - {word: state, pos: verb}
   - {word: stated, pos: verb}
@@ -871,6 +885,7 @@ words:
   - {word: steps, pos: noun}
   - {word: stock, pos: noun}
   - {word: stop, pos: verb}
+  - {word: stopped, pos: verb}
   - {word: stops, pos: noun}
   - {word: stored, pos: noun}
   - {word: story, pos: noun}
@@ -905,10 +920,12 @@ words:
   - {word: tags, pos: verb}
   - {word: taint, pos: noun}
   - {word: take, pos: verb}
+  - {word: takes, pos: verb}
   - {word: target, pos: noun}
   - {word: targeting, pos: noun}
   - {word: targets, pos: noun}
   - {word: taskcontract, pos: noun}
+  - {word: tasks, pos: noun}
   - {word: taxonomy, pos: noun}
   - {word: team, pos: noun}
   - {word: template, pos: noun}
@@ -923,12 +940,14 @@ words:
   - {word: text-types, pos: noun}
   - {word: theirs, pos: noun}
   - {word: themselves, pos: noun}
+  - {word: third, pos: modifier}
   - {word: thirteen, pos: noun}
   - {word: threshold, pos: noun}
   - {word: thresholds, pos: noun}
   - {word: tiers, pos: noun}
   - {word: time, pos: noun}
   - {word: today, pos: noun}
+  - {word: tokens, pos: noun}
   - {word: tolerance, pos: noun}
   - {word: tool, pos: noun}
   - {word: tooled, pos: noun}
@@ -945,6 +964,7 @@ words:
   - {word: 'true', pos: noun}
   - {word: trusts, pos: noun}
   - {word: truth, pos: noun}
+  - {word: turn, pos: noun}
   - {word: turns, pos: verb}
   - {word: unaffected, pos: noun}
   - {word: unbound, pos: noun}

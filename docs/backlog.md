@@ -293,8 +293,14 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     `flows/restart.md`. Session 137: the engineer seat signed the design
     at r4 (r5): 12 sections, 0 OPEN, five units `rs1-stop-record`,
     `rs2-restart`, `rs3-fresh-rounds`, `rs4-abandoned`, `rs5-release`
-    (kit 0.22.0), built in that order, about 3.0M to 3.5M tokens. Next:
-    intake, `/sdlc intake docs/features/run-restart.md`.
+    (kit 0.22.0), built in that order, about 3.0M to 3.5M tokens.
+    Session 138: intake found `rs2-restart` holding four checks with no
+    `+` join; the design paired `SC2.3+SC5.3` and was signed again at r8
+    (r9); the five terms were ratified and the dictionary took 20
+    done-means words; `specs/run-restart/contract.yaml` validates
+    ready-green, with `Ready:` rows at requirements r6 and design r10, and
+    lang-check reads 0 on it. Next: build
+    `rs1-stop-record`, the first of the five units.
 
 ## Next actions
 
