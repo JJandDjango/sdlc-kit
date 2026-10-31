@@ -9,6 +9,7 @@
 | 2026-10-31 | Johnathan Hyden | r7: Measured: the checks before signing, on the solution half: 30 findings (CL006 30); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
 | 2026-10-31 | Johnathan Hyden | r8: The solution half finished: 12 sections written, 0 OPEN |
 | 2026-10-31 | Johnathan Hyden | r9: Signed: solution half. The engineer seat signs r8 |
+| 2026-10-31 | intake | r10: Ready: contract `run-restart` validates ready-green, derived from r8, against requirements r4; the engineer seat (Johnathan Hyden) signed the solution half at r8 (r9) |
 
 # run-restart - Restart a stopped run in a fresh session
 
