@@ -1,0 +1,66 @@
+schema: spec-interview-state/2
+id: run-restart
+started: 2026-10-30
+phase: solution
+next: S5
+requirements_revision: r4
+origin: feature
+title: Restart a stopped run in a fresh session
+seats: {engineer: Johnathan Hyden}
+answers:
+  scope:
+    - "workflows/tools/task.py: stop and a third fail keep the rounds file and write the stop record; a new restart command reads the stop record, the progress records and the branch, and prints where the run starts or why it cannot"
+    - "skills/sdlc/flows/execute.md: E2 runs task.py restart first; a refused task start stops with a stop record; each passed task saves what it hands on (note, draft, base, commit, receipts) in the git folder"
+    - "workflows/qa.js, qa-verifier.js, developer.js, dev-verifier.js: each takes an answer argument (SC2.2)"
+    - "tests/test_rounds.py, tests/test_team.py"
+    - "docs/usage/the-team.md, USAGE.md, CHANGELOG.md"
+  out_of_scope:
+    - "The design document and the design run: the restart never edits or starts them (PO seat; a place not touched)"
+    - "hooks/wall.py: unchanged; the restart removes a leftover task file before task.py start, as every task does today"
+    - "taskcontract/progress.py: read, never changed"
+    - "workflows/tools/prove.py, workflows/tools/receipts.py, workflows/test-retirer.js"
+  interfaces:
+    confirmed: true
+    text: "Per-unit folder {git folder}/sdlc-run/{contract}/{unit}/ with run.json, stop.json, rounds.json (moved from sdlc-rounds.json), draft/; sdlc-task.json gains unit. task.py start writes run.json at a unit's first start; keep --key draft|draft-file|receipts|commit; stop gains --unit and --kind and writes stop.json; third fail writes stop.json; restart --unit (read-only JSON: state none|stopped|abandoned) and restart --go [--fresh] --scratch; end --run --unit removes the folder. /sdlc execute {contract} {unit} [--answer TEXT] [--enough]; the four requirements messages plus 'Is that answer enough to give {task} three fresh rounds?'; each member takes answer {stopped, reply} or null. Interactive asks in chat; headless ends its turn and the user relaunches with --answer (and --enough). No endpoint table."
+  sources:
+    - {fact: "state: stopped, abandoned or none", read_from: "stop.json present: stopped; else run.json present: abandoned; else none", when_two_disagree: "stop.json wins"}
+    - {fact: "the task to restart at", read_from: "stop.json's task; else sdlc-task.json when its unit matches; else run.json's task in hand", when_two_disagree: "in that order"}
+    - {fact: "round n", read_from: "stop.json's round for a stopped run; else 1 plus the channel's failed rounds in rounds.json", when_two_disagree: "rounds.json wins at start"}
+    - {fact: "the question or FAIL reasons", read_from: "stop.json", when_two_disagree: "one source"}
+    - {fact: "the tasks already finished", read_from: "run.json's task in hand; progress records show each task's state", when_two_disagree: "run.json wins; a disagreeing progress record is shown in one line"}
+    - {fact: "the branch the run stopped on", read_from: "run.json; this session's branch from git branch --show-current", when_two_disagree: "compared, never reconciled (SC2.3)"}
+    - {fact: "the base commit", read_from: "run.json (HEAD at the unit's first start)", when_two_disagree: "one source"}
+    - {fact: "QA's interface note and test file name", read_from: "run.json's kept draft", when_two_disagree: "one source"}
+    - {fact: "the test file", read_from: "kept draft/ before prove-red passed; the working tree's file after", when_two_disagree: "the working tree wins once prove-red passed"}
+    - {fact: "the commit and the receipts for two-key", read_from: "run.json's kept values", when_two_disagree: "the kept commit wins over HEAD"}
+    - {fact: "the user's answer", read_from: "--answer, else the reply in chat", when_two_disagree: "--answer wins"}
+  constraints_candidate:
+    confirmed: false
+    note: "Shown at S5 in session 136; the seat paused before answering. Show it again at S5."
+    items:
+      - "A restart starts at most 50K tokens: it reads only the unit's run folder, the progress records and the branch, never a transcript (SC4.1, SC4.2)"
+      - "stop.json holds only the latest stop and run.json only the current values, so the fourth restart reads no more than the first (SC4.3)"
+      - "Nothing starts before the user's answer or word, and nothing starts on another branch (SC2.3, SC5.1, non-goals)"
+      - "Only task.py writes in the git folder; members write only in the session's scratch folder, as today"
+      - "A unit with no run folder runs as today; the lines task.py start, end, fail and stop print today keep their wording (SC5.3)"
+      - "execute.md stands at 11,785 of its 12,000-character ceiling (tests/test_team.py:49, 810): the restart's steps go in a new flow file skills/sdlc/flows/restart.md, loaded by E2 only on a stopped or abandoned run; whatever execute.md gains it trims elsewhere; scope gains restart.md and skills/sdlc/SKILL.md"
+      - "No new permissions: the headless launch keeps its tool list (non-goal 1)"
+      - "Every Bash call one segment; values quoted the way {reasons} is today (execute.md:28)"
+  risks_and_cost:
+    source: material
+    items:
+      - "An abandoned run leaves sdlc-task.json behind; task.py start refuses every task while it stands (task.py:200-202)"
+      - "That file arms the wall only for a member's calls, never the session's own (wall.py:12-15)"
+  terms:
+    - "team run: one `/sdlc execute` of one unit by the execution team, from its first task until it passes or stops."
+    - "stopped run: a team run that ended short of a pass: a member's question or error, a task's third failed round, or a task start `task.py start` refuses."
+    - "stop record: the file a stop writes so a fresh session can start where the run stopped."
+    - "abandoned run: a team run whose session ended mid-task with no stop written: killed, crashed or out of context."
+    - "restart: an `/sdlc execute` in a fresh session that starts a stopped or abandoned run again at the task where it ended."
+open: []
+history:
+  - {at: "2026-10-30", event: "id confirmed; design read held requirements r4 (signed by r5)"}
+  - {at: "2026-10-30", event: "O4: engineer seat Johnathan Hyden"}
+  - {at: "2026-10-30", event: "O5: eleven material items confirmed (backlog Next 24 and the code it cites)"}
+  - {at: "2026-10-30", event: "opening complete, document written as r1"}
+  - {at: "2026-10-31", event: "S1 to S4 written; paused at S5 with its candidate shown, not answered (session 136 wrap)"}
