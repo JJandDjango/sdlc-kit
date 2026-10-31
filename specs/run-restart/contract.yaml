@@ -1,0 +1,182 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: run-restart
+
+title: Restart a stopped run in a fresh session
+
+intent: >-
+  Today each stop and each third FAIL removes the task file and the rounds
+  file, so a stopped run keeps no state. Over eight runs by `--resume` in
+  session 129, the context at the start of a run goes from 45K to 281K
+  tokens. After this task each stop writes a stop record: the unit, the
+  task, the round counts, and the question or the FAIL reasons. A restart
+  in a fresh session reads the stop record, each progress record and the
+  branch, and shows the stop. The restart takes the answer of the user and
+  starts at the stopped task, near the 45K tokens of a first start. After a
+  third FAIL, an answer the user rules enough starts the task again with
+  three fresh rounds. An abandoned run restarts at the task in hand, on the
+  word of the user.
+
+scope:
+  - workflows/tools/task.py
+  - skills/sdlc/flows/execute.md
+  - skills/sdlc/flows/restart.md
+  - skills/sdlc/SKILL.md
+  - workflows/qa.js
+  - workflows/qa-verifier.js
+  - workflows/developer.js
+  - workflows/dev-verifier.js
+  - tests/test_rounds.py
+  - tests/test_team.py
+  - docs/usage/the-team.md
+  - USAGE.md
+  - CHANGELOG.md
+  - pyproject.toml
+  - skills/sdlc/init.py
+  - .github/workflows/sdlc.yml
+
+non_goals:
+  - No member gets a new tool or a new write surface.
+  - No member waits on the session that runs it. A headless session ends a
+    workflow that waits past a 10-minute limit, and keeps all of its
+    context.
+  - "No restart without the answer of the user: a run never starts itself
+    again in a loop."
+  - No restart on another branch, or in another checkout, than the stopped
+    run.
+
+decomposition:
+  - unit: rs1-stop-record
+    id: rs1-stop-record
+    confirmed_by: [user]
+    done_means: >-
+      A question, an error, a refused task start or a third FAIL writes
+      `stop.json` in the unit's run folder. The record names the unit, the
+      task, the round counts, and the question, error, refusal or each
+      round's FAIL reasons. The run then ends with no PR and no task file.
+    acceptance_sketch:
+      - >-
+        verify that a question or an error of a member stops the run and
+        writes a stop record. Verify that a refused task start does the
+        same. Verify that the stop record names the unit, the task, the
+        round counts, and the question, error or refusal (SC1.1)
+      - >-
+        verify that a third FAIL of a task writes a stop record. Verify that
+        the stop record names the unit, the task, the round counts and the
+        reasons of each FAIL (SC1.2)
+      - >-
+        verify that after any stop the run ends with no PR and no task file,
+        so the wall holds no call (SC1.3)
+  - unit: rs2-restart
+    id: rs2-restart
+    depends_on: [rs1-stop-record]
+    confirmed_by: [user]
+    done_means: >-
+      `/sdlc execute {contract} {unit} --answer TEXT` in a fresh session on
+      the run's branch starts at the stopped task. The stopped task takes
+      what the earlier tasks kept and the user's answer, and no earlier task
+      runs again. On another branch nothing starts; a unit with no run
+      folder starts as today.
+    acceptance_sketch:
+      - >-
+        verify that a restart after a stop at the green task starts at green
+        in a fresh session. Verify that the Developer gets the interface note
+        and the test file of QA. Verify that no earlier task runs again
+        (SC2.1)
+      - >-
+        verify that the member of the stopped task gets the answer of the
+        user. Verify that the member also gets the question or FAIL reasons
+        of the stop record (SC2.2)
+      - >-
+        verify that a restart on another branch than the branch of the run
+        starts nothing and shows the error of SC2.3. Verify that with no stop
+        record and no abandoned run, `/sdlc execute` starts the unit at
+        write-tests, round 1, as today (SC2.3, SC5.3)
+  - unit: rs3-fresh-rounds
+    id: rs3-fresh-rounds
+    depends_on: [rs2-restart]
+    confirmed_by: [user]
+    done_means: >-
+      After a third FAIL, an answer the user rules enough (`--enough`)
+      restarts the task at round 1. The task then has three fresh rounds. An
+      answer ruled not enough starts nothing and keeps the stop record.
+    acceptance_sketch:
+      - >-
+        verify that after a third FAIL, an answer the user rules enough
+        restarts the task at round 1 (SC3.1)
+      - >-
+        verify that the task then stops again only at the third FAIL of its
+        three fresh rounds (SC3.2)
+      - >-
+        verify that an answer the user rules not enough starts no task and
+        keeps the stop record (SC3.3)
+  - unit: rs4-abandoned
+    id: rs4-abandoned
+    depends_on: [rs3-fresh-rounds]
+    confirmed_by: [user]
+    done_means: >-
+      A run folder with no stop record reads as abandoned. `/sdlc execute`
+      shows the unit and the task, and waits for the user's word. On that
+      word it removes the leftover task file and starts at that task.
+    acceptance_sketch:
+      - >-
+        verify that after a session ends during a task, `/sdlc execute`
+        shows the abandoned run with its unit and its task. Verify that
+        nothing starts before the word of the user (SC5.1)
+      - >-
+        verify that on the word of the user the restart starts at the task
+        in hand. Verify that no earlier task runs again (SC5.2)
+  - unit: rs5-release
+    id: rs5-release
+    depends_on: [rs4-abandoned]
+    confirmed_by: [user]
+    done_means: >-
+      A headless restart's first turn holds at most 50K tokens, the fourth
+      restart of one unit too, and kit 0.22.0 ships.
+    acceptance_sketch:
+      - >-
+        verify that the first turn of a restart in a fresh headless session
+        holds at most 50K tokens of context (SC4.1)
+      - >-
+        verify that a restart reads only the stop record, each progress
+        record and the branch. Verify that the restart reads no turn of the
+        stopped session (SC4.2)
+      - >-
+        verify that the first turn of the fourth restart of one unit still
+        holds at most 50K tokens. Verify that the context at the start never
+        grows from one restart to the next (SC4.3)
+
+dependencies:
+  - {ref: execution-team, status: resolved}
+
+entities:
+  - feature
+  - feature-document
+  - pair
+  - requirements-document
+  - design-document
+  - intake
+  - task-contract
+  - decomposition-unit
+  - success-criterion
+  - check
+  - task
+  - round
+  - operator
+  - orchestrator
+  - intake-seat
+  - progress-record
+  - release-unit
+  - two-key
+  - qa-verifier
+  - dev-verifier
+  - team-run
+  - stopped-run
+  - stop-record
+  - abandoned-run
+  - restart
+
+provenance:
+  origin: human-request
+  ref: docs/features/run-restart.md

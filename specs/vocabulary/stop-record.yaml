@@ -1,0 +1,20 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Written at run-restart's intake (session 138) from the Terms of
+# docs/features/run-restart.md at r4; ratified by the user 2026-10-31
+# (class-S flip; the PR merge is the outer record, ADR 0025).
+
+term: stop-record
+
+name: Stop record
+
+definition: >-
+  The file a stop writes so a fresh session can start where the run
+  stopped.
+
+kind: entity
+
+status: ratified
+since: 2026-10-31
+
+sources:
+  - docs/features/run-restart.md
