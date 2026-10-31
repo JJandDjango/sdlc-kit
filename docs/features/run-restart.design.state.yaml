@@ -1,8 +1,8 @@
 schema: spec-interview-state/2
 id: run-restart
 started: 2026-10-30
-phase: solution
-next: S5
+phase: complete
+next: null
 requirements_revision: r4
 origin: feature
 title: Restart a stopped run in a fresh session
@@ -11,8 +11,10 @@ answers:
   scope:
     - "workflows/tools/task.py: stop and a third fail keep the rounds file and write the stop record; a new restart command reads the stop record, the progress records and the branch, and prints where the run starts or why it cannot"
     - "skills/sdlc/flows/execute.md: E2 runs task.py restart first; a refused task start stops with a stop record; each passed task saves what it hands on (note, draft, base, commit, receipts) in the git folder"
+    - "skills/sdlc/flows/restart.md (new) and skills/sdlc/SKILL.md: the restart's steps in their own flow file; SKILL.md lists it (added at S5, seat confirmed)"
     - "workflows/qa.js, qa-verifier.js, developer.js, dev-verifier.js: each takes an answer argument (SC2.2)"
     - "tests/test_rounds.py, tests/test_team.py"
+    - "pyproject.toml, skills/sdlc/init.py (KIT_VERSION): kit 0.22.0; .github/workflows/sdlc.yml takes the v0.22.0 tag in the self-pin PR (added at E6)"
     - "docs/usage/the-team.md, USAGE.md, CHANGELOG.md"
   out_of_scope:
     - "The design document and the design run: the restart never edits or starts them (PO seat; a place not touched)"
@@ -21,12 +23,12 @@ answers:
     - "workflows/tools/prove.py, workflows/tools/receipts.py, workflows/test-retirer.js"
   interfaces:
     confirmed: true
-    text: "Per-unit folder {git folder}/sdlc-run/{contract}/{unit}/ with run.json, stop.json, rounds.json (moved from sdlc-rounds.json), draft/; sdlc-task.json gains unit. task.py start writes run.json at a unit's first start; keep --key draft|draft-file|receipts|commit; stop gains --unit and --kind and writes stop.json; third fail writes stop.json; restart --unit (read-only JSON: state none|stopped|abandoned) and restart --go [--fresh] --scratch; end --run --unit removes the folder. /sdlc execute {contract} {unit} [--answer TEXT] [--enough]; the four requirements messages plus 'Is that answer enough to give {task} three fresh rounds?'; each member takes answer {stopped, reply} or null. Interactive asks in chat; headless ends its turn and the user relaunches with --answer (and --enough). No endpoint table."
+    text: "Per-unit folder {git folder}/sdlc-run/{contract}/{unit}/ with run.json, stop.json, rounds.json (moved from sdlc-rounds.json), draft/; sdlc-task.json gains unit. task.py start writes run.json at a unit's first start; keep --key draft|draft-file|receipts|commit; stop gains --unit and --kind and writes stop.json; third fail writes stop.json; restart --unit (read-only JSON: state none|stopped|abandoned) and restart --go [--fresh] --scratch; end --run --unit removes the folder. /sdlc execute {contract} {unit} [--answer TEXT] [--enough]; the four requirements messages plus 'Is that answer enough to give {task} three fresh rounds?'; each member takes answer {stopped, reply} or null. Interactive asks in chat; headless ends its turn and the user relaunches with --answer (and --enough). No endpoint table. Drawn at E6: stop.json for a question (error and refusal share its shape: unit, task, operator, kind, round, failed, text, at) and for a third FAIL (reasons in place of text); run.json with green in hand (unit, branch, base, task, kept: draft {test_file, interface}, draft-file, commit, receipts) and at the first start (task write-tests, kept {})."
   sources:
     - {fact: "state: stopped, abandoned or none", read_from: "stop.json present: stopped; else run.json present: abandoned; else none", when_two_disagree: "stop.json wins"}
     - {fact: "the task to restart at", read_from: "stop.json's task; else sdlc-task.json when its unit matches; else run.json's task in hand", when_two_disagree: "in that order"}
     - {fact: "round n", read_from: "stop.json's round for a stopped run; else 1 plus the channel's failed rounds in rounds.json", when_two_disagree: "rounds.json wins at start"}
-    - {fact: "the question or FAIL reasons", read_from: "stop.json", when_two_disagree: "one source"}
+    - {fact: "the question, error, refusal or FAIL reasons", read_from: "stop.json's text, or its reasons after a third FAIL", when_two_disagree: "one source"}
     - {fact: "the tasks already finished", read_from: "run.json's task in hand; progress records show each task's state", when_two_disagree: "run.json wins; a disagreeing progress record is shown in one line"}
     - {fact: "the branch the run stopped on", read_from: "run.json; this session's branch from git branch --show-current", when_two_disagree: "compared, never reconciled (SC2.3)"}
     - {fact: "the base commit", read_from: "run.json (HEAD at the unit's first start)", when_two_disagree: "one source"}
@@ -34,23 +36,54 @@ answers:
     - {fact: "the test file", read_from: "kept draft/ before prove-red passed; the working tree's file after", when_two_disagree: "the working tree wins once prove-red passed"}
     - {fact: "the commit and the receipts for two-key", read_from: "run.json's kept values", when_two_disagree: "the kept commit wins over HEAD"}
     - {fact: "the user's answer", read_from: "--answer, else the reply in chat", when_two_disagree: "--answer wins"}
-  constraints_candidate:
-    confirmed: false
-    note: "Shown at S5 in session 136; the seat paused before answering. Show it again at S5."
-    items:
-      - "A restart starts at most 50K tokens: it reads only the unit's run folder, the progress records and the branch, never a transcript (SC4.1, SC4.2)"
-      - "stop.json holds only the latest stop and run.json only the current values, so the fourth restart reads no more than the first (SC4.3)"
-      - "Nothing starts before the user's answer or word, and nothing starts on another branch (SC2.3, SC5.1, non-goals)"
-      - "Only task.py writes in the git folder; members write only in the session's scratch folder, as today"
-      - "A unit with no run folder runs as today; the lines task.py start, end, fail and stop print today keep their wording (SC5.3)"
-      - "execute.md stands at 11,785 of its 12,000-character ceiling (tests/test_team.py:49, 810): the restart's steps go in a new flow file skills/sdlc/flows/restart.md, loaded by E2 only on a stopped or abandoned run; whatever execute.md gains it trims elsewhere; scope gains restart.md and skills/sdlc/SKILL.md"
-      - "No new permissions: the headless launch keeps its tool list (non-goal 1)"
-      - "Every Bash call one segment; values quoted the way {reasons} is today (execute.md:28)"
+  constraints:
+    - "A restart starts at most 50K tokens: it reads only the unit's run folder, the progress records and the branch, never a transcript (SC4.1, SC4.2)"
+    - "stop.json holds only the latest stop and run.json only the current values, so the fourth restart reads no more than the first (SC4.3)"
+    - "Nothing starts before the user's answer or word, and nothing starts on another branch (SC2.3, SC5.1, non-goals)"
+    - "Only task.py writes in the git folder; members write only in the session's scratch folder, as today"
+    - "A unit with no run folder runs as today; the lines task.py start, end, fail and stop print today keep their wording (SC5.3)"
+    - "execute.md stands at 11,720 of its 12,000-character ceiling as the test counts it (tests/test_team.py:49, 810): the restart's steps go in a new flow file skills/sdlc/flows/restart.md, loaded by E2 only on a stopped or abandoned run; whatever execute.md gains it trims elsewhere; SKILL.md (9,505) names the new file"
+    - "No new permissions: the headless launch keeps its tool list (non-goal 1)"
+    - "Every Bash call one segment; values quoted the way {reasons} is today (execute.md:28)"
+    - "task.py writes run.json and stop.json whole (temporary file in the same folder, then os.replace); a record that does not parse is reported, never guessed; today task.py:214, 232 write in place"
+  units:
+    - {id: rs1-stop-record, checks: "SC1.1, SC1.2, SC1.3", done_means: "A question, an error, a refused task start or a third FAIL writes stop.json in the unit's run folder. The record names the unit, the task, the round counts, and the question, error, refusal or each round's FAIL reasons. The run then ends with no PR and no task file.", tests: "SC1.1, SC1.2, SC1.3: automated", retirements: "rounds-file deletes at task.py:211, 235, 246; sdlc-rounds.json moved to the run folder as rounds.json; the-team.md:206, 217, 225; pinning tests found by test-retirer"}
+    - {id: rs2-restart, checks: "SC2.1, SC2.2, SC2.3, SC5.3", done_means: "/sdlc execute {contract} {unit} --answer TEXT in a fresh session on the run's branch starts at the stopped task. The stopped task takes what the earlier tasks kept and the user's answer, and no earlier task runs again. On another branch nothing starts; a unit with no run folder starts as today.", tests: "SC2.1 automated and a manual receipt (restart at green in a fresh session); SC2.2, SC2.3, SC5.3 automated", retirements: none}
+    - {id: rs3-fresh-rounds, checks: "SC3.1, SC3.2, SC3.3", done_means: "After a third FAIL, an answer the user rules enough (--enough) restarts the task at round 1. The task then has three fresh rounds. An answer ruled not enough starts nothing and keeps the stop record.", tests: "SC3.1, SC3.2, SC3.3 automated", retirements: none}
+    - {id: rs4-abandoned, checks: "SC5.1, SC5.2", done_means: "A run folder with no stop record reads as abandoned. /sdlc execute shows the unit and the task, and waits for the user's word. On that word it removes the leftover task file and starts at that task.", tests: "SC5.1 automated and a manual receipt (a session killed mid-task); SC5.2 automated", retirements: none}
+    - {id: rs5-release, checks: "SC4.1, SC4.2, SC4.3", done_means: "A headless restart's first turn holds at most 50K tokens, the fourth restart of one unit too, and kit 0.22.0 ships.", tests: "SC4.2 automated text test; SC4.1, SC4.3 manual receipts (context-breakdown script on the first and fourth restart's transcripts)", retirements: none}
+  order: "rs1-stop-record, rs2-restart, rs3-fresh-rounds, rs4-abandoned, rs5-release; each reads what the one before writes; rs3 and rs4 are independent but share task.py restart and restart.md, so built in turn"
+  cases:
+    - {case: 1, answer: yes, asked: "the engineer seat, Johnathan Hyden (also the PO seat), at S3 in session 136", decided: "SC2.2 leaves open how a headless session takes the answer; /sdlc execute takes --answer and --enough; interactive asks in chat, headless ends its turn and the user relaunches with --answer"}
+    - {case: 2, answer: yes, asked: "the engineer seat, Johnathan Hyden, at S3 in session 136 and S5 in session 137", decided: "one folder a unit (sdlc-run/{contract}/{unit}/) over one shared file, so two stopped units never overwrite each other; the restart's steps in a new restart.md over execute.md, which stands at 11,720 of 12,000 characters"}
+    - {case: 3, answer: no, asked: null, decided: null}
+    - {case: 4, answer: yes, asked: "the engineer seat, Johnathan Hyden, at S3 in session 136", decided: "/sdlc execute gains --answer and --enough, each member gains answer, task.py gains keep and restart and stop gains --unit and --kind, run.json and stop.json are a new format and sdlc-rounds.json moves; every change additive, today's printed lines keep their wording (SC5.3), only task.py reads sdlc-rounds.json, ships as minor 0.22.0"}
+  decisions:
+    - {q: "Ship in /sdlc execute or a personal skill?", a: "/sdlc execute (PO seat, requirements)"}
+    - {q: "How does a headless session take the answer?", a: "relaunch with --answer and --enough (case 1)"}
+    - {q: "Where do the run records live?", a: "one folder a unit under the git folder, never committed (case 2)"}
+    - {q: "Where do the restart's steps go?", a: "skills/sdlc/flows/restart.md (S5)"}
+    - {q: "Stopped or abandoned?", a: "stop.json present: stopped; run.json alone: abandoned (S4)"}
+    - {q: "What clears the records?", a: "task.py end --run --unit after the draft PR (S3)"}
+    - {q: "HEAD check or live-run detection?", a: "neither: branch name and the user's word (S8)"}
+  links_out:
+    - "docs/features/run-restart.md (requirements r4, signed r5, PR #152)"
+    - "docs/features/execution-team.design.md"
+    - "docs/usage/the-team.md"
+    - "docs/backlog.md, Next 24"
+    - "docs/session-metrics.md, sessions 124 to 133"
+    - "ADR 0040, ADR 0037"
+  notes:
+    - "Character counts are the test's count (Path.read_text, a Windows line end read as one newline); a byte count on a Windows checkout reads one more a line: execute.md is 11,785 bytes with 65 line ends"
   risks_and_cost:
-    source: material
+    source: material, confirmed at S8 with three more
     items:
-      - "An abandoned run leaves sdlc-task.json behind; task.py start refuses every task while it stands (task.py:200-202)"
+      - "An abandoned run leaves sdlc-task.json behind; task.py start refuses every task while it stands (task.py:200-202); rs4 removes it on the user's word"
       - "That file arms the wall only for a member's calls, never the session's own (wall.py:12-15)"
+      - "Nothing marks a run live: a run in another session reads as abandoned; SC5.1's wait for the user's word is the guard"
+      - "A hand commit after the stop goes unseen (branch name only, kept commit over HEAD); accepted, no HEAD check"
+      - "Only manual receipts hold the 50K ceiling; restart.md takes execute.md's 12,000-character ceiling test"
+    cost: "3.0M to 3.5M tokens over five build sessions at one round each (rs1 0.5M, rs2 0.8M, rs3 0.4M, rs4 0.5M, rs5 0.75M); basis docs/session-metrics.md rows 124-131; four rounds can reach 1.85M (e5)"
   terms:
     - "team run: one `/sdlc execute` of one unit by the execution team, from its first task until it passes or stops."
     - "stopped run: a team run that ended short of a pass: a member's question or error, a task's third failed round, or a task start `task.py start` refuses."
@@ -64,3 +97,19 @@ history:
   - {at: "2026-10-30", event: "O5: eleven material items confirmed (backlog Next 24 and the code it cites)"}
   - {at: "2026-10-30", event: "opening complete, document written as r1"}
   - {at: "2026-10-31", event: "S1 to S4 written; paused at S5 with its candidate shown, not answered (session 136 wrap)"}
+  - {at: "2026-10-31", event: "S5: nine constraints confirmed (count corrected to 11,720; whole-file writes added); S1's scope gains restart.md and SKILL.md"}
+  - {at: "2026-10-31", event: "S6: five units confirmed (rs1 to rs5); every check in one unit; rs5 is the release unit"}
+  - {at: "2026-10-31", event: "S7: order confirmed, rs1 to rs5 in turn"}
+  - {at: "2026-10-31", event: "S8: five risks (risk 4 accepted) and the cost confirmed"}
+  - {at: "2026-10-31", event: "S9 case 1: yes"}
+  - {at: "2026-10-31", event: "S9 case 2: yes"}
+  - {at: "2026-10-31", event: "S9 case 3: no (os.replace as receipts.py:118 does; run state in the git folder as today)"}
+  - {at: "2026-10-31", event: "S9 case 4: yes; Consult cases written"}
+  - {at: "2026-10-31", event: "S10: seven decisions, none open"}
+  - {at: "2026-10-31", event: "S11: six links out"}
+  - {at: "2026-10-31", event: "S12: one note; solution half complete, next E1"}
+  - {at: "2026-10-31", event: "E1 to E5: r2 Measured, 33 findings (CL006 29, CL008 4); release paths outside Scope; 3 OPEN (11, 12, 14)"}
+  - {at: "2026-10-31", event: "E6 go back: Units (done means split, CL010 subjects named, CL006 note, release paths), Scope (release paths), Interfaces (stop.json and run.json drawn), Sources (error and refusal named)"}
+  - {at: "2026-10-31", event: "E1 to E5: r3 Measured, 30 findings (CL006 30, answered by the Units note); Scope covered; 0 OPEN"}
+  - {at: "2026-10-31", event: "solution half signed (r5 signs r4)"}
+  - {at: "2026-10-31", event: "output complete (W1 skipped: the Google Docs connector failed to connect)"}

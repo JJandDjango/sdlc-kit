@@ -288,10 +288,13 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     sources): one record folder a unit under the git folder, a new
     `task.py restart`, `--answer` and `--enough` on `/sdlc execute`. It
     paused at S5 with its candidate unanswered; the candidate found
-    `execute.md` at 11,785 of its 12,000-character ceiling, so the
-    restart's steps go in a new `flows/restart.md`. Next: resume the
-    design run, `/sdlc:product-specification-interview run-restart
-    design`, at S5.
+    `execute.md` at 11,785 bytes (11,720 characters as the test counts)
+    of its 12,000-character ceiling, so the restart's steps go in a new
+    `flows/restart.md`. Session 137: the engineer seat signed the design
+    at r4 (r5): 12 sections, 0 OPEN, five units `rs1-stop-record`,
+    `rs2-restart`, `rs3-fresh-rounds`, `rs4-abandoned`, `rs5-release`
+    (kit 0.22.0), built in that order, about 3.0M to 3.5M tokens. Next:
+    intake, `/sdlc intake docs/features/run-restart.md`.
 
 ## Next actions
 
