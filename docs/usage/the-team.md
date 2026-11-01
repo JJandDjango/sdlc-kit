@@ -262,3 +262,68 @@ System32 first itself, as the fixture's `test.bat` does; without it,
 ```bat
 set "PATH=%SystemRoot%\System32;%PATH%"
 ```
+
+#### Restarting a stopped run 🔴
+
+> 🔴 **Ratified, built unit by unit** (contract `specs/run-restart/`, units
+> rs1 to rs5; design [run-restart.design.md](../features/run-restart.design.md)).
+> Each paragraph turns green as its unit ships; kit 0.22.0 ships the whole.
+
+🔴 Each stop writes a stop record, `stop.json`, in the unit's run folder,
+`{git folder}/sdlc-run/{contract}/{unit}/`, which is never committed: a
+member's question or error, a task start `task.py start` refuses, and a
+task's third failed round. The record names the unit, the task, the
+operator, the kind (`question`, `error`, `refusal` or `fail`), the round,
+the failed rounds of each channel, the question, error or refusal as
+`text` or each round's FAIL reasons as `reasons`, and the time. The run
+then ends with no PR and no task file. (rs1)
+
+```json
+{"unit": "c/u", "task": "green", "operator": "developer", "kind": "question",
+ "round": 2, "failed": {"write-tests": 0, "green": 1},
+ "text": "Which header declares parse_args?", "at": "2026-11-02T14:05:11Z"}
+```
+
+🔴 `task.py stop --unit {contract}/{unit} --task {task} --operator
+{operator} --kind question|error|refusal --question TEXT` writes the record.
+A question or an error prints today's line; a refusal prints none, since
+`start`'s own line already says why. A task's third `task.py fail` writes a
+`fail` record and prints as today. (rs1)
+
+🔴 The rounds file moves into the run folder as `rounds.json`, one a unit,
+so two stopped units never overwrite each other's counts. A stop keeps it;
+`task.py end --run --unit {contract}/{unit}` removes the task file and the
+unit's folder after the draft PR. (rs1)
+
+🔴 `/sdlc execute {contract} {unit} --answer TEXT` in a fresh session, on
+the run's branch, starts at the stopped task. It reads the stop record,
+the progress records and the branch, never a transcript. An interactive
+session shows the stop and takes the reply in chat; a headless session
+ends its turn there, and the user launches again with `--answer`:
+
+```
+Execution stopped: {contract} unit {unit}, task {task}, round {n} of 3: {question or reasons}. Your answer?
+```
+
+The stopped task's member takes the answer with the question or the
+reasons, and no earlier task runs again. On another branch nothing
+starts: `Execution did not restart: the run stopped on branch {branch};
+this session is on {current}.` A unit with no run folder starts at
+write-tests, round 1, as today. (rs2)
+
+🔴 After a third FAIL the session also asks whether the answer is enough
+to give the task three fresh rounds (`--enough` when headless). On yes,
+the task restarts at round 1. On no, nothing starts, the stop record
+stays, and the session shows `Execution did not restart: {contract} unit
+{unit} stays stopped at {task}. The design may need revisiting.` (rs3)
+
+🔴 A run folder with no stop record is an abandoned run, a session that
+ended mid-task. `/sdlc execute` shows `Execution was abandoned: {contract}
+unit {unit}, task {task}, round {n}. Restart at {task}?` and starts
+nothing before the user's word; on it, the leftover task file goes and the
+run starts at that task. Nothing marks a run live, so a run still going in
+another session reads as abandoned: answer no there. (rs4)
+
+🔴 A restart's first turn holds at most 50K tokens of context, near a
+first start's, and the fourth restart of one unit holds no more than the
+first. (rs5)
