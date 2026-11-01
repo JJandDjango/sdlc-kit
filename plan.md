@@ -26,6 +26,7 @@ The requirements (`docs/features/run-restart.md`, r4) and design (`docs/features
 8. approve-commit: `receipts.py` runs the test command; commit with the `Contract: run-restart` trailer.
 9. two-key: the Dev verifier (`workflows/dev-verifier.js`), then the QA verifier with its mutations. A FAIL returns the task to its channel with the reasons, up to three rounds.
    Stopped here (round 1): the Dev verifier passed all three sketches and failed on scope alone: `tests/test_stop_record.py` and `tests/test_flow_fixes.py` are outside the contract's `scope`. The run stopped with a stop record; the scope is the user's ruling (handoff: `RECEIPT_run-restart-rs1_2026-11-01/handoff.md`, untracked).
+   Session 140: the user ruled `tests/`; re-intake `025fdc4` (design r11 to r13, requirements r7) and the G1.3 review signed again on design r11 (`173b47d`); then two-key ran again by hand, as rs2 is not built.
 10. Close: `progress done run-restart/rs1-stop-record`, the backlog's Next 24 updated (rs2 next), a row in `docs/session-metrics.md`, `plan.md` out, push, draft PR.
 
 ## 4. Where Claude stops for the user

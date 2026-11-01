@@ -306,10 +306,13 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     contract lists `tests/test_rounds.py` and `tests/test_team.py` and the
     unit also touches `tests/test_stop_record.py` and
     `tests/test_flow_fixes.py` (scope-check SC001). The run stopped with a
-    stop record. Next: the user rules the scope (recommended: `tests/`, a
-    re-intake with the engineer seat's `Signed:` row), then two-key and
-    the wrap from
-    `RECEIPT_run-restart-rs1_2026-11-01/handoff.md`.
+    stop record. Session 140: the user ruled `tests/`; re-intake
+    `025fdc4` (design r11 to r13, requirements r7) reopened G1.3, which
+    the user signed again on design r11 (`173b47d`); both verifiers
+    passed rs1 (the QA verifier caught 4 of 4 mutations). Next: `rs2-restart`
+    from main once rs1's PR merges. rs2 also closes the Dev verifier's
+    advisory: `task.py`'s `--unit` check passes a half such as `c:`, and
+    `Path.joinpath` then leaves the git folder on Windows.
 
 ## Next actions
 
