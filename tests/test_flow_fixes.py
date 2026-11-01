@@ -6,8 +6,9 @@ What moves: the Orchestrator's flow `skills/sdlc/flows/execute.md` (its
 quoting, two held values, the join of the reasons and one close call),
 `workflows/qa-verifier.js` (the argument `at` of prove-red) and
 `workflows/dev-verifier.js` (two sections read only where the document has
-them). `workflows/tools/task.py` keeps its commands and options (Design
-Interfaces 10); `prove.py` keeps `--at REV` (Interfaces 7).
+them). `workflows/tools/task.py` keeps its commands (Design Interfaces 10),
+with `stop` taking `--unit` and `--kind` and `fail` taking `--operator` (unit
+rs1-stop-record); `prove.py` keeps `--at REV` (Interfaces 7).
 
 The flow is prose, so a test reads its text: the spans it shows in backticks,
 and the sentences round them. Where a span can run, a test renders it (a
@@ -44,9 +45,10 @@ needs_node = pytest.mark.skipif(NODE is None, reason="node is not on PATH")
 
 TASKPY = "python {skill-dir}/../../workflows/tools/task.py"
 FAIL_SPAN = (f"{TASKPY} fail --unit {{contract}}/{{unit}} --task {{channel}} "
-             "--reason '{reasons}'")
-STOP_SPAN = (f"{TASKPY} stop --task {{task}} --operator {{operator}} "
-             "--question '{question}'")
+             "--operator {operator} --reason '{reasons}'")
+# The stop a member's question runs; the flow's error and refusal stops differ in --kind.
+STOP_SPAN = (f"{TASKPY} stop --unit {{contract}}/{{unit}} --task {{task}} "
+             "--operator {operator} --kind question --question '{question}'")
 CLOSE_SPAN = "python -m taskcontract progress done {contract}/{unit}"
 END_TWO_KEY = f"{TASKPY} end --unit {{contract}}/{{unit}} --task two-key"
 QUOTE_FORM = "'\\''"  # the four characters ' \ ' ' the flow writes for one single quote
@@ -95,6 +97,10 @@ def spans(text: str) -> list[tuple[int, str]]:
 def task_spans(text: str, verb: str) -> list[tuple[int, str]]:
     return [(at, c) for at, c in spans(text) if c.startswith(f"{TASKPY} {verb} ")
             or c == f"{TASKPY} {verb}"]
+
+
+def question_spans(text: str) -> list[tuple[int, str]]:
+    return [(at, c) for at, c in task_spans(text, "stop") if " --kind question " in c]
 
 
 def reading(text: str, at: int, command: str) -> str:
@@ -289,7 +295,7 @@ def prompt_of(tmp_path: Path, name: str, args: dict, reply: dict) -> str:
 def test_14_1_the_flow_passes_the_reasons_and_the_question_in_single_quotes():
     text = flow()
     assert [c for _, c in task_spans(text, "fail")] == [FAIL_SPAN]
-    assert [c for _, c in task_spans(text, "stop")] == [STOP_SPAN]
+    assert [c for _, c in question_spans(text)] == [STOP_SPAN]
     assert '"{reasons}"' not in text and '"{question}"' not in text
     # One sentence of the rounds rule says how a single quote inside the value is written;
     # it comes before the fail command, so the stop command after it follows it too.
@@ -303,8 +309,8 @@ def test_14_1_the_flow_passes_the_reasons_and_the_question_in_single_quotes():
 def test_14_1_task_py_commands_and_options_stay_as_drawn():
     text = flow()
     drawn = {"start": {"--unit", "--task", "--operator"},
-             "fail": {"--unit", "--task", "--reason"},
-             "stop": {"--task", "--operator", "--question"},
+             "fail": {"--unit", "--task", "--operator", "--reason"},
+             "stop": {"--unit", "--task", "--operator", "--kind", "--question"},
              "end": {"--unit", "--task", "--by", "--run"}}
     used = {}
     for _, command in spans(text):
@@ -322,7 +328,7 @@ def test_14_1_task_py_commands_and_options_stay_as_drawn():
     assert all(option in helped for option in drawn["fail"])
     # The two values reach the script through single quotes, whatever they hold.
     assert [c for _, c in task_spans(text, "fail")][0].endswith("--reason '{reasons}'")
-    assert [c for _, c in task_spans(text, "stop")][0].endswith("--question '{question}'")
+    assert [c for _, c in question_spans(text)][0].endswith("--question '{question}'")
 
 
 def test_14_1_a_reason_with_shell_characters_reaches_the_stop_line_whole(tmp_path):
@@ -338,7 +344,7 @@ def test_14_1_a_reason_with_shell_characters_reaches_the_stop_line_whole(tmp_pat
     codes = []
     for n in range(3):
         codes.append(run_span(tmp_path, root, found[0], contract=CONTRACT, unit=U,
-                              channel="green", reasons=value))
+                              channel="green", operator="developer", reasons=value))
     assert [c[0] for c in codes] == [0, 0, 1]
     assert codes[0][1] == "" and codes[1][1] == ""
     assert codes[2][1] == ("Task green failed 3 rounds. The run stops here; the failures follow.\n"
@@ -348,15 +354,15 @@ def test_14_1_a_reason_with_shell_characters_reaches_the_stop_line_whole(tmp_pat
 
 def test_14_1_a_question_with_shell_characters_reaches_the_stop_line_whole(tmp_path):
     text = flow()
-    found = [c for _, c in task_spans(text, "stop")]
+    found = [c for _, c in question_spans(text)]
     assert found == [STOP_SPAN], found
     form = re.search(r"`('\\'')`", steps_of(text)["E2"])
     assert form and form[1] == QUOTE_FORM
     value = NASTY.replace("'", form[1])
     root = make_repo(tmp_path)
     assert shlex.split(found[0].replace("{question}", value))[-1] == NASTY
-    code, out, err = run_span(tmp_path, root, found[0], task="green", operator="developer",
-                              question=value)
+    code, out, err = run_span(tmp_path, root, found[0], contract=CONTRACT, unit=U,
+                              task="green", operator="developer", question=value)
     assert (code, err) == (1, "")
     assert out == f"Task green stopped on a question from Developer: {NASTY}\n"
 
@@ -490,13 +496,13 @@ def test_14_3_the_flow_holds_the_operator_as_qa_verifier_after_the_dev_verifier_
 def test_14_3_a_question_from_the_qa_verifier_at_two_key_stops_with_its_name(tmp_path):
     text = flow()
     operator = held_operator(steps_of(text)["E9"])
-    found = [c for _, c in task_spans(text, "stop")]
+    found = [c for _, c in question_spans(text)]
     assert found == [STOP_SPAN], found
     root = make_repo(tmp_path)
     started(tmp_path, root, "two-key", "dev-verifier")
     question = "Which mutation may touch the exit code?"
-    code, out, err = run_span(tmp_path, root, found[0], task="two-key", operator=operator,
-                              question=question)
+    code, out, err = run_span(tmp_path, root, found[0], contract=CONTRACT, unit=U,
+                              task="two-key", operator=operator, question=question)
     assert (code, err) == (1, "")
     assert out == f"Task two-key stopped on a question from QA verifier: {question}\n"
     assert "Dev verifier" not in out
@@ -552,18 +558,19 @@ def test_14_6_the_stop_sample_prints_the_design_lines_when_the_rule_builds_the_r
     assert build_reasons(["1 sketch failed"], []) == "1 sketch failed"
     text = flow()
     fail = [c for _, c in task_spans(text, "fail")]
-    stop = [c for _, c in task_spans(text, "stop")]
+    stop = [c for _, c in question_spans(text)]
     assert fail == [FAIL_SPAN] and stop == [STOP_SPAN]
     root = make_repo(tmp_path)
     outs = [run_span(tmp_path, root, fail[0], contract=CONTRACT, unit=U, channel="green",
-                     reasons=build_reasons(*one)) for one in rounds]
+                     operator="developer", reasons=build_reasons(*one)) for one in rounds]
     assert [o[0] for o in outs] == [0, 0, 1] and outs[0][1] == "" and outs[1][1] == ""
     assert outs[2] == (1, DESIGN_STOP, "")
     # On a question, the other sample line of the design.
     (tmp_path / "second").mkdir()
     again = make_repo(tmp_path / "second")
-    code, out, err = run_span(tmp_path / "second", again, stop[0], task="green",
-                              operator="developer", question="Which exit code does --frames 0 take?")
+    code, out, err = run_span(tmp_path / "second", again, stop[0], contract=CONTRACT, unit=U,
+                              task="green", operator="developer",
+                              question="Which exit code does --frames 0 take?")
     assert (code, out, err) == (1, DESIGN_QUESTION, "")
 
 
