@@ -1,0 +1,42 @@
+records:
+- condition: G1.3
+  at: '2026-11-01T04:20:44Z'
+  head: a3511f9
+  by: Johnathan Hyden
+  seat: user
+  requirements: r4
+  design: r8
+  items:
+  - n: 1
+    name: Testable
+    checked: true
+  - n: 2
+    name: Unambiguous
+    checked: true
+  - n: 3
+    name: Traceable
+    checked: true
+  - n: 4
+    name: Complete over units
+    checked: true
+  - n: 5
+    name: Covers the sketch
+    checked: true
+  - n: 6
+    name: Consistent
+    checked: true
+  - n: 7
+    name: Respects non-goals
+    checked: true
+  - n: 8
+    name: Boundary + error paths
+    checked: true
+  - n: 9
+    name: Property-spec applicability
+    checked: true
+  - n: 10
+    name: Schema presence
+    checked: true
+  - n: 11
+    name: Oracle designation answered
+    checked: true
