@@ -17,6 +17,7 @@ The requirements (`docs/features/run-restart.md`, r4) and design (`docs/features
 
 1. Branch `session-139-rs1-stop-record` off main; this plan committed and pushed.
 2. Pass 0, by hand: `docs/usage/the-team.md` gains its restart section, every line red, restating the design (the stop record, the run folder, the restart, fresh rounds, the abandoned run, the 50K start). Own commit.
+   Added after the first `task.py start` refused (`G1 has not passed for run-restart`): `/sdlc g1 run-restart`, the G1 venue. G1.1 and G1.2 read done (no schema, no hard core in scope); the user reviewed and signed G1.3's 11 items (`b4683fa`). Session 138 named rs1 next without this gate: a gap in its handoff, charged in the metrics row.
 3. write-tests: QA (`workflows/qa.js`, by `scriptPath`) drafts the tests for SC1.1 to SC1.3 from the contract, the requirements and the design.
 4. approve-tests, then prove-red: the QA verifier (`workflows/qa-verifier.js`) grades the draft, then proves it red at the base commit through `prove.py`. The draft goes into the tree.
 5. green: the Developer (`workflows/developer.js`) changes `task.py` (the run folder, `stop.json`, `rounds.json`, `stop --unit --kind`, `end --run --unit`) and `skills/sdlc/flows/execute.md` (the new options, and a refused start that stops with a record), keeping `execute.md` under its 12,000-character ceiling.
