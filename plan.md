@@ -25,6 +25,7 @@ The requirements (`docs/features/run-restart.md`, r4) and design (`docs/features
 7. The usage page by hand: rs1's red lines turn green, and the three "removes both files" sentences (`docs/usage/the-team.md:203-226`) say what the code now does.
 8. approve-commit: `receipts.py` runs the test command; commit with the `Contract: run-restart` trailer.
 9. two-key: the Dev verifier (`workflows/dev-verifier.js`), then the QA verifier with its mutations. A FAIL returns the task to its channel with the reasons, up to three rounds.
+   Stopped here (round 1): the Dev verifier passed all three sketches and failed on scope alone: `tests/test_stop_record.py` and `tests/test_flow_fixes.py` are outside the contract's `scope`. The run stopped with a stop record; the scope is the user's ruling (handoff: `RECEIPT_run-restart-rs1_2026-11-01/handoff.md`, untracked).
 10. Close: `progress done run-restart/rs1-stop-record`, the backlog's Next 24 updated (rs2 next), a row in `docs/session-metrics.md`, `plan.md` out, push, draft PR.
 
 ## 4. Where Claude stops for the user

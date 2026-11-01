@@ -299,8 +299,17 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     (r9); the five terms were ratified and the dictionary took 20
     done-means words; `specs/run-restart/contract.yaml` validates
     ready-green, with `Ready:` rows at requirements r6 and design r10, and
-    lang-check reads 0 on it. Next: build
-    `rs1-stop-record`, the first of the five units.
+    lang-check reads 0 on it. Session 139 (branch
+    `session-139-rs1-stop-record`, no PR): G1 passed (`b4683fa`, the user
+    signed G1.3); the team built `rs1-stop-record` at `bfda725` (suite
+    2692); the Dev verifier failed round 1 on scope alone, since the
+    contract lists `tests/test_rounds.py` and `tests/test_team.py` and the
+    unit also touches `tests/test_stop_record.py` and
+    `tests/test_flow_fixes.py` (scope-check SC001). The run stopped with a
+    stop record. Next: the user rules the scope (recommended: `tests/`, a
+    re-intake with the engineer seat's `Signed:` row), then two-key and
+    the wrap from
+    `RECEIPT_run-restart-rs1_2026-11-01/handoff.md`.
 
 ## Next actions
 
