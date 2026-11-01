@@ -27,8 +27,7 @@ scope:
   - workflows/qa-verifier.js
   - workflows/developer.js
   - workflows/dev-verifier.js
-  - tests/test_rounds.py
-  - tests/test_team.py
+  - tests/
   - docs/usage/the-team.md
   - USAGE.md
   - CHANGELOG.md

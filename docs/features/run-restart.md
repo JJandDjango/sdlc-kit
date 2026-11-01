@@ -6,6 +6,7 @@
 | 2026-10-30 | Johnathan Hyden | r4: The request half finished: 11 sections written, 0 OPEN |
 | 2026-10-30 | Johnathan Hyden | r5: Signed: request half. The PO seat signs r4 |
 | 2026-10-31 | intake | r6: Ready: contract `run-restart` validates ready-green, derived from r4; the PO seat (Johnathan Hyden) signed the request half at r4 (r5) |
+| 2026-11-01 | intake | r7: Ready: contract `run-restart` validates ready-green, derived from r4; the PO seat (Johnathan Hyden) signed the request half at r4 (r5) |
 
 # run-restart - Restart a stopped run in a fresh session
 

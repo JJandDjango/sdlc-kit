@@ -2,8 +2,9 @@
 SC4.3, SC5.1 and SC5.2).
 
 The unit adds three commands to `workflows/tools/task.py` (`fail`, `stop` and
-`end`), the rounds file `sdlc-rounds.json` beside the task file in the
-repository's git folder, and the draft PR to the Orchestrator's flow
+`end`), the rounds file `rounds.json` in the unit's run folder
+`sdlc-run/{contract}/{unit}/` of the repository's git folder, and the draft PR
+to the Orchestrator's flow
 `skills/sdlc/flows/execute.md`. A FAIL goes back to its channel with its
 reasons (the members `qa` and `developer` read them as the argument `reasons`);
 a third failed round or a question stops the run with the design's own lines;
@@ -149,17 +150,18 @@ def end(tmp_path, root, task="green", by=None, unit=UNIT):
     return call(tmp_path, root, "end", "--unit", unit, "--task", task, *extra)
 
 
-def stop(tmp_path, root, question="Which exit code?", task="green", operator="developer"):
-    return call(tmp_path, root, "stop", "--task", task, "--operator", operator,
-                "--question", question)
+def stop(tmp_path, root, question="Which exit code?", task="green", operator="developer",
+         kind="question", unit=UNIT):
+    return call(tmp_path, root, "stop", "--unit", unit, "--task", task, "--operator", operator,
+                "--kind", kind, "--question", question)
 
 
 def task_file(root: Path) -> Path:
     return root / ".git" / "sdlc-task.json"
 
 
-def rounds_file(root: Path) -> Path:
-    return root / ".git" / "sdlc-rounds.json"
+def rounds_file(root: Path, unit: str = UNIT) -> Path:
+    return root / ".git" / "sdlc-run" / unit / "rounds.json"
 
 
 def task_json(root: Path) -> dict:
@@ -192,7 +194,8 @@ def test_sc4_1_a_first_failed_round_is_silent_removes_the_task_file_and_keeps_th
     held = records(root)
     assert fail(tmp_path, root, "green", REASONS_3[0]) == (0, "", "")
     assert not task_file(root).exists()
-    assert rounds_file(root) == root / ".git" / "sdlc-rounds.json" and rounds_file(root).is_file()
+    assert rounds_file(root) == root / ".git" / "sdlc-run" / CONTRACT / U / "rounds.json"
+    assert rounds_file(root).is_file()
     assert records(root) == held, "fail writes no progress record"
 
 
@@ -252,10 +255,10 @@ def test_sc4_1_a_fail_for_another_unit_starts_from_none_and_keeps_none_of_the_fi
     root = make_repo(tmp_path)
     failed_rounds(tmp_path, root, "green", ["u1 green a", "u1 green b"])
     failed_rounds(tmp_path, root, "write-tests", ["u1 tests a", "u1 tests b"])
-    # No start of the second unit before its first fail: the fail alone drops the first
-    # unit's rounds. Kept, the green count would be 3 and this fail would stop the run.
+    # No start of the second unit before its first fail: its run folder holds none of the
+    # first unit's rounds. Shared, the green count would be 3 and this fail would stop the run.
     assert fail(tmp_path, root, "green", "u2 green a", unit=UNIT2) == (0, "", "")
-    # The first unit's write-tests failures are gone too, not only the green ones.
+    # The first unit's write-tests failures do not carry over either, not only the green ones.
     assert start(tmp_path, root, "write-tests", "qa", unit=UNIT2) == (
         0, STARTED.format(task="write-tests", operator="QA", round=1), "")
     task_file(root).unlink()
@@ -267,26 +270,6 @@ def test_sc4_1_a_fail_for_another_unit_starts_from_none_and_keeps_none_of_the_fi
     assert fail(tmp_path, root, "green", "u2 green c", unit=UNIT2) == (
         1, STOPPED.format(task="green") + "  Round 1: u2 green a\n  Round 2: u2 green b\n"
                                            "  Round 3: u2 green c\n", "")
-
-
-def test_sc4_1_a_fail_for_another_task_of_another_unit_leaves_no_failed_round_to_the_first(
-        tmp_path):
-    root = make_repo(tmp_path)
-    failed_rounds(tmp_path, root, "green", ["u1 green a", "u1 green b"])
-    # A different task, a different unit: nothing of the first unit's green rounds stays.
-    assert fail(tmp_path, root, "write-tests", "u2 tests a", unit=UNIT2) == (0, "", "")
-    assert start(tmp_path, root, "green", unit=UNIT2) == (
-        0, STARTED.format(task="green", operator="Developer", round=1), "")
-    task_file(root).unlink()
-    # The rounds file holds one unit's run: back on the first unit, its rounds are gone.
-    assert start(tmp_path, root, "green", unit=UNIT) == (
-        0, STARTED.format(task="green", operator="Developer", round=1), "")
-    task_file(root).unlink()
-    assert fail(tmp_path, root, "green", "u1 green c", unit=UNIT) == (0, "", "")
-    assert fail(tmp_path, root, "green", "u1 green d", unit=UNIT) == (0, "", "")
-    assert fail(tmp_path, root, "green", "u1 green e", unit=UNIT) == (
-        1, STOPPED.format(task="green") + "  Round 1: u1 green c\n  Round 2: u1 green d\n"
-                                           "  Round 3: u1 green e\n", "")
 
 
 # --- SC4.1: a task's round is its channel's -------------------------------------------
@@ -383,6 +366,7 @@ def test_sc4_1_a_run_with_a_two_key_fail_goes_round_2_in_each_task_of_the_green_
                          ids=["empty", "not-json", "list", "empty-object", "string", "number"])
 def test_sc4_1_a_rounds_file_that_holds_no_counts_is_replaced_by_the_next_fail(tmp_path, text):
     root = make_repo(tmp_path)
+    rounds_file(root).parent.mkdir(parents=True)
     rounds_file(root).write_text(text, encoding="utf-8")
     assert fail(tmp_path, root, "green", REASONS_3[0]) == (0, "", "")
     assert start(tmp_path, root) == (
@@ -400,7 +384,7 @@ def test_sc4_1_in_a_linked_worktree_the_rounds_file_is_in_the_worktrees_own_git_
     wt_git = Path(git(wt, "rev-parse", "--absolute-git-dir").strip())
     assert wt_git != root / ".git" and (wt / ".git").is_file()
     assert fail(tmp_path, wt, "green", REASONS_3[0]) == (0, "", "")
-    assert (wt_git / "sdlc-rounds.json").is_file()
+    assert (wt_git / "sdlc-run" / CONTRACT / U / "rounds.json").is_file()
     assert not rounds_file(root).exists()
     assert start(tmp_path, wt) == (
         0, STARTED.format(task="green", operator="Developer", round=2), "")
@@ -411,7 +395,7 @@ def test_sc4_1_fail_without_a_git_repository_refuses_and_writes_nothing(tmp_path
     before = snapshot(root)
     assert fail(tmp_path, root, "green", REASONS_3[0]) == (1, "", NO_GIT.format(root=root))
     assert snapshot(root) == before
-    assert not any(p.name == "sdlc-rounds.json" for p in tmp_path.rglob("*"))
+    assert not any(p.name == "rounds.json" for p in tmp_path.rglob("*"))
 
 
 # --- SC4.1: the reasons reach the next round's member --------------------------------
@@ -507,23 +491,6 @@ def test_sc4_2_a_third_failed_round_prints_the_message_and_one_line_a_round_and_
     assert fail(tmp_path, root, "green", REASONS_3[2]) == (1, expected, "")
 
 
-def test_sc4_2_a_run_of_three_rounds_ends_with_both_files_removed_and_a_fresh_run_after(tmp_path):
-    root = make_repo(tmp_path)
-    for round_no, reason in enumerate(REASONS_3[:2], 1):
-        assert start(tmp_path, root)[1] == STARTED.format(
-            task="green", operator="Developer", round=round_no)
-        assert fail(tmp_path, root, "green", reason) == (0, "", "")
-    assert start(tmp_path, root)[1] == STARTED.format(
-        task="green", operator="Developer", round=3)
-    assert task_file(root).is_file() and rounds_file(root).is_file()
-    code, out, err = fail(tmp_path, root, "green", REASONS_3[2])
-    assert (code, err) == (1, "") and out.startswith(STOPPED.format(task="green"))
-    assert not task_file(root).exists() and not rounds_file(root).exists()
-    # The stopped run starts no fourth round: what follows is a new run, at round 1.
-    assert start(tmp_path, root)[1] == STARTED.format(
-        task="green", operator="Developer", round=1)
-
-
 @pytest.mark.parametrize("task", ["write-tests", "prove-red", "two-key"])
 def test_sc4_2_the_message_names_the_task_that_failed_three_rounds(tmp_path, task):
     root = make_repo(tmp_path)
@@ -571,7 +538,7 @@ def test_sc4_3_stop_prints_the_question_message_with_the_operator_name_and_exits
         1, QUESTION.format(task="green", operator=printed, question=question), "")
 
 
-def test_sc4_3_stop_removes_the_task_file_and_the_rounds_file(tmp_path):
+def test_sc4_3_stop_removes_the_task_file_and_keeps_the_rounds_file(tmp_path):
     root = make_repo(tmp_path)
     assert start(tmp_path, root)[0] == 0
     assert fail(tmp_path, root, "green", REASONS_3[0]) == (0, "", "")
@@ -579,7 +546,7 @@ def test_sc4_3_stop_removes_the_task_file_and_the_rounds_file(tmp_path):
     assert task_file(root).is_file() and rounds_file(root).is_file()
     assert stop(tmp_path, root, "Which flag?", "green", "developer") == (
         1, QUESTION.format(task="green", operator="Developer", question="Which flag?"), "")
-    assert not task_file(root).exists() and not rounds_file(root).exists()
+    assert not task_file(root).exists() and rounds_file(root).is_file()
 
 
 def test_sc4_3_stop_writes_nothing_else_and_records_no_progress(tmp_path):
@@ -687,11 +654,11 @@ def test_sc5_1_end_run_removes_both_files_prints_nothing_and_exits_0(tmp_path):
     assert start(tmp_path, root)[0] == 0
     assert task_file(root).is_file() and rounds_file(root).is_file()
     held = records(root)
-    assert call(tmp_path, root, "end", "--run") == (0, "", "")
+    assert call(tmp_path, root, "end", "--run", "--unit", UNIT) == (0, "", "")
     assert not task_file(root).exists() and not rounds_file(root).exists()
     assert records(root) == held
     # With no file standing it is the same call, the same silence.
-    assert call(tmp_path, root, "end", "--run") == (0, "", "")
+    assert call(tmp_path, root, "end", "--run", "--unit", UNIT) == (0, "", "")
 
 
 # --- the flow: the draft PR, the rounds and the stops --------------------------------
@@ -733,9 +700,8 @@ CHANNEL_OF = [("qa-verifier", "approve-tests", "write-tests"),
               ("dev-verifier", "two-key", "green"),
               ("qa-verifier", "two-key", "write-tests")]
 # Single quotes, so shell characters in a reason never run (tests/test_flow_fixes.py).
-FAIL_SPAN = f"{TASKPY} fail --unit {{contract}}/{{unit}} --task {{channel}} --reason '{{reasons}}'"
-STOP_SPAN = (f'{TASKPY} stop --task {{task}} --operator {{operator}} '
-             "--question '{question}'")
+FAIL_SPAN = (f"{TASKPY} fail --unit {{contract}}/{{unit}} --task {{channel}} "
+             "--operator {operator} --reason '{reasons}'")
 
 
 def member_segments(text: str) -> list[tuple[str, str, str]]:
@@ -893,11 +859,6 @@ def test_sc4_2_after_fail_exit_1_the_flow_shows_the_output_and_stops_with_no_pr(
     assert "no PR" in after, after
 
 
-def test_sc4_3_the_flow_has_one_stop_command_with_the_task_the_operator_and_the_question():
-    found = [c for _, c in task_spans(flow(), "stop")]
-    assert found == [STOP_SPAN], found
-
-
 def test_sc4_3_the_flow_holds_the_task_the_operator_and_the_question_of_the_result():
     text = flow()
     assert re.search(r"HOLD[^\n]*\{task\}[^\n]*\{operator\}", text), \
@@ -905,16 +866,6 @@ def test_sc4_3_the_flow_holds_the_task_the_operator_and_the_question_of_the_resu
     assert re.search(
         r"HOLD[^\n]*(`questions`[^\n]*\{question\}|\{question\}[^\n]*`questions`)", text), \
         "no line holds a question of the `questions` of a result as {question}"
-
-
-def test_sc4_3_after_stop_the_flow_shows_the_output_to_the_user_and_stops_with_no_pr():
-    text = flow()
-    found = task_spans(text, "stop")
-    assert len(found) == 1, found
-    at, command = found[0]
-    after = reading(text, at, command)
-    assert re.search(r"SHOW.*?output.*?STOP", after, re.S), after
-    assert "no PR" in after, after
 
 
 @pytest.mark.parametrize("name", ["qa", "developer"])
@@ -949,11 +900,13 @@ def test_sc5_1_the_flow_ends_each_task_through_task_py_end_and_no_longer_calls_p
 
 def test_sc5_1_the_flow_removes_the_task_file_just_before_each_command_that_names_the_unit():
     # Backlog Next actions 12: with the task file standing, the wall refuses a command
-    # naming a contract id that starts a walled path.
+    # naming a contract id that starts a walled path. The refusal stop of a refused
+    # start leaves the task file standing, so it is the one command left out.
     text = flow()
     commands = spans(text)
     named = [i for i, (_, c) in enumerate(commands)
-             if c.startswith((f"{TASKPY} end --unit", f"{TASKPY} fail", f"{TASKPY} stop"))]
+             if c.startswith((f"{TASKPY} end --unit", f"{TASKPY} fail", f"{TASKPY} stop"))
+             and "--kind refusal" not in c]
     assert len(named) >= 9, f"{len(named)} task.py end, fail and stop commands"
     for i in named:
         assert i > 0 and commands[i - 1][1] == REMOVE_TASK_FILE, commands[i][1]

@@ -13,7 +13,7 @@ answers:
     - "skills/sdlc/flows/execute.md: E2 runs task.py restart first; a refused task start stops with a stop record; each passed task saves what it hands on (note, draft, base, commit, receipts) in the git folder"
     - "skills/sdlc/flows/restart.md (new) and skills/sdlc/SKILL.md: the restart's steps in their own flow file; SKILL.md lists it (added at S5, seat confirmed)"
     - "workflows/qa.js, qa-verifier.js, developer.js, dev-verifier.js: each takes an answer argument (SC2.2)"
-    - "tests/test_rounds.py, tests/test_team.py"
+    - "tests/: each unit's own test file and the older tests its change makes false (re-intake at rs1's Two-Key, session 140, seat ruled)"
     - "pyproject.toml, skills/sdlc/init.py (KIT_VERSION): kit 0.22.0; .github/workflows/sdlc.yml takes the v0.22.0 tag in the self-pin PR (added at E6)"
     - "docs/usage/the-team.md, USAGE.md, CHANGELOG.md"
   out_of_scope:
@@ -117,3 +117,5 @@ history:
   - {at: "2026-10-31", event: "E1 to E5: r7 Measured, 30 findings (CL006 30, answered by the Units note); Scope covered; 0 OPEN"}
   - {at: "2026-10-31", event: "solution half signed (r9 signs r8)"}
   - {at: "2026-10-31", event: "output complete (W1 not offered: the pasted form is declined standing; next: intake)"}
+  - {at: "2026-11-01", event: "re-intake during the build (session 140): Scope's test bullet becomes tests/ (SC001 at rs1's Two-Key); r11 text row, one decision entry"}
+  - {at: "2026-11-01", event: "solution half signed (r12 signs r11)"}

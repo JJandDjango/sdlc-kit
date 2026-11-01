@@ -299,8 +299,20 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     (r9); the five terms were ratified and the dictionary took 20
     done-means words; `specs/run-restart/contract.yaml` validates
     ready-green, with `Ready:` rows at requirements r6 and design r10, and
-    lang-check reads 0 on it. Next: build
-    `rs1-stop-record`, the first of the five units.
+    lang-check reads 0 on it. Session 139 (branch
+    `session-139-rs1-stop-record`, no PR): G1 passed (`b4683fa`, the user
+    signed G1.3); the team built `rs1-stop-record` at `bfda725` (suite
+    2692); the Dev verifier failed round 1 on scope alone, since the
+    contract lists `tests/test_rounds.py` and `tests/test_team.py` and the
+    unit also touches `tests/test_stop_record.py` and
+    `tests/test_flow_fixes.py` (scope-check SC001). The run stopped with a
+    stop record. Session 140: the user ruled `tests/`; re-intake
+    `025fdc4` (design r11 to r13, requirements r7) reopened G1.3, which
+    the user signed again on design r11 (`173b47d`); both verifiers
+    passed rs1 (the QA verifier caught 4 of 4 mutations). Next: `rs2-restart`
+    from main once rs1's PR merges. rs2 also closes the Dev verifier's
+    advisory: `task.py`'s `--unit` check passes a half such as `c:`, and
+    `Path.joinpath` then leaves the git folder on Windows.
 
 ## Next actions
 
