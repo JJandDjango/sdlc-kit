@@ -16,7 +16,7 @@ an error or a refusal.
         --key draft|draft-file|receipts|commit (--file PATH | --value TEXT)
         [--root DIR]
     python workflows/tools/task.py restart --unit {contract}/{unit}
-        [--go --scratch DIR] [--root DIR]
+        [--go [--fresh] --scratch DIR] [--root DIR]
 
 `start` checks, in this order, that the repository declares a test command,
 that the root is a git repository and that no task is running, then runs
@@ -56,7 +56,9 @@ one JSON line, the run's state (`none`, `stopped` or `abandoned`) with the
 task, operator, round, stop kind and text, and the kept values; it refuses on
 one line when the session is on another branch than the run or a record does
 not parse. With `--go` it also removes the stop record and the task file and
-writes the kept draft under the scratch folder.
+writes the kept draft under the scratch folder; `--fresh` with it also clears
+the failed rounds of the stopped task's channel, so its next three rounds
+count from one.
 
 The script imports the `taskcontract` that sits beside it, whichever package
 of that name the environment holds.
@@ -196,6 +198,8 @@ def build_parser() -> argparse.ArgumentParser:
                          help="the unit, as {contract}/{unit}")
     restart.add_argument("--go", action="store_true",
                          help="remove the stop record and the task file, write the kept draft")
+    restart.add_argument("--fresh", action="store_true",
+                         help="with --go, also clear the failed rounds of the stopped task's channel")
     restart.add_argument("--scratch", metavar="DIR",
                          help="the session's scratch folder; required with --go")
     restart.add_argument("--root", default=".", help=ROOT_HELP)
@@ -519,11 +523,24 @@ def place_draft(run_path: Path, kept: dict, scratch: Path) -> None:
     shutil.copyfile(source, target)
 
 
+def clear_channel(path: Path, task: object) -> None:
+    """Remove the failed reasons of the task's channel from the rounds file,
+    keeping its unit and the other channel's reasons; nothing is written when
+    the file holds no reasons for the channel."""
+    held, rounds = read_rounds(path)
+    channel = CHANNELS.get(task, task)
+    if held is None or channel not in rounds:
+        return
+    del rounds[channel]
+    write_whole(path, {"unit": held, "rounds": rounds})
+
+
 def restart(args: argparse.Namespace) -> int:
     """Print the unit's state as one JSON line: 0 when it reads, 1 when a record
     does not parse or the run stopped on another branch. With `--go`, a stopped
     or abandoned run also loses its stop record and task file, and the kept
-    draft is written under the scratch folder."""
+    draft is written under the scratch folder; with `--fresh` as well, the
+    failed rounds of the stopped task's channel are cleared."""
     folder = git_folder(args.root)
     if folder is None:
         return refuse(f"Execution did not restart: no git repository at {args.root}.")
@@ -533,6 +550,8 @@ def restart(args: argparse.Namespace) -> int:
     if args.go and state["state"] != "none":
         run_path = run_folder(folder, args.unit)
         place_draft(run_path, state["kept"], Path(args.scratch))
+        if args.fresh:
+            clear_channel(run_path / ROUNDS_FILE, state["task"])
         remove(folder / TASK_FILE, run_path / STOP_FILE)
     print(json.dumps(state, separators=(",", ":")))
     return 0
@@ -557,6 +576,8 @@ def main(argv: list[str] | None = None) -> int:
             parser.error(str(error))
     if args.command == "restart" and args.go and not args.scratch:
         parser.error("--go requires --scratch")
+    if args.command == "restart" and args.fresh and not args.go:
+        parser.error("--fresh requires --go")
     return COMMANDS[args.command](args)
 
 
