@@ -236,23 +236,16 @@ def test_sc1_1_a_stop_removes_the_task_file_and_keeps_the_rounds_file(tmp_path):
     assert stop_json(root)["task"] == "green"
 
 
-def test_sc1_1_a_stop_writes_only_the_two_files_in_the_run_folder_and_no_progress(tmp_path):
+def test_sc1_1_a_stop_writes_only_the_record_files_in_the_run_folder_and_no_progress(tmp_path):
     root = make_repo(tmp_path)
     assert fail(tmp_path, root, "write-tests", R3[0]) == (0, "", "")
     assert start(tmp_path, root, "write-tests", "qa")[0] == 0
     held = records(root)
     assert stop(tmp_path, root, "Which flag?", "write-tests", "qa")[0] == 1
-    assert sorted(p.name for p in run_dir(root).iterdir()) == ["rounds.json", "stop.json"]
+    assert sorted(p.name for p in run_dir(root).iterdir()) == [
+        "rounds.json", "run.json", "stop.json"]
     assert records(root) == held
     assert not old_rounds(root).exists()
-
-
-def test_sc1_1_the_run_folder_is_made_on_the_first_write(tmp_path):
-    root = make_repo(tmp_path)
-    assert start(tmp_path, root)[0] == 0
-    assert not (gitdir(root) / "sdlc-run").exists()
-    assert stop(tmp_path, root, "Which flag?")[0] == 1
-    assert (run_dir(root) / "stop.json").is_file()
 
 
 def test_sc1_1_the_time_is_utc_to_the_second_with_a_trailing_z(tmp_path):
@@ -318,7 +311,8 @@ def test_sc1_1_a_second_stop_of_the_unit_replaces_the_first(tmp_path):
     assert stop(tmp_path, root, "second", "green", "developer", "error")[0] == 1
     got = stop_json(root)
     assert got["kind"] == "error" and got["text"] == "second" and "reasons" not in got
-    assert sorted(p.name for p in run_dir(root).iterdir()) == ["rounds.json", "stop.json"]
+    assert sorted(p.name for p in run_dir(root).iterdir()) == [
+        "rounds.json", "run.json", "stop.json"]
 
 
 def test_sc1_1_two_units_keep_a_stop_record_each(tmp_path):

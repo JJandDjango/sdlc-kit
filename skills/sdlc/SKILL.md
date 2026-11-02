@@ -29,6 +29,7 @@ Flows live beside this file, one PromptLang file per subcommand (ADR
 0025): init.md, new.md, intake.md, vocab.md, lang.md, audit.md,
 g1.md,
 execute.md,
+restart.md,
 update.md. This file dispatches; the flow file executes. The
 constraints and criteria here bind inside every flow.
 

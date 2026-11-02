@@ -108,7 +108,7 @@ const RULES = [
   `The repository is read-only for you: create, edit or delete nothing under ${a.repo}, and change no git state. Write only under ${a.scratch}.`,
   'Every shell call is a single command: no pipes, no &&, no ;, no redirects. Run separate commands as separate calls.',
   'Run every test and prove.py call in the foreground and set the Bash tool timeout yourself: 600000 for prove.py. Never use run_in_background, and never read a task\'s output file to wait for it.',
-].join('\n')
+].join('\n') + (a.answer == null ? '' : `\nThe run stopped here earlier, with this question or these reasons:\n${a.answer.stopped}\nThe user's answer:\n${a.answer.reply}\nTake the answer into account.`)
 
 const prove = a.task === 'approve-tests' ? '' : `python ${a.pluginRoot}/workflows/tools/prove.py --scratch ${a.scratch} --test ${a.testFile}`
 

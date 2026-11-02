@@ -307,8 +307,8 @@ unit's folder after the draft PR. An `sdlc-rounds.json` that a kit 0.21 run
 left in the git folder is no longer read or removed: delete it by hand.
 (rs1)
 
-🔴 `/sdlc execute {contract} {unit} --answer TEXT` in a fresh session, on
-the run's branch, starts at the stopped task. It reads the stop record,
+🟢 `/sdlc execute {contract} {unit} --answer TEXT` in a fresh session, on
+the run's branch, starts at the stopped task. It reads the run folder,
 the progress records and the branch, never a transcript. An interactive
 session shows the stop and takes the reply in chat; a headless session
 ends its turn there, and the user launches again with `--answer`:
@@ -321,7 +321,23 @@ The stopped task's member takes the answer with the question or the
 reasons, and no earlier task runs again. On another branch nothing
 starts: `Execution did not restart: the run stopped on branch {branch};
 this session is on {current}.` A unit with no run folder starts at
-write-tests, round 1, as today. (rs2)
+write-tests, round 1, as today. A stop after a third FAIL waits for rs3,
+and an abandoned run for rs4: the session shows the record and starts
+nothing. (rs2)
+
+🟢 What a restart reads stands in the run folder beside the stop record.
+A unit's first `task.py start` writes `run.json`: the unit, the branch,
+HEAD as the base commit, the task in hand and the values kept. A later
+start sets only the task, and a stop writes one when none stands. Each
+passed task saves what it hands on with `task.py keep --unit
+{contract}/{unit} --key draft|draft-file|receipts|commit --value TEXT`
+(or `--file PATH`), and the task file also names its `unit`. `task.py
+restart --unit {contract}/{unit}` prints one JSON line, its `state` one
+of `none`, `stopped` or `abandoned`, with the task, operator, round,
+kind, text and kept values, and changes nothing. With `--go --scratch
+DIR` it removes the stop record and a leftover task file and writes the
+kept draft test file under `DIR/draft/`. The flow's steps are in
+`skills/sdlc/flows/restart.md`. (rs2)
 
 🔴 After a third FAIL the session also asks whether the answer is enough
 to give the task three fresh rounds (`--enough` when headless). On yes,

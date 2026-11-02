@@ -270,7 +270,7 @@ def test_reading_a_each_operator_prints_as_its_name_and_the_file_keeps_its_id(
     assert start(tmp_path, root, operator=operator) == (
         0, STARTED.format(task="green", operator=printed), "")
     assert json.loads(task_file(root).read_text(encoding="utf-8")) == {
-        "task": "green", "operator": operator, "round": 1}
+        "task": "green", "operator": operator, "unit": UNIT, "round": 1}
 
 
 # --- reading (b): the start ---------------------------------------------------------
@@ -281,7 +281,7 @@ def test_reading_b_a_start_writes_the_task_file_prints_its_line_and_records_doin
         0, "Task prove-red: QA, round 1\n", "")
     assert task_file(root) == root / ".git" / "sdlc-task.json" and task_file(root).is_file()
     assert json.loads(task_file(root).read_text(encoding="utf-8")) == {
-        "task": "prove-red", "operator": "qa", "round": 1}
+        "task": "prove-red", "operator": "qa", "unit": UNIT, "round": 1}
     got = records(root)
     assert len(got) == 1
     assert got[0]["item"] == f"{UNIT}/prove-red" and got[0]["state"] == "doing"
@@ -359,7 +359,7 @@ def test_reading_d_a_file_that_names_no_task_is_no_running_task_and_start_replac
     assert start(tmp_path, root, operator="receipts") == (
         0, STARTED.format(task="green", operator="receipts"), "")
     assert json.loads(task_file(root).read_text(encoding="utf-8")) == {
-        "task": "green", "operator": "receipts", "round": 1}
+        "task": "green", "operator": "receipts", "unit": UNIT, "round": 1}
 
 
 def test_reading_d_in_a_linked_worktree_the_file_is_in_the_worktrees_own_git_folder(tmp_path):
@@ -375,7 +375,7 @@ def test_reading_d_in_a_linked_worktree_the_file_is_in_the_worktrees_own_git_fol
     assert start(tmp_path, wt, operator="dev-verifier") == (
         0, STARTED.format(task="green", operator="Dev verifier"), "")
     assert json.loads((wt_git / "sdlc-task.json").read_text(encoding="utf-8")) == {
-        "task": "green", "operator": "dev-verifier", "round": 1}
+        "task": "green", "operator": "dev-verifier", "unit": UNIT, "round": 1}
     assert not task_file(root).exists()
     assert not (wt / ".git" / "sdlc-task.json").exists()
 

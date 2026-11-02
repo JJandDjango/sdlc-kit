@@ -309,10 +309,20 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     stop record. Session 140: the user ruled `tests/`; re-intake
     `025fdc4` (design r11 to r13, requirements r7) reopened G1.3, which
     the user signed again on design r11 (`173b47d`); both verifiers
-    passed rs1 (the QA verifier caught 4 of 4 mutations). Next: `rs2-restart`
-    from main once rs1's PR merges. rs2 also closes the Dev verifier's
-    advisory: `task.py`'s `--unit` check passes a half such as `c:`, and
-    `Path.joinpath` then leaves the git folder on Windows.
+    passed rs1 (the QA verifier caught 4 of 4 mutations); PR #156 merged
+    at `7a1e96d`. Session 141 (branch `session-141-rs2-restart`, plan
+    `f139b2b`, no PR): QA drafted `tests/test_restart.py` (105 tests),
+    approve-tests and prove-red passed, and the Developer made them green
+    (with the `--unit` drive-colon fix), uncommitted; 29 older tests
+    pin the old behavior. The Developer asked two questions, so the run
+    stopped at green with a stop record. Session 142 (same branch):
+    green restarted with the handoff's answer (restart.md reads the base
+    from `run.json`); the test-retirer retired 1 older test and amended
+    28; unit `f2fae79` (suite 2796); both verifiers passed (the QA
+    verifier's four mutations ran from the session, past the 600 s Bash
+    cap); the SC2.1 receipt passed, a fresh headless session starting at
+    green near 54K. Next: rs3-fresh-rounds, from main after rs2's PR
+    merges.
 
 ## Next actions
 
@@ -553,6 +563,17 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     route exists: the styled-rendering prototype writes a .docx, and the
     Workspace connector's `import_to_google_doc` takes it from
     `~/.workspace-mcp/attachments` by a `file:///` URL (sessions 32, 50).
+18. `rs2-restart`'s Two-Key advisories and receipt findings (session
+    142), for rs3 to rs5: E3's `keep --value '{draft}'` and E7's
+    `--value '{receipts}'` carry no quoting rule, and the SC2.1 receipt's
+    E7 call failed once on a Windows path's backslashes (`--file` avoids
+    both); `--answer` on a unit with no stop record reaches the members
+    as text, not an object; `restart --go` removes a task file that names
+    another unit; the restart reads no progress record, though the usage
+    page, `restart.md` and the design say it does; `end --run` leaves the
+    empty contract folder. And the kit's `test.file` runs without `-n
+    auto`, so the QA verifier's four mutations on `tests/test_restart.py`
+    (about 170 s a run) outlast the 600 s Bash cap.
 
 ## Open questions
 

@@ -49,7 +49,10 @@ const retry = reasons.length
   ? `\nThe last round failed, for these reasons. Fix each one:\n${list(reasons)}\n`
   : ''
 
-const prompt = `You are the developer (G3) for unit "${a.unit}" of contract "${a.contract}", in the repository at ${a.repo}, on branch ${a.branch}. The spec channel has placed the unit's tests at ${a.testFile}, and they fail today. Make them pass by changing the code, working from the interface note below.
+// A restart's answer: the stop's question or reasons, and the user's reply; null on a first run.
+const answer = a.answer == null ? '' : `\nThe run stopped here earlier, with this question or these reasons:\n${a.answer.stopped}\nThe user's answer:\n${a.answer.reply}\nTake the answer into account.\n`
+
+const prompt =`You are the developer (G3) for unit "${a.unit}" of contract "${a.contract}", in the repository at ${a.repo}, on branch ${a.branch}. The spec channel has placed the unit's tests at ${a.testFile}, and they fail today. Make them pass by changing the code, working from the interface note below.
 
 Rules:
 - Never open, read, search or edit any of these files: ${functional}. Never read anything under ${a.scratchRoot}. You may run the tests and read the test output.
@@ -69,7 +72,7 @@ ${list(a.sources)}
 
 The interface note (the tests assume exactly this):
 ${a.interface}
-${retry}
+${retry}${answer}
 Done means: ${whole} passes whole. Run it from the repository root, then return the structured result.`
 
 phase('Green')
