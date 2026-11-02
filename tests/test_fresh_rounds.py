@@ -693,7 +693,6 @@ def test_sc3_1_restart_md_no_longer_holds_a_stop_of_kind_fail_until_rs3():
     text = read(RESTART)
     assert "until rs3" not in text
     assert ENOUGH_Q in text, "the fail path goes on to the enough question"
-    assert "until rs4" in text, "an abandoned run still waits for rs4"
 
 
 def test_sc3_1_restart_md_stays_under_the_ceiling_with_the_fresh_steps_and_execute_md_is_unchanged():

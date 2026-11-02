@@ -538,9 +538,10 @@ def clear_channel(path: Path, task: object) -> None:
 def restart(args: argparse.Namespace) -> int:
     """Print the unit's state as one JSON line: 0 when it reads, 1 when a record
     does not parse or the run stopped on another branch. With `--go`, a stopped
-    or abandoned run also loses its stop record and task file, and the kept
-    draft is written under the scratch folder; with `--fresh` as well, the
-    failed rounds of the stopped task's channel are cleared."""
+    or abandoned run also loses its stop record and, when it names this unit,
+    its task file, and the kept draft is written under the scratch folder;
+    with `--fresh` as well, the failed rounds of the stopped task's channel
+    are cleared."""
     folder = git_folder(args.root)
     if folder is None:
         return refuse(f"Execution did not restart: no git repository at {args.root}.")
@@ -552,7 +553,10 @@ def restart(args: argparse.Namespace) -> int:
         place_draft(run_path, state["kept"], Path(args.scratch))
         if args.fresh:
             clear_channel(run_path / ROUNDS_FILE, state["task"])
-        remove(folder / TASK_FILE, run_path / STOP_FILE)
+        running = read_object(folder / TASK_FILE)
+        if running is not None and running.get("unit") == args.unit:
+            remove(folder / TASK_FILE)
+        remove(run_path / STOP_FILE)
     print(json.dumps(state, separators=(",", ":")))
     return 0
 
