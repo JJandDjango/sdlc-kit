@@ -309,10 +309,16 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     stop record. Session 140: the user ruled `tests/`; re-intake
     `025fdc4` (design r11 to r13, requirements r7) reopened G1.3, which
     the user signed again on design r11 (`173b47d`); both verifiers
-    passed rs1 (the QA verifier caught 4 of 4 mutations). Next: `rs2-restart`
-    from main once rs1's PR merges. rs2 also closes the Dev verifier's
-    advisory: `task.py`'s `--unit` check passes a half such as `c:`, and
-    `Path.joinpath` then leaves the git folder on Windows.
+    passed rs1 (the QA verifier caught 4 of 4 mutations); PR #156 merged
+    at `7a1e96d`. Session 141 (branch `session-141-rs2-restart`, plan
+    `f139b2b`, no PR): QA drafted `tests/test_restart.py` (105 tests),
+    approve-tests and prove-red passed, and the Developer made them green
+    (with the `--unit` drive-colon fix), uncommitted; 29 older tests
+    pin the old behavior. The Developer asked two questions, so the run
+    stopped at green with a stop record. Next: restart green with the
+    handoff's answer, then the test-retirer, approve-commit, commit,
+    two-key and the SC2.1 receipt (handoff:
+    `RECEIPT_run-restart-rs2_2026-11-02/handoff.md`, untracked).
 
 ## Next actions
 
