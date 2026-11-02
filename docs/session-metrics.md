@@ -64,6 +64,7 @@ the same kind at PR review.
 | 133 | `execution-team` fixes: e3-wall, e5-rounds with e4-team, the 0.21.1 release pages | yes | e3 2, e5 1, e6 2 | 0 / 2 | | 0 | 1,031: probe 41 (Haiku), QA 313 (118, 195), Developer 138 (66, 72; one run stopped before any edit), Dev verifier 539 (e3 90 + 84, e5 118, e6 128 + 119) | 11 readings / | 1 / 1 |
 | 139 + 140 | `run-restart/rs1-stop-record`, built by the shipped team | yes, in session 140 | 2 | 0 / 1 | 1 | 24 | 1,019: QA 222 (139, 84), QA verifier 327 (approve-tests 93 + 102, prove-red 51, two-key 81), Developer 125, test-retirer 144, Dev verifier 201 (99, 102) | 12 readings / | 1 / 0 |
 | 141 + 142 | `run-restart/rs2-restart`, built by the shipped team, restarted at green | yes, in session 142 | 1 | 0 / 0 | | 1 | 994: QA 193, QA verifier 257 (approve-tests 126, prove-red 51, two-key 80), Developer 324 (259, 64), test-retirer 109, Dev verifier 112 | 11 readings / | 1 / 1 |
+| 143 | `run-restart/rs3-fresh-rounds`, built by the shipped team | yes | 2 | 1 / 0 | | 0 | 1,007: QA 243 (154, 89), QA verifier 443 (approve-tests 96 + 85, prove-red 51 + 52, two-key 75 + 84), Developer 145 (76, 69), Dev verifier 176 (86, 90) | 10 readings / | 1 / 0 |
 
 ## Notes on the baseline
 
@@ -270,3 +271,15 @@ the same kind at PR review.
   headless session (2.02M cache reads) stands outside the total. The
   deferred count is one line added (Next actions 18) and one closed (the
   drive-letter advisory).
+- Session 143 built rs3 the same way, in one session. Every task passed
+  round 1, but the QA verifier's two-key caught 3 of 4 mutations: no
+  test stopped the run at a peer task before `--go --fresh`, though the
+  plan's first reading pinned the peer-to-channel map. The QA channel's
+  round 2 added five cases (`1893f47`); the code at `4d0ef1e` did not
+  change, so the one defect is the test list's, counted as code. Each
+  green run asked one question (the STOP line's extra clause; whether
+  the tests changed after the code). The session settled both with no
+  file changed and did not stop the run on them, against the flow's
+  rule; they are two of the 10 readings, with the plan's eight. Agents
+  took 1,007K against a plan of 0.7M to 0.9M. The deferred line is Next
+  actions 19.

@@ -321,8 +321,13 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     28; unit `f2fae79` (suite 2796); both verifiers passed (the QA
     verifier's four mutations ran from the session, past the 600 s Bash
     cap); the SC2.1 receipt passed, a fresh headless session starting at
-    green near 54K. Next: rs3-fresh-rounds, from main after rs2's PR
-    merges.
+    green near 54K; PR #157 merged at `8c492dd`. Session 143 (branch
+    `session-143-rs3-fresh-rounds`, plan `aa589a5`): every task passed
+    round 1 and the unit landed at `4d0ef1e` (suite 2827), but the QA
+    verifier caught 3 of 4 mutations: no test stopped at a peer task
+    before `--go --fresh`. The QA channel's round 2 added five cases
+    (`1893f47`, suite 2832, code unchanged); both verifiers passed. Next:
+    rs4-abandoned, from main after rs3's PR merges.
 
 ## Next actions
 
@@ -574,6 +579,15 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     empty contract folder. And the kit's `test.file` runs without `-n
     auto`, so the QA verifier's four mutations on `tests/test_restart.py`
     (about 170 s a run) outlast the 600 s Bash cap.
+19. `rs3-fresh-rounds`'s Two-Key advisories (session 143), for rs4 and
+    rs5: `--fresh` clears the channel on a stop of any kind, and on an
+    abandoned run, though only a third FAIL's enough ruling passes it;
+    `--enough` is named only in `restart.md`, not in `execute.md`'s E2
+    (at 11,991 of 12,000 characters); the not-enough block stands
+    between R3 and R4 outside a numbered step. And the QA verifier
+    starts each two-key with more mutations than the 600 s cap holds (7,
+    then 9, about 100 s a run), so each round lost one killed run before
+    it cut to four.
 
 ## Open questions
 
