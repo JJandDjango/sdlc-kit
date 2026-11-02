@@ -326,8 +326,17 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     round 1 and the unit landed at `4d0ef1e` (suite 2827), but the QA
     verifier caught 3 of 4 mutations: no test stopped at a peer task
     before `--go --fresh`. The QA channel's round 2 added five cases
-    (`1893f47`, suite 2832, code unchanged); both verifiers passed. Next:
-    rs4-abandoned, from main after rs3's PR merges.
+    (`1893f47`, suite 2832, code unchanged); both verifiers passed; PR
+    #158 merged at `cf23f04`. Session 144 (branch
+    `session-144-rs4-abandoned`, plan `4d01e8e`): QA's 14 tests passed
+    approve-tests and prove-red in round 1; the session's review failed
+    green round 1 (R1's abandoned path skipped R5, which holds the kept
+    values) and round 2 fixed it; the test-retirer amended one
+    assertion; unit `8bafbd8` (suite 2846); the Dev verifier passed and
+    the QA verifier caught 10 of 10 mutations; the SC5.1 receipt passed:
+    a headless session killed mid-task left an abandoned run, a fresh one
+    showed it and started nothing, and `--answer yes` restarted at
+    write-tests. Next: rs5-release, from main after rs4's PR merges.
 
 ## Next actions
 
@@ -573,8 +582,8 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     `--value '{receipts}'` carry no quoting rule, and the SC2.1 receipt's
     E7 call failed once on a Windows path's backslashes (`--file` avoids
     both); `--answer` on a unit with no stop record reaches the members
-    as text, not an object; `restart --go` removes a task file that names
-    another unit; the restart reads no progress record, though the usage
+    as text, not an object; `restart --go` removed a task file that named
+    another unit (fixed by rs4); the restart reads no progress record, though the usage
     page, `restart.md` and the design say it does; `end --run` leaves the
     empty contract folder. And the kit's `test.file` runs without `-n
     auto`, so the QA verifier's four mutations on `tests/test_restart.py`
@@ -588,6 +597,16 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     starts each two-key with more mutations than the 600 s cap holds (7,
     then 9, about 100 s a run), so each round lost one killed run before
     it cut to four.
+20. `rs4-abandoned`'s Two-Key advisories and review findings (session
+    144), for rs5: `--go`'s help text (`task.py:200`) still says it
+    removes the task file, though it now removes one only when it names
+    the unit; R4's `--fresh` paragraph opens "On yes", which an
+    abandoned run's yes could be read to reach, and only the first
+    paragraph's "never `--fresh`" settles it; no test pins that R1's
+    abandoned path goes through R5, the defect the session's review
+    caught. And the SC5.1 receipt's three headless launches read 1.40M
+    from the cache, against a plan of 0.4M to 0.7M: each re-reads E1's
+    and E2's files over 7 to 13 messages before its first flow call.
 
 ## Open questions
 
