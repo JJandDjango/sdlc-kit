@@ -16,15 +16,27 @@ that folder. The earlier tasks and steps stay done.
 </purpose>
 
 <instructions>
-R1. HOLD the JSON line of E2 as {stop}, and its `task` as {task}, `operator` as {operator}, `round` as {n}, `kind` as {kind}, `text` as {text} and `kept` as {kept}. When `state` is `abandoned`, SHOW {stop}, then STOP, with no PR: an abandoned run starts nothing until rs4. When {kind} is `fail`, SHOW {stop}, then STOP, with no PR: a stop of kind `fail` restarts nothing until rs3, and no `--go` runs.
-
+R1. HOLD the JSON line of E2 as {stop}, and its `task` as {task}, `operator` as {operator}, `round` as {n}, `kind` as {kind}, `text` as {text} and `kept` as {kept}. When `state` is `abandoned`, SHOW {stop}, then STOP, with no PR: an abandoned run starts nothing until rs4.
 R2. SHOW:
     Execution stopped: {contract} unit {unit}, task {task}, round {n} of 3: {text}. Your answer?
     The user's answer comes from `--answer` first, else from chat. A headless session ends its turn at that question, and the user launches `/sdlc execute` again with `--answer`.
 
 R3. HOLD the answer as {reply}, and {answer} as {"stopped": "{text}", "reply": "{reply}"}, each value quoted as {reasons} is in E2. The members get it through `"answer": {answer}`, and only the member of the task that stopped: once that task passes, HOLD {answer} as `null`.
+    For a stop of kind `fail`, {task} is `write-tests` or `green`, and the member of {task} (QA at E3, the Developer at E6) takes the answer, not {operator}, the verifier or receipts whose FAIL was the third.
+    Only a stop of kind `fail` asks it, after the answer.
+    SHOW:
+        Is that answer enough to give {task} three fresh rounds?
+    An interactive session asks in chat.
+    `--enough` answers yes. It is read from the invocation as `--answer` is in R2.
+    A headless session with no `--enough` ends its turn at that question, starting nothing, and the stop record stays.
+    `--enough` on a stop of another kind is unused.
 
-R4. RUN `python {skill-dir}/../../workflows/tools/task.py restart --unit {contract}/{unit} --go --scratch {scratch}`, one Bash call. It removes the stop record and a leftover task file, and writes the kept draft test file under {scratch}/draft.
+On no, SHOW:
+    Execution did not restart: {contract} unit {unit} stays stopped at {task}. The design may need revisiting.
+Then STOP, with no PR: a stop of kind `fail` ruled not enough restarts nothing. No `--go` runs and the stop record stays.
+
+R4. RUN `python {skill-dir}/../../workflows/tools/task.py restart --unit {contract}/{unit} --go --scratch {scratch}`, one Bash call, for a stop of any kind but `fail`. It removes the stop record and a leftover task file, and writes the kept draft test file under {scratch}/draft.
+    On yes, RUN `python {skill-dir}/../../workflows/tools/task.py restart --unit {contract}/{unit} --go --fresh --scratch {scratch}`, one Bash call. It does the same, and clears the failed rounds of the channel of {task}. HOLD {reasons} as `[]` so the member's reasons start empty (round 1); the FAIL reasons ride in the answer's `stopped` value as R3 builds it.
 
 R5. HOLD the values {kept} holds, under the flow's names. `draft` is {draft}: its `test_file` is {testFile} and its `interface` is {note}; `draft-file` is the copy of the draft now at {scratch}/draft/{testFile}. `receipts` is {receipts} and `commit` is {sha}. A key {kept} lacks is not kept yet, and its step runs when it comes.
     READ {gitdir}/sdlc-run/{contract}/{unit}/run.json and HOLD its `base` as {base} for E5.
@@ -37,5 +49,5 @@ R6. Continue at the step of {task}, with the round `task.py start` prints there.
     approve-commit: E7
     commit: E8
     two-key: E9
-    Then each later step runs as execute.md says. When {operator} is `receipts` or `orchestrator`, the task has no member: SHOW the answer, then RUN the command of its step by the answer.
+    Then each later step runs as execute.md says. When {task} is `approve-commit` (receipts) or `commit` (orchestrator), the task has no member: SHOW the answer, then RUN the command of its step by the answer.
 </instructions>

@@ -321,9 +321,8 @@ The stopped task's member takes the answer with the question or the
 reasons, and no earlier task runs again. On another branch nothing
 starts: `Execution did not restart: the run stopped on branch {branch};
 this session is on {current}.` A unit with no run folder starts at
-write-tests, round 1, as today. A stop after a third FAIL waits for rs3,
-and an abandoned run for rs4: the session shows the record and starts
-nothing. (rs2)
+write-tests, round 1, as today. An abandoned run waits for rs4: the
+session shows the record and starts nothing. (rs2)
 
 🟢 What a restart reads stands in the run folder beside the stop record.
 A unit's first `task.py start` writes `run.json`: the unit, the branch,
@@ -339,10 +338,12 @@ DIR` it removes the stop record and a leftover task file and writes the
 kept draft test file under `DIR/draft/`. The flow's steps are in
 `skills/sdlc/flows/restart.md`. (rs2)
 
-🔴 After a third FAIL the session also asks whether the answer is enough
+🟢 After a third FAIL the session also asks whether the answer is enough
 to give the task three fresh rounds (`--enough` when headless). On yes,
-the task restarts at round 1. On no, nothing starts, the stop record
-stays, and the session shows `Execution did not restart: {contract} unit
+`task.py restart --go --fresh` clears the failed rounds of the task's
+channel, and the task restarts at round 1: QA or the Developer takes the
+answer with the reasons. On no, nothing starts, the stop record stays,
+and the session shows `Execution did not restart: {contract} unit
 {unit} stays stopped at {task}. The design may need revisiting.` (rs3)
 
 🔴 A run folder with no stop record is an abandoned run, a session that
