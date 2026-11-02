@@ -315,10 +315,14 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     approve-tests and prove-red passed, and the Developer made them green
     (with the `--unit` drive-colon fix), uncommitted; 29 older tests
     pin the old behavior. The Developer asked two questions, so the run
-    stopped at green with a stop record. Next: restart green with the
-    handoff's answer, then the test-retirer, approve-commit, commit,
-    two-key and the SC2.1 receipt (handoff:
-    `RECEIPT_run-restart-rs2_2026-11-02/handoff.md`, untracked).
+    stopped at green with a stop record. Session 142 (same branch):
+    green restarted with the handoff's answer (restart.md reads the base
+    from `run.json`); the test-retirer retired 1 older test and amended
+    28; unit `f2fae79` (suite 2796); both verifiers passed (the QA
+    verifier's four mutations ran from the session, past the 600 s Bash
+    cap); the SC2.1 receipt passed, a fresh headless session starting at
+    green near 54K. Next: rs3-fresh-rounds, from main after rs2's PR
+    merges.
 
 ## Next actions
 
@@ -559,6 +563,17 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     route exists: the styled-rendering prototype writes a .docx, and the
     Workspace connector's `import_to_google_doc` takes it from
     `~/.workspace-mcp/attachments` by a `file:///` URL (sessions 32, 50).
+18. `rs2-restart`'s Two-Key advisories and receipt findings (session
+    142), for rs3 to rs5: E3's `keep --value '{draft}'` and E7's
+    `--value '{receipts}'` carry no quoting rule, and the SC2.1 receipt's
+    E7 call failed once on a Windows path's backslashes (`--file` avoids
+    both); `--answer` on a unit with no stop record reaches the members
+    as text, not an object; `restart --go` removes a task file that names
+    another unit; the restart reads no progress record, though the usage
+    page, `restart.md` and the design say it does; `end --run` leaves the
+    empty contract folder. And the kit's `test.file` runs without `-n
+    auto`, so the QA verifier's four mutations on `tests/test_restart.py`
+    (about 170 s a run) outlast the 600 s Bash cap.
 
 ## Open questions
 
