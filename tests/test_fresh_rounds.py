@@ -393,6 +393,46 @@ def test_sc3_1_go_fresh_clears_the_channel_whatever_the_kind_of_the_stop(tmp_pat
         "write-tests", "write-tests", "qa", "QA", 2)
 
 
+# A stop at a peer task counts its rounds under the peer's channel, so --go --fresh after it
+# clears the channel's failed rounds and leaves the other channel's as they were.
+PEER_STOPS = [("green", "two-key", "dev-verifier", "Dev verifier", "question"),
+              ("green", "approve-commit", "receipts", "receipts", "error"),
+              ("green", "commit", "orchestrator", "Orchestrator", "refusal"),
+              ("write-tests", "approve-tests", "qa-verifier", "QA verifier", "question"),
+              ("write-tests", "prove-red", "qa-verifier", "QA verifier", "error")]
+
+
+@pytest.mark.parametrize("channel,peer,operator,printed,kind", PEER_STOPS,
+                         ids=[p[1] for p in PEER_STOPS])
+def test_sc3_1_go_fresh_after_a_stop_at_a_peer_task_clears_the_peers_channel_only(
+        tmp_path, channel, peer, operator, printed, kind):
+    spec = CHANNELS[channel]
+    other = spec["other"]
+    other_spec = CHANNELS[other]
+    root = make_repo(tmp_path)
+    assert fail(tmp_path, root, other, "other a") == (0, "", "")
+    for reason in OLD[:2]:
+        assert fail(tmp_path, root, channel, reason, operator=spec["verifier"]) == (0, "", "")
+    assert start(tmp_path, root, peer, operator) == started(channel, peer, operator, printed, 3)
+    assert stop(tmp_path, root, "Which one?", peer, operator, kind)[0] == 1
+    assert stop_json(root)["task"] == peer and stop_json(root)["kind"] == kind
+    assert rounds_of(root)[channel] == OLD[:2]
+    code, out, err = go_fresh(tmp_path, root)
+    assert (code, err) == (0, ""), (code, out, err)
+    assert json.loads(out)["task"] == peer and json.loads(out)["kind"] == kind
+    assert not (run_dir(root) / "stop.json").exists()
+    assert rounds_of(root).get(channel, []) == [], "the peer's channel is cleared"
+    assert rounds_of(root).get(peer, []) == []
+    assert rounds_of(root)[other] == ["other a"], "the other channel stays as it was"
+    assert start(tmp_path, root, peer, operator) == started(channel, peer, operator, printed, 1)
+    task_file(root).unlink()
+    assert start(tmp_path, root, channel, spec["member"]) == started(
+        channel, channel, spec["member"], spec["printed"], 1)
+    task_file(root).unlink()
+    assert start(tmp_path, root, other, other_spec["member"]) == started(
+        other, other, other_spec["member"], other_spec["printed"], 2)
+
+
 def test_sc3_1_go_fresh_with_no_failed_round_on_file_starts_the_task_at_round_1(tmp_path):
     root = make_repo(tmp_path)
     assert start(tmp_path, root, "write-tests", "qa")[0] == 0
