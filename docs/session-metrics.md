@@ -62,6 +62,7 @@ the same kind at PR review.
 | 129 | `execution-team/e5-rounds`, built by the shipped team | yes | 4 | 3 / 0 | | 1 | 1,846: QA 396 (three rounds), QA verifier 597 (approve-tests 412, prove-red 38, two-key 68 killed + 85 + 101), Developer 311 (four runs, one killed), Dev verifier 435 (four rounds) | 7 readings / | 2 / 1 |
 | 131 | `execution-team/e6-batch-run`, the release, its receipt run by the shipped team | yes | 3 | 0 / 6 | | 0 | 755: the receipt's members 267 (run 1 QA 40 killed; run 2 QA 45, QA verifier 107 over three tasks, Developer 35, Dev verifier 40), the kit's Dev verifier 488 (141, 170, 177) | 6 readings / | 2 / 1 |
 | 133 | `execution-team` fixes: e3-wall, e5-rounds with e4-team, the 0.21.1 release pages | yes | e3 2, e5 1, e6 2 | 0 / 2 | | 0 | 1,031: probe 41 (Haiku), QA 313 (118, 195), Developer 138 (66, 72; one run stopped before any edit), Dev verifier 539 (e3 90 + 84, e5 118, e6 128 + 119) | 11 readings / | 1 / 1 |
+| 139 + 140 | `run-restart/rs1-stop-record`, built by the shipped team | yes, in session 140 | 2 | 0 / 1 | | 24 | 1,019: QA 222 (139, 84), QA verifier 327 (approve-tests 93 + 102, prove-red 51, two-key 81), Developer 125, test-retirer 144, Dev verifier 201 (99, 102) | 12 readings / | 1 / 0 |
 
 ## Notes on the baseline
 
@@ -244,3 +245,13 @@ the same kind at PR review.
   output) against a plan of 3M to 6M, since each resume re-reads its
   whole context. The deferred count is two lines added (Next actions
   13 and 14) and one closed (12).
+- Sessions 139 and 140 built rs1 from this interactive session by
+  `scriptPath`, no headless Orchestrator. The Dev verifier stopped
+  round 1 on scope alone: the design's Scope listed two test files and
+  missed the two its own change breaks (the wording defect). The run
+  stopped with rs1's own stop record; session 140 took the user's
+  ruling, re-intook, and ran two-key again by hand, since rs2 is not
+  built. The 24 touches are G1.3 twice (13 replies in 139, which the
+  plan left out; 10 in 140, after the re-intake reopened it) and the
+  scope ruling. Agents took 1,019K against a plan of 0.5M to 0.8M. The
+  deferred line is the `--unit` drive-letter advisory, routed to rs2.

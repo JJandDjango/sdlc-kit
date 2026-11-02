@@ -10,6 +10,9 @@
 | 2026-10-31 | Johnathan Hyden | r8: The solution half finished: 12 sections written, 0 OPEN |
 | 2026-10-31 | Johnathan Hyden | r9: Signed: solution half. The engineer seat signs r8 |
 | 2026-10-31 | intake | r10: Ready: contract `run-restart` validates ready-green, derived from r8, against requirements r4; the engineer seat (Johnathan Hyden) signed the solution half at r8 (r9) |
+| 2026-11-01 | Johnathan Hyden | r11: The solution half amended in kit session 140, a re-intake during the build: Scope's test bullet becomes the `tests/` folder, for each unit's own test file and the older tests its change makes false (found at rs1's Two-Key: `tests/test_stop_record.py` and `tests/test_flow_fixes.py` outside scope, SC001); one decision entry records it. No check, no `done_means` and no out-of-scope path changes; typed by Claude on the user's word |
+| 2026-11-01 | Johnathan Hyden | r12: Signed: solution half. The engineer seat signs r11; typed by Claude on the user's word |
+| 2026-11-01 | intake | r13: Ready: contract `run-restart` validates ready-green, derived from r11, against requirements r4; the engineer seat (Johnathan Hyden) signed the solution half at r11 (r12) |
 
 # run-restart - Restart a stopped run in a fresh session
 
@@ -25,7 +28,7 @@
 - `skills/sdlc/flows/execute.md`: the restart ships in `/sdlc execute`. E2 runs `task.py restart` first; a refused task start stops with a stop record; each passed task saves what it hands on (QA's interface note, the draft, the base commit, the commit, the receipts) in the git folder beside the task file.
 - `skills/sdlc/flows/restart.md` (new) and `skills/sdlc/SKILL.md`: the restart's steps, in their own flow file since `execute.md` stands near its ceiling (see Constraints); `SKILL.md` lists the new file among its flow files.
 - `workflows/qa.js`, `workflows/qa-verifier.js`, `workflows/developer.js`, `workflows/dev-verifier.js`: each takes an `answer` argument, the user's answer with the stop's question or FAIL reasons (SC2.2).
-- `tests/test_rounds.py`, `tests/test_team.py`: the new and changed behavior.
+- `tests/`: the new and changed behavior, in each unit's own test file, and the older tests the change makes false (at rs1: `tests/test_rounds.py`, `tests/test_flow_fixes.py`).
 - `docs/usage/the-team.md`, `USAGE.md`, `CHANGELOG.md`: the restart, for a user.
 - `pyproject.toml`, `skills/sdlc/init.py` (`KIT_VERSION`): the release, kit 0.22.0; `.github/workflows/sdlc.yml` takes the `v0.22.0` tag in the self-pin PR after the merge.
 
@@ -173,6 +176,7 @@ Cost: about 3.0M to 3.5M tokens over five build sessions at one round each: `rs1
 - How is a stopped run told from an abandoned one? `stop.json` present: stopped; `run.json` alone: abandoned (Sources).
 - What clears the records? `task.py end --run --unit` removes the unit's folder after the draft PR (Interfaces).
 - Does the restart check HEAD, or detect a live run? Neither: it checks the branch's name and waits for the user's word (Risks and cost).
+- Does Scope list each test file, or the `tests/` folder? The folder: each unit's QA writes its own test file, and the test-retirer amends whichever older test pins the old behavior, so a list of files fails again at each unit. Found at rs1's Two-Key (`tests/test_stop_record.py` and `tests/test_flow_fixes.py` outside scope, SC001); decided 2026-11-01.
 
 No question is open.
 
