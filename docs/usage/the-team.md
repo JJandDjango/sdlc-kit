@@ -321,8 +321,7 @@ The stopped task's member takes the answer with the question or the
 reasons, and no earlier task runs again. On another branch nothing
 starts: `Execution did not restart: the run stopped on branch {branch};
 this session is on {current}.` A unit with no run folder starts at
-write-tests, round 1, as today. An abandoned run waits for rs4: the
-session shows the record and starts nothing. (rs2)
+write-tests, round 1, as today. (rs2)
 
 🟢 What a restart reads stands in the run folder beside the stop record.
 A unit's first `task.py start` writes `run.json`: the unit, the branch,
@@ -334,8 +333,9 @@ passed task saves what it hands on with `task.py keep --unit
 restart --unit {contract}/{unit}` prints one JSON line, its `state` one
 of `none`, `stopped` or `abandoned`, with the task, operator, round,
 kind, text and kept values, and changes nothing. With `--go --scratch
-DIR` it removes the stop record and a leftover task file and writes the
-kept draft test file under `DIR/draft/`. The flow's steps are in
+DIR` it removes the stop record and a leftover task file of the unit,
+and writes the kept draft test file under `DIR/draft/`; another unit's
+task file stays (rs4). The flow's steps are in
 `skills/sdlc/flows/restart.md`. (rs2)
 
 🟢 After a third FAIL the session also asks whether the answer is enough
@@ -346,12 +346,16 @@ answer with the reasons. On no, nothing starts, the stop record stays,
 and the session shows `Execution did not restart: {contract} unit
 {unit} stays stopped at {task}. The design may need revisiting.` (rs3)
 
-🔴 A run folder with no stop record is an abandoned run, a session that
+🟢 A run folder with no stop record is an abandoned run, a session that
 ended mid-task. `/sdlc execute` shows `Execution was abandoned: {contract}
 unit {unit}, task {task}, round {n}. Restart at {task}?` and starts
-nothing before the user's word; on it, the leftover task file goes and the
-run starts at that task. Nothing marks a run live, so a run still going in
-another session reads as abandoned: answer no there. (rs4)
+nothing before the user's word (`--answer yes` when headless). On yes,
+`task.py restart --go` removes the leftover task file and the run starts
+at that task; no earlier task runs again, and no member takes an answer.
+Any other reply starts nothing and shows `Execution did not restart:
+{contract} unit {unit} stays abandoned at {task}.` Nothing marks a run
+live, so a run still going in another session reads as abandoned: answer
+no there. (rs4)
 
 🔴 A restart's first turn holds at most 50K tokens of context, near a
 first start's, and the fourth restart of one unit holds no more than the

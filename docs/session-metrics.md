@@ -65,6 +65,7 @@ the same kind at PR review.
 | 139 + 140 | `run-restart/rs1-stop-record`, built by the shipped team | yes, in session 140 | 2 | 0 / 1 | 1 | 24 | 1,019: QA 222 (139, 84), QA verifier 327 (approve-tests 93 + 102, prove-red 51, two-key 81), Developer 125, test-retirer 144, Dev verifier 201 (99, 102) | 12 readings / | 1 / 0 |
 | 141 + 142 | `run-restart/rs2-restart`, built by the shipped team, restarted at green | yes, in session 142 | 1 | 0 / 0 | | 1 | 994: QA 193, QA verifier 257 (approve-tests 126, prove-red 51, two-key 80), Developer 324 (259, 64), test-retirer 109, Dev verifier 112 | 11 readings / | 1 / 1 |
 | 143 | `run-restart/rs3-fresh-rounds`, built by the shipped team | yes | 2 | 1 / 0 | | 0 | 1,007: QA 243 (154, 89), QA verifier 443 (approve-tests 96 + 85, prove-red 51 + 52, two-key 75 + 84), Developer 145 (76, 69), Dev verifier 176 (86, 90) | 10 readings / | 1 / 0 |
+| 144 | `run-restart/rs4-abandoned`, built by the shipped team | yes | 1 | 0 / 0 | | 0 | 634: QA 139, QA verifier 215 (approve-tests 92, prove-red 51, two-key 72), Developer 125 (66, 59), test-retirer 65, Dev verifier 91 | 9 readings / | 1 / 1 |
 
 ## Notes on the baseline
 
@@ -283,3 +284,18 @@ the same kind at PR review.
   rule; they are two of the 10 readings, with the plan's eight. Agents
   took 1,007K against a plan of 0.7M to 0.9M. The deferred line is Next
   actions 19.
+- Session 144 built rs4 the same way, in one session. Write-tests,
+  approve-tests and prove-red passed round 1. Green made the 14 tests
+  pass, but the session's review of the diff found R1's abandoned path
+  going on "to R4, then R6", skipping R5's kept values; the session
+  failed green round 1 with that reason and round 2 fixed it. No Two-Key
+  round failed, so the defect is not counted, though no test caught it.
+  Both verifiers passed their first run; the QA verifier's 10 mutations
+  all ran under the 600 s cap (`tests/test_abandoned.py` runs in about
+  40 s). The Developer's one question was the planned retirement and the
+  QA verifier's a note on an exit code; neither stopped the run. They
+  are two of the 9 readings, with the plan's seven. Agents took 634K
+  against a plan of 0.9M to 1.1M; the SC5.1 receipt's three headless
+  launches (1.40M cache reads, against 0.4M to 0.7M planned) stand
+  outside the total. The deferred lines: Next actions 20 added, and
+  18's cross-unit task file closed.

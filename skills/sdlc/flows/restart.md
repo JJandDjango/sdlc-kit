@@ -16,7 +16,16 @@ that folder. The earlier tasks and steps stay done.
 </purpose>
 
 <instructions>
-R1. HOLD the JSON line of E2 as {stop}, and its `task` as {task}, `operator` as {operator}, `round` as {n}, `kind` as {kind}, `text` as {text} and `kept` as {kept}. When `state` is `abandoned`, SHOW {stop}, then STOP, with no PR: an abandoned run starts nothing until rs4.
+R1. HOLD the JSON line of E2 as {stop}, and its `task` as {task}, `operator` as {operator}, `round` as {n}, `kind` as {kind}, `text` as {text} and `kept` as {kept}.
+    When `state` is `abandoned`, SHOW:
+        Execution was abandoned: {contract} unit {unit}, task {task}, round {n}. Restart at {task}?
+    The word comes from `--answer` first, else from chat, as R2 reads the answer.
+    A headless session with no `--answer` ends its turn at the question, starting nothing; the run folder and the task file stay.
+    A reply that says yes restarts; any other reply is no.
+    On no, SHOW:
+        Execution did not restart: {contract} unit {unit} stays abandoned at {task}.
+    Then STOP, with no PR. No `--go` runs and nothing is removed.
+    On yes, HOLD {answer} as `null`: E2 holds the raw `--answer` text, and no member takes an answer on an abandoned run. R1 runs no command. Go on to R4, R5 and R6; R2 and R3 are for a stopped run.
 R2. SHOW:
     Execution stopped: {contract} unit {unit}, task {task}, round {n} of 3: {text}. Your answer?
     The user's answer comes from `--answer` first, else from chat. A headless session ends its turn at that question, and the user launches `/sdlc execute` again with `--answer`.
@@ -35,7 +44,7 @@ On no, SHOW:
     Execution did not restart: {contract} unit {unit} stays stopped at {task}. The design may need revisiting.
 Then STOP, with no PR: a stop of kind `fail` ruled not enough restarts nothing. No `--go` runs and the stop record stays.
 
-R4. RUN `python {skill-dir}/../../workflows/tools/task.py restart --unit {contract}/{unit} --go --scratch {scratch}`, one Bash call, for a stop of any kind but `fail`. It removes the stop record and a leftover task file, and writes the kept draft test file under {scratch}/draft.
+R4. RUN `python {skill-dir}/../../workflows/tools/task.py restart --unit {contract}/{unit} --go --scratch {scratch}`, one Bash call, for a stop of any kind but `fail` and for an abandoned run, never `--fresh`. It removes the stop record and a leftover task file of this unit, and writes the kept draft test file under {scratch}/draft.
     On yes, RUN `python {skill-dir}/../../workflows/tools/task.py restart --unit {contract}/{unit} --go --fresh --scratch {scratch}`, one Bash call. It does the same, and clears the failed rounds of the channel of {task}. HOLD {reasons} as `[]` so the member's reasons start empty (round 1); the FAIL reasons ride in the answer's `stopped` value as R3 builds it.
 
 R5. HOLD the values {kept} holds, under the flow's names. `draft` is {draft}: its `test_file` is {testFile} and its `interface` is {note}; `draft-file` is the copy of the draft now at {scratch}/draft/{testFile}. `receipts` is {receipts} and `commit` is {sha}. A key {kept} lacks is not kept yet, and its step runs when it comes.
@@ -50,4 +59,5 @@ R6. Continue at the step of {task}, with the round `task.py start` prints there.
     commit: E8
     two-key: E9
     Then each later step runs as execute.md says. When {task} is `approve-commit` (receipts) or `commit` (orchestrator), the task has no member: SHOW the answer, then RUN the command of its step by the answer.
+    On an abandoned run there is no answer to show: the step runs as execute.md says.
 </instructions>
