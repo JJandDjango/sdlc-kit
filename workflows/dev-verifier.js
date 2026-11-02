@@ -77,7 +77,7 @@ const RULES = [
   'You are read-only. Do not edit, create, stage, commit, push, or delete anything. Do not switch branches.',
   'Every shell call is a single command: no pipes, no &&, no ;, no redirects. Run separate commands as separate calls.',
   `Work in the repository at ${a.repo} (it is on branch ${a.branch}). Use python -m from the repository root so the checkout, not an installed copy, is what runs.`,
-].join('\n')
+].join('\n') + (a.answer == null ? '' : `\nThe run stopped here earlier, with this question or these reasons:\n${a.answer.stopped}\nThe user's answer:\n${a.answer.reply}\nTake the answer into account.`)
 
 // The blocking bar: the wrap files are session scratch, rewritten at every
 // wrap, so a defect in one never gates a unit; and the repo-wide stale-claim

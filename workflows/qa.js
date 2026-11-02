@@ -70,6 +70,9 @@ const retry = reasons.length
   ? `\nThe last round failed, for these reasons. The new list must fix each one:\n${list(reasons)}\n`
   : ''
 
+// A restart's answer: the stop's question or reasons, and the user's reply; null on a first run.
+const answer = a.answer == null ? '' : `\nThe run stopped here earlier, with this question or these reasons:\n${a.answer.stopped}\nThe user's answer:\n${a.answer.reply}\nTake the answer into account.\n`
+
 const prompt = `You are the spec channel (G2.5) for unit "${a.unit}" of contract "${a.contract}", in the repository at ${a.repo}. You write the unit's tests. A separate developer agent writes the code later from your interface note alone, and never reads your tests, so the note must carry every name, option, printed line and exit code the tests depend on.
 
 Rules:
@@ -86,7 +89,7 @@ The repository's declared test commands, each an argv joined by single spaces:
 
 Read first, in this order:
 ${list(a.sources)}
-${retry}
+${retry}${answer}
 The list must pin:
 - each acceptance_sketch line of unit ${a.unit}, and each sentence of its done_means;
 - these rulings and readings, and these advisories carried from earlier rounds:

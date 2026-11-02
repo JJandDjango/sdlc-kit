@@ -311,7 +311,9 @@ def test_14_1_task_py_commands_and_options_stay_as_drawn():
     drawn = {"start": {"--unit", "--task", "--operator"},
              "fail": {"--unit", "--task", "--operator", "--reason"},
              "stop": {"--unit", "--task", "--operator", "--kind", "--question"},
-             "end": {"--unit", "--task", "--by", "--run"}}
+             "end": {"--unit", "--task", "--by", "--run"},
+             "keep": {"--unit", "--key", "--value", "--file"},
+             "restart": {"--unit", "--go", "--scratch"}}
     used = {}
     for _, command in spans(text):
         if command.startswith(TASKPY + " "):

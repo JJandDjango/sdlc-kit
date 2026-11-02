@@ -205,12 +205,14 @@ def test_sc4_1_the_next_start_of_the_task_prints_round_2_then_round_3(tmp_path):
     assert fail(tmp_path, root, "green", REASONS_3[0]) == (0, "", "")
     assert start(tmp_path, root) == (
         0, STARTED.format(task="green", operator="Developer", round=2), "")
-    assert task_json(root) == {"task": "green", "operator": "developer", "round": 2}
+    assert task_json(root) == {"task": "green", "operator": "developer", "unit": UNIT,
+                               "round": 2}
     assert fail(tmp_path, root, "green", REASONS_3[1]) == (0, "", "")
     assert not task_file(root).exists()
     assert start(tmp_path, root) == (
         0, STARTED.format(task="green", operator="Developer", round=3), "")
-    assert task_json(root) == {"task": "green", "operator": "developer", "round": 3}
+    assert task_json(root) == {"task": "green", "operator": "developer", "unit": UNIT,
+                               "round": 3}
 
 
 def test_sc4_1_a_fail_counts_without_a_task_file_and_each_task_counts_its_own_rounds(tmp_path):
@@ -293,12 +295,12 @@ def test_sc4_1_after_a_fail_on_the_channel_its_peer_starts_at_round_2_then_round
     assert fail(tmp_path, root, channel, REASONS_3[0]) == (0, "", "")
     assert start(tmp_path, root, peer, operator) == (
         0, STARTED.format(task=peer, operator=printed, round=2), "")
-    assert task_json(root) == {"task": peer, "operator": operator, "round": 2}
+    assert task_json(root) == {"task": peer, "operator": operator, "unit": UNIT, "round": 2}
     task_file(root).unlink()
     assert fail(tmp_path, root, channel, REASONS_3[1]) == (0, "", "")
     assert start(tmp_path, root, peer, operator) == (
         0, STARTED.format(task=peer, operator=printed, round=3), "")
-    assert task_json(root) == {"task": peer, "operator": operator, "round": 3}
+    assert task_json(root) == {"task": peer, "operator": operator, "unit": UNIT, "round": 3}
 
 
 @pytest.mark.parametrize("channel, peer, operator, printed", PEERS,
