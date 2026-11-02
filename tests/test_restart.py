@@ -53,9 +53,15 @@ DRAFT = {"test_file": "tests/test_cli.py", "interface": "parse_args(argv) -> Arg
          "red_proof": {"command": "prove", "summary": "red"}, "questions": []}
 DRAFT_BYTES = b"def test_parse_args():\n    assert False\n"
 KEPT_AT_GREEN = {"draft": DRAFT, "draft-file": "draft/test_cli.py"}
-KEYS = {"state", "task", "operator", "round", "kind", "text", "kept"}
+KEYS = {"state", "task", "operator", "round", "kind", "text", "kept", "progress"}
 NONE = {"state": "none", "task": None, "operator": None, "round": None, "kind": None,
-        "text": None, "kept": {}}
+        "text": None, "kept": {}, "progress": []}
+
+
+def no_record(at: str, *tasks: str) -> list[str]:
+    """The progress lines for tasks the run passed that no progress file records."""
+    return [f"Progress record disagrees: {t} reads no record, but the run is at {at}."
+            for t in tasks]
 WRONG_BRANCH = "Execution did not restart: the run stopped on branch {branch}; this session is on {current}.\n"
 NOT_PARSED = "Execution did not restart: {name} of {contract} unit {unit} does not parse.\n"
 NO_RUN_JSON = "Execution did not restart: stop.json of {contract} unit {unit} has no run.json.\n"
@@ -435,7 +441,8 @@ def test_sc2_1_a_restart_after_a_stop_at_green_reads_green_and_what_qa_kept(tmp_
     stopped_at_green(tmp_path, root, "Which header declares parse_args?")
     assert state_of(tmp_path, root) == {
         "state": "stopped", "task": "green", "operator": "developer", "round": 2,
-        "kind": "question", "text": "Which header declares parse_args?", "kept": KEPT_AT_GREEN}
+        "kind": "question", "text": "Which header declares parse_args?", "kept": KEPT_AT_GREEN,
+        "progress": []}
 
 
 def test_sc2_1_a_restart_runs_no_earlier_task_again_it_changes_no_record(tmp_path):
@@ -460,7 +467,8 @@ def test_sc2_2_a_stop_of_each_kind_restarts_with_its_text_as_the_record_holds_it
     assert stop(tmp_path, root, text, "prove-red", "qa-verifier", kind)[0] == 1
     assert state_of(tmp_path, root) == {
         "state": "stopped", "task": "prove-red", "operator": "qa-verifier", "round": 1,
-        "kind": kind, "text": text, "kept": {}}
+        "kind": kind, "text": text, "kept": {},
+        "progress": no_record("prove-red", "write-tests", "approve-tests")}
 
 
 def test_sc2_2_a_third_fail_restarts_with_its_reasons_joined_by_semicolons(tmp_path):
@@ -471,7 +479,8 @@ def test_sc2_2_a_third_fail_restarts_with_its_reasons_joined_by_semicolons(tmp_p
     assert fail(tmp_path, root, "green", R3[2], operator="dev-verifier")[0] == 1
     assert state_of(tmp_path, root) == {
         "state": "stopped", "task": "green", "operator": "dev-verifier", "round": 3,
-        "kind": "fail", "text": "; ".join(R3), "kept": {}}
+        "kind": "fail", "text": "; ".join(R3), "kept": {},
+        "progress": no_record("green", "write-tests", "approve-tests", "prove-red")}
 
 
 def test_sc2_2_a_third_fail_that_names_no_operator_has_a_null_operator(tmp_path):
@@ -503,7 +512,8 @@ def test_sc2_1_a_run_json_with_a_task_file_of_its_unit_reads_abandoned_at_that_t
         0, STARTED.format(task="green", operator="Developer", round=3), "")
     assert state_of(tmp_path, root) == {
         "state": "abandoned", "task": "green", "operator": "developer", "round": 3,
-        "kind": None, "text": None, "kept": {}}
+        "kind": None, "text": None, "kept": {},
+        "progress": no_record("green", "write-tests", "approve-tests", "prove-red")}
 
 
 def test_sc2_1_a_run_json_with_no_task_file_reads_abandoned_at_the_task_in_hand(tmp_path):
@@ -513,7 +523,8 @@ def test_sc2_1_a_run_json_with_no_task_file_reads_abandoned_at_the_task_in_hand(
     assert end(tmp_path, root, "write-tests") == (0, "", "")
     assert state_of(tmp_path, root) == {
         "state": "abandoned", "task": "write-tests", "operator": None, "round": 1,
-        "kind": None, "text": None, "kept": {"commit": "3f2a1bc"}}
+        "kind": None, "text": None, "kept": {"commit": "3f2a1bc"},
+        "progress": []}
 
 
 def test_sc2_1_a_task_file_of_another_unit_is_not_this_units_task_in_hand(tmp_path):

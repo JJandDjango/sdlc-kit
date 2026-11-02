@@ -16,8 +16,8 @@ that folder. The earlier tasks and steps stay done.
 </purpose>
 
 <instructions>
-R1. HOLD the JSON line of E2 as {stop}, and its `task` as {task}, `operator` as {operator}, `round` as {n}, `kind` as {kind}, `text` as {text} and `kept` as {kept}.
-    When `state` is `abandoned`, SHOW:
+R1. HOLD the JSON line of E2 as {stop}, and its `task` as {task}, `operator` as {operator}, `round` as {n}, `kind` as {kind}, `text` as {text} and `kept` as {kept}, and `progress` as {progress}.
+    When `state` is `abandoned`, SHOW each entry of `progress` on its own line, then SHOW:
         Execution was abandoned: {contract} unit {unit}, task {task}, round {n}. Restart at {task}?
     The word comes from `--answer` first, else from chat, as R2 reads the answer.
     A headless session with no `--answer` ends its turn at the question, starting nothing; the run folder and the task file stay.
@@ -26,7 +26,7 @@ R1. HOLD the JSON line of E2 as {stop}, and its `task` as {task}, `operator` as 
         Execution did not restart: {contract} unit {unit} stays abandoned at {task}.
     Then STOP, with no PR. No `--go` runs and nothing is removed.
     On yes, HOLD {answer} as `null`: E2 holds the raw `--answer` text, and no member takes an answer on an abandoned run. R1 runs no command. Go on to R4, R5 and R6; R2 and R3 are for a stopped run.
-R2. SHOW:
+R2. SHOW each entry of `progress` on its own line, then SHOW:
     Execution stopped: {contract} unit {unit}, task {task}, round {n} of 3: {text}. Your answer?
     The user's answer comes from `--answer` first, else from chat. A headless session ends its turn at that question, and the user launches `/sdlc execute` again with `--answer`.
 

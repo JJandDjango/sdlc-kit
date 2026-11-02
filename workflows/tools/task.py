@@ -53,9 +53,12 @@ not two names joined by one `/` included, and one name holding a colon.
 and `receipts` hold the JSON given, parsed; `commit` the text given;
 `draft-file` copies the file into `draft/`. `restart` is read-only: it prints
 one JSON line, the run's state (`none`, `stopped` or `abandoned`) with the
-task, operator, round, stop kind and text, and the kept values; it refuses on
+task, operator, round, stop kind and text, the kept values and `progress`, one
+line for each task before the one in hand whose progress record is not done
+(the run record wins); it refuses on
 one line when the session is on another branch than the run or a record does
-not parse. With `--go` it also removes the stop record and the task file and
+not parse. With `--go` it also removes the stop record and the task file, the
+task file only when it names this unit, and
 writes the kept draft under the scratch folder; `--fresh` with it also clears
 the failed rounds of the stopped task's channel, so its next three rounds
 count from one.
@@ -84,7 +87,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import yaml  # noqa: E402
 
 from taskcontract.declaration import read_test  # noqa: E402
-from taskcontract.progress import record_state  # noqa: E402
+from taskcontract.progress import read_progress, record_state  # noqa: E402
 from taskcontract.tree import TASKS_PATH  # noqa: E402
 
 NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)  # absent off Windows
@@ -95,7 +98,10 @@ ROUNDS_FILE = "rounds.json"
 STOP_FILE = "stop.json"
 MAX_ROUNDS = 3
 STOP_KINDS = ["question", "error", "refusal"]
-KEEP_KEYS = ["draft", "draft-file", "receipts", "commit"]
+# The tasks in the order a unit runs them; the tree lists them in another.
+RESTART_ORDER = ["write-tests", "approve-tests", "prove-red", "green",
+                 "approve-commit", "commit", "two-key"]
+KEEP_KEYS =["draft", "draft-file", "receipts", "commit"]
 ROOT_HELP = "repo root that holds specs/ and .sdlc/ (default: cwd)"
 # Each operator id, and the name the start line prints for it.
 OPERATORS = {
@@ -197,7 +203,7 @@ def build_parser() -> argparse.ArgumentParser:
     restart.add_argument("--unit", required=True, type=unit_arg, metavar="CONTRACT/UNIT",
                          help="the unit, as {contract}/{unit}")
     restart.add_argument("--go", action="store_true",
-                         help="remove the stop record and the task file, write the kept draft")
+                         help="remove the stop record and the task file (only when it names this unit), write the kept draft")
     restart.add_argument("--fresh", action="store_true",
                          help="with --go, also clear the failed rounds of the stopped task's channel")
     restart.add_argument("--scratch", metavar="DIR",
@@ -482,7 +488,7 @@ def run_state(args: argparse.Namespace, folder: Path) -> tuple[dict | None, str 
     if has_stop and not has_run:
         return None, refusal(STOP_FILE, "has no run.json")
     state = {"state": "none", "task": None, "operator": None, "round": None,
-             "kind": None, "text": None, "kept": {}}
+             "kind": None, "text": None, "kept": {}, "progress": []}
     if run is None:
         return state, None
     branch = git_line(args.root, "branch", "--show-current") or ""
@@ -497,14 +503,36 @@ def run_state(args: argparse.Namespace, folder: Path) -> tuple[dict | None, str 
                 else stop.get("text"))
         return {**state, "state": "stopped", "task": stop.get("task"),
                 "operator": stop.get("operator"), "round": stop.get("round"),
-                "kind": stop.get("kind"), "text": text}, None
+                "kind": stop.get("kind"), "text": text,
+                "progress": disagreements(args, stop.get("task"))}, None
     running = read_object(folder / TASK_FILE)
     held = running is not None and running.get("unit") == args.unit \
         and isinstance(running.get("task"), str)
     task = running["task"] if held else run.get("task")
     return {**state, "state": "abandoned", "task": task,
             "operator": running.get("operator") if held else None,
-            "round": round_number(run_path / ROUNDS_FILE, args.unit, task)}, None
+            "round": round_number(run_path / ROUNDS_FILE, args.unit, task),
+            "progress": disagreements(args, task)}, None
+
+
+def disagreements(args: argparse.Namespace, in_hand: object) -> list[str]:
+    """One line for each task before the one in hand whose last progress record
+    is not `done`, in task order; nothing when the task in hand is not one of
+    the tasks. The run record wins, so these lines only report."""
+    if in_hand not in RESTART_ORDER:
+        return []
+    contract = args.unit.split("/")[0]
+    problems: list[str] = []
+    records = read_progress(Path(args.root), problems).get(contract, [])
+    lines = []
+    for task in RESTART_ORDER[:RESTART_ORDER.index(in_hand)]:
+        states = [r.state for r in records
+                  if r.item == f"{args.unit}/{task}" and r.state is not None]
+        if states[-1:] != ["done"]:
+            lines.append(f"Progress record disagrees: {task} reads "
+                         f"{states[-1] if states else 'no record'}, "
+                         f"but the run is at {in_hand}.")
+    return lines
 
 
 def place_draft(run_path: Path, kept: dict, scratch: Path) -> None:

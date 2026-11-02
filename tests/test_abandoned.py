@@ -300,7 +300,8 @@ def test_sc5_2_go_with_another_units_task_file_standing_leaves_it_byte_identical
     code, out, err = restart(tmp_path, root)
     assert (code, err) == (0, ""), (code, out, err)
     assert one_line(out) == {"state": "abandoned", "task": "write-tests", "operator": None,
-                             "round": 1, "kind": None, "text": None, "kept": {}}
+                             "round": 1, "kind": None, "text": None, "kept": {},
+                             "progress": []}
     assert snapshot(root) == before
     # SC5.2: --go leaves the other unit's file and run folder as they were.
     run_bytes = (run_dir(root) / "run.json").read_bytes()
