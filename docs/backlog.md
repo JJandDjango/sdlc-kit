@@ -351,10 +351,15 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     the release at `ad5d1e6`; both verifiers passed round 2 (QA verifier 9
     of 9). The SC4.1 and SC4.3 receipt: four headless restarts of one unit
     each read 40,074 tokens at the first request. 1,667K agent tokens plus
-    2.31M receipt cache reads.
-25. After the user merges and tags `v0.22.0`: the self-pin PR
+    2.31M receipt cache reads. Merged as PR #160 at `59bf526`, and tagged
+    `v0.22.0` there on the user's word.
+25. [x] After the user merges and tags `v0.22.0`: the self-pin PR
     (`.github/workflows/sdlc.yml:20`, `docs/usage/restricted-environments.md:40`
     and any other pinned install line) to `v0.22.0`, the 0.21.1 shape (PR #151).
+    Session 146 on `session-146-self-pin`: no other pinned install line
+    exists; the `uv` line, run against the tag with `python -P`, installs
+    `sdlc-taskcontract 0.22.0` and reads `specs/run-restart` ready-green;
+    the suite passes (2984).
 
 ## Next actions
 
