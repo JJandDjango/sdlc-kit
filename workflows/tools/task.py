@@ -101,7 +101,7 @@ STOP_KINDS = ["question", "error", "refusal"]
 # The tasks in the order a unit runs them; the tree lists them in another.
 RESTART_ORDER = ["write-tests", "approve-tests", "prove-red", "green",
                  "approve-commit", "commit", "two-key"]
-KEEP_KEYS =["draft", "draft-file", "receipts", "commit"]
+KEEP_KEYS = ["draft", "draft-file", "receipts", "commit"]
 ROOT_HELP = "repo root that holds specs/ and .sdlc/ (default: cwd)"
 # Each operator id, and the name the start line prints for it.
 OPERATORS = {

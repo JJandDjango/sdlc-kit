@@ -270,11 +270,10 @@ System32 first itself, as the fixture's `test.bat` does; without it,
 set "PATH=%SystemRoot%\System32;%PATH%"
 ```
 
-#### Restarting a stopped run 🔴
+#### Restarting a stopped run 🟢
 
-> 🔴 **Ratified, built unit by unit** (contract `specs/run-restart/`, units
-> rs1 to rs5; design [run-restart.design.md](../features/run-restart.design.md)).
-> Each paragraph turns green as its unit ships; kit 0.22.0 ships the whole.
+> 🟢 **Shipped** in kit 0.22.0 (contract `specs/run-restart/`, units rs1 to
+> rs5; design [run-restart.design.md](../features/run-restart.design.md)).
 
 🟢 Each stop writes a stop record, `stop.json`, in the unit's run folder,
 `{git folder}/sdlc-run/{contract}/{unit}/`, which is never committed: a
@@ -332,9 +331,12 @@ passed task saves what it hands on with `task.py keep --unit
 (or `--file PATH`), and the task file also names its `unit`. `task.py
 restart --unit {contract}/{unit}` prints one JSON line, its `state` one
 of `none`, `stopped` or `abandoned`, with the task, operator, round,
-kind, text and kept values, and changes nothing. With `--go --scratch
-DIR` it removes the stop record and a leftover task file of the unit,
-and writes the kept draft test file under `DIR/draft/`; another unit's
+kind, text and kept values, and `progress`: one line for each task before
+the task in hand whose progress record is missing or not done, run.json
+winning. R1 and R2 show each line before their question. It changes
+nothing. With `--go --scratch DIR` it removes the stop record and a
+leftover task file of the unit, and writes the kept draft test file
+under `DIR/draft/`; another unit's
 task file stays (rs4). The flow's steps are in
 `skills/sdlc/flows/restart.md`. (rs2)
 
@@ -357,6 +359,10 @@ Any other reply starts nothing and shows `Execution did not restart:
 live, so a run still going in another session reads as abandoned: answer
 no there. (rs4)
 
-🔴 A restart's first turn holds at most 50K tokens of context, near a
+🟢 A restart's first turn holds at most 50K tokens of context, near a
 first start's, and the fourth restart of one unit holds no more than the
-first. (rs5)
+first. Measured by hand: four restarts of one unit each read 40,074 tokens
+at the first request, a first launch's size, the fourth equal to the first,
+against 281K for session 129's eighth `--resume`. The receipt is
+`RECEIPT_run-restart-rs5_2026-11-02/sc4_restarts.md`, untracked by the
+repository's convention. (rs5)
