@@ -265,7 +265,7 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     `ARCHITECTURE.md` drops to Cairn's 3072-byte budget (#150's
     `workflows/` row put it at 3100). The engine's note went to the user
     that session, to carry to the engine's own session.
-24. Restart a stopped run in a fresh session (the user, session 130).
+24. [x] Restart a stopped run in a fresh session (the user, session 130).
     `task.py stop` and a third failed round remove the task file and the
     rounds file, so a stopped run keeps no state; session 129 went on by
     `--resume`, and the headless session's starting context grew from 45K
@@ -336,7 +336,25 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     the QA verifier caught 10 of 10 mutations; the SC5.1 receipt passed:
     a headless session killed mid-task left an abandoned run, a fresh one
     showed it and started nothing, and `--answer yes` restarted at
-    write-tests. Next: rs5-release, from main after rs4's PR merges.
+    write-tests. PR #159 merged at `e8d33b9`. Session 145 (branch
+    `session-145-rs5-release`, plan `bea8678`): rs5 builds the design's
+    Sources row the earlier units left out: `task.py restart` reads the
+    progress records and its line gains `progress`, one line for each
+    earlier task whose record is missing or not done, `run.json` winning.
+    Approve-tests failed three rounds on SC4.2's source check, each round
+    closing the holes named and the verifier finding narrower ones; the
+    run stopped, and the user ruled the answer enough with a bar (fix
+    round 3's three defects; any further evasion is advisory unless it
+    shows a real transcript read). The fresh round passed; unit `46e30f5`
+    (suite 2984). The Dev verifier failed two-key round 1 on order alone
+    (the receipt and 0.22.0 not yet in the tree), so green round 2 shipped
+    the release at `ad5d1e6`; both verifiers passed round 2 (QA verifier 9
+    of 9). The SC4.1 and SC4.3 receipt: four headless restarts of one unit
+    each read 40,074 tokens at the first request. 1,667K agent tokens plus
+    2.31M receipt cache reads.
+25. After the user merges and tags `v0.22.0`: the self-pin PR
+    (`.github/workflows/sdlc.yml:20`, `docs/usage/restricted-environments.md:40`
+    and any other pinned install line) to `v0.22.0`, the 0.21.1 shape (PR #151).
 
 ## Next actions
 
@@ -607,6 +625,23 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     caught. And the SC5.1 receipt's three headless launches read 1.40M
     from the cache, against a plan of 0.4M to 0.7M: each re-reads E1's
     and E2's files over 7 to 13 messages before its first flow call.
+21. `rs5-release`'s findings (session 145). The team's flow has no
+    notion of a manual-receipt check: approve-tests requires every sketch
+    pinned by a test (`qa-verifier.js:131`), and the Dev verifier grades
+    two-key on the files as they stand, so a unit whose checks are
+    receipts fails both until the session's answer or the receipt lands
+    first. After a third FAIL the answer reaches only the channel's member
+    (`restart.md` R3), never the verifier whose bar it sets. A text test
+    of "reads only" over flow prose invites an open-ended hunt; the
+    allow-list lint held only under the user's bar. `task.py restart`
+    drops `read_progress`'s problem lines, so a progress file that does
+    not parse shows as "no record" lines with no reason; `RESTART_ORDER`
+    copies the seven tasks' order; the module docstring's `--go` sentence
+    reads "the task file, the task file only when it names this unit".
+    The restart line carries the whole kept draft (about 10K characters
+    at an approve-tests stop). The QA verifier's two-key ran `prove.py`
+    with `-n auto` added to fit the 600 s cap, and started with 12
+    mutations before cutting to nine.
 
 ## Open questions
 
