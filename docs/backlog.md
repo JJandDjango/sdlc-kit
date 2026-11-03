@@ -360,10 +360,23 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     exists; the `uv` line, run against the tag with `python -P`, installs
     `sdlc-taskcontract 0.22.0` and reads `specs/run-restart` ready-green;
     the suite passes (2984).
+26. Close G1's open edges before any G2 work (the user, session 146).
+    They stand under Open questions: the readings of PRs #116 and #119
+    that cost something (an exempt feature refused in the tree's second
+    build; I9 trusting a config that cannot be trusted), the
+    hand-written files that stop the print or a command (sessions 94 and
+    95), G1.3's seven unnamed cases, G1.2's (model files no record binds,
+    P with no live run, a `tlc.cmd` at the root), G1.1's four, and the
+    three smaller ones; with them the `s4-tree` folds left in Next
+    actions' opener. Each waits for a text row of
+    `docs/features/g1-requirements-spec.design.md`: the engineer seat
+    rules each edge (fix it, or leave it and say so), signs the row, and
+    a re-intake reopens G1.3 before the build. It starts with a
+    strikeable list of the edges, on `session-146-g1-edges`.
 
 ## Next actions
 
-Opener: no Next item is open; the user names the next. The
+Opener: Next 26, G1's open edges, is open. The
 engine's M0 passed G1 and its unit 1 ran G2.5 by hand (`d2dafba`),
 so the user's 2026-10-20 hold on G2's venue and G1's open edges is
 lifted. The readings of PRs #116 and #119 that cost something (Open questions, G1)
