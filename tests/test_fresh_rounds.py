@@ -59,7 +59,7 @@ DRAFT = {"test_file": "tests/test_cli.py", "interface": "parse_args(argv) -> Arg
 DRAFT_BYTES = b"def test_parse_args():\n    assert False\n"
 KEPT_AT_GREEN = {"draft": DRAFT, "draft-file": "draft/test_cli.py"}
 NONE = {"state": "none", "task": None, "operator": None, "round": None, "kind": None,
-        "text": None, "kept": {}}
+        "text": None, "kept": {}, "progress": []}
 
 # Each channel: the task a FAIL returns to, its member, the verifier whose FAIL was the
 # third, the other channel, and the peers that count their rounds under the channel.

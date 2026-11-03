@@ -9,6 +9,30 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.22.0 - 2026-11-02 (tag `v0.22.0`)
+
+- **Each stop writes a stop record** (`run-restart`, unit `rs1`). `stop.json`
+  stands in the unit's run folder, `{git folder}/sdlc-run/{contract}/{unit}/`,
+  and `rounds.json` moves there. Delta note: an `sdlc-rounds.json` that a
+  0.21 run left in the git folder is no longer read; delete it by hand.
+- **A stopped run restarts in a fresh session** (`run-restart`, unit `rs2`).
+  `/sdlc execute {contract} {unit} --answer TEXT` starts at the stopped task,
+  with no earlier task run again. `task.py restart` shows the state and
+  `task.py keep` saves what a task hands on, in `run.json`. The steps are in
+  `skills/sdlc/flows/restart.md`.
+- **A third FAIL can restart the task** (`run-restart`, unit `rs3`). After an
+  answer ruled enough (`--enough` when headless), `restart --go --fresh` gives
+  the task three fresh rounds.
+- **An abandoned run restarts on the user's word** (`run-restart`, unit `rs4`).
+  A run folder with no stop record restarts at the task in hand.
+- **A restart shows each progress record that disagrees** (`run-restart`, unit
+  `rs5`). `task.py restart` lists a task before the one in hand whose record
+  is missing or not done, run.json winning. Measured: four restarts of one
+  unit each read 40,074 tokens at the first request, the fourth equal to the
+  first, against 281K for session 129's eighth `--resume`. Kit `0.21.1` ->
+  `0.22.0`; the contract schema stays at `1.5.0`. Delta note: pull this
+  release, then delete any `sdlc-rounds.json` a 0.21 run left.
+
 ## 0.21.1 - 2026-10-28 (tag `v0.21.1`)
 
 - **The wall passes the session's own calls and the declared test command**
