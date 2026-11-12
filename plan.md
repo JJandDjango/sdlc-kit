@@ -22,6 +22,8 @@ The user ruled this the repository's top priority (session 147) and asked how it
 
 ## 3. The steps
 
+Where it stands at session 147's close (the 200K mark): steps 1 to 3 done; step 4 drafted, with requirements r10 and design r12 written, ADR 0041 proposed, and the checks before signing not yet run. The next session opens on those checks (the two `Measured:` rows, `lang-check --draft` and ready checks 1 to 8 and 11 to 15), then step 5. Design r12 moved the fix from I2 into `new` (its Decisions say why), so the plan's I2 wording below is superseded there.
+
 1. Stay on `session-146-g1-edges` (one commit past main's `7ee90c8`); this plan committed and pushed.
 2. Backlog: the finding joins Next 26 as its first edge, and Open questions' G1 entries gain it with its second case.
 3. Post-mortem. Trace the bug past each check that could have stopped it, from its record: the requirements (SC4.1's scenario, consult case 1), the design (shape call 9, the Review term, the Sources row), the checks before signing (design r2 and r8), `s3-review`'s and `s5-start`'s test lists and Two-Key receipts, `s5-start`'s manual receipt, the 0.20.0 release, and the tree's reading of `glossary-alias-disjointness` since then. For each: what the check read, and why the case fell outside it. Written to `NOTES_g1-plain-request-post-mortem_2026-11-12.md`; the escape charged in `docs/session-metrics.md`. A process change it points to goes to the user as a proposed ADR, drafted only on their yes.

@@ -11,6 +11,7 @@
 | 2026-10-17 | user | r9: Amended by hand in kit session 101, after the signature and intake: G1.1's record holds a `runs` list, one run for each `g1.schemas` entry with a schema in scope (Interfaces: the record file and its edges); a tool not installed is recorded for its own run; a contract whose scope cannot be read or holds no entry reads G1.1 `to do` and `lint` refuses it (Interfaces: the edges and How a condition reads); three answers under Decisions; typed by Claude on the user's word |
 | 2026-10-17 | user | r10: Signed: solution half. The engineer seat signs r9 |
 | 2026-10-17 | intake | r11: Ready: contract `g1-requirements-spec` validates ready-green, derived from r9, against requirements r6; the engineer seat (user) signed the solution half at r9 (r10) |
+| 2026-11-12 | user | r12: Amended by hand in kit session 147, against requirements r10, after the engine's finding `g1-unreachable-from-a-plain-request`: `new` refuses a feature G1 gates that has no feature document, and intake's I3 reports any refusal of `new` (Scope, Interfaces: The scaffold, Sources); G1.3 reports RS302 for such a feature, and the venue asks no item there; unit `s7-plain-request` takes SC1.2 and SC4.1 and ships kit 0.22.1 (Units, Order); constraint 10's count; one risk; four answers under Decisions, one naming the kept readings left for Next 26 (ADR 0041, rule 1); typed by Claude on the user's word |
 
 # g1-requirements-spec - Failure points found before development starts
 
@@ -33,12 +34,14 @@ The package:
 - `taskcontract/tree.py`: a feature's own active gates, G1's reading, G1.3's evidence.
 - `taskcontract/tree_view.py`: the pane watches `.sdlc/g1`.
 - `taskcontract/progress.py`: the refusal.
+- `taskcontract/scaffold.py`: `new` refuses a feature G1 gates that has no feature document (`s7-plain-request`).
 
 The skill:
 
 - `skills/sdlc/flows/g1.md` (new): the venue.
 - `skills/sdlc/SKILL.md`: the dispatch line, the flow list, one constraint, one criterion.
-- `skills/sdlc/flows/intake.md`: one sentence at I9.
+- `skills/sdlc/flows/intake.md`: one sentence at I9; one clause at I3, which reports any refusal of `new` (`s7-plain-request`).
+- `skills/sdlc/flows/g1.md`: at R5, no item is asked where the feature has no feature document (`s7-plain-request`).
 - `skills/sdlc/init.py`: `KIT_VERSION`.
 - `skills/sdlc/templates/SDLC.md.template` and `skills/sdlc/templates/specs-README.md.template`.
 
@@ -64,7 +67,7 @@ here. The build leaves these places untouched:
 - `taskcontract/checker.py` and the `validate` command: ready-green keeps meaning G0 alone.
 - `taskcontract/schemas/task-contract.schema.json`: the contract schema stays at version 1.5.0.
 - `skills/product-specification-interview/`: every file.
-- `skills/sdlc/flows/intake.md`, steps I1 to I8.
+- `skills/sdlc/flows/intake.md`, steps I1, I2 and I4 to I8.
 - `.github/workflows/ci.yml` and `skills/sdlc/templates/workflow.yml.template`: no step runs a linter or a checker.
 - `skills/sdlc/templates/config.yaml.template`: a new repository is born with G0 alone.
 - `skills/sdlc/templates/hooks-protect-specs.py.template`.
@@ -311,6 +314,27 @@ Next step: G1. Run /sdlc g1 apply-discount.
 With `G1` absent from `active_gates`, or the feature exempt, the report
 ends as today.
 
+**The scaffold** (`s7-plain-request`). `new {id}` keeps its two
+refusals, a bad id and a contract that exists, in that order. Then,
+where G1 is active for {id} and `docs/features/{id}.md` is no file, it
+writes nothing, prints message 8 on stderr and exits 1, as its other
+refusals do. It reads G1 through `g1.read_config` and `g1.is_active`.
+I3 gains one clause: on any other failure of `new`, REPORT its line
+verbatim, write nothing, and return to the conversation. The clause names
+no G1 word, no config file and no command, so I9's tests stand.
+
+```
+$ python -m taskcontract new apply-discount
+taskcontract new: no feature document for apply-discount, and G1 is active for it; write docs/features/apply-discount.md, or add apply-discount to g1.exempt
+```
+
+**A contract with no feature document** (`s7-plain-request`). G1.3
+reads it first: where `docs/features/{id}.md` is no file, G1.3 reads
+`failed` with one finding, `RS302`, message 9, whatever its records
+hold. The tree and `g1-check` show it as they show `RS301`. At R5 the
+venue asks no item there and goes to R7, whose `g1-check` line names the
+way out. `g1-record review` keeps its refusal.
+
 ### Sources
 
 | Fact | Read from | When two disagree |
@@ -330,6 +354,7 @@ ends as today.
 | Which rule belongs to which condition | `rules:` in `taskcontract/data/gates.yaml` | One source. |
 | Where ready checks 1 to 15 are asked | the interview's signing flow and intake's I2, as today | One source: G1's flow holds none of their question sentences. |
 | The parts of intake's report | I9 of `skills/sdlc/flows/intake.md`, as today, with the feature's id | One source. |
+| Whether a feature G1 gates has a feature document | `docs/features/{id}.md` is a file, read by `new` and by G1.3 | One source: a design document alone is no feature document. |
 
 ### Constraints
 
@@ -342,7 +367,7 @@ ends as today.
 7. The tree stays derived at every print: G1's reading stores nothing and runs no tool.
 8. `.sdlc/progress/` holds no G1 record, and no gate reads a progress file (ADRs 0024 and 0031).
 9. An exempt feature's tree lines keep every byte, and the `gates/G0` line keeps its reading.
-10. Each prompt file the build touches passes `python -m prompt_lang`, keeps the PromptLang tag set and stays under 12,000 characters. `intake.md` has 495 characters free.
+10. Each prompt file the build touches passes `python -m prompt_lang`, keeps the PromptLang tag set and stays under 12,000 characters. `intake.md` has 167 characters free (kit session 147), and I3's clause takes about 100.
 11. Intake keeps I1 to I9 and their order, and I9's sentence names no fifth `python -m taskcontract` command.
 12. The 13 question sentences of ready checks 1 to 8 and 11 to 15 stand in no G1 file.
 13. G1.3's 11 items stay as ratified, and no agent signs a review: the flow runs the writer only on the person's word.
@@ -355,12 +380,14 @@ ends as today.
 | :-- | :-- | :-- | :-- | :-- |
 | s1-lint | SC2.1, SC2.2, SC2.3 | With a boundary schema in a feature's scope, G1.1 reads done only when the pinned linter's record shows it clean. | SC2.1: automated, with a stand-in linter, and a manual receipt, a live Spectral run on one clean file and one unclean file. SC2.2: automated. SC2.3: automated. | USAGE's red-legend test, at pass zero (`tests/test_document_split_release.py:517-527`). The two tests that hold `rules:` to G0's conditions (`tests/test_tree_conditions.py:313-327` and `432-442`), each replaced by one that holds G1's too. |
 | s2-model | SC3.1, SC3.2, SC3.3 | With a hard core in a feature's scope, G1.2 reads done only when the record shows its model passes the checker. | SC3.1: automated, with a stand-in checker, and a manual receipt, a live TLC run on one passing model and one failing model. SC3.2: automated. SC3.3: automated. | none |
-| s3-review | SC1.1, SC1.2, SC1.3 | A seat reads G1.3's 11 items at the venue, and G1.3 reads done only from a review with a signature. | SC1.1: automated, and a manual receipt, a live run of `/sdlc g1` on an invented feature with a seat answering the 11 items. SC1.2: automated. SC1.3: automated, a text test on G1's flow, the interview and intake. | none |
+| s3-review | SC1.1, SC1.3 | A seat reads G1.3's 11 items at the venue, and G1.3 reads done only from a review with a signature. | SC1.1: automated, and a manual receipt, a live run of `/sdlc g1` on an invented feature with a seat answering the 11 items. SC1.2: automated. SC1.3: automated, a text test on G1's flow, the interview and intake. | none |
 | s4-tree | SC5.1, SC5.2, SC5.3 | The tree shows G1 as an active gate where a feature needs it, with each condition's status, diagnostics and review. | SC5.1: automated. SC5.2: automated. SC5.3: automated. | The sha256 pin on `tree.py`'s code (`tests/test_document_split_release.py:483-490`); the docstring's sentence order, pinned at line 487, stays. |
-| s5-start | SC4.1, SC4.2 | Intake's report names G1 as the next step, and no unit's task reads done before its feature's G1 passes. | SC4.1: automated, a text test on I9, and a manual receipt, a live intake run whose report ends on the G1 line. SC4.2: automated. | Two sentences that say no task is enforced, each reworded: `tasks.yaml`'s header comment and USAGE's "shown and never enforced". No test pins either. |
+| s5-start | SC4.2 | Intake's report names G1 as the next step, and no unit's task reads done before its feature's G1 passes. | SC4.1: automated, a text test on I9, and a manual receipt, a live intake run whose report ends on the G1 line. SC4.2: automated. | Two sentences that say no task is enforced, each reworded: `tasks.yaml`'s header comment and USAGE's "shown and never enforced". No test pins either. |
 | s6-release | SC4.3 | Kit 0.20.0 ships G1 with its documentation, and the kit's own tree shows G1 as an active gate with G0 unchanged. | SC4.3: automated, on a fixture and on the kit's own tree. Two manual receipts: the install from the tag reads 0.20.0, and Spectral lints the kit's four schemas under `.spectral.yaml`. | Section 9's banner test (`tests/test_document_split_release.py:530-545`), replaced. USAGE's drawing of this feature before intake (`USAGE.md:1640-1655`), redrawn on an invented feature. |
 
-Every check stands in one unit. `s6-release` is the release unit.
+| s7-plain-request | SC1.2, SC4.1 | Where G1 is active, `new` refuses a feature with no feature document, and G1.3 names that dead end with its way out; kit 0.22.1 ships the fix. | SC1.2: automated, the no-document case beside `s3-review`'s. SC4.1: automated, `new` on both paths into intake, a plain request and a pair, each taken on to `g1-record review`; and a manual receipt, a live intake run on a plain request with G1 active, taken to the `/sdlc g1` step (ADR 0041, rule 3). | Any test that scaffolds through `new` where G1 is active with no feature document, found by the test-retirer. |
+
+Every check stands in one unit; SC1.2 and SC4.1 moved to `s7-plain-request` at r12, and `s3-review`'s and `s5-start`'s tests for them stand. `s6-release` is the release unit of 0.20.0, and `s7-plain-request` ships 0.22.1.
 
 ### Order
 
@@ -373,6 +400,7 @@ The units are built in a line: `s1-lint`, `s2-model`, `s3-review`,
 - `s4-tree` follows the three rules: the tree prints what they read.
 - `s5-start` follows the tree: the refusal reads the tree's G1 verdict.
 - `s6-release` is last. It turns the red marks green, moves the versions and turns G1 on at the kit.
+- `s7-plain-request` follows on main at kit 0.22.0 (r12): it changes `new`, G1.3's reader and two flows, and ships 0.22.1.
 
 ## Risks and cost
 
@@ -390,6 +418,7 @@ What can go wrong:
 8. Turning G1 on at the kit refuses this feature's own last tasks unless its id joins the exempt list in the same commit.
 9. The tree reads the two declarations and one record file a feature at every print, and the pane keeps no G1 reading. `s4-tree` measures the print on the kit's 20 features.
 10. `{section}` in message 5 is text a person names, and nothing checks that the section exists.
+11. `s7-plain-request` makes the kit's own tree show G1.3 `failed` for `glossary-alias-disjointness`, and a test that reads the kit's own tree may pin its line.
 
 What it costs: six units over about six sessions, after two to three
 sessions for the PO seat's amendment and intake. The agents cost 3.7
@@ -440,6 +469,10 @@ A shape call's number is its place among that session's 13.
 - Q: How does one G1.1 record hold the results of several linters? A: A call lints every `g1.schemas` entry with a schema in scope and appends one record whose `runs` list holds one run for each entry. The reader holds each schema to the run of its own entry. The engineer seat ruled it on 2026-10-09 (kit session 90) and the text row of 2026-10-17 (kit session 101) carries it.
 - Q: What does G1.1 read for a contract whose scope cannot be read? A: `to do`, as G1.2 does, and `lint` refuses the call with exit 2. Kit session 88's `s1-lint` read `done` there: an escaped defect, fixed by the same text row.
 - Q: Do the checks before signing read green for the text row of 2026-10-17? A: No, and each finding is answered: 14 CL014 findings, one for each term the state file copies from the requirements document. The user ratified all 14 word for word in kit session 86 (`8f9e9ed`), so each maps to its ratified term, and none stands in the amended text.
+- Q: Where does the refusal of a feature with no feature document stand? A: In `new`, which intake's I3 already runs, and not in a new sentence at I2. The id is known there, the refusal is code a test can run, and `intake.md` keeps room under its cap. The engine's finding proposed I2; the engineer seat ruled `new` on 2026-11-12.
+- Q: Why does G1.3 read `failed` and not `to do` with no document? A: `to do` reads as "not yet". The kit's own `glossary-alias-disjointness` read `to do` for 25 days with no way to `done` (ADR 0041, rule 4).
+- Q: Which kit ships the fix? A: 0.22.1, a patch, as 0.21.1 shipped the team's fixes; `s7-plain-request` carries its release files.
+- Q: Which kept readings does this row take (ADR 0041, rule 1)? A: Reading 3 of PR #112 alone. Left for Next 26's later rows, each with that reason: PR #112's readings 1, 2 and 4 to 12, PR #116's 1 to 15, and PR #119's 1 to 12.
 
 ## Traceability
 

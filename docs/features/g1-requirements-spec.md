@@ -9,6 +9,7 @@
 | 2026-10-08 | user | r7: Signed: request half. The PO seat signs r6 |
 | 2026-10-08 | intake | r8: Ready: contract `g1-requirements-spec` validates ready-green, derived from r6; the PO seat (user) signed the request half at r6 (r7) |
 | 2026-10-17 | intake | r9: Ready: contract `g1-requirements-spec` validates ready-green, derived from r6; the PO seat (user) signed the request half at r6 (r7) |
+| 2026-11-12 | user | r10: Amended by hand in kit session 147, after the engine's finding `g1-unreachable-from-a-plain-request` (`NOTES_g1-plain-request-post-mortem_2026-11-12.md`): where G1 is active, intake takes a feature in only from a feature document (SC4, SC4.1, message 8, Existing behavior touched 5); a feature with no feature document shows message 9 under G1.3, which reads failed (SC1.2); the Gherkin scenarios of SC1.2 and SC4.1; three answers under Decisions; typed by Claude on the user's word |
 
 # g1-requirements-spec - Failure points found before development starts
 
@@ -93,6 +94,8 @@ Each entry gets a regression check under Acceptance criteria.
 4. The feature document's ready checks 1 to 15 are asked in the
    interview, advisory there, and at intake, hard there (ADRs 0029, 0033
    and 0037).
+5. `python -m taskcontract new {id}`, intake's I3, scaffolds a contract
+   for any id that holds none.
 
 ## Success criteria
 
@@ -105,9 +108,9 @@ Each entry gets a regression check under Acceptance criteria.
    changes lints clean, and a feature with none passes.
 3. SC3: Before development starts, every hard core a feature touches has a
    model its checker passes, and a feature with none passes.
-4. SC4: Where G1 is active for a feature, intake's report names G1 as
-   the next step, and the feature's development starts only once its G1
-   passes.
+4. SC4: Where G1 is active for a feature, intake takes it in only from a
+   feature document, its report names G1 as the next step, and the
+   feature's development starts only once its G1 passes.
 5. SC5: The tree shows each feature's G1 conditions with their status and
    their diagnostics.
 
@@ -167,7 +170,7 @@ Each entry gets a regression check under Acceptance criteria.
 
 Three checks under each success criterion. SC4.1, SC4.3, SC5.2 and SC1.3
 carry the regression checks for Existing behavior touched, entries 1 to 4
-in that order.
+in that order, and SC4.1 carries entry 5's.
 
 SC1 The G1.3 review
 
@@ -175,8 +178,9 @@ SC1 The G1.3 review
   feature's documents, and a named person signs it on the revisions its
   contract was derived from, one for each document of a pair
 - SC1.2: verify each unchecked item shows as a diagnostic under G1.3,
-  naming the item and the document's section it concerns, and G1.3 reads
-  failed until a later revision's review passes
+  naming the item and the document's section it concerns, and a feature
+  with no feature document shows message 9 there; G1.3 reads failed until
+  a later revision's review passes
 - SC1.3: verify ready checks 1 to 15 are still asked in the interview and
   at intake as today, and the review does not ask them again
 
@@ -204,7 +208,10 @@ SC4 G1 before development
 
 - SC4.1: verify intake's report names G1 as the next step where G1 is
   active for the feature, after the contract's path, state, seats and
-  scope summary as today, and ends as today where it is not
+  scope summary as today, and ends as today where it is not; and where G1
+  is active and no feature document stands, intake stops before any
+  contract exists with message 8, while `new` scaffolds as today
+  everywhere else
 - SC4.2: verify no task can be recorded as started, and no task, unit or
   contract as done, while its feature's G1 is active and has not passed,
   and the refusal prints its message under Error messages
@@ -224,7 +231,7 @@ SC5 The tree
 
 ### Error messages, verbatim
 
-Seven new messages:
+Nine new messages:
 
 1. `G1.1: {tool} is not installed; install it and pin it in the repository` (SC2.3)
 2. `G1.2: hard core {component} has no model` (SC3.3)
@@ -235,6 +242,8 @@ Seven new messages:
    `G1.3: item 6 Consistent is unchecked in Statement`
 6. `G1.1: {file} does not lint clean: {tool} reports {n}` (SC2.1)
 7. `G1.2: the model of {component} does not pass {tool}` (SC3.1)
+8. `taskcontract new: no feature document for {id}, and G1 is active for it; write docs/features/{id}.md, or add {id} to g1.exempt` (SC4.1)
+9. `G1.3: no feature document at docs/features/{feature}.md; write it and run intake again, or add {feature} to g1.exempt` (SC1.2)
 
 Every message the kit prints today stays word for word.
 
@@ -292,6 +301,17 @@ Every message the kit prints today stays word for word.
 - Q: Are Ready check and Check still as r3 mapped them? A: No: both were
   ratified on 2026-09-30, so Ready check leaves the terms to ratify, and
   Check maps to its own term (decided 2026-10-08).
+- Q: Where G1 is active, may intake take a feature in from a plain
+  request? A: No: G1.3 reviews a feature document, so a contract with
+  none can never pass G1, and the refusal then stops every task. `new`
+  refuses before any contract exists and names both ways out (the
+  engine's finding, decided 2026-11-12).
+- Q: Why amend SC1.2 and SC4.1 rather than add checks? A: SC1 and SC4
+  each hold three checks, the most ready check 3 allows; the two amended
+  checks move to the unit that builds them (decided 2026-11-12).
+- Q: Does `glossary-alias-disjointness` join the exempt list? A: No: it
+  has had no review. It stays parked, shows message 9, and needs a pair
+  before it starts (decided 2026-11-12).
 
 ## Notes
 
@@ -323,6 +343,11 @@ Scenario: SC1.2 An unchecked item shows as a diagnostic under G1.3
   When G1.3 is read
   Then the item shows as a diagnostic under G1.3, naming the item and the document's section it concerns
   And G1.3 reads failed until a later revision's review passes
+
+Scenario: SC1.2 A feature with no feature document shows message 9 under G1.3
+  Given a contract whose feature has G1 active and no feature document
+  When G1.3 is read
+  Then message 9 shows as a diagnostic under G1.3, and G1.3 reads failed
 
 Scenario: SC1.3 The review asks no ready check again
   Given a feature document that goes through the interview and intake
@@ -366,6 +391,12 @@ Scenario: SC4.1 Intake's report names G1 where G1 is active
   When intake reports
   Then where G1 is active for the feature, the report names G1 as the next step, after the contract's path, state, seats and scope summary as today
   And where it is not, the report ends as today
+
+Scenario: SC4.1 Intake stops a request with no feature document where G1 is active
+  Given a feature with G1 active, not exempt, and no feature document
+  When intake scaffolds its contract
+  Then `new` prints message 8 and writes nothing, and intake stops before any contract exists
+  And for a feature document, or where G1 is not active, `new` scaffolds as today
 
 Scenario: SC4.2 No task starts, and nothing is done, before G1 passes
   Given a feature whose G1 is active and has not passed
