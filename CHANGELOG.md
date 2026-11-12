@@ -9,6 +9,18 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.22.1 - 2026-11-12
+
+- **G1 starts from a plain request** (`g1-requirements-spec`, unit
+  `s7-plain-request`). Where G1 is active for a feature, `new` refuses to
+  scaffold while `docs/features/{id}.md` is no file, and writes nothing.
+  G1.3 reads `failed` with the new rule RS302 until that document stands and a
+  review of it passes. `intake.md` I3 reports any other failure of `new` and
+  returns to the conversation; `g1.md` R5 asks no item when the document is
+  missing. Kit `0.22.0` -> `0.22.1`; the contract schema stays at `1.5.0`.
+  Delta note: a contract with no feature document now reads `G1.3 failed`
+  where it read `to do`; write the document or add the id to `g1.exempt`.
+
 ## 0.22.0 - 2026-11-02 (tag `v0.22.0`)
 
 - **Each stop writes a stop record** (`run-restart`, unit `rs1`). `stop.json`

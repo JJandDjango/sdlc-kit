@@ -16,6 +16,17 @@ what gates entry into development. 🟢 Intake also takes a human answer
 per unit and records it under `confirmed_by` before the contract lands
 (kit 0.12.0).
 
+🟢 **A plain request with no feature document.** Where G1 is active for the
+id and `docs/features/<task-id>.md` is no file, `taskcontract new` writes
+nothing and exits 1 with one line:
+`taskcontract new: no feature document for <task-id>, and G1 is active for
+it; write docs/features/<task-id>.md, or add <task-id> to g1.exempt`.
+Intake's scaffold step reports that line verbatim and returns to the
+conversation. A contract that already stands reads G1.3 `failed` with the
+`RS302` line (`G1.3: no feature document at docs/features/<task-id>.md; ...`)
+until the document is written and a review of it passes. Where G1 is off or
+the id is exempt, `new` scaffolds as before.
+
 ### What `ready` requires — two declarations 🟢
 
 > 🟢 **Shipped** (kit 0.14.0, [ADR 0030](../../decisions/0030-a-doors-input-is-a-declaration.md),

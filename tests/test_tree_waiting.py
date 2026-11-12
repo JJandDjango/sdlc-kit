@@ -223,9 +223,14 @@ def test_sc3_1_a_closed_contract_reads_done_whatever_its_verdicts_read(tmp_path,
     # with G1 active too, its verdict reads to do on its own line, and the closed
     # contract still reads done and names its close; its units still read done
     _config(root, ["G0", "G1"])
+    # G1.3 fails for a feature with no requirements document, so alpha has one
+    (root / "docs" / "features").mkdir(parents=True)
+    (root / "docs" / "features" / "alpha.md").write_text("# alpha\n", encoding="utf-8")
     lines = _lines(root, capsys)
     alpha = _line(lines, "alpha")
-    assert alpha.startswith("alpha (no title) [done] no feature document at 1a2b3c4 | "), alpha
+    # the document is there now, with no `Ready:` row, so the close names that instead
+    assert alpha.startswith(
+        'alpha (no title) [done] no "Ready:" row at 1a2b3c4 doc: docs/features/alpha.md | '), alpha
     assert _line(lines, "alpha/G1") == "  alpha/G1 Requirements / Spec [to do]"
     assert _line(lines, "alpha/G2").startswith("  alpha/G2 ")
     assert _line(lines, "alpha/G2").endswith(" [to do] inactive")

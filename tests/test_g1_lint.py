@@ -240,6 +240,7 @@ class Repo:
         self.monkeypatch = monkeypatch
         write_seat_roster(self.root)
         self.contract(ID, "api/", "src/")
+        self.write(f"docs/features/{ID}.md", f"# {ID}\n")  # G1.3 fails with no document
         self.config()
         self.write(".spectral.yaml", "rules: {}\n")
         self.plan()
@@ -870,7 +871,7 @@ def test_done_means_an_id_with_no_contract_is_a_call_neither_command_can_use(rep
 @pytest.mark.parametrize("condition, codes", [
     ("G1.1", ["RS101", "RS102"]),
     ("G1.2", ["RS201", "RS202", "RS203"]),
-    ("G1.3", ["RS301"]),
+    ("G1.3", ["RS301", "RS302"]),
 ])
 def test_done_means_gates_yaml_lists_the_rules_each_g1_condition_owns(condition, codes):
     assert g1_rules()[condition] == codes

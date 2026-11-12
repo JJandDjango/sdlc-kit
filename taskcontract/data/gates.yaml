@@ -31,7 +31,7 @@ gates:
     conditions:
       - {id: G1.1, name: Spec/schema linting, rules: [RS101, RS102]}
       - {id: G1.2, name: Model checking, rules: [RS201, RS202, RS203]}
-      - {id: G1.3, name: Criteria completeness + ambiguity review, rules: [RS301]}
+      - {id: G1.3, name: Criteria completeness + ambiguity review, rules: [RS301, RS302]}
   - id: G2
     name: Design / Architecture
     page: docs/gates/G2-design-architecture.md
