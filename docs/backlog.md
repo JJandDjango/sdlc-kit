@@ -361,7 +361,14 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     `sdlc-taskcontract 0.22.0` and reads `specs/run-restart` ready-green;
     the suite passes (2984).
 26. Close G1's open edges before any G2 work (the user, session 146).
-    They stand under Open questions: the readings of PRs #116 and #119
+    First, the user's top priority (session 147): G1 is unreachable from
+    a plain request (the engine's finding of 2026-11-12, an escape of
+    `s5-start`; `NOTES_g1-plain-request-post-mortem_2026-11-12.md`).
+    PR #112's reading 3 kept the case, and `s5-start` turned it into a
+    feature that can never be built; `glossary-alias-disjointness` is
+    the kit's own case. The fix is unit `s7-plain-request`, after a
+    requirements and a design row the user signs (`plan.md`, session
+    147). The rest stand under Open questions: the readings of PRs #116 and #119
     that cost something (an exempt feature refused in the tree's second
     build; I9 trusting a config that cannot be trusted), the
     hand-written files that stop the print or a command (sessions 94 and
@@ -706,7 +713,8 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
   with nothing linted.
 - G1.3 (session 92; PR #112's body names each). The user kept all 12
   readings at the review (session 93), so a feature with no feature
-  document cannot pass G1. For the design's next text row: the six
+  document cannot pass G1; since `s5-start` it can start no task, and
+  that case is Next 26's first edge (session 147). For the design's next text row: the six
   cases it never named, and a seventh from the review, what a person
   answers for an item that does not apply to the feature (an answer is
   checked or unchecked alone today, so such an item is answered

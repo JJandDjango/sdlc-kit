@@ -18,7 +18,7 @@ The engine (`E:\ImSimProject\engine`, kit pinned at `v0.22.0`) filed the finding
 - `progress start` refuses every task while G1 has not passed (design, The refusal). A contract made from a plain request, with G1 active, is green at G0 and can never be built.
 - The kit holds a second case: `glossary-alias-disjointness` has a contract, no feature document, and stays off `g1.exempt` by shape call 9 (design `:428`). `g1-check` reads it `G1.3 to do` today.
 
-The user ruled this the repository's top priority (session 147) and asked how it was missed. It is the first edge of the backlog's Next 26, G1's open edges. Next 26's other edges keep their place.
+The user ruled this the repository's top priority (session 147) and asked how it was missed. It was already on the backlog as one of G1.3's unnamed cases (PR #112's reading 3, kept in session 93), priced before the refusal existed; it is now the first edge of the backlog's Next 26, G1's open edges. Next 26's other edges keep their place.
 
 ## 3. The steps
 
@@ -36,11 +36,11 @@ The user ruled this the repository's top priority (session 147) and asked how it
 
 ## 4. Where Claude stops for the user
 
-At step 5 (two seat signatures, and an ADR only on a yes) and at the PR's review. Otherwise only on a case the signed documents leave open, or a discovery that needs a decision; a third failed round is one.
+At step 5 (two seat signatures, and an ADR only on a yes), at step 7's test list (the tripwire, section 5) and at the PR's review. Otherwise only on a case the signed documents leave open, or a discovery that needs a decision; a third failed round is one.
 
 ## 5. Where Claude goes on alone, and by what rule
 
-Steps 1 to 4 and 6 to 8: no approval stands before the PR review (`CONTRIBUTING.md`, Delegation). Seat signatures are the user's. The test list is Claude's, recorded `--by claude`.
+Steps 1 to 4 and 6 to 8: no approval stands before the PR review (`CONTRIBUTING.md`, Delegation). Seat signatures are the user's. The test list is the user's until the user rules otherwise: this escape traces to `s5-start`'s test list, which Claude approved, so the tripwire in `docs/session-metrics.md` fired. Step 7 shows the list in chat and records it `--by user`.
 
 ## 6. Rulings needed
 
