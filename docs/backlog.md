@@ -361,14 +361,13 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     `sdlc-taskcontract 0.22.0` and reads `specs/run-restart` ready-green;
     the suite passes (2984).
 26. Close G1's open edges before any G2 work (the user, session 146).
-    First, the user's top priority (session 147): G1 is unreachable from
-    a plain request (the engine's finding of 2026-11-12, an escape of
-    `s5-start`; `NOTES_g1-plain-request-post-mortem_2026-11-12.md`).
-    PR #112's reading 3 kept the case, and `s5-start` turned it into a
-    feature that can never be built; `glossary-alias-disjointness` is
-    the kit's own case. The fix is unit `s7-plain-request`, after a
-    requirements and a design row the user signs (`plan.md`, session
-    147). The rest stand under Open questions: the readings of PRs #116 and #119
+    The first edge is closed: G1 was unreachable from a plain request
+    (the engine's finding of 2026-11-12, an escape of `s5-start`;
+    `NOTES_g1-plain-request-post-mortem_2026-11-12.md`). Unit
+    `s7-plain-request` (session 149, kit 0.22.1, commit `5b5899e`) makes
+    `new` refuse a feature G1 gates with no feature document, and G1.3
+    name the missing document with RS302. The engine's stuck contract is
+    the engine's to clear. The rest stand under Open questions: the readings of PRs #116 and #119
     that cost something (an exempt feature refused in the tree's second
     build; I9 trusting a config that cannot be trusted), the
     hand-written files that stop the print or a command (sessions 94 and
@@ -461,7 +460,8 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
    without `evidence` hiding a seat; `tests/conftest.py`'s row pattern
    splits a plain name at its first ` [`).
 5. Deferred, carried: `glossary-alias-disjointness` (parked by the user,
-   2026-09-26); `derived-language` (prerequisite 5); ADR 0029's appendix
+   2026-09-26; it needs a pair before it unparks, and reads G1.3 `failed`
+   with RS302 until then, requirements r10); `derived-language` (prerequisite 5); ADR 0029's appendix
    copy and Gherkin for project-tree; flag the Claude pane itself; the
    hook's key action and its four known edges, in its README;
    `.sdlc/config.yaml` still lists `plan.workflow.json` as a free path;

@@ -67,6 +67,7 @@ the same kind at PR review.
 | 143 | `run-restart/rs3-fresh-rounds`, built by the shipped team | yes | 2 | 1 / 0 | | 0 | 1,007: QA 243 (154, 89), QA verifier 443 (approve-tests 96 + 85, prove-red 51 + 52, two-key 75 + 84), Developer 145 (76, 69), Dev verifier 176 (86, 90) | 10 readings / | 1 / 0 |
 | 144 | `run-restart/rs4-abandoned`, built by the shipped team | yes | 1 | 0 / 0 | | 0 | 634: QA 139, QA verifier 215 (approve-tests 92, prove-red 51, two-key 72), Developer 125 (66, 59), test-retirer 65, Dev verifier 91 | 9 readings / | 1 / 1 |
 | 145 | `run-restart/rs5-release`, built by the shipped team, restarted twice in the session, kit 0.22.0 | yes | 2 | 1 / 0 | | 1 | 1,667: QA 570 (151, 159, 132, 128), QA verifier 654 (approve-tests 90 + 103 + 96 + 129 + 98, prove-red 52, two-key 86), Developer 147 (83, 64), test-retirer 106, Dev verifier 190 (96, 94) | 12 readings / | 2 / 1 |
+| 149 | `g1-requirements-spec/s7-plain-request`, built by the shipped team, restarted at green, kit 0.22.1; test list the user's (tripwire) | yes | 1 | 0 / 0 | | 1 | 677: QA 201, QA verifier 118 (prove-red 52, two-key 66), Developer 152 (88, 64), test-retirer 121, Dev verifier 85 | 7 readings / | 0 / 1 |
 
 ## Notes on the baseline
 
