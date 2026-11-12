@@ -22,7 +22,7 @@ The user ruled this the repository's top priority (session 147) and asked how it
 
 ## 3. The steps
 
-Where it stands at session 147's close (the 200K mark): steps 1 to 3 done; step 4 drafted, with requirements r10 and design r12 written, ADR 0041 proposed, and the checks before signing not yet run. The next session opens on those checks (the two `Measured:` rows, `lang-check --draft` and ready checks 1 to 8 and 11 to 15), then step 5. Design r12 moved the fix from I2 into `new` (its Decisions say why), so the plan's I2 wording below is superseded there.
+Where it stands in session 148: steps 1 to 5 done. The checks before signing are recorded as requirements r11 and design r13, the user signed both halves (requirements r12, design r14) and ratified ADR 0041. Step 6 is next. Design r12 moved the fix from I2 into `new` (its Decisions say why), so the plan's I2 wording below is superseded there.
 
 1. Stay on `session-146-g1-edges` (one commit past main's `7ee90c8`); this plan committed and pushed.
 2. Backlog: the finding joins Next 26 as its first edge, and Open questions' G1 entries gain it with its second case.

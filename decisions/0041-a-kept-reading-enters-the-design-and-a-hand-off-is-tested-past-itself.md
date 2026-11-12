@@ -1,6 +1,6 @@
 # 41. A kept reading enters the design, and a hand-off is tested past itself
 
-Status: proposed
+Status: accepted
 Date: 2026-11-12
 
 ## Context

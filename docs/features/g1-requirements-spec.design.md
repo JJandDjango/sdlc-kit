@@ -12,7 +12,8 @@
 | 2026-10-17 | user | r10: Signed: solution half. The engineer seat signs r9 |
 | 2026-10-17 | intake | r11: Ready: contract `g1-requirements-spec` validates ready-green, derived from r9, against requirements r6; the engineer seat (user) signed the solution half at r9 (r10) |
 | 2026-11-12 | user | r12: Amended by hand in kit session 147, against requirements r10, after the engine's finding `g1-unreachable-from-a-plain-request`: `new` refuses a feature G1 gates that has no feature document, and intake's I3 reports any refusal of `new` (Scope, Interfaces: The scaffold, Sources); G1.3 reports RS302 for such a feature, and the venue asks no item there; unit `s7-plain-request` takes SC1.2 and SC4.1 and ships kit 0.22.1 (Units, Order); the usage pages for messages 8 and 9 (Scope); consult cases 2 and 4; constraint 10's count; one risk; five answers under Decisions, one naming the kept readings left for Next 26 (ADR 0041, rule 1); typed by Claude on the user's word |
-| 2026-11-12 | user | r13: Measured: the checks before signing, on the solution half's amendment: 14 findings (CL014 14), each a copied term ratified since r2 and none in the amended text; Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
+| 2026-11-12 | user | r13: Measured: the checks before signing, on the solution half's amendment: 14 findings (CL014 14), each a copied term ratified since r2 and none in the amended text; Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN; kept readings since r9 (ADR 0041, rule 1): 39, 1 taken and 38 left, each named under Decisions |
+| 2026-11-12 | user | r14: Signed: solution half. The engineer seat signs r12 |
 
 # g1-requirements-spec - Failure points found before development starts
 
