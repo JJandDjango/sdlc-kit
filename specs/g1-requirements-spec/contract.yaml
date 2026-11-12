@@ -13,11 +13,13 @@ intent: >-
   linter shows each boundary schema in the scope of a feature clean under
   its pin. G1.2 reads done when each hard core in that scope has a model
   that its checker passes. G1.3 reads done when a human records a review
-  of its 11 items with a signature. Intake names G1 as the next step where
-  G1 is an active gate for the feature. No task can be recorded as
-  `doing`, and no task, unit or contract as done, before G1 passes for its
-  feature. The tree shows each condition of G1 with its status and each
-  diagnostic. The kit version reads `0.20.0`.
+  of its 11 items with a signature. Where G1 is an active gate, intake
+  takes a feature in only from a feature document, and G1.3 names a
+  missing feature document. Intake names G1 as the next step where G1 is
+  an active gate for the feature. No task can be recorded as `doing`, and
+  no task, unit or contract as done, before G1 passes for its feature. The
+  tree shows each condition of G1 with its status and each diagnostic. The
+  kit version reads `0.22.1`.
 
 scope:
   - taskcontract/g1.py
@@ -29,6 +31,7 @@ scope:
   - taskcontract/tree.py
   - taskcontract/tree_view.py
   - taskcontract/progress.py
+  - taskcontract/scaffold.py
   - skills/sdlc/flows/g1.md
   - skills/sdlc/SKILL.md
   - skills/sdlc/flows/intake.md
@@ -108,12 +111,6 @@ decomposition:
         signature on the review. Verify the signature names each revision
         that the contract derives from, one for each doc of a pair (SC1.1)
       - >-
-        verify each item that a review records as `unchecked` shows as a
-        diagnostic under G1.3. Verify the diagnostic names the item and
-        the section of the feature document that the item is about. Verify
-        G1.3 reads `failed` until the review of a later revision passes
-        (SC1.2)
-      - >-
         verify the interview still covers ready checks 1 to 15, and intake
         still covers them, as today. Verify the review covers none of them
         again (SC1.3)
@@ -146,12 +143,6 @@ decomposition:
       done before its feature's G1 passes.
     acceptance_sketch:
       - >-
-        verify the report of intake names G1 as the next step where G1 is
-        an active gate for the feature. Verify that line stands after the
-        path of the contract, its state, its seats and its scope line, as
-        today. Verify the report closes as today where G1 is no active
-        gate for the feature (SC4.1)
-      - >-
         verify no task can be recorded as `doing` while G1 is an active
         gate for its feature and G1 does not yet pass. Verify no task,
         unit or contract can be recorded as done in that state. Verify the
@@ -170,6 +161,31 @@ decomposition:
         `ready-green`, and `blocked` when `draft-green` with `TC003`.
         Verify the verdict reads `to do` when `draft-green` otherwise, and
         `failed` when `draft-red` (SC4.3)
+  - unit: s7-plain-request
+    id: s7-plain-request
+    depends_on: [s6-release]
+    confirmed_by: [user]
+    done_means: >-
+      `new` refuses a feature with no feature document where G1 is an active
+      gate, and G1.3 names the missing feature document. Kit 0.22.1 ships
+      the fix.
+    acceptance_sketch:
+      - >-
+        verify each item that a review records as `unchecked` shows as a
+        diagnostic under G1.3. Verify the diagnostic names the item and
+        the section of the feature document that the item is about. Verify
+        a feature with no feature document makes G1.3 read `failed` with
+        its error. Verify G1.3 reads `failed` until the review of a later
+        revision passes (SC1.2)
+      - >-
+        verify the report of intake names G1 as the next step where G1 is
+        an active gate for the feature. Verify that line stands after the
+        path of the contract, its state, its seats and its scope line, as
+        today. Verify the report closes as today where G1 is no active
+        gate for the feature. Verify `new` rejects a feature with no
+        feature document where G1 is an active gate, prints its error and
+        writes no contract. Verify `new` writes the contract as today where
+        G1 is no active gate, or where a feature document stands (SC4.1)
 
 dependencies: []
 
