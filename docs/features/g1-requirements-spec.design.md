@@ -11,7 +11,8 @@
 | 2026-10-17 | user | r9: Amended by hand in kit session 101, after the signature and intake: G1.1's record holds a `runs` list, one run for each `g1.schemas` entry with a schema in scope (Interfaces: the record file and its edges); a tool not installed is recorded for its own run; a contract whose scope cannot be read or holds no entry reads G1.1 `to do` and `lint` refuses it (Interfaces: the edges and How a condition reads); three answers under Decisions; typed by Claude on the user's word |
 | 2026-10-17 | user | r10: Signed: solution half. The engineer seat signs r9 |
 | 2026-10-17 | intake | r11: Ready: contract `g1-requirements-spec` validates ready-green, derived from r9, against requirements r6; the engineer seat (user) signed the solution half at r9 (r10) |
-| 2026-11-12 | user | r12: Amended by hand in kit session 147, against requirements r10, after the engine's finding `g1-unreachable-from-a-plain-request`: `new` refuses a feature G1 gates that has no feature document, and intake's I3 reports any refusal of `new` (Scope, Interfaces: The scaffold, Sources); G1.3 reports RS302 for such a feature, and the venue asks no item there; unit `s7-plain-request` takes SC1.2 and SC4.1 and ships kit 0.22.1 (Units, Order); constraint 10's count; one risk; four answers under Decisions, one naming the kept readings left for Next 26 (ADR 0041, rule 1); typed by Claude on the user's word |
+| 2026-11-12 | user | r12: Amended by hand in kit session 147, against requirements r10, after the engine's finding `g1-unreachable-from-a-plain-request`: `new` refuses a feature G1 gates that has no feature document, and intake's I3 reports any refusal of `new` (Scope, Interfaces: The scaffold, Sources); G1.3 reports RS302 for such a feature, and the venue asks no item there; unit `s7-plain-request` takes SC1.2 and SC4.1 and ships kit 0.22.1 (Units, Order); the usage pages for messages 8 and 9 (Scope); consult cases 2 and 4; constraint 10's count; one risk; five answers under Decisions, one naming the kept readings left for Next 26 (ADR 0041, rule 1); typed by Claude on the user's word |
+| 2026-11-12 | user | r13: Measured: the checks before signing, on the solution half's amendment: 14 findings (CL014 14), each a copied term ratified since r2 and none in the amended text; Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
 
 # g1-requirements-spec - Failure points found before development starts
 
@@ -50,6 +51,7 @@ The release and the pages:
 - `pyproject.toml`: the version.
 - `tests/`: each unit's tests, and the retirements Units names.
 - `USAGE.md`, `CHANGELOG.md`, `MAP.md` and `SDLC.md`.
+- `docs/usage/intake.md` and `docs/usage/g1.md`: messages 8 and 9 (`s7-plain-request`).
 - `docs/gates/G1-requirements-spec.md`, `docs/gates.md` and `docs/operators.md`.
 - `.github/workflows/sdlc.yml`: the install pin, moved at the self-pin after the tag.
 
@@ -384,8 +386,7 @@ way out. `g1-record review` keeps its refusal.
 | s4-tree | SC5.1, SC5.2, SC5.3 | The tree shows G1 as an active gate where a feature needs it, with each condition's status, diagnostics and review. | SC5.1: automated. SC5.2: automated. SC5.3: automated. | The sha256 pin on `tree.py`'s code (`tests/test_document_split_release.py:483-490`); the docstring's sentence order, pinned at line 487, stays. |
 | s5-start | SC4.2 | Intake's report names G1 as the next step, and no unit's task reads done before its feature's G1 passes. | SC4.1: automated, a text test on I9, and a manual receipt, a live intake run whose report ends on the G1 line. SC4.2: automated. | Two sentences that say no task is enforced, each reworded: `tasks.yaml`'s header comment and USAGE's "shown and never enforced". No test pins either. |
 | s6-release | SC4.3 | Kit 0.20.0 ships G1 with its documentation, and the kit's own tree shows G1 as an active gate with G0 unchanged. | SC4.3: automated, on a fixture and on the kit's own tree. Two manual receipts: the install from the tag reads 0.20.0, and Spectral lints the kit's four schemas under `.spectral.yaml`. | Section 9's banner test (`tests/test_document_split_release.py:530-545`), replaced. USAGE's drawing of this feature before intake (`USAGE.md:1640-1655`), redrawn on an invented feature. |
-
-| s7-plain-request | SC1.2, SC4.1 | Where G1 is active, `new` refuses a feature with no feature document, and G1.3 names that dead end with its way out; kit 0.22.1 ships the fix. | SC1.2: automated, the no-document case beside `s3-review`'s. SC4.1: automated, `new` on both paths into intake, a plain request and a pair, each taken on to `g1-record review`; and a manual receipt, a live intake run on a plain request with G1 active, taken to the `/sdlc g1` step (ADR 0041, rule 3). | Any test that scaffolds through `new` where G1 is active with no feature document, found by the test-retirer. |
+| s7-plain-request | SC1.2, SC4.1 | `new` refuses a feature with no feature document where G1 is an active gate, and G1.3 names the missing feature document. Kit 0.22.1 ships the fix. | SC1.2: automated, the no-document case beside `s3-review`'s. SC4.1: automated, `new` on both paths into intake, a plain request and a pair, each taken on to `g1-record review`; and a manual receipt, a live intake run on a plain request with G1 active, taken to the `/sdlc g1` step (ADR 0041, rule 3). | Any test that scaffolds through `new` where G1 is active with no feature document, found by the test-retirer. |
 
 Every check stands in one unit; SC1.2 and SC4.1 moved to `s7-plain-request` at r12, and `s3-review`'s and `s5-start`'s tests for them stand. `s6-release` is the release unit of 0.20.0, and `s7-plain-request` ships 0.22.1.
 
@@ -434,9 +435,9 @@ Spectral, and Java with `tla2tools.jar`, on the build machine.
 | Case | Answer | Who was asked | What was decided |
 | :-- | :-: | :-- | :-- |
 | 1. An ambiguity in the requirements | yes | the PO seat, user, on 2026-10-07 | Five points, which the PO seat's amendment carries before intake: the counts of features done and of ready checks stand at 18 and 15; messages 6 and 7 join the five; I9 names G1 only where G1 is active for the feature; the refusal covers `done` and a contract's close beside `start`; a review names both revisions of a pair. |
-| 2. More than one solution | yes | no second engineer; the engineer seat decided on options four read-only explorers laid out with their costs | The 13 shape calls of 2026-10-07, each recorded under Decisions and open questions. |
+| 2. More than one solution | yes | no second engineer; the engineer seat decided on options four read-only explorers laid out with their costs | The 13 shape calls of 2026-10-07, each recorded under Decisions and open questions. At r12 (2026-11-12), the refusal stands in `new` and not at I2, recorded there too. |
 | 3. A solution unconventional to the codebase | yes | no second engineer; the engineer seat decided on options four read-only explorers laid out with their costs | The refusal makes the task list enforced, and a gate is active by feature. ADR 0038, written at intake, amends ADR 0031 for both. |
-| 4. A change to a public contract: routes, a gateway definition, events, a schema | yes | no second engineer; the engineer seat decided on options four read-only explorers laid out with their costs | One new schema, two new commands and new config keys, each additive. No schema, command or message that stands today changes. |
+| 4. A change to a public contract: routes, a gateway definition, events, a schema | yes | no second engineer; the engineer seat decided on options four read-only explorers laid out with their costs | One new schema, two new commands and new config keys, each additive. No schema, command or message that stands today changes. At r12 (2026-11-12), `new` gains one refusal, message 8 with exit 1, for a feature G1 gates with no feature document, and G1.3 gains RS302; every other call reads as before. |
 
 ## Decisions and open questions
 
@@ -473,6 +474,7 @@ A shape call's number is its place among that session's 13.
 - Q: Why does G1.3 read `failed` and not `to do` with no document? A: `to do` reads as "not yet". The kit's own `glossary-alias-disjointness` read `to do` for 25 days with no way to `done` (ADR 0041, rule 4).
 - Q: Which kit ships the fix? A: 0.22.1, a patch, as 0.21.1 shipped the team's fixes; `s7-plain-request` carries its release files.
 - Q: Which kept readings does this row take (ADR 0041, rule 1)? A: Reading 3 of PR #112 alone. Left for Next 26's later rows, each with that reason: PR #112's readings 1, 2 and 4 to 12, PR #116's 1 to 15, and PR #119's 1 to 12.
+- Q: Do the checks before signing read green for the text row of 2026-11-12? A: No, and each finding is answered: the same 14 CL014 findings as the text row of 2026-10-17, one for each copied term, each ratified in kit session 86. `s7-plain-request`'s Done means reads zero, reworded from five findings before its row was measured.
 
 ## Traceability
 

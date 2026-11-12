@@ -10,6 +10,7 @@
 | 2026-10-08 | intake | r8: Ready: contract `g1-requirements-spec` validates ready-green, derived from r6; the PO seat (user) signed the request half at r6 (r7) |
 | 2026-10-17 | intake | r9: Ready: contract `g1-requirements-spec` validates ready-green, derived from r6; the PO seat (user) signed the request half at r6 (r7) |
 | 2026-11-12 | user | r10: Amended by hand in kit session 147, after the engine's finding `g1-unreachable-from-a-plain-request` (`NOTES_g1-plain-request-post-mortem_2026-11-12.md`): where G1 is active, intake takes a feature in only from a feature document (SC4, SC4.1, message 8, Existing behavior touched 5); a feature with no feature document shows message 9 under G1.3, which reads failed (SC1.2); the Gherkin scenarios of SC1.2 and SC4.1; three answers under Decisions; typed by Claude on the user's word |
+| 2026-11-12 | user | r11: Measured: the checks before signing, on the request half: 98 findings (CL006 72, CL008 12, CL014 14), each CL014 a term ratified in kit session 86; ready checks 1 to 8: 0 OPEN |
 
 # g1-requirements-spec - Failure points found before development starts
 
