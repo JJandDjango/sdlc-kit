@@ -9,7 +9,7 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
-## 0.22.1 - 2026-11-12
+## 0.22.1 - 2026-11-12 (tag `v0.22.1`)
 
 - **G1 starts from a plain request** (`g1-requirements-spec`, unit
   `s7-plain-request`). Where G1 is active for a feature, `new` refuses to
