@@ -366,8 +366,10 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     `NOTES_g1-plain-request-post-mortem_2026-11-12.md`). Unit
     `s7-plain-request` (session 149, kit 0.22.1, commit `5b5899e`) makes
     `new` refuse a feature G1 gates with no feature document, and G1.3
-    name the missing document with RS302. The engine's stuck contract is
-    the engine's to clear. The rest stand under Open questions: the readings of PRs #116 and #119
+    name the missing document with RS302; merged as PR #162 at
+    `268c88e`, tagged `v0.22.1` there, and the self-pin PR (session 150,
+    `session-150-self-pin`) moves the kit's own pins to that tag. The
+    engine's stuck contract is the engine's to clear. The rest stand under Open questions: the readings of PRs #116 and #119
     that cost something (an exempt feature refused in the tree's second
     build; I9 trusting a config that cannot be trusted), the
     hand-written files that stop the print or a command (sessions 94 and
@@ -378,7 +380,7 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     `docs/features/g1-requirements-spec.design.md`: the engineer seat
     rules each edge (fix it, or leave it and say so), signs the row, and
     a re-intake reopens G1.3 before the build. It starts with a
-    strikeable list of the edges, on `session-146-g1-edges`.
+    strikeable list of the edges, on a fresh branch off main.
 
 ## Next actions
 
