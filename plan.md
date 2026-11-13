@@ -17,8 +17,8 @@ Session 152 made Next 28 the top priority, ahead of Next 26's `s8-honest-reads`.
 
 1. Branch `session-153-agent-tools` off `session-150-g1-edges` at `8a1956b`; this plan committed and pushed.
 2. Measure a current start. Done: session 149's seven `s7` agents (session `491115f8`) started at 50,068 to 54,243 tokens and sent 13.3M tokens over 135 requests. They called Read, Grep, Glob, Edit, Write, Bash and StructuredOutput only; the retirer also called PowerShell twice, which Bash covers. The QA verifier's Two-Key run wrote and edited files (its mutants), so the verifiers need Edit and Write too.
-3. The probe: one workflow, two agents, the same short prompt and a schema asking for their tool names. One runs as the default workflow subagent, one with `agentType: 'sdlc:sdlc-verifier'`. Read: the type resolves, the tool list shrinks, StructuredOutput still works, and each start's size.
-4. Rule the path: a feature document, or a contract with no feature document. Claude recommends one with step 3's numbers.
+3. The probe: one workflow, two agents, the same short prompt and a schema asking for their tool names. One runs as the default workflow subagent, one with `agentType: 'sdlc:sdlc-verifier'`. Done (run `wf_682248ad-4b4`): the type resolved; its tools were Bash, Read, Glob, Grep and StructuredOutput against the default's 16 tools and 191 deferred names; its skill listing was empty against 58 skills; both still loaded the global `CLAUDE.md` and the memory index. Starts: 18,314 tokens typed against 49,831 default, 31.5K less (63%).
+4. Rule the path. Claude's call: amend the `execution-team` pair, since the five scripts are its surface: a design text row on `docs/features/execution-team.design.md` (one new agent definition with six tools and a short body, not the two G3 operator agents, whose prompts would reach the briefs), measured and signed, then re-intake adds one unit. The precedent is G1's edges (sessions 150 to 152). A new feature document would interview for a six-line change.
 5. Build: one agent definition allowing Read, Grep, Glob, Edit, Write and Bash, passed as `agentType` in the five calls. Its body carries whatever the default workflow subagent prompt gave that the briefs rely on.
 6. Measure after: a run's agent starts against step 2's.
 7. Close: Next 28 closed on the backlog, a row in `docs/session-metrics.md`, `plan.md` out, push, a draft PR with its readings at the top.
@@ -45,7 +45,7 @@ Steps 1, 2, 5 to 7: no approval stands before the PR review (`CONTRIBUTING.md`, 
 
 ## 8. This session's cost, with its basis
 
-Steps 1 to 4: about 0.15M main-session tokens, plus the probe's about 0.11M (two starts near 50K, each with a short reply). The build through `/sdlc execute`, if one contract unit: about 0.7M to 1.0M agent tokens at one round (rs4 ran 634K, rs1 to rs3 about 1.0M each, `docs/session-metrics.md`). The return, by step 2's numbers: 135 requests at 19K less each is about 2.6M of a unit's 13.3M tokens sent, about 19%.
+Steps 1 to 4: about 0.15M main-session tokens, plus the probe's about 0.11M (two starts near 50K, each with a short reply). The build through `/sdlc execute`, if one contract unit: about 0.7M to 1.0M agent tokens at one round (rs4 ran 634K, rs1 to rs3 about 1.0M each, `docs/session-metrics.md`). The return, by steps 2 and 3: 135 requests at about 30K less each (step 3's 31.5K, less Edit's and Write's definitions) is about 4.0M of a unit's 13.3M tokens sent, about 30%.
 
 ## 9. Not in this session
 
