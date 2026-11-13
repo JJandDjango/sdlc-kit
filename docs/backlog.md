@@ -385,8 +385,13 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     1 already left. Session 151 wrote design r16, which takes the kept
     readings ADR 0041 rule 1 owes, measured it (r17), and the user signed
     it (r18): 28 fixes in `s8` to `s10` (kit 0.22.2), 8 left, and 1
-    (`tree.py`'s docstrings) found closed by `s4-tree`. Next: re-intake
-    (`plan.md` step 7), then build `s8-honest-reads`.
+    (`tree.py`'s docstrings) found closed by `s4-tree`. Session 152's
+    re-intake found `s8` with four checks against the schema's three
+    sketch entries; design r19 joins `SC2.1+SC3.1` (the user signed r21),
+    and the contract took `s8` to `s10` ready-green (rows r14 and r22).
+    The checks before signing hold no check for a unit of more than three
+    checks with no `+` pair; r17 missed it. Next: build `s8-honest-reads`
+    (`plan.md` step 8).
 
 ## Next actions
 
