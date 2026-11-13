@@ -360,6 +360,19 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     exists; the `uv` line, run against the tag with `python -P`, installs
     `sdlc-taskcontract 0.22.0` and reads `specs/run-restart` ready-green;
     the suite passes (2984).
+28. Give the team's agents only the tools they use (the user, session 152:
+    highest priority, ahead of Next 26's `s8-honest-reads`). The five
+    workflow scripts call `agent()` with no agent type
+    (`workflows/developer.js:79`, `qa.js:112`, `qa-verifier.js:153`,
+    `dev-verifier.js:127`, `test-retirer.js:92`), so each agent takes the
+    session's whole tool set. An agent's start read 53,782 tokens on
+    2026-10-17, tool definitions about 24K of it (`Artifact` alone about
+    13K). One agent definition allowing Read, Grep, Glob, Edit, Write and
+    Bash, passed as the agent type in the five calls, takes about 19K off
+    each start. First: confirm a plugin's agent type holds inside a
+    workflow's `agent()`, and measure a current start (`s7`'s agents,
+    session 149); then the path, a feature document or a maintenance
+    contract.
 26. Close G1's open edges before any G2 work (the user, session 146).
     The first edge is closed: G1 was unreachable from a plain request
     (the engine's finding of 2026-11-12, an escape of `s5-start`;
