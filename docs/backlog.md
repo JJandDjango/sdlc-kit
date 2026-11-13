@@ -382,8 +382,11 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     a re-intake reopens G1.3 before the build. Session 150 listed 37
     edges on `session-150-g1-edges` (`plan.md`, section 6), and the user
     ruled all as called: 29 fixes in three units (`s8` to `s10`), 7 left,
-    1 already left. Next: the design text row, which also takes the kept
-    readings ADR 0041 rule 1 owes (`plan.md`, section 3).
+    1 already left. Session 151 wrote design r16, which takes the kept
+    readings ADR 0041 rule 1 owes, measured it (r17), and the user signed
+    it (r18): 28 fixes in `s8` to `s10` (kit 0.22.2), 8 left, and 1
+    (`tree.py`'s docstrings) found closed by `s4-tree`. Next: re-intake
+    (`plan.md` step 7), then build `s8-honest-reads`.
 
 ## Next actions
 
