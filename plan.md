@@ -15,10 +15,17 @@ Kit 0.22.1 is tagged at `268c88e` (PR #162) and the self-pin merged (PR #163, ma
 
 ## 3. The steps
 
+Where it stands at session 150's close (the 200K mark): steps 1 to 3 done; the next session opens on step 4 and needs no PR body read again. Its inputs:
+
+- **The rulings.** All 37 edges as called in section 6.
+- **The readings owed (ADR 0041 rule 1)**, each taken as built, since the user kept each at its review. Where one is an edge, the row takes it with the edge's ruling. PR #112: 1 (E1), 2 (E2), 9 (E3), and 4 to 8 and 10 to 12 as built (each item once; the seat equals an `intake-seat` value at the call; the last G1.3 record alone counts; an unreadable scope is refused; the flow holds the 11 items word for word; 14 lines with no source, pinned; `g1.py`'s own `Ready:` row reader, G1; an agent sat the seat only in throwaway live runs). PR #116 (s4-tree): 1 to 15 as built, except 12, which A1 overturns (the second build reads `g1.exempt`); 9 and 10 are C2's and B1's ground; 14 is B8; 15 is B5's half the tree already holds. PR #119 (s5-start): 1 to 4 and 8 to 12 as built; 5 is A1; 6 and 9 are F1; 7 is A2. PR #162: 1 to 6 are process notes (the row names them as taken, no text); 7 is H1.
+- **The checks.** Each new unit takes existing checks, and each built unit keeps at least one. Proposed: `s8-honest-reads` takes SC2.1 (from `s1-lint`), SC3.1 (`s2-model`), SC4.1 (`s7-plain-request`) and SC5.2 (`s4-tree`); `s9-one-line-refusals` takes SC5.1 (`s4-tree`) and SC3.3 (`s2-model`); `s10-words-and-folds` takes SC1.1 (`s3-review`). Two moves from section 6's grouping: F2 to `s8` (the same pattern walk as C2), H2 to `s9` (the print). A moved check's requirements text stays, so no PO row, except where step 5 finds an edge that changes a check's words.
+- **The design's layout** (`docs/features/g1-requirements-spec.design.md`, 531 lines): revision table at lines 1 to 17, the next row r16; Units `:381-393`; Order `:395-406`; Risks `:408-431`; Consult cases `:433-442` (case 4 takes C1's exit 2, D1's record entry and the new refusals); Decisions `:444-479`. Interfaces `:84-341` holds each command's edges; read it by section. The contract's units and acceptance sketches: `specs/g1-requirements-spec/contract.yaml:63-188`.
+
 1. Branch `session-150-g1-edges` off main at `efbc8df`; this plan committed and pushed.
 2. The edge list (section 6), published as a page for review.
-3. Stop: the engineer seat rules each edge: keep Claude's call, flip it, or strike the edge.
-4. Draft the design text row: each kept fix with its rule, each edge left named as left, and the fixes grouped into units with their order (the proposal is in section 6).
+3. Stop: the engineer seat rules each edge: keep Claude's call, flip it, or strike the edge. Done: the user ruled "all as called" (session 150).
+4. Draft the design text row: each kept fix with its rule, each edge left named as left, and the fixes grouped into units with their order (the proposal is in section 6). ADR 0041 rule 1 also binds this row: it takes every reading kept at a PR review since r9 that r12 left for Next 26 (PR #112's readings 1, 2 and 4 to 12, PR #116's 1 to 15, PR #119's 1 to 12) and PR #162's 1 to 7, or names each one it leaves out and why. The user kept each at its review, so each is taken as built. The new units take existing checks, as `s7` did at r12: G1 holds five success criteria, the interview's limit, so a new check would make a second feature.
 5. The checks before signing, recorded as a `Measured:` row: `lang-check`, the design's own checks, each edge's source re-read at its line.
 6. Stop: the engineer seat signs the row. An edge that changes what the PO seat signed gets a requirements row too.
 7. Re-intake: `/sdlc intake docs/features/g1-requirements-spec.md` adds the units and writes the `Ready:` rows.

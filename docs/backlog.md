@@ -379,8 +379,11 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     actions' opener. Each waits for a text row of
     `docs/features/g1-requirements-spec.design.md`: the engineer seat
     rules each edge (fix it, or leave it and say so), signs the row, and
-    a re-intake reopens G1.3 before the build. It starts with a
-    strikeable list of the edges, on a fresh branch off main.
+    a re-intake reopens G1.3 before the build. Session 150 listed 37
+    edges on `session-150-g1-edges` (`plan.md`, section 6), and the user
+    ruled all as called: 29 fixes in three units (`s8` to `s10`), 7 left,
+    1 already left. Next: the design text row, which also takes the kept
+    readings ADR 0041 rule 1 owes (`plan.md`, section 3).
 
 ## Next actions
 
