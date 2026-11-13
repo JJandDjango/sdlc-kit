@@ -749,14 +749,20 @@ def test_sc1_1_a_feature_with_no_feature_document_cannot_be_reviewed(repo, capsy
     """The design document alone is no feature document."""
     assert passing(capsys)[0] == 0
     is_green(repo, capsys)
+    no_document = (f"{ID}: RS302 G1.3: no feature document at {REQUIREMENTS}; "
+                   f"write it and run intake again, or add {ID} to g1.exempt")
     repo.remove(REQUIREMENTS)
     refused(repo, capsys, "--by", "Ann Lee", "--seat", "po", "--checked", ALL,
             names=(REQUIREMENTS,))
-    reads(repo, capsys, "to do")
+    code, out, err = check(repo, capsys)
+    assert out.splitlines() == [no_document, summary("failed")]
+    assert (code, err) == (1, "")
     repo.remove(DESIGN)
     refused(repo, capsys, "--by", "Ann Lee", "--seat", "po", "--checked", ALL,
             names=(REQUIREMENTS,))
-    reads(repo, capsys, "to do")
+    code, out, err = check(repo, capsys)
+    assert out.splitlines() == [no_document, summary("failed")]
+    assert (code, err) == (1, "")
 
 
 @pytest.mark.parametrize("doc", [REQUIREMENTS, DESIGN])

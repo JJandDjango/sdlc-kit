@@ -495,6 +495,9 @@ def test_sc2_1_with_the_last_gate_active_no_inactive_gate_shows(tmp_path, capsys
 def test_sc2_1_every_gate_opens_into_its_conditions_in_the_kit_order(tmp_path, capsys):
     pages = _pages()
     root = _repo(tmp_path, gates=[gate for gate, _ in pages])  # every gate active
+    # G1.3 fails for a feature with no requirements document, so `ready` has one
+    (root / "docs" / "features").mkdir(parents=True)
+    (root / "docs" / "features" / "ready.md").write_text("# ready\n", encoding="utf-8")
     rows = _tree(root, capsys)
     total = 0
     for gate, page in pages:

@@ -89,6 +89,7 @@ revisions than the documents' `Ready:` rows name now. It reports:
   RS202  the record found the checker not installed
   RS203  the model of a hard core in scope is recorded as not passing
   RS301  the last review leaves an item unchecked
+  RS302  the feature has no requirements document
 
 A condition reads `failed` when one of its rules reports, else `done` when
 everything it needs is present and current, else `to do`. Exit 0 when the
@@ -150,6 +151,8 @@ PASSING = "G1.2: the model of {component} passes {tool}"
 
 UNCHECKED = "G1.3: item {n} {item} is unchecked in {section}"
 ALL_CHECKED = "G1.3: the review checks all {count} items"
+NO_DOCUMENT = ("G1.3: no feature document at docs/features/{feature}.md; "
+               "write it and run intake again, or add {feature} to g1.exempt")
 
 # A feature document's revision table, read as `tree.drift` reads it: a
 # pipe after a backslash never splits a cell; a counted row's last cell
@@ -679,8 +682,11 @@ def read_review(root: Path, feature_id: str) -> tuple[str, list[Finding]]:
     """G1.3's status and its findings, by item number.
 
     Only the last G1.3 record counts, with no falling back to an earlier
-    one. `to do` when there is none or it is not well formed. A
-    well-formed record that leaves an item unchecked reports RS301 for
+    one. The documents are read first: where the requirements document
+    is no file, the status is `failed` with the one RS302 finding and
+    nothing else, whatever the record holds. Else `to do` when there is
+    no record or it is not well formed. A well-formed record that leaves
+    an item unchecked reports RS301 for
     each, whatever the documents say now. One that checks every item
     reads `done` only when its `requirements` and its `design` equal, as
     text, the revisions the documents' `Ready:` rows name now, the
@@ -688,6 +694,9 @@ def read_review(root: Path, feature_id: str) -> tuple[str, list[Finding]]:
     document; a document that names no revision reads `to do`. The seat
     is held against the roster at the call alone.
     """
+    if not (root / FEATURES / f"{feature_id}.md").is_file():
+        return FAILED, [Finding(feature_id, REVIEW, "RS302",
+                                NO_DOCUMENT.format(feature=feature_id))]
     names = items()
     record = last_record(root, feature_id, REVIEW)
     unchecked = _unchecked(record, names) if record is not None else None

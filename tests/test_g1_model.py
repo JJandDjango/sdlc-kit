@@ -260,6 +260,7 @@ class Repo:
         self.monkeypatch = monkeypatch
         write_seat_roster(self.root)
         self.contract(ID, "api/", "src/")
+        self.write(f"docs/features/{ID}.md", f"# {ID}\n")  # G1.3 fails with no document
         self.config()
         self.components(LEDGER, API)
         self.core(LEDGER)

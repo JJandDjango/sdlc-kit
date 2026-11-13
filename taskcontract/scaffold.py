@@ -10,6 +10,10 @@ default `[]` would declare "no glossary terms" on the author's behalf and
 so restore silence by default, the alternative that ADR rejects. The field
 stays the author's to write, and TC017 names it at ready until they do.
 The draft verdict is unchanged: TC007 only.
+
+Where G1 is an active gate for the id and `docs/features/<id>.md` is no
+file, `new` writes nothing and refuses: a contract with no requirements
+document behind it cannot pass G1.
 """
 
 from __future__ import annotations
@@ -17,6 +21,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from . import g1
 from .checker import load_schema
 
 TEMPLATE = """\
@@ -71,6 +76,11 @@ def scaffold(task_id: str, root: Path | str = ".", schema_doc: dict | None = Non
     path = Path(root) / "specs" / task_id / "contract.yaml"
     if path.exists():
         raise FileExistsError(f"{path} already exists (contracts are never overwritten)")
+    if g1.is_active(g1.read_config(Path(root)), task_id) and not (
+            Path(root) / g1.FEATURES / f"{task_id}.md").is_file():
+        raise ValueError(
+            f"no feature document for {task_id}, and G1 is active for it; "
+            f"write docs/features/{task_id}.md, or add {task_id} to g1.exempt")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(TEMPLATE.format(task_id=task_id, path=path.as_posix()), encoding="utf-8")
     return path

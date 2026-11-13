@@ -360,10 +360,29 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     exists; the `uv` line, run against the tag with `python -P`, installs
     `sdlc-taskcontract 0.22.0` and reads `specs/run-restart` ready-green;
     the suite passes (2984).
+26. Close G1's open edges before any G2 work (the user, session 146).
+    The first edge is closed: G1 was unreachable from a plain request
+    (the engine's finding of 2026-11-12, an escape of `s5-start`;
+    `NOTES_g1-plain-request-post-mortem_2026-11-12.md`). Unit
+    `s7-plain-request` (session 149, kit 0.22.1, commit `5b5899e`) makes
+    `new` refuse a feature G1 gates with no feature document, and G1.3
+    name the missing document with RS302. The engine's stuck contract is
+    the engine's to clear. The rest stand under Open questions: the readings of PRs #116 and #119
+    that cost something (an exempt feature refused in the tree's second
+    build; I9 trusting a config that cannot be trusted), the
+    hand-written files that stop the print or a command (sessions 94 and
+    95), G1.3's seven unnamed cases, G1.2's (model files no record binds,
+    P with no live run, a `tlc.cmd` at the root), G1.1's four, and the
+    three smaller ones; with them the `s4-tree` folds left in Next
+    actions' opener. Each waits for a text row of
+    `docs/features/g1-requirements-spec.design.md`: the engineer seat
+    rules each edge (fix it, or leave it and say so), signs the row, and
+    a re-intake reopens G1.3 before the build. It starts with a
+    strikeable list of the edges, on `session-146-g1-edges`.
 
 ## Next actions
 
-Opener: no Next item is open; the user names the next. The
+Opener: Next 26, G1's open edges, is open. The
 engine's M0 passed G1 and its unit 1 ran G2.5 by hand (`d2dafba`),
 so the user's 2026-10-20 hold on G2's venue and G1's open edges is
 lifted. The readings of PRs #116 and #119 that cost something (Open questions, G1)
@@ -441,7 +460,8 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
    without `evidence` hiding a seat; `tests/conftest.py`'s row pattern
    splits a plain name at its first ` [`).
 5. Deferred, carried: `glossary-alias-disjointness` (parked by the user,
-   2026-09-26); `derived-language` (prerequisite 5); ADR 0029's appendix
+   2026-09-26; it needs a pair before it unparks, and reads G1.3 `failed`
+   with RS302 until then, requirements r10); `derived-language` (prerequisite 5); ADR 0029's appendix
    copy and Gherkin for project-tree; flag the Claude pane itself; the
    hook's key action and its four known edges, in its README;
    `.sdlc/config.yaml` still lists `plan.workflow.json` as a free path;
@@ -693,7 +713,8 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
   with nothing linted.
 - G1.3 (session 92; PR #112's body names each). The user kept all 12
   readings at the review (session 93), so a feature with no feature
-  document cannot pass G1. For the design's next text row: the six
+  document cannot pass G1; since `s5-start` it can start no task, and
+  that case is Next 26's first edge (session 147). For the design's next text row: the six
   cases it never named, and a seventh from the review, what a person
   answers for an item that does not apply to the feature (an answer is
   checked or unchecked alone today, so such an item is answered

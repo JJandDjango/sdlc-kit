@@ -305,7 +305,12 @@ def test_sc1_1_a_gate_in_a_repo_with_no_contract_reads_to_do(tmp_path, capsys):
 
 
 def test_sc1_1_every_active_gate_counts_its_verdicts(tmp_path, capsys):
-    rows = _tree(_repo(tmp_path, ["drafted", "ready"], gates=("G0", "G1")), capsys)
+    root = _repo(tmp_path, ["drafted", "ready"], gates=("G0", "G1"))
+    # G1.3 fails for a feature with no requirements document, so each has one
+    (root / "docs" / "features").mkdir(parents=True)
+    for cid in ("drafted", "ready"):
+        (root / "docs" / "features" / f"{cid}.md").write_text(f"# {cid}\n", encoding="utf-8")
+    rows = _tree(root, capsys)
     assert _reads(rows, "gates/G0") == ("doing", ["drafted holds G0 at to do"])
     # G1's verdicts, active now, read `to do`: the kit computes none yet.
     assert _reads(rows, "gates/G1") == (

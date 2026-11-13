@@ -738,7 +738,9 @@ def test_done_means_g1_check_reads_the_kits_two_declarations_for_a_feature_each_
     # Exit 0 or 1 is a reading of the declarations; exit 2 says one is absent or unreadable.
     # G1.3 changes once the feature's review is recorded, so its word is not pinned.
     assert done.returncode in (0, 1) and done.stderr == "", (done.returncode, done.stderr)
-    first = done.stdout.splitlines()[0]
+    # With no feature document G1.3 reports RS302 on a line before the summary, so the
+    # summary is the last line.
+    first = done.stdout.splitlines()[-1]
     assert first == f"g1-green: {NOT_EXEMPT}" or first.startswith(f"{NOT_EXEMPT}: G1.1 done, G1.2 done"), first
     for feature in ("g1-requirements-spec", "tree-view"):
         done = _cli("g1-check", feature)
