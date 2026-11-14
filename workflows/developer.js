@@ -16,9 +16,10 @@ if (!a.model || !a.effort) {
 }
 
 // A required argument is absent when it is null or empty; test.command is a
-// list, and an empty one declares nothing.
+// list, and an empty one declares nothing. The agent type, a.agentType, is
+// one more: the flow names it, no workflow does.
 const read = name => name.split('.').reduce((o, k) => (o == null ? o : o[k]), a)
-const absent = ['unit', 'contract', 'repo', 'branch', 'testFile', 'scratchRoot', 'files', 'sources', 'interface', 'test.command']
+const absent = ['unit', 'contract', 'repo', 'branch', 'testFile', 'scratchRoot', 'files', 'sources', 'interface', 'test.command', 'agentType']
   .filter(n => { const v = read(n); return v == null || v === '' || (n === 'test.command' && !(Array.isArray(v) && v.length)) })
 if (absent.length) {
   log(`${a.unit}: missing required argument(s): ${absent.join(', ')}`)
@@ -76,7 +77,7 @@ ${retry}${answer}
 Done means: ${whole} passes whole. Run it from the repository root, then return the structured result.`
 
 phase('Green')
-const dev = await agent(prompt, { label: `green:${a.unit}`, phase: 'Green', schema: DEV_SCHEMA, model: a.model, effort: a.effort })
+const dev = await agent(prompt, { label: `green:${a.unit}`, phase: 'Green', schema: DEV_SCHEMA, model: a.model, effort: a.effort, agentType: a.agentType })
 if (!dev) {
   log(`${a.unit}: the developer returned nothing`)
   return { unit: a.unit, dev: null, error: 'the developer returned nothing', questions: [] }

@@ -18,7 +18,8 @@ if (!a.model || !a.effort) {
 // A required argument is absent when it is null or empty; test.command is a
 // list, and an empty one declares nothing.
 const read = name => name.split('.').reduce((o, k) => (o == null ? o : o[k]), a)
-const absent = ['unit', 'contract', 'repo', 'scratch', 'test.command']
+// The agent type, a.agentType, is one more: the flow names it, no workflow does.
+const absent = ['unit', 'contract', 'repo', 'scratch', 'test.command', 'agentType']
   .filter(n => { const v = read(n); return v == null || v === '' || (n === 'test.command' && !(Array.isArray(v) && v.length)) })
 if (absent.length) {
   log(`${a.unit}: missing required argument(s): ${absent.join(', ')}`)
@@ -89,7 +90,7 @@ ${list(a.context || [])}
 Return the structured result.`
 
 phase('Retire')
-const result = await agent(prompt, { label: `retire:${a.unit}`, phase: 'Retire', schema: RETIRE_SCHEMA, model: a.model, effort: a.effort })
+const result = await agent(prompt, { label: `retire:${a.unit}`, phase: 'Retire', schema: RETIRE_SCHEMA, model: a.model, effort: a.effort, agentType: a.agentType })
 if (!result) {
   log(`${a.unit}: the retirer returned nothing`)
   return { unit: a.unit, retire: null, error: 'the retirer returned nothing' }

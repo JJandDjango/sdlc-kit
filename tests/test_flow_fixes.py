@@ -120,8 +120,9 @@ def sentence_around(text: str, index: int) -> str:
 
 
 def member_starts(step: str) -> list[tuple[str, str]]:
-    """The members a step starts, in order: (plugin-name, text up to the next one)."""
-    found = list(re.finditer(r"\{plugin\}:([a-z][a-z-]*)", step))
+    """The members a step starts, in order: (plugin-name, text up to the next one).
+    The agent type's own name, which a start's args carry (e7), is no member."""
+    found = list(re.finditer(r"\{plugin\}:((?!sdlc-team)[a-z][a-z-]*)", step))
     return [(m[1], step[m.start():(found[i + 1].start() if i + 1 < len(found) else len(step))])
             for i, m in enumerate(found)]
 
@@ -251,8 +252,8 @@ run(args, agent, m => logs.push(String(m)), () => {})
   .catch(err => console.log(JSON.stringify({ thrown: String((err && err.stack) || err) })))
 """
 
-BASE = {"model": "m-from-args", "effort": "e-from-args", "unit": "u1", "contract": "contract-1",
-        "repo": "/r"}
+BASE = {"model": "m-from-args", "effort": "e-from-args", "agentType": "t-from-args", "unit": "u1",
+        "contract": "contract-1", "repo": "/r"}
 TEST_FILE = "tests/run_x.bat"
 VERIFIER = {**BASE, "scratch": "/s", "pluginRoot": "/p", "testFile": TEST_FILE}
 PROVE_RED_REPLY = {"command": "prove", "exit_code": 0, "output": "{}", "red_summary": "2 failed"}

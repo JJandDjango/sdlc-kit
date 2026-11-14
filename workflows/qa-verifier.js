@@ -28,7 +28,8 @@ const REQUIRED = {
   'prove-red': ['unit', 'contract', 'repo', 'scratch', 'testFile', 'pluginRoot'],
   'two-key': ['unit', 'contract', 'repo', 'scratch', 'testFile', 'pluginRoot', 'commit', 'contractPath', 'requestPath'],
 }
-const absent = REQUIRED[a.task].filter(n => a[n] == null || a[n] === '')
+// The agent type, a.agentType, is one more: the flow names it, no workflow does.
+const absent = [...REQUIRED[a.task], 'agentType'].filter(n => a[n] == null || a[n] === '')
 if (absent.length) {
   log(`${a.unit}: missing required argument(s): ${absent.join(', ')}`)
   return stop('INCOMPLETE', [`missing required argument(s): ${absent.join(', ')}`])
@@ -150,7 +151,7 @@ It prints one JSON line (the full output of each run is under ${a.scratch}/logs/
 const SCHEMAS = { 'approve-tests': APPROVE_SCHEMA, 'prove-red': PROVE_SCHEMA, 'two-key': MUTATE_SCHEMA }
 
 phase('Verify')
-const reply = await agent(PROMPTS[a.task](), { label: `${a.task}:${a.unit}`, phase: 'Verify', schema: SCHEMAS[a.task], model: a.model, effort: a.effort })
+const reply = await agent(PROMPTS[a.task](), { label: `${a.task}:${a.unit}`, phase: 'Verify', schema: SCHEMAS[a.task], model: a.model, effort: a.effort, agentType: a.agentType })
 if (!reply) {
   log(`${a.unit}: the QA verifier returned nothing`)
   return { ...stop('INCOMPLETE', ['the QA verifier returned nothing']), ...(a.task === 'two-key' ? { mutations: { caught: 0, total: 0 } } : {}) }

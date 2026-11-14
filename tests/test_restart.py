@@ -755,8 +755,8 @@ run(args, agent, m => logs.push(String(m)), () => {})
 TEST = {"command": ["run-all.bat"], "file": ["run-one.bat", "{file}"], "build": ["build.bat"]}
 WALL = {"functional": ["tests/run_*.bat"], "unit": ["tests/*.cpp"], "code": ["src/"],
         "interface": ["src/*.h"]}
-BASE = {"model": "m-from-args", "effort": "e-from-args", "unit": "u1", "contract": "contract-1",
-        "repo": "/r"}
+BASE = {"model": "m-from-args", "effort": "e-from-args", "agentType": "t-from-args", "unit": "u1",
+        "contract": "contract-1", "repo": "/r"}
 TEST_FILE = "tests/run_x.bat"
 MEMBER_DRAFT = {"test_file": TEST_FILE, "interface": "NOTE-TEXT",
                 "tests": [{"name": "t1", "proves": "SC1.1", "intent": "pins x"}],
@@ -878,7 +878,8 @@ def steps_of(text: str) -> dict[str, str]:
 
 
 def member_segments(step: str) -> list[tuple[str, str]]:
-    found = list(re.finditer(r"\{plugin\}:([a-z][a-z-]*)", step))
+    # The agent type's own name, which a start's args carry (e7), is no member.
+    found = list(re.finditer(r"\{plugin\}:((?!sdlc-team)[a-z][a-z-]*)", step))
     return [(m[1], step[m.start():(found[i + 1].start() if i + 1 < len(found) else len(step))])
             for i, m in enumerate(found)]
 
