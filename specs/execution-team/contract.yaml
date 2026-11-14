@@ -39,6 +39,7 @@ scope:
   - ARCHITECTURE.md
   - docs/conventions/prove-py.md
   - docs/conventions/receipts-py.md
+  - agents/sdlc-team.md
 
 non_goals:
   - No node replaces another node.
@@ -95,16 +96,8 @@ decomposition:
       consumer session at the execution row's settings.
     acceptance_sketch:
       - >-
-        verify that after a plugin install or update, a consumer session
-        starts each team member. Verify that no file is copied by hand.
-        Verify that `sdlc-spec` and `sdlc-qa` are registered and the plugin
-        ships neither (SC1.1)
-      - >-
         verify that git holds each file the team runs, and the plugin ships
         it. Verify that none stands only under `.claude/workflows/` (SC1.2)
-      - >-
-        verify that each team member runs at the agent model and effort of
-        the execution row (SC1.3)
   - unit: e5-rounds
     id: e5-rounds
     depends_on: [e4-team]
@@ -138,6 +131,24 @@ decomposition:
       - >-
         verify that one unit runs from write-tests to two-key and ends green
         in a batch-file fixture repository (SC2.2)
+  - unit: e7-agent-type
+    id: e7-agent-type
+    depends_on: [e6-batch-run]
+    confirmed_by: [user]
+    done_means: >-
+      Each team member starts as the plugin's agent `sdlc-team`, which holds
+      only Read, Grep, Glob, Edit, Write and Bash. Each member runs at the
+      execution row's settings. A workflow that names no agent starts no
+      agent.
+    acceptance_sketch:
+      - >-
+        verify that after a plugin install or update, a consumer session
+        starts each team member. Verify that no file is copied by hand.
+        Verify that `sdlc-spec` and `sdlc-qa` are registered and the plugin
+        ships neither (SC1.1)
+      - >-
+        verify that each team member runs at the agent model and effort of
+        the execution row (SC1.3)
 
 dependencies: []
 

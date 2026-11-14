@@ -22,6 +22,7 @@
 | 2026-11-14 | Johnathan Hyden | r20: Amended by hand in kit session 154, against requirements r3, on r18 before its signature, after the engineer seat's review of r18: a missing type stops the Developer, QA and the test retirer as an `error`, and the two verifiers return it as an `INCOMPLETE` verdict the rounds rule counts as a failed round, drawn (Interfaces 12); whether `agent()`'s `model` wins over the type's `model: inherit` joins e7's opening probe (Risks 12); typed by Claude on the user's word |
 | 2026-11-14 | Johnathan Hyden | r21: Measured: the checks before signing, on the solution half's amendments r18 and r20: 7 findings (CL014 7), each a copied term ratified at PR #142 and none in the amended text (e7's done means, read from a copy of the state file with e7 added, reads clean); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN (the verifiers' `INCOMPLETE` drawn; the type's `model: inherit` names no model, so the execution row stays the one source, and e7's opening probe reads it, Risks 12) |
 | 2026-11-14 | Johnathan Hyden | r22: Signed: solution half. The engineer seat signs r20 |
+| 2026-11-14 | intake | r23: Ready: contract `execution-team` validates ready-green, derived from r20, against requirements r3; the engineer seat (Johnathan Hyden) signed the solution half at r20 (r22) |
 
 # execution-team - Standard Development Workflow
 
