@@ -120,7 +120,11 @@ def start_args() -> list[tuple[str, str, str]]:
 
 def listed(path: str) -> bool:
     """Whether git lists the file at the plugin root: tracked, or new and not
-    ignored, which is how a file reads before the commit task adds it."""
+    ignored, which is how a file reads before the commit task adds it. A copy
+    with no `.git` at its root (prove.py's export) has no git to ask, so the
+    file's presence stands in there."""
+    if not (PLUGIN / ".git").exists():
+        return (PLUGIN / path).is_file()
     done = subprocess.run(["git", "-C", str(PLUGIN), "ls-files", "--cached", "--others",
                            "--exclude-standard", "--", path],
                           capture_output=True, encoding="utf-8", errors="replace",
