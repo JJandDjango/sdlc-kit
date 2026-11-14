@@ -698,6 +698,15 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     at an approve-tests stop). The QA verifier's two-key ran `prove.py`
     with `-n auto` added to fit the 600 s cap, and started with 12
     mutations before cutting to nine.
+22. Score seat prompts on behavior, not only form (the user, session 155,
+    after DSPy's "program, don't prompt", dspy.ai). PromptLang checks a
+    prompt's form; nothing checks that an edited seat prompt still reaches
+    the verdicts it reached before, so a prompt can drift unseen. The
+    untracked `RECEIPT_*` folders hold past runs whose verdicts are known: a
+    replay of a changed seat prompt against them, scored by verdict
+    agreement, would catch the drift before it ships. Later, on that score
+    alone: mine the verifiers' FAIL reasons for seat-prompt edits (DSPy's
+    GEPA). Not before e7.
 
 ## Open questions
 
