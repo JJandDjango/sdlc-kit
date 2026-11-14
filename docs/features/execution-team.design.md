@@ -19,6 +19,9 @@
 | 2026-10-25 | intake | r17: Ready: contract `execution-team` validates ready-green, derived from r15, against requirements r3; the engineer seat (Johnathan Hyden) signed the solution half at r15 (r16) |
 | 2026-11-13 | Johnathan Hyden | r18: Amended by hand in kit session 153, against requirements r3, for backlog Next 28: each team member starts as the plugin's agent type `sdlc-team`, which allows Read, Grep, Glob, Edit, Write and Bash, measured by a probe (Decisions 10); the type's approval through PL-PIPE.1 (Decisions 11); the 63 readings kept at PR reviews since r15 taken (ADR 0041, rule 1; Decisions 12); unit `e7-agent-type` takes SC1.1 and SC1.3 from e4 (Units, Order); Scope, Out of scope 5, Interfaces 12, Sources, three risks, consult cases 3 and 4, Notes 4; typed by Claude on the user's word |
 | 2026-11-13 | Johnathan Hyden | r19: Measured: the checks before signing, on the solution half's amendment: 7 findings (CL014 7), each a copied term ratified at PR #142 and none in the amended text (e7's done means, reworded once, reads clean); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN (e7 opens with a probe for the wrong-name and walled-call edges, as e3 did, Risks 9 and 10); kept readings since r15 (ADR 0041, rule 1): 63, 48 taken as built, 10 process notes with no design text and 5 closed by a later fix, each named under Decisions 12 |
+| 2026-11-14 | Johnathan Hyden | r20: Amended by hand in kit session 154, against requirements r3, on r18 before its signature, after the engineer seat's review of r18: a missing type stops the Developer, QA and the test retirer as an `error`, and the two verifiers return it as an `INCOMPLETE` verdict the rounds rule counts as a failed round, drawn (Interfaces 12); whether `agent()`'s `model` wins over the type's `model: inherit` joins e7's opening probe (Risks 12); typed by Claude on the user's word |
+| 2026-11-14 | Johnathan Hyden | r21: Measured: the checks before signing, on the solution half's amendments r18 and r20: 7 findings (CL014 7), each a copied term ratified at PR #142 and none in the amended text (e7's done means, read from a copy of the state file with e7 added, reads clean); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN (the verifiers' `INCOMPLETE` drawn; the type's `model: inherit` names no model, so the execution row stays the one source, and e7's opening probe reads it, Risks 12) |
+| 2026-11-14 | Johnathan Hyden | r22: Signed: solution half. The engineer seat signs r20 |
 
 # execution-team - Standard Development Workflow
 
@@ -175,10 +178,17 @@ model: inherit
 ---
 ```
 
-Its body says only what every brief needs: the brief is the whole task, and the reply goes through the schema's tool. It passes `python -m prompt_lang`. `/sdlc execute` passes `"agentType": "{plugin}:sdlc-team"` in each workflow's args, beside model and effort, and each `agent()` call passes it on. A workflow given no type starts no agent and returns its missing-argument error, which stops the run as any error does, with no PR:
+Its body says only what every brief needs: the brief is the whole task, and the reply goes through the schema's tool. It passes `python -m prompt_lang`. `/sdlc execute` passes `"agentType": "{plugin}:sdlc-team"` in each workflow's args, beside model and effort, and each `agent()` call passes it on. A workflow given no type starts no agent and logs its missing argument. The Developer, QA and the test retirer return it as an `error`, which stops the run as any error does, with no PR:
 
 ```
 e7-agent-type: missing required argument(s): agentType
+```
+
+The two verifiers return it as an `INCOMPLETE` verdict (`workflows/dev-verifier.js:69`, `workflows/qa-verifier.js:34`), which the rounds rule counts as a failed round (`skills/sdlc/flows/execute.md:25`), so the run stops at its third round, with no PR (r20):
+
+```
+e7-agent-type: missing required argument(s): agentType
+Task two-key: Dev verifier, round 1: INCOMPLETE (missing required argument(s): agentType)
 ```
 
 No endpoint table: the feature has no HTTP surface.
@@ -261,6 +271,7 @@ e1, e2, e3, e4, e5, e6, one at a time; each unit uses what the one before made:
 9. A type that does not resolve (r18): under `--plugin-dir` the type takes the folder's name (PR #146, reading b), and what `agent()` does with a wrong name is not measured. The flow passes `{plugin}:sdlc-team` as it names each workflow; e7 opens with a probe of a wrong name and a `--plugin-dir` load, before it builds anything else.
 10. The wall under a typed agent (r18): the hook fired for a default workflow agent (Risks 5) and tells the session's own calls by `agent_id` (PR #150, reading 1); a typed agent's call is not measured. e7's opening probe makes one walled call as the type.
 11. The global `CLAUDE.md` and the memory index still reach a typed agent (the probe's two agents both loaded them): the user's own files, outside the kit.
+12. The model a typed agent runs at (r20): the type reads `model: inherit`, and whether `agent()`'s `model` wins over it is not measured. If the type wins, each member runs at the session's model, not the execution row's, and SC1.3 fails with no error. e7's opening probe passes a model other than the session's and reads the model the agent ran at.
 
 ## Consult cases
 

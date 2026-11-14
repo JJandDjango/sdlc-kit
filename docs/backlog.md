@@ -372,7 +372,9 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     each start. Session 153 on `session-153-agent-tools`: a probe agent
     started at 18,314 tokens as `sdlc:sdlc-verifier` against 49,831 as
     the default; the path amends `execution-team` (design r18, measured
-    r19). Next: the engineer seat signs r18, re-intake adds
+    r19). Session 154: r20 fixes two points of r18 (the verifiers'
+    `INCOMPLETE` on a missing type; the model check joins e7's probe,
+    Risks 12), measured r21, signed r22. Next: re-intake adds
     `e7-agent-type`, then its build through `/sdlc execute`.
 26. Close G1's open edges before any G2 work (the user, session 146).
     The first edge is closed: G1 was unreachable from a plain request
