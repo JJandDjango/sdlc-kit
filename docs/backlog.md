@@ -360,7 +360,7 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     exists; the `uv` line, run against the tag with `python -P`, installs
     `sdlc-taskcontract 0.22.0` and reads `specs/run-restart` ready-green;
     the suite passes (2984).
-28. Give the team's agents only the tools they use (the user, session 152:
+28. [x] Give the team's agents only the tools they use (the user, session 152:
     highest priority, ahead of Next 26's `s8-honest-reads`). The five
     workflow scripts call `agent()` with no agent type
     (`workflows/developer.js:79`, `qa.js:112`, `qa-verifier.js:153`,
@@ -379,9 +379,14 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     re-signed). Session 155: the probe of Risks 9, 10 and 12 held
     (`RECEIPT_execution-team-e7_2026-11-14/probe.md`); QA's round 1
     stopped on three questions, and the user approved its 18-test list
-    with both rulings. Next: restart e7 with `/sdlc execute
-    execution-team e7-agent-type --answer`, the answer as `plan.md`
-    step 5 holds it.
+    with both rulings. Session 156: QA's rerun kept the draft unchanged,
+    so approve-tests went `--by user`; unit `2721e7e` (suite 3086), with
+    Ruling 1's hand amendments in five test files. Two-key stopped once:
+    `prove.py`'s export has no `.git`, and the user ruled `listed()`
+    amended by hand (`471622f`); both verifiers then passed round 1 (QA
+    verifier 11 of 11), ADR 0042. The after-measure waits for the first
+    unit built on a kit release carrying e7: this run used the installed
+    kit, whose members start untyped.
 26. Close G1's open edges before any G2 work (the user, session 146).
     The first edge is closed: G1 was unreachable from a plain request
     (the engine's finding of 2026-11-12, an escape of `s5-start`;
@@ -711,6 +716,15 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     agreement, would catch the drift before it ships. Later, on that score
     alone: mine the verifiers' FAIL reasons for seat-prompt edits (DSPy's
     GEPA). Not before e7.
+23. Give `prove.py`'s export a git (e7's two-key, session 156). The
+    export is a `git archive` with no `.git`, so a pin that asks git
+    fails the mutation pass's baseline and no mutation runs. e7's
+    `listed()` falls back to the file's presence there (`471622f`), so a
+    mutant that only untracks a file goes uncaught. And `prove.py`
+    overlays `{scratch}/draft/` on the export, so after a hand amendment
+    a stale kept draft shadows the committed test: e7's QA verifier
+    deleted it to pass its baseline. Clear or refresh the draft before
+    two-key.
 
 ## Open questions
 

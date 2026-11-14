@@ -292,7 +292,9 @@ session are the house rules in [CONTRIBUTING.md](../../CONTRIBUTING.md).
   `.claude/workflows/` keeps only this repository's session tools,
   launched by `scriptPath`. Keep each agent's reading narrow (the user
   stops an agent past about 400K tokens). `test-retirer.js` takes
-  `overlay` (the prototype's changed files) when no name goes. The release
+  `overlay` (the prototype's changed files) when no name goes, and a
+  retirer launched by hand passes `agentType` (`sdlc:sdlc-team`, ADR
+  0042), or it starts no agent. The release
   unit's Two-Key runs with `sweep: true`. Every Two-Key receipt must exit
   0. Session 64's Two-Key rounds: 278K, 242K, 254K and 243K; session
   68's f1: 226K; session 69's f2: 263K (drafter 221K, retirer 80K,
