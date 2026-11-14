@@ -17,6 +17,8 @@
 | 2026-10-25 | Johnathan Hyden | r15: The solution half finished: 12 sections written, 0 OPEN |
 | 2026-10-25 | Johnathan Hyden | r16: Signed: solution half. The engineer seat signs r15 |
 | 2026-10-25 | intake | r17: Ready: contract `execution-team` validates ready-green, derived from r15, against requirements r3; the engineer seat (Johnathan Hyden) signed the solution half at r15 (r16) |
+| 2026-11-13 | Johnathan Hyden | r18: Amended by hand in kit session 153, against requirements r3, for backlog Next 28: each team member starts as the plugin's agent type `sdlc-team`, which allows Read, Grep, Glob, Edit, Write and Bash, measured by a probe (Decisions 10); the type's approval through PL-PIPE.1 (Decisions 11); the 63 readings kept at PR reviews since r15 taken (ADR 0041, rule 1; Decisions 12); unit `e7-agent-type` takes SC1.1 and SC1.3 from e4 (Units, Order); Scope, Out of scope 5, Interfaces 12, Sources, three risks, consult cases 3 and 4, Notes 4; typed by Claude on the user's word |
+| 2026-11-13 | Johnathan Hyden | r19: Measured: the checks before signing, on the solution half's amendment: 7 findings (CL014 7), each a copied term ratified at PR #142 and none in the amended text (e7's done means, reworded once, reads clean); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN (e7 opens with a probe for the wrong-name and walled-call edges, as e3 did, Risks 9 and 10); kept readings since r15 (ADR 0041, rule 1): 63, 48 taken as built, 10 process notes with no design text and 5 closed by a later fix, each named under Decisions 12 |
 
 # execution-team - Standard Development Workflow
 
@@ -40,6 +42,8 @@
 10. `decisions/`: e4's ADR (Decisions 2).
 11. `ARCHITECTURE.md`: the folder map gains a `workflows/` row, and its `hooks/` row gains the wall.
 12. `docs/conventions/prove-py.md` and `docs/conventions/receipts-py.md`: both scripts move to `workflows/tools/` and run the declared test command.
+13. `agents/sdlc-team.md` (new, r18): the team's agent type; `docs/operators.md` gains its row, and `decisions/` e7's ADR.
+14. `workflows/*.js` and `skills/sdlc/flows/execute.md` (r18): each workflow takes `agentType` as a required argument and passes it to `agent()`; the flow passes `{plugin}:sdlc-team`.
 
 ### Out of scope
 
@@ -47,7 +51,7 @@
 2. The registrations of `sdlc-spec` and `sdlc-qa`: both stay registered and unshipped (`docs/operators.md:34-35`).
 3. `skills/sdlc/templates/profiles/`: no `cpp` profile is added.
 4. `.sdlc/workflow.md`: the execution row already reads `sonnet`, `high` and the five operators.
-5. `agents/sdlc-developer.md` and `agents/sdlc-verifier.md`: unchanged, `model: inherit` kept; the team runs through the workflows' own prompts.
+5. `agents/sdlc-developer.md` and `agents/sdlc-verifier.md`: unchanged, `model: inherit` kept; the team runs through the workflows' own prompts, each member started as `sdlc-team` (r18).
 6. `live-run-seats` and the other session tools in `.claude/workflows/`: they stay untracked and do not ship.
 
 ### Interfaces
@@ -160,6 +164,23 @@ Task green: Developer, round 1: done
 Task green stopped on a question from Developer: Which exit code does --frames 0 take?
 ```
 
+12. The team's agent type (r18). `agents/sdlc-team.md`, beside the two operators:
+
+```
+---
+name: sdlc-team
+description: The execution team's agent type. Each workflow under workflows/ starts its agent as this type, so a team member holds only the tools the team uses. Started by /sdlc execute, never by hand.
+tools: Read, Grep, Glob, Edit, Write, Bash
+model: inherit
+---
+```
+
+Its body says only what every brief needs: the brief is the whole task, and the reply goes through the schema's tool. It passes `python -m prompt_lang`. `/sdlc execute` passes `"agentType": "{plugin}:sdlc-team"` in each workflow's args, beside model and effort, and each `agent()` call passes it on. A workflow given no type starts no agent and returns its missing-argument error, which stops the run as any error does, with no PR:
+
+```
+e7-agent-type: missing required argument(s): agentType
+```
+
 No endpoint table: the feature has no HTTP surface.
 
 ### Sources
@@ -180,6 +201,8 @@ No endpoint table: the feature has no HTTP surface.
 | Whether a file the team runs ships | `git ls-files` (the plugin ships the tracked tree) | Git |
 | A failure's reasons | The verifier's result: its reasons, failed sketches, blocking defects or uncaught mutations | The result: the Orchestrator passes it whole to the next round |
 | An operator's question | The `questions` field of the task's workflow result | The result: a non-empty list stops the task |
+| The tools a team member holds | `agents/sdlc-team.md`, its `tools:` line | The definition: no brief grants a tool |
+| The agent type's name | `{plugin}:sdlc-team`, `{plugin}` as the flow reads it (`skills/sdlc/flows/execute.md:11-13`) | The flow: no workflow names the plugin |
 
 ### Constraints
 
@@ -203,9 +226,10 @@ No endpoint table: the feature has no HTTP surface.
 | e1-declaration | SC2.3 | A repository declares `test:` and `wall:`, the kit declares its own, and a task with no `test.command` prints SC2.3's message. | SC2.3: automated | none |
 | e2-scripts | SC2.1 | `prove.py` and `receipts.py` ship under `workflows/tools/` and run the declared test command, pytest only where it is declared, with no prototype. | SC2.1: automated, on a pytest fixture and a batch-file fixture | `prove.py`'s prototype (`setup`'s package copy, `prove_green`, `PACKAGE`) and the tests in `test_prove.py` that pin it |
 | e3-wall | SC3.1 + SC3.2 | `python -m taskcontract interface` prints signatures without bodies, and the hook refuses each tool call across the wall during a task. | SC3.1, SC3.2: automated, the hook fed tool calls | none |
-| e4-team | SC1.1, SC1.2, SC1.3 | The team ships in the plugin, and each team member starts in a consumer session at the execution row's settings. | SC1.1: automated, and a manual receipt (a consumer session starts each team member); SC1.2, SC1.3: automated | the untracked copies under `.claude/workflows/` (no test pins them) |
+| e4-team | SC1.2 | The team ships in the plugin, and each team member starts in a consumer session at the execution row's settings. | SC1.1: automated, and a manual receipt (a consumer session starts each team member); SC1.2, SC1.3: automated | the untracked copies under `.claude/workflows/` (no test pins them) |
 | e5-rounds | SC4.1, SC4.2 + SC4.3, SC5.1 + SC5.2 | A FAIL returns its reasons, three failures or a question stop the run, and a pass opens a draft PR. | SC4.1, SC4.2, SC4.3, SC5.1, SC5.2: automated (`task.py`'s rounds and messages; the flow's one PR command is `gh pr create --draft`) | none |
 | e6-batch-run | SC2.2 | In a batch-file fixture repository, one unit runs from write-tests to two-key and ends green, and kit 0.21.0 ships. | SC2.2: manual receipt (the run's lines and the fixture's green) | none |
+| e7-agent-type | SC1.1, SC1.3 | Each team member starts as the plugin's agent `sdlc-team`, which holds only Read, Grep, Glob, Edit, Write and Bash. Each member runs at the execution row's settings. A workflow that names no agent starts no agent. | SC1.1: automated (the definition ships tracked with its six tools; the flow passes `{plugin}:sdlc-team` to each workflow; each workflow refuses without it), and a manual receipt (a session with the plugin loaded starts each member as the type; one member's start measured against 49,831 tokens). SC1.3: automated (each `agent()` call passes model, effort and the type). | none |
 
 e6 is the release unit: it ships kit 0.21.0 through `pyproject.toml`, `skills/sdlc/init.py` (`KIT_VERSION`) and `.github/workflows/sdlc.yml`, since the engine pulls only a release. The usage page is written in e1 with every marker red; each unit turns its own markers green as it ships.
 
@@ -220,6 +244,7 @@ e1, e2, e3, e4, e5, e6, one at a time; each unit uses what the one before made:
 3. e3 before the team ships: no team member runs without its wall.
 4. e4, then e5: the team, then its rounds and its PR.
 5. e6 last: the live batch-file run needs all five.
+6. e7 after the release (r18): it changes the five workflows e4 shipped and the flow. It ships no release of its own; the kit's next release carries it.
 
 ## Risks and cost
 
@@ -233,6 +258,9 @@ e1, e2, e3, e4, e5, e6, one at a time; each unit uses what the one before made:
 6. A Bash call can read a walled file without naming it (a glob, a script). The hook matches walled paths and globs over walled folders; an indirect read can still pass.
 7. In the engine, each mutation rebuilds and runs the whole suite: 4 mutations cost 4 full builds, time not yet measured.
 8. The build's cost: six build sessions, one a unit; e6 adds a live run of the whole team.
+9. A type that does not resolve (r18): under `--plugin-dir` the type takes the folder's name (PR #146, reading b), and what `agent()` does with a wrong name is not measured. The flow passes `{plugin}:sdlc-team` as it names each workflow; e7 opens with a probe of a wrong name and a `--plugin-dir` load, before it builds anything else.
+10. The wall under a typed agent (r18): the hook fired for a default workflow agent (Risks 5) and tells the session's own calls by `agent_id` (PR #150, reading 1); a typed agent's call is not measured. e7's opening probe makes one walled call as the type.
+11. The global `CLAUDE.md` and the memory index still reach a typed agent (the probe's two agents both loaded them): the user's own files, outside the kit.
 
 ## Consult cases
 
@@ -242,8 +270,8 @@ e1, e2, e3, e4, e5, e6, one at a time; each unit uses what the one before made:
 | :-- | :-: | :-- | :-- |
 | 1. An ambiguity in the requirements | yes | Johnathan Hyden, the engineer seat (also the PO seat), at S3 | The requirements name no holder for approve-tests and approve-commit: the QA verifier holds approve-tests; `receipts.py`'s exit 0 holds approve-commit. |
 | 2. More than one solution | yes | Johnathan Hyden, the engineer seat, at S3 | The test command lives in `.sdlc/config.yaml`, not a `cpp` tooling profile (a non-goal); QA's proof uses mutations at two-key, not a prototype (SC3.2 forbids it); a hook holds the wall, not a prompt alone. |
-| 3. A solution unconventional to the codebase | yes | Johnathan Hyden, the engineer seat, at S1 and S3 | `workflows/` is a new plugin folder, launched by path, beside `agents/`, `skills/` and `hooks/`; the kit writes a runtime file under `.git/` (`.git/sdlc-task.json`) for the first time. |
-| 4. A change to a public contract: routes, a gateway definition, events, a schema | yes | Johnathan Hyden, the engineer seat, at S3 | A consumer's `.sdlc/config.yaml` gains `test:` and `wall:` (additive: a config with no `test:` is refused only when it starts a task); the plugin's `hooks.json` gains a PreToolUse hook (it refuses nothing while no task runs); the term `operator` gains the Orchestrator (waits for intake). |
+| 3. A solution unconventional to the codebase | yes | Johnathan Hyden, the engineer seat, at S1 and S3, and at r18 | `workflows/` is a new plugin folder, launched by path, beside `agents/`, `skills/` and `hooks/`; the kit writes a runtime file under `.git/` (`.git/sdlc-task.json`) for the first time. At r18: the kit's first agent definition that is a tool set, not an operator persona, `agents/sdlc-team.md` (Decisions 10). |
+| 4. A change to a public contract: routes, a gateway definition, events, a schema | yes | Johnathan Hyden, the engineer seat, at S3, and at r18 | A consumer's `.sdlc/config.yaml` gains `test:` and `wall:` (additive: a config with no `test:` is refused only when it starts a task); the plugin's `hooks.json` gains a PreToolUse hook (it refuses nothing while no task runs); the term `operator` gains the Orchestrator (waits for intake). At r18: the plugin gains the agent type `sdlc-team`, shown in a consumer session's agent list (additive). |
 
 ## Decisions and open questions
 
@@ -258,6 +286,9 @@ e1, e2, e3, e4, e5, e6, one at a time; each unit uses what the one before made:
 7. How does QA prove its tests can pass without reading a body? Decided: QA writes no prototype; the QA verifier's mutations at two-key prove the tests catch broken behavior.
 8. Does a workflow's agent fire the session's hooks? Decided: yes, measured 2026-10-25: a session hook refused a workflow agent's piped Bash call (Risks and cost 5). e3 opens with the same probe on the plugin's hook.
 9. Does the run record each task through `taskcontract progress`, as the kit's own builds do? Decided: yes, through `task.py` (Interfaces 10): `start` runs `progress start` and `end` runs `progress done`, so G1's refusal (ADR 0038) stops a run before its first task. Built in e5 with `task.py`'s other messages.
+10. Does each team member start as a shipped agent type? Decided at r18 (backlog Next 28): yes, one type, `sdlc-team`, allowing Read, Grep, Glob, Edit, Write and Bash. Measured 2026-11-13 (probe run `wf_682248ad-4b4`): a workflow agent started at 18,314 tokens as `sdlc:sdlc-verifier` against 49,831 as the default, with its allowlist's tools and the schema's tool only, and no skill listing. Session 149's seven `s7` agents called only those six tools and the schema's. One type, not one per role: each role used Edit or Write (the QA verifier writes its mutants). Not the operator definitions: their G3 prompts would reach the briefs. It amends ADR 0040's "the team runs through the workflows' own prompts" in part, so e7 records it in an ADR.
+11. Who approves the new class E definition (Constraint 6)? Decided at r18: the human principal, through PL-PIPE.1's full lane, since a prompt has no field-wise direction (`docs/gates/PL-PIPE-pipeline-integrity.md:76-80`). The engineer seat's signature on r18 is that approval until the approval ledger rides pilot activation.
+12. Which readings kept at PR reviews since r15 does r18 take (ADR 0041, rule 1)? Decided: all 63, in eight PRs, each as built since the user kept each at its review, except where named. PR #142: 3; 1, 4 and 5 are process notes with no design text; 2 is closed by e3's probe (PR #145). PR #143: 1 to 4. PR #144: 1 to 6. PR #145: 1 to 7. PR #146: (a) to (j) and session 128's first two; (b) and (c) are e7's ground: the type is named `{plugin}:sdlc-team`, and a member refuses to start without it; (k) and (l) are process notes; "Parked for e5" is closed by e5 (PR #147, reading 8). PR #147: 2 to 6; 1 and 7 are closed by kit 0.21.1 (PR #150, readings 2 and 4); 8 and 9 are process notes. PR #148: 2, 3, 4 and 6; 1 is closed by kit 0.21.1; 5 is a process note. PR #150: 1 to 9; 10 and 11 are process notes. In all: 48 as built, 10 process notes, 5 closed by a later fix.
 
 ## Traceability
 
@@ -273,6 +304,7 @@ e1, e2, e3, e4, e5, e6, one at a time; each unit uses what the one before made:
 - `docs/distribution.md`: the plugin's channels, which the new `workflows/` folder joins (Consult case 3)
 - `taskcontract/data/tasks.yaml`: the seven tasks a run reports
 - `hooks/hooks.json`: the kit's shipped hooks, which the wall's hook joins (ADR 0039)
+- `docs/backlog.md`, Next 28, and `docs/gates/PL-PIPE-pipeline-integrity.md` (PL-PIPE.1): r18's source and its approval channel
 
 ### Record
 
@@ -287,7 +319,7 @@ e1, e2, e3, e4, e5, e6, one at a time; each unit uses what the one before made:
 1. The engine splits signatures from bodies: `src/*.h` and `src/*.cpp`.
 2. The engine's functional tests are `tests\run_*.bat`; its unit tests build into `imsim_tests.exe`.
 3. `live-run-seats` serves the interview's receipts, not a build.
-4. Each team member is a workflow's own agent, not a shipped agent definition, so `sdlc-qa` stays unshipped (SC1.1).
+4. Each team member is a workflow's own agent, started as the `sdlc-team` type (r18): a tool set, not an operator persona, so `sdlc-qa` stays unshipped (SC1.1).
 5. After the release, the engine adds its own `test:` and `wall:` blocks in its own repository; the kit never writes them there.
 
 ## Appendix

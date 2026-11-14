@@ -369,10 +369,11 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     2026-10-17, tool definitions about 24K of it (`Artifact` alone about
     13K). One agent definition allowing Read, Grep, Glob, Edit, Write and
     Bash, passed as the agent type in the five calls, takes about 19K off
-    each start. First: confirm a plugin's agent type holds inside a
-    workflow's `agent()`, and measure a current start (`s7`'s agents,
-    session 149); then the path, a feature document or a maintenance
-    contract.
+    each start. Session 153 on `session-153-agent-tools`: a probe agent
+    started at 18,314 tokens as `sdlc:sdlc-verifier` against 49,831 as
+    the default; the path amends `execution-team` (design r18, measured
+    r19). Next: the engineer seat signs r18, re-intake adds
+    `e7-agent-type`, then its build through `/sdlc execute`.
 26. Close G1's open edges before any G2 work (the user, session 146).
     The first edge is closed: G1 was unreachable from a plain request
     (the engine's finding of 2026-11-12, an escape of `s5-start`;
