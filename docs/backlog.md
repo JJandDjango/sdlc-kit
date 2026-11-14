@@ -374,8 +374,10 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     the default; the path amends `execution-team` (design r18, measured
     r19). Session 154: r20 fixes two points of r18 (the verifiers'
     `INCOMPLETE` on a missing type; the model check joins e7's probe,
-    Risks 12), measured r21, signed r22. Next: re-intake adds
-    `e7-agent-type`, then its build through `/sdlc execute`.
+    Risks 12), measured r21, signed r22; re-intake added
+    `e7-agent-type` (Ready r7 and r23) and G1 passed again (G1.3
+    re-signed). Next: e7 through `/sdlc execute execution-team
+    e7-agent-type`, opening with the probe of Risks 9, 10 and 12.
 26. Close G1's open edges before any G2 work (the user, session 146).
     The first edge is closed: G1 was unreachable from a plain request
     (the engine's finding of 2026-11-12, an escape of `s5-start`;
