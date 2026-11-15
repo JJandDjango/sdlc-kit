@@ -19,7 +19,7 @@ intent: >-
   an active gate for the feature. No task can be recorded as `doing`, and
   no task, unit or contract as done, before G1 passes for its feature. The
   tree shows each condition of G1 with its status and each diagnostic. The
-  kit version reads `0.22.1`.
+  kit version reads `0.22.2`.
 
 scope:
   - taskcontract/g1.py
@@ -32,6 +32,7 @@ scope:
   - taskcontract/tree_view.py
   - taskcontract/progress.py
   - taskcontract/scaffold.py
+  - taskcontract/scope_check.py
   - skills/sdlc/flows/g1.md
   - skills/sdlc/SKILL.md
   - skills/sdlc/flows/intake.md
@@ -69,10 +70,6 @@ decomposition:
       when the pinned linter's record shows it clean.
     acceptance_sketch:
       - >-
-        verify the linter runs under its pin on each JSON Schema, OpenAPI
-        or `protobuf` file that the feature adds or changes. Verify a
-        warning makes G1.1 read `failed`, as an error does (SC2.1)
-      - >-
         verify a feature that adds or changes no boundary schema passes
         G1.1, and no linter runs (SC2.2)
       - >-
@@ -87,16 +84,8 @@ decomposition:
       record shows its model passes the checker.
     acceptance_sketch:
       - >-
-        verify each hard core in the component declaration record whose
-        paths are in the scope of the feature has a model. Verify TLC or P
-        passes that model under its pin (SC3.1)
-      - >-
         verify a feature whose scope holds no hard core passes G1.2, and
         no checker runs (SC3.2)
-      - >-
-        verify a hard core with no model makes G1.2 read `failed` with its
-        error. Verify a hard core whose checker the repo did not install
-        makes G1.2 read `failed` with its error (SC3.3)
   - unit: s3-review
     id: s3-review
     depends_on: [s2-model]
@@ -105,11 +94,6 @@ decomposition:
       A seat reads G1.3's 11 items at the venue, and G1.3 reads done only
       from a review with a signature.
     acceptance_sketch:
-      - >-
-        verify the review covers each of the 11 items of G1.3 against each
-        feature document of the feature. Verify a named human records a
-        signature on the review. Verify the signature names each revision
-        that the contract derives from, one for each doc of a pair (SC1.1)
       - >-
         verify the interview still covers ready checks 1 to 15, and intake
         still covers them, as today. Verify the review covers none of them
@@ -122,14 +106,6 @@ decomposition:
       The tree shows G1 as an active gate where a feature needs it, with
       each condition's status, diagnostics and review.
     acceptance_sketch:
-      - >-
-        verify a feature past G0 shows G1 as an active gate. Verify G1.1,
-        G1.2 and G1.3 each take their status from their own rules. Verify
-        a condition that is not done lists each diagnostic (SC5.1)
-      - >-
-        verify each feature already done, all 18, shows G1 `inactive`, as
-        today. Verify the tree still marks the next gate after each active
-        gate `inactive` (SC5.2)
       - >-
         verify the status of G1 is the roll-up of its three conditions.
         Verify a G1.3 review with a signature shows its seat and each
@@ -177,6 +153,21 @@ decomposition:
         a feature with no feature document makes G1.3 read `failed` with
         its error. Verify G1.3 reads `failed` until the review of a later
         revision passes (SC1.2)
+  - unit: s8-honest-reads
+    id: s8-honest-reads
+    depends_on: [s7-plain-request]
+    confirmed_by: [user]
+    done_means: >-
+      G1 reads done only for what a tool or a review checked. Only the
+      config and the contract's origin name where G1 is an active gate.
+    acceptance_sketch:
+      - >-
+        verify the linter runs under its pin on each JSON Schema, OpenAPI
+        or `protobuf` file that the feature adds or changes. Verify a
+        warning makes G1.1 read `failed`, as an error does. Verify each
+        hard core in the component declaration record whose paths are in
+        the scope of the feature has a model. Verify TLC or P passes that
+        model under its pin (SC2.1, SC3.1)
       - >-
         verify the report of intake names G1 as the next step where G1 is
         an active gate for the feature. Verify that line stands after the
@@ -186,6 +177,40 @@ decomposition:
         feature document where G1 is an active gate, prints its error and
         writes no contract. Verify `new` writes the contract as today where
         G1 is no active gate, or where a feature document stands (SC4.1)
+      - >-
+        verify each feature already done, all 18, shows G1 `inactive`, as
+        today. Verify the tree still marks the next gate after each active
+        gate `inactive` (SC5.2)
+  - unit: s9-one-line-refusals
+    id: s9-one-line-refusals
+    depends_on: [s8-honest-reads]
+    confirmed_by: [user]
+    done_means: >-
+      A file that cannot be read stops no command. `g1-check` and
+      `g1-record` each exit 2 with one line, and the tree goes on.
+    acceptance_sketch:
+      - >-
+        verify a hard core with no model makes G1.2 read `failed` with its
+        error. Verify a hard core whose checker the repo did not install
+        makes G1.2 read `failed` with its error (SC3.3)
+      - >-
+        verify a feature past G0 shows G1 as an active gate. Verify G1.1,
+        G1.2 and G1.3 each take their status from their own rules. Verify
+        a condition that is not done lists each diagnostic (SC5.1)
+  - unit: s10-words-and-folds
+    id: s10-words-and-folds
+    depends_on: [s9-one-line-refusals]
+    confirmed_by: [user]
+    done_means: >-
+      Each line that `g1-record` shows stands in the design word for word,
+      and one reader reads a `Ready:` row. Kit 0.22.2 ships the three
+      units.
+    acceptance_sketch:
+      - >-
+        verify the review covers each of the 11 items of G1.3 against each
+        feature document of the feature. Verify a named human records a
+        signature on the review. Verify the signature names each revision
+        that the contract derives from, one for each doc of a pair (SC1.1)
 
 dependencies: []
 

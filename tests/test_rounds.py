@@ -424,8 +424,8 @@ run(args, agent, m => logs.push(String(m)), () => {})
 TEST = {"command": ["run-all.bat"], "file": ["run-one.bat", "{file}"], "build": ["build.bat"]}
 WALL = {"functional": ["tests/run_*.bat"], "unit": ["tests/*.cpp"], "code": ["src/"],
         "interface": ["src/*.h"]}
-BASE = {"model": "m-from-args", "effort": "e-from-args", "unit": "u1", "contract": "contract-1",
-        "repo": "/r"}
+BASE = {"model": "m-from-args", "effort": "e-from-args", "agentType": "t-from-args", "unit": "u1",
+        "contract": "contract-1", "repo": "/r"}
 DRAFT = {
     "test_file": "tests/run_x.bat", "interface": "NOTE-TEXT",
     "tests": [{"name": "t1", "proves": "SC1.1", "intent": "pins x"}],
@@ -711,7 +711,8 @@ def member_segments(text: str) -> list[tuple[str, str, str]]:
     member's name to the next member, the next `task.py start` or the `gh` command."""
     commands = spans(text)
     cuts = [o for o, c in commands if c.startswith(f"{TASKPY} start ") or c.startswith("gh ")]
-    starts = [(m.start(), m[1]) for m in re.finditer(r"\{plugin\}:([\w-]+)", text)]
+    # The agent type's own name, which a start's args carry (e7), is no member.
+    starts = [(m.start(), m[1]) for m in re.finditer(r"\{plugin\}:((?!sdlc-team)[\w-]+)", text)]
     out = []
     for i, (at, name) in enumerate(starts):
         stops = [o for o in cuts if o > at] + ([starts[i + 1][0]] if i + 1 < len(starts) else [])
@@ -877,7 +878,7 @@ def test_sc4_1_the_flow_passes_the_reasons_to_the_member_of_the_next_round(name)
     assert starts, f"the flow starts no {name}"
     for found in starts:
         rest = text[found.start():]
-        stop_at = re.search(r"\{plugin\}:", rest[1:])
+        stop_at = re.search(r"\{plugin\}:(?!sdlc-team)", rest[1:])
         segment = rest[:stop_at.start() + 1] if stop_at else rest
         args = re.search(r"args `([^`]*)`", segment)
         assert args, f"no args span after {name}"

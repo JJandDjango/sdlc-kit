@@ -16,9 +16,10 @@ if (!a.model || !a.effort) {
 }
 
 // A required argument is absent when it is null or empty; test.command is a
-// list, and an empty one declares nothing.
+// list, and an empty one declares nothing. The agent type, a.agentType, is
+// one more: the flow names it, no workflow does.
 const read = name => name.split('.').reduce((o, k) => (o == null ? o : o[k]), a)
-const absent = ['unit', 'contract', 'repo', 'scratch', 'pluginRoot', 'sources', 'test.command']
+const absent = ['unit', 'contract', 'repo', 'scratch', 'pluginRoot', 'sources', 'test.command', 'agentType']
   .filter(n => { const v = read(n); return v == null || v === '' || (n === 'test.command' && !(Array.isArray(v) && v.length)) })
 if (absent.length) {
   log(`${a.unit}: missing required argument(s): ${absent.join(', ')}`)
@@ -109,7 +110,7 @@ Prove the list red with one command, from the repository root: python ${a.plugin
 Return the structured result. In interface, write the note the developer will get: the commands and their options, what each writes (keys and their values), every line printed verbatim with where it goes (stdout or stderr), the exit codes, and what the tree prints for each new state and piece of evidence. Run python -m taskcontract interface on each Python file you describe, so the signatures you give are the real ones.`
 
 phase('Draft')
-const draft = await agent(prompt, { label: `draft:${a.unit}`, phase: 'Draft', schema: DRAFT_SCHEMA, model: a.model, effort: a.effort })
+const draft = await agent(prompt, { label: `draft:${a.unit}`, phase: 'Draft', schema: DRAFT_SCHEMA, model: a.model, effort: a.effort, agentType: a.agentType })
 if (!draft) {
   log(`${a.unit}: the QA agent returned nothing`)
   return { unit: a.unit, draft: null, error: 'the QA agent returned nothing', questions: [] }

@@ -13,6 +13,7 @@
 | 2026-11-12 | user | r11: Measured: the checks before signing, on the request half: 98 findings (CL006 72, CL008 12, CL014 14), each CL014 a term ratified in kit session 86; ready checks 1 to 8: 0 OPEN |
 | 2026-11-12 | user | r12: Signed: request half. The PO seat signs r10 |
 | 2026-11-12 | intake | r13: Ready: contract `g1-requirements-spec` validates ready-green, derived from r10; the PO seat (user) signed the request half at r10 (r12) |
+| 2026-11-13 | intake | r14: Ready: contract `g1-requirements-spec` validates ready-green, derived from r10; the PO seat (user) signed the request half at r10 (r12) |
 
 # g1-requirements-spec - Failure points found before development starts
 

@@ -62,7 +62,8 @@ if (!a.model || !a.effort) {
   return { unit: a.unit, verdict: 'INCOMPLETE', reasons: ['model and effort are required arguments'], questions: [] }
 }
 
-const absent = ['unit', 'contract', 'repo', 'branch', 'commit', 'contractPath', 'requestPath', 'receiptsResult']
+// The agent type, a.agentType, is one more: the flow names it, no workflow does.
+const absent = ['unit', 'contract', 'repo', 'branch', 'commit', 'contractPath', 'requestPath', 'receiptsResult', 'agentType']
   .filter(n => a[n] == null || a[n] === '')
 if (absent.length) {
   log(`${a.unit}: missing required argument(s): ${absent.join(', ')}`)
@@ -124,7 +125,7 @@ const given = a.receiptsResult
 const receipts = !!given && Array.isArray(given.commands) && given.commands.length > 0
   && given.commands.every(c => Number.isInteger(c.exit_code)) ? given : null
 phase('Grade')
-const grade = await agent(gradePrompt, { label: `grade:${a.unit}`, phase: 'Grade', schema: GRADE_SCHEMA, model: a.model, effort: a.effort })
+const grade = await agent(gradePrompt, { label: `grade:${a.unit}`, phase: 'Grade', schema: GRADE_SCHEMA, model: a.model, effort: a.effort, agentType: a.agentType })
 
 const failedCommands = receipts ? receipts.commands.filter(c => c.exit_code !== 0) : []
 const failedSketches = grade ? grade.sketches.filter(s => s.verdict !== 'PASS') : []

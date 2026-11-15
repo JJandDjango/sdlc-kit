@@ -360,6 +360,33 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     exists; the `uv` line, run against the tag with `python -P`, installs
     `sdlc-taskcontract 0.22.0` and reads `specs/run-restart` ready-green;
     the suite passes (2984).
+28. [x] Give the team's agents only the tools they use (the user, session 152:
+    highest priority, ahead of Next 26's `s8-honest-reads`). The five
+    workflow scripts call `agent()` with no agent type
+    (`workflows/developer.js:79`, `qa.js:112`, `qa-verifier.js:153`,
+    `dev-verifier.js:127`, `test-retirer.js:92`), so each agent takes the
+    session's whole tool set. An agent's start read 53,782 tokens on
+    2026-10-17, tool definitions about 24K of it (`Artifact` alone about
+    13K). One agent definition allowing Read, Grep, Glob, Edit, Write and
+    Bash, passed as the agent type in the five calls, takes about 19K off
+    each start. Session 153 on `session-153-agent-tools`: a probe agent
+    started at 18,314 tokens as `sdlc:sdlc-verifier` against 49,831 as
+    the default; the path amends `execution-team` (design r18, measured
+    r19). Session 154: r20 fixes two points of r18 (the verifiers'
+    `INCOMPLETE` on a missing type; the model check joins e7's probe,
+    Risks 12), measured r21, signed r22; re-intake added
+    `e7-agent-type` (Ready r7 and r23) and G1 passed again (G1.3
+    re-signed). Session 155: the probe of Risks 9, 10 and 12 held
+    (`RECEIPT_execution-team-e7_2026-11-14/probe.md`); QA's round 1
+    stopped on three questions, and the user approved its 18-test list
+    with both rulings. Session 156: QA's rerun kept the draft unchanged,
+    so approve-tests went `--by user`; unit `2721e7e` (suite 3086), with
+    Ruling 1's hand amendments in five test files. Two-key stopped once:
+    `prove.py`'s export has no `.git`, and the user ruled `listed()`
+    amended by hand (`471622f`); both verifiers then passed round 1 (QA
+    verifier 11 of 11), ADR 0042. The after-measure waits for the first
+    unit built on a kit release carrying e7: this run used the installed
+    kit, whose members start untyped.
 26. Close G1's open edges before any G2 work (the user, session 146).
     The first edge is closed: G1 was unreachable from a plain request
     (the engine's finding of 2026-11-12, an escape of `s5-start`;
@@ -379,8 +406,19 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     actions' opener. Each waits for a text row of
     `docs/features/g1-requirements-spec.design.md`: the engineer seat
     rules each edge (fix it, or leave it and say so), signs the row, and
-    a re-intake reopens G1.3 before the build. It starts with a
-    strikeable list of the edges, on a fresh branch off main.
+    a re-intake reopens G1.3 before the build. Session 150 listed 37
+    edges on `session-150-g1-edges` (`plan.md`, section 6), and the user
+    ruled all as called: 29 fixes in three units (`s8` to `s10`), 7 left,
+    1 already left. Session 151 wrote design r16, which takes the kept
+    readings ADR 0041 rule 1 owes, measured it (r17), and the user signed
+    it (r18): 28 fixes in `s8` to `s10` (kit 0.22.2), 8 left, and 1
+    (`tree.py`'s docstrings) found closed by `s4-tree`. Session 152's
+    re-intake found `s8` with four checks against the schema's three
+    sketch entries; design r19 joins `SC2.1+SC3.1` (the user signed r21),
+    and the contract took `s8` to `s10` ready-green (rows r14 and r22).
+    The checks before signing hold no check for a unit of more than three
+    checks with no `+` pair; r17 missed it. Next: build `s8-honest-reads`
+    (`plan.md` step 8).
 
 ## Next actions
 
@@ -669,6 +707,24 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     at an approve-tests stop). The QA verifier's two-key ran `prove.py`
     with `-n auto` added to fit the 600 s cap, and started with 12
     mutations before cutting to nine.
+22. Score seat prompts on behavior, not only form (the user, session 155,
+    after DSPy's "program, don't prompt", dspy.ai). PromptLang checks a
+    prompt's form; nothing checks that an edited seat prompt still reaches
+    the verdicts it reached before, so a prompt can drift unseen. The
+    untracked `RECEIPT_*` folders hold past runs whose verdicts are known: a
+    replay of a changed seat prompt against them, scored by verdict
+    agreement, would catch the drift before it ships. Later, on that score
+    alone: mine the verifiers' FAIL reasons for seat-prompt edits (DSPy's
+    GEPA). Not before e7.
+23. Give `prove.py`'s export a git (e7's two-key, session 156). The
+    export is a `git archive` with no `.git`, so a pin that asks git
+    fails the mutation pass's baseline and no mutation runs. e7's
+    `listed()` falls back to the file's presence there (`471622f`), so a
+    mutant that only untracks a file goes uncaught. And `prove.py`
+    overlays `{scratch}/draft/` on the export, so after a hand amendment
+    a stale kept draft shadows the committed test: e7's QA verifier
+    deleted it to pass its baseline. Clear or refresh the draft before
+    two-key.
 
 ## Open questions
 

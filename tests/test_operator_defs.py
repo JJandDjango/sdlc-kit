@@ -18,6 +18,7 @@ OPERATORS_DOC = ROOT / "docs" / "operators.md"
 DOTNET_DIR = ROOT / "skills" / "sdlc" / "templates" / "profiles" / "dotnet"
 
 SHIPPED = {"sdlc-developer.md", "sdlc-verifier.md"}
+TEAM_TYPE = "sdlc-team.md"  # the execution team's agent type (e7), no operator def
 PROMPTLANG_TAGS = ("purpose", "context", "instructions", "constraints",
                    "output", "criteria")
 CHAIN_CHARS = ";|&>"
@@ -38,7 +39,7 @@ def _doc_text() -> str:
 
 def test_shipped_pair_is_exactly_the_ratified_set():
     files = {p.name for p in AGENTS.glob("*.md")}
-    assert files == SHIPPED  # sdlc-spec / sdlc-qa register, no files ship
+    assert files == SHIPPED | {TEAM_TYPE}  # sdlc-spec / sdlc-qa register, no files ship
 
 
 def test_defs_carry_frontmatter_and_promptlang_structure():
