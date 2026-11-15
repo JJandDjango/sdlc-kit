@@ -530,6 +530,8 @@ UNREADABLE = [
     ("not-utf-8", b"active_gates: [G0, G1]\n\xff\xfe\x00"),
     ("no-yaml", b"active_gates: [G0, G1\n"),
     ("no-mapping", b"- G0\n- G1\n"),
+    ("empty-file", b""),
+    ("comments-only", b"# gates\n# none\n"),
     ("active-gates-no-list", b"active_gates: G1\n"),
     ("active-gates-no-text", b"active_gates: [G0, 5]\n"),
     ("g1-no-mapping", b"active_gates: [G0, G1]\ng1: [exempt]\n"),
