@@ -8,13 +8,20 @@ writers of a lint record, of a model record and of a review record,
 reader, `g1-check`.
 
 G1 is active for a feature when .sdlc/config.yaml lists `G1` under
-`active_gates` and its `g1.exempt` list does not name the feature. The
+`active_gates`, its `g1.exempt` list does not name the feature and the
+contract's `provenance.origin` is no escape or maintenance (`g8-escape`,
+`g9-maintenance`). A config that stands and cannot be read is no G1 off:
+`config_fault` gives its reason, and each command refuses on it. The
 `g1.schemas` entries of that file declare the boundary schemas, each
-pattern with its linter and its pin. A schema is in scope when its path
+pattern with its linter and its pin. A pattern loses a leading `./`; one
+that is absolute, holds `..` or matches no file, by the disk's own case,
+makes the declaration unreadable. A schema is in scope when its path
 from the root matches one pattern of an entry and one entry of `scope` in
 specs/<id>/contract.yaml, each read as `scope_check.matches` reads a scope
 entry. A declaration that cannot be read counts as absent for `g1-check`,
-and `g1-record lint` refuses it.
+and `g1-record lint` refuses it, as it refuses a `g1.schemas` key that is
+absent. A linter or a checker that resolves to a file inside the
+repository is refused before any tool starts.
 
 `g1-record lint <id>` makes one run for each `g1.schemas` entry that has a
 schema in scope, in the declaration's order, and appends one record to
@@ -29,8 +36,9 @@ including a contract whose scope cannot be read, and when a tool ends on
 an error of its own.
 
 specs/components.yaml is the component declaration record, read under
-schemas/component-declaration.schema.json: one entry the schema refuses
-makes the whole declaration unreadable. A hard core is in scope when one
+schemas/component-declaration.schema.json: one entry the schema refuses, two entries of one `id`, and a `model` or
+`model_config` that leaves the repository make the whole declaration
+unreadable. A hard core is in scope when one
 of its `paths` and one entry of the contract's `scope` overlap, read from
 the two texts alone and never from the files on disk. It is out of scope
 only when no path could fall under both entries of each such pair: the
@@ -47,8 +55,10 @@ hard core in scope and appends one record: for each hard core that has a
 model, the tool, the model's and the configuration's hashes, and `pass`
 or `fail`. `tlc` runs once, inside the model's folder, with a working
 folder of its own outside the repository that the call removes; `p`
-reads the words of the configuration's file, compiles the project and
-then checks it with those words. The exit code is the result: 0 passes,
+reads the words of the configuration's file, which must name a test case
+with `-tc`, compiles the project and then checks it with those words. The
+record binds the hash of the model's folder, not of the model's file
+(`folder_hash`). The exit code is the result: 0 passes,
 and a code by which the checker says its search found a violation fails.
 Every check comes first here too, and nothing is printed or written
 before every tool has run. A contract whose scope cannot be read is
@@ -126,6 +136,8 @@ ITEMS_PATH = Path(__file__).resolve().parent / "data" / "g1-items.yaml"
 FEATURES = Path("docs") / "features"
 SEAT_TERM = Path("specs") / "vocabulary" / "intake-seat.yaml"
 GATE = "G1"
+# the origins of a contract that G1 does not gate
+UNGATED = ("g8-escape", "g9-maintenance")
 LINT = "G1.1"
 MODEL = "G1.2"
 REVIEW = "G1.3"
@@ -137,6 +149,10 @@ NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)  # absent off Windows
 COUNTED = (0, 1)  # Spectral's severities for an error and a warning
 # the exit codes by which a checker says its search found a violation
 VIOLATION = {"tlc": (10, 11, 12, 13, 14), "p": (1,)}
+# the extensions of the files a G1.2 record binds, for each checker
+MODEL_SUFFIXES = {"tlc": (".tla", ".cfg"), "p": (".p", ".pproj")}
+# the trace module TLC writes beside a model during a run
+_TRACE = re.compile(r".+_TTrace_[0-9]+\.tla", re.IGNORECASE)
 
 NO_SCHEMA = "G1.1: no boundary schema in scope"
 NOT_INSTALLED = "G1.1: {tool} is not installed; install it and pin it in the repository"
@@ -192,7 +208,8 @@ class Unreadable(ValueError):
 
 
 def read_config(root: Path) -> dict:
-    """.sdlc/config.yaml as a mapping; a missing or unreadable file is empty."""
+    """.sdlc/config.yaml as a mapping; a missing or unreadable file is empty.
+    `config_fault` says whether a file that stands can be read."""
     try:
         doc = yaml.safe_load((root / ".sdlc" / "config.yaml").read_text(encoding="utf-8"))
     except (OSError, ValueError, yaml.YAMLError):  # a date no calendar holds is a ValueError
@@ -200,9 +217,64 @@ def read_config(root: Path) -> dict:
     return doc if isinstance(doc, dict) else {}
 
 
+def _one_text_line(text: str) -> str:
+    """The text on one line: each line break one space, the ends cut."""
+    return " ".join(part.strip() for part in text.splitlines() if part.strip())
+
+
+def config_fault(root: Path) -> str | None:
+    """Why .sdlc/config.yaml, a file that stands, cannot be read, on one
+    line; None when it is absent, which means no gate is active, or can be
+    read. It cannot be read when it is not UTF-8, is no YAML or no mapping,
+    or holds an `active_gates` that is no list of text, a `g1` that is no
+    mapping, or a `g1.exempt` that is no list of text. A file with no key
+    reads as before."""
+    path = root / ".sdlc" / "config.yaml"
+    if not path.is_file():
+        return None
+    try:
+        raw = path.read_bytes()
+    except OSError as exc:
+        return f"it cannot be read: {_one_text_line(exc.strerror or 'no reason given')}"
+    try:
+        doc = yaml.safe_load(raw.decode("utf-8"))
+    except UnicodeDecodeError:
+        return "it is not UTF-8"
+    except (yaml.YAMLError, ValueError) as exc:  # a date no calendar holds is a ValueError
+        problem = getattr(exc, "problem", None) or str(exc)
+        mark = getattr(exc, "problem_mark", None)
+        where = f" at line {mark.line + 1}" if mark is not None else ""
+        return f"it is not valid YAML: {_one_text_line(str(problem))}{where}"
+    if not isinstance(doc, dict):  # an empty or comment-only file is YAML null
+        return "it is no mapping"
+    if "active_gates" in doc and not _text_list(doc["active_gates"]):
+        return "active_gates is no list of text"
+    section = doc.get("g1")
+    if "g1" in doc and not isinstance(section, dict):
+        return "g1 is no mapping"
+    if isinstance(section, dict) and "exempt" in section \
+            and not _text_list(section["exempt"]):
+        return "g1.exempt is no list of text"
+    return None
+
+
+def _text_list(value) -> bool:
+    return isinstance(value, list) and all(isinstance(item, str) for item in value)
+
+
+def config_refusal(root: Path, feature_id: str) -> str | None:
+    """The line that refuses a call on a config that stands and cannot be
+    read; None when it can be read or is absent."""
+    fault = config_fault(root)
+    if fault is None:
+        return None
+    return f"{feature_id}: .sdlc/config.yaml cannot be read: {fault}"
+
+
 def is_active(config: dict, feature_id: str) -> bool:
     """Whether G1 is active for the feature: listed under `active_gates`,
-    and the feature not named by `g1.exempt`."""
+    and the feature not named by `g1.exempt`. A contract born of an escape
+    or maintenance is gated by neither: `gated` reads its origin."""
     gates = config.get("active_gates")
     if not isinstance(gates, list) or GATE not in gates:
         return False
@@ -211,12 +283,35 @@ def is_active(config: dict, feature_id: str) -> bool:
     return not (isinstance(exempt, list) and feature_id in [str(e) for e in exempt])
 
 
-def schema_entries(config: dict) -> list[dict] | None:
+def born_ungated(contract) -> bool:
+    """Whether a contract's `provenance.origin` is an escape or maintenance,
+    which G1 does not gate; a contract that is no mapping, or names another
+    origin or none, is gated as the config says."""
+    provenance = contract.get("provenance") if isinstance(contract, dict) else None
+    return isinstance(provenance, dict) and provenance.get("origin") in UNGATED
+
+
+def gated(root: Path, config: dict, feature_id: str) -> bool:
+    """Whether G1 is an active gate for the feature: `is_active`, and the
+    contract at specs/<id>/contract.yaml not born of an escape or
+    maintenance. A contract that cannot be read is gated as the config says."""
+    if not is_active(config, feature_id):
+        return False
+    try:
+        contract = yaml.safe_load(
+            (root / "specs" / feature_id / "contract.yaml").read_text(encoding="utf-8"))
+    except (OSError, ValueError, yaml.YAMLError):  # a date no calendar holds is a ValueError
+        return True
+    return not born_ungated(contract)
+
+
+def schema_entries(config: dict, root: Path | None = None) -> list[dict] | None:
     """The `g1.schemas` entries; None when the key is absent, which is not
     the empty list. Unreadable with the reason when the key holds no list,
     or one entry is no mapping that holds `paths`, a list of strings,
     `linter`, a string, and `pin`, a string that is not empty: one such
-    entry makes the whole declaration unreadable."""
+    entry makes the whole declaration unreadable. With the root given, so
+    does a pattern that is absolute, holds `..` or matches no file."""
     section = config.get("g1")
     if not isinstance(section, dict) or "schemas" not in section:
         return None
@@ -233,6 +328,16 @@ def schema_entries(config: dict) -> list[dict] | None:
             raise Unreadable(f"entry {n} names no linter")
         if not isinstance(entry.get("pin"), str) or not entry["pin"]:
             raise Unreadable(f"entry {n} names no pin")
+    if root is not None:
+        for n, entry in enumerate(entries, start=1):
+            for pattern in entry["paths"]:
+                shown = _one_text_line(pattern) or repr(pattern)
+                if not _plain_pattern(pattern):
+                    raise Unreadable(f"entry {n} holds the pattern {shown}, which is "
+                                     "absolute or holds ..")
+                if not _files(root, pattern):
+                    raise Unreadable(f"entry {n} holds the pattern {shown}, which "
+                                     "matches no file")
     return entries
 
 
@@ -250,37 +355,58 @@ def schemas_in_scope(root: Path, scope: list[str], entries: list[dict]) -> list[
     return [found[path] for path in sorted(found)]
 
 
+def _pattern(pattern: str) -> str:
+    """The pattern as it is read: ends stripped, a backslash a slash, and
+    no leading `./`."""
+    entry = pattern.strip().replace("\\", "/")
+    while entry.startswith("./"):
+        entry = entry[2:].lstrip("/")
+    return entry
+
+
+def _plain_pattern(pattern: str) -> bool:
+    """Whether the pattern stays under the root: it is no drive and no
+    absolute path and holds no `..`."""
+    entry = _pattern(pattern)
+    return _inside(entry) and not os.path.splitdrive(entry)[0]
+
+
 def _files(root: Path, pattern: str) -> list[str]:
     """The files under the root that the pattern matches, each as its path
-    from the root. The walk starts at the folder the pattern names before
-    its first wildcard; `matches` decides. A pattern whose path the system
-    refuses matches no file."""
-    entry = pattern.strip().replace("\\", "/")
-    if not entry:
+    from the root, by the disk's own case. The walk starts at the root and
+    goes only into the folders that lead to the folder the pattern names
+    before its first wildcard, and never into `.git`; `matches` decides. A
+    pattern that is absolute, holds `..` or that the system refuses matches
+    no file."""
+    entry = _pattern(pattern)
+    if not entry or not _plain_pattern(entry):
         return []
     if entry.endswith("/"):
         base = entry.rstrip("/")
     else:
-        cut = min((entry.index(c) for c in "*?[" if c in entry), default=None)
-        if cut is None:
-            return [entry] if _inside(entry) and _is_file(root / entry) else []
+        cut = min((entry.index(c) for c in "*?[" if c in entry), default=len(entry))
         base = entry[:cut].rpartition("/")[0]
-    if not _inside(base):
-        return []
-    start = root / base if base else root
-    try:
-        walked = list(os.walk(start))
-    except (OSError, ValueError):  # a folder that holds a NUL names none
-        return []
+    wanted = [part for part in base.split("/") if part]
     paths = []
-    for folder, _, names in walked:
-        under = Path(folder).relative_to(start).as_posix()
-        parts = [part for part in (base, "" if under == "." else under) if part]
-        for name in names:
-            path = "/".join([*parts, name])
-            if matches(path, entry):
-                paths.append(path)
+    try:
+        for folder, names, files in os.walk(root):
+            under = Path(folder).relative_to(root).parts
+            names[:] = [name for name in names if name != ".git"
+                        and _leads_to(wanted, [*under, name])]
+            for name in files:
+                path = "/".join([*under, name])
+                if matches(path, entry):
+                    paths.append(path)
+    except (OSError, ValueError):  # a path the system refuses names none
+        return []
     return paths
+
+
+def _leads_to(wanted: list[str], folder: list[str]) -> bool:
+    """Whether the folder is on the way to the wanted one, is it, or is
+    under it."""
+    n = min(len(wanted), len(folder))
+    return wanted[:n] == folder[:n]
 
 
 def _inside(path: str) -> bool:
@@ -360,7 +486,7 @@ def read_lint(root: Path, feature_id: str, scope: list[str],
     unmatched. With no report, one unmatched schema reads `to do`.
     """
     try:
-        entries = schema_entries(config)
+        entries = schema_entries(config, root)
     except Unreadable:
         entries = None
     if entries is None or not scope:
@@ -417,7 +543,28 @@ def components(root: Path) -> list[dict] | None:
     if error is not None:
         where = "/".join(str(part) for part in error.absolute_path)
         raise Unreadable(f"{where}: {error.message}" if where else error.message)
+    seen: set[str] = set()
+    for entry in doc["components"]:
+        name = _one_text_line(str(entry.get("id")))
+        if name in seen:
+            raise Unreadable(f"component {name} is declared more than once")
+        seen.add(name)
+        for key in ("model", "model_config"):
+            if isinstance(entry.get(key), str) and _outside(root, entry[key]):
+                raise Unreadable(f"component {name}: {key} {_one_text_line(entry[key])} "
+                                 "is outside the repository")
     return doc["components"]
+
+
+def _outside(root: Path, path: str) -> bool:
+    """Whether the path, joined to the root and resolved, leaves the root: a
+    path that is absolute, or climbs out with `..`, outside the repository.
+    An absolute path inside it stays inside; a path the system refuses
+    leaves nothing."""
+    try:
+        return not (root / _entry(path)).resolve().is_relative_to(root.resolve())
+    except (OSError, ValueError):  # a name that holds a NUL
+        return False
 
 
 def hard_cores_in_scope(scope: list[str], entries: list[dict]) -> list[dict]:
@@ -499,15 +646,48 @@ def _has_model(root: Path, core: dict) -> bool:
 
 def _pins(root: Path, core: dict) -> dict:
     """What a G1.2 record holds of a hard core that has a model, but for the
-    result: the component, the tool, and the model and its configuration,
-    each with its path and its file's hash as it stands now."""
+    result: the component, the tool, the folder of the model with its hash,
+    and the configuration with its path and its file's hash, each as it
+    stands now."""
     model, config = _entry(core["model"]), core["model_config"]
+    folder = model.rpartition("/")[0]
     return {
         "component": core["id"],
         "tool": core["checker"],
-        "model": {"path": model, "sha256": sha256_of(root / model)},
+        "model_folder": {"path": f"{folder}/" if folder else "./",
+                         "sha256": folder_hash(root / folder if folder else root,
+                                               core["checker"])},
         "config": {"path": config, "sha256": sha256_of(root / config)},
     }
+
+
+def folder_hash(folder: Path, tool: str) -> str | None:
+    """The SHA-256 of the model's folder: each file under it, subfolders
+    too, whose extension is the checker's, by its path from the folder and
+    its bytes, in path order. A trace module TLC writes beside the model,
+    `<stem>_TTrace_<digits>.tla`, is left out. None when a file or a folder
+    cannot be read."""
+    suffixes = MODEL_SUFFIXES.get(tool, ())
+    found: list[tuple[str, Path]] = []
+    try:
+        for where, _, names in os.walk(folder, onerror=_raise):
+            under = Path(where).relative_to(folder).parts
+            for name in names:
+                if Path(name).suffix.lower() in suffixes and not _TRACE.fullmatch(name):
+                    found.append(("/".join([*under, name]), Path(where) / name))
+    except (OSError, ValueError):
+        return None
+    digest = hashlib.sha256()
+    for path, file in sorted(found):
+        held = sha256_of(file)
+        if held is None:
+            return None
+        digest.update(f"{path}\0{held}\n".encode("utf-8", errors="surrogatepass"))
+    return digest.hexdigest()
+
+
+def _raise(exc: OSError) -> None:
+    raise exc
 
 
 def read_model(root: Path, feature_id: str,
@@ -519,10 +699,11 @@ def read_model(root: Path, feature_id: str,
     no hard core is in scope. Else each hard core in scope reports RS201
     when it has no model, whatever a record holds, and is else held
     against the last G1.2 record: it is matched when the record holds its
-    component with the declared checker, and the declared model and
-    configuration, each with its file's hash as it stands now. A
-    configuration's file that is absent reads as null on both sides, and
-    null equals null; a model whose file cannot be read is unmatched. A
+    component with the declared checker, the hash of the model's folder
+    and the configuration's hash, each as it stands now; an entry of the
+    old form, which holds the model's file in place of its folder, is none.
+    A configuration's file that is absent reads as null on both sides, and
+    null equals null; a model's folder that cannot be read is unmatched. A
     matched hard core reports RS202 when the record found the tool not
     installed, once for the tool, and RS203 when its result is `fail`; a
     result whose configuration's hash is null is no pinned result, and a
@@ -552,7 +733,7 @@ def read_model(root: Path, feature_id: str,
         tool = pins["tool"]
         entry = next((e for e in held if isinstance(e, dict)
                       and all(e.get(key) == value for key, value in pins.items())), None)
-        if entry is None or pins["model"]["sha256"] is None:
+        if entry is None or pins["model_folder"]["sha256"] is None:
             unmatched = True
         elif entry.get("installed") is False:
             if tool not in missing:
@@ -722,8 +903,11 @@ def main_g1_check(args) -> int:
     scope = contract_scope(root, feature_id)
     if scope is None:
         return _refuse(_no_contract(feature_id))
+    unread = config_refusal(root, feature_id)
+    if unread is not None:
+        return _refuse(unread)
     config = read_config(root)
-    if not is_active(config, feature_id):
+    if not gated(root, config, feature_id):
         return _refuse(_not_active(feature_id))
     lint, findings = read_lint(root, feature_id, scope, config)
     model, reported = read_model(root, feature_id, scope)
@@ -775,17 +959,22 @@ def record_lint(root: Path, feature_id: str) -> int:
         scope = []
     if scope is None:
         return _refuse(_no_contract(feature_id))
+    unread = config_refusal(root, feature_id)
+    if unread is not None:
+        return _refuse(unread)
     config = read_config(root)
-    if not is_active(config, feature_id):
+    if not gated(root, config, feature_id):
         return _refuse(_not_active(feature_id))
     if not scope:
         return _refuse(f"{feature_id}: the contract's scope cannot be read at "
                        f"specs/{feature_id}/contract.yaml")
     try:
-        entries = schema_entries(config)
+        entries = schema_entries(config, root)
     except Unreadable as exc:
         return _refuse(f"{feature_id}: g1.schemas cannot be read: {exc}")
-    schemas = schemas_in_scope(root, scope, entries or [])
+    if entries is None:
+        return _refuse(f"{feature_id}: no g1.schemas in .sdlc/config.yaml")
+    schemas = schemas_in_scope(root, scope, entries)
     if not schemas:
         print(NO_SCHEMA)
         return 0
@@ -794,6 +983,10 @@ def record_lint(root: Path, feature_id: str) -> int:
     unknown = next((run[0].linter for run in runs if run[0].linter not in LINTERS), None)
     if unknown is not None:
         return _refuse(f"{feature_id}: g1.schemas names a linter the kit does not know: {unknown}")
+    for run in runs:
+        inside = _inside_root(root, run[0].linter)
+        if inside is not None:
+            return _refuse(f"{feature_id}: {run[0].linter} resolves inside the repository: {inside}")
     path = root / G1_DIR / f"{feature_id}.yaml"
     try:
         doc = _existing(path)
@@ -942,7 +1135,10 @@ def record_model(root: Path, feature_id: str) -> int:
     scope = contract_scope(root, feature_id)
     if scope is None:
         return _refuse(_no_contract(feature_id))
-    if not is_active(read_config(root), feature_id):
+    unread = config_refusal(root, feature_id)
+    if unread is not None:
+        return _refuse(unread)
+    if not gated(root, read_config(root), feature_id):
         return _refuse(_not_active(feature_id))
     if not scope:
         return _refuse(f"{feature_id}: the contract's scope cannot be read at "
@@ -957,6 +1153,9 @@ def record_model(root: Path, feature_id: str) -> int:
     if not cores:
         print(NO_HARD_CORE)
         return 0
+    refused = _refused_core(root, feature_id, cores)
+    if refused is not None:
+        return _refuse(refused)
     path = root / G1_DIR / f"{feature_id}.yaml"
     try:
         doc = _existing(path)
@@ -999,7 +1198,7 @@ def record_model(root: Path, feature_id: str) -> int:
             "at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "head": head_id(root),
             "cores": [{key: entry[key] for key in ("component", "tool", "installed",
-                                                   "model", "config", "result")}
+                                                   "model_folder", "config", "result")}
                       for entry in held],
         })
         _write(path, doc)
@@ -1008,6 +1207,46 @@ def record_model(root: Path, feature_id: str) -> int:
     if held:
         print(f"recorded: {(G1_DIR / path.name).as_posix()}")
     return 0 if green else 1
+
+
+def _inside_root(root: Path, tool: str) -> str | None:
+    """Where the tool's name resolves inside the repository, as a path from
+    the root with forward slashes; None when the tool is not found or its
+    real path lies outside. The lookup is the one that starts the tool."""
+    program = shutil.which(tool)
+    if program is None:
+        return None
+    try:
+        real, base = Path(program).resolve(), root.resolve()
+        return real.relative_to(base).as_posix() if real.is_relative_to(base) else None
+    except (OSError, ValueError):
+        return None
+
+
+def _refused_core(root: Path, feature_id: str, cores: list[dict]) -> str | None:
+    """The line that refuses a model call before any tool starts: a checker
+    that resolves inside the repository, or the configuration of a P model
+    that names no test case. The cores are read in order, only those with a
+    model, and a configuration P cannot read is left to its run."""
+    named: set[str] = set()
+    for core in cores:
+        if not _has_model(root, core):
+            continue
+        tool = core["checker"]
+        if tool not in named:
+            named.add(tool)
+            inside = _inside_root(root, tool)
+            if inside is not None:
+                return f"{feature_id}: {tool} resolves inside the repository: {inside}"
+        if tool == "p":
+            try:
+                words = (root / core["model_config"]).read_text(encoding="utf-8").split()
+            except (OSError, UnicodeDecodeError):
+                continue
+            if "-tc" not in words[:-1]:
+                return (f"{feature_id}: the configuration of {core['id']} names no "
+                        f"test case: {core['model_config']}")
+    return None
 
 
 def _tlc(program: str, root: Path, core: dict, feature_id: str) -> str | None:
@@ -1097,7 +1336,10 @@ def record_review(root: Path, feature_id: str, by: list[str], seat: list[str],
         scope = []
     if scope is None:
         return _refuse(_no_contract(feature_id))
-    if not is_active(read_config(root), feature_id):
+    unread = config_refusal(root, feature_id)
+    if unread is not None:
+        return _refuse(unread)
+    if not gated(root, read_config(root), feature_id):
         return _refuse(_not_active(feature_id))
     if not scope:
         return _refuse(f"{feature_id}: the contract's scope cannot be read at "

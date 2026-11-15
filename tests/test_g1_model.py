@@ -22,7 +22,8 @@ hard core with no model fails it with RS201, and a checker that is not
 installed fails it with RS202 (SC3.3). The exit codes, each printed line,
 the record's keys and the declaration's schema each have a case.
 
-The fixture's `g1.schemas` pattern matches no file, so G1.1 reads `done`
+The fixture's `g1.schemas` pattern matches one file, outside the contract's
+scope, so G1.1 reads `done`
 in every summary line here, and no fixture holds a review record, so G1.3
 reads `to do`.
 """
@@ -76,7 +77,7 @@ provenance:
   origin: human-request
 """
 
-SPECTRAL = {"paths": ["api/*.yaml"], "linter": "spectral", "pin": ".spectral.yaml"}
+SPECTRAL = {"paths": ["schemas/*.yaml"], "linter": "spectral", "pin": ".spectral.yaml"}
 
 # The design's drawing of specs/components.yaml, word for word.
 DRAWING = """version: 1
@@ -246,6 +247,23 @@ def sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+SUFFIXES = {"tlc": (".tla", ".cfg"), "p": (".p", ".pproj")}
+
+
+def folder_sha(repo, model: str, tool: str) -> str:
+    """The hash a G1.2 record binds to the model's folder: each file under
+    it that the checker reads, by its path from the folder and its bytes, in
+    path order."""
+    folder = repo.root / model.rpartition("/")[0]
+    held = sorted((path.relative_to(folder).as_posix(), sha(path))
+                  for path in folder.rglob("*")
+                  if path.is_file() and path.suffix.lower() in SUFFIXES[tool])
+    digest = hashlib.sha256()
+    for name, text in held:
+        digest.update(f"{name}\0{text}\n".encode("utf-8"))
+    return digest.hexdigest()
+
+
 class Repo:
     """One fixture repository at <tmp>/repo, and beside it <tmp>/bin, the
     only folder on PATH: empty until a test installs a stand-in there. The
@@ -262,6 +280,8 @@ class Repo:
         self.contract(ID, "api/", "src/")
         self.write(f"docs/features/{ID}.md", f"# {ID}\n")  # G1.3 fails with no document
         self.config()
+        # the pattern's one match, outside the contract's scope
+        self.write("schemas/openapi.yaml", "openapi: 3.1.0\n")
         self.components(LEDGER, API)
         self.core(LEDGER)
         self.plan()
@@ -408,7 +428,8 @@ def entry_of(repo: Repo, core: dict, installed: bool, result) -> dict:
     """The record entry of one hard core as the files stand now."""
     config = repo.root / core["model_config"]
     return {"component": core["id"], "tool": core["checker"], "installed": installed,
-            "model": {"path": core["model"], "sha256": sha(repo.root / core["model"])},
+            "model_folder": {"path": core["model"].rpartition("/")[0] + "/",
+                             "sha256": folder_sha(repo, core["model"], core["checker"])},
             "config": {"path": core["model_config"],
                        "sha256": sha(config) if config.exists() else None},
             "result": result}
@@ -463,15 +484,16 @@ def test_sc3_1_the_record_holds_one_entry_for_the_hard_core_with_the_whole_hashe
     assert record["head"] == "no commit"  # no git on this PATH, as progress records it
     (entry,) = record["cores"]  # the component that is no hard core gets no entry
     # No tool version: a checker has no version call.
-    assert list(entry) == ["component", "tool", "installed", "model", "config", "result"]
+    assert list(entry) == ["component", "tool", "installed", "model_folder", "config",
+                           "result"]
     assert entry == {
         "component": "ledger", "tool": "tlc", "installed": True,
-        "model": {"path": "specs/models/ledger.tla",
-                  "sha256": sha(repo.root / "specs/models/ledger.tla")},
+        "model_folder": {"path": "specs/models/",
+                         "sha256": folder_sha(repo, "specs/models/ledger.tla", "tlc")},
         "config": {"path": "specs/models/ledger.cfg",
                    "sha256": sha(repo.root / "specs/models/ledger.cfg")},
         "result": "pass"}
-    assert len(entry["model"]["sha256"]) == 64
+    assert len(entry["model_folder"]["sha256"]) == 64
     assert len(entry["config"]["sha256"]) == 64
     assert [p.name for p in (repo.root / ".sdlc" / "g1").iterdir()] == [f"{ID}.yaml"]
 
@@ -884,6 +906,7 @@ def test_done_means_a_passing_entry_does_not_stand_for_another_configuration_or_
     repo.components({**LEDGER, "checker": "p"}, API)
     assert check(repo, capsys)[1].splitlines() == [summary("to do")]
     repo.components(LEDGER, API)
+    (repo.root / other["model_config"]).unlink()  # the model's folder binds the copy too
     assert check(repo, capsys)[1].splitlines() == [summary("done")]
 
 
@@ -936,7 +959,7 @@ def test_done_means_a_lint_record_and_a_model_record_stand_in_one_file(repo, cap
     """Each condition reads its own last record, whatever follows it."""
     repo.install("tlc")
     assert model(capsys)[0] == 0
-    repo.write("api/openapi.yaml", "openapi: 3.1.0\n")
+    repo.contract(ID, "api/", "src/", "schemas/")  # the schema is now in scope
     repo.write(".spectral.yaml", "rules: {}\n")
     code, out, _ = cli(capsys, "g1-record", "lint", ID)  # no spectral on PATH
     assert code == 1
@@ -1290,7 +1313,8 @@ def test_sc3_3_a_checker_that_is_not_installed_is_recorded_and_fails_g1_2(repo, 
     (record,) = repo.records()
     assert list(record) == ["condition", "at", "head", "cores"]
     (entry,) = record["cores"]
-    assert list(entry) == ["component", "tool", "installed", "model", "config", "result"]
+    assert list(entry) == ["component", "tool", "installed", "model_folder", "config",
+                           "result"]
     assert entry == entry_of(repo, LEDGER, False, None)
     code, out, _ = check(repo, capsys)
     assert out.splitlines() == [f"{ID}: RS202 {rs202()}", summary("failed")]
@@ -1314,7 +1338,7 @@ def test_sc3_3_a_checker_that_is_not_installed_fails_g1_2_with_the_configuration
     (entry,) = repo.cores()
     assert entry["installed"] is False
     assert entry["config"] == {"path": "specs/models/ledger.cfg", "sha256": None}
-    assert entry["model"]["sha256"] == sha(repo.root / LEDGER["model"])
+    assert entry["model_folder"]["sha256"] == folder_sha(repo, LEDGER["model"], "tlc")
     code, out, _ = check(repo, capsys)
     assert out.splitlines() == [f"{ID}: RS202 {rs202()}", summary("failed")]
     assert code == 1

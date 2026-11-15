@@ -10,7 +10,7 @@ and it reads `failed` until a later revision's review passes (SC1.2). Kit
 
 A temporary repository per test, with a `.sdlc/config.yaml` that turns G1 on,
 a ratified `intake-seat` term, and a `g1` declaration whose schema pattern
-matches no file and whose component declaration holds no hard core, so G1.1
+matches one file, outside the contract's scope, and whose component declaration holds no hard core, so G1.1
 and G1.2 read `done` in every summary line here. No test needs a tool on the
 machine. Every test that pins the new behavior first asserts it, so none
 passes on today's code.
@@ -81,7 +81,7 @@ provenance:
   origin: human-request
 """
 
-SPECTRAL = {"paths": ["api/*.yaml"], "linter": "spectral", "pin": ".spectral.yaml"}
+SPECTRAL = {"paths": ["schemas/*.yaml"], "linter": "spectral", "pin": ".spectral.yaml"}
 API = {"id": "api", "paths": ["src/api/"], "hard_core": False, "oracle": "none",
        "oracle_reason": "read-only pass-through, covered by its acceptance tests"}
 ACTIVE = {"active_gates": ["G0", "G1"],
@@ -154,6 +154,8 @@ class Repo:
         self.root.mkdir()
         self.write(ROSTER, yaml.safe_dump(SEAT_TERM, sort_keys=False))
         self.config(ACTIVE)
+        # the pattern's one match, outside the contract's scope
+        self.write("schemas/openapi.yaml", "openapi: 3.0.0\n")
         self.write("specs/components.yaml", yaml.safe_dump(
             {"version": 1, "components": [API]}, sort_keys=False))
         # another feature's documents: no document for ID
@@ -618,7 +620,8 @@ def step(text: str, label: str) -> str:
     return rest[:end.start()] if end else rest
 
 
-I3_TODAY = ("I3. SCAFFOLD - one Bash call: `python -m taskcontract new {id}`. If it fails "
+I3_TODAY = ("I3. SCAFFOLD - one Bash call: `python -m taskcontract new {id}` (add `--origin "
+            "g8-escape` or `g9-maintenance` for those). If it fails "
             "because the contract already exists, ASK before touching anything - existing "
             "contracts are never silently edited.")
 I3_CLAUSE = " On any other failure, REPORT its line verbatim, write nothing, and return to the conversation."

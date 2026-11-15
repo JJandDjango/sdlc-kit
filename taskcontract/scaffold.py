@@ -63,12 +63,18 @@ dependencies: []
 # origin: human-request | g8-escape | g9-maintenance; g8-escape requires ref
 # (the incident the escape converges from).
 provenance:
-  origin: human-request
+  origin: {origin}
 """
 
+ORIGINS = ("human-request", "g8-escape", "g9-maintenance")
 
-def scaffold(task_id: str, root: Path | str = ".", schema_doc: dict | None = None) -> Path:
-    """Write specs/<id>/contract.yaml under root; refuse bad ids and clobbers."""
+
+def scaffold(task_id: str, root: Path | str = ".", schema_doc: dict | None = None,
+             origin: str = "human-request") -> Path:
+    """Write specs/<id>/contract.yaml under root; refuse bad ids and clobbers,
+    a config that stands and cannot be read, and, for a human request, a
+    feature G1 gates that has no feature document. A contract born of an
+    escape or maintenance is gated by no G1."""
     doc = schema_doc or load_schema()
     pattern = doc["properties"]["id"]["pattern"]
     if not re.fullmatch(pattern, task_id):
@@ -76,11 +82,15 @@ def scaffold(task_id: str, root: Path | str = ".", schema_doc: dict | None = Non
     path = Path(root) / "specs" / task_id / "contract.yaml"
     if path.exists():
         raise FileExistsError(f"{path} already exists (contracts are never overwritten)")
-    if g1.is_active(g1.read_config(Path(root)), task_id) and not (
-            Path(root) / g1.FEATURES / f"{task_id}.md").is_file():
+    fault = g1.config_fault(Path(root))
+    if fault is not None:
+        raise ValueError(f".sdlc/config.yaml cannot be read: {fault}")
+    if origin not in g1.UNGATED and g1.is_active(g1.read_config(Path(root)), task_id) \
+            and not (Path(root) / g1.FEATURES / f"{task_id}.md").is_file():
         raise ValueError(
             f"no feature document for {task_id}, and G1 is active for it; "
             f"write docs/features/{task_id}.md, or add {task_id} to g1.exempt")
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(TEMPLATE.format(task_id=task_id, path=path.as_posix()), encoding="utf-8")
+    path.write_text(TEMPLATE.format(task_id=task_id, path=path.as_posix(), origin=origin),
+                    encoding="utf-8")
     return path

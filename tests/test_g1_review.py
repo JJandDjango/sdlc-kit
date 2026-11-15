@@ -5,7 +5,8 @@ A temporary repository per test: one contract under specs/, a
 values are `po` and `engineer`, and the feature's pair under
 docs/features/: a requirements document whose newest `Ready:` row names
 r5, and a design document whose newest `Ready:` row names r4. The
-fixture's `g1.schemas` pattern matches no file and its component
+fixture's `g1.schemas` pattern matches one file, outside the contract's
+scope, and its component
 declaration holds no hard core, so G1.1 and G1.2 read `done` in every
 summary line here. No test needs a tool on the machine.
 
@@ -93,7 +94,7 @@ provenance:
   origin: human-request
 """
 
-SPECTRAL = {"paths": ["api/*.yaml"], "linter": "spectral", "pin": ".spectral.yaml"}
+SPECTRAL = {"paths": ["schemas/*.yaml"], "linter": "spectral", "pin": ".spectral.yaml"}
 API = {"id": "api", "paths": ["src/api/"], "hard_core": False, "oracle": "none",
        "oracle_reason": "read-only pass-through, covered by its acceptance tests"}
 
@@ -155,6 +156,8 @@ class Repo:
             "active_gates": ["G0", "G1"],
             "g1": {"exempt": ["controlled-language"], "schemas": [SPECTRAL]}},
             sort_keys=False))
+        # the pattern's one match, outside the contract's scope
+        self.write("schemas/openapi.yaml", "openapi: 3.0.0\n")
         self.write("specs/components.yaml", yaml.safe_dump(
             {"version": 1, "components": [API]}, sort_keys=False))
         self.requirements(5)
