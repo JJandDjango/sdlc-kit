@@ -27,6 +27,19 @@ conversation. A contract that already stands reads G1.3 `failed` with the
 until the document is written and a review of it passes. Where G1 is off or
 the id is exempt, `new` scaffolds as before.
 
+🟢 **A config that cannot be read.** Where `.sdlc/config.yaml` stands and
+cannot be read (not UTF-8, no YAML, no mapping, or a key of the wrong
+shape), `taskcontract new` writes nothing and exits 1 with `taskcontract
+new: .sdlc/config.yaml cannot be read: <reason>`; it never reads the file
+as G1 off. An absent file still means no gate is active.
+
+🟢 **A request from an escape or from maintenance.** Intake's scaffold step
+runs `python -m taskcontract new <task-id> --origin g8-escape` or
+`--origin g9-maintenance` for such a request (`human-request` is the
+default). The contract's `provenance.origin` holds the value, and G1 does
+not gate it: `new` needs no feature document, `progress` does not refuse
+it, and the tree prints its G1 `inactive`.
+
 ### What `ready` requires — two declarations 🟢
 
 > 🟢 **Shipped** (kit 0.14.0, [ADR 0030](../../decisions/0030-a-doors-input-is-a-declaration.md),

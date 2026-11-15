@@ -88,6 +88,7 @@ SCHEMA = "api/openapi.yaml"
 PIN = ".spectral.yaml"
 SPECTRAL = {"paths": ["api/*.yaml"], "linter": "spectral", "pin": PIN}
 MODEL = "specs/models/ledger.tla"
+MODEL_FOLDER = "specs/models/"
 MODEL_CONFIG = "specs/models/ledger.cfg"
 # The design's hard core; its model's file is absent until a test writes it.
 LEDGER = {"id": "ledger", "paths": ["src/ledger/"], "hard_core": True,
@@ -209,6 +210,20 @@ class Repo:
     def sha(self, rel: str) -> str:
         return hashlib.sha256((self.root / rel).read_bytes()).hexdigest()
 
+    def folder_sha(self, rel: str) -> str:
+        """The hash a G1.2 record binds to the model's folder: each `.tla`
+        and `.cfg` file under it, by its path from the folder and its bytes,
+        in path order."""
+        folder = self.root / rel
+        held = sorted((path.relative_to(folder).as_posix(),
+                       hashlib.sha256(path.read_bytes()).hexdigest())
+                      for path in folder.rglob("*")
+                      if path.is_file() and path.suffix.lower() in (".tla", ".cfg"))
+        digest = hashlib.sha256()
+        for name, text in held:
+            digest.update(f"{name}\0{text}\n".encode("utf-8"))
+        return digest.hexdigest()
+
     def contract(self, cid: str) -> None:
         self.write(f"specs/{cid}/contract.yaml", CONTRACT.format(id=cid))
 
@@ -270,7 +285,8 @@ class Repo:
         """A G1.2 record that matches the ledger's model as it stands."""
         return {"condition": "G1.2", "at": "2026-10-07T14:10:00Z", "head": "8635064",
                 "cores": [{"component": "ledger", "tool": "tlc", "installed": installed,
-                           "model": {"path": MODEL, "sha256": self.sha(MODEL)},
+                           "model_folder": {"path": MODEL_FOLDER,
+                                            "sha256": self.folder_sha(MODEL_FOLDER)},
                            "config": {"path": MODEL_CONFIG, "sha256": self.sha(MODEL_CONFIG)},
                            "result": result}]}
 
@@ -881,7 +897,10 @@ def test_done_means_an_exempt_value_that_is_no_list_exempts_nothing_and_prints_o
     printed = show(repo, capsys)
     assert printed.problems == [f"{PROBLEM}unreadable g1.exempt: {CONFIG} (it is no list)"]
     assert printed.row(f"{ID}/G1")["line"] == f"  {ID}/G1 Requirements / Spec [failed]"
-    agree(repo, capsys, printed)
+    # `g1-check` no longer reads past it: it refuses the config it cannot read
+    code, out, err = cli(capsys, "g1-check", ID, "--root", repo.root, "--json")
+    assert (code, out) == (2, "")
+    assert err == f"{ID}: .sdlc/config.yaml cannot be read: g1.exempt is no list of text\n"
 
 
 def test_done_means_g1s_problem_lines_follow_todays_in_one_order(repo, capsys):
@@ -917,12 +936,20 @@ def test_done_means_a_contract_that_is_not_utf_8_never_stops_the_print(repo, cap
         f"{PROBLEM}unreadable contract: specs/{OTHER}/contract.yaml (cannot be read)"]
 
 
+def no_file_line(pattern: str) -> str:
+    """The one problem line of a `g1.schemas` pattern that matches no file."""
+    return (f"{PROBLEM}unreadable g1.schemas: {CONFIG} "
+            f"(entry 1 holds the pattern {pattern}, which matches no file)")
+
+
 # One declared path no system call takes. A file named so reads as absent,
 # and a pattern whose folder is named so matches no file, as a pattern that
-# leaves the root matches none.
-NUL_PATHS = [("a-pin", "G1.1", TO_DO), ("a-schema-folder", "G1.1", DONE),
-             ("a-schema-folder-pattern", "G1.1", DONE),
+# leaves the root matches none: the declaration is unreadable, G1.1 reads
+# `to do` and the print names the pattern.
+NUL_PATHS = [("a-pin", "G1.1", TO_DO), ("a-schema-folder", "G1.1", TO_DO),
+             ("a-schema-folder-pattern", "G1.1", TO_DO),
              ("a-model-configuration", "G1.2", TO_DO)]
+NUL_PATTERNS = {"a-schema-folder": "a\x00b/*.json", "a-schema-folder-pattern": "a\x00b/"}
 
 
 @pytest.mark.parametrize("case, condition, status", NUL_PATHS, ids=[row[0] for row in NUL_PATHS])
@@ -944,12 +971,13 @@ def test_done_means_a_declared_path_that_holds_a_nul_never_stops_the_print(
     # for the tree and for `g1-check` alike
     printed = show(repo, capsys)
     assert printed.tag(f"{ID}/G1/{condition}") == status
-    assert printed.problems == []
+    assert printed.problems == ([no_file_line(NUL_PATTERNS[case])]
+                                if case in NUL_PATTERNS else [])
     agree(repo, capsys, printed)
 
 
 REFUSED = "a-name-the-system-refuses"
-REFUSED_PATHS = [("a-schema-file", "G1.1", DONE), ("a-model", "G1.2", FAILED)]
+REFUSED_PATHS = [("a-schema-file", "G1.1", TO_DO), ("a-model", "G1.2", FAILED)]
 
 
 @pytest.mark.parametrize("case, condition, status", REFUSED_PATHS,
@@ -972,10 +1000,12 @@ def test_done_means_a_declared_path_the_system_refuses_never_stops_the_print(
         repo.config(schemas=[{**SPECTRAL, "paths": [f"api/{REFUSED}.yaml"]}])
     else:
         repo.components({**LEDGER, "model": f"specs/models/{REFUSED}.tla"})
-    # a schema file named so is no file on disk, and a model named so is absent
+    # a schema file named so is no file on disk, so its pattern makes the
+    # declaration unreadable, and a model named so is absent
     printed = show(repo, capsys)
     assert printed.tag(f"{ID}/G1/{condition}") == status
-    assert printed.problems == []
+    assert printed.problems == ([no_file_line(f"api/{REFUSED}.yaml")]
+                                if case == "a-schema-file" else [])
     agree(repo, capsys, printed)
 
 
@@ -1106,21 +1136,6 @@ def test_done_means_an_exempt_entry_python_cannot_turn_into_text_never_stops_the
     assert printed.out == bare.out
     assert len(printed.problems) == 1, printed.problems
     assert printed.problems[0].startswith(WHOLE + "(ValueError: Exceeds the limit")
-
-
-def test_done_means_a_build_whose_g1_part_ended_on_an_error_reads_no_exemption(
-        repo, capsys, monkeypatch):
-    repo.feature(OLD)
-    bare = show(repo, capsys)
-    assert bare.after(f"  {OLD}/G1 Requirements / Spec [to do]", 4) == g1_lines(OLD, TO_DO)
-    repo.state(DONE, DONE, DONE, exempt=[OLD])
-    assert show(repo, capsys).verdicts(OLD)[1:] == [
-        f"  {OLD}/G1 Requirements / Spec [to do] inactive"]
-    # the list was read before the error, and it still exempts nothing
-    monkeypatch.setattr(tree, "g1_problems", raises)
-    printed = show(repo, capsys)
-    assert printed.out == bare.out
-    assert printed.problems == [WHOLE + "(RuntimeError: no such reading)"]
 
 
 def test_done_means_the_one_line_stands_last_and_no_other_g1_line_is_printed(

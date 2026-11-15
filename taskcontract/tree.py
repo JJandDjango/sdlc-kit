@@ -30,10 +30,13 @@ list the package ships. It stores none of that, in a verdict cache or
 elsewhere, and starts no linter and no checker. With `G1` absent from
 `active_gates` it reads none of them and names none in a problem line.
 A build that ends on any exception while `G1` is listed is made again,
-whole, with none of G1's sources read: no feature is exempt, each G1
-condition and verdict reads `to do`, and the one G1 problem line, the
+whole, reading only the config's `g1.exempt` of G1's sources: an exempt
+feature prints as before, each other feature holds G1 active with each G1
+condition and verdict reading `to do`, and the one G1 problem line, the
 last, is `unreadable G1 reading: G1 (<reason>)`, so no G1 text stops the
-print and nothing unproven reads `done`.
+print and nothing unproven reads `done`. A contract whose
+`provenance.origin` is `g8-escape` or `g9-maintenance` is gated by no G1:
+it prints as an exempt feature does.
 
 The gates stand first, at the repository level, each opening first into
 its conditions, the named parts gates.yaml lists in its page's order. A
@@ -335,13 +338,17 @@ def build(root: Path, cache: dict[str, G0Reading] | None = None
     build, and only while `active_gates` lists it.
 
     While `active_gates` lists `G1`, a build that ends on any exception is
-    made again, whole, as one that reads no G1 source: no feature is
-    exempt, each G1 condition and verdict reads `to do` with no diagnostic
-    and no evidence, and no G1 problem line of the first build stands. One
+    made again, whole, as one that reads no G1 reading: the config's
+    `g1.exempt` alone, so an exempt feature, and a contract born of an
+    escape or maintenance, prints as in the first build, and each other
+    feature holds G1 active with each G1 condition and verdict `to do`,
+    with no diagnostic and no evidence, and no G1 problem line of the
+    first build stands. One
     line is then added, last: `unreadable G1 reading: G1 (<reason>)`, the
     reason as `_ended` gives it for the exception the first build ended
-    on. An exception the second build ends on propagates, as does any
-    while `G1` is not listed, with no second build.
+    on. A config or an exemption the second build cannot read holds the
+    feature to G1. An exception it ends on otherwise propagates, as does
+    any while `G1` is not listed, with no second build.
     """
     listed: list[str] = []
     try:
@@ -359,8 +366,8 @@ def _build(root: Path, cache: dict[str, G0Reading] | None,
            listed: list[str] | None) -> tuple[list[Item], list[str]]:
     """One build of the tree, as `build` returns it. `listed` takes the
     active gates as this build read them, for the caller; None makes the
-    build that reads no G1 source: it calls nothing of `g1.py`'s, and
-    neither `_g1_verdicts` nor `g1_problems`."""
+    build that reads no G1 reading: it reads the config and who is exempt
+    through `g1.py`, and calls neither `_g1_verdicts` nor `g1_problems`."""
     problems: list[str] = []
     gates = {gate["id"]: gate for gate in gate_list()}
     tasks = {task["id"]: task for task in task_list()}
@@ -369,24 +376,29 @@ def _build(root: Path, cache: dict[str, G0Reading] | None,
     upcoming = next_gate(active, order)
     if listed is not None:
         listed += active
-    # None while `G1` is not listed, and in the build that reads no G1
-    # source: no G1 source is read then.
-    config = g1.read_config(root) if listed is not None and g1.GATE in active else None
+    # None while `G1` is not listed: no G1 source is read then. The build
+    # that reads no G1 reading reads the config's `g1.exempt` alone, and
+    # holds a feature it cannot read an exemption for to G1.
+    config = _config(root, listed is not None) if g1.GATE in active else None
     findings = read_findings(root, problems)
     items = _gate_items(order, active, findings, gates)
     read = read_contracts(root, problems)
     ahead = read_features(root, {cid for cid, _ in read})
+    # a contract born of an escape or maintenance is gated by no G1
+    ungated = {cid for cid, instance in read if _ungated(instance, listed is not None)}
     exempt = {fid for fid in [cid for cid, _ in read] + ahead
-              if config is not None and not g1.is_active(config, fid)}
+              if config is not None
+              and (fid in ungated or _exempts(config, fid, listed is not None))}
     contracts = [_contract_item(root, cid, instance, active, upcoming, gates, tasks,
                                 cid in exempt)
                  for cid, instance in read]
-    unread = derive(root, contracts, read_progress(root, problems), cache, config)
+    unread = derive(root, contracts, read_progress(root, problems), cache,
+                    config if listed is not None else None)
     before = [_feature_item(root, fid, active, upcoming, gates, fid in exempt)
               for fid in ahead]
     for feature in before:
         _roll_up(feature)
-    if config is not None:
+    if config is not None and listed is not None:
         problems += g1_problems(root, config, [cid for cid, _ in read], ahead, exempt)
     problems += unread  # after every other line of the print
     # One order for both kinds: a contract's folder name is its id.
@@ -396,6 +408,40 @@ def _build(root: Path, cache: dict[str, G0Reading] | None,
             _gate_roll_up(item, features)
     items += features
     return items, problems
+
+
+def _config(root: Path, strict: bool) -> dict | None:
+    """.sdlc/config.yaml as `g1.read_config` reads it. In the build that
+    reads no G1 reading (`strict` false) a config that cannot be read at all
+    reads as none, so no feature is exempt."""
+    try:
+        return g1.read_config(root)
+    except Exception:
+        if strict:
+            raise
+        return None
+
+
+def _exempts(config: dict, fid: str, strict: bool) -> bool:
+    """Whether G1 is no active gate for the feature by the config; a feature
+    the build that reads no G1 reading cannot read it for is held to G1."""
+    try:
+        return not g1.is_active(config, fid)
+    except Exception:
+        if strict:
+            raise
+        return False
+
+
+def _ungated(contract, strict: bool) -> bool:
+    """Whether the contract was born of an escape or maintenance; as
+    `_exempts` reads it."""
+    try:
+        return g1.born_ungated(contract)
+    except Exception:
+        if strict:
+            raise
+        return False
 
 
 def next_gate(active: list[str], order: list[str]) -> str | None:
@@ -776,7 +822,7 @@ def g1_problems(root: Path, config: dict, contracts: list[str], ahead: list[str]
             problems += [f"g1.exempt names no feature: {' '.join(str(entry).splitlines())}"
                          for entry in section["exempt"] if str(entry) not in known]
     try:
-        g1.schema_entries(config)
+        g1.schema_entries(config, root)
     except g1.Unreadable as exc:
         problems.append(f"unreadable g1.schemas: .sdlc/config.yaml ({exc})")
     except Exception as exc:

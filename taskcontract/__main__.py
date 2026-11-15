@@ -13,7 +13,7 @@ from .graph import main_graph
 from .interface import main_interface
 from .lang import main_lang_check, main_lang_draft, main_lang_extract
 from .progress import RUNS, main_progress
-from .scaffold import scaffold
+from .scaffold import ORIGINS, scaffold
 from .scope_check import main_scope_check
 from .suppression_audit import main_audit
 from .tree_view import main_tree
@@ -40,6 +40,9 @@ def main(argv=None) -> int:
     new.add_argument("id", help="task id (schema pattern: lowercase, digits, hyphens)")
     new.add_argument("--root", type=Path, default=Path("."),
                      help="repo root that holds specs/ (default: cwd)")
+    new.add_argument("--origin", choices=ORIGINS, default="human-request",
+                     help="where the request comes from; g8-escape and g9-maintenance "
+                          "are gated by no G1 (default: human-request)")
     vocab = sub.add_parser("vocab-check",
                            help="validate the specs/vocabulary/ glossary at the door (ADR 0017)")
     vocab.add_argument("--root", type=Path, default=Path("."),
@@ -238,7 +241,7 @@ def main(argv=None) -> int:
 
     if args.command == "new":
         try:
-            path = scaffold(args.id, root=args.root)
+            path = scaffold(args.id, root=args.root, origin=args.origin)
         except (ValueError, FileExistsError, OSError) as exc:
             print(f"taskcontract new: {exc}", file=sys.stderr)
             return 1

@@ -26,7 +26,9 @@ call writes nothing. A task writer checks the id, its kind, the feature's
 G1, the options and the progress file, in that order: while G1 is an active
 gate for the feature and its verdict in the tree does not read `done`,
 `start` and `done` refuse with `<unit> cannot start: G1 has not passed for
-<feature>`, and `block` and `run` stay open.
+<feature>`, and `block` and `run` stay open. A config that stands and
+cannot be read refuses `start` and `done` first, with `<unit> cannot start:
+.sdlc/config.yaml cannot be read: <reason>`, whatever gate is active.
 """
 
 from __future__ import annotations
@@ -225,7 +227,8 @@ def record_state(root: Path, action: str, item_id: str,
     feature's G1, the options and the contract's progress file are checked
     in that order before anything is written, so a refused call writes
     nothing. G1 refuses a `start` and a `done` only, and it is read from the
-    one tree built here, the build that answers the id.
+    one tree built here, the build that answers the id; the config's own
+    reading stands first among its refusals.
     """
     from .tree import APPROVALS, build  # tree imports this module
 
@@ -239,11 +242,17 @@ def record_state(root: Path, action: str, item_id: str,
     if action != "done" and target.level != "task":
         return _refuse(f"{PROG}: '{item_id}' is a {_kind(target)}, not a task - "
                        f"{action} takes a task id")
-    if action != "block" and _g1_holds(items, item_id):
+    if action != "block":
+        from .g1 import config_fault  # g1 imports this module
+
         feature, _, rest = item_id.partition("/")
         # A contract's close names the feature in the unit's place.
         unit = rest.split("/", 1)[0] or feature
-        return _refuse(f"{unit} cannot start: {G1} has not passed for {feature}")
+        fault = config_fault(root)
+        if fault is not None:
+            return _refuse(f"{unit} cannot start: .sdlc/config.yaml cannot be read: {fault}")
+        if _g1_holds(items, item_id):
+            return _refuse(f"{unit} cannot start: {G1} has not passed for {feature}")
     approval = target.level == "task" and item_id.rsplit("/", 1)[-1] in APPROVALS
     if action == "done" and approval and not (by or "").strip():
         return _refuse(f"{PROG}: '{item_id}' is an approval - done needs --by <seat>")

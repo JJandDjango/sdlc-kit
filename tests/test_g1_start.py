@@ -69,6 +69,8 @@ PROBLEM = "taskcontract tree: "
 
 # The refusal, verbatim (message 4 of the requirements).
 MESSAGE = "{unit} cannot start: G1 has not passed for {feature}\n"
+CONFIG_UNREADABLE = ("{unit} cannot start: .sdlc/config.yaml cannot be read: "
+                     "g1.exempt is no list of text\n")
 
 # The older lines of `taskcontract progress`, as tests/test_progress.py pins them.
 UNKNOWN = "no node '{id}' - print the tree to list every node id\n"
@@ -284,13 +286,14 @@ def tree_refuses(repo: Repo, capsys, fid: str = ID) -> bool:
     return g1(repo, capsys, fid) not in (None, "inactive", DONE)
 
 
-def refused(repo: Repo, capsys, feature: str = ID, unit: str = U) -> None:
+def refused(repo: Repo, capsys, feature: str = ID, unit: str = U,
+            message: str = MESSAGE) -> None:
     """Each kind of call is refused with its line, and nothing is written."""
     assert tree_refuses(repo, capsys, feature)
     before = repo.snapshot()
     for call, opens, _ in calls(feature, unit):
         assert mark(repo, capsys, *call) == (
-            2, "", MESSAGE.format(unit=opens, feature=feature)), call
+            2, "", message.format(unit=opens, feature=feature)), call
     assert repo.snapshot() == before
 
 
@@ -562,7 +565,10 @@ def test_sc4_2_a_g1_text_the_tree_reads_as_not_passed_is_refused(repo, capsys, t
     text(repo)
     status = g1(repo, capsys)
     assert status in (TO_DO, DOING, FAILED), status
-    refused(repo, capsys)
+    if text is _exempt_is_no_list:  # a config the kit cannot read: its own line
+        refused(repo, capsys, message=CONFIG_UNREADABLE)
+    else:
+        refused(repo, capsys)
 
 
 def test_sc4_2_g1_in_lower_case_lists_no_g1_so_no_call_is_refused(repo, capsys):

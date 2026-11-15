@@ -417,16 +417,18 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     sketch entries; design r19 joins `SC2.1+SC3.1` (the user signed r21),
     and the contract took `s8` to `s10` ready-green (rows r14 and r22).
     The checks before signing hold no check for a unit of more than three
-    checks with no `+` pair; r17 missed it. Next: build `s8-honest-reads`
-    (`plan.md` step 8).
+    checks with no `+` pair; r17 missed it. Session 157 built
+    `s8-honest-reads` (`e62a4e2`, `e00f346`; A1, A2 with F1, C1, C2, D1,
+    D2 in part, D5, D6, F2, H1), on a draft PR; Two-Key ended with one
+    mutant the user ruled equivalent. Next: build `s9-one-line-refusals`.
 
 ## Next actions
 
 Opener: Next 26, G1's open edges, is open. The
 engine's M0 passed G1 and its unit 1 ran G2.5 by hand (`d2dafba`),
 so the user's 2026-10-20 hold on G2's venue and G1's open edges is
-lifted. The readings of PRs #116 and #119 that cost something (Open questions, G1)
-still wait for a design text row. The Haiku receipts agent's question
+lifted. The readings of PRs #116 and #119 that cost something entered
+design r16 and closed with `s8-honest-reads` (session 157). The Haiku receipts agent's question
 closed with Next 8: Two-Key now takes its receipts from `receipts.py`
 alone. Not folded in `s4-tree`: `g1.py`'s `Ready:` row
 reader and `tree.drift`'s; `progress._target` has one caller left.
@@ -739,12 +741,6 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
   token (session 96)? The shares of the process's cost rest on the
   API's weights. The `/usage` readings of `s5-start`'s two sessions are
   the first measure (`USAGE-readings.md` in the s5 receipt folder).
-- G1, two readings of PR #119 that cost something, for the design's
-  next text row: in the tree's second build an exempt feature is
-  refused, where ADR 0038 and the design say an exempt feature is never
-  refused; and I9 reads the config as a person would, so where the
-  config cannot be trusted the report can end as today while `progress`
-  refuses every task.
 - A hand-written file that stops the print or a command (sessions 94
   and 95; the two handoff files name each with its receipt). On main
   G1's three readers hold their known causes, the tree holds whatever a
@@ -766,9 +762,7 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
   features that hold it; and an error of another cause that passes
   before the second build prints under G1's name for that one print. A
   `g1.exempt` entry that is no text prints whole in its problem line,
-  however long. The open edge of G1.1 widens by a case: a schema
-  pattern the system refuses matches no file, so G1.1 can read `done`
-  with nothing linted.
+  however long.
 - G1.3 (session 92; PR #112's body names each). The user kept all 12
   readings at the review (session 93), so a feature with no feature
   document cannot pass G1; since `s5-start` it can start no task, and
@@ -788,18 +782,12 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
   stand untracked on this machine (the `.claude/workflows/` question
   below).
 - G1.2, for the engineer seat (session 90; PR #109's body names each).
-  - A record binds two files of a model, the model's and its
-    configuration's, as the design draws the entry. A file the model
-    extends or includes is not bound, and a P project's sources never
-    are, so G1.2 can read `done` for text no checker ran on. Hash the
-    model's folder, or a declared list of files? Either changes the
-    record's entry, which is signed design text.
   - P has had no live run. Its two calls, its configuration as a text
     file of `p check`'s arguments, and its exit codes (0, 1 and 2, from
     `ExitCode.cs` at `260da92`) are read, not run. What `p check`
-    returns with several test cases and none named is not measured: if
-    it is 0, a configuration with no `-tc` records a pass with nothing
-    checked. P writes inside the project's folder.
+    returns with several test cases and none named is not measured;
+    since `s8-honest-reads`, `model` refuses a configuration with no
+    `-tc`. P writes inside the project's folder.
   - Five refusal lines of `g1-record model` carry words no source
     gives, beside G1.1's six.
   - Three paths end either writer on a traceback with exit 1, each
@@ -807,28 +795,15 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     declared path or in a P configuration, and a damaged schema file in
     the install. `contract_scope` does not catch a contract that is no
     UTF-8.
-  - On Windows the system finds a tool in the repository's root before
-    PATH by default, so a `tlc.cmd` committed at the root is the one
-    started, and a linter's too. Refuse it, or leave it?
-  - Two components with one `id`, and a `model` path that leaves the
-    repository, are each taken as declared.
   - Overlap's tail, under USAGE's stated limit: a second name for one
     folder (a link, an absolute path with no drive, two Unicode forms
     of a name, a Windows short name) is not seen.
-- G1.1, four edges for the engineer seat (session 88; Two-Key's
+- G1.1, two edges for the engineer seat (session 88; Two-Key's
   advisories on `79b4a5b`). Session 102 closed two others: a feature
   whose schemas stand under two `g1.schemas` entries now gets one record
   that holds a run for each, and a contract whose scope cannot be read
-  reads G1.1 `to do`, which `lint` refuses.
-  - With the `g1.schemas` key absent, `lint` prints `G1.1: no boundary
-    schema in scope` and exits 0, by the design's letter, while
-    `g1-check` reads G1.1 `to do`. Refuse the call (exit 2), as an
-    unreadable declaration is refused, or leave it?
-  - A pattern such as `./api/*.yaml`, one whose folder differs from
-    the disk in case alone, or one that is absolute or holds `..`
-    matches nothing, so its schema leaves the scope in silence and
-    G1.1 reads `done`. The design's guard is review item 10. Strip a
-    leading `./` and refuse the rest, or leave it?
+  reads G1.1 `to do`, which `lint` refuses. `s8-honest-reads` closed two
+  more: `lint` with no `g1.schemas` key, and patterns that match no file.
   - Five refusal lines carry words no source gives and no test pins,
     each on stderr with exit 2: `{id}: G1 is not active` on
     `g1-record`; `{id}: no contract at specs/{id}/contract.yaml`;
@@ -840,12 +815,6 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     memory), its JSON report (one object a line) and where an older
     release prints its version are read from its reference page and a
     stand-in.
-- G1, three smaller ones from the same round. An unreadable
-  `.sdlc/config.yaml` reads as empty, so G1 reads not active: how the
-  tree and the refusal read that is `s4-tree`'s and `s5-start`'s. A
-  pattern at the root walks the whole repository, `.git` with it;
-  `s4-tree` measures the print. `tree.py`'s docstrings at lines 288 and
-  655 say `rules:` is G0's alone.
 - The second machine after `d6`'s merge: its plugin update is not
   tested, and whether that machine holds a combined document with no
   `Ready:` row is not known. Such a document now meets its own message

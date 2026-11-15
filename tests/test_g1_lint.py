@@ -927,16 +927,6 @@ def test_sc2_2_an_empty_schemas_list_says_none_and_g1_1_reads_done(repo, capsys)
     assert check(repo, capsys)[1].splitlines() == [summary("done")]
 
 
-def test_sc2_2_a_pattern_that_matches_no_file_on_disk_puts_no_schema_in_scope(repo, capsys):
-    repo.write("api/readme.md", "no schema here\n")
-    repo.install("spectral")
-    code, out, _ = lint(capsys)
-    assert out.splitlines() == ["G1.1: no boundary schema in scope"]
-    assert code == 0
-    assert repo.calls() == []
-    assert check(repo, capsys)[1].splitlines() == [summary("done")]
-
-
 def test_sc2_2_no_schema_in_scope_passes_with_no_linter_on_the_machine(repo, capsys):
     repo.contract(ID, "src/")
     repo.write("api/openapi.yaml", "openapi: 3.1.0\n")
