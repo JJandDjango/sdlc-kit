@@ -487,6 +487,31 @@ def test_sc3_3_a_record_that_cannot_be_written_ends_each_writer_in_one_line_and_
     assert repo.snapshot() == before, "a refused writer wrote under the root"
 
 
+@pytest.mark.parametrize("writer", sorted(WRITERS))
+def test_sc3_3_a_value_error_while_the_record_is_written_ends_each_writer_as_an_os_error_does(
+        repo, capsys, monkeypatch, writer):
+    repo.install("spectral")
+    repo.install("tlc")
+    under_record_folder = re.compile(r"(^|/)\.sdlc/g1(/|$)")
+
+    def refusing(original):
+        def guarded(self, *args, **kwargs):
+            if under_record_folder.search(self.as_posix()):
+                raise UnicodeEncodeError("utf-8", WIDE, 0, 1, "the record cannot be encoded")
+            return original(self, *args, **kwargs)
+        return guarded
+
+    for name in ("write_bytes", "write_text", "mkdir"):
+        monkeypatch.setattr(Path, name, refusing(getattr(Path, name)))
+    before = repo.snapshot()
+    code, out, err = WRITERS[writer](capsys)
+    assert (code, out) == (2, ""), (code, out, err)
+    assert len(err.splitlines()) == 1 and "Traceback" not in err, err
+    assert re.fullmatch(the_record_cannot_be_written(), err), err
+    assert repo.snapshot() == before, "a refused writer wrote under the root"
+    assert not (repo.root / RECORD).exists()
+
+
 def test_sc3_3_a_hard_core_whose_checker_is_not_installed_reads_failed_and_its_record_is_one_line_when_unwritable(
         repo, capsys):
     # no tool is installed: the run of `model` is recorded as not installed
