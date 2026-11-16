@@ -124,6 +124,7 @@ from pathlib import Path
 
 import yaml
 from jsonschema import Draft202012Validator
+from jsonschema.exceptions import SchemaError
 
 from .progress import head_id
 from .scope_check import contract_scope, in_any, matches
@@ -205,6 +206,28 @@ class Finding:
 class Unreadable(ValueError):
     """A record file or a declaration the writer refuses, with the reason
     it prints."""
+
+
+class KitFault(Exception):
+    """A file of the kit's own that cannot be read, with the line the
+    writer prints after its name."""
+
+
+def _reason(exc: Exception) -> str:
+    """Why a file failed, on one line: the system's reason when it gives
+    one, else the exception's text."""
+    return _one_text_line(getattr(exc, "strerror", None) or str(exc)) or "no reason given"
+
+
+def _ended(exc: Exception) -> str:
+    """What a reader ended on, as `tree` names it: the exception's class
+    name and its message, a line break in it read as one space; the class
+    name alone when the message cannot be made. It never raises."""
+    try:
+        message = " ".join(str(exc).splitlines())
+    except Exception:
+        return type(exc).__name__
+    return f"{type(exc).__name__}: {message}"
 
 
 def read_config(root: Path) -> dict:
@@ -526,19 +549,20 @@ def components(root: Path) -> list[dict] | None:
     """The entries of specs/components.yaml; None when the file is absent,
     which is not the empty list. Unreadable with the reason when the file
     is no YAML or the declaration's schema refuses it: one such entry makes
-    the whole declaration unreadable."""
+    the whole declaration unreadable. KitFault when the kit's own schema
+    cannot be read, which no declaration is at fault for."""
     path = root / COMPONENTS
     if not path.exists():
         return None
     try:
         doc = yaml.safe_load(path.read_text(encoding="utf-8"))
-        schema = json.loads(COMPONENT_SCHEMA.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError) as exc:
         raise Unreadable(getattr(exc, "strerror", None) or "cannot be read") from None
     except (yaml.YAMLError, ValueError) as exc:  # a date no calendar holds is a ValueError
         mark = getattr(exc, "problem_mark", None)
         raise Unreadable(f"YAML error at line {mark.line + 1}" if mark is not None
                          else "YAML error") from None
+    schema = _kit_schema()
     error = next(iter(Draft202012Validator(schema).iter_errors(doc)), None)
     if error is not None:
         where = "/".join(str(part) for part in error.absolute_path)
@@ -554,6 +578,22 @@ def components(root: Path) -> list[dict] | None:
                 raise Unreadable(f"component {name}: {key} {_one_text_line(entry[key])} "
                                  "is outside the repository")
     return doc["components"]
+
+
+def _kit_schema() -> dict:
+    """The component declaration's schema, which ships with the kit; KitFault
+    with the line the writer prints when the file cannot be read, is no
+    JSON, or is no schema."""
+    try:
+        schema = json.loads(COMPONENT_SCHEMA.read_text(encoding="utf-8"))
+        Draft202012Validator.check_schema(schema)
+    except SchemaError as exc:
+        reason = _one_text_line(exc.message) or "no reason given"
+    except (OSError, ValueError) as exc:  # not JSON, or not UTF-8
+        reason = _reason(exc)
+    else:
+        return schema
+    raise KitFault(f"the kit's schema cannot be read: {COMPONENT_SCHEMA.name} ({reason})")
 
 
 def _outside(root: Path, path: str) -> bool:
@@ -909,11 +949,18 @@ def main_g1_check(args) -> int:
     config = read_config(root)
     if not gated(root, config, feature_id):
         return _refuse(_not_active(feature_id))
-    lint, findings = read_lint(root, feature_id, scope, config)
-    model, reported = read_model(root, feature_id, scope)
-    review, unchecked = read_review(root, feature_id)
-    findings = findings + reported + unchecked
-    statuses = {LINT: lint, MODEL: model, REVIEW: review}
+    readers = ((LINT, lambda: read_lint(root, feature_id, scope, config)),
+               (MODEL, lambda: read_model(root, feature_id, scope)),
+               (REVIEW, lambda: read_review(root, feature_id)))
+    statuses: dict[str, str] = {}
+    findings: list[Finding] = []
+    for condition, reader in readers:
+        try:
+            statuses[condition], found = reader()
+        except Exception as exc:  # the first reader that fails is the one named
+            return _refuse(f"{feature_id}: unreadable G1 reading: {condition} "
+                           f"({_ended(exc)})")
+        findings += found
     note = ", ".join(f"{condition} {status}" for condition, status in statuses.items())
     green = all(status == DONE for status in statuses.values())
     if args.as_json:
@@ -974,6 +1021,10 @@ def record_lint(root: Path, feature_id: str) -> int:
         return _refuse(f"{feature_id}: g1.schemas cannot be read: {exc}")
     if entries is None:
         return _refuse(f"{feature_id}: no g1.schemas in .sdlc/config.yaml")
+    for n, entry in enumerate(entries, start=1):  # no call can carry a NUL
+        if "\0" in entry["pin"]:
+            return _refuse(f"{feature_id}: g1.schemas cannot be read: entry {n} "
+                           "names a pin that holds a NUL character")
     schemas = schemas_in_scope(root, scope, entries)
     if not schemas:
         print(NO_SCHEMA)
@@ -1018,7 +1069,10 @@ def record_lint(root: Path, feature_id: str) -> int:
         "head": head_id(root),
         "runs": held,
     })
-    _write(path, doc)
+    try:
+        _write(path, doc)
+    except Unreadable as exc:
+        return _refuse(f"{PROG}: {exc}")
     named: set[str] = set()  # the tools the not-installed line has named
     for run, result in zip(runs, results):
         tool = run[0].linter
@@ -1147,8 +1201,16 @@ def record_model(root: Path, feature_id: str) -> int:
         entries = components(root)
     except Unreadable as exc:
         return _refuse(f"{feature_id}: {COMPONENTS.as_posix()} cannot be read: {exc}")
+    except KitFault as exc:
+        return _refuse(f"{PROG}: {exc}")
     if entries is None:
         return _refuse(f"{feature_id}: no component declaration at {COMPONENTS.as_posix()}")
+    for entry in entries:  # no call can carry a NUL
+        for key in ("model", "model_config"):
+            if isinstance(entry.get(key), str) and "\0" in entry[key]:
+                return _refuse(f"{feature_id}: {COMPONENTS.as_posix()} cannot be read: "
+                               f"component {_one_text_line(str(entry['id']))}: {key} "
+                               "holds a NUL character")
     cores = hard_cores_in_scope(scope, entries)
     if not cores:
         print(NO_HARD_CORE)
@@ -1201,7 +1263,10 @@ def record_model(root: Path, feature_id: str) -> int:
                                                    "model_folder", "config", "result")}
                       for entry in held],
         })
-        _write(path, doc)
+        try:
+            _write(path, doc)
+        except Unreadable as exc:
+            return _refuse(f"{PROG}: {exc}")
     for line in lines:
         print(line)
     if held:
@@ -1243,6 +1308,8 @@ def _refused_core(root: Path, feature_id: str, cores: list[dict]) -> str | None:
                 words = (root / core["model_config"]).read_text(encoding="utf-8").split()
             except (OSError, UnicodeDecodeError):
                 continue
+            if any("\0" in word for word in words):
+                continue  # P cannot read it either: left to its run
             if "-tc" not in words[:-1]:
                 return (f"{feature_id}: the configuration of {core['id']} names no "
                         f"test case: {core['model_config']}")
@@ -1277,11 +1344,14 @@ def _p(program: str, root: Path, core: dict, feature_id: str) -> str | None:
     with no call made; a compile that does not exit 0 gives no result,
     and no check follows. None when P cannot start."""
     model = root / _entry(core["model"])
+    unread = NoResult(f"{feature_id}: the configuration of {core['id']} cannot be "
+                      f"read: {core['model_config']}")
     try:
         words = (root / core["model_config"]).read_text(encoding="utf-8").split()
     except (OSError, UnicodeDecodeError):
-        raise NoResult(f"{feature_id}: the configuration of {core['id']} cannot be "
-                       f"read: {core['model_config']}") from None
+        raise unread from None
+    if any("\0" in word for word in words):  # no call can carry a NUL
+        raise unread
     built = _start([program, "compile", "--pproj", model.name], model.parent)
     if built is None:
         return None
@@ -1344,7 +1414,11 @@ def record_review(root: Path, feature_id: str, by: list[str], seat: list[str],
     if not scope:
         return _refuse(f"{feature_id}: the contract's scope cannot be read at "
                        f"specs/{feature_id}/contract.yaml")
-    names = items()
+    try:
+        names = items()
+    except (OSError, ValueError, yaml.YAMLError, KeyError, TypeError) as exc:
+        return _refuse(f"{PROG}: the kit's items cannot be read: "
+                       f"{ITEMS_PATH.name} ({_reason(exc)})")
     try:
         signer = _signer(by)
         sat = _seat(root, seat)
@@ -1369,7 +1443,10 @@ def record_review(root: Path, feature_id: str, by: list[str], seat: list[str],
                    **({"section": sections[n]} if n in sections else {})}
                   for n, name in names.items()],
     })
-    _write(path, doc)
+    try:
+        _write(path, doc)
+    except Unreadable as exc:
+        return _refuse(f"{PROG}: {exc}")
     for n in sorted(sections):
         print(UNCHECKED.format(n=n, item=names[n], section=sections[n]))
     if not sections:
@@ -1404,7 +1481,7 @@ def _seat(root: Path, seat: list[str]) -> str:
     given = _once("--seat", seat)
     try:
         term = yaml.safe_load((root / SEAT_TERM).read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, yaml.YAMLError):
+    except (OSError, ValueError, yaml.YAMLError):  # a date no calendar holds is a ValueError
         term = None
     if not isinstance(term, dict) or term.get("status") != "ratified":
         raise Refused(f"no ratified intake-seat term at {SEAT_TERM.as_posix()}")
@@ -1480,10 +1557,16 @@ def _existing(path: Path) -> dict:
 
 def _write(path: Path, doc: dict) -> None:
     """The record file and its folder, UTF-8 with LF on every platform. The
-    folder is committed, so it gets no `.gitignore`."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8", newline="\n") as out:
-        yaml.safe_dump(doc, out, sort_keys=False, allow_unicode=True)
+    folder is committed, so it gets no `.gitignore`. The text is made whole
+    before the folder or the file is touched; Unreadable with the reason
+    for a record that cannot be written."""
+    try:
+        data = yaml.safe_dump(doc, sort_keys=False, allow_unicode=True).encode("utf-8")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
+    except (OSError, ValueError) as exc:
+        raise Unreadable(f"the record cannot be written: "
+                         f"{(G1_DIR / path.name).as_posix()} ({_reason(exc)})") from None
 
 
 def _no_contract(feature_id: str) -> str:

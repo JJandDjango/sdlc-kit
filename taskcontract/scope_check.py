@@ -99,7 +99,7 @@ def contract_scope(root: Path, contract_id: str) -> list[str] | None:
         return None
     try:
         doc = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    except (OSError, yaml.YAMLError):
+    except (OSError, yaml.YAMLError, ValueError):  # a bad date, a huge number, not UTF-8
         return []
     scope = doc.get("scope") if isinstance(doc, dict) else None
     return [str(entry) for entry in scope] if isinstance(scope, list) else []

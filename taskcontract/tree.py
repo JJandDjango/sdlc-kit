@@ -753,7 +753,10 @@ def _g1_verdicts(root: Path, contracts: list[Item], config: dict) -> list[str]:
             if condition.status == FAILED:
                 condition.diagnostics = [" ".join(finding.message.splitlines())
                                          for finding in found]
-            if key == g1.REVIEW and condition.status in (DONE, FAILED):
+            # no feature document, RS302, leaves no review to name
+            if key == g1.REVIEW and (condition.status == DONE or (
+                    condition.status == FAILED
+                    and not any(finding.rule == "RS302" for finding in found))):
                 condition.evidence = review_evidence(g1.last_record(root, cid, g1.REVIEW))
         verdict.status = _rolled([condition.status for condition in verdict.children])
     return [line for _, _, line in sorted(unread)]
@@ -881,9 +884,11 @@ def g0_status(path: Path, schema: dict) -> G0Reading:
     `blocked`, else `to do`), and whether the file reads as a mapping, which
     decides whether the joins' conditions can read it. Warnings never count."""
     def errors(profile: str) -> tuple[tuple[str, str], ...]:
-        return tuple((v.rule, v.message)
-                     for v in checker.validate_path(path, profile=profile, schema_doc=schema)
-                     if v.severity == "error")
+        try:
+            found = checker.validate_path(path, profile=profile, schema_doc=schema)
+        except ValueError as exc:  # not UTF-8, a date no calendar holds: as a YAML error
+            return (("TC000", f"unreadable contract: {exc}"),)
+        return tuple((v.rule, v.message) for v in found if v.severity == "error")
 
     draft, ready = errors("draft"), errors("ready")
     return G0Reading(_g0(draft, ready), draft, ready,
@@ -1375,7 +1380,7 @@ def _node(path: Path, place: tuple):
     longer holds it; a repeated key gives its last value, as the loader does."""
     try:
         node = yaml.compose(path.read_text(encoding="utf-8"), Loader=yaml.SafeLoader)
-    except (yaml.YAMLError, OSError, UnicodeDecodeError):
+    except (yaml.YAMLError, OSError, ValueError):
         return None
     for key in place:
         if isinstance(key, int):
@@ -1408,6 +1413,8 @@ def _load(path: Path, root: Path, problems: list[str], what: str) -> dict | None
         reason = f"YAML error at line {mark.line + 1}" if mark is not None else "YAML error"
     except (OSError, UnicodeDecodeError) as exc:
         reason = getattr(exc, "strerror", None) or "cannot be read"
+    except ValueError:  # a date no calendar holds, or a number past the digit limit
+        reason = "YAML error"
     else:
         if isinstance(doc, dict):
             return doc

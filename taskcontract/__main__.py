@@ -22,7 +22,19 @@ from .vocabulary import (VOCAB_DIR, list_terms, load_glossary_schema,
 from .workflow import main_node
 
 
+def _escape_stdout() -> None:
+    """Standard output writes a character its encoding cannot hold as its
+    backslash escape, the way Python writes standard error."""
+    reconfigure = getattr(sys.stdout, "reconfigure", None)
+    if reconfigure is not None:
+        try:
+            reconfigure(errors="backslashreplace")
+        except (ValueError, OSError):
+            pass  # a stream that cannot change: the write is its own
+
+
 def main(argv=None) -> int:
+    _escape_stdout()
     parser = argparse.ArgumentParser(
         prog="taskcontract",
         description="Validate task contracts (G0.1 definition-of-ready, ADR 0006).",
