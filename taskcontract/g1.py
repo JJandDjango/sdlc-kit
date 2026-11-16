@@ -178,6 +178,10 @@ NO_DOCUMENT = ("G1.3: no feature document at docs/features/{feature}.md; "
 _PIPE = re.compile(r"(?<!\\)\|")
 _REVISION = re.compile(r"r([0-9]+):\s*")
 _DERIVED = re.compile(r"derived from r([0-9]+)(?!\w)")
+# The row's opening word, and the drift mark of a document that has none
+# that names a revision; `tree` takes both from here.
+READY = "Ready:"
+NO_READY = 'no "Ready:" row'
 
 
 @dataclass(frozen=True)
@@ -813,16 +817,12 @@ def _names(value) -> bool:
             and any(ch.isalnum() for ch in value))
 
 
-def _ready_revision(path: Path) -> int | None:
-    """The revision the document's contract was derived from, as
-    `tree.drift` reads it: of the first table's `Ready:` rows that name a
-    `derived from rM`, the one with the highest N gives M, the lower row
-    winning a tie. None when the file cannot be read as text, holds no
-    table or holds no such row."""
-    try:
-        lines = path.read_bytes().decode("utf-8-sig").splitlines()
-    except (OSError, UnicodeDecodeError):
-        return None
+def ready_revision(lines: list[str]) -> int | None:
+    """The revision a document's contract was derived from, the one reader
+    of a `Ready:` row, which `tree.drift` calls too: of the first table's
+    rows that name a `derived from rM`, the one with the highest N gives M,
+    the lower row winning a tie. None when the lines hold no table or no
+    such row."""
     revision, newest, started = None, -1, False
     for line in lines:
         row = line.strip()
@@ -836,12 +836,22 @@ def _ready_revision(path: Path) -> int | None:
         cells = [cell.strip() for cell in _PIPE.split(row)[1:]]
         cell = cells[-1] if cells else ""
         match = _REVISION.match(cell)
-        if match is None or not cell.startswith("Ready:", match.end()):
+        if match is None or not cell.startswith(READY, match.end()):
             continue
         derived = _DERIVED.search(cell, match.end())
         if derived is not None and int(match.group(1)) >= newest:
             newest, revision = int(match.group(1)), int(derived.group(1))
     return revision
+
+
+def _ready_revision(path: Path) -> int | None:
+    """`ready_revision` of the file's lines; None when the file cannot be
+    read as text."""
+    try:
+        lines = path.read_bytes().decode("utf-8-sig").splitlines()
+    except (OSError, UnicodeDecodeError):
+        return None
+    return ready_revision(lines)
 
 
 def derived_from(root: Path, feature_id: str) -> dict[str, str]:
@@ -935,10 +945,11 @@ def read_review(root: Path, feature_id: str) -> tuple[str, list[Finding]]:
 
 
 def main_g1_check(args) -> int:
-    """`taskcontract g1-check`: the three conditions' statuses, G1.1's
-    findings, then G1.2's and then G1.3's. Exit 0 when all three read
-    `done`, 1 when they do not, 2 when the id has no contract or G1 is not
-    active for the feature."""
+    """`taskcontract g1-check`: the findings of G1.1, then G1.2's and then
+    G1.3's, and after them the three conditions' statuses. Exit 0 when all
+    three read `done`, 1 when they do not, 2 when the id has no contract,
+    G1 is not active for the feature, the config cannot be read or a reader
+    fails."""
     root, feature_id = Path(args.root), args.id
     scope = contract_scope(root, feature_id)
     if scope is None:

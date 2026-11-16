@@ -229,7 +229,7 @@ _CHECK_ID = re.compile(r"^[A-Za-z][A-Za-z0-9._-]*$")
 
 # A contract's drift marks when it has no stale one.
 NO_DOCUMENT = "no feature document"
-NO_READY = 'no "Ready:" row'
+NO_READY = g1.NO_READY
 # A feature before intake's mark when its doc gives no text row.
 NO_REVISION = "no revision table"
 # A pair's second document, by its name's end, and the word its marks carry.
@@ -238,15 +238,14 @@ DESIGN = "design"
 # A feature before intake's halves, each an id segment and a plain name.
 HALVES = (("request", "Request half"), ("solution", "Solution half"))
 # A feature doc's revision table: a pipe after a backslash never splits a
-# cell; a counted row's last cell opens on `r<N>:`, and a `Ready:` row names
-# its `rM` by the first `derived from rM`, the digits ending at a non-word.
+# cell; a counted row's last cell opens on `r<N>:`. `g1.ready_revision` reads
+# a `Ready:` row, which names its `rM` by the first `derived from rM`.
 # A text row opens on none of the four words, and only a text row ages
 # anything; a signature's words after `r<N>:` are fixed (ADR 0034), the
 # half's name ending at a non-word.
 _PIPE = re.compile(r"(?<!\\)\|")
 _REVISION = re.compile(r"r([0-9]+):\s*")
-_DERIVED = re.compile(r"derived from r([0-9]+)(?!\w)")
-_NOT_TEXT = ("Ready:", "Measured:", "Signed:", "Parked:")
+_NOT_TEXT = (g1.READY, "Measured:", "Signed:", "Parked:")
 _SIGNED = re.compile(r"Signed: (request|solution) half(?!\w)")
 # A revision as a review record's evidence prints it: `r` and ASCII digits,
 # matched whole.
@@ -478,14 +477,10 @@ def drift(path: Path, word: str = "document") -> str | None:
     lines = _lines(path)
     if lines is None:
         return NO_READY
-    document = contract = None
-    newest = -1  # the N of the `Ready:` row that gave `contract`
+    document = None
+    contract = g1.ready_revision(lines)
     for _, n, rest, _ in _counted(lines):
-        if rest.startswith("Ready:"):
-            derived = _DERIVED.search(rest)
-            if derived is not None and n >= newest:  # a tie: the lower row wins
-                newest, contract = n, int(derived.group(1))
-        elif not rest.startswith(_NOT_TEXT):
+        if not rest.startswith(_NOT_TEXT):
             document = n if document is None else max(document, n)
     if contract is None:
         return NO_READY
