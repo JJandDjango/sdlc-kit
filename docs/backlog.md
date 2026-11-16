@@ -426,11 +426,13 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     D3, E1 to E5, G1, H3; B6 not taken), merged as PR #167 at `9514ff0`
     and tagged `v0.22.2` there (session 160: the install from the tag
     read 0.22.2 and `ready-green`); the self-pin PR moves the kit's own
-    pins to that tag. B6 stands under Open questions.
+    pins to that tag. Session 161 closed B6, the last edge: `tree.build`'s
+    docstring says the second build's G1 line and its conditions still
+    name each feature that holds them.
 
 ## Next actions
 
-Opener: Next 26, G1's open edges, is open. The
+Opener: Next 26, G1's open edges, is closed (B6 last, session 161). The
 engine's M0 passed G1 and its unit 1 ran G2.5 by hand (`d2dafba`),
 so the user's 2026-10-20 hold on G2's venue and G1's open edges is
 lifted. The readings of PRs #116 and #119 that cost something entered
@@ -761,11 +763,7 @@ alone. `s10-words-and-folds` folded `g1.py`'s `Ready:` row reader and
   file that is not UTF-8 or holds a date no calendar holds; it reads
   that file through `checker.py` and `vocabulary.py`, outside
   `g1-requirements-spec`'s scope (QA's question, session 158). Left
-  from round 4, both advisory: `build`'s
-  docstring says each G1 condition reads `to do` with no diagnostic in
-  the second build, and not that the repository's G1 line still lists
-  the features that hold it (B6, ruled a fix for `s10`; its test list
-  and interface note did not carry it, session 159); and an error of another cause that passes
+  from round 4, advisory: an error of another cause that passes
   before the second build prints under G1's name for that one print. A
   `g1.exempt` entry that is no text prints whole in its problem line,
   however long.
