@@ -420,7 +420,9 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     checks with no `+` pair; r17 missed it. Session 157 built
     `s8-honest-reads` (`e62a4e2`, `e00f346`; A1, A2 with F1, C1, C2, D1,
     D2 in part, D5, D6, F2, H1), on a draft PR; Two-Key ended with one
-    mutant the user ruled equivalent. Next: build `s9-one-line-refusals`.
+    mutant the user ruled equivalent. Session 158 built
+    `s9-one-line-refusals` (`37b14ea`, `a192f0f`; B1 to B5, D4, H2), on a
+    draft PR. Next: build `s10-words-and-folds`, which ships 0.22.2.
 
 ## Next actions
 
@@ -746,17 +748,15 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
   G1's three readers hold their known causes, the tree holds whatever a
   reader ends on, `tree.build` holds whatever G1's part of a build ends
   on, and the print writes a character its output cannot hold as its
-  escape. Still open, each older than `s4-tree`: with G0 active a
-  contract that is not UTF-8, or one whose scope holds a number past
-  4300 digits, stops the whole print in the validator's path;
-  `tree._load` and `scope_check.contract_scope` let a plain ValueError
-  from the YAML loader through (an unquoted date no calendar holds;
-  since session 102 `g1-record lint` catches it and refuses the
-  contract, with no test that feeds it one);
-  `g1._seat` does too, for the seat term's file; `g1-check` calls its
-  three readers bare; and `g1-check` and the other commands write
-  through `print`, so a text outside the code page stops them through a
-  pipe on Windows. Left from round 4, both advisory: `build`'s
+  escape. `s9-one-line-refusals` (session 158) closed the five older
+  causes: a contract that is not UTF-8 or holds a number past 4300
+  digits, the loader's ValueError in `tree._load`, `contract_scope` and
+  `g1._seat`, `g1-check`'s bare readers, and a character outside the
+  code page through a pipe. Still open: the tree ends on a vocabulary
+  file that is not UTF-8 or holds a date no calendar holds; it reads
+  that file through `checker.py` and `vocabulary.py`, outside
+  `g1-requirements-spec`'s scope (QA's question, session 158). Left
+  from round 4, both advisory: `build`'s
   docstring says each G1 condition reads `to do` with no diagnostic in
   the second build, and the repository's G1 line still lists the
   features that hold it; and an error of another cause that passes
@@ -790,11 +790,10 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     `-tc`. P writes inside the project's folder.
   - Five refusal lines of `g1-record model` carry words no source
     gives, beside G1.1's six.
-  - Three paths end either writer on a traceback with exit 1, each
-    writing nothing: a record file that cannot be written, a NUL in a
-    declared path or in a P configuration, and a damaged schema file in
-    the install. `contract_scope` does not catch a contract that is no
-    UTF-8.
+  - `g1-check` on a damaged kit schema exits 2 with
+    `G1.2 (KitFault: ...)` since `s9-one-line-refusals` (the Developer's
+    reading, session 158); no test pins it. `s9` closed the three paths
+    that ended either writer on a traceback.
   - Overlap's tail, under USAGE's stated limit: a second name for one
     folder (a link, an absolute path with no drive, two Unicode forms
     of a name, a Windows short name) is not seen.
