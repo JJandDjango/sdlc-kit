@@ -628,7 +628,9 @@ def test_sc3_3_a_kit_schema_that_is_no_schema_ends_model_in_one_line_and_writes_
     assert repo.snapshot() == before
 
 
-@pytest.mark.parametrize("kind, body", [("not-yaml", b"[\n"), ("absent", None)])
+@pytest.mark.parametrize("kind, body", [
+    ("not-yaml", b"[\n"), ("absent", None), ("not-utf-8", b"\xff\xfe"),
+    ("empty-mapping", b"{}\n"), ("list-of-numbers", b"[1, 2]\n")])
 def test_sc3_3_a_damaged_items_file_of_the_kit_ends_review_in_one_line_and_writes_nothing(
         repo, damaged, package, kind, body):
     damage, _, items = damaged
@@ -642,7 +644,9 @@ def test_sc3_3_a_damaged_items_file_of_the_kit_ends_review_in_one_line_and_write
 
 
 @pytest.mark.parametrize("kind, body, cause", [
-    ("not-yaml", b"[\n", "ParserError"), ("absent", None, "FileNotFoundError")])
+    ("not-yaml", b"[\n", "ParserError"), ("absent", None, "FileNotFoundError"),
+    ("not-utf-8", b"\xff\xfe", r"\w+"), ("empty-mapping", b"{}\n", r"\w+"),
+    ("list-of-numbers", b"[1, 2]\n", r"\w+")])
 def test_done_means_g1_check_holds_a_damaged_items_file_to_one_line_with_exit_2(
         repo, damaged, package, kind, body, cause):
     damage, _, items = damaged
@@ -652,7 +656,7 @@ def test_done_means_g1_check_holds_a_damaged_items_file_to_one_line_with_exit_2(
         code, out, err = child(repo, "g1-check", ID, *options, package=package)
         assert (code, out) == (2, b""), (options, code, out, err)
         assert re.fullmatch(
-            re.escape(f"{ID}: unreadable G1 reading: G1.3 ({cause}: ") + r"[^\n]+\)\n", err), err
+            re.escape(f"{ID}: unreadable G1 reading: G1.3 (") + f"{cause}: " + r"[^\n]+\)\n", err), err
     assert repo.snapshot() == before
 
 
