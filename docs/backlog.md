@@ -453,47 +453,76 @@ alone. `s10-words-and-folds` folded `g1.py`'s `Ready:` row reader and
    requirements r7 and design r7, at `1da34dd` (2026-10-20).
 
 2. Deferred from 0.18.0's sweep (Two-Key's advisories, rounds 1 to 3),
-   each a change of behavior or a sentence a test pins word for word.
-   A measure comes first: which of them a consumer meets. The
-   2026-10-05 feedback named none.
-   - The interview: E2 gives a free path (`CHANGELOG.md`, `MAP.md`) no
-     exemption; S6 never asks which unit is the release unit; P6 writes
-     `next: P1` before Q15 proposes a changed check's scenario again;
-     E6's path back into a request-half section runs neither Q15 nor P1
-     to P5 again; Q14 never asks whether a term amends another; S3 never
-     asks for each output kind; the "sections written" count is one a
-     seat cannot check; with no engineer seat, S1's Out of scope lines
-     land under no text row. O6 writes "(none: intake writes the
-     record)" into each document, and no step writes the Record; a test
-     pins the string.
-   - Seen in `d3`'s live run, listed in the receipt folder's
-     `RECEIPT.md`: Q15 withheld the scenario for a check Q11 had
-     accepted, as thin; the requirements run wrote two state-file lines
-     with an unquoted colon, so the draft check's first run could not
-     read the file; S2 calls the engineer seat's own out-of-scope places
-     refusals; E1 to E5 ran in the same turn as the Notes confirmation.
-   - Seen in `d5`'s live runs: a design run lets a unit hold more than
-     three checks with no `+` in its Checks cell (`hello-name`'s
-     `u1-greeting` holds six), and I4 allows a unit three sketch
-     entries, so intake could not place them.
-   - Intake: I5 still offers `strike` on a feature document; I3's
-     "contract already exists, ASK" says nothing for a re-intake;
-     `intake.md:23` uses "above" for a table position and for a higher
-     revision number; after a ready intake the Appendix's Contract block
-     and the status line's `draft` stay as the interview wrote them,
-     against ADR 0036.
+   measured in session 162 against main at `0c2f9f6` and the engine's
+   record (`E:/ImSimProject/engine`: `m0-window-vulkan-cleared-frame`
+   and `subset-lint`, each through both interview runs and intake). The
+   2026-10-05 feedback named none. A consumer met four of the 27, and
+   the measure found a fifth; each is a unit candidate, in no unit yet:
+   - S3 never asks for each output kind (`solution.md:50`, unchanged
+     since 0.18.0): in both designs ready check 12 found outputs S3 had
+     not drawn, each closed by a way back after signing (engine
+     `subset-lint.design.state.yaml:326,332`,
+     `m0-window-vulkan-cleared-frame.design.state.yaml:246,252`).
+   - No step writes the Record: O6 writes "(none: intake writes the
+     record)" (`opening.md:36`; a test pins the string) and intake never
+     names it. Both features wrote it by hand at merge (engine
+     `b1b11b7`, `e029f96`).
+   - After a ready intake the design's Contract block still reads
+     "(none: intake writes `specs/{id}/contract.yaml`)" (engine
+     `subset-lint.design.md:615`,
+     `m0-window-vulkan-cleared-frame.design.md:322`), and the status
+     line moved to merged by hand (`b1b11b7`), against ADR 0036.
+   - I3's "contract already exists, ASK" says nothing for a re-intake
+     (`intake.md:26`): m0's re-intake removed the r3 contract by hand,
+     since the write-guard denies a session on a ready contract (engine
+     `7116a92`).
+   - Found by the measure: O5 records material "under
+     `answers.{section}` with `source: material`" (`opening.md:34`).
+     Both engine runs read that as a mapping, and the draft check reads
+     a mapping as no entries (`taskcontract/lang.py:482-484`), so it
+     reports 0 findings on 0 checks. Each run reshaped its answers by
+     hand before the check (engine `subset-lint.state.yaml:129`,
+     `subset-lint.design.state.yaml:325`).
+   Parked: each stands on main, and the engine never ran its path or ran
+   it with no symptom. Each is a change of behavior or a sentence a test
+   pins word for word.
+   - The interview: E2 gives a free path (`CHANGELOG.md`) no exemption
+     (both designs had no release unit, so E2 skipped); P6 writes
+     `next: P1` before Q15 proposes a changed check's scenario again
+     (the engine went back twice, no check changed); Q14 names `amends`
+     but never asks it, and its record has no field for it; the
+     "sections written" count is one a seat cannot check (all four
+     documents wrote it, no symptom); Q15 withheld the scenario for a
+     check Q11 accepted, as thin (`d3`); a state-file line with an
+     unquoted colon makes the file unreadable and no step says to quote
+     (`d3`; the same class broke the engine's hand-written
+     `specs/components.yaml`, `1da34dd`); S12 routes into E1 to E5 in
+     the same turn (`d3`); a design run lets a unit hold four or more
+     checks with no `+`, and I4 places only a pair a `+` joins (`d5`;
+     every engine unit holds two or three).
+   - Intake: I5 still offers `strike` on a feature document.
    - The command: with a repo dictionary that cannot be read, `--draft`
      prints its `CL000` line and still ends `(no dictionary here - door
-     at rest)`; it runs no rule of `vocab-check`, while USAGE and the
-     contract's SC2.1 say "through the vocabulary check".
+     at rest)` (`lang.py:566-599`); it runs no rule of `vocab-check`,
+     while `docs/usage/feature-document.md:202` and the contract's SC2.1
+     say "through the vocabulary check".
    - Pages: `docs/controlled-language.md` never names `CL014` or
-     `--draft`; USAGE section 2 never says the interview needs the
-     plugin; "each heading followed by its tag", where Traceability and
-     the Appendix carry tags on their blocks (a test pins it);
-     `skills/sdlc/SKILL.md:91` uses "parked" for a contract held at
-     draft and for a parked document; `MAP.md:41` still reads `designed`
-     for raw-request intake; the signed document's own line 413 says
-     "eighteen sections" after the status line.
+     `--draft`; `docs/usage/install.md` section 2 never says the
+     interview needs the plugin, nor pins its `pip` line; "each heading
+     followed by its tag" (the interview's `SKILL.md:56`), where
+     Traceability and the Appendix carry tags on their blocks (a test
+     pins it; the engine writes no tag lines, by its own ruling);
+     `skills/sdlc/SKILL.md:97` uses "parked" for a contract held at
+     draft and for a parked pair.
+   Closed by the measure. Gone on main: S6's release unit (E2 asks the
+   seat when the rows leave it unclear); E6's way back into a
+   request-half section (a design run writes nothing there); the case
+   with no engineer seat (a design run always asks for one); S2 calling
+   the engineer seat's places refusals (they are the PO seat's now);
+   `intake.md`'s two meanings of "above" (one left); `MAP.md:41` (the
+   file left in the Cairn 2.0 migration). Kept as history:
+   `docs/features/feature-document.md:413`'s "eighteen sections", a
+   signed record of a released feature whose count ADR 0037 amends.
 3. Prerequisite 7: feature documents for the 15 contracts without one,
    each through its own interview.
 4. Small, parked: `test-retirer.js` has its agent wait on the whole
