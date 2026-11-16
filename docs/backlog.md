@@ -387,7 +387,7 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     verifier 11 of 11), ADR 0042. The after-measure waits for the first
     unit built on a kit release carrying e7: this run used the installed
     kit, whose members start untyped.
-26. Close G1's open edges before any G2 work (the user, session 146).
+26. [x] Close G1's open edges before any G2 work (the user, session 146).
     The first edge is closed: G1 was unreachable from a plain request
     (the engine's finding of 2026-11-12, an escape of `s5-start`;
     `NOTES_g1-plain-request-post-mortem_2026-11-12.md`). Unit
@@ -423,9 +423,10 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     mutant the user ruled equivalent. Session 158 built
     `s9-one-line-refusals` (`37b14ea`, `a192f0f`; B1 to B5, D4, H2), on a
     draft PR. Session 159 built `s10-words-and-folds` (`02fc83e`; C3,
-    D3, E1 to E5, G1, H3; B6 not taken), on a draft PR that carries kit
-    0.22.2. Next: the user merges, tags `v0.22.2` at the merge, and the
-    self-pin PR follows; B6 stands under Open questions.
+    D3, E1 to E5, G1, H3; B6 not taken), merged as PR #167 at `9514ff0`
+    and tagged `v0.22.2` there (session 160: the install from the tag
+    read 0.22.2 and `ready-green`); the self-pin PR moves the kit's own
+    pins to that tag. B6 stands under Open questions.
 
 ## Next actions
 
