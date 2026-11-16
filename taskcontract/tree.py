@@ -342,7 +342,10 @@ def build(root: Path, cache: dict[str, G0Reading] | None = None
     escape or maintenance, prints as in the first build, and each other
     feature holds G1 active with each G1 condition and verdict `to do`,
     with no diagnostic and no evidence, and no G1 problem line of the
-    first build stands. One
+    first build stands. The repository's G1 line and each of its
+    conditions still name each feature that holds them, as
+    `<feature> holds G1 at to do`, so those lines alone carry G1
+    diagnostics. One
     line is then added, last: `unreadable G1 reading: G1 (<reason>)`, the
     reason as `_ended` gives it for the exception the first build ended
     on. A config or an exemption the second build cannot read holds the
