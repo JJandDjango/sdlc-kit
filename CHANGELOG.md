@@ -9,6 +9,21 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.22.2 - 2026-11-16 (tag `v0.22.2`)
+
+- **G1's reads and words close their edges** (`g1-requirements-spec`,
+  units `s8-honest-reads`, `s9-one-line-refusals` and
+  `s10-words-and-folds`). The readings read what the files hold, the
+  refusals print one line each, and one reader takes a `Ready:` row for
+  both `g1-check` and the tree. `g1.md` R5 now says that `checked` covers
+  an item that does not apply to the feature. Kit `0.22.1` -> `0.22.2`;
+  the contract schema stays at `1.5.0`.
+  Delta note: a G1.2 record of the two-file form counts as absent, so
+  G1.2 reads `to do` until `g1-record model` runs again.
+  Delta note: a `g1.schemas` pattern that matches no file, or no
+  `g1.schemas` key, now reads `to do` for G1.1 where it read `done`; the
+  note stands on G1.1 until a pattern matches a file.
+
 ## 0.22.1 - 2026-11-12 (tag `v0.22.1`)
 
 - **G1 starts from a plain request** (`g1-requirements-spec`, unit

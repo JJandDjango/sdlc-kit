@@ -422,7 +422,10 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     D2 in part, D5, D6, F2, H1), on a draft PR; Two-Key ended with one
     mutant the user ruled equivalent. Session 158 built
     `s9-one-line-refusals` (`37b14ea`, `a192f0f`; B1 to B5, D4, H2), on a
-    draft PR. Next: build `s10-words-and-folds`, which ships 0.22.2.
+    draft PR. Session 159 built `s10-words-and-folds` (`02fc83e`; C3,
+    D3, E1 to E5, G1, H3; B6 not taken), on a draft PR that carries kit
+    0.22.2. Next: the user merges, tags `v0.22.2` at the merge, and the
+    self-pin PR follows; B6 stands under Open questions.
 
 ## Next actions
 
@@ -432,8 +435,9 @@ so the user's 2026-10-20 hold on G2's venue and G1's open edges is
 lifted. The readings of PRs #116 and #119 that cost something entered
 design r16 and closed with `s8-honest-reads` (session 157). The Haiku receipts agent's question
 closed with Next 8: Two-Key now takes its receipts from `receipts.py`
-alone. Not folded in `s4-tree`: `g1.py`'s `Ready:` row
-reader and `tree.drift`'s; `progress._target` has one caller left.
+alone. `s10-words-and-folds` folded `g1.py`'s `Ready:` row reader and
+`tree.drift`'s into `g1.ready_revision` (session 159);
+`progress._target` has one caller left.
 
 1. [x] The pilot's config line, in the engine's session; the engine's
    install ref moves to the release that carries G1 (pull, not push).
@@ -758,19 +762,19 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
   `g1-requirements-spec`'s scope (QA's question, session 158). Left
   from round 4, both advisory: `build`'s
   docstring says each G1 condition reads `to do` with no diagnostic in
-  the second build, and the repository's G1 line still lists the
-  features that hold it; and an error of another cause that passes
+  the second build, and not that the repository's G1 line still lists
+  the features that hold it (B6, ruled a fix for `s10`; its test list
+  and interface note did not carry it, session 159); and an error of another cause that passes
   before the second build prints under G1's name for that one print. A
   `g1.exempt` entry that is no text prints whole in its problem line,
   however long.
 - G1.3 (session 92; PR #112's body names each). The user kept all 12
   readings at the review (session 93), so a feature with no feature
   document cannot pass G1; since `s5-start` it can start no task, and
-  that case is Next 26's first edge (session 147). For the design's next text row: the six
-  cases it never named, and a seventh from the review, what a person
-  answers for an item that does not apply to the feature (an answer is
-  checked or unchecked alone today, so such an item is answered
-  checked). Three edges left as they are: a shortened flag (`--check`)
+  that case is Next 26's first edge (session 147). Design r16 named the
+  six cases and a seventh from the review, an item that does not apply
+  to the feature; `s10-words-and-folds` (session 159) pins their words,
+  and R5 now says that `checked` covers such an item. Three edges left as they are: a shortened flag (`--check`)
   is taken; a name or a section may hold a terminal escape; on Windows
   an id in capitals reaches the same contract. A path
   `docs/features/<id>.design.md` that is a folder counts as no design
@@ -788,8 +792,6 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
     returns with several test cases and none named is not measured;
     since `s8-honest-reads`, `model` refuses a configuration with no
     `-tc`. P writes inside the project's folder.
-  - Five refusal lines of `g1-record model` carry words no source
-    gives, beside G1.1's six.
   - `g1-check` on a damaged kit schema exits 2 with
     `G1.2 (KitFault: ...)` since `s9-one-line-refusals` (the Developer's
     reading, session 158); no test pins it. `s9` closed the three paths
@@ -797,19 +799,14 @@ reader and `tree.drift`'s; `progress._target` has one caller left.
   - Overlap's tail, under USAGE's stated limit: a second name for one
     folder (a link, an absolute path with no drive, two Unicode forms
     of a name, a Windows short name) is not seen.
-- G1.1, two edges for the engineer seat (session 88; Two-Key's
+- G1.1, one edge for the engineer seat (session 88; Two-Key's
   advisories on `79b4a5b`). Session 102 closed two others: a feature
   whose schemas stand under two `g1.schemas` entries now gets one record
   that holds a run for each, and a contract whose scope cannot be read
   reads G1.1 `to do`, which `lint` refuses. `s8-honest-reads` closed two
   more: `lint` with no `g1.schemas` key, and patterns that match no file.
-  - Five refusal lines carry words no source gives and no test pins,
-    each on stderr with exit 2: `{id}: G1 is not active` on
-    `g1-record`; `{id}: no contract at specs/{id}/contract.yaml`;
-    `{id}: g1.schemas names a linter the kit does not know: {value}`;
-    `taskcontract g1-record: unreadable record: {path} ({reason})`;
-    `{id}: g1.schemas cannot be read: {reason}`. None stands in USAGE's or the design's exit-2 list.
-    `g1-green: {id}` has no test before `s3-review`.
+  `s10-words-and-folds` closed the refusal lines no test pinned: the
+  design adopts each, and `tests/test_g1_words_pinned.py` holds them.
   - `buf` has had no live run: its exit code on a violation (100, from
     memory), its JSON report (one object a line) and where an older
     release prints its version are read from its reference page and a
