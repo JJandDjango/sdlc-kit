@@ -5,6 +5,7 @@
 | 2026-11-22 | Johnathan Hyden | r3: Measured: the checks before signing, on the solution half: 20 findings (CL006 20); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
 | 2026-11-22 | Johnathan Hyden | r4: The solution half finished: 12 sections written, 0 OPEN |
 | 2026-11-22 | Johnathan Hyden | r5: Signed: solution half. The engineer seat signs r4 |
+| 2026-11-22 | intake | r6: Parked: OPEN: Ready check 3: SC1 holds five checks and SC2 four, past the two or three a criterion takes; the extras are Q11's regression checks. Decisions and open questions 9: OPEN: can a timer (`CronCreate`) wake an idle interactive session? Decisions and open questions 10: OPEN: can `herdr pane send-keys` type slash commands into a Claude pane? Decisions and open questions 11: OPEN: how does the 55-minute notice reach the user: phone, email or desktop toast? |
 
 # session-loop - Sessions restart themselves until you are needed
 
