@@ -1,0 +1,104 @@
+schema: spec-interview-state/2
+id: session-loop
+started: 2026-11-22
+phase: solution
+next: E6
+requirements_revision: r4
+origin: feature
+title: Sessions restart themselves until you are needed
+seats: {engineer: Johnathan Hyden}
+answers:
+  materials:
+    - {source: material, item: "trial 1: a one-shot CronCreate set 17:41:44 for 17:44 fired 17:44:02 on the idle session"}
+    - {source: material, item: "trial 2: herdr pane send-text + send-keys Enter ran /clear and /cairn status in a Claude pane; Git Bash rewrote /clear to C:/Program Files/Git/clear; after /exit the pane's foreground process was pwsh.exe"}
+    - {source: material, item: "trial 3: PushNotification held back while the terminal was active"}
+    - {source: material, item: "backlog Next 30; E:\\herdr-sdlc\\README.md (the tree hook's shape: stdlib, run seam, herdr argv)"}
+  scope:
+    - "workflows/tools/loop.py (new): on, off, stop, reply, due, wrap"
+    - "skills/sdlc/flows/loop.md (new) and skills/sdlc/SKILL.md: the /sdlc loop on|off route and the session's rules"
+    - "hooks/loop_on.py (new) and hooks/hooks.json: a SessionStart entry"
+    - "E:\\herdr-sdlc\\herdr_loop.py (new), E:\\herdr-sdlc\\tests\\, E:\\herdr-sdlc\\README.md: the launcher"
+    - "tests/: each kit unit's own test file"
+    - "docs/usage/ (a session-loop page), USAGE.md, docs/components.md, CHANGELOG.md, pyproject.toml, skills/sdlc/init.py (kit 0.23.0); .github/workflows/sdlc.yml in the self-pin PR"
+  out_of_scope:
+    - "hooks/context_size.py and hooks/wall.py: unchanged"
+    - "workflows/tools/task.py and a team run's files: unchanged"
+    - "E:\\herdr-sdlc\\herdr_seat.py: unchanged (SC1.5)"
+    - "the user-global skills /resume-session, /cairn, end-session: unchanged"
+    - "docs/backlog.md and its Next: never written by the loop (SC5.3)"
+    - "herdr's config and plugins: no plugin, no key binding"
+  interfaces:
+    confirmed: true
+    text: "/sdlc loop on|off; {git folder}/sdlc-loop/ loop.json {on}, waiting.json {issue, at, due, cron}, sentinel.json {kind continue|self-wrap|pick, position, next, head, at} written last; loop.py on, off, stop --question (label check, issue, waiting.json, prints issue/due/cron), reply (close, remove), due (exit 0 or 3), wrap --plan-step --task --next [--self] (push check, pick issue, sentinel; pick and self-wrap remove loop.json); flows/loop.md rules: stop (loop.py stop, CronCreate one-shot, PushNotification, end on the question), reply (CronDelete, loop.py reply), wrap (commit, push, /cairn status, loop.py wrap, closing asks nothing); SessionStart line when loop.json exists; launcher herdr_loop.py <pane>: exit 2 with no loop.json, continue sentinel: idle wait, /clear Enter, 3 s, /resume-session Enter within 60 s; self-wrap or pick: exit 0; own stops: needs-ruling issue with the verbatim message, herdr toast, remove loop.json, exit 1; loop.json gone: exit 0. No endpoint table."
+  sources:
+    - {fact: "the loop is on", read_from: "loop.json in the git folder", when_two_disagree: "one source"}
+    - {fact: "the pane the launcher drives", read_from: "the launcher's argument; its repo from herdr pane get's cwd", when_two_disagree: "one source"}
+    - {fact: "position", read_from: "the sentinel's position from --plan-step and --task; the launcher holds the previous one", when_two_disagree: "one source"}
+    - {fact: "Next", read_from: "/cairn status's Next passed as --next", when_two_disagree: "one source"}
+    - {fact: "the wrap's commit is on the remote", read_from: "git ls-remote origin refs/heads/{branch} against HEAD", when_two_disagree: "the remote wins"}
+    - {fact: "a stop is waiting", read_from: "waiting.json", when_two_disagree: "one source"}
+    - {fact: "the label exists", read_from: "gh label list --search needs-ruling, exact name", when_two_disagree: "one source"}
+    - {fact: "an open pick issue", read_from: "gh issue list --state open --label needs-ruling, exact title", when_two_disagree: "one source"}
+    - {fact: "Claude runs in the pane", read_from: "herdr pane process-info foreground process claude.exe or claude", when_two_disagree: "process-info wins over herdr pane get's agent key"}
+    - {fact: "the pane is idle", read_from: "herdr pane get's agent_status", when_two_disagree: "one source"}
+    - {fact: "the pane changed (hung)", read_from: "the transcript's last write, ~/.claude/projects/*/{id}.jsonl", when_two_disagree: "the transcript; the pane's text is never read"}
+  constraints:
+    - "stdlib only; subprocess output decoded UTF-8, errors replaced"
+    - "the launcher calls herdr and gh with argument lists, never a shell"
+    - "the launcher types only into its argument's pane, only while idle"
+    - "the kit runs no herdr command; the launcher imports nothing from the kit (ADR 0031)"
+    - "timer minute: stop + 55 min cut to the minute; :00 or :30 moves one on; wrap starts within 54 to 56 minutes"
+    - "the sentinel is the wrap's last write, after the push check"
+    - "loop.md under 12,000 characters; every Bash call one segment"
+    - "no new window or tab"
+  units:
+    - {id: l1-loop-files, checks: [SC1.2, SC2.1, SC2.3, SC5.1, SC5.2, SC5.3], done_means: "`loop.py stop` files the `needs-ruling` issue and writes the waiting file. `reply` closes that issue. `wrap` writes the sentinel last, after the push. With Next empty, `wrap` files one pick issue.", tests: "all automated, git and gh behind a run seam; SC5.3 automated (writes nothing outside the loop folder)", retirements: none}
+    - {id: l2-loop-launcher, checks: [SC1.1, SC1.4, SC1.5, SC3.2, SC4.1, SC4.2, SC4.3], done_means: "`herdr_loop.py` restarts the pane within 60 seconds of a `continue` sentinel. The launcher types nothing on any other sentinel or with none. Two strikes, an exit or a 60-minute hang stop the loop with one issue.", tests: "automated with herdr, gh, sleep and clock faked; SC1.1 and SC1.5 also manual receipts", retirements: none}
+    - {id: l3-loop-rules, checks: [SC1.3, SC2.2, SC2.4, SC3.1, SC3.3], done_means: "`/sdlc loop on` turns the loop on. In a loop, a session files its stop and sets its timer. A reply continues the session. With no reply, the session wraps itself. Kit 0.23.0 ships.", tests: "SC2.4 automated text test; SC1.3, SC2.2, SC3.1, SC3.3 manual receipts in one live two-pane sitting", retirements: none}
+  order: "l1, l2, l3: l1's files are the contract the others read; l2 tests on those shapes with herdr faked; l3's live receipts need both"
+  risks_and_cost: "timer lost on a Claude restart (hang check is the net); PushNotification held while the terminal is active, phone only over Remote Control; a wrong position defeats strikes; mid-turn typing guarded by idle; l2 in a second repo; about six build sessions plus one live hour"
+  cases:
+    - {case: 1, answer: "yes", asked: "engineer seat on Claude's recommendation, session 165", decided: "hang reads the transcript; every stop removes loop.json"}
+    - {case: 2, answer: "yes", asked: "engineer seat on Claude's recommendation, session 165", decided: "the timer is CronCreate in the session, not launcher typing"}
+    - {case: 3, answer: "no"}
+    - {case: 4, answer: "yes", asked: "engineer seat on Claude's recommendation, session 165", decided: "/sdlc loop on|off, a SessionStart hook and three JSON files are the contract"}
+  decisions:
+    - {q: "requirements OPEN 9: can a timer wake an idle session?", a: "yes (trial 1); CronCreate in the session"}
+    - {q: "requirements OPEN 10: can herdr type slash commands into a Claude pane?", a: "yes (trial 2), through argument lists, not Git Bash"}
+    - {q: "requirements OPEN 11: how does the notice reach the user?", a: "PushNotification from the session; a herdr toast at the launcher's stops"}
+    - {q: "when is the loop on?", a: "while loop.json exists; every stop removes it"}
+    - {q: "do the launcher's stop issues carry needs-ruling?", a: "yes"}
+    - {q: "a human-needed issue's title?", a: "the question's first line cut to 70 characters"}
+    - {q: "SC1.2's message?", a: "session-loop: the wrap's commit is not on the remote; push first"}
+  links_out:
+    - "docs/features/session-loop.md (r4, PR #171)"
+    - "ADR 0031"
+    - "ADR 0039"
+    - "docs/features/run-restart.design.md"
+    - "E:\\herdr-sdlc\\README.md"
+    - "docs/backlog.md Next 30 and 31"
+  notes:
+    - "every answer is Claude's recommendation on the engineer seat's delegation of 2026-11-22"
+    - "trials on herdr 0.9.1 and Claude Code v2.1.330"
+    - "the requirements' OPEN on ready check 3 stays the PO seat's"
+  terms:
+    - "wrap: a session's close: record Next and the position, commit, push, then write the sentinel."
+    - "launcher: the process outside any session that, after a wrap, starts the next session in the same herdr pane and checks progress."
+    - "sentinel: the file the wrap writes last; it tells the launcher the wrap finished."
+    - "position: where a wrap stopped: the plan step and the unit task."
+    - "strike: a session that ends at the position it started from; two strikes in a row stop the loop."
+    - "needs-ruling: the GitHub issue label `/cairn status` prints under \"Waiting on you\"."
+    - "session loop: the chain of sessions in one herdr pane, each started by the launcher after the last one's wrap."
+    - "human-needed stop: a stop where the session needs the user's answer: it files a `needs-ruling` issue and waits."
+    - "self-wrap: the wrap a session runs on its own 55 minutes after a human-needed stop with no reply; the loop stays stopped after it."
+    - "hung: a session whose pane shows no change for 60 minutes with no sentinel; the launcher treats it as crashed."
+open: []
+history:
+  - {at: "2026-11-22", event: "id confirmed; design read held requirements r4 (signed by r5)"}
+  - {at: "2026-11-22", event: "O4: engineer seat Johnathan Hyden; the seat delegated every answer this session to Claude's recommendation (\"Go with all of your recommendations on this session, then give me a recap of what those were\")"}
+  - {at: "2026-11-22", event: "O5: three live trials (timer, herdr typing, notice) and two material items confirmed"}
+  - {at: "2026-11-22", event: "opening complete, document written as r1"}
+  - {at: "2026-11-22", event: "S1 to S12 written on the delegation; next E1"}
+  - {at: "2026-11-22", event: "E1 to E5: 29 findings (CL006 26, CL008 3); Scope covered (release unit l3-loop-rules); 3 OPEN (ready check 11: Sources rows for the wrap, the reply, the issue's state and the times; 12: the launcher's issue body and on/off edges; 14: findings unanswered); not stale; r2 Measured"}
+  - {at: "2026-11-22", event: "E6 went back (on the delegation): Sources, Interfaces, Units' done means split, Notes answer CL006; the three OPEN closed"}
+  - {at: "2026-11-22", event: "E1 to E5 again: 20 findings (CL006 20, answered in Notes); Scope covered; 0 OPEN; not stale; r3 Measured; next E6, the signature held for the seat with the recap"}
