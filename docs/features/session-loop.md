@@ -3,6 +3,8 @@
 | 2026-11-21 | Johnathan Hyden | r1: Created through /sdlc:product-specification-interview. The request half, in progress. PO seat: Johnathan Hyden |
 | 2026-11-22 | Johnathan Hyden | r2: Measured: the checks before signing, on the request half: 60 findings (CL003 1, CL006 56, CL008 3); ready checks 1 to 8: 2 OPEN |
 | 2026-11-22 | Johnathan Hyden | r3: Measured: the checks before signing, on the request half: 59 findings (CL006 56, CL008 3); ready checks 1 to 8: 1 OPEN |
+| 2026-11-22 | Johnathan Hyden | r4: The request half finished: 11 sections written, 1 OPEN |
+| 2026-11-22 | Johnathan Hyden | r5: Signed: request half. The PO seat signs r4 |
 
 # session-loop - Sessions restart themselves until you are needed
 
@@ -131,7 +133,7 @@ OPEN: Ready check 3: SC1 holds five checks and SC2 four, past the two or three a
 
 ### Gherkin
 
-`[PO seat · derived from r1]`
+`[PO seat · derived from r4]`
 
 ```gherkin
 Scenario: SC1.1 The launcher restarts the session in the same pane

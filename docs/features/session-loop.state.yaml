@@ -1,8 +1,8 @@
 schema: spec-interview-state/2
 id: session-loop
 started: 2026-11-21
-phase: request
-next: P6
+phase: complete
+next: null
 origin: feature
 title: Sessions restart themselves until you are needed
 seats: {po: Johnathan Hyden}
@@ -158,3 +158,6 @@ history:
   - {at: "2026-11-22", event: "P1 to P5: 60 findings (CL003 1, CL006 56, CL008 3); P2 all five sources hold; 2 OPEN (ready checks 3 and 5); Gherkin not stale; r2 Measured"}
   - {at: "2026-11-22", event: "P6 went back (on the delegation): Q10 names the label's owner, closing ready check 5; Q14 renames the term loop to session loop, for CL003"}
   - {at: "2026-11-22", event: "P1 to P5 again: 59 findings (CL006 56, CL008 3); sources hold; 1 OPEN (ready check 3); Gherkin not stale; r3 Measured"}
+  - {at: "2026-11-22", event: request half signed}
+  - {at: "2026-11-22", event: "W1: no Google Docs form (the PO seat's delegation; a pasted form is never wanted)"}
+  - {at: "2026-11-22", event: output complete}
