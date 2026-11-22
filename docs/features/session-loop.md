@@ -10,6 +10,7 @@
 | 2026-11-22 | Johnathan Hyden | r8: Measured: the checks before signing, on the request half: 61 findings (CL006 54, CL008 7); ready checks 1 to 8: 0 OPEN |
 | 2026-11-22 | Johnathan Hyden | r9: The request half finished: 11 sections written, 0 OPEN |
 | 2026-11-22 | Johnathan Hyden | r10: Signed: request half. The PO seat signs r9 |
+| 2026-11-22 | intake | r11: Ready: contract `session-loop` validates ready-green, derived from r9; the PO seat (Johnathan Hyden) signed the request half at r9 (r10) |
 
 # session-loop - Sessions restart themselves until you are needed
 

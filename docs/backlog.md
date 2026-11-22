@@ -437,10 +437,16 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     past the cap). SC6, the herdr sidebar, split to Next 31. The O5
     material shape hid every draft-check finding (Next actions 2):
     reshaped to flat keys, the check read 60.
-30. Review and merge session-loop's design PR, then run
-    `/sdlc intake docs/features/session-loop.md` and build its three
-    units in order: `l1-loop-files`, `l2-loop-launcher` (in
-    `E:\herdr-sdlc`), `l3-loop-rules` (kit 0.23.0). Session 165 ran the
+30. Take session-loop's contract to lang-check zero (its new terms
+    drafted and ratified, the dictionary's words added, the prose
+    rewritten, as session 138 did for run-restart), then
+    `/sdlc g1 session-loop`, then build its four units in order:
+    `l1-loop-files`, `l2-loop-launcher` and `l3-loop-stops` (both in
+    `E:\herdr-sdlc`), `l4-loop-rules` (kit 0.23.0). Session 166's intake
+    parked the pair on four OPEN marks; the requirements merged 18
+    checks to 14 (r9), the design cut the units to four, at most three
+    sketch entries each (r10), and the contract validates ready-green
+    (`specs/session-loop/contract.yaml`). Session 165 ran the
     design run: three live trials closed the requirements' OPEN 9 to 11
     (`CronCreate` woke the idle session; herdr typed `/clear` and a
     skill into a Claude pane; `PushNotification` is the notice), and

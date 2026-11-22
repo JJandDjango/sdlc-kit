@@ -11,6 +11,7 @@
 | 2026-11-22 | Johnathan Hyden | r9: Measured: the checks before signing, on the solution half: 22 findings (CL006 22); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
 | 2026-11-22 | Johnathan Hyden | r10: The solution half finished: 12 sections written, 0 OPEN |
 | 2026-11-22 | Johnathan Hyden | r11: Signed: solution half. The engineer seat signs r10 |
+| 2026-11-22 | intake | r12: Ready: contract `session-loop` validates ready-green, derived from r10, against requirements r9; the engineer seat (Johnathan Hyden) signed the solution half at r10 (r11) |
 
 # session-loop - Sessions restart themselves until you are needed
 
