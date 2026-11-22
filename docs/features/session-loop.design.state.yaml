@@ -1,8 +1,8 @@
 schema: spec-interview-state/2
 id: session-loop
 started: 2026-11-22
-phase: solution
-next: E6
+phase: complete
+next: null
 requirements_revision: r4
 origin: feature
 title: Sessions restart themselves until you are needed
@@ -102,3 +102,6 @@ history:
   - {at: "2026-11-22", event: "E1 to E5: 29 findings (CL006 26, CL008 3); Scope covered (release unit l3-loop-rules); 3 OPEN (ready check 11: Sources rows for the wrap, the reply, the issue's state and the times; 12: the launcher's issue body and on/off edges; 14: findings unanswered); not stale; r2 Measured"}
   - {at: "2026-11-22", event: "E6 went back (on the delegation): Sources, Interfaces, Units' done means split, Notes answer CL006; the three OPEN closed"}
   - {at: "2026-11-22", event: "E1 to E5 again: 20 findings (CL006 20, answered in Notes); Scope covered; 0 OPEN; not stale; r3 Measured; next E6, the signature held for the seat with the recap"}
+  - {at: "2026-11-22", event: solution half signed}
+  - {at: "2026-11-22", event: "W1: no Google Docs form (the seat's delegation; a pasted form is never wanted)"}
+  - {at: "2026-11-22", event: output complete}

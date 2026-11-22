@@ -3,6 +3,8 @@
 | 2026-11-22 | Johnathan Hyden | r1: Created through /sdlc:product-specification-interview. The design, in progress, against requirements r4. Engineer seat: Johnathan Hyden |
 | 2026-11-22 | Johnathan Hyden | r2: Measured: the checks before signing, on the solution half: 29 findings (CL006 26, CL008 3); Scope against the release unit's paths: covered; ready checks 11 to 15: 3 OPEN |
 | 2026-11-22 | Johnathan Hyden | r3: Measured: the checks before signing, on the solution half: 20 findings (CL006 20); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
+| 2026-11-22 | Johnathan Hyden | r4: The solution half finished: 12 sections written, 0 OPEN |
+| 2026-11-22 | Johnathan Hyden | r5: Signed: solution half. The engineer seat signs r4 |
 
 # session-loop - Sessions restart themselves until you are needed
 

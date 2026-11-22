@@ -437,11 +437,16 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     past the cap). SC6, the herdr sidebar, split to Next 31. The O5
     material shape hid every draft-check finding (Next actions 2):
     reshaped to flat keys, the check read 60.
-30. Review and merge the session-loop requirements PR, then run the
-    design run: `/sdlc:product-specification-interview session-loop
-    design`. Its three OPEN questions (a timer waking an idle session;
-    `herdr pane send-keys` typing a slash command; how the notice
-    reaches the user) are for the design run to test.
+30. Review and merge session-loop's design PR, then run
+    `/sdlc intake docs/features/session-loop.md` and build its three
+    units in order: `l1-loop-files`, `l2-loop-launcher` (in
+    `E:\herdr-sdlc`), `l3-loop-rules` (kit 0.23.0). Session 165 ran the
+    design run: three live trials closed the requirements' OPEN 9 to 11
+    (`CronCreate` woke the idle session; herdr typed `/clear` and a
+    skill into a Claude pane; `PushNotification` is the notice), and
+    the engineer seat signed r4 (r5) with 0 OPEN and 20 CL006 findings
+    answered in Notes. The `needs-ruling` label is still missing on the
+    remote (the user's prerequisite, before l1's first live run).
 31. Write session-loop-sidebar's requirements document (the user,
     session 164): the herdr sidebar shows each loop's position, strike
     count and waiting state. Split from session-loop's SC6.
