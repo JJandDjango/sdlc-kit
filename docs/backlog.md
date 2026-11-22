@@ -429,6 +429,22 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     pins to that tag. Session 161 closed B6, the last edge: `tree.build`'s
     docstring says the second build's G1 line and its conditions still
     name each feature that holds them.
+29. [x] Write session-loop's requirements document (the user, session
+    163): sessions that wrap and restart themselves until the user is
+    needed. Session 164 finished the interview: five criteria, 18 checks,
+    the PO seat signed r4 (r5) with one OPEN (ready check 3: SC1 holds
+    five checks and SC2 four, since Q11's regression step adds checks
+    past the cap). SC6, the herdr sidebar, split to Next 31. The O5
+    material shape hid every draft-check finding (Next actions 2):
+    reshaped to flat keys, the check read 60.
+30. Review and merge the session-loop requirements PR, then run the
+    design run: `/sdlc:product-specification-interview session-loop
+    design`. Its three OPEN questions (a timer waking an idle session;
+    `herdr pane send-keys` typing a slash command; how the notice
+    reaches the user) are for the design run to test.
+31. Write session-loop-sidebar's requirements document (the user,
+    session 164): the herdr sidebar shows each loop's position, strike
+    count and waiting state. Split from session-loop's SC6.
 
 ## Next actions
 
