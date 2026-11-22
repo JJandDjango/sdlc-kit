@@ -1,0 +1,20 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Born draft at session-loop's intake (session 167) from the Terms of
+# docs/features/session-loop.md at r9; ratified by the user 2026-11-22
+# (class-S flip; the PR merge is the outer record, ADR 0025).
+
+term: human-needed-stop
+
+name: Human-needed stop
+
+definition: >-
+  A stop where the session needs the user's answer: it files a
+  `needs-ruling` issue and waits.
+
+kind: entity
+
+status: ratified
+since: 2026-11-22
+
+sources:
+  - docs/features/session-loop.md

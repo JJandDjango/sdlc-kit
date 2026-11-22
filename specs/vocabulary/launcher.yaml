@@ -1,0 +1,20 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Born draft at session-loop's intake (session 167) from the Terms of
+# docs/features/session-loop.md at r9; ratified by the user 2026-11-22
+# (class-S flip; the PR merge is the outer record, ADR 0025).
+
+term: launcher
+
+name: Launcher
+
+definition: >-
+  The process outside any session that, after a wrap, starts the next
+  session in the same herdr pane and checks progress.
+
+kind: entity
+
+status: ratified
+since: 2026-11-22
+
+sources:
+  - docs/features/session-loop.md
