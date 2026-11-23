@@ -437,7 +437,10 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     past the cap). SC6, the herdr sidebar, split to Next 31. The O5
     material shape hid every draft-check finding (Next actions 2):
     reshaped to flat keys, the check read 60.
-30. Build `l4-loop-rules` (kit 0.23.0), after Next 32. Session 173
+30. Build `l4-loop-rules` (kit 0.23.0). Session 174 folded the
+    launcher and the tree hook into the kit's `herdr/` folder (Next 32,
+    ADR 0043), so l4 runs `/sdlc execute` with no hand run or shim;
+    `E:\herdr-sdlc` keeps the history the shas below name. Session 173
     built `l3-loop-stops` on branch `session-172-l3-loop-stops`:
     `E:\herdr-sdlc` `31918d6` (README `1602d9a`), 109 tests, Two-Key
     PASS in round 1 (Dev verifier PASS, QA verifier 11 of 11 mutants
@@ -493,7 +496,7 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
 31. Write session-loop-sidebar's requirements document (the user,
     session 164): the herdr sidebar shows each loop's position, strike
     count and waiting state. Split from session-loop's SC6.
-32. Fold `E:\herdr-sdlc` into the kit as an opt-in `herdr/` folder, after
+32. [x] Fold `E:\herdr-sdlc` into the kit as an opt-in `herdr/` folder, after
     l3 and before l4 (the user, session 173). A second repo is a second
     dependency for one workflow: it has no remote (no one else can
     install it, no backup), CI never runs its tests, and `/sdlc execute`
@@ -503,6 +506,12 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     that supersedes its "multiplexer plugin outside the kit" clause;
     revise session-loop's design and contract paths; move `herdr_loop.py`,
     `herdr_seat.py`, their tests and README, so 0.23.0 ships one repo.
+    Done in session 174: ADR 0043; the copy from `E:\herdr-sdlc`
+    `1602d9a` (no history import: the scope check flags commits with no
+    `Contract:` trailer); design r13 to r15 and re-intake r16 move the
+    contract's scope to `herdr/`; the 109 tests pass in the kit. Left
+    open: a test pinning ADR 0043's line, and deleting `E:\herdr-sdlc`
+    (the user's call).
 
 ## Next actions
 

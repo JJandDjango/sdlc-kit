@@ -35,8 +35,8 @@ flowchart LR
 | [skills/](skills/) | The `sdlc` and interview skills |
 | [hooks/](hooks/) | The plugin's hooks: the session-size message; the team's wall (`wall.py`), which keeps members out of `.sdlc/config.yaml`'s `wall:` while a task runs |
 | [taskcontract/](taskcontract/) | The validator and work tree (pip package) |
-| [workflows/](workflows/) | The execution team's four members, one workflow each, which `/sdlc execute` starts (the session is the Orchestrator); `tools/`: `task.py`, `prove.py`, `receipts.py` |
-| [herdr/](herdr/) | Opt-in herdr tools, never imported by the kit's core (ADR 0043): the tree pane's hook `herdr_seat.py`, the session loop's launcher `herdr_loop.py` |
+| [workflows/](workflows/) | The execution team, one workflow a member, started by `/sdlc execute`; `tools/`: `task.py`, `prove.py`, `receipts.py` |
+| [herdr/](herdr/) | Opt-in herdr tools (ADR 0043) |
 | [specs/](specs/) | Task contracts and the vocabulary |
 | [agents/](agents/) | Two-Key personas: developer, verifier |
 | [docs/](docs/) | Gates, taxonomy, features, conventions, USAGE's pages |
