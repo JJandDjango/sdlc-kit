@@ -26,5 +26,5 @@ packages = ["taskcontract"]
 taskcontract = ["schemas/*.json", "data/*.yaml"]
 
 [tool.pytest.ini_options]
-pythonpath = ["."]
+pythonpath = [".", "herdr"]
 testpaths = ["tests"]
