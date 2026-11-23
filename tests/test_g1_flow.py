@@ -393,7 +393,7 @@ def test_done_means_skill_md_names_g1_md_in_its_flow_list():
     names = [name.strip(" .") for name in listed.split(",")]
     assert sorted(names) == sorted(["init.md", "new.md", "intake.md", "vocab.md", "lang.md",
                                     "audit.md", "update.md", "g1.md", "execute.md",
-                                    "restart.md"])
+                                    "restart.md", "loop.md"])
     assert listed.endswith(".")
 
 

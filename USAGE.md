@@ -40,4 +40,5 @@ that order.
 | 9 | [Following the work: the tree](docs/usage/the-tree.md) | what the tree holds, its statuses, modes and tasks, recording progress, notify |
 | 9 | [Following the work: the pane](docs/usage/the-pane.md) | the pane's lines, conditions, names, drift, blocked work, the interactive pane |
 | 9 | [Following the work: documents](docs/usage/documents-on-the-tree.md) | gates roll up, features before intake, revisions, parked and paired documents, G1 active |
+| 9 | [The session loop](docs/usage/session-loop.md) | `/sdlc loop on` and `off`, the stop, the reply and the self-wrap, the launcher |
 | 10 | [Troubleshooting](docs/usage/troubleshooting.md) | each refusal code and its remedy |

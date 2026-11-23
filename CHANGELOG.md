@@ -9,6 +9,24 @@ Two house rules, enforced in review:
   tag. Consumers upgrade by bumping the ref in their committed
   workflow - pull, not push - with this file in hand.
 
+## 0.23.0 - 2026-11-23 (tag `v0.23.0`)
+
+- **Sessions restart themselves until you are needed** (`session-loop`,
+  units `l1-loop-files`, `l2-loop-launcher`, `l3-loop-stops` and
+  `l4-loop-rules`). `/sdlc loop on` turns the loop on; a launcher in a pane
+  of your own (`herdr/herdr_loop.py`, opt-in) types `/clear` and
+  `/resume-session` after each wrap. A session in a loop files its
+  `needs-ruling` issue at a stop that needs you and sets a 55-minute timer; a
+  reply in the session goes on, and with none the session wraps itself and
+  the loop stays stopped. The new flow is `skills/sdlc/flows/loop.md`, the
+  new hook is `hooks/loop_on.py`. Kit `0.22.2` -> `0.23.0`; the contract
+  schema stays at `1.5.0`.
+  Delta note: `hooks/hooks.json` gains a `SessionStart` entry; a session in
+  a repo with no loop reads nothing new from it.
+  Delta note: the `needs-ruling` label is yours to create once per repo,
+  with `gh label create needs-ruling`; without it `/sdlc loop on` refuses and
+  a stop is an ordinary stop.
+
 ## 0.22.2 - 2026-11-16 (tag `v0.22.2`)
 
 - **G1's reads and words close their edges** (`g1-requirements-spec`,
