@@ -437,10 +437,19 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     past the cap). SC6, the herdr sidebar, split to Next 31. The O5
     material shape hid every draft-check finding (Next actions 2):
     reshaped to flat keys, the check read 60.
-30. Run l2's two manual receipts in herdr (SC1.1: a live restart whose
-    new session names the sentinel's Next; SC1.3: the tree pane flagged
-    while the launcher runs), then build `l3-loop-stops` (in
-    `E:\herdr-sdlc`) and `l4-loop-rules` (kit 0.23.0). Session 170 built
+30. Build `l3-loop-stops` (in `E:\herdr-sdlc`), then `l4-loop-rules`
+    (kit 0.23.0). Session 171 ran l2's manual receipts live: SC1.1 failed
+    first (herdr reads a finished turn nobody has looked at as `done`, and
+    the launcher waited for exactly `idle`), was fixed at `E:\herdr-sdlc`
+    `27cb671` (Two-Key PASS round 1, 68 tests) and passed on the rerun
+    (`/clear` 3.4 s after the sentinel, the new session naming the Next);
+    SC1.3 passed (`RECEIPT_session-loop-l2_2026-11-22/manual.md`). The
+    trial setup stays for l3's live receipts: clone `.trial/clone` (kit
+    progress copied in, `cairn.plan` set), origin `.trial/origin.git`,
+    both in the kit folder and listed in `.git/info/exclude`. Carried to
+    l3, from the fix's
+    Verifier: no test pins a failed `pane get` or a missing status during
+    the wait; `wait_idle`'s name still says idle. Session 170 built
     `l2-loop-launcher`: `E:\herdr-sdlc\herdr_loop.py`, commit `c6aee1b`
     on that repo's master (no remote), 26 tests, Two-Key PASS in round
     1. `/sdlc execute` commits only in its own repo, so Claude ran its
