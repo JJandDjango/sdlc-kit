@@ -56,8 +56,8 @@ scope_check:
     - NOTES_*.md
     - .sdlc/
 tree:
-  # The herdr hook (E:/herdr-sdlc): flags the pane's seat in herdr's sidebar.
-  notify: python E:/herdr-sdlc/herdr_seat.py
+  # The herdr hook (herdr/, ADR 0043): flags the pane's seat in herdr's sidebar.
+  notify: python herdr/herdr_seat.py
 # The execution team's declaration (execution-team design): the test command and the wall's paths.
 test:
   command: [python, -P, -m, pytest, tests, -q, -n, auto]

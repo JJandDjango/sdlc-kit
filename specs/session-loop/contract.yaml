@@ -23,9 +23,7 @@ scope:
   - skills/sdlc/SKILL.md
   - hooks/loop_on.py
   - hooks/hooks.json
-  - E:/herdr-sdlc/herdr_loop.py
-  - E:/herdr-sdlc/tests/
-  - E:/herdr-sdlc/README.md
+  - herdr/
   - tests/
   - docs/usage/
   - USAGE.md
