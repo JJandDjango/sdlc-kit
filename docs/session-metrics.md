@@ -73,7 +73,8 @@ the same kind at PR review.
 | 158 | `g1-requirements-spec/s9-one-line-refusals`, on e7's typed team with no restart; QA's and the Developer's questions answered in session; test list and two added rounds the user's (tripwire) | yes | 3 (test channel; rounds 2 and 3 changed no code) | 2 / 0 | | 3 | 960: QA 337 (217, amendment 25, round 2 48, round 3 47), QA verifier 215 (prove-red 20 + 20 + 20, two-key 43 + 72 + 40), Developer 219 (130, 57, 32), Dev verifier 189 (70, 55, 64) | 9 readings / | 0 / 0 |
 | 159 | `g1-requirements-spec/s10-words-and-folds`, kit 0.22.2, on e7's typed team with no restart of the plugin; QA's and the Developer's questions answered in session; test list and the 22 green word pins the user's (tripwire) | yes | 1 | 0 / 0 | | 2 | 471: QA 239 (167, answer 72), QA verifier 87 (prove-red 20, two-key 67), Developer 73 (49, answer 24), Dev verifier 72 | 8 readings / | 1 / 0 |
 | 169 | `session-loop/l1-loop-files`, on e7's typed team with no restart of the plugin; QA's question answered with the test list; the Developer's two notes taken as readings, no stop; test list the user's (tripwire) | yes | 1, no QA verifier PASS: the user ruled one mutant equivalent (9 of 10 caught) | 0 / 0 | | 2 | 347: QA 136 (80, answer 56), QA verifier 116 (approve-tests 65, prove-red 20, two-key 31), Developer 37, Dev verifier 58 | 5 readings / | 1 / 0 |
-| 170 | `session-loop/l2-loop-launcher`, in `E:\herdr-sdlc` by a hand run of execute's tasks (the flow commits only in its own repo); the Developer's suite run refused by the wall hook, run by the Orchestrator as receipts; test list and one added test the user's (tripwire) | yes, the manual receipts to come | 1 (QA amended once at the user's approval) | 0 / 0 | | 2 | 305: QA 116 (76, amendment 40), QA verifier 103 (approve-tests 51, prove-red 20, two-key 32, 8 of 8 caught), Developer 32, Dev verifier 54 | 7 readings / | 3 / 0 |
+| 170 | `session-loop/l2-loop-launcher`, in `E:\herdr-sdlc` by a hand run of execute's tasks (the flow commits only in its own repo); the Developer's suite run refused by the wall hook, run by the Orchestrator as receipts; test list and one added test the user's (tripwire) | yes, the manual receipts to come | 1 (QA amended once at the user's approval) | 0 / 0 | 1 | 2 | 305: QA 116 (76, amendment 40), QA verifier 103 (approve-tests 51, prove-red 20, two-key 32, 8 of 8 caught), Developer 32, Dev verifier 54 | 7 readings / | 3 / 0 |
+| 171 | `session-loop/l2-loop-launcher`'s two manual receipts, live in herdr panes on a scratch clone; SC1.1 failed (a finished, unseen turn reads `done`), fixed in `E:\herdr-sdlc` `27cb671` by a Developer and a zero-trust Verifier in one workflow, then passed with SC1.3 | yes | 1 (the fix) | 0 / 0 | | 3 | 162: Developer and Verifier in one workflow (mutants 2 of 2 caught) | 3 readings / | 0 / 0 |
 
 ## Notes on the baseline
 
@@ -311,3 +312,11 @@ the same kind at PR review.
   launches (1.40M cache reads, against 0.4M to 0.7M planned) stand
   outside the total. The deferred lines: Next actions 20 added, and
   18's cross-unit task file closed.
+- Session 171: session 170's Escaped cell reads 1. Its launcher waited
+  for herdr's `agent_status` to read exactly `idle`, but herdr 0.9.5
+  reads a finished turn nobody has focused as `done`, so SC1.1's live
+  run never restarted the pane. The design's Sources row named
+  `agent_status` as the idle reading; the fakes assumed it. The test
+  list was the user's, so the tripwire does not fire. Touches: the fix's
+  ruling, the workflow opt-in, and keeping the trial clone. The trial
+  sessions (Sonnet, three starts) stand outside the token total.
