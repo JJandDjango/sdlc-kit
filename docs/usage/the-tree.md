@@ -279,6 +279,7 @@ the next render; when the shell itself cannot start, the same line reads
 code 127. The pane keeps running either way, and with no `notify` set it
 runs the same. Ctrl-C ends the pane and leaves the commands it started
 running. The key is optional, and
-the config template does not carry it. The command is the kit's edge: a
-terminal multiplexer's plugin (herdr's, for one) wraps it outside the
-kit.
+the config template does not carry it. The command is the kit's edge: the
+kit's core runs it and never a multiplexer itself. For herdr, the hook
+ships opt-in as `herdr/herdr_seat.py` (setup in `herdr/README.md`, ADR
+0043).

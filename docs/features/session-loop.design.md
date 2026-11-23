@@ -12,6 +12,10 @@
 | 2026-11-22 | Johnathan Hyden | r10: The solution half finished: 12 sections written, 0 OPEN |
 | 2026-11-22 | Johnathan Hyden | r11: Signed: solution half. The engineer seat signs r10 |
 | 2026-11-22 | intake | r12: Ready: contract `session-loop` validates ready-green, derived from r10, against requirements r9; the engineer seat (Johnathan Hyden) signed the solution half at r10 (r11) |
+| 2026-11-23 | Johnathan Hyden | r13: Amended by hand in kit session 174, against requirements r9, on r10: the fold (backlog Next 32, the engineer seat's ruling in session 173, ADR 0043) moves the launcher and the tree hook from `E:\herdr-sdlc` into the kit's opt-in `herdr/` folder and their tests into `tests/`; Scope, Out of scope, Interfaces, Constraints, Risks, Consult case 4 and Links out name the new paths, and the state file's scope, out of scope, constraints and links follow; no check, unit or done means changes; typed by Claude on the user's word |
+| 2026-11-23 | Johnathan Hyden | r14: Measured: the checks before signing, on the solution half's amendment r13: 0 findings; Scope against the release unit's paths: covered (l4's release paths stand unchanged in Scope); ready checks 11 to 15: 0 OPEN (no Sources row, unit or consult answer changes but for paths) |
+| 2026-11-23 | Johnathan Hyden | r15: Signed: solution half. The engineer seat signs r13 |
+| 2026-11-23 | intake | r16: Ready: contract `session-loop` validates ready-green, derived from r13, against requirements r9; the engineer seat (Johnathan Hyden) signed the solution half at r13 (r15) |
 
 # session-loop - Sessions restart themselves until you are needed
 
@@ -26,7 +30,7 @@
 - `workflows/tools/loop.py` (new): the loop's files and issues: `on`, `off`, `stop`, `reply`, `due`, `wrap`.
 - `skills/sdlc/flows/loop.md` (new) and `skills/sdlc/SKILL.md`: the `/sdlc loop on|off` route, and the rules a session in a loop follows at a stop, a reply and a wrap.
 - `hooks/loop_on.py` (new) and `hooks/hooks.json`: a SessionStart entry that tells a fresh session the loop is on.
-- `E:\herdr-sdlc\herdr_loop.py` (new), `E:\herdr-sdlc\tests\` and `E:\herdr-sdlc\README.md`: the launcher.
+- `herdr/` (ADR 0043): the launcher, `herdr_loop.py` (new), and the folder's `README.md`; the fold moved in the tree hook, `herdr_seat.py`, unchanged. l2 and l3 built the launcher in `E:\herdr-sdlc`.
 - `tests/`: each kit unit's own test file.
 - `docs/usage/` (a session-loop page), `USAGE.md`, `docs/components.md`, `CHANGELOG.md`, `pyproject.toml` and `skills/sdlc/init.py` (kit 0.23.0); `.github/workflows/sdlc.yml` takes the `v0.23.0` tag in the self-pin PR.
 
@@ -36,7 +40,7 @@ The requirements run's state file holds no refused places. The build leaves thes
 
 - `hooks/context_size.py` and `hooks/wall.py`: the 200K message stays the wrap's trigger, unchanged.
 - `workflows/tools/task.py` and a team run's files: SC1.3 reads only that no sentinel appears.
-- `E:\herdr-sdlc\herdr_seat.py`: the tree pane's flag stays its own (SC1.3).
+- `herdr/herdr_seat.py`'s behavior: the fold moves the file, and the tree pane's flag stays its own (SC1.3).
 - The user-global skills `/resume-session`, `/cairn` and `end-session`: the launcher types `/resume-session` as it stands.
 - `docs/backlog.md` and the Next it holds: the loop never writes Next (SC5.2).
 - herdr's config and plugins: no plugin, no key binding.
@@ -49,7 +53,7 @@ The user starts a loop in two steps, and stops it with one:
 > /sdlc loop on
 session loop on; a launcher may now restart this repo's sessions
 
-PS> python E:\herdr-sdlc\herdr_loop.py w9:p1
+PS> python E:\sdlc_development_kit\herdr\herdr_loop.py w9:p1
 herdr-loop: watching pane w9:p1 (E:\sdlc_development_kit)
 
 > /sdlc loop off
@@ -78,7 +82,7 @@ The session's rules, in `flows/loop.md`, in force while `loop.json` exists:
 
 The SessionStart hook prints, when `loop.json` exists: `A session loop is on in this repo: follow {plugin}/skills/sdlc/flows/loop.md at every stop and wrap.`
 
-The launcher, `python E:\herdr-sdlc\herdr_loop.py <pane>`, prints one line per event in its own pane:
+The launcher, `python {kit}\herdr\herdr_loop.py <pane>` (`{kit}` the kit's folder: a clone, or the plugin's install), prints one line per event in its own pane:
 
 - With no `loop.json` in the git folder of the pane's working directory (`herdr pane get`'s `cwd`): `herdr-loop: no session loop is on in pane {pane}; run /sdlc loop on there`, exit 2.
 - On a `continue` sentinel: renames it `sentinel.seen.json`, counts the strike, waits until the pane reads idle, types `/clear` and Enter, then 3 seconds later `/resume-session` and Enter, all within 60 seconds of the sentinel. Prints `herdr-loop: restarted pane {pane} at {position}`.
@@ -114,7 +118,7 @@ No endpoint table: the feature has no network endpoint.
 - `loop.py` and `herdr_loop.py` use the standard library only, and decode subprocess output as UTF-8 with errors replaced.
 - The launcher calls herdr and `gh` with argument lists, never through a shell: in trial 2, Git Bash rewrote `/clear` to `C:/Program Files/Git/clear`.
 - The launcher types only into the pane its argument names, and only while that pane reads idle.
-- The kit imports nothing from `E:\herdr-sdlc` and runs no herdr command; the launcher imports nothing from the kit and reads its files by path (ADR 0031's split).
+- The kit's core imports nothing from `herdr/` and runs no herdr command; the launcher imports nothing from the kit and reads its files by path (ADR 0031's split, kept by ADR 0043).
 - The timer's minute: the stop's time plus 55 minutes, cut to the minute; a minute of :00 or :30 moves one minute on, since a one-shot landing there may fire up to 90 seconds early. The wrap then starts within 54 to 56 minutes (SC3.1).
 - The sentinel is the wrap's last write, after the push check (SC1.2).
 - `loop.md` stays under 12,000 characters, the flow files' ceiling, and every Bash call in it is one segment.
@@ -141,7 +145,7 @@ l1, then l2, then l3, then l4. l1's files are the contract the others read. l2 t
 - `PushNotification` is held back while the terminal is active (trial 3), and reaches the phone only with Remote Control connected. The issue is the record either way. GitHub sends no notice for an issue filed under the user's own account (assumed, not measured).
 - A session that writes a wrong position defeats the strike count; the exit and hang checks still stop the loop.
 - Typing into a pane mid-turn: the launcher waits for the idle reading.
-- l2 and l3 land in a second repo, `E:\herdr-sdlc`, with their tests there; the tree hook, `herdr_seat.py`, is the precedent.
+- l2 and l3 were built in a second repo, `E:\herdr-sdlc`, with no remote, no CI and no team commits; the fold moved them into the kit's `herdr/` before l4 (ADR 0043), and that repo keeps their history.
 - Cost: about eight build sessions, two a unit (standing practice, session 96), plus one live sitting of about an hour, idle while the timers run.
 
 ## Consult cases
@@ -153,7 +157,7 @@ l1, then l2, then l3, then l4. l1's files are the contract the others read. l2 t
 | 1. An ambiguity in the requirements | yes | The engineer seat, Johnathan Hyden, on Claude's recommendation (session 165) | "The pane shows no change" reads the transcript's last write, since the pane's status line redraws every second. Every stop, the launcher's too, removes `loop.json`, so the loop stays stopped until the user turns it on. |
 | 2. More than one solution | yes | The engineer seat, Johnathan Hyden, on Claude's recommendation (session 165) | The 55-minute timer is a `CronCreate` in the session (trial 1), not the launcher typing a wrap prompt: the self-wrap stays the session's own act and needs no typing. |
 | 3. A solution unconventional to the codebase | no | | |
-| 4. A change to a public contract: routes, a gateway definition, events, a schema | yes | The engineer seat, Johnathan Hyden, on Claude's recommendation (session 165) | A new command, `/sdlc loop on|off`, a SessionStart hook, and three JSON files `E:\herdr-sdlc` reads: their shapes in Interfaces are the contract. |
+| 4. A change to a public contract: routes, a gateway definition, events, a schema | yes | The engineer seat, Johnathan Hyden, on Claude's recommendation (session 165) | A new command, `/sdlc loop on|off`, a SessionStart hook, and three JSON files the launcher reads: their shapes in Interfaces are the contract. |
 
 ## Decisions and open questions
 
@@ -176,8 +180,9 @@ l1, then l2, then l3, then l4. l1's files are the contract the others read. l2 t
 - Requirements: `docs/features/session-loop.md`, signed at r4 (PR #171), and again at r9 after intake parked the pair (session 166).
 - ADR 0031, `decisions/0031-the-work-is-one-derived-tree.md`: the kit writes files, the herdr side reads them.
 - ADR 0039, `decisions/0039-the-kit-ships-plugin-hooks-and-a-node-starts-at-its-rows-settings.md`: the kit ships plugin hooks.
+- ADR 0043, `decisions/0043-the-herdr-tools-ship-in-the-kits-opt-in-herdr-folder.md`: the herdr tools in the kit's opt-in folder.
 - `docs/features/run-restart.design.md`: the git-folder files a run keeps.
-- `E:\herdr-sdlc\README.md`: the tree hook, the launcher's neighbour.
+- `herdr/README.md`: the launcher and the tree hook, its neighbour.
 - `docs/backlog.md` Next 30 (this design) and Next 31 (`session-loop-sidebar`).
 
 ### Record
