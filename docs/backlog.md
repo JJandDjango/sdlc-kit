@@ -437,12 +437,24 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     past the cap). SC6, the herdr sidebar, split to Next 31. The O5
     material shape hid every draft-check finding (Next actions 2):
     reshaped to flat keys, the check read 60.
-30. Build session-loop's last three units in order:
-    `l2-loop-launcher` and `l3-loop-stops` (both in `E:\herdr-sdlc`),
-    `l4-loop-rules` (kit 0.23.0). Session 169 built `l1-loop-files`
-    (`workflows/tools/loop.py`, 39 tests with the timer-minute property,
-    Two-Key PASS in round 1); its file shapes are what l2 reads. Session
-    168 passed G1: the user signed
+30. Run l2's two manual receipts in herdr (SC1.1: a live restart whose
+    new session names the sentinel's Next; SC1.3: the tree pane flagged
+    while the launcher runs), then build `l3-loop-stops` (in
+    `E:\herdr-sdlc`) and `l4-loop-rules` (kit 0.23.0). Session 170 built
+    `l2-loop-launcher`: `E:\herdr-sdlc\herdr_loop.py`, commit `c6aee1b`
+    on that repo's master (no remote), 26 tests, Two-Key PASS in round
+    1. `/sdlc execute` commits only in its own repo, so Claude ran its
+    tasks by hand: the members got `repo` `E:/herdr-sdlc`, a prove.py
+    shim as their `pluginRoot`, and the repo's new `.sdlc/config.yaml`
+    test declaration (`ef3f0d1`); `task.py` kept the progress in the
+    kit. The kit's wall hook refuses a wrapped command naming `tests`, so
+    the Orchestrator ran the Developer's suite as the receipts. Carried
+    to l3: a parseable sentinel of an unknown kind polls forever (the
+    docstring says it stops); `restart()` ignores the herdr calls' exit
+    codes; l3's fake herdr must answer `process-info`. Session 169 built
+    `l1-loop-files` (`workflows/tools/loop.py`, 39 tests with the
+    timer-minute property, Two-Key PASS in round 1). Session 168 passed
+    G1: the user signed
     all 11 items of G1.3 on requirements r9 and design r10
     (`.sdlc/g1/session-loop.yaml`); items 8 and 9 were checked with their
     gaps in Next actions 24. Session 167 took the
