@@ -1,0 +1,162 @@
+# Task contract - G0 definition-of-ready (ADR 0005 fields, ADR 0006 encoding).
+# Contracts are immutable to implementers once ready (write-surface rule, ADR 0010).
+
+id: session-loop
+
+title: Sessions restart themselves until you are needed
+
+intent: >-
+  Today a session wraps itself, but the user runs `/clear` and
+  `/resume-session` by hand, so work waits on the user. After this task a
+  wrap writes a sentinel last, after its push. Within 60 seconds a launcher
+  outside any session types `/clear` and `/resume-session` into the same
+  `herdr` pane. At a human-needed stop the session files a `needs-ruling`
+  issue and waits, and a reply in the session continues the session. With
+  no reply before its 55-minute timer runs out, the session runs its
+  self-wrap and the loop stays stopped. Two strikes in a row, an exit or a
+  hung session stop the loop with one issue. An empty Next files one "Pick
+  the next deliverable" issue.
+
+scope:
+  - workflows/tools/loop.py
+  - skills/sdlc/flows/loop.md
+  - skills/sdlc/SKILL.md
+  - hooks/loop_on.py
+  - hooks/hooks.json
+  - E:/herdr-sdlc/herdr_loop.py
+  - E:/herdr-sdlc/tests/
+  - E:/herdr-sdlc/README.md
+  - tests/
+  - docs/usage/
+  - USAGE.md
+  - docs/components.md
+  - CHANGELOG.md
+  - pyproject.toml
+  - skills/sdlc/init.py
+  - .github/workflows/sdlc.yml
+
+non_goals:
+  - The loop adds no `permissions` entry.
+  - The loop never names a deliverable itself; a new feature still needs
+    the user's interview.
+  - Every restart is a fresh session; no earlier session goes on.
+  - No new window per session; each session runs in the same pane.
+  - The restart is `/clear`, never `/compact`.
+  - The kit never needs `herdr`.
+  - No cap on time or tokens per session.
+
+decomposition:
+  - unit: l1-loop-files
+    id: l1-loop-files
+    confirmed_by: [user]
+    done_means: >-
+      `loop.py stop` files the `needs-ruling` issue and writes the waiting
+      file. `reply` closes that issue. `wrap` writes the sentinel last,
+      after the push. With Next empty, `wrap` files one pick issue.
+    acceptance_sketch:
+      - >-
+        verify that the wrap writes the sentinel only after its push lands
+        on the branch (SC1.2)
+      - >-
+        verify that at a human-needed stop, an open `needs-ruling` issue
+        holds the question before the session waits. Verify that on the
+        reply the session closes that issue (SC2.1)
+      - >-
+        verify that when `/cairn status` prints Next as `(none)`, the wrap
+        files one `needs-ruling` issue named "Pick the next deliverable".
+        Verify that the wrap files none while one is open, and the launcher
+        types nothing. Verify that when Next is empty, the wrap's push
+        leaves Next empty (SC5.1, SC5.2)
+  - unit: l2-loop-launcher
+    id: l2-loop-launcher
+    depends_on: [l1-loop-files]
+    confirmed_by: [user]
+    done_means: >-
+      `herdr_loop.py` restarts the pane within 60 seconds of a `continue`
+      sentinel. The launcher types nothing on any other sentinel or with
+      none.
+    acceptance_sketch:
+      - >-
+        verify that within 60 seconds of the sentinel, the launcher types
+        `/clear` and then `/resume-session` into the same pane. Verify that
+        the new session names the Next the wrap recorded (SC1.1)
+      - >-
+        verify that while a loop runs, the launcher types nothing when a
+        team run stops with no wrap. Verify that the kit's `tree: notify:`
+        command still flags the tree pane (SC1.3)
+      - >-
+        verify that after this self-wrap the launcher types nothing into
+        the pane, and the `needs-ruling` issue stays open (SC3.2)
+  - unit: l3-loop-stops
+    id: l3-loop-stops
+    depends_on: [l2-loop-launcher]
+    confirmed_by: [user]
+    done_means: >-
+      Two strikes, an exit or a 60-minute hang stop the loop with one
+      issue, and the launcher types nothing.
+    acceptance_sketch:
+      - >-
+        verify that after two strikes in a row, the launcher types nothing.
+        Verify that the launcher files one issue naming the position (SC4.1)
+      - >-
+        verify that a session that changes the position sets the strike
+        count back to zero (SC4.2)
+      - >-
+        verify that when Claude in the pane exits with no sentinel, or the
+        session is hung, the launcher types nothing. Verify that the
+        launcher then files one issue naming the pane and the last position
+        (SC4.3)
+  - unit: l4-loop-rules
+    id: l4-loop-rules
+    depends_on: [l3-loop-stops]
+    confirmed_by: [user]
+    done_means: >-
+      `/sdlc loop on` turns the loop on. In a loop, a session files its
+      stop and sets its timer. A reply continues the session. With no
+      reply, the session wraps itself. Kit 0.23.0 ships.
+    acceptance_sketch:
+      - >-
+        verify that a reply in the session 60 seconds before the 55-minute
+        timer runs out continues that session. Verify that the session runs
+        no wrap and writes no sentinel (SC2.2)
+      - >-
+        verify that a human-needed stop's last message ends on its
+        question, and a wrap's closing message holds no question (SC2.3)
+      - >-
+        verify that with no reply, the session runs its self-wrap within 60
+        seconds of the time its 55-minute timer runs out. Verify that in the
+        user's next session, `/cairn status` lists the `needs-ruling` issue
+        under `Waiting on you` (SC3.1, SC3.3)
+
+dependencies: []
+
+entities:
+  - feature
+  - feature-document
+  - pair
+  - requirements-document
+  - design-document
+  - intake
+  - task-contract
+  - decomposition-unit
+  - success-criterion
+  - check
+  - release-unit
+  - team-run
+  - pane
+  - tree
+  - notify-command
+  - wrap
+  - launcher
+  - sentinel
+  - position
+  - strike
+  - needs-ruling
+  - session-loop
+  - human-needed-stop
+  - self-wrap
+  - hung
+
+provenance:
+  origin: human-request
+  ref: docs/features/session-loop.md

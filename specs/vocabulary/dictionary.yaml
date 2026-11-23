@@ -186,6 +186,7 @@ words:
   - {word: contains, pos: verb}
   - {word: content, pos: noun}
   - {word: context, pos: noun}
+  - {word: continues, pos: verb}
   - {word: contract, pos: noun}
   - {word: contracts, pos: noun}
   - {word: control, pos: noun}
@@ -411,6 +412,7 @@ words:
   - {word: grows, pos: verb}
   - {word: guard, pos: noun}
   - {word: hand, pos: noun}
+  - {word: hang, pos: noun}
   - {word: happen, pos: noun}
   - {word: harness, pos: noun}
   - {word: harvested, pos: verb}
@@ -452,6 +454,7 @@ words:
   - {word: interpretation, pos: noun}
   - {word: interview, pos: noun}
   - {word: invocation, pos: noun}
+  - {word: issue, pos: noun}
   - {word: items, pos: noun}
   - {word: iteration, pos: noun}
   - {word: itself, pos: noun}
@@ -616,6 +619,7 @@ words:
   - {word: per-vector, pos: noun}
   - {word: persistent, pos: noun}
   - {word: persona, pos: noun}
+  - {word: pick, pos: noun}
   - {word: pilot, pos: noun}
   - {word: pinned, pos: verb}
   - {word: pins, pos: verb}
@@ -745,6 +749,7 @@ words:
   - {word: replacement, pos: noun}
   - {word: replacements, pos: noun}
   - {word: replaces, pos: verb}
+  - {word: reply, pos: noun}
   - {word: repo, pos: noun}
   - {word: report, pos: verb}
   - {word: report-only, pos: noun}
@@ -803,6 +808,7 @@ words:
   - {word: sdlc-spec, pos: noun}
   - {word: sdlc-verifier, pos: noun}
   - {word: seats, pos: noun}
+  - {word: seconds, pos: noun}
   - {word: secrets, pos: noun}
   - {word: secrets-scan-step, pos: noun}
   - {word: section, pos: noun}
@@ -824,6 +830,7 @@ words:
   - {word: sessions, pos: noun}
   - {word: set, pos: noun}
   - {word: set-ratified, pos: noun}
+  - {word: sets, pos: verb}
   - {word: setting, pos: noun}
   - {word: settings, pos: noun}
   - {word: setup, pos: noun}
@@ -894,6 +901,7 @@ words:
   - {word: strict-compile-props, pos: noun}
   - {word: strictness, pos: noun}
   - {word: strictness-flag, pos: noun}
+  - {word: strikes, pos: noun}
   - {word: string, pos: noun}
   - {word: struck, pos: verb}
   - {word: structural, pos: noun}
@@ -946,6 +954,7 @@ words:
   - {word: thresholds, pos: noun}
   - {word: tiers, pos: noun}
   - {word: time, pos: noun}
+  - {word: timer, pos: noun}
   - {word: today, pos: noun}
   - {word: tokens, pos: noun}
   - {word: tolerance, pos: noun}
@@ -966,6 +975,7 @@ words:
   - {word: truth, pos: noun}
   - {word: turn, pos: noun}
   - {word: turns, pos: verb}
+  - {word: types, pos: verb}
   - {word: unaffected, pos: noun}
   - {word: unbound, pos: noun}
   - {word: unchanged, pos: noun}
@@ -1016,6 +1026,7 @@ words:
   - {word: vocab-drafts, pos: noun}
   - {word: vocab-skill-family, pos: noun}
   - {word: vocabulary, pos: noun}
+  - {word: waiting, pos: modifier}
   - {word: waits, pos: noun}
   - {word: wall, pos: noun}
   - {word: warn, pos: verb}
@@ -1039,6 +1050,7 @@ words:
   - {word: workflows, pos: noun}
   - {word: working, pos: noun}
   - {word: wrapper, pos: noun}
+  - {word: wraps, pos: verb}
   - {word: write, pos: verb}
   - {word: write-surface, pos: noun}
   - {word: write-tests, pos: noun}

@@ -5,6 +5,12 @@
 | 2026-11-22 | Johnathan Hyden | r3: Measured: the checks before signing, on the request half: 59 findings (CL006 56, CL008 3); ready checks 1 to 8: 1 OPEN |
 | 2026-11-22 | Johnathan Hyden | r4: The request half finished: 11 sections written, 1 OPEN |
 | 2026-11-22 | Johnathan Hyden | r5: Signed: request half. The PO seat signs r4 |
+| 2026-11-22 | intake | r6: Parked: OPEN: Ready check 3: SC1 holds five checks and SC2 four, past the two or three a criterion takes; the extras are Q11's regression checks. Decisions and open questions 9: OPEN: can a timer (`CronCreate`) wake an idle interactive session? Decisions and open questions 10: OPEN: can `herdr pane send-keys` type slash commands into a Claude pane? Decisions and open questions 11: OPEN: how does the 55-minute notice reach the user: phone, email or desktop toast? |
+| 2026-11-22 | Johnathan Hyden | r7: Q11 again: SC1.1 takes SC1.3, a new SC1.3 joins SC1.4 and SC1.5, SC2.1 takes SC2.3, SC5.1 takes SC5.2, so each criterion holds two or three checks (14 in all); Decisions 9 to 11 closed by the design run's trials (session 165) |
+| 2026-11-22 | Johnathan Hyden | r8: Measured: the checks before signing, on the request half: 61 findings (CL006 54, CL008 7); ready checks 1 to 8: 0 OPEN |
+| 2026-11-22 | Johnathan Hyden | r9: The request half finished: 11 sections written, 0 OPEN |
+| 2026-11-22 | Johnathan Hyden | r10: Signed: request half. The PO seat signs r9 |
+| 2026-11-22 | intake | r11: Ready: contract `session-loop` validates ready-green, derived from r9; the PO seat (Johnathan Hyden) signed the request half at r9 (r10) |
 
 # session-loop - Sessions restart themselves until you are needed
 
@@ -35,11 +41,11 @@ Since 2026-11-14 a session wraps itself past about 20% context at a natural stop
 
 ### Existing behavior touched
 
-1. The close rule: a session's closing message is its last and asks nothing. A stop that waits on the user's word ends on a question instead (the user's standing rule, session 100 and 2026-11-14; held in Claude's memory, not in the repo). Regression check: SC2.4.
+1. The close rule: a session's closing message is its last and asks nothing. A stop that waits on the user's word ends on a question instead (the user's standing rule, session 100 and 2026-11-14; held in Claude's memory, not in the repo). Regression check: SC2.3.
 2. `/cairn status` prints open issues labelled `needs-ruling` under "Waiting on you" (`status.py:17`). Regression check: SC3.3.
-3. run-restart's non-goal: a run never relaunches itself in a loop (`docs/features/run-restart.md:56`). Regression check: SC1.4.
+3. run-restart's non-goal: a run never relaunches itself in a loop (`docs/features/run-restart.md:56`). Regression check: SC1.3.
 4. A session left overnight is never resumed; a new one starts from the handoff (`docs/conventions/standing-practice.md:11`). Regression check: SC1.1.
-5. The herdr hook flags the tree pane on the kit's notify command (`E:\herdr-sdlc\herdr_seat.py`, run as a repo's `tree: notify:`; `E:\herdr-sdlc\README.md:4-7`). Regression check: SC1.5.
+5. The herdr hook flags the tree pane on the kit's notify command (`E:\herdr-sdlc\herdr_seat.py`, run as a repo's `tree: notify:`; `E:\herdr-sdlc\README.md:4-7`). Regression check: SC1.3.
 
 ## Success criteria
 
@@ -77,27 +83,20 @@ Since 2026-11-14 a session wraps itself past about 20% context at a natural stop
 
 ### Checks
 
-- SC1.1: verify that within 60 seconds of the wrap's sentinel appearing, the launcher types `/clear` and then `/resume-session` into the same pane.
+- SC1.1: verify that within 60 seconds of the wrap's sentinel appearing, the launcher types `/clear` and then `/resume-session` into the same pane, and the new session's ready-state names the Next the wrap recorded.
 - SC1.2: verify that the sentinel appears only after the wrap's commit is on the remote branch.
-- SC1.3: verify that the new session's ready-state names the same Next the wrap recorded.
-- SC1.4: verify that when a team run stops with no wrap, the launcher types nothing.
-- SC1.5: verify that the kit's `tree: notify:` command still flags the tree pane while a loop runs.
-- SC2.1: verify that at a stop for the user's answer, an open `needs-ruling` issue holds the question before the session waits.
+- SC1.3: verify that while a loop runs, a team run that stops with no wrap gets no keystroke from the launcher, and the kit's `tree: notify:` command still flags the tree pane.
+- SC2.1: verify that at a stop for the user's answer, an open `needs-ruling` issue holds the question before the session waits, and that on the reply the session closes that issue.
 - SC2.2: verify that a reply in the session 54 minutes after the stop continues that session, with no wrap and no sentinel.
-- SC2.3: verify that on the reply, the session closes its `needs-ruling` issue.
-- SC2.4: verify that a human-needed stop's last message ends on its question, and a wrap's closing message asks nothing.
-
-OPEN: Ready check 3: SC1 holds five checks and SC2 four, past the two or three a criterion takes; the extras are Q11's regression checks.
-
+- SC2.3: verify that a human-needed stop's last message ends on its question, and a wrap's closing message asks nothing.
 - SC3.1: verify that with no reply, the session starts its wrap 55 minutes after the stop, give or take one minute.
 - SC3.2: verify that after this self-wrap the launcher types nothing into the pane, and the `needs-ruling` issue stays open.
 - SC3.3: verify that in the session the user starts next, `/cairn status` lists that issue under "Waiting on you".
 - SC4.1: verify that when a second session in a row ends at the position it started from, the launcher types nothing and files one issue naming that position.
 - SC4.2: verify that a session that moves the position resets the strike count to zero.
 - SC4.3: verify that when the Claude process in the pane exits with no sentinel, or the pane shows no change for 60 minutes with no sentinel, the launcher types nothing and files one issue naming the pane and the last position.
-- SC5.1: verify that when `/cairn status` prints Next as "(none)", the wrap files one "Pick the next deliverable" issue labelled `needs-ruling`, and the launcher types nothing.
-- SC5.2: verify that when a "Pick the next deliverable" issue is already open, the wrap files no second one.
-- SC5.3: verify that when Next is empty, the wrap's commit leaves it empty.
+- SC5.1: verify that when `/cairn status` prints Next as "(none)", the wrap files one "Pick the next deliverable" issue labelled `needs-ruling`, none when one is already open, and the launcher types nothing.
+- SC5.2: verify that when Next is empty, the wrap's commit leaves it empty.
 
 ### Error messages, verbatim
 
@@ -119,52 +118,46 @@ OPEN: Ready check 3: SC1 holds five checks and SC2 four, past the two or three a
 6. Decided (session 164): the herdr sidebar (each loop's position, strike count and waiting state) is a second feature, `session-loop-sidebar`.
 7. Decided (session 164): the reply comes in the session (the pane or a remote client); the `needs-ruling` issue is the notice and the record, never the reply channel.
 8. Decided (session 164): after a self-wrap at 55 minutes the loop stays stopped until the user restarts it.
-9. OPEN: can a timer (`CronCreate`) wake an idle interactive session?
-10. OPEN: can `herdr pane send-keys` type slash commands into a Claude pane?
-11. OPEN: how does the 55-minute notice reach the user: phone, email or desktop toast?
+9. Decided (session 165, the design run's trial 1): a one-shot `CronCreate` wakes an idle interactive session; it fired at 17:44:02 for 17:44.
+10. Decided (session 165, trial 2): `herdr pane send-text` then `send-keys Enter` types `/clear` and a skill into a Claude pane, when herdr is called with an argument list; Git Bash rewrites `/clear` to a path.
+11. Decided (session 165, trial 3): the notice is `PushNotification` from the session, a desktop notice and the phone over Remote Control; the `needs-ruling` issue is the record.
 
 ## Notes
 
 `[PO seat · authored]`
 
 - From the Q11 regression mappings through Q15, the answers are Claude's recommendations, taken on the PO seat's word of 2026-11-22: "Go with all of your recommendations for the remainder of these questions."
+- Session 166's way back to Q11 and Decisions (after intake parked the pair at r6) took Claude's recommendation on each answer, on the PO seat's word of 2026-11-22: "Yes". Three merges join two checks one unit already delivered; SC1.1 takes SC1.3 from the live sitting, so the launcher's live restart reads the new session's ready-state.
 
 ## Appendix
 
 ### Gherkin
 
-`[PO seat · derived from r4]`
+`[PO seat · derived from r9]`
 
 ```gherkin
-Scenario: SC1.1 The launcher restarts the session in the same pane
-  Given a session in a herdr pane whose wrap writes its sentinel
+Scenario: SC1.1 The launcher restarts the session where it stopped
+  Given a session in a herdr pane whose wrap recorded Next and writes its sentinel
   When 60 seconds pass after the sentinel appears
   Then the launcher has typed `/clear` and then `/resume-session` into the same pane
+  And the new session's ready-state names the same Next
 
 Scenario: SC1.2 The sentinel follows the push
   Given a session running its wrap
   When the sentinel appears
   Then the wrap's commit is already on the remote branch
 
-Scenario: SC1.3 The new session names the recorded Next
-  Given a wrap that recorded Next
-  When the launcher starts the new session
-  Then the new session's ready-state names the same Next
-
-Scenario: SC1.4 A stopped team run is not relaunched
-  Given a team run in a pane
-  When the run stops with no wrap
-  Then the launcher types nothing into the pane
-
-Scenario: SC1.5 The notify hook still flags the tree pane
+Scenario: SC1.3 A loop leaves team runs and the tree pane as they were
   Given a loop running in a herdr pane
-  When the kit runs its `tree: notify:` command
-  Then the tree pane is flagged
+  When a team run in it stops with no wrap, and the kit runs its `tree: notify:` command
+  Then the launcher types nothing into the pane
+  And the tree pane is flagged
 
-Scenario: SC2.1 The stop files its question first
+Scenario: SC2.1 The stop files its question first, and the reply closes it
   Given a session that needs the user's answer
-  When it stops
-  Then an open `needs-ruling` issue holds the question before the session waits
+  When it stops, and the user later replies in the session
+  Then an open `needs-ruling` issue held the question before the session waited
+  And the session closed that issue on the reply
 
 Scenario: SC2.2 A reply inside 55 minutes continues the session
   Given a session waiting at a human-needed stop
@@ -172,12 +165,7 @@ Scenario: SC2.2 A reply inside 55 minutes continues the session
   Then the same session continues
   And no wrap runs and no sentinel appears
 
-Scenario: SC2.3 The reply closes the issue
-  Given a session waiting at a stop with an open `needs-ruling` issue
-  When the user replies in the session
-  Then the session closes that issue
-
-Scenario: SC2.4 A stop ends on its question and a wrap asks nothing
+Scenario: SC2.3 A stop ends on its question and a wrap asks nothing
   Given a session in a loop
   When it reaches a human-needed stop, or it wraps
   Then the stop's last message ends on its question
@@ -216,18 +204,13 @@ Scenario: SC4.3 A crashed or hung session stops the loop
   Then the launcher types nothing
   And it files one issue naming the pane and the last position
 
-Scenario: SC5.1 An empty Next files one pick issue
+Scenario: SC5.1 An empty Next files one pick issue, never a second
   Given `/cairn status` prints Next as "(none)"
   When the session wraps
-  Then the wrap files one "Pick the next deliverable" issue labelled `needs-ruling`
+  Then the wrap files one "Pick the next deliverable" issue labelled `needs-ruling`, none when one is already open
   And the launcher types nothing
 
-Scenario: SC5.2 No second pick issue
-  Given an open "Pick the next deliverable" issue
-  When a session wraps
-  Then the wrap files no second one
-
-Scenario: SC5.3 The loop never picks a deliverable
+Scenario: SC5.2 The loop never picks a deliverable
   Given Next is empty
   When the session wraps
   Then the wrap's commit leaves Next empty

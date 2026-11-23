@@ -5,6 +5,13 @@
 | 2026-11-22 | Johnathan Hyden | r3: Measured: the checks before signing, on the solution half: 20 findings (CL006 20); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
 | 2026-11-22 | Johnathan Hyden | r4: The solution half finished: 12 sections written, 0 OPEN |
 | 2026-11-22 | Johnathan Hyden | r5: Signed: solution half. The engineer seat signs r4 |
+| 2026-11-22 | intake | r6: Parked: OPEN: Ready check 3: SC1 holds five checks and SC2 four, past the two or three a criterion takes; the extras are Q11's regression checks. Decisions and open questions 9: OPEN: can a timer (`CronCreate`) wake an idle interactive session? Decisions and open questions 10: OPEN: can `herdr pane send-keys` type slash commands into a Claude pane? Decisions and open questions 11: OPEN: how does the 55-minute notice reach the user: phone, email or desktop toast? |
+| 2026-11-22 | Johnathan Hyden | r7: Confirmed against requirements r9 |
+| 2026-11-22 | Johnathan Hyden | r8: Units cut to four against requirements r9, each at most three sketch entries: `l3-loop-stops` splits from `l2-loop-launcher`, the rules move to `l4-loop-rules`; Order, Risks and cost, Out of scope, Links out and Notes follow |
+| 2026-11-22 | Johnathan Hyden | r9: Measured: the checks before signing, on the solution half: 22 findings (CL006 22); Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN |
+| 2026-11-22 | Johnathan Hyden | r10: The solution half finished: 12 sections written, 0 OPEN |
+| 2026-11-22 | Johnathan Hyden | r11: Signed: solution half. The engineer seat signs r10 |
+| 2026-11-22 | intake | r12: Ready: contract `session-loop` validates ready-green, derived from r10, against requirements r9; the engineer seat (Johnathan Hyden) signed the solution half at r10 (r11) |
 
 # session-loop - Sessions restart themselves until you are needed
 
@@ -28,10 +35,10 @@
 The requirements run's state file holds no refused places. The build leaves these untouched:
 
 - `hooks/context_size.py` and `hooks/wall.py`: the 200K message stays the wrap's trigger, unchanged.
-- `workflows/tools/task.py` and a team run's files: SC1.4 reads only that no sentinel appears.
-- `E:\herdr-sdlc\herdr_seat.py`: the tree pane's flag stays its own (SC1.5).
+- `workflows/tools/task.py` and a team run's files: SC1.3 reads only that no sentinel appears.
+- `E:\herdr-sdlc\herdr_seat.py`: the tree pane's flag stays its own (SC1.3).
 - The user-global skills `/resume-session`, `/cairn` and `end-session`: the launcher types `/resume-session` as it stands.
-- `docs/backlog.md` and the Next it holds: the loop never writes Next (SC5.3).
+- `docs/backlog.md` and the Next it holds: the loop never writes Next (SC5.2).
 - herdr's config and plugins: no plugin, no key binding.
 
 ### Interfaces
@@ -117,13 +124,14 @@ No endpoint table: the feature has no network endpoint.
 
 | Unit | Checks | Done means | Tests by check id and kind | Retirements |
 | :-- | :-- | :-- | :-- | :-- |
-| l1-loop-files | SC1.2, SC2.1, SC2.3, SC5.1, SC5.2, SC5.3 | `loop.py stop` files the `needs-ruling` issue and writes the waiting file. `reply` closes that issue. `wrap` writes the sentinel last, after the push. With Next empty, `wrap` files one pick issue. | SC1.2, SC2.1, SC2.3, SC5.1, SC5.2: automated, with git and `gh` behind a run seam. SC5.3: automated (`loop.py` writes nothing outside `{git folder}/sdlc-loop/`). | none |
-| l2-loop-launcher | SC1.1, SC1.4, SC1.5, SC3.2, SC4.1, SC4.2, SC4.3 | `herdr_loop.py` restarts the pane within 60 seconds of a `continue` sentinel. The launcher types nothing on any other sentinel or with none. Two strikes, an exit or a 60-minute hang stop the loop with one issue. | SC1.1: automated, and a manual receipt: one live restart in a herdr pane. SC1.4, SC3.2, SC4.1, SC4.2, SC4.3: automated, with herdr, `gh`, sleep and the clock faked. SC1.5: automated (no `report-agent` or `release-agent` call), and a manual receipt: the tree pane flagged while the launcher runs. | none |
-| l3-loop-rules | SC1.3, SC2.2, SC2.4, SC3.1, SC3.3 | `/sdlc loop on` turns the loop on. In a loop, a session files its stop and sets its timer. A reply continues the session. With no reply, the session wraps itself. Kit 0.23.0 ships. | SC2.4: automated (a text test on `loop.md`). SC1.3, SC2.2, SC3.1, SC3.3: manual receipts in one live sitting of two panes, one answered at 54 minutes, one left to 55. | none |
+| l1-loop-files | SC1.2, SC2.1, SC5.1+SC5.2 | `loop.py stop` files the `needs-ruling` issue and writes the waiting file. `reply` closes that issue. `wrap` writes the sentinel last, after the push. With Next empty, `wrap` files one pick issue. | SC1.2, SC2.1: automated, with git and `gh` behind a run seam. SC5.1+SC5.2: automated, with `gh` behind the run seam, and `loop.py` writes nothing outside `{git folder}/sdlc-loop/`. | none |
+| l2-loop-launcher | SC1.1, SC1.3, SC3.2 | `herdr_loop.py` restarts the pane within 60 seconds of a `continue` sentinel. The launcher types nothing on any other sentinel or with none. | SC1.1: automated, and a manual receipt: one live restart in a herdr pane, whose new session names the Next the sentinel holds. SC1.3: automated (no keystroke with no sentinel; no `report-agent` or `release-agent` call), and a manual receipt: the tree pane flagged while the launcher runs. SC3.2: automated, with herdr, `gh`, sleep and the clock faked. | none |
+| l3-loop-stops | SC4.1, SC4.2, SC4.3 | Two strikes, an exit or a 60-minute hang stop the loop with one issue, and the launcher types nothing. | SC4.1, SC4.2, SC4.3: automated, with herdr, `gh`, sleep and the clock faked. | none |
+| l4-loop-rules | SC2.2, SC2.3, SC3.1+SC3.3 | `/sdlc loop on` turns the loop on. In a loop, a session files its stop and sets its timer. A reply continues the session. With no reply, the session wraps itself. Kit 0.23.0 ships. | SC2.3: automated (a text test on `loop.md`). SC2.2, SC3.1+SC3.3: manual receipts in one live sitting of two panes, one answered at 54 minutes, one left to 55. | none |
 
 ### Order
 
-l1, then l2, then l3. l1's files are the contract the other two read. l2 tests against those file shapes with herdr faked. l3's live receipts need both l1 and l2 in place.
+l1, then l2, then l3, then l4. l1's files are the contract the others read. l2 tests against those file shapes with herdr faked; l3 adds its stops to l2's launcher. l4's live receipts need l1 to l3 in place.
 
 ## Risks and cost
 
@@ -133,8 +141,8 @@ l1, then l2, then l3. l1's files are the contract the other two read. l2 tests a
 - `PushNotification` is held back while the terminal is active (trial 3), and reaches the phone only with Remote Control connected. The issue is the record either way. GitHub sends no notice for an issue filed under the user's own account (assumed, not measured).
 - A session that writes a wrong position defeats the strike count; the exit and hang checks still stop the loop.
 - Typing into a pane mid-turn: the launcher waits for the idle reading.
-- l2 lands in a second repo, `E:\herdr-sdlc`, with its tests there; the tree hook, `herdr_seat.py`, is the precedent.
-- Cost: about six build sessions, two a unit (standing practice, session 96), plus one live sitting of about an hour, idle while the timers run.
+- l2 and l3 land in a second repo, `E:\herdr-sdlc`, with their tests there; the tree hook, `herdr_seat.py`, is the precedent.
+- Cost: about eight build sessions, two a unit (standing practice, session 96), plus one live sitting of about an hour, idle while the timers run.
 
 ## Consult cases
 
@@ -165,7 +173,7 @@ l1, then l2, then l3. l1's files are the contract the other two read. l2 tests a
 
 `[Engineer seat · authored]`
 
-- Requirements: `docs/features/session-loop.md`, signed at r4 (PR #171).
+- Requirements: `docs/features/session-loop.md`, signed at r4 (PR #171), and again at r9 after intake parked the pair (session 166).
 - ADR 0031, `decisions/0031-the-work-is-one-derived-tree.md`: the kit writes files, the herdr side reads them.
 - ADR 0039, `decisions/0039-the-kit-ships-plugin-hooks-and-a-node-starts-at-its-rows-settings.md`: the kit ships plugin hooks.
 - `docs/features/run-restart.design.md`: the git-folder files a run keeps.
@@ -185,7 +193,7 @@ l1, then l2, then l3. l1's files are the contract the other two read. l2 tests a
 - Every answer in this design is Claude's recommendation, taken on the engineer seat's word of 2026-11-22: "Go with all of your recommendations on this session, then give me a recap of what those were".
 - The trials ran in session 165 on herdr 0.9.1 and Claude Code v2.1.330, in a scratch pane closed afterwards.
 - The draft check's CL006 findings stand answered: they are the feature's own terms (wrap, sentinel, strike, `needs-ruling`) and plain words outside the controlled dictionary (issue, reply, timer, seconds), the class the request half signed with at 56. Adding them to the dictionary is the full lane's work; this design adds no entry.
-- The requirements' OPEN on ready check 3 (SC1 holds five checks, SC2 four) stays the PO seat's; the design takes the checks as signed.
+- Session 166: intake parked the pair at r6 on the requirements' four OPEN marks, and the requirements' r9 merged 18 checks to 14. The contract holds at most three sketch entries a unit, so r8 cut the units to four, with `+` pairing two checks one test reads. Each answer is Claude's recommendation, on the engineer seat's word of 2026-11-22: "Yes".
 
 ## Appendix
 

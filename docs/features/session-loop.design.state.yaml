@@ -3,7 +3,7 @@ id: session-loop
 started: 2026-11-22
 phase: complete
 next: null
-requirements_revision: r4
+requirements_revision: r9
 origin: feature
 title: Sessions restart themselves until you are needed
 seats: {engineer: Johnathan Hyden}
@@ -52,10 +52,11 @@ answers:
     - "loop.md under 12,000 characters; every Bash call one segment"
     - "no new window or tab"
   units:
-    - {id: l1-loop-files, checks: [SC1.2, SC2.1, SC2.3, SC5.1, SC5.2, SC5.3], done_means: "`loop.py stop` files the `needs-ruling` issue and writes the waiting file. `reply` closes that issue. `wrap` writes the sentinel last, after the push. With Next empty, `wrap` files one pick issue.", tests: "all automated, git and gh behind a run seam; SC5.3 automated (writes nothing outside the loop folder)", retirements: none}
-    - {id: l2-loop-launcher, checks: [SC1.1, SC1.4, SC1.5, SC3.2, SC4.1, SC4.2, SC4.3], done_means: "`herdr_loop.py` restarts the pane within 60 seconds of a `continue` sentinel. The launcher types nothing on any other sentinel or with none. Two strikes, an exit or a 60-minute hang stop the loop with one issue.", tests: "automated with herdr, gh, sleep and clock faked; SC1.1 and SC1.5 also manual receipts", retirements: none}
-    - {id: l3-loop-rules, checks: [SC1.3, SC2.2, SC2.4, SC3.1, SC3.3], done_means: "`/sdlc loop on` turns the loop on. In a loop, a session files its stop and sets its timer. A reply continues the session. With no reply, the session wraps itself. Kit 0.23.0 ships.", tests: "SC2.4 automated text test; SC1.3, SC2.2, SC3.1, SC3.3 manual receipts in one live two-pane sitting", retirements: none}
-  order: "l1, l2, l3: l1's files are the contract the others read; l2 tests on those shapes with herdr faked; l3's live receipts need both"
+    - {id: l1-loop-files, checks: [SC1.2, SC2.1, SC5.1+SC5.2], done_means: "`loop.py stop` files the `needs-ruling` issue and writes the waiting file. `reply` closes that issue. `wrap` writes the sentinel last, after the push. With Next empty, `wrap` files one pick issue.", tests: "SC1.2, SC2.1 automated, git and gh behind a run seam; SC5.1+SC5.2 automated, gh behind the seam, nothing written outside the loop folder", retirements: none}
+    - {id: l2-loop-launcher, checks: [SC1.1, SC1.3, SC3.2], done_means: "`herdr_loop.py` restarts the pane within 60 seconds of a `continue` sentinel. The launcher types nothing on any other sentinel or with none.", tests: "automated with herdr, gh, sleep and clock faked; SC1.1 and SC1.3 also manual receipts (a live restart naming the Next; the tree pane flagged)", retirements: none}
+    - {id: l3-loop-stops, checks: [SC4.1, SC4.2, SC4.3], done_means: "Two strikes, an exit or a 60-minute hang stop the loop with one issue, and the launcher types nothing.", tests: "automated with herdr, gh, sleep and clock faked", retirements: none}
+    - {id: l4-loop-rules, checks: [SC2.2, SC2.3, SC3.1+SC3.3], done_means: "`/sdlc loop on` turns the loop on. In a loop, a session files its stop and sets its timer. A reply continues the session. With no reply, the session wraps itself. Kit 0.23.0 ships.", tests: "SC2.3 automated text test; SC2.2, SC3.1+SC3.3 manual receipts in one live two-pane sitting", retirements: none}
+  order: "l1, l2, l3, l4: l1's files are the contract the others read; l2 tests on those shapes with herdr faked; l3 adds its stops to l2's launcher; l4's live receipts need l1 to l3"
   risks_and_cost: "timer lost on a Claude restart (hang check is the net); PushNotification held while the terminal is active, phone only over Remote Control; a wrong position defeats strikes; mid-turn typing guarded by idle; l2 in a second repo; about six build sessions plus one live hour"
   cases:
     - {case: 1, answer: "yes", asked: "engineer seat on Claude's recommendation, session 165", decided: "hang reads the transcript; every stop removes loop.json"}
@@ -104,4 +105,10 @@ history:
   - {at: "2026-11-22", event: "E1 to E5 again: 20 findings (CL006 20, answered in Notes); Scope covered; 0 OPEN; not stale; r3 Measured; next E6, the signature held for the seat with the recap"}
   - {at: "2026-11-22", event: solution half signed}
   - {at: "2026-11-22", event: "W1: no Google Docs form (the seat's delegation; a pasted form is never wanted)"}
+  - {at: "2026-11-22", event: output complete}
+  - {at: "2026-11-22", event: "DESIGN CONFIRM: confirmed against requirements r9 (r7); the re-signature held for E6, since the units change next"}
+  - {at: "2026-11-22", event: "way back (on the seat's delegation, session 166): S6 units cut to four, each at most three sketch entries; S7, S8, S2, S11, S12 follow; r8 text row"}
+  - {at: "2026-11-22", event: "E1 to E5: 22 findings (CL006 22, answered in Notes); Scope covered (release unit l4-loop-rules); 0 OPEN; not stale; r9 Measured"}
+  - {at: "2026-11-22", event: solution half signed}
+  - {at: "2026-11-22", event: "W1: no Google Docs form (a pasted form is never wanted)"}
   - {at: "2026-11-22", event: output complete}

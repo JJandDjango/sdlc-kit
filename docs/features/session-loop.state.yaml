@@ -52,24 +52,20 @@ answers:
     - {item: "`gh` installed and signed in with `repo` scope, for the `needs-ruling` issues.", exists: true}
     - {item: "The `needs-ruling` label in the repo. Missing; owner: the user, who runs `gh label create needs-ruling` once before the first loop.", exists: false, owner: the user}
   checks:
-    - {id: SC1.1, text: "verify that within 60 seconds of the wrap's sentinel appearing, the launcher types `/clear` and then `/resume-session` into the same pane.", regression_for: 4}
+    - {id: SC1.1, text: "verify that within 60 seconds of the wrap's sentinel appearing, the launcher types `/clear` and then `/resume-session` into the same pane, and the new session's ready-state names the Next the wrap recorded.", regression_for: 4}
     - {id: SC1.2, text: "verify that the sentinel appears only after the wrap's commit is on the remote branch."}
-    - {id: SC1.3, text: "verify that the new session's ready-state names the same Next the wrap recorded."}
-    - {id: SC1.4, text: "verify that when a team run stops with no wrap, the launcher types nothing.", regression_for: 3}
-    - {id: SC1.5, text: "verify that the kit's `tree: notify:` command still flags the tree pane while a loop runs.", regression_for: 5}
-    - {id: SC2.1, text: "verify that at a stop for the user's answer, an open `needs-ruling` issue holds the question before the session waits."}
+    - {id: SC1.3, text: "verify that while a loop runs, a team run that stops with no wrap gets no keystroke from the launcher, and the kit's `tree: notify:` command still flags the tree pane.", regression_for: [3, 5]}
+    - {id: SC2.1, text: "verify that at a stop for the user's answer, an open `needs-ruling` issue holds the question before the session waits, and that on the reply the session closes that issue."}
     - {id: SC2.2, text: "verify that a reply in the session 54 minutes after the stop continues that session, with no wrap and no sentinel."}
-    - {id: SC2.3, text: "verify that on the reply, the session closes its `needs-ruling` issue."}
-    - {id: SC2.4, text: "verify that a human-needed stop's last message ends on its question, and a wrap's closing message asks nothing.", regression_for: 1}
+    - {id: SC2.3, text: "verify that a human-needed stop's last message ends on its question, and a wrap's closing message asks nothing.", regression_for: 1}
     - {id: SC3.1, text: "verify that with no reply, the session starts its wrap 55 minutes after the stop, give or take one minute."}
     - {id: SC3.2, text: "verify that after this self-wrap the launcher types nothing into the pane, and the `needs-ruling` issue stays open."}
     - {id: SC3.3, text: "verify that in the session the user starts next, `/cairn status` lists that issue under \"Waiting on you\".", regression_for: 2}
     - {id: SC4.1, text: "verify that when a second session in a row ends at the position it started from, the launcher types nothing and files one issue naming that position."}
     - {id: SC4.2, text: "verify that a session that moves the position resets the strike count to zero."}
     - {id: SC4.3, text: "verify that when the Claude process in the pane exits with no sentinel, or the pane shows no change for 60 minutes with no sentinel, the launcher types nothing and files one issue naming the pane and the last position."}
-    - {id: SC5.1, text: "verify that when `/cairn status` prints Next as \"(none)\", the wrap files one \"Pick the next deliverable\" issue labelled `needs-ruling`, and the launcher types nothing."}
-    - {id: SC5.2, text: "verify that when a \"Pick the next deliverable\" issue is already open, the wrap files no second one."}
-    - {id: SC5.3, text: "verify that when Next is empty, the wrap's commit leaves it empty."}
+    - {id: SC5.1, text: "verify that when `/cairn status` prints Next as \"(none)\", the wrap files one \"Pick the next deliverable\" issue labelled `needs-ruling`, none when one is already open, and the launcher types nothing."}
+    - {id: SC5.2, text: "verify that when Next is empty, the wrap's commit leaves it empty."}
   error_messages:
     - {check: SC2.1, text: "session-loop: the needs-ruling label is missing; run: gh label create needs-ruling"}
     - {check: SC4.1, text: "session-loop stopped: two sessions in a row ended at {position}"}
@@ -85,11 +81,12 @@ answers:
     - "Decided (session 164): the herdr sidebar (each loop's position, strike count and waiting state) is a second feature, `session-loop-sidebar`."
     - "Decided (session 164): the reply comes in the session (the pane or a remote client); the `needs-ruling` issue is the notice and the record, never the reply channel."
     - "Decided (session 164): after a self-wrap at 55 minutes the loop stays stopped until the user restarts it."
-    - "OPEN: can a timer (`CronCreate`) wake an idle interactive session?"
-    - "OPEN: can `herdr pane send-keys` type slash commands into a Claude pane?"
-    - "OPEN: how does the 55-minute notice reach the user: phone, email or desktop toast?"
+    - "Decided (session 165, the design run's trial 1): a one-shot `CronCreate` wakes an idle interactive session; it fired at 17:44:02 for 17:44."
+    - "Decided (session 165, trial 2): `herdr pane send-text` then `send-keys Enter` types `/clear` and a skill into a Claude pane, when herdr is called with an argument list; Git Bash rewrites `/clear` to a path."
+    - "Decided (session 165, trial 3): the notice is `PushNotification` from the session, a desktop notice and the phone over Remote Control; the `needs-ruling` issue is the record."
   notes:
     - "From the Q11 regression mappings through Q15, the answers are Claude's recommendations, taken on the PO seat's word of 2026-11-22: \"Go with all of your recommendations for the remainder of these questions.\""
+    - "Session 166's way back to Q11 and Decisions (after intake parked the pair at r6) took Claude's recommendation on each answer, on the PO seat's word of 2026-11-22: \"Yes\". Three merges join two checks one unit already delivered; SC1.1 takes SC1.3 from the live sitting, so the launcher's live restart reads the new session's ready-state."
   terms:
     - {name: wrap, definition: "A session's close: record Next and the position, commit, push, then write the sentinel."}
     - {name: launcher, definition: "The process outside any session that, after a wrap, starts the next session in the same herdr pane and checks progress."}
@@ -102,29 +99,21 @@ answers:
     - {name: self-wrap, definition: "The wrap a session runs on its own 55 minutes after a human-needed stop with no reply; the loop stays stopped after it."}
     - {name: hung, definition: "A session whose pane shows no change for 60 minutes with no sentinel; the launcher treats it as crashed."}
   gherkin:
-    - {check: SC1.1, name: "The launcher restarts the session in the same pane", given: "a session in a herdr pane whose wrap writes its sentinel", when: "60 seconds pass after the sentinel appears", then: "the launcher has typed `/clear` and then `/resume-session` into the same pane", status: accepted}
+    - {check: SC1.1, name: "The launcher restarts the session where it stopped", given: "a session in a herdr pane whose wrap recorded Next and writes its sentinel", when: "60 seconds pass after the sentinel appears", then: "the launcher has typed `/clear` and then `/resume-session` into the same pane, and the new session's ready-state names the same Next", status: changed}
     - {check: SC1.2, name: "The sentinel follows the push", given: "a session running its wrap", when: "the sentinel appears", then: "the wrap's commit is already on the remote branch", status: accepted}
-    - {check: SC1.3, name: "The new session names the recorded Next", given: "a wrap that recorded Next", when: "the launcher starts the new session", then: "the new session's ready-state names the same Next", status: accepted}
-    - {check: SC1.4, name: "A stopped team run is not relaunched", given: "a team run in a pane", when: "the run stops with no wrap", then: "the launcher types nothing into the pane", status: accepted}
-    - {check: SC1.5, name: "The notify hook still flags the tree pane", given: "a loop running in a herdr pane", when: "the kit runs its `tree: notify:` command", then: "the tree pane is flagged", status: accepted}
-    - {check: SC2.1, name: "The stop files its question first", given: "a session that needs the user's answer", when: "it stops", then: "an open `needs-ruling` issue holds the question before the session waits", status: accepted}
+    - {check: SC1.3, name: "A loop leaves team runs and the tree pane as they were", given: "a loop running in a herdr pane", when: "a team run in it stops with no wrap, and the kit runs its `tree: notify:` command", then: "the launcher types nothing into the pane, and the tree pane is flagged", status: changed}
+    - {check: SC2.1, name: "The stop files its question first, and the reply closes it", given: "a session that needs the user's answer", when: "it stops, and the user later replies in the session", then: "an open `needs-ruling` issue held the question before the session waited, and the session closed that issue on the reply", status: changed}
     - {check: SC2.2, name: "A reply inside 55 minutes continues the session", given: "a session waiting at a human-needed stop", when: "the user replies in the session 54 minutes after the stop", then: "the same session continues, with no wrap and no sentinel", status: accepted}
-    - {check: SC2.3, name: "The reply closes the issue", given: "a session waiting at a stop with an open `needs-ruling` issue", when: "the user replies in the session", then: "the session closes that issue", status: accepted}
-    - {check: SC2.4, name: "A stop ends on its question and a wrap asks nothing", given: "a session in a loop", when: "it reaches a human-needed stop, or it wraps", then: "the stop's last message ends on its question, and the wrap's closing message asks nothing", status: accepted}
+    - {check: SC2.3, name: "A stop ends on its question and a wrap asks nothing", given: "a session in a loop", when: "it reaches a human-needed stop, or it wraps", then: "the stop's last message ends on its question, and the wrap's closing message asks nothing", status: accepted}
     - {check: SC3.1, name: "No reply in 55 minutes starts the wrap", given: "a session waiting at a human-needed stop", when: "no reply comes", then: "the session starts its wrap between 54 and 56 minutes after the stop", status: accepted}
     - {check: SC3.2, name: "After a self-wrap the loop stays stopped", given: "a session that wrapped itself 55 minutes after a stop", when: "the wrap's sentinel appears", then: "the launcher types nothing into the pane, and the `needs-ruling` issue stays open", status: accepted}
     - {check: SC3.3, name: "The open question waits for the user", given: "a self-wrap that left its `needs-ruling` issue open", when: "the user starts the next session and runs `/cairn status`", then: "\"Waiting on you\" lists that issue", status: accepted}
     - {check: SC4.1, name: "Two strikes stop the loop", given: "a session that ended at the position it started from", when: "the next session also ends at the position it started from", then: "the launcher types nothing, and files one issue naming that position", status: accepted}
     - {check: SC4.2, name: "Progress resets the strikes", given: "a loop with one strike", when: "a session ends at a position other than the one it started from", then: "the strike count is zero", status: accepted}
     - {check: SC4.3, name: "A crashed or hung session stops the loop", given: "a session in a loop", when: "its Claude process exits with no sentinel, or its pane shows no change for 60 minutes with no sentinel", then: "the launcher types nothing, and files one issue naming the pane and the last position", status: accepted}
-    - {check: SC5.1, name: "An empty Next files one pick issue", given: "`/cairn status` prints Next as \"(none)\"", when: "the session wraps", then: "the wrap files one \"Pick the next deliverable\" issue labelled `needs-ruling`, and the launcher types nothing", status: accepted}
-    - {check: SC5.2, name: "No second pick issue", given: "an open \"Pick the next deliverable\" issue", when: "a session wraps", then: "the wrap files no second one", status: accepted}
-    - {check: SC5.3, name: "The loop never picks a deliverable", given: "Next is empty", when: "the session wraps", then: "the wrap's commit leaves Next empty", status: accepted}
-open:
-  - "Can a timer (`CronCreate`) wake an idle interactive session?"
-  - "Can `herdr pane send-keys` type slash commands into a Claude pane?"
-  - "How does the 55-minute notice reach the user: phone, email or desktop toast?"
-  - "OPEN: Ready check 3: SC1 holds five checks and SC2 four, past the two or three a criterion takes; the extras are Q11's regression checks."
+    - {check: SC5.1, name: "An empty Next files one pick issue, never a second", given: "`/cairn status` prints Next as \"(none)\"", when: "the session wraps", then: "the wrap files one \"Pick the next deliverable\" issue labelled `needs-ruling`, none when one is already open, and the launcher types nothing", status: changed}
+    - {check: SC5.2, name: "The loop never picks a deliverable", given: "Next is empty", when: "the session wraps", then: "the wrap's commit leaves Next empty", status: accepted}
+open: []
 history:
   - {at: "2026-11-21", event: id confirmed}
   - {at: "2026-11-21", event: origin recorded (feature)}
@@ -160,4 +149,10 @@ history:
   - {at: "2026-11-22", event: "P1 to P5 again: 59 findings (CL006 56, CL008 3); sources hold; 1 OPEN (ready check 3); Gherkin not stale; r3 Measured"}
   - {at: "2026-11-22", event: request half signed}
   - {at: "2026-11-22", event: "W1: no Google Docs form (the PO seat's delegation; a pasted form is never wanted)"}
+  - {at: "2026-11-22", event: output complete}
+  - {at: "2026-11-22", event: "intake parked the pair at r6 on four OPEN marks (ready check 3; Decisions 9 to 11)"}
+  - {at: "2026-11-22", event: "way back (on the PO seat's delegation): Q11 merges to 14 checks, two or three a criterion; Decisions 9 to 11 closed by the design trials; Q15 re-confirmed four scenarios, renumbered two; r7 text row"}
+  - {at: "2026-11-22", event: "P1 to P5: 61 findings (CL006 54, CL008 7); P2 all five sources hold; 0 OPEN; Gherkin not stale; r8 Measured"}
+  - {at: "2026-11-22", event: request half signed}
+  - {at: "2026-11-22", event: "W1: no Google Docs form (a pasted form is never wanted)"}
   - {at: "2026-11-22", event: output complete}

@@ -1,0 +1,20 @@
+# Glossary term - vocabulary layer (ADR 0017 V1).
+# Born draft at session-loop's intake (session 167) from the Terms of
+# docs/features/session-loop.md at r9; ratified by the user 2026-11-22
+# (class-S flip; the PR merge is the outer record, ADR 0025).
+
+term: session-loop
+
+name: Session loop
+
+definition: >-
+  The chain of sessions in one herdr pane, each started by the launcher
+  after the last one's wrap.
+
+kind: entity
+
+status: ratified
+since: 2026-11-22
+
+sources:
+  - docs/features/session-loop.md
