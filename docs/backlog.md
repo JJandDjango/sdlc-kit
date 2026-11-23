@@ -437,11 +437,18 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     past the cap). SC6, the herdr sidebar, split to Next 31. The O5
     material shape hid every draft-check finding (Next actions 2):
     reshaped to flat keys, the check read 60.
-30. Build `l4-loop-rules` (kit 0.23.0). Session 175 (branch
-    `session-175-l4-loop-rules`) stopped at the test list: 51 tests red,
-    QA verifier PASS, the user approved with readings A to D; session 176
-    goes on at E5 (prove-red) by
-    `RECEIPT_session-loop-l4_2026-11-23/handover.md`. Session 174 folded the
+30. Finish `l4-loop-rules` (kit 0.23.0): the live sitting, then the
+    close. Session 176 built it on branch `session-175-l4-loop-rules`,
+    draft PR #180: unit `4845b4f`, CHANGELOG fix `f176624`, Two-Key PASS
+    in round 2 (the Dev verifier's round 1 caught a false label claim;
+    QA verifier 8 of 8 mutants). Session 177 runs the sitting (SC2.2,
+    SC3.1+SC3.3) and closes, by
+    `RECEIPT_session-loop-l4_2026-11-23/handover.md`. Carried: the
+    `hooks.json` description does not name the SessionStart line;
+    `tests/test_pane_renders.py::test_sc4_3_a_source_change_renders_within_two_seconds`
+    failed once at 2.19 s under `-n auto` and passed on the rerun.
+    Session 175 stopped at the test list: 51 tests red, QA verifier PASS,
+    the user approved with readings A to D. Session 174 folded the
     launcher and the tree hook into the kit's `herdr/` folder (Next 32,
     ADR 0043), so l4 runs `/sdlc execute` with no hand run or shim;
     `E:\herdr-sdlc` keeps the history the shas below name. Session 173
