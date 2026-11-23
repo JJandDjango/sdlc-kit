@@ -14,6 +14,8 @@
 | 2026-11-22 | intake | r12: Ready: contract `session-loop` validates ready-green, derived from r10, against requirements r9; the engineer seat (Johnathan Hyden) signed the solution half at r10 (r11) |
 | 2026-11-23 | Johnathan Hyden | r13: Amended by hand in kit session 174, against requirements r9, on r10: the fold (backlog Next 32, the engineer seat's ruling in session 173, ADR 0043) moves the launcher and the tree hook from `E:\herdr-sdlc` into the kit's opt-in `herdr/` folder and their tests into `tests/`; Scope, Out of scope, Interfaces, Constraints, Risks, Consult case 4 and Links out name the new paths, and the state file's scope, out of scope, constraints and links follow; no check, unit or done means changes; typed by Claude on the user's word |
 | 2026-11-23 | Johnathan Hyden | r14: Measured: the checks before signing, on the solution half's amendment r13: 0 findings; Scope against the release unit's paths: covered (l4's release paths stand unchanged in Scope); ready checks 11 to 15: 0 OPEN (no Sources row, unit or consult answer changes but for paths) |
+| 2026-11-23 | Johnathan Hyden | r15: Signed: solution half. The engineer seat signs r13 |
+| 2026-11-23 | intake | r16: Ready: contract `session-loop` validates ready-green, derived from r13, against requirements r9; the engineer seat (Johnathan Hyden) signed the solution half at r13 (r15) |
 
 # session-loop - Sessions restart themselves until you are needed
 
