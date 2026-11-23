@@ -6,17 +6,16 @@ id: session-loop
 title: Sessions restart themselves until you are needed
 
 intent: >-
-  Today a session wraps itself at a natural stop, but the user starts the
-  next one by hand with `/clear` and `/resume-session`, so work waits while
-  the user is away. After this task a wrap writes a sentinel last, after
-  its push, and a launcher outside any session types `/clear` and
-  `/resume-session` into the same herdr pane within 60 seconds. The loop
-  stops in three cases. At a human-needed stop the session files a
-  `needs-ruling` issue and waits: a reply in the session continues it, and
-  with no reply in 55 minutes the session wraps itself and the loop stays
-  stopped. Two sessions in a row that end where they started, or a crashed
-  or hung session, stop the loop with one issue. An empty Next files one
-  "Pick the next deliverable" issue.
+  Today a session wraps itself, but the user runs `/clear` and
+  `/resume-session` by hand, so work waits on the user. After this task a
+  wrap writes a sentinel last, after its push. Within 60 seconds a launcher
+  outside any session types `/clear` and `/resume-session` into the same
+  `herdr` pane. At a human-needed stop the session files a `needs-ruling`
+  issue and waits, and a reply in the session continues the session. With
+  no reply before its 55-minute timer runs out, the session runs its
+  self-wrap and the loop stays stopped. Two strikes in a row, an exit or a
+  hung session stop the loop with one issue. An empty Next files one "Pick
+  the next deliverable" issue.
 
 scope:
   - workflows/tools/loop.py
@@ -37,14 +36,14 @@ scope:
   - .github/workflows/sdlc.yml
 
 non_goals:
-  - No new authorizations are added.
-  - The loop never picks a deliverable itself; a new feature still starts
-    with the user's interview.
-  - "No resume of an old session: every restart is a fresh session."
-  - No new window or tab per session.
-  - No built-in compaction as the restart.
-  - The kit has no dependency on herdr.
-  - No time or token budget per session.
+  - The loop adds no `permissions` entry.
+  - The loop never names a deliverable itself; a new feature still needs
+    the user's interview.
+  - Every restart is a fresh session; no earlier session goes on.
+  - No new window per session; each session runs in the same pane.
+  - The restart is `/clear`, never `/compact`.
+  - The kit never needs `herdr`.
+  - No cap on time or tokens per session.
 
 decomposition:
   - unit: l1-loop-files
@@ -56,18 +55,18 @@ decomposition:
       after the push. With Next empty, `wrap` files one pick issue.
     acceptance_sketch:
       - >-
-        verify that the sentinel appears only after the wrap's commit is on
-        the remote branch (SC1.2)
+        verify that the wrap writes the sentinel only after its push lands
+        on the branch (SC1.2)
       - >-
-        verify that at a stop for the user's answer, an open `needs-ruling`
-        issue holds the question before the session waits, and that on the
+        verify that at a human-needed stop, an open `needs-ruling` issue
+        holds the question before the session waits. Verify that on the
         reply the session closes that issue (SC2.1)
       - >-
-        verify that when `/cairn status` prints Next as "(none)", the wrap
-        files one "Pick the next deliverable" issue labelled
-        `needs-ruling`, none when one is already open, and the launcher
-        types nothing. Verify that when Next is empty, the wrap's commit
-        leaves it empty (SC5.1, SC5.2)
+        verify that when `/cairn status` prints Next as `(none)`, the wrap
+        files one `needs-ruling` issue named "Pick the next deliverable".
+        Verify that the wrap files none while one is open, and the launcher
+        types nothing. Verify that when Next is empty, the wrap's push
+        leaves Next empty (SC5.1, SC5.2)
   - unit: l2-loop-launcher
     id: l2-loop-launcher
     depends_on: [l1-loop-files]
@@ -78,13 +77,12 @@ decomposition:
       none.
     acceptance_sketch:
       - >-
-        verify that within 60 seconds of the wrap's sentinel appearing, the
-        launcher types `/clear` and then `/resume-session` into the same
-        pane, and the new session's ready-state names the Next the wrap
-        recorded (SC1.1)
+        verify that within 60 seconds of the sentinel, the launcher types
+        `/clear` and then `/resume-session` into the same pane. Verify that
+        the new session names the Next the wrap recorded (SC1.1)
       - >-
-        verify that while a loop runs, a team run that stops with no wrap
-        gets no keystroke from the launcher, and the kit's `tree: notify:`
+        verify that while a loop runs, the launcher types nothing when a
+        team run stops with no wrap. Verify that the kit's `tree: notify:`
         command still flags the tree pane (SC1.3)
       - >-
         verify that after this self-wrap the launcher types nothing into
@@ -98,17 +96,16 @@ decomposition:
       issue, and the launcher types nothing.
     acceptance_sketch:
       - >-
-        verify that when a second session in a row ends at the position it
-        started from, the launcher types nothing and files one issue naming
-        that position (SC4.1)
+        verify that after two strikes in a row, the launcher types nothing.
+        Verify that the launcher files one issue naming the position (SC4.1)
       - >-
-        verify that a session that moves the position resets the strike
-        count to zero (SC4.2)
+        verify that a session that changes the position sets the strike
+        count back to zero (SC4.2)
       - >-
-        verify that when the Claude process in the pane exits with no
-        sentinel, or the pane shows no change for 60 minutes with no
-        sentinel, the launcher types nothing and files one issue naming the
-        pane and the last position (SC4.3)
+        verify that when Claude in the pane exits with no sentinel, or the
+        session is hung, the launcher types nothing. Verify that the
+        launcher then files one issue naming the pane and the last position
+        (SC4.3)
   - unit: l4-loop-rules
     id: l4-loop-rules
     depends_on: [l3-loop-stops]
@@ -119,16 +116,17 @@ decomposition:
       reply, the session wraps itself. Kit 0.23.0 ships.
     acceptance_sketch:
       - >-
-        verify that a reply in the session 54 minutes after the stop
-        continues that session, with no wrap and no sentinel (SC2.2)
+        verify that a reply in the session 60 seconds before the 55-minute
+        timer runs out continues that session. Verify that the session runs
+        no wrap and writes no sentinel (SC2.2)
       - >-
         verify that a human-needed stop's last message ends on its
-        question, and a wrap's closing message asks nothing (SC2.3)
+        question, and a wrap's closing message holds no question (SC2.3)
       - >-
-        verify that with no reply, the session starts its wrap 55 minutes
-        after the stop, give or take one minute. Verify that in the session
-        the user starts next, `/cairn status` lists that issue under
-        "Waiting on you" (SC3.1, SC3.3)
+        verify that with no reply, the session runs its self-wrap within 60
+        seconds of the time its 55-minute timer runs out. Verify that in the
+        user's next session, `/cairn status` lists the `needs-ruling` issue
+        under `Waiting on you` (SC3.1, SC3.3)
 
 dependencies: []
 
@@ -148,6 +146,16 @@ entities:
   - pane
   - tree
   - notify-command
+  - wrap
+  - launcher
+  - sentinel
+  - position
+  - strike
+  - needs-ruling
+  - session-loop
+  - human-needed-stop
+  - self-wrap
+  - hung
 
 provenance:
   origin: human-request
