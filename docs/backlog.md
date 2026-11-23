@@ -437,13 +437,15 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     past the cap). SC6, the herdr sidebar, split to Next 31. The O5
     material shape hid every draft-check finding (Next actions 2):
     reshaped to flat keys, the check read 60.
-30. Build session-loop's four units in order: `l1-loop-files`,
+30. Build session-loop's last three units in order:
     `l2-loop-launcher` and `l3-loop-stops` (both in `E:\herdr-sdlc`),
-    `l4-loop-rules` (kit 0.23.0). Session 168 passed G1: the user signed
+    `l4-loop-rules` (kit 0.23.0). Session 169 built `l1-loop-files`
+    (`workflows/tools/loop.py`, 39 tests with the timer-minute property,
+    Two-Key PASS in round 1); its file shapes are what l2 reads. Session
+    168 passed G1: the user signed
     all 11 items of G1.3 on requirements r9 and design r10
     (`.sdlc/g1/session-loop.yaml`); items 8 and 9 were checked with their
-    gaps in Next actions 24, whose timer property l1's approve-tests
-    takes up. Session 167 took the
+    gaps in Next actions 24. Session 167 took the
     contract to lang-check zero (129 findings to 0): the ten terms of the
     requirements ratified, 12 words the done_means force added to the
     dictionary, the rest of the prose rewritten. Session 166's intake
@@ -805,7 +807,12 @@ alone. `s10-words-and-folds` folded `g1.py`'s `Ready:` row reader and
     (design Constraints: the stop plus 55 minutes, cut to the minute,
     moved off :00 and :30) has no property spec; at l1's approve-tests,
     pin it as one: for any stop time, the timer lands 54 to 56 minutes
-    later and never at :00 or :30.
+    later and never at :00 or :30. Item 9 closed in session 169:
+    `tests/test_loop_files.py` sweeps every second of one day and the
+    last hour of three month and year ends.
+25. A timing flake (session 169): `tests/test_pane_renders.py::
+    test_sc4_3_a_source_change_renders_within_two_seconds` failed once at
+    2.22 s against its 2.0 s bound under `-n auto`, then passed.
 
 ## Open questions
 
