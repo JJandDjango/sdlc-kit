@@ -437,14 +437,22 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     past the cap). SC6, the herdr sidebar, split to Next 31. The O5
     material shape hid every draft-check finding (Next actions 2):
     reshaped to flat keys, the check read 60.
-30. Build `l3-loop-stops` (in `E:\herdr-sdlc`), then `l4-loop-rules`
-    (kit 0.23.0). Session 172 (branch `session-172-l3-loop-stops`, plan
-    `3e25c2b`) stopped at the tripwire: QA's 18-test list is red and the
-    QA verifier passed it; it waits for the user's approval with readings
-    A and B and recommendation C
-    (`RECEIPT_session-loop-l3_2026-11-23/handover.md`, which also holds
-    the draft, the prove.py shim and the hand run's arguments). l3's
-    checks are automated only (design Units row); no live receipt.
+30. Build `l4-loop-rules` (kit 0.23.0), after Next 32. Session 173
+    built `l3-loop-stops` on branch `session-172-l3-loop-stops`:
+    `E:\herdr-sdlc` `31918d6` (README `1602d9a`), 109 tests, Two-Key
+    PASS in round 1 (Dev verifier PASS, QA verifier 11 of 11 mutants
+    caught). Session 172 drafted the 18-test list and stopped at the
+    tripwire; the user approved it with readings A (l2's
+    `assert_well_formed` takes `process-info --pane P`) and B (a failed
+    `gh` or toast at a stop stays unpinned) and the added assertion C
+    (the issue is filed from the pane's folder). Carried to l4, from
+    l3's Dev verifier: `wait_idle` polls with no exit or hang check, so
+    a session that exits or hangs after a `continue` sentinel, before
+    the pane reads ready, holds the launcher forever; a half-written
+    sentinel at the same poll as an exit stops with the exit message.
+    Still carried from l2: `restart()` ignores the herdr calls' exit
+    codes; no test pins a failed `pane get` or a missing status during
+    the wait; `wait_idle`'s name still says idle.
     Session 171 ran l2's manual receipts live: SC1.1 failed
     first (herdr reads a finished turn nobody has looked at as `done`, and
     the launcher waited for exactly `idle`), was fixed at `E:\herdr-sdlc`
@@ -453,10 +461,7 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     SC1.3 passed (`RECEIPT_session-loop-l2_2026-11-22/manual.md`). The
     trial setup stays for l4's live receipts: clone `.trial/clone` (kit
     progress copied in, `cairn.plan` set), origin `.trial/origin.git`,
-    both in the kit folder and listed in `.git/info/exclude`. Carried to
-    l3, from the fix's
-    Verifier: no test pins a failed `pane get` or a missing status during
-    the wait; `wait_idle`'s name still says idle. Session 170 built
+    both in the kit folder and listed in `.git/info/exclude`. Session 170 built
     `l2-loop-launcher`: `E:\herdr-sdlc\herdr_loop.py`, commit `c6aee1b`
     on that repo's master (no remote), 26 tests, Two-Key PASS in round
     1. `/sdlc execute` commits only in its own repo, so Claude ran its
@@ -464,10 +469,7 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     shim as their `pluginRoot`, and the repo's new `.sdlc/config.yaml`
     test declaration (`ef3f0d1`); `task.py` kept the progress in the
     kit. The kit's wall hook refuses a wrapped command naming `tests`, so
-    the Orchestrator ran the Developer's suite as the receipts. Carried
-    to l3: a parseable sentinel of an unknown kind polls forever (the
-    docstring says it stops); `restart()` ignores the herdr calls' exit
-    codes; l3's fake herdr must answer `process-info`. Session 169 built
+    the Orchestrator ran the Developer's suite as the receipts. Session 169 built
     `l1-loop-files` (`workflows/tools/loop.py`, 39 tests with the
     timer-minute property, Two-Key PASS in round 1). Session 168 passed
     G1: the user signed
@@ -491,6 +493,16 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
 31. Write session-loop-sidebar's requirements document (the user,
     session 164): the herdr sidebar shows each loop's position, strike
     count and waiting state. Split from session-loop's SC6.
+32. Fold `E:\herdr-sdlc` into the kit as an opt-in `herdr/` folder, after
+    l3 and before l4 (the user, session 173). A second repo is a second
+    dependency for one workflow: it has no remote (no one else can
+    install it, no backup), CI never runs its tests, and `/sdlc execute`
+    cannot commit there, so sessions 170 to 172 ran the team by hand
+    through a prove.py shim. Keep ADR 0031's real line (the kit's core
+    imports nothing from herdr and runs no herdr command) in a new ADR
+    that supersedes its "multiplexer plugin outside the kit" clause;
+    revise session-loop's design and contract paths; move `herdr_loop.py`,
+    `herdr_seat.py`, their tests and README, so 0.23.0 ships one repo.
 
 ## Next actions
 
