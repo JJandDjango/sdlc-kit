@@ -24,8 +24,8 @@ Two house rules, enforced in review:
   Delta note: `hooks/hooks.json` gains a `SessionStart` entry; a session in
   a repo with no loop reads nothing new from it.
   Delta note: the `needs-ruling` label is yours to create once per repo,
-  with `gh label create needs-ruling`; without it `/sdlc loop on` refuses and
-  a stop is an ordinary stop.
+  with `gh label create needs-ruling`; without it `/sdlc loop on` still turns
+  the loop on, but a stop refuses and is an ordinary stop.
 
 ## 0.22.2 - 2026-11-16 (tag `v0.22.2`)
 
