@@ -437,9 +437,13 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     past the cap). SC6, the herdr sidebar, split to Next 31. The O5
     material shape hid every draft-check finding (Next actions 2):
     reshaped to flat keys, the check read 60.
-30. Run `/sdlc g1 session-loop`, then build its four units in order:
-    `l1-loop-files`, `l2-loop-launcher` and `l3-loop-stops` (both in
-    `E:\herdr-sdlc`), `l4-loop-rules` (kit 0.23.0). Session 167 took the
+30. Build session-loop's four units in order: `l1-loop-files`,
+    `l2-loop-launcher` and `l3-loop-stops` (both in `E:\herdr-sdlc`),
+    `l4-loop-rules` (kit 0.23.0). Session 168 passed G1: the user signed
+    all 11 items of G1.3 on requirements r9 and design r10
+    (`.sdlc/g1/session-loop.yaml`); items 8 and 9 were checked with their
+    gaps in Next actions 24, whose timer property l1's approve-tests
+    takes up. Session 167 took the
     contract to lang-check zero (129 findings to 0): the ten terms of the
     requirements ratified, 12 words the done_means force added to the
     dictionary, the rest of the prose rewritten. Session 166's intake
@@ -451,8 +455,9 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     (`CronCreate` woke the idle session; herdr typed `/clear` and a
     skill into a Claude pane; `PushNotification` is the notice), and
     the engineer seat signed r4 (r5) with 0 OPEN and 20 CL006 findings
-    answered in Notes. The `needs-ruling` label is still missing on the
-    remote (the user's prerequisite, before l1's first live run).
+    answered in Notes. The user reports the `needs-ruling` label created
+    (session 168), but `gh label list` on `JJandDjango/sdlc-kit` showed
+    none that session; check it before the first live run.
 31. Write session-loop-sidebar's requirements document (the user,
     session 164): the herdr sidebar shows each loop's position, strike
     count and waiting state. Split from session-loop's SC6.
@@ -792,6 +797,15 @@ alone. `s10-words-and-folds` folded `g1.py`'s `Ready:` row reader and
     a stale kept draft shadows the committed test: e7's QA verifier
     deleted it to pass its baseline. Clear or refresh the draft before
     two-key.
+24. session-loop's G1.3 gaps (session 168), checked by the user with each
+    gap recorded here. Item 8: two external dependencies have no failure
+    criterion: herdr failing under the launcher's pane calls, and `gh`
+    unreachable or signed out (only the missing label has one); the loop
+    falls back to today's hand restart. Item 9: the timer's minute rule
+    (design Constraints: the stop plus 55 minutes, cut to the minute,
+    moved off :00 and :30) has no property spec; at l1's approve-tests,
+    pin it as one: for any stop time, the timer lands 54 to 56 minutes
+    later and never at :00 or :30.
 
 ## Open questions
 
