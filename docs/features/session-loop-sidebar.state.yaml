@@ -1,0 +1,82 @@
+schema: spec-interview-state/2
+id: session-loop-sidebar
+started: 2026-11-24
+phase: request
+next: Q15
+origin: feature
+title: Each loop's state shows in herdr's sidebar
+seats: {po: Johnathan Hyden}
+answers:
+  statement: "As the developer running session loops, I want each loop's position, strike count and waiting state in herdr's sidebar, so that I can tell which loop needs me without opening its pane."
+  materials:
+    - "session-loop's split record (docs/features/session-loop.state.yaml, answers.split; requirements decision 6, session 164)"
+    - "plan.md section 2 (session 179: what the loop knows, what herdr offers, ADR 0031 and ADR 0043)"
+  description:
+    text: "Each pane a launcher watches shows, on its own sidebar entry, the position of its last wrap (plan step and task), its strike count (0 or 1; the second strike stops the loop), and whether a stop waits on the user, with the minutes left before the 55-minute self-wrap. When the launcher stops the loop, the entry says why until the loop is turned on again."
+    source: "material, widened by the PO seat (minutes left, the stop reason)"
+  background:
+    text: "Session 164 split this from session-loop's SC6 as display work, and 0.23.0 shipped without it. Today a loop's state is spread across `loop.json`, `waiting.json`, the launcher's memory and the launcher pane's output; none of it is visible at a glance. 0.23.0 (2026-11-24) puts loops in daily use, so the gap is now felt each time a loop runs."
+    source: "material, plus the PO seat's why-now sentence"
+  existing_behavior:
+    - text: "The launcher holds the last position and the strike count in memory only, and stops the loop at two strikes."
+      source: "`herdr/herdr_loop.py:185-209`"
+      from: material
+    - text: "A human-needed stop is waiting while `waiting.json` exists; it holds the stop's issue and the 55-minute timer's due time."
+      source: "`docs/features/session-loop.design.md:71`"
+      from: "material, widened by the PO seat"
+    - text: "The seat hook flags the tree pane in herdr's sidebar as agent `sdlc`, state `blocked`."
+      source: "`herdr/README.md:55`"
+      from: material
+    - text: "At its own stops the launcher files one `needs-ruling` issue, shows a toast, removes `loop.json` and exits 1."
+      source: "`docs/features/session-loop.design.md:97`"
+      from: PO seat
+  success_criteria:
+    - {id: SC1, text: "Within 10 seconds of a restart, the pane's sidebar entry shows the new position and strike count."}
+    - {id: SC2, text: "While a stop waits, the pane's sidebar entry shows the minutes left before the self-wrap, never more than one minute stale, and the entry clears within one minute of your reply."}
+    - {id: SC3, text: "When the loop stops on its own (two strikes, the session exited, no change for 60 minutes, a self-wrap, or an empty Next), the pane's sidebar entry shows which of those five ended it, until the loop is turned on again."}
+    - {id: SC4, text: "Within 10 seconds of `/sdlc loop off`, the pane's sidebar entry shows nothing from the loop."}
+  non_goals:
+    - "No new authorizations are added."
+    - "No actions from the sidebar: the entry cannot reply, restart or turn the loop off; it only displays."
+    - "No history: the entry shows the current state only, never past positions or past stops."
+    - "No new notice: the sidebar adds no toast or sound beyond what session-loop already sends."
+  prerequisites:
+    - {item: "session-loop, kit 0.23.0", exists: true}
+    - {item: "herdr on the machine, at least 0.9.5 (the launcher's measured version, session 171)", exists: true}
+    - {item: "A row in the user's herdr config (`[ui.sidebar.agents] rows`) that shows the loop's tokens; the design names the line and `herdr/README.md` tells the user to add it, since the kit never writes the user's herdr config", exists: false}
+  checks:
+    - {id: SC1.1, text: "verify that after a `continue` sentinel at a new position, the pane's entry shows that position and strike count 0 within 10 seconds of the restart."}
+    - {id: SC1.2, text: "verify that after a session ends at the position it started from, the entry shows strike count 1 within 10 seconds of the restart."}
+    - {id: SC1.3, text: "verify that the seat hook's `sdlc` `blocked` flag on the tree pane still shows while a loop pane's entry shows its state.", regression_for: "existing behavior 3"}
+    - {id: SC2.1, text: "verify that while `waiting.json` exists, in the form 0.23.0 writes it, the entry shows the whole minutes left before its due time, never more than one minute behind the clock.", regression_for: "existing behavior 2"}
+    - {id: SC2.2, text: "verify that within one minute of the reply removing `waiting.json`, the entry no longer shows the waiting state."}
+    - {id: SC3.1, text: "verify that after each of the launcher's three stops (two strikes, the session exited, no change for 60 minutes), the launcher still files its one `needs-ruling` issue, shows its toast, removes `loop.json` and exits 1, and the entry shows that stop's reason, still after the launcher exits.", regression_for: "existing behaviors 1 and 4"}
+    - {id: SC3.2, text: "verify that a `self-wrap` sentinel and a `pick` sentinel (empty Next) each leave the entry showing their own reason."}
+    - {id: SC3.3, text: "verify that once the loop is on again and a launcher starts on the pane, the entry no longer shows the old reason."}
+    - {id: SC4.1, text: "verify that within 10 seconds of `/sdlc loop off` removing `loop.json`, the entry shows none of the loop's state (position, strikes, waiting, reason)."}
+    - {id: SC4.2, text: "verify that turning the loop off while a stop waits clears the waiting state too, within the same 10 seconds."}
+  error_messages:
+    - {check: SC3.1, text: "stopped: two strikes"}
+    - {check: SC3.1, text: "stopped: session exited"}
+    - {check: SC3.1, text: "stopped: no change 60m"}
+    - {check: SC3.2, text: "stopped: self-wrap"}
+    - {check: SC3.2, text: "stopped: Next empty"}
+  terms:
+    - {name: sidebar entry, definition: "A pane's row in herdr's sidebar, where the loop's state shows beside the pane's name."}
+    - {name: waiting state, definition: "A human-needed stop is open (`waiting.json` exists) until the reply or the self-wrap."}
+    - {name: stop reason, definition: "The short text an entry shows after the loop stops on its own, naming which of the five ends it was."}
+  success_criteria_material: "herdr's sidebar shows each loop's position, strike count and waiting state. (split by outcome at Q8)"
+  out_of_scope:
+    - text: "The kit's core runs no herdr command (ADR 0031, ADR 0043)."
+      source: material
+  decisions:
+    - "Decided (session 164): the herdr sidebar (each loop's position, strike count and waiting state) is a feature of its own, split from session-loop's SC6."
+    - "Decided (ADR 0043): herdr code lives in the kit's opt-in `herdr/` folder; the kit's core imports nothing from herdr and runs no herdr command."
+  notes:
+    - "herdr 0.9.1 (measured 2026-09-21 and 2026-09-23): `herdr pane report-metadata <pane> --source ID --token name=value` shows as `$name` in `[ui.sidebar.agents] rows`; `herdr pane report-agent --state blocked` never changes a Claude pane."
+    - "Open for the design run: whether a token row shows on a Claude pane's sidebar entry."
+open: []
+history:
+  - {at: "2026-11-24", event: id confirmed}
+  - {at: "2026-11-24", event: materials confirmed (seven sections)}
+  - {at: "2026-11-24", event: opening complete, document written as r1}
