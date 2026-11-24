@@ -48,7 +48,7 @@ USAGE_PAGE = ROOT / "docs" / "usage" / "session-loop.md"
 USAGE = ROOT / "USAGE.md"
 COMPONENTS = ROOT / "docs" / "components.md"
 
-LP = "python {skill-dir}/../../workflows/tools/loop.py"
+LP = "python {plugin}/workflows/tools/loop.py"  # design r17: the path from the SessionStart line
 CEILING = 12000  # the flow files' ceiling (design, constraints)
 STEPS = [("L1", "ON"), ("L2", "OFF"), ("L3", "STOP"), ("L4", "REPLY"), ("L5", "WRAP"),
          ("L6", "SELF-WRAP")]
@@ -384,8 +384,10 @@ def run_hook(stdin: str, process_cwd: Path) -> subprocess.CompletedProcess:
 
 def hook_line() -> str:
     plugin = HOOK.resolve().parents[1].as_posix()
-    return (f"A session loop is on in this repo: follow {plugin}/skills/sdlc/flows/loop.md "
-            "at every stop and wrap.")
+    return ("A session loop is on in this repo, and the user may be away. Every question to "
+            f"the user is a stop: first run the stop rule (L3) in {plugin}/skills/sdlc/flows/"
+            "loop.md, then ask in a plain message, never by AskUserQuestion. Follow the same "
+            f"file at every wrap. Run loop.py as python {plugin}/workflows/tools/loop.py.")
 
 
 def snapshot(base: Path) -> dict:
@@ -558,8 +560,11 @@ def test_done_means_the_usage_page_carries_built_or_shipped_markers_and_keeps_it
     plain = collapsed(text)
     assert "> /sdlc loop on session loop on; a launcher may now restart this repo's sessions" \
         in plain
-    assert ("A session loop is on in this repo: follow {plugin}/skills/sdlc/flows/loop.md "
-            "at every stop and wrap.") in plain
+    assert ("A session loop is on in this repo, and the user may be away. Every question to "
+            "the user is a stop: first run the stop rule (L3) in {plugin}/skills/sdlc/flows/"
+            "loop.md, then ask in a plain message, never by AskUserQuestion. Follow the same "
+            "file at every wrap. Run loop.py as python {plugin}/workflows/tools/loop.py.") \
+        in plain
 
 
 def test_done_means_usage_md_links_the_session_loop_page_in_one_row():
@@ -570,12 +575,12 @@ def test_done_means_usage_md_links_the_session_loop_page_in_one_row():
     assert "/sdlc loop on" in rows[0]
 
 
-def test_done_means_components_md_holds_one_session_loop_row_with_the_three_files():
+def test_done_means_components_md_holds_one_session_loop_row_with_the_four_files():
     rows = [line for line in COMPONENTS.read_text(encoding="utf-8").splitlines()
             if line.startswith("| session loop |")]
     assert len(rows) == 1, rows
     row = rows[0]
-    for piece in ("`workflows/tools/loop.py`", "`hooks/loop_on.py`", "`herdr/herdr_loop.py`",
-                  "/sdlc loop on", "implemented (v1)", "[docs/usage/session-loop.md]"
+    for piece in ("`workflows/tools/loop.py`", "`hooks/loop_on.py`", "`hooks/loop_ask.py`",
+                  "`herdr/herdr_loop.py`", "/sdlc loop on", "implemented (v1)", "[docs/usage/session-loop.md]"
                   "(usage/session-loop.md)"):
         assert piece in row, piece

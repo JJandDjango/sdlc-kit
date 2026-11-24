@@ -27,8 +27,7 @@ removes it, and the launcher then ends with `herdr-loop: the session loop
 is off`. None of the loop's files is ever tracked.
 
 🟡 **A fresh session knows.** While the loop is on, each session starts
-with: `A session loop is on in this repo: follow
-{plugin}/skills/sdlc/flows/loop.md at every stop and wrap.`
+with: `A session loop is on in this repo, and the user may be away. Every question to the user is a stop: first run the stop rule (L3) in {plugin}/skills/sdlc/flows/loop.md, then ask in a plain message, never by AskUserQuestion. Follow the same file at every wrap. Run loop.py as python {plugin}/workflows/tools/loop.py.`
 
 🟡 **A stop that needs you.** The session files a `needs-ruling` issue
 holding its question, sets a 55-minute timer, sends a notice, and ends its

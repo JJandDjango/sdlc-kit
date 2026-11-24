@@ -19,10 +19,13 @@ Two house rules, enforced in review:
   `needs-ruling` issue at a stop that needs you and sets a 55-minute timer; a
   reply in the session goes on, and with none the session wraps itself and
   the loop stays stopped. The new flow is `skills/sdlc/flows/loop.md`, the
-  new hook is `hooks/loop_on.py`. Kit `0.22.2` -> `0.23.0`; the contract
-  schema stays at `1.5.0`.
-  Delta note: `hooks/hooks.json` gains a `SessionStart` entry; a session in
-  a repo with no loop reads nothing new from it.
+  new hooks are `hooks/loop_on.py` and `hooks/loop_ask.py`. While the loop
+  is on, `loop_ask.py` refuses an `AskUserQuestion` dialog and points the
+  session at the stop rule, which asks in a plain message. Kit `0.22.2` ->
+  `0.23.0`; the contract schema stays at `1.5.0`.
+  Delta note: `hooks/hooks.json` gains a `SessionStart` entry and a
+  `PreToolUse` entry (matcher `AskUserQuestion`); a session in a repo with
+  no loop reads and loses nothing from either.
   Delta note: the `needs-ruling` label is yours to create once per repo,
   with `gh label create needs-ruling`; without it `/sdlc loop on` still turns
   the loop on, but a stop refuses and is an ordinary stop.
