@@ -437,26 +437,25 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     past the cap). SC6, the herdr sidebar, split to Next 31. The O5
     material shape hid every draft-check finding (Next actions 2):
     reshaped to flat keys, the check read 60.
-30. Finish `l4-loop-rules` (kit 0.23.0): sign design r17, then intake,
-    `/sdlc g1`, the stop-entry fix round, its five-minute receipt, then
-    the close (`plan.md` steps 6b and 7). Session 177 ran the sitting
-    (`RECEIPT_session-loop-l4_2026-11-23/manual.md`): SC2.2, SC3.1 and
-    SC3.3 PASS live; the stop entry FAIL, since both loop sessions asked by
-    an AskUserQuestion dialog with no `loop.py stop`. The user took the fix
-    into l4: design r17 (a PreToolUse hook `hooks/loop_ask.py` denies the
-    dialog in a loop, the SessionStart line carries the stop rule,
-    `loop.py` named as `{plugin}/workflows/tools/loop.py`), r18 measured
-    0 findings, 0 OPEN; draft `stop-entry-fix.md` in the same folder. The
-    `needs-ruling` label now exists; trial issues #181 and #182 closed;
-    clones `.trial/clone` and `.trial/clone-b` stay. Session 176 built it on branch `session-175-l4-loop-rules`,
-    draft PR #180: unit `4845b4f`, CHANGELOG fix `f176624`, Two-Key PASS
-    in round 2 (the Dev verifier's round 1 caught a false label claim;
-    QA verifier 8 of 8 mutants). Session 177 runs the sitting (SC2.2,
-    SC3.1+SC3.3) and closes, by
-    `RECEIPT_session-loop-l4_2026-11-23/handover.md`. Carried: the
-    `hooks.json` description does not name the SessionStart line;
+30. [x] Build session-loop's four units, l1 to l4 (kit 0.23.0). Session
+    178 closed l4 on branch `session-178-l4-stop-entry`: the user signed
+    design r17 (r19), intake r20 added `hooks/loop_ask.py` to the scope,
+    G1 signed again on r17; the fix round's unit `934c72e` (27 tests in
+    `tests/test_loop_stop_entry.py`, the user's assertion A and reading B,
+    five older pins moved), Two-Key PASS in round 1 (QA verifier 9 of 9
+    mutants). The stop entry passed live (`manual.md`, issue #183): with
+    no nudge, the session ran `loop.py stop` before asking in a plain
+    message; the deny hook never had to fire. The `v0.23.0` tag and the
+    self-pin PR follow the user's merge. Carried:
     `tests/test_pane_renders.py::test_sc4_3_a_source_change_renders_within_two_seconds`
     failed once at 2.19 s under `-n auto` and passed on the rerun.
+    Session 177 ran the sitting (`RECEIPT_session-loop-l4_2026-11-23/manual.md`):
+    SC2.2, SC3.1 and SC3.3 PASS live; the stop entry FAIL, since both
+    loop sessions asked by an AskUserQuestion dialog with no `loop.py
+    stop`; the user took the fix into l4 as design r17. Clones
+    `.trial/clone` and `.trial/clone-b` stay. Session 176 built l4 on
+    branch `session-175-l4-loop-rules`, PR #180 (merged at `c7ad046`):
+    unit `4845b4f`, CHANGELOG fix `f176624`, Two-Key PASS in round 2.
     Session 175 stopped at the test list: 51 tests red, QA verifier PASS,
     the user approved with readings A to D. Session 174 folded the
     launcher and the tree hook into the kit's `herdr/` folder (Next 32,

@@ -37,7 +37,7 @@ Steps 1, 3, 6 and 7, and step 5 but for the test list: no approval stands before
 
 None beyond the signatures: r17 settles the fix. Readings Claude foresees, each listed in the PR body:
 
-1. `loop_ask.py` finds `loop.json` as `loop_on.py` does (`git rev-parse --absolute-git-dir` of the event's `cwd`) and `{plugin}` from `CLAUDE_PLUGIN_ROOT`; on any failure it exits 0 with no output.
+1. `loop_ask.py` finds `loop.json` as `loop_on.py` does (`git rev-parse --absolute-git-dir` of the event's `cwd`) and `{plugin}` from its own file's location (`loop_on.py:21`), not `CLAUDE_PLUGIN_ROOT`; on any failure, an unreadable event included, it exits 0 with no output.
 2. The deny exits 2 with the reason on stderr (design `:88`, the wall hook's form), not a JSON `permissionDecision`.
 3. The CHANGELOG's 0.23.0 entry gains the deny hook: 0.23.0 is not yet tagged, so no new version.
 

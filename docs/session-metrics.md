@@ -77,6 +77,7 @@ the same kind at PR review.
 | 171 | `session-loop/l2-loop-launcher`'s two manual receipts, live in herdr panes on a scratch clone; SC1.1 failed (a finished, unseen turn reads `done`), fixed in `E:\herdr-sdlc` `27cb671` by a Developer and a zero-trust Verifier in one workflow, then passed with SC1.3 | yes | 1 (the fix) | 0 / 0 | | 3 | 162: Developer and Verifier in one workflow (mutants 2 of 2 caught) | 3 readings / | 0 / 0 |
 | 172 + 173 | `session-loop/l3-loop-stops`, in `E:\herdr-sdlc` by the same hand run, split at the test list (tripwire); the user approved it with two readings and one added assertion (`gh` runs in the pane's folder) | yes | 1 | 0 / 0 | | 1 | 315: QA 96, QA verifier 119 (approve-tests 49, prove-red 21, two-key 49, 11 of 11 caught), Developer 38, Dev verifier 62 | 7 readings / | 3 / 2 |
 | 175 + 176 | `session-loop/l4-loop-rules` by the normal `/sdlc execute`, split at the test list (tripwire, readings A to D); built and Two-Key PASS, the live sitting in session 177 | built; sitting open | 2 | 0 / 1 | | 4 | 457: QA 124, QA verifier 129 (approve-tests 68, prove-red 20, two-key 41, 8 of 8 caught), Developer 89 (58, round 2 31), Dev verifier 115 (62, 53) | 7 readings / | 2 / 0 |
+| 178 | `session-loop/l4-loop-rules`'s stop-entry fix (design r17) by `/sdlc execute`: new tests in a new file, five older pins moved by the Orchestrator; test list the user's (tripwire, assertion A, reading B); the five-minute live receipt passed | yes | 1 | 0 / 0 | | 2 | 357: QA 99, QA verifier 149 (approve-tests 89, prove-red 20, two-key 40, 9 of 9 caught), Developer 38, Dev verifier 71 | 10 readings / | 0 / 1 |
 
 ## Notes on the baseline
 
@@ -329,3 +330,10 @@ the same kind at PR review.
   defect: the CHANGELOG said `/sdlc loop on` refuses without the label.
   Touches: the G1 re-sign, the test list, and the workflow opt-in in each
   session. The live sitting goes to session 177.
+- Session 178: the fix round after session 177's sitting failed the stop
+  entry. `/sdlc execute` names no fix round on a built unit: prove.py's
+  red rule wants every test in the file to fail, so QA wrote a new file
+  (told by the workflow's `pins` and `notes` arguments) and the
+  Orchestrator moved the five older pins the fix changes, as session 101
+  did. Touches: the signatures with the workflow opt-in, and the test
+  list. The trial session (Sonnet, two turns) stands outside the token total.
