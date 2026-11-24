@@ -16,6 +16,8 @@
 | 2026-11-23 | Johnathan Hyden | r14: Measured: the checks before signing, on the solution half's amendment r13: 0 findings; Scope against the release unit's paths: covered (l4's release paths stand unchanged in Scope); ready checks 11 to 15: 0 OPEN (no Sources row, unit or consult answer changes but for paths) |
 | 2026-11-23 | Johnathan Hyden | r15: Signed: solution half. The engineer seat signs r13 |
 | 2026-11-23 | intake | r16: Ready: contract `session-loop` validates ready-green, derived from r13, against requirements r9; the engineer seat (Johnathan Hyden) signed the solution half at r13 (r15) |
+| 2026-11-23 | Johnathan Hyden | r17: Amended by hand in kit session 177, against requirements r9, on r13: the stop-entry fix after l4's live sitting (`RECEIPT_session-loop-l4_2026-11-23/manual.md`), where both loop sessions asked by an AskUserQuestion dialog and ran no `loop.py stop`. Scope adds `hooks/loop_ask.py`, a PreToolUse hook that denies AskUserQuestion while the loop is on; Interfaces gives the SessionStart line the stop rule, names `loop.py` as `{plugin}/workflows/tools/loop.py`, and has the stop ask in a plain message; Constraints, l4's tests, Risks, Consult case 4, Decisions and Notes follow, and the state file's scope, interfaces, constraints, units, risks, cases, decisions and notes follow; no check, unit or done means changes; typed by Claude on the user's word |
+| 2026-11-23 | Johnathan Hyden | r18: Measured: the checks before signing, on the solution half's amendment r17: 0 findings; Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN (the stop entry's tests name l4's done means, since no requirements check covers it; the deny hook reads `loop.json`, an existing Sources row) |
 
 # session-loop - Sessions restart themselves until you are needed
 
@@ -29,7 +31,8 @@
 
 - `workflows/tools/loop.py` (new): the loop's files and issues: `on`, `off`, `stop`, `reply`, `due`, `wrap`.
 - `skills/sdlc/flows/loop.md` (new) and `skills/sdlc/SKILL.md`: the `/sdlc loop on|off` route, and the rules a session in a loop follows at a stop, a reply and a wrap.
-- `hooks/loop_on.py` (new) and `hooks/hooks.json`: a SessionStart entry that tells a fresh session the loop is on.
+- `hooks/loop_on.py` (new) and `hooks/hooks.json`: a SessionStart entry that tells a fresh session the loop is on and how a stop asks.
+- `hooks/loop_ask.py` (new) and `hooks/hooks.json`: a PreToolUse entry, matcher `AskUserQuestion`, that turns a dialog in a loop back to the stop rule.
 - `herdr/` (ADR 0043): the launcher, `herdr_loop.py` (new), and the folder's `README.md`; the fold moved in the tree hook, `herdr_seat.py`, unchanged. l2 and l3 built the launcher in `E:\herdr-sdlc`.
 - `tests/`: each kit unit's own test file.
 - `docs/usage/` (a session-loop page), `USAGE.md`, `docs/components.md`, `CHANGELOG.md`, `pyproject.toml` and `skills/sdlc/init.py` (kit 0.23.0); `.github/workflows/sdlc.yml` takes the `v0.23.0` tag in the self-pin PR.
@@ -66,7 +69,7 @@ The kit's files, all under `{git folder}/sdlc-loop/` (the folder `git rev-parse 
 - `waiting.json`: `{"issue": 172, "at": "...", "due": "...", "cron": "36 18 22 11 *"}`. A human-needed stop is open while it exists.
 - `sentinel.json`, written last: `{"kind": "continue", "position": "plan step 4, task none", "next": "...", "head": "<sha>", "at": "..."}`. `kind` is `continue`, `self-wrap` or `pick`.
 
-`loop.py`, run by the session as `python {skill-dir}/../../workflows/tools/loop.py`, one Bash call each:
+`loop.py`, run by the session as `python {plugin}/workflows/tools/loop.py`, one Bash call each. `{plugin}` is the kit's folder in forward slashes: the SessionStart line names it in full, and from `/sdlc loop on` it is two folders above the folder holding `SKILL.md`. In session 177's sitting, both sessions read `{skill-dir}` as the folder of `loop.md` and built a path one folder too deep.
 
 - `on` and `off`: write and remove `loop.json`. `on` when on rewrites the time and prints the same line; `off` when off prints `session loop off` and exits 0.
 - `stop --question TEXT`: with no `needs-ruling` label, prints `session-loop: the needs-ruling label is missing; run: gh label create needs-ruling` and exits 1, writing nothing. Else it files the issue (label `needs-ruling`, title the question's first line cut to 70 characters, body the question), writes `waiting.json`, and prints `{"issue": N, "due": "...", "cron": "M H D Mo *"}`.
@@ -76,11 +79,13 @@ The kit's files, all under `{git folder}/sdlc-loop/` (the folder `git rev-parse 
 
 The session's rules, in `flows/loop.md`, in force while `loop.json` exists:
 
-- Human-needed stop: run `loop.py stop`; on exit 1 show its line and stop as an ordinary stop. Else set a one-shot `CronCreate` at the printed `cron` with the prompt `session-loop: no reply to issue #{n} in 55 minutes. Run loop.py due: on exit 0 self-wrap by flows/loop.md; on exit 3 do nothing.`, send `PushNotification` with `Ruling needed (#{n}): {question, cut to 150 characters}`, and end the turn on the question.
+- Human-needed stop: every question to the user while the loop is on is one. Run `loop.py stop` before asking; on exit 1 show its line and stop as an ordinary stop. Else set a one-shot `CronCreate` at the printed `cron` with the prompt `session-loop: no reply to issue #{n} in 55 minutes. Run loop.py due: on exit 0 self-wrap by flows/loop.md; on exit 3 do nothing.`, send `PushNotification` with `Ruling needed (#{n}): {question, cut to 150 characters}`, and end the turn on the question, asked in a plain message, never by AskUserQuestion: a dialog that waits is no idle session, so the timer's prompt never lands. This rule outranks a flow step that asks by AskUserQuestion (`init`, `intake`).
 - Reply: the user's next message while `waiting.json` exists: `CronDelete` the job, run `loop.py reply`, then go on.
 - Wrap: commit, push, read Next by `/cairn status`, run `loop.py wrap`, then a closing message that asks nothing. The self-wrap is the same with `--self`.
 
-The SessionStart hook prints, when `loop.json` exists: `A session loop is on in this repo: follow {plugin}/skills/sdlc/flows/loop.md at every stop and wrap.`
+The SessionStart hook prints, when `loop.json` exists: `A session loop is on in this repo, and the user may be away. Every question to the user is a stop: first run the stop rule (L3) in {plugin}/skills/sdlc/flows/loop.md, then ask in a plain message, never by AskUserQuestion. Follow the same file at every wrap. Run loop.py as python {plugin}/workflows/tools/loop.py.`
+
+The PreToolUse hook, `hooks/loop_ask.py` (matcher `AskUserQuestion`), denies the call when `loop.json` exists: it exits 2 with this reason on stderr, the wall hook's form: `A session loop is on in this repo: this question is a stop. Run the stop rule (L3) in {plugin}/skills/sdlc/flows/loop.md, then ask in a plain message that ends on the question.` With no `loop.json`, outside a git repository, or on an error, it prints nothing and exits 0, and the call goes on. Like `loop_on.py`, it reads the repo of the event's `cwd` and writes no file.
 
 The launcher, `python {kit}\herdr\herdr_loop.py <pane>` (`{kit}` the kit's folder: a clone, or the plugin's install), prints one line per event in its own pane:
 
@@ -122,6 +127,7 @@ No endpoint table: the feature has no network endpoint.
 - The timer's minute: the stop's time plus 55 minutes, cut to the minute; a minute of :00 or :30 moves one minute on, since a one-shot landing there may fire up to 90 seconds early. The wrap then starts within 54 to 56 minutes (SC3.1).
 - The sentinel is the wrap's last write, after the push check (SC1.2).
 - `loop.md` stays under 12,000 characters, the flow files' ceiling, and every Bash call in it is one segment.
+- `loop_on.py` and `loop_ask.py` use the standard library only and never fail a session outside a loop: there, and on an error, each exits 0 with no output. `loop_ask.py` denies only AskUserQuestion, and only while `loop.json` exists.
 - No new window or tab: the user starts the launcher in a pane of their own.
 
 ### Units
@@ -131,7 +137,7 @@ No endpoint table: the feature has no network endpoint.
 | l1-loop-files | SC1.2, SC2.1, SC5.1+SC5.2 | `loop.py stop` files the `needs-ruling` issue and writes the waiting file. `reply` closes that issue. `wrap` writes the sentinel last, after the push. With Next empty, `wrap` files one pick issue. | SC1.2, SC2.1: automated, with git and `gh` behind a run seam. SC5.1+SC5.2: automated, with `gh` behind the run seam, and `loop.py` writes nothing outside `{git folder}/sdlc-loop/`. | none |
 | l2-loop-launcher | SC1.1, SC1.3, SC3.2 | `herdr_loop.py` restarts the pane within 60 seconds of a `continue` sentinel. The launcher types nothing on any other sentinel or with none. | SC1.1: automated, and a manual receipt: one live restart in a herdr pane, whose new session names the Next the sentinel holds. SC1.3: automated (no keystroke with no sentinel; no `report-agent` or `release-agent` call), and a manual receipt: the tree pane flagged while the launcher runs. SC3.2: automated, with herdr, `gh`, sleep and the clock faked. | none |
 | l3-loop-stops | SC4.1, SC4.2, SC4.3 | Two strikes, an exit or a 60-minute hang stop the loop with one issue, and the launcher types nothing. | SC4.1, SC4.2, SC4.3: automated, with herdr, `gh`, sleep and the clock faked. | none |
-| l4-loop-rules | SC2.2, SC2.3, SC3.1+SC3.3 | `/sdlc loop on` turns the loop on. In a loop, a session files its stop and sets its timer. A reply continues the session. With no reply, the session wraps itself. Kit 0.23.0 ships. | SC2.3: automated (a text test on `loop.md`). SC2.2, SC3.1+SC3.3: manual receipts in one live sitting of two panes, one answered at 54 minutes, one left to 55. | none |
+| l4-loop-rules | SC2.2, SC2.3, SC3.1+SC3.3 | `/sdlc loop on` turns the loop on. In a loop, a session files its stop and sets its timer. A reply continues the session. With no reply, the session wraps itself. Kit 0.23.0 ships. | SC2.3: automated (a text test on `loop.md`). SC2.2, SC3.1+SC3.3: manual receipts in one live sitting of two panes, one answered at 54 minutes, one left to 55. The stop entry (done means: a session files its stop): automated (`loop_ask.py` denies AskUserQuestion with its reason only in a loop; the SessionStart line and L3 name the plain-message ask and `{plugin}/workflows/tools/loop.py`), and a manual receipt: a fresh loop pane, asked to ask a question with no nudge, runs `loop.py stop` first and leaves no dialog open. | none |
 
 ### Order
 
@@ -145,6 +151,7 @@ l1, then l2, then l3, then l4. l1's files are the contract the others read. l2 t
 - `PushNotification` is held back while the terminal is active (trial 3), and reaches the phone only with Remote Control connected. The issue is the record either way. GitHub sends no notice for an issue filed under the user's own account (assumed, not measured).
 - A session that writes a wrong position defeats the strike count; the exit and hang checks still stop the loop.
 - Typing into a pane mid-turn: the launcher waits for the idle reading.
+- A rule in a file the session must open does not hold at a stop: in session 177's sitting, both sessions asked by a dialog and never opened `loop.md`. `loop_ask.py` holds the dialog case. A plain question asked with no `loop.py stop` still rests on the SessionStart line alone.
 - l2 and l3 were built in a second repo, `E:\herdr-sdlc`, with no remote, no CI and no team commits; the fold moved them into the kit's `herdr/` before l4 (ADR 0043), and that repo keeps their history.
 - Cost: about eight build sessions, two a unit (standing practice, session 96), plus one live sitting of about an hour, idle while the timers run.
 
@@ -157,7 +164,7 @@ l1, then l2, then l3, then l4. l1's files are the contract the others read. l2 t
 | 1. An ambiguity in the requirements | yes | The engineer seat, Johnathan Hyden, on Claude's recommendation (session 165) | "The pane shows no change" reads the transcript's last write, since the pane's status line redraws every second. Every stop, the launcher's too, removes `loop.json`, so the loop stays stopped until the user turns it on. |
 | 2. More than one solution | yes | The engineer seat, Johnathan Hyden, on Claude's recommendation (session 165) | The 55-minute timer is a `CronCreate` in the session (trial 1), not the launcher typing a wrap prompt: the self-wrap stays the session's own act and needs no typing. |
 | 3. A solution unconventional to the codebase | no | | |
-| 4. A change to a public contract: routes, a gateway definition, events, a schema | yes | The engineer seat, Johnathan Hyden, on Claude's recommendation (session 165) | A new command, `/sdlc loop on|off`, a SessionStart hook, and three JSON files the launcher reads: their shapes in Interfaces are the contract. |
+| 4. A change to a public contract: routes, a gateway definition, events, a schema | yes | The engineer seat, Johnathan Hyden, on Claude's recommendation (session 165) | A new command, `/sdlc loop on|off`, a SessionStart hook, a PreToolUse hook on AskUserQuestion (r17, on the user's word in session 177), and three JSON files the launcher reads: their shapes in Interfaces are the contract. |
 
 ## Decisions and open questions
 
@@ -170,6 +177,7 @@ l1, then l2, then l3, then l4. l1's files are the contract the others read. l2 t
 5. Decided: the launcher's stop issues carry the `needs-ruling` label, so `/cairn status` lists them under "Waiting on you".
 6. Decided: a human-needed issue's title is the question's first line, cut to 70 characters.
 7. Decided: the push check's message, `session-loop: the wrap's commit is not on the remote; push first`, is the design's; the requirements give none for SC1.2.
+8. Decided (session 177's sitting, r17): at a question, two Sonnet 5.5 sessions in a loop opened an AskUserQuestion dialog with no `loop.py stop`; told to follow the loop's rules, both filed the stop. So the stop asks in a plain message, the SessionStart line carries the rule, and `loop_ask.py` denies the dialog with the same pointer. SC2.2, SC3.1 and SC3.3 passed live once the stops were filed.
 
 ## Traceability
 
@@ -199,6 +207,7 @@ l1, then l2, then l3, then l4. l1's files are the contract the others read. l2 t
 - The trials ran in session 165 on herdr 0.9.1 and Claude Code v2.1.330, in a scratch pane closed afterwards.
 - The draft check's CL006 findings stand answered: they are the feature's own terms (wrap, sentinel, strike, `needs-ruling`) and plain words outside the controlled dictionary (issue, reply, timer, seconds), the class the request half signed with at 56. Adding them to the dictionary is the full lane's work; this design adds no entry.
 - Session 166: intake parked the pair at r6 on the requirements' four OPEN marks, and the requirements' r9 merged 18 checks to 14. The contract holds at most three sketch entries a unit, so r8 cut the units to four, with `+` pairing two checks one test reads. Each answer is Claude's recommendation, on the engineer seat's word of 2026-11-22: "Yes".
+- Session 177: r17 is Claude's draft (`RECEIPT_session-loop-l4_2026-11-23/stop-entry-fix.md`), taken on the engineer seat's word: "take it into l4, start the design revision".
 
 ## Appendix
 

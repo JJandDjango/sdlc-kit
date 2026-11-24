@@ -25,7 +25,9 @@ This is the first unit built by the normal `/sdlc execute` since the fold (ADR 0
 4. E4: the QA verifier approves the test list. Stop: the user approves it too (the tripwire). This session hands over at the test list, by a file in `RECEIPT_session-loop-l4_2026-11-23/`.
 5. Session 176, E5 to E9: prove-red, the Developer, the receipts, the commit, the Dev verifier, the QA verifier's mutations.
 6. Session 176, the live sitting: `gh label create needs-ruling` (missing on `JJandDjango/sdlc-kit`, checked today); two loop panes in herdr from `.trial/clone`, one answered at 54 minutes (SC2.2), one left past 55 (SC3.1), then `/cairn status` in a fresh session (SC3.3). Receipt: `RECEIPT_session-loop-l4_*/manual.md`.
-7. Session 176, close: the usage page's markers 🟢, backlog Next 30, a row in `docs/session-metrics.md`, `ARCHITECTURE.md` trimmed if l4's rows need room, `plan.md` out, push, the PR with its readings at the top, CI green.
+6a. Session 177 ran the sitting (`manual.md`): SC2.2, SC3.1, SC3.3 PASS; the stop entry FAIL (both sessions asked by AskUserQuestion, no `loop.py stop`). The user took the fix into l4: design r17 (amended by hand) and r18 (measured, 0 findings, 0 OPEN), from `RECEIPT_session-loop-l4_2026-11-23/stop-entry-fix.md`.
+6b. Session 178: the engineer seat signs r17 (r19); intake re-derives the contract (scope adds `hooks/loop_ask.py`); `/sdlc g1` re-signs on r17; then a fix round by `/sdlc execute session-loop l4-loop-rules` (QA's list amended and proved red, the Developer, Two-Key); then the five-minute stop-entry receipt in a fresh loop pane, with the same un-nudged prompt.
+7. Then the close: the usage page's markers 🟢, backlog Next 30, a row in `docs/session-metrics.md`, `ARCHITECTURE.md` trimmed if l4's rows need room, `plan.md` out, push, the PR with its readings at the top, CI green.
 
 ## 4. Where Claude stops for the user
 

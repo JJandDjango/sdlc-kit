@@ -437,8 +437,18 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     past the cap). SC6, the herdr sidebar, split to Next 31. The O5
     material shape hid every draft-check finding (Next actions 2):
     reshaped to flat keys, the check read 60.
-30. Finish `l4-loop-rules` (kit 0.23.0): the live sitting, then the
-    close. Session 176 built it on branch `session-175-l4-loop-rules`,
+30. Finish `l4-loop-rules` (kit 0.23.0): sign design r17, then intake,
+    `/sdlc g1`, the stop-entry fix round, its five-minute receipt, then
+    the close (`plan.md` steps 6b and 7). Session 177 ran the sitting
+    (`RECEIPT_session-loop-l4_2026-11-23/manual.md`): SC2.2, SC3.1 and
+    SC3.3 PASS live; the stop entry FAIL, since both loop sessions asked by
+    an AskUserQuestion dialog with no `loop.py stop`. The user took the fix
+    into l4: design r17 (a PreToolUse hook `hooks/loop_ask.py` denies the
+    dialog in a loop, the SessionStart line carries the stop rule,
+    `loop.py` named as `{plugin}/workflows/tools/loop.py`), r18 measured
+    0 findings, 0 OPEN; draft `stop-entry-fix.md` in the same folder. The
+    `needs-ruling` label now exists; trial issues #181 and #182 closed;
+    clones `.trial/clone` and `.trial/clone-b` stay. Session 176 built it on branch `session-175-l4-loop-rules`,
     draft PR #180: unit `4845b4f`, CHANGELOG fix `f176624`, Two-Key PASS
     in round 2 (the Dev verifier's round 1 caught a false label claim;
     QA verifier 8 of 8 mutants). Session 177 runs the sitting (SC2.2,
