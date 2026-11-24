@@ -1,80 +1,73 @@
-# Session 175 plan: build `l4-loop-rules`, the last of session-loop's four units
+# Session 178 plan: the stop-entry fix, then `l4-loop-rules` closes
 
 **Project:** sdlc_development_kit, a spec-first SDLC kit shipped as a Claude Code plugin: gates, task contracts and the agents that build to them.
 **Area:** the session flow: how a kit session stops for the user, wraps and starts again.
-**Feature:** session-loop (contract `session-loop`): a wrapped session restarts itself in the same pane until the user is needed; l1 to l3 built and merged (PRs #175 to #178, the herdr fold in #179).
-**Unit:** `l4-loop-rules`: `/sdlc loop on|off`, the rules a session in a loop follows at a stop, a reply and a wrap, the SessionStart hook, and kit 0.23.0.
+**Feature:** session-loop (contract `session-loop`): a wrapped session restarts itself in the same pane until the user is needed; l1 to l4 merged (PR #180 at `c7ad046`), the stop entry failed live.
+**Unit:** `l4-loop-rules`, its fix round: `hooks/loop_ask.py` denies AskUserQuestion in a loop, and the SessionStart line and `loop.md`'s L3 make every question a stop.
 
 ## 1. The deliverable
 
-`l4-loop-rules`' test list drafted, proved red and approved by the QA verifier and the user; the build, the live sitting and the PR follow in session 176.
+The stop-entry fix built, Two-Key PASS, its five-minute receipt passed live, and its PR open for review; `v0.23.0` is tagged on that PR's merge.
 
 ## 2. Where this sits
 
-PR #178 merged at `49b64f1` (2026-11-23) with l3 and the fold: `herdr/herdr_loop.py` restarts, ends quietly and stops; `workflows/tools/loop.py` already has `on`, `off`, `stop`, `reply`, `due` and `wrap` (l1).
+PR #180 merged at `c7ad046` (2026-11-24) before the fix; the user holds the `v0.23.0` tag and the self-pin PR until this fix merges. Session 177's sitting (`RECEIPT_session-loop-l4_2026-11-23/manual.md`): SC2.2, SC3.1, SC3.3 PASS; the stop entry FAIL, since both loop sessions asked by an AskUserQuestion dialog and ran no `loop.py stop`.
 
-l4's done means and checks: `specs/session-loop/contract.yaml:107-127` (SC2.2, SC2.3, SC3.1+SC3.3). What l4 builds: design `docs/features/session-loop.design.md:31-32` (scope), `:77-83` (the session's rules and the hook's line), `:134` (Units row: SC2.3 a text test on `loop.md`; SC2.2 and SC3.1+SC3.3 manual receipts in one live sitting of two panes).
-
-This is the first unit built by the normal `/sdlc execute` since the fold (ADR 0043): no hand run, no shim.
+The fix: design r17 (`docs/features/session-loop.design.md`, Scope `:35`, Interfaces `:72` and `:82-88`, Constraints `:130`, Units row l4 `:140`), measured at r18 (0 findings, 0 OPEN); the draft and the tests it moves: `RECEIPT_session-loop-l4_2026-11-23/stop-entry-fix.md`.
 
 ## 3. The steps
 
-1. Branch `session-175-l4-loop-rules` off main at `49b64f1`; this plan committed and pushed.
-2. Documentation first: `docs/usage/session-loop.md`, the user's page for the loop, from the design's Interfaces; each feature marked 🟢 (l1 to l3) or 🔴 (l4's).
-3. `/sdlc execute session-loop l4-loop-rules`, tasks E1 to E3: QA drafts the test list and proves it red.
-4. E4: the QA verifier approves the test list. Stop: the user approves it too (the tripwire). This session hands over at the test list, by a file in `RECEIPT_session-loop-l4_2026-11-23/`.
-5. Session 176, E5 to E9: prove-red, the Developer, the receipts, the commit, the Dev verifier, the QA verifier's mutations.
-6. Session 176, the live sitting: `gh label create needs-ruling` (missing on `JJandDjango/sdlc-kit`, checked today); two loop panes in herdr from `.trial/clone`, one answered at 54 minutes (SC2.2), one left past 55 (SC3.1), then `/cairn status` in a fresh session (SC3.3). Receipt: `RECEIPT_session-loop-l4_*/manual.md`.
-6a. Session 177 ran the sitting (`manual.md`): SC2.2, SC3.1, SC3.3 PASS; the stop entry FAIL (both sessions asked by AskUserQuestion, no `loop.py stop`). The user took the fix into l4: design r17 (amended by hand) and r18 (measured, 0 findings, 0 OPEN), from `RECEIPT_session-loop-l4_2026-11-23/stop-entry-fix.md`.
-6b. Session 178: the engineer seat signs r17 (r19); intake re-derives the contract (scope adds `hooks/loop_ask.py`); `/sdlc g1` re-signs on r17; then a fix round by `/sdlc execute session-loop l4-loop-rules` (QA's list amended and proved red, the Developer, Two-Key); then the five-minute stop-entry receipt in a fresh loop pane, with the same un-nudged prompt.
-7. Then the close: the usage page's markers 🟢, backlog Next 30, a row in `docs/session-metrics.md`, `ARCHITECTURE.md` trimmed if l4's rows need room, `plan.md` out, push, the PR with its readings at the top, CI green.
+1. Branch `session-178-l4-stop-entry` off main at `c7ad046`; this plan committed and pushed. The branch's last commit removes `plan.md`, which #180 left on main.
+2. The engineer seat signs r17 (row r19), on the user's word.
+3. `/sdlc intake session-loop`: the contract's scope adds `hooks/loop_ask.py` (row r20); no check, unit or done means changes.
+4. `/sdlc g1 session-loop`: G1.3 signed again on design r17 (session 175's lesson: any re-intake needs it before a unit starts), on the user's word.
+5. A fix round by `/sdlc execute session-loop l4-loop-rules`: QA amends `tests/test_loop_rules.py` by `stop-entry-fix.md` section 4 and proves it red; the QA verifier approves; the user approves the amended list (the tripwire); prove-red, the Developer, receipts, Dev verifier, QA verifier's mutations.
+6. The receipt: a fresh loop pane in `.trial/clone` on this branch, `claude --plugin-dir E:/sdlc_development_kit`, `GH_REPO=JJandDjango/sdlc-kit`, the same un-nudged prompt (`... Ask me whether it should be trial-note.md or trial-note.txt ...`). Pass when `loop.py stop` runs before the question, no dialog stays open and `waiting.json` exists. Appended to `manual.md`.
+7. The close: the usage page's stop-entry marker 🟢, `CHANGELOG.md`'s 0.23.0 entry names the deny hook, backlog Next 30, a row in `docs/session-metrics.md`, `plan.md` out, push, the PR with its readings at the top, CI green.
 
 ## 4. Where Claude stops for the user
 
-Now, for the words "run the workflow" (the auto-mode classifier refuses a team run without them). At step 4, while the tripwire stands. At the PR's review, merge and the 0.23.0 tag. Otherwise only on a case the signed documents leave open, or a discovery that needs a decision.
+Now: the r17 signature, the G1.3 answers on r17, and the words "run the workflow" (the auto-mode classifier refuses a team run without them). At step 5's test list, while the tripwire stands. At the PR's review, merge and the `v0.23.0` tag. Otherwise only on a case the signed documents leave open, or a discovery that needs a decision.
 
 ## 5. Where Claude goes on alone, and by what rule
 
-Steps 1 to 3 and 5 to 7: no approval stands before the PR review (`CONTRIBUTING.md`, Delegation). Claude answers a member's question from the design and lists each answer as a reading in the PR body.
+Steps 1, 3, 6 and 7, and step 5 but for the test list: no approval stands before the PR review (`CONTRIBUTING.md`, Delegation). Claude answers a member's question from the design and lists each answer as a reading in the PR body.
 
 ## 6. Rulings needed
 
-None: the documents are signed and l1 to l3 merged. Readings Claude foresees, each listed in the PR body:
+None beyond the signatures: r17 settles the fix. Readings Claude foresees, each listed in the PR body:
 
-1. The hook finds `{plugin}` from `CLAUDE_PLUGIN_ROOT` and `loop.json` under `git rev-parse --absolute-git-dir` of the session's folder. Outside git, or on any failure, it prints nothing and exits 0: a session start never fails on the loop.
-2. SC2.3's text test reads `loop.md`: the stop rule ends the turn on the question; the wrap rule's closing message asks nothing. QA may also pin the route and the hook's line; the design names SC2.3 alone.
-3. The self-wrap's closing message names the open issue and asks nothing; `/cairn status` carries the question under Waiting on you (SC3.3).
-4. Kit 0.23.0 lands in the unit's commit (`pyproject.toml`, `skills/sdlc/init.py`, `CHANGELOG.md`); the tag and the self-pin PR (`.github/workflows/sdlc.yml`) follow the user's merge.
+1. `loop_ask.py` finds `loop.json` as `loop_on.py` does (`git rev-parse --absolute-git-dir` of the event's `cwd`) and `{plugin}` from `CLAUDE_PLUGIN_ROOT`; on any failure it exits 0 with no output.
+2. The deny exits 2 with the reason on stderr (design `:88`, the wall hook's form), not a JSON `permissionDecision`.
+3. The CHANGELOG's 0.23.0 entry gains the deny hook: 0.23.0 is not yet tagged, so no new version.
 
 ## 7. What could go wrong, already ruled
 
-- A `CronCreate` one-shot fires only while the session is idle: the live sitting leaves both panes idle until their minute.
-- `loop.py stop` exits 1 with no label: the label is created before the sitting.
-- `PushNotification` is held back while the terminal is active: no check reads it.
-- QA's result too large to parse comes back empty (session 157): recover it from the member's transcript.
+- `.trial/clone` sits on PR #180's branch: it pulls this branch before the receipt, and the pane runs `--plugin-dir` against the kit, so the installed plugin's age does not matter.
+- A trial pane needs the trust prompt answered (`send-keys Down Enter`, from an argv list, never Git Bash).
+- An idle-cron watcher ends on the event, inside the 1-hour cache, not at a fixed time.
+- QA's draft is too big for a member's args: pass `"draft": {"file": ..., "read": ...}`.
 - Two whole suites at once stop each other: run one at a time.
 
 ## 8. This session's cost, with its basis
 
-This session: about 0.15M to 0.25M agent tokens (QA 96K to 136K, QA verifier's approve-tests 49K to 65K, from l1's and l3's rows in `docs/session-metrics.md`). Session 176: about 0.2M to 0.35M, plus an hour's sitting, idle while the timers run. Each failed round adds about 100K to 200K.
+About 0.25M to 0.4M agent tokens: QA's amendment 60K to 125K, QA verifier 90K to 130K (approve-tests, prove-red, two-key), Developer 40K to 90K, Dev verifier 55K to 115K, from l4's row (sessions 175 and 176, 457K) and l1's and l3's in `docs/session-metrics.md`. Each failed round adds about 100K. The receipt: about five minutes of one pane.
 
 ## 9. Not in this session
 
-- The launcher's advisories carried from l2 and l3: `wait_idle` has no exit or hang check after a `continue` sentinel; `restart()` ignores the herdr calls' exit codes; no test pins a failed `pane get`; `wait_idle`'s name. None is one of l4's checks.
+- The launcher's advisories carried from l2 and l3 (`wait_idle` exit and hang checks, `restart()` exit codes, a failed `pane get`, `wait_idle`'s name).
+- The flaky `test_sc4_3_a_source_change_renders_within_two_seconds` (2.19 s once under `-n auto`).
 - Next 31, `session-loop-sidebar` (SC6).
 
 ## 10. Words
 
 - **loop**: on while `loop.json` sits in `{git folder}/sdlc-loop/`; `/sdlc loop on|off` writes and removes it.
-- **human-needed stop**: the session files a `needs-ruling` issue by `loop.py stop`, sets its timer and ends its turn on the question.
-- **timer**: a one-shot `CronCreate` at the stop's time plus 55 minutes; with no reply it starts the self-wrap.
-- **reply**: the user's next message while `waiting.json` exists; the session deletes the timer, closes the issue and goes on.
-- **self-wrap**: the wrap the timer starts; its sentinel's kind `self-wrap` ends the loop, and the issue stays open.
-- **sentinel**: `sentinel.json`, a wrap's last write; the launcher restarts the pane only on kind `continue`.
-- **launcher**: `herdr/herdr_loop.py`, run in the user's own pane; it watches one Claude pane.
-- **hook**: `hooks/loop_on.py`, run at each session start; it tells a fresh session the loop is on.
-- **live sitting**: the manual receipts, run in real herdr panes with real timers.
+- **stop entry**: the moment a session in a loop needs the user: it runs `loop.py stop`, sets its timer, then asks in a plain message.
+- **deny hook**: `hooks/loop_ask.py`, a PreToolUse hook that refuses AskUserQuestion while `loop.json` exists and points at L3.
+- **L3**: the stop rule in `skills/sdlc/flows/loop.md`.
+- **SessionStart line**: what `hooks/loop_on.py` prints at a session start while the loop is on.
+- **receipt**: a check run by hand and recorded in `manual.md`; here the five-minute stop-entry run.
 - **reading**: a call made where the signed documents were silent; each is listed in the PR body.
-- **team, member**: QA (drafts the tests), QA verifier, Developer, Dev verifier, each started by its Workflow.
+- **team, member**: QA, QA verifier, Developer, Dev verifier, each started by its Workflow.
 - **Two-Key**: a unit is done only when independent verifiers, rerunning the tests, grade PASS.
 - **tripwire**: the rule in `docs/session-metrics.md` that sends a unit's test list to the user after an escape traced to a test list Claude approved.
