@@ -1,8 +1,8 @@
 schema: spec-interview-state/2
 id: session-loop-sidebar
 started: 2026-11-24
-phase: request
-next: Q15
+phase: complete
+next: null
 origin: feature
 title: Each loop's state shows in herdr's sidebar
 seats: {po: Johnathan Hyden}
@@ -65,6 +65,17 @@ answers:
     - {name: sidebar entry, definition: "A pane's row in herdr's sidebar, where the loop's state shows beside the pane's name."}
     - {name: waiting state, definition: "A human-needed stop is open (`waiting.json` exists) until the reply or the self-wrap."}
     - {name: stop reason, definition: "The short text an entry shows after the loop stops on its own, naming which of the five ends it was."}
+  gherkin:
+    - {check: SC1.1, name: "Position and zero strikes after a restart", given: "a launcher watching the loop's pane", when: "a `continue` sentinel arrives at a new position", then: "within 10 seconds of the restart the entry shows that position and strike count 0", status: accepted}
+    - {check: SC1.2, name: "One strike after a session that did not move", given: "a session that started at a position", when: "it ends at that same position and the launcher restarts the pane", then: "within 10 seconds of the restart the entry shows strike count 1", status: accepted}
+    - {check: SC1.3, name: "The tree pane's flag still shows", given: "the seat hook has flagged the tree pane as agent `sdlc`, state `blocked`", when: "a loop pane's entry shows its state", then: "the tree pane's flag still shows", status: accepted}
+    - {check: SC2.1, name: "Minutes left while a stop waits", given: "`waiting.json` exists in the form 0.23.0 writes it", when: "time passes toward its due time", then: "the entry shows the whole minutes left, never more than one minute behind the clock", status: accepted}
+    - {check: SC2.2, name: "The reply clears the waiting state", given: "an entry showing the waiting state", when: "the reply removes `waiting.json`", then: "within one minute the entry no longer shows the waiting state", status: accepted}
+    - {check: SC3.1, name: "A launcher stop shows its reason", given: "a launcher watching the loop's pane", when: "it stops on two strikes, the session exiting, or no change for 60 minutes", then: "it files its one `needs-ruling` issue, shows its toast, removes `loop.json` and exits 1, and after it exits the entry shows that stop's reason", status: accepted}
+    - {check: SC3.2, name: "Self-wrap and empty Next show their own reason", given: "a launcher watching the loop's pane", when: "a `self-wrap` sentinel or a `pick` sentinel arrives", then: "the entry shows that sentinel's own reason", status: accepted}
+    - {check: SC3.3, name: "A new start clears the old reason", given: "an entry showing a stop reason", when: "the loop is on again and a launcher starts on the pane", then: "the entry no longer shows the old reason", status: accepted}
+    - {check: SC4.1, name: "Loop off clears the entry", given: "a loop pane whose entry shows its state", when: "`/sdlc loop off` removes `loop.json`", then: "within 10 seconds the entry shows none of the loop's state", status: accepted}
+    - {check: SC4.2, name: "Loop off clears a waiting stop too", given: "an entry showing the waiting state", when: "the loop is turned off", then: "within 10 seconds the entry no longer shows the waiting state", status: accepted}
   success_criteria_material: "herdr's sidebar shows each loop's position, strike count and waiting state. (split by outcome at Q8)"
   out_of_scope:
     - text: "The kit's core runs no herdr command (ADR 0031, ADR 0043)."
@@ -80,3 +91,6 @@ history:
   - {at: "2026-11-24", event: id confirmed}
   - {at: "2026-11-24", event: materials confirmed (seven sections)}
   - {at: "2026-11-24", event: opening complete, document written as r1}
+  - {at: "2026-11-24", event: "checks before signing: 48 findings (CL006 42, CL008 6), 0 OPEN (r2)"}
+  - {at: "2026-11-24", event: request half signed (r4 signs r3)}
+  - {at: "2026-11-24", event: output complete}

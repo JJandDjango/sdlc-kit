@@ -515,9 +515,15 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     answered in Notes. The user reports the `needs-ruling` label created
     (session 168), but `gh label list` on `JJandDjango/sdlc-kit` showed
     none that session; check it before the first live run.
-31. Write session-loop-sidebar's requirements document (the user,
+31. [x] Write session-loop-sidebar's requirements document (the user,
     session 164): the herdr sidebar shows each loop's position, strike
-    count and waiting state. Split from session-loop's SC6.
+    count and waiting state. Split from session-loop's SC6. Session 179
+    ran the interview: four criteria (position and strikes after a
+    restart, minutes left while a stop waits, the stop reason, loop
+    off), ten checks, five stop-reason texts, three terms; the PO seat
+    signed r3 (r4) with 0 OPEN and 48 draft-check findings (CL006 42,
+    CL008 6). Open for the design run: whether a token row shows on a
+    Claude pane's sidebar entry, and what a failed herdr call does.
 32. [x] Fold `E:\herdr-sdlc` into the kit as an opt-in `herdr/` folder, after
     l3 and before l4 (the user, session 173). A second repo is a second
     dependency for one workflow: it has no remote (no one else can
@@ -534,6 +540,10 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     contract's scope to `herdr/`; the 109 tests pass in the kit. Left
     open: a test pinning ADR 0043's line, and deleting `E:\herdr-sdlc`
     (the user's call).
+33. Write session-loop-sidebar's design document (the user, engineer
+    seat): `/sdlc:product-specification-interview session-loop-sidebar
+    design` on requirements r3, then intake. Measure first whether a
+    `report-metadata` token row shows on a Claude pane's sidebar entry.
 
 ## Next actions
 

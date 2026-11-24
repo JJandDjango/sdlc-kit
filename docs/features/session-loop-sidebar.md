@@ -1,6 +1,9 @@
 | Revision Date | Revised By | Changes Made |
 | :-: | :-: | :-- |
 | 2026-11-24 | Johnathan Hyden | r1: Created through /sdlc:product-specification-interview. The request half, in progress. PO seat: Johnathan Hyden |
+| 2026-11-24 | Johnathan Hyden | r2: Measured: the checks before signing, on the request half: 48 findings (CL006 42, CL008 6); ready checks 1 to 8: 0 OPEN |
+| 2026-11-24 | Johnathan Hyden | r3: The request half finished: 11 sections written, 0 OPEN |
+| 2026-11-24 | Johnathan Hyden | r4: Signed: request half. The PO seat signs r3 |
 
 # session-loop-sidebar - Each loop's state shows in herdr's sidebar
 
@@ -100,9 +103,60 @@ Session 164 split this from session-loop's SC6 as display work, and 0.23.0 shipp
 
 ### Gherkin
 
-`[PO seat · derived]`
+`[PO seat · derived from r3]`
 
-(none: the Gherkin step writes one scenario per check)
+```gherkin
+Scenario: SC1.1 Position and zero strikes after a restart
+  Given a launcher watching the loop's pane
+  When a `continue` sentinel arrives at a new position
+  Then within 10 seconds of the restart the entry shows that position and strike count 0
+
+Scenario: SC1.2 One strike after a session that did not move
+  Given a session that started at a position
+  When it ends at that same position and the launcher restarts the pane
+  Then within 10 seconds of the restart the entry shows strike count 1
+
+Scenario: SC1.3 The tree pane's flag still shows
+  Given the seat hook has flagged the tree pane as agent `sdlc`, state `blocked`
+  When a loop pane's entry shows its state
+  Then the tree pane's flag still shows
+
+Scenario: SC2.1 Minutes left while a stop waits
+  Given `waiting.json` exists in the form 0.23.0 writes it
+  When time passes toward its due time
+  Then the entry shows the whole minutes left, never more than one minute behind the clock
+
+Scenario: SC2.2 The reply clears the waiting state
+  Given an entry showing the waiting state
+  When the reply removes `waiting.json`
+  Then within one minute the entry no longer shows the waiting state
+
+Scenario: SC3.1 A launcher stop shows its reason
+  Given a launcher watching the loop's pane
+  When it stops on two strikes, the session exiting, or no change for 60 minutes
+  Then it files its one `needs-ruling` issue, shows its toast, removes `loop.json` and exits 1
+  And after it exits the entry shows that stop's reason
+
+Scenario: SC3.2 Self-wrap and empty Next show their own reason
+  Given a launcher watching the loop's pane
+  When a `self-wrap` sentinel or a `pick` sentinel arrives
+  Then the entry shows that sentinel's own reason
+
+Scenario: SC3.3 A new start clears the old reason
+  Given an entry showing a stop reason
+  When the loop is on again and a launcher starts on the pane
+  Then the entry no longer shows the old reason
+
+Scenario: SC4.1 Loop off clears the entry
+  Given a loop pane whose entry shows its state
+  When `/sdlc loop off` removes `loop.json`
+  Then within 10 seconds the entry shows none of the loop's state
+
+Scenario: SC4.2 Loop off clears a waiting stop too
+  Given an entry showing the waiting state
+  When the loop is turned off
+  Then within 10 seconds the entry no longer shows the waiting state
+```
 
 ### Terms
 
