@@ -682,7 +682,8 @@ def matches(matcher: str, tool: str) -> bool:
 def test_reading_i_hooks_json_gains_one_pretooluse_entry_for_the_seven_tools():
     hooks = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))["hooks"]
     entries = hooks.get("PreToolUse")
-    assert isinstance(entries, list) and len(entries) == 1
+    # session-loop r17 adds a second entry, loop_ask.py's; the wall's stays first
+    assert isinstance(entries, list) and len(entries) == 2
     entry = entries[0]
     assert entry["hooks"] == [{"type": "command", "command": COMMAND}]
     assert isinstance(entry.get("matcher"), str)
