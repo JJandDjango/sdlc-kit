@@ -18,6 +18,8 @@
 | 2026-11-23 | intake | r16: Ready: contract `session-loop` validates ready-green, derived from r13, against requirements r9; the engineer seat (Johnathan Hyden) signed the solution half at r13 (r15) |
 | 2026-11-23 | Johnathan Hyden | r17: Amended by hand in kit session 177, against requirements r9, on r13: the stop-entry fix after l4's live sitting (`RECEIPT_session-loop-l4_2026-11-23/manual.md`), where both loop sessions asked by an AskUserQuestion dialog and ran no `loop.py stop`. Scope adds `hooks/loop_ask.py`, a PreToolUse hook that denies AskUserQuestion while the loop is on; Interfaces gives the SessionStart line the stop rule, names `loop.py` as `{plugin}/workflows/tools/loop.py`, and has the stop ask in a plain message; Constraints, l4's tests, Risks, Consult case 4, Decisions and Notes follow, and the state file's scope, interfaces, constraints, units, risks, cases, decisions and notes follow; no check, unit or done means changes; typed by Claude on the user's word |
 | 2026-11-23 | Johnathan Hyden | r18: Measured: the checks before signing, on the solution half's amendment r17: 0 findings; Scope against the release unit's paths: covered; ready checks 11 to 15: 0 OPEN (the stop entry's tests name l4's done means, since no requirements check covers it; the deny hook reads `loop.json`, an existing Sources row) |
+| 2026-11-24 | Johnathan Hyden | r19: Signed: solution half. The engineer seat signs r17 |
+| 2026-11-24 | intake | r20: Ready: contract `session-loop` validates ready-green, derived from r17, against requirements r9; the engineer seat (Johnathan Hyden) signed the solution half at r17 (r19) |
 
 # session-loop - Sessions restart themselves until you are needed
 

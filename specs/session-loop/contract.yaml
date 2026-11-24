@@ -22,6 +22,7 @@ scope:
   - skills/sdlc/flows/loop.md
   - skills/sdlc/SKILL.md
   - hooks/loop_on.py
+  - hooks/loop_ask.py
   - hooks/hooks.json
   - herdr/
   - tests/
