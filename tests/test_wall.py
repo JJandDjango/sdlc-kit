@@ -692,7 +692,7 @@ def test_reading_i_hooks_json_gains_one_pretooluse_entry_for_the_seven_tools():
         assert not matches(entry["matcher"], tool), tool
     assert hooks["PostToolUse"] == POST_TOOL_USE
     assert hooks["UserPromptSubmit"] == USER_PROMPT_SUBMIT
-    assert set(hooks) == {"PreToolUse", "PostToolUse", "UserPromptSubmit"}
+    assert set(hooks) == {"PreToolUse", "PostToolUse", "UserPromptSubmit", "SessionStart"}
 
 
 def test_reading_i_the_registered_script_is_the_hook_that_refuses(tmp_path):

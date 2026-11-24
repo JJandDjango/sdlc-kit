@@ -76,6 +76,7 @@ the same kind at PR review.
 | 170 | `session-loop/l2-loop-launcher`, in `E:\herdr-sdlc` by a hand run of execute's tasks (the flow commits only in its own repo); the Developer's suite run refused by the wall hook, run by the Orchestrator as receipts; test list and one added test the user's (tripwire) | yes, the manual receipts to come | 1 (QA amended once at the user's approval) | 0 / 0 | 1 | 2 | 305: QA 116 (76, amendment 40), QA verifier 103 (approve-tests 51, prove-red 20, two-key 32, 8 of 8 caught), Developer 32, Dev verifier 54 | 7 readings / | 3 / 0 |
 | 171 | `session-loop/l2-loop-launcher`'s two manual receipts, live in herdr panes on a scratch clone; SC1.1 failed (a finished, unseen turn reads `done`), fixed in `E:\herdr-sdlc` `27cb671` by a Developer and a zero-trust Verifier in one workflow, then passed with SC1.3 | yes | 1 (the fix) | 0 / 0 | | 3 | 162: Developer and Verifier in one workflow (mutants 2 of 2 caught) | 3 readings / | 0 / 0 |
 | 172 + 173 | `session-loop/l3-loop-stops`, in `E:\herdr-sdlc` by the same hand run, split at the test list (tripwire); the user approved it with two readings and one added assertion (`gh` runs in the pane's folder) | yes | 1 | 0 / 0 | | 1 | 315: QA 96, QA verifier 119 (approve-tests 49, prove-red 21, two-key 49, 11 of 11 caught), Developer 38, Dev verifier 62 | 7 readings / | 3 / 2 |
+| 175 + 176 | `session-loop/l4-loop-rules` by the normal `/sdlc execute`, split at the test list (tripwire, readings A to D); built and Two-Key PASS, the live sitting in session 177 | built; sitting open | 2 | 0 / 1 | | 4 | 457: QA 124, QA verifier 129 (approve-tests 68, prove-red 20, two-key 41, 8 of 8 caught), Developer 89 (58, round 2 31), Dev verifier 115 (62, 53) | 7 readings / | 2 / 0 |
 
 ## Notes on the baseline
 
@@ -321,3 +322,10 @@ the same kind at PR review.
   list was the user's, so the tripwire does not fire. Touches: the fix's
   ruling, the workflow opt-in, and keeping the trial clone. The trial
   sessions (Sonnet, three starts) stand outside the token total.
+- Sessions 175 and 176: the first unit by the normal `/sdlc execute` since the
+  herdr fold; split at the test list (tripwire). The restart read
+  `abandoned` at approve-tests, and session 176 went on at E5. The
+  Developer got the 11K interface note by a file pointer. Round 1's
+  defect: the CHANGELOG said `/sdlc loop on` refuses without the label.
+  Touches: the G1 re-sign, the test list, and the workflow opt-in in each
+  session. The live sitting goes to session 177.

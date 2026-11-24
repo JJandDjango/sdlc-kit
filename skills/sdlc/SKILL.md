@@ -30,6 +30,7 @@ Flows live beside this file, one PromptLang file per subcommand (ADR
 g1.md,
 execute.md,
 restart.md,
+loop.md,
 update.md. This file dispatches; the flow file executes. The
 constraints and criteria here bind inside every flow.
 
@@ -67,6 +68,7 @@ is the live container, deliberately empty until its G3 slice
    - `intake` - LOAD {skill-dir}/flows/intake.md and EXECUTE the Intake flow (I1-I9); remaining text is the raw request, when given.
    - `g1` - LOAD {skill-dir}/flows/g1.md and EXECUTE the G1 flow (R1-R7); the second argument is the feature's id.
    - `execute` - LOAD {skill-dir}/flows/execute.md and EXECUTE the Execute flow (E1-E9); the second argument is the contract's id, the third the unit's id.
+   - `loop` - LOAD {skill-dir}/flows/loop.md and EXECUTE the Loop flow (L1-L6); the second argument is `on` or `off`, and L3 to L6 are the rules of a session in a loop.
    - `vocab` - LOAD {skill-dir}/flows/vocab.md and sub-dispatch on the next argument: none - the List flow (L1); `add` - the Add flow (VA1-VA2), third argument is the term slug; `extract` - the Extract flow (X1-X4), remaining text names the surfaces, when given.
    - `lang` - LOAD {skill-dir}/flows/lang.md and sub-dispatch on the next argument: none - the Lang Check flow (LC1); `extract` - the Lang Extract flow (LX1).
    Otherwise (no args, or a scaffold / `init` intent) LOAD {skill-dir}/flows/init.md and EXECUTE the Init interview, steps 1-6.
@@ -96,6 +98,7 @@ is the live container, deliberately empty until its G3 slice
 - [ ] New flow: `taskcontract new` invoked; created path + loop line reported, or the failure + install hint.
 - [ ] Intake flow: stopped before any contract when no ratified `intake-seat` stands; contract authored on its own scaffold with `entities` declared; the unit graph rendered and every unit answered by a human before the contract is final, `confirmed_by` recorded on every unit; validate looped (max 5) to ready-green or PARKED with a named blocker; handoff refused while red; a pair read before the scaffold: stopped with nothing written when no design document stands, parked with one `Parked:` row in each table and no contract while a refusal stands in either document, stopped with no row and no contract while a signature is missing or the design is stale, and given one `Ready:` row in each table only once the contract validates ready-green; nothing else written.
 - [ ] G1 flow: stopped with nothing recorded when the contract is not ready-green, G1 is not active for the feature, or a declaration is absent; lint and model recorded and their lines shown; all 11 items asked of a person, one at a time, in the item's own words; the review writer run only on that person's name, seat and word to sign; `g1-check` run and the report ended on its passed or not-passed line.
+- [ ] Loop flow: `/sdlc loop on` and `off` ran `loop.py` once and showed its line; in a loop a stop filed its issue before it set a timer and ended on its question, a reply deleted the timer and ran no wrap, and a wrap or self-wrap closed with no question.
 - [ ] Audit flow: audit.py ran by absolute path; findings reported verbatim; nothing written or fixed.
 - [ ] Update flow: update.py ran by absolute path; drift reported by class (kit-owned / merge-target / consumer); apply only per-file on explicit user direction; merge targets and consumer files never applied.
 - [ ] Vocab flows: listing computed and reported verbatim; add scaffolds red and draft; extract reads only declared surfaces, births 5-15 draft terms with sources, loops the door to green (max 5), and leaves every ratification to the user.
