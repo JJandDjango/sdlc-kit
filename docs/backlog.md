@@ -445,8 +445,10 @@ Cairn 2.0 migration (2026-10-16). Session history stays in git:
     five older pins moved), Two-Key PASS in round 1 (QA verifier 9 of 9
     mutants). The stop entry passed live (`manual.md`, issue #183): with
     no nudge, the session ran `loop.py stop` before asking in a plain
-    message; the deny hook never had to fire. The `v0.23.0` tag and the
-    self-pin PR follow the user's merge. Carried:
+    message; the deny hook never had to fire. Merged as PR #184 at
+    `adbb07f` and tagged `v0.23.0` there (the install from the tag read
+    0.23.0 and `ready-green`); the self-pin PR moves the kit's own pins
+    to that tag. Carried:
     `tests/test_pane_renders.py::test_sc4_3_a_source_change_renders_within_two_seconds`
     failed once at 2.19 s under `-n auto` and passed on the rerun.
     Session 177 ran the sitting (`RECEIPT_session-loop-l4_2026-11-23/manual.md`):
